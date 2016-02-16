@@ -21,9 +21,15 @@
     <ClCompile Include="AccelerometerReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AccelerometerDataPerSecond.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AccelerometerReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AccelerometerDataPerSecond.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
