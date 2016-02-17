@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     gridLayout = new QGridLayout();
     this->centralWidget()->setLayout(gridLayout);
+
 }
 
 MainWindow::~MainWindow()

@@ -5,4 +5,5 @@ MainController::MainController(MainWindow& mainWindow)
 {
     ViewLoader loader = ViewLoader();
     loader.loadLayout(mainWindow);
+
 }
