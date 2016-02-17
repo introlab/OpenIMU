@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <qwt_plot.h>
 
+
 ViewLoader::ViewLoader()
 {
 
@@ -39,5 +40,5 @@ QWidget *ViewLoader::createWidget(std::string widgetName)
     else if(widgetName == "Label")
         return new QLabel();
     else if(widgetName == "Plot")
-        return new
+        return new QwtPlot();
 }

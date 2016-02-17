@@ -14,10 +14,10 @@ CXX           = cl
 DEFINES       = -DUNICODE -DWIN32 -DWIN64 -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -nologo -Zc:wchar_t -FS -Zi -MDd -W3 /Fddebug\open_imu.pdb $(DEFINES)
 CXXFLAGS      = -nologo -Zc:wchar_t -FS -Zi -MDd -GR -W3 -w34100 -w34189 -w44996 -EHsc /Fddebug\open_imu.pdb $(DEFINES)
-INCPATH       = -I..\src -I. -I..\src\models\json -IC:\Qt\5.5\msvc2013_64\include -IC:\Qt\5.5\msvc2013_64\include\QtWidgets -IC:\Qt\5.5\msvc2013_64\include\QtGui -IC:\Qt\5.5\msvc2013_64\include\QtANGLE -IC:\Qt\5.5\msvc2013_64\include\QtCore -Idebug -I. -IC:\Qt\5.5\msvc2013_64\mkspecs\win32-msvc2013 
+INCPATH       = -I..\src -I. -I..\src\models\json -I..\qwt-6.1.2\src -I..\qwt-6.1.2 -IC:\Qt\5.5\msvc2013_64\include -IC:\Qt\5.5\msvc2013_64\include\QtWidgets -IC:\Qt\5.5\msvc2013_64\include\QtGui -IC:\Qt\5.5\msvc2013_64\include\QtANGLE -IC:\Qt\5.5\msvc2013_64\include\QtCore -Idebug -I. -IC:\Qt\5.5\msvc2013_64\mkspecs\win32-msvc2013 
 LINKER        = link
 LFLAGS        = /NOLOGO /DYNAMICBASE /NXCOMPAT /DEBUG /SUBSYSTEM:WINDOWS "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'"
-LIBS          = /LIBPATH:C:\Qt\5.5\msvc2013_64\lib C:\Qt\5.5\msvc2013_64\lib\qtmaind.lib shell32.lib /LIBPATH:C:\Qt\5.5\msvc2013_64\lib C:\Qt\5.5\msvc2013_64\lib\Qt5Cored.lib C:\Qt\5.5\msvc2013_64\lib\Qt5Widgetsd.lib C:\Qt\5.5\msvc2013_64\lib\Qt5Guid.lib C:\Qt\5.5\msvc2013_64\lib\Qt5Cored.lib 
+LIBS          = /LIBPATH:C:\Qt\5.5\msvc2013_64\lib C:\Qt\5.5\msvc2013_64\lib\qtmaind.lib shell32.lib /LIBPATH:C:\Qt\5.5\msvc2013_64\lib C:\Qt\5.5\msvc2013_64\lib\Qt5Cored.lib /LIBPATH:C:\Users\dror2202\Documents\OpenIMU\qwt-6.1.2\lib C:\Users\dror2202\Documents\OpenIMU\qwt-6.1.2\lib\qwtd.lib C:\Qt\5.5\msvc2013_64\lib\Qt5Widgetsd.lib C:\Qt\5.5\msvc2013_64\lib\Qt5Guid.lib C:\Qt\5.5\msvc2013_64\lib\Qt5Cored.lib 
 QMAKE         = C:\Qt\5.5\msvc2013_64\bin\qmake.exe
 IDC           = idc
 IDL           = midl
@@ -391,7 +391,7 @@ debug\moc_mainwindow.cpp: C:\Qt\5.5\msvc2013_64\include\QtWidgets\QMainWindow \
 		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qlayoutitem.h \
 		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qboxlayout.h \
 		..\src\views\mainwindow.h
-	C:\Qt\5.5\msvc2013_64\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -D_WIN64 -IC:/Qt/5.5/msvc2013_64/mkspecs/win32-msvc2013 -IC:/Users/dror2202/Documents/OpenIMU/src -IC:/Users/dror2202/Documents/OpenIMU/src/models/json -IC:/Qt/5.5/msvc2013_64/include -IC:/Qt/5.5/msvc2013_64/include/QtWidgets -IC:/Qt/5.5/msvc2013_64/include/QtGui -IC:/Qt/5.5/msvc2013_64/include/QtANGLE -IC:/Qt/5.5/msvc2013_64/include/QtCore -I. ..\src\views\mainwindow.h -o debug\moc_mainwindow.cpp
+	C:\Qt\5.5\msvc2013_64\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -D_WIN64 -IC:/Qt/5.5/msvc2013_64/mkspecs/win32-msvc2013 -IC:/Users/dror2202/Documents/OpenIMU/src -IC:/Users/dror2202/Documents/OpenIMU/src/models/json -IC:/Users/dror2202/Documents/OpenIMU/qwt-6.1.2/src -IC:/Users/dror2202/Documents/OpenIMU/qwt-6.1.2 -IC:/Qt/5.5/msvc2013_64/include -IC:/Qt/5.5/msvc2013_64/include/QtWidgets -IC:/Qt/5.5/msvc2013_64/include/QtGui -IC:/Qt/5.5/msvc2013_64/include/QtANGLE -IC:/Qt/5.5/msvc2013_64/include/QtCore -I. ..\src\views\mainwindow.h -o debug\moc_mainwindow.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -644,7 +644,45 @@ debug\mainwindow.obj: ..\src\views\mainwindow.cpp ../src/views/mainwindow.h \
 		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qlayout.h \
 		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qlayoutitem.h \
 		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qboxlayout.h \
-		ui_mainwindow.h
+		ui_mainwindow.h \
+		C:\Qt\5.5\msvc2013_64\include\QtCore\QVariant \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\QAction \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qaction.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qactiongroup.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\QApplication \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qapplication.h \
+		C:\Qt\5.5\msvc2013_64\include\QtCore\qcoreapplication.h \
+		C:\Qt\5.5\msvc2013_64\include\QtCore\qeventloop.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qdesktopwidget.h \
+		C:\Qt\5.5\msvc2013_64\include\QtGui\qguiapplication.h \
+		C:\Qt\5.5\msvc2013_64\include\QtGui\qinputmethod.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\QButtonGroup \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qbuttongroup.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\QHeaderView \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qheaderview.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qabstractitemview.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qabstractscrollarea.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qframe.h \
+		C:\Qt\5.5\msvc2013_64\include\QtCore\qabstractitemmodel.h \
+		C:\Qt\5.5\msvc2013_64\include\QtCore\qitemselectionmodel.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qabstractitemdelegate.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qstyleoption.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qabstractspinbox.h \
+		C:\Qt\5.5\msvc2013_64\include\QtGui\qvalidator.h \
+		C:\Qt\5.5\msvc2013_64\include\QtCore\qregularexpression.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qslider.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qabstractslider.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qstyle.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qtabbar.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qrubberband.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\QMenuBar \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qmenubar.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qmenu.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\QStatusBar \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qstatusbar.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\QToolBar \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qtoolbar.h \
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\QWidget
 
 debug\connector.obj: ..\src\models\connectors\connector.cpp ../src/models/connectors/connector.h
 
@@ -884,7 +922,20 @@ debug\viewloader.obj: ..\src\models\viewloader.cpp ../src/models/viewloader.h \
 		C:\Qt\5.5\msvc2013_64\include\QtGui\qpen.h \
 		C:\Qt\5.5\msvc2013_64\include\QtGui\qtextoption.h \
 		C:\Qt\5.5\msvc2013_64\include\QtWidgets\QLabel \
-		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qlabel.h
+		C:\Qt\5.5\msvc2013_64\include\QtWidgets\qlabel.h \
+		..\qwt-6.1.2\src\qwt_plot.h \
+		..\qwt-6.1.2\src\qwt_global.h \
+		..\qwt-6.1.2\src\qwt_text.h \
+		..\qwt-6.1.2\src\qwt_plot_dict.h \
+		..\qwt-6.1.2\src\qwt_plot_item.h \
+		..\qwt-6.1.2\src\qwt_legend_data.h \
+		..\qwt-6.1.2\src\qwt_graphic.h \
+		..\qwt-6.1.2\src\qwt_null_paintdevice.h \
+		C:\Qt\5.5\msvc2013_64\include\QtGui\qpaintengine.h \
+		C:\Qt\5.5\msvc2013_64\include\QtGui\qpainter.h \
+		..\qwt-6.1.2\src\qwt_scale_map.h \
+		..\qwt-6.1.2\src\qwt_transform.h \
+		..\qwt-6.1.2\src\qwt_interval.h
 
 debug\jsoncpp.obj: ..\src\models\json\jsoncpp.cpp ../src/models/json/json/json.h
 
