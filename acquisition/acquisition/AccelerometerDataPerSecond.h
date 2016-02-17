@@ -16,6 +16,8 @@ public:
 	void setYAxisValue(signed short int yvalue);
 	void setZAxisValue(signed short int zvalue);
 
+	void displayDataPerSecond();
+
 	vector<signed short int> getXAxisValues();
 	vector<signed short int> getYAxisValues();
 	vector<signed short int> getZAxisValues();
