@@ -1,13 +1,23 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "packageexplorer.h"
+
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    hBox = new QHBoxLayout();
+    //packageExplorer = new PackageExplorer();
+
+    //hBox->addWidget(packageExplorer);
+
+
     gridLayout = new QGridLayout();
-    this->centralWidget()->setLayout(gridLayout);
+    this->centralWidget()->setLayout(hBox);
 
 }
 
