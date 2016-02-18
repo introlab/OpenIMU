@@ -4,7 +4,9 @@
 #include <QMainWindow>
 #include <qgridlayout.h>
 #include <QHBoxLayout>
-#include "packageexplorer.h"
+
+#include "explorerfile.h"
+#include "explorertab.h"
 
 namespace Ui {
 class MainWindow;
@@ -23,8 +25,9 @@ public:
 private:
     Ui::MainWindow *ui;
     QHBoxLayout* hBox;
-    PackageExplorer* packageExplorer;
     QGridLayout* gridLayout;
+    ExplorerFile* explorerFile;
+    ExplorerTab* explorerTab;
 };
 
 #endif // MAINWINDOW_H

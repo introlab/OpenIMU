@@ -1,8 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "packageexplorer.h"
 
-
+#include <QLabel>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -11,13 +10,19 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     hBox = new QHBoxLayout();
-    //packageExplorer = new PackageExplorer();
+    explorerFile = new ExplorerFile(this);
+    explorerTab = new ExplorerTab(this);
 
-    //hBox->addWidget(packageExplorer);
 
+    hBox->addWidget(explorerFile);
+    hBox->addWidget(new QLabel("Hello"));
 
     gridLayout = new QGridLayout();
+
     this->centralWidget()->setLayout(hBox);
+
+
+
 
 }
 

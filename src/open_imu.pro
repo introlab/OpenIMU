@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     models/viewloader.cpp \
     models/json/jsoncpp.cpp \
     models/layoutreader.cpp \
-    packageexplorer.cpp
+    views/explorerfile.cpp \
+    views/explorertab.cpp
 
 HEADERS  += views/mainwindow.h \
     models/connectors/connector.h \
@@ -30,7 +31,8 @@ HEADERS  += views/mainwindow.h \
     models/json/json/json-forwards.h \
     models/json/json/json.h \
     models/layoutreader.h \
-    packageexplorer.h
+    views/explorerfile.h \
+    views/explorertab.h
 
 FORMS    += views/mainwindow.ui
 
