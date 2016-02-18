@@ -76,10 +76,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AccelerometerDataPerDay.cpp" />
+    <ClCompile Include="AccelerometerDataPerHour.cpp" />
+    <ClCompile Include="AccelerometerDataPerSecond.cpp" />
     <ClCompile Include="AccelerometerReader.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AccelerometerDataPerDay.h" />
+    <ClInclude Include="AccelerometerDataPerHour.h" />
+    <ClInclude Include="AccelerometerDataPerSecond.h" />
     <ClInclude Include="AccelerometerReader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
