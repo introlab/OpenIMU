@@ -8,16 +8,21 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    QWidget *temp = new QWidget();
+    gridLayout = new QGridLayout();
+    temp->setLayout(gridLayout);
 
     hBox = new QHBoxLayout();
     explorerFile = new ExplorerFile(this);
     explorerTab = new ExplorerTab(this);
+    explorerTab->addTab(temp ,"Tab 1");
+
 
 
     hBox->addWidget(explorerFile);
-    hBox->addWidget(new QLabel("Hello"));
+    hBox->addWidget(explorerTab);
 
-    gridLayout = new QGridLayout();
+
 
     this->centralWidget()->setLayout(hBox);
 

@@ -3,4 +3,5 @@
 ExplorerTab::ExplorerTab(QWidget *parent)
 {
     this->parent = parent;
+
 }
