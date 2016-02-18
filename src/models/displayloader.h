@@ -1,13 +1,13 @@
-#ifndef VIEWLOADER_H
-#define VIEWLOADER_H
+#ifndef DISPLAYLOADER_H
+#define DISPLAYLOADER_H
 
 #include "views/mainwindow.h"
 #include <QWidget>
 
-class ViewLoader
+class DisplayLoader
 {
 public:
-    ViewLoader();
+    DisplayLoader();
 
     void loadLayout(MainWindow& mainWindow);
 

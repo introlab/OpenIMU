@@ -6,7 +6,7 @@
 #include <QHBoxLayout>
 
 #include "explorerfile.h"
-#include "explorertab.h"
+#include "explorerdisplay.h"
 
 namespace Ui {
 class MainWindow;
@@ -27,7 +27,7 @@ private:
     QHBoxLayout* hBox;
     QGridLayout* gridLayout;
     ExplorerFile* explorerFile;
-    ExplorerTab* explorerTab;
+    ExplorerDisplay* explorerDisplay;
 };
 
 #endif // MAINWINDOW_H

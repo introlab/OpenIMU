@@ -14,13 +14,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     hBox = new QHBoxLayout();
     explorerFile = new ExplorerFile(this);
-    explorerTab = new ExplorerTab(this);
-    explorerTab->addTab(temp ,"Tab 1");
+    explorerDisplay = new ExplorerDisplay(this);
+    explorerDisplay->addTab(temp ,"Tab 1");
 
 
 
     hBox->addWidget(explorerFile);
-    hBox->addWidget(explorerTab);
+    hBox->addWidget(explorerDisplay);
 
 
 

@@ -18,21 +18,21 @@ SOURCES += main.cpp\
         views/mainwindow.cpp \
     models/connectors/connector.cpp \
     controllers/maincontroller.cpp \
-    models/viewloader.cpp \
     models/json/jsoncpp.cpp \
     models/layoutreader.cpp \
     views/explorerfile.cpp \
-    views/explorertab.cpp
+    views/explorerdisplay.cpp \
+    models/displayloader.cpp
 
 HEADERS  += views/mainwindow.h \
     models/connectors/connector.h \
     controllers/maincontroller.h \
-    models/viewloader.h \
     models/json/json/json-forwards.h \
     models/json/json/json.h \
     models/layoutreader.h \
     views/explorerfile.h \
-    views/explorertab.h
+    views/explorerdisplay.h \
+    models/displayloader.h
 
 FORMS    += views/mainwindow.ui
 

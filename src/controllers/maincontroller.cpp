@@ -1,9 +1,9 @@
 #include "maincontroller.h"
-#include "models/viewloader.h"
+#include "models/displayloader.h"
 
 MainController::MainController(MainWindow& mainWindow)
 {
-    ViewLoader loader = ViewLoader();
+    DisplayLoader loader = DisplayLoader();
     loader.loadLayout(mainWindow);
 
 }
