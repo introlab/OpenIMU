@@ -15,18 +15,26 @@ INCLUDEPATH += $$PWD/models/json
 
 SOURCES += main.cpp\
         views/mainwindow.cpp \
-    models/connectors/connector.cpp \
     controllers/maincontroller.cpp \
     models/viewloader.cpp \
     models/json/jsoncpp.cpp \
-    models/layoutreader.cpp
+    models/layoutreader.cpp \
+    models/connectors/input.cpp \
+    models/connectors/output.cpp \
+    models/ialgo.cpp \
+    models/connectors/iconnector.cpp \
+    models/observer.cpp
 
 HEADERS  += views/mainwindow.h \
-    models/connectors/connector.h \
     controllers/maincontroller.h \
     models/viewloader.h \
     models/json/json/json-forwards.h \
     models/json/json/json.h \
-    models/layoutreader.h
+    models/layoutreader.h \
+    models/connectors/input.h \
+    models/connectors/output.h \
+    models/ialgo.h \
+    models/connectors/iconnector.h \
+    models/observer.h
 
 FORMS    += views/mainwindow.ui
