@@ -1,6 +1,6 @@
 #include "views/mainwindow.h"
 #include <QApplication>
-#include "models/viewloader.h"
+#include "models/displayloader.h"
 #include "controllers/maincontroller.h"
 
 int main(int argc, char *argv[])

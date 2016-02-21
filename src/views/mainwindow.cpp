@@ -1,13 +1,34 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QLabel>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    QWidget *temp = new QWidget();
     gridLayout = new QGridLayout();
-    this->centralWidget()->setLayout(gridLayout);
+    temp->setLayout(gridLayout);
+
+    hBox = new QHBoxLayout();
+    explorerFile = new ExplorerFile(this);
+    explorerDisplay = new ExplorerDisplay(this);
+    explorerDisplay->addTab(temp ,"Tab 1");
+
+
+
+    hBox->addWidget(explorerFile);
+    hBox->addWidget(explorerDisplay);
+
+
+
+    this->centralWidget()->setLayout(hBox);
+
+
+
+
 }
 
 MainWindow::~MainWindow()

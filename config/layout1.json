@@ -5,6 +5,7 @@
 {"widget": "Label", "pos": {"x": 1, "y": 0}},
 {"widget": "Label", "pos": {"x": 0, "y": 1}},
 {"widget": "LineEdit", "pos": {"x": 1, "y": 1}},
-{"widget": "LineEdit", "pos": {"x": 2, "y": 1}}
+{"widget": "LineEdit", "pos": {"x": 2, "y": 1}},
+{"widget": "Plot", "pos": {"x": 2, "y": 0}}
 ]
 }

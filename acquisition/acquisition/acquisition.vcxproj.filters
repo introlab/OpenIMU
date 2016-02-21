@@ -21,9 +21,27 @@
     <ClCompile Include="AccelerometerReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AccelerometerDataPerSecond.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AccelerometerDataPerHour.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AccelerometerDataPerDay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AccelerometerReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AccelerometerDataPerSecond.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AccelerometerDataPerHour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AccelerometerDataPerDay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

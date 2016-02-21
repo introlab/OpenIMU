@@ -1,16 +1,18 @@
-#include "viewloader.h"
+#include "displayloader.h"
 #include "layoutreader.h"
 #include <json/json.h>
 #include <iostream>
 #include <QLineEdit>
 #include <QLabel>
+#include <qwt_plot.h>
 
-ViewLoader::ViewLoader()
+
+DisplayLoader::DisplayLoader()
 {
 
 }
 
-void ViewLoader::loadLayout(MainWindow &mainWindow)
+void DisplayLoader::loadLayout(MainWindow &mainWindow)
 {
     LayoutReader layoutReader = LayoutReader();
 
@@ -31,10 +33,12 @@ void ViewLoader::loadLayout(MainWindow &mainWindow)
     }
 }
 
-QWidget *ViewLoader::createWidget(std::string widgetName)
+QWidget *DisplayLoader::createWidget(std::string widgetName)
 {
     if(widgetName == "LineEdit")
         return new QLineEdit();
     else if(widgetName == "Label")
         return new QLabel();
+    else if(widgetName == "Plot")
+        return new QwtPlot();
 }

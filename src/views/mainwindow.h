@@ -3,6 +3,10 @@
 
 #include <QMainWindow>
 #include <qgridlayout.h>
+#include <QHBoxLayout>
+
+#include "explorerfile.h"
+#include "explorerdisplay.h"
 
 namespace Ui {
 class MainWindow;
@@ -20,7 +24,10 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QHBoxLayout* hBox;
     QGridLayout* gridLayout;
+    ExplorerFile* explorerFile;
+    ExplorerDisplay* explorerDisplay;
 };
 
 #endif // MAINWINDOW_H
