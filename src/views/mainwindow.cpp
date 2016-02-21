@@ -8,15 +8,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    QWidget *temp = new QWidget();
-    gridLayout = new QGridLayout();
-    temp->setLayout(gridLayout);
 
     hBox = new QHBoxLayout();
     explorerFile = new ExplorerFile(this);
     explorerDisplay = new ExplorerDisplay(this);
-    explorerDisplay->addTab(temp ,"Tab 1");
-
 
 
     hBox->addWidget(explorerFile);

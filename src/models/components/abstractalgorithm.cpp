@@ -27,7 +27,7 @@ void AbstractAlgorithm::AddOutput(AbstractOutputNode* output)
 
 AbstractInputNode* AbstractAlgorithm::Input(std::string inputID)
 {
-    for (typename std::vector<AbstractInputNode*>::iterator it = inputs.begin() ; it != inputs.end(); ++it)
+    for ( std::vector<AbstractInputNode*>::iterator it = inputs.begin() ; it != inputs.end(); ++it)
     {
         if((*it)->GetID() == inputID) return *it;
     }
@@ -36,7 +36,7 @@ AbstractInputNode* AbstractAlgorithm::Input(std::string inputID)
 
 AbstractOutputNode* AbstractAlgorithm::Output(std::string outputID)
 {
-    for (typename std::vector<AbstractOutputNode*>::iterator it = outputs.begin() ; it != outputs.end(); ++it)
+    for ( std::vector<AbstractOutputNode*>::iterator it = outputs.begin() ; it != outputs.end(); ++it)
     {
         if((*it)->GetID() == outputID) return *it;
     }

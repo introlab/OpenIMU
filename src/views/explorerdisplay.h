@@ -8,6 +8,7 @@ class ExplorerDisplay : public QTabWidget
 public:
     ExplorerDisplay(QWidget *parent);
 private:
+    void initialize();
     QWidget* parent;
 };
 
