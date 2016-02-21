@@ -4,10 +4,10 @@
 #include <json/json.h>
 #include <iostream>
 
-class LayoutReader
+class JsonReader
 {
 public:
-    LayoutReader();
+    JsonReader();
 
     void loadFile(std::string str);
     void save();

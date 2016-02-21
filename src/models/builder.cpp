@@ -3,7 +3,7 @@
 
 Builder::Builder()
 {
-    this->layoutReader = new LayoutReader();
+    this->jsonReader = new JsonReader();
 }
 
 Display *Builder::load(std::string str)

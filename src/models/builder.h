@@ -12,7 +12,7 @@ class Builder
 public:
     Builder();
     Display* load(std::string str);
-    JsonReader* layoutReader;
+    JsonReader* jsonReader;
 };
 
 #endif // DISPLAYBUILDER_H
