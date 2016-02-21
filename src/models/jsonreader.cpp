@@ -1,15 +1,15 @@
-#include "layoutreader.h"
+#include "jsonreader.h"
 #include <json/json.h>
 #include <iostream>
 #include <fstream>
 
-LayoutReader::LayoutReader()
+JsonReader::JsonReader()
 {
     filename = "";
     fileLoaded = false;
 }
 
-void LayoutReader::loadFile(std::string str)
+void JsonReader::loadFile(std::string str)
 {
     filename = str;
     Json::Reader reader;
@@ -36,12 +36,12 @@ void LayoutReader::loadFile(std::string str)
     fileLoaded = true;
 }
 
-void LayoutReader::save()
+void JsonReader::save()
 {
 
 }
 
-Json::Value LayoutReader::getNextWidget()
+Json::Value JsonReader::getNextWidget()
 {
     // Get the value of the member of root named 'layout', return a 'null' value if
     // there is no such member.
@@ -56,7 +56,7 @@ Json::Value LayoutReader::getNextWidget()
     return widgetList[index];
 }
 
-bool LayoutReader::hasWidget()
+bool JsonReader::hasWidget()
 {
     int listSize = widgetList.size();
     return widgetIndex <= listSize;

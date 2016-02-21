@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <string>
 #include "views/display.h"
-#include "layoutreader.h"
+#include "jsonreader.h"
 
 
 class DisplayBuilder
@@ -12,7 +12,7 @@ class DisplayBuilder
 public:
     DisplayBuilder();
     Display* load(std::string str);
-    LayoutReader* layoutReader;
+    JsonReader* layoutReader;
 };
 
 #endif // DISPLAYBUILDER_H

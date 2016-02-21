@@ -18,7 +18,6 @@ SOURCES += main.cpp\
         views/mainwindow.cpp \
     controllers/maincontroller.cpp \
     models/json/jsoncpp.cpp \
-    models/layoutreader.cpp \
     models/components/observer.cpp \
     models/components/abstractinputnode.cpp \
     models/components/abstractoutputnode.cpp \
@@ -29,14 +28,14 @@ SOURCES += main.cpp\
     views/explorerdisplay.cpp \
     models/displayloader.cpp \
     views/display.cpp \
-    models/displaybuilder.cpp
+    models/displaybuilder.cpp \
+    models/jsonreader.cpp
 
 
 HEADERS  += views/mainwindow.h \
     controllers/maincontroller.h \
     models/json/json/json-forwards.h \
     models/json/json/json.h \
-    models/layoutreader.h \
     models/components/observer.h \
     models/components/abstractinputnode.h \
     models/components/abstractoutputnode.h \
@@ -47,7 +46,8 @@ HEADERS  += views/mainwindow.h \
     views/explorerdisplay.h \
     models/displayloader.h \
     views/display.h \
-    models/displaybuilder.h
+    models/displaybuilder.h \
+    models/jsonreader.h
 
 
 FORMS    += views/mainwindow.ui
