@@ -12,7 +12,7 @@ TARGET = open_imu
 TEMPLATE = app
 
 INCLUDEPATH += $$PWD/models/json
-INCLUDEPATH += $$PWD/../qwt-6.1.2/src
+INCLUDEPATH += $$PWD/../../qwt-6.1.2/src
 
 SOURCES += main.cpp\
         views/mainwindow.cpp \
@@ -53,9 +53,9 @@ HEADERS  += views/mainwindow.h \
 FORMS    += views/mainwindow.ui
 
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../qwt-6.1.2/lib/ -lqwt
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../qwt-6.1.2/lib/ -lqwtd
-else:unix: LIBS += -L$$PWD/../qwt-6.1.2/lib/ -lqwt
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../qwt-6.1.2/lib/ -lqwt
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../qwt-6.1.2/lib/ -lqwtd
+else:unix: LIBS += -L$$PWD/../../qwt-6.1.2/lib/ -lqwt
 
-INCLUDEPATH += $$PWD/../qwt-6.1.2
-DEPENDPATH += $$PWD/../qwt-6.1.2
+INCLUDEPATH += $$PWD/../../qwt-6.1.2
+DEPENDPATH += $$PWD/../../qwt-6.1.2
