@@ -19,11 +19,12 @@ SOURCES += main.cpp\
     models/viewloader.cpp \
     models/json/jsoncpp.cpp \
     models/layoutreader.cpp \
-    models/connectors/input.cpp \
-    models/connectors/output.cpp \
-    models/ialgo.cpp \
-    models/connectors/iconnector.cpp \
-    models/observer.cpp
+    models/components/observer.cpp \
+    models/components/abstractinputnode.cpp \
+    models/components/abstractoutputnode.cpp \
+    models/components/inputnode.cpp \
+    models/components/outputnode.cpp \
+    models/components/abstractalgorithm.cpp
 
 HEADERS  += views/mainwindow.h \
     controllers/maincontroller.h \
@@ -31,10 +32,11 @@ HEADERS  += views/mainwindow.h \
     models/json/json/json-forwards.h \
     models/json/json/json.h \
     models/layoutreader.h \
-    models/connectors/input.h \
-    models/connectors/output.h \
-    models/ialgo.h \
-    models/connectors/iconnector.h \
-    models/observer.h
+    models/components/observer.h \
+    models/components/abstractinputnode.h \
+    models/components/abstractoutputnode.h \
+    models/components/inputnode.h \
+    models/components/outputnode.h \
+    models/components/abstractalgorithm.h
 
 FORMS    += views/mainwindow.ui
