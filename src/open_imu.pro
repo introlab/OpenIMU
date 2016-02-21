@@ -27,7 +27,10 @@ SOURCES += main.cpp\
     models/components/abstractalgorithm.cpp \
     views/explorerfile.cpp \
     views/explorerdisplay.cpp \
-    models/displayloader.cpp
+    models/displayloader.cpp \
+    views/display.cpp \
+    models/displaybuilder.cpp
+
 
 HEADERS  += views/mainwindow.h \
     controllers/maincontroller.h \
@@ -42,7 +45,10 @@ HEADERS  += views/mainwindow.h \
     models/components/abstractalgorithm.h \
     views/explorerfile.h \
     views/explorerdisplay.h \
-    models/displayloader.h
+    models/displayloader.h \
+    views/display.h \
+    models/displaybuilder.h
+
 
 FORMS    += views/mainwindow.ui
 
