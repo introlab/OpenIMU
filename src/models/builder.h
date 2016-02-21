@@ -7,10 +7,10 @@
 #include "jsonreader.h"
 
 
-class DisplayBuilder
+class Builder
 {
 public:
-    DisplayBuilder();
+    Builder();
     Display* load(std::string str);
     JsonReader* layoutReader;
 };

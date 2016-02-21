@@ -1,12 +1,12 @@
-#include "displaybuilder.h"
+#include "builder.h"
 
 
-DisplayBuilder::DisplayBuilder()
+Builder::Builder()
 {
     this->layoutReader = new LayoutReader();
 }
 
-Display *DisplayBuilder::load(std::string str)
+Display *Builder::load(std::string str)
 {
     /*
     layoutReader.loadFile("../config/layout1.json");

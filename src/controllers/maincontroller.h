@@ -2,7 +2,7 @@
 #define MAINCONTROLLER_H
 
 #include "views/mainwindow.h"
-#include "models/displaybuilder.h"
+#include "models/builder.h"
 
 class MainController
 {
@@ -10,7 +10,7 @@ public:
     MainController(MainWindow* mainWindow);
 private:
     MainWindow* mainWindow;
-    DisplayBuilder* displayBuilder;
+    Builder* displayBuilder;
 };
 
 #endif // MAINCONTROLLER_H

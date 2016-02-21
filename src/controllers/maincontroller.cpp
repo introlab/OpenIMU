@@ -5,7 +5,7 @@ MainController::MainController(MainWindow* mainWindow)
 {
     std::cout << "Hello";
     this->mainWindow = mainWindow;
-    this->displayBuilder = new DisplayBuilder();
+    this->displayBuilder = new Builder();
     this->mainWindow->explorerDisplay->addTab(new QWidget(),"Dummy");
 
     //DisplayLoader loader = DisplayLoader();

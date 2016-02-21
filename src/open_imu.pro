@@ -28,8 +28,8 @@ SOURCES += main.cpp\
     views/explorerdisplay.cpp \
     models/displayloader.cpp \
     views/display.cpp \
-    models/displaybuilder.cpp \
-    models/jsonreader.cpp
+    models/jsonreader.cpp \
+    models/builder.cpp
 
 
 HEADERS  += views/mainwindow.h \
@@ -46,8 +46,8 @@ HEADERS  += views/mainwindow.h \
     views/explorerdisplay.h \
     models/displayloader.h \
     views/display.h \
-    models/displaybuilder.h \
-    models/jsonreader.h
+    models/jsonreader.h \
+    models/builder.h
 
 
 FORMS    += views/mainwindow.ui
