@@ -19,15 +19,14 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
     void AddCustomWidget(QWidget *widget, int x, int y);
+
+    ExplorerFile* explorerFile;
+    ExplorerDisplay* explorerDisplay;
 
 private:
     Ui::MainWindow *ui;
     QHBoxLayout* hBox;
-    QGridLayout* gridLayout;
-    ExplorerFile* explorerFile;
-    ExplorerDisplay* explorerDisplay;
 };
 
 #endif // MAINWINDOW_H
