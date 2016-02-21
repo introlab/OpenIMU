@@ -244,3 +244,4 @@ _Pvt_Extensions
 # JetBrains Rider
 .idea/
 *.sln.iml
+build-open_imu-Desktop_Qt_5_5_1_MSVC2013_64bit-Debug/
