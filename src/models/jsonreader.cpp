@@ -49,8 +49,9 @@ Json::Value JsonReader::getNextWidget()
 
     if (widgetList.isNull())
     {
-        widgetList = root["layout"];
+        widgetList = root["widgets"];
         widgetIndex = 0;
+        if(widgetList.size() == 0)return widgetList[0];
     }
     int index = widgetIndex<widgetList.size()?widgetIndex++:widgetIndex++-1;
     return widgetList[index];
@@ -61,3 +62,12 @@ bool JsonReader::hasWidget()
     int listSize = widgetList.size();
     return widgetIndex <= listSize;
 }
+
+Json::Value JsonReader::getNextAlgo(){}
+bool JsonReader::hasAlgo(){}
+
+Json::Value JsonReader::getNextInput(){}
+bool JsonReader::hasInput(){}
+
+Json::Value JsonReader::getNextOutput(){}
+bool JsonReader::hasOutput(){}

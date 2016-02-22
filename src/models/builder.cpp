@@ -25,9 +25,9 @@ void Builder::CreateItems(){
         int yPos = widgetDesc["pos"]["y"].asInt();
         AbstractWidgetController* node = this->displayBuilder->CreateWidget(widgetName, xPos, yPos);
         this->controllerList.push_back(node);
-        CreateInputsAndOutputs(node);
+        //CreateInputsAndOutputs(node);
     }
-
+/*
     for(Json::Value algoDesc = jsonReader->getNextAlgo(); jsonReader->hasAlgo(); algoDesc = jsonReader->getNextAlgo())
     {
         std::string algoName = algoDesc["algo"].asString();
@@ -37,7 +37,7 @@ void Builder::CreateItems(){
     }
 
     this->CreateConnections();
-
+*/
 }
 
 AbstractAlgorithm *Builder::CreateAlgo(std::string algoName, std::string algoID)
