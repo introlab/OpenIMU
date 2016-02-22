@@ -4,7 +4,7 @@
 {"widget": "Button", "ID": "wB1", "pos": {"x": 0, "y": 0},
 "inputs":[],"outputs":[{"ID":"click", "dataType": "int"}]
 },
-{"widget": "Label", "ID": "wL1", "pos": {"x": 0, "y": 1},
+{"widget": "Graph", "ID": "wL1", "pos": {"x": 0, "y": 1},
 "inputs":[
 {"ID":"a", "active": true, "dataType": "int"}
 ],"outputs":[]

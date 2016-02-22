@@ -3,6 +3,7 @@
 
 #include "srcpackages/widget/button/buttonfactory.h"
 #include "srcpackages/widget/label/labelfactory.h"
+#include "srcpackages/widget/graph/graphfactory.h"
 
 DisplayBuilder::DisplayBuilder()
 {
@@ -26,6 +27,16 @@ AbstractWidgetController *DisplayBuilder::CreateWidget(std::string widgetName, i
     else if(widgetName == "Label")
     {
         AbstractWidgetFactory* factory = new LabelFactory();
+        factory->Generate();
+        widget = factory->GetWidget();
+        widgetList.push_back(widget);
+        display->setWidget(widget, x, y);
+
+        return factory->GetController();
+    }
+    else if(widgetName == "Graph")
+    {
+        AbstractWidgetFactory* factory = new GraphFactory();
         factory->Generate();
         widget = factory->GetWidget();
         widgetList.push_back(widget);

@@ -43,7 +43,12 @@ SOURCES += main.cpp\
     srcpackages/widget/label/labelobserver.cpp \
     srcpackages/widget/label/labelobservable.cpp \
     srcpackages/widget/label/label.cpp \
-    srcpackages/algorithm/incrementer/incrementer.cpp
+    srcpackages/algorithm/incrementer/incrementer.cpp \
+    srcpackages/widget/graph/graphfactory.cpp \
+    srcpackages/widget/graph/graphcontroller.cpp \
+    srcpackages/widget/graph/graphobserver.cpp \
+    srcpackages/widget/graph/graphobservable.cpp \
+    srcpackages/widget/graph/graph.cpp
 
 
 HEADERS  += views/mainwindow.h \
@@ -75,7 +80,12 @@ HEADERS  += views/mainwindow.h \
     srcpackages/widget/label/labelobserver.h \
     srcpackages/widget/label/labelobservable.h \
     srcpackages/widget/label/label.h \
-    srcpackages/algorithm/incrementer/incrementer.h
+    srcpackages/algorithm/incrementer/incrementer.h \
+    srcpackages/widget/graph/graphfactory.h \
+    srcpackages/widget/graph/graphcontroller.h \
+    srcpackages/widget/graph/graphobserver.h \
+    srcpackages/widget/graph/graphobservable.h \
+    srcpackages/widget/graph/graph.h
 
 
 
