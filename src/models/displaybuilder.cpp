@@ -1,7 +1,6 @@
 #include "displaybuilder.h"
 #include "components/abstractwidgetfactory.h"
-
-#include "packages/widget/buttonfactory.h"
+#include "srcpackages/widget/button/buttonfactory.h"
 
 DisplayBuilder::DisplayBuilder()
 {
