@@ -245,3 +245,5 @@ _Pvt_Extensions
 .idea/
 *.sln.iml
 build-open_imu-Desktop_Qt_5_5_1_MSVC2013_64bit-Debug/
+build-open_imu-Desktop_Qt_5_5_1_MSVC2013_64bit-Release/
+build-open_imu-Desktop_Qt_5_5_1_MSVC2013_64bit-Profile/

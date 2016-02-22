@@ -63,11 +63,23 @@ bool JsonReader::hasWidget()
     return widgetIndex <= listSize;
 }
 
-Json::Value JsonReader::getNextAlgo(){}
-bool JsonReader::hasAlgo(){}
+Json::Value JsonReader::getNextAlgo(){
+    return 0;
+}
+bool JsonReader::hasAlgo(){
+    return 0;
+}
 
-Json::Value JsonReader::getNextInput(){}
-bool JsonReader::hasInput(){}
+Json::Value JsonReader::getNextInput(){
+    return 0;
+}
+bool JsonReader::hasInput(){
+    return 0;
+}
 
-Json::Value JsonReader::getNextOutput(){}
-bool JsonReader::hasOutput(){}
+Json::Value JsonReader::getNextOutput(){
+    return 0;
+}
+bool JsonReader::hasOutput(){
+    return 0;
+}
