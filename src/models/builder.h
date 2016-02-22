@@ -20,7 +20,7 @@ public:
 
 private:
     Display* display;
-    std::list<AbstractWidgetController*> widgetList;
+    std::list<AbstractWidgetController*> controllerList;
     std::list<AbstractInputNode*> inputNodeList;
     std::list<AbstractOutputNode*> outputNodeList;
     std::list<AbstractAlgorithm*> algorithmList;

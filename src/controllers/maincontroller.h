@@ -9,6 +9,7 @@ class MainController
 public:
     MainController(MainWindow* mainWindow);
 private:
+    void AddTab(std::string layoutName);
     MainWindow* mainWindow;
     Builder* displayBuilder;
 };

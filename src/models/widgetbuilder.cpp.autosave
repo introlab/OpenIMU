@@ -1,0 +1,6 @@
+#include "widgetbuilder.h"
+
+DisplayBuilder::DisplayBuilder()
+{
+
+}

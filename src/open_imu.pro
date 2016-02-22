@@ -29,7 +29,17 @@ SOURCES += main.cpp\
     views/display.cpp \
     models/jsonreader.cpp \
     models/builder.cpp \
-    models/components/abstractwidgetcontroller.cpp
+    models/components/abstractwidgetcontroller.cpp \
+    models/displaybuilder.cpp \
+    packages/widgets/plot/plot.cpp \
+    packages/widgets/plot/plotcontroller.cpp \
+    packages/widgets/plot/widgetobservable.cpp \
+    packages/widgets/plot/widgetobserver.cpp \
+    packages/widgets/plot/curvedata.cpp \
+    packages/widgets/plot/knob.cpp \
+    packages/widgets/plot/samplingthread.cpp \
+    packages/widgets/plot/signaldata.cpp \
+    packages/widgets/plot/wheelbox.cpp
 
 
 HEADERS  += views/mainwindow.h \
@@ -47,7 +57,18 @@ HEADERS  += views/mainwindow.h \
     views/display.h \
     models/jsonreader.h \
     models/builder.h \
-    models/components/abstractwidgetcontroller.h
+    models/components/abstractwidgetcontroller.h \
+    models/displaybuilder.h \
+    packages/widgets/plot/plot.h \
+    packages/widgets/plot/plotcontroller.h \
+    packages/widgets/plot/widgetobservable.h \
+    packages/widgets/plot/widgetobserver.h \
+    packages/widgets/plot/curvedata.h \
+    packages/widgets/plot/knob.h \
+    packages/widgets/plot/samplingthread.h \
+    packages/widgets/plot/signaldata.h \
+    packages/widgets/plot/wheelbox.h
+
 
 
 FORMS    += views/mainwindow.ui

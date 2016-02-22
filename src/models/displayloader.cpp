@@ -1,5 +1,5 @@
 #include "displayloader.h"
-#include "layoutreader.h"
+#include "jsonreader.h"
 #include <json/json.h>
 #include <iostream>
 #include <QLineEdit>
