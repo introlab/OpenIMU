@@ -26,10 +26,10 @@ SOURCES += main.cpp\
     models/components/abstractalgorithm.cpp \
     views/explorerfile.cpp \
     views/explorerdisplay.cpp \
-    models/displayloader.cpp \
     views/display.cpp \
     models/jsonreader.cpp \
-    models/builder.cpp
+    models/builder.cpp \
+    models/components/abstractwidgetcontroller.cpp
 
 
 HEADERS  += views/mainwindow.h \
@@ -44,10 +44,10 @@ HEADERS  += views/mainwindow.h \
     models/components/abstractalgorithm.h \
     views/explorerfile.h \
     views/explorerdisplay.h \
-    models/displayloader.h \
     views/display.h \
     models/jsonreader.h \
-    models/builder.h
+    models/builder.h \
+    models/components/abstractwidgetcontroller.h
 
 
 FORMS    += views/mainwindow.ui
