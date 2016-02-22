@@ -11,8 +11,15 @@ public:
 
     void loadFile(std::string str);
     void save();
+
     Json::Value getNextWidget();
     bool hasWidget();
+    Json::Value getNextAlgo();
+    bool hasAlgo();
+    Json::Value getNextInput();
+    bool hasInput();
+    Json::Value getNextOutput();
+    bool hasOutput();
 
 private:
     std::string filename;

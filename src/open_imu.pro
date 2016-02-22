@@ -37,7 +37,13 @@ SOURCES += main.cpp\
     srcpackages/widget/button/buttoncontroller.cpp \
     srcpackages/widget/button/buttonobserver.cpp \
     srcpackages/widget/button/buttonobservable.cpp \
-    models/components/abstractwidgethandler.cpp
+    models/components/abstractwidgethandler.cpp \
+    srcpackages/widget/label/labelfactory.cpp \
+    srcpackages/widget/label/labelcontroller.cpp \
+    srcpackages/widget/label/labelobserver.cpp \
+    srcpackages/widget/label/labelobservable.cpp \
+    srcpackages/widget/label/label.cpp \
+    srcpackages/algorithm/incrementer/incrementer.cpp
 
 
 HEADERS  += views/mainwindow.h \
@@ -63,7 +69,13 @@ HEADERS  += views/mainwindow.h \
     srcpackages/widget/button/buttoncontroller.h \
     srcpackages/widget/button/buttonobserver.h \
     srcpackages/widget/button/buttonobservable.h \
-    models/components/abstractwidgethandler.h
+    models/components/abstractwidgethandler.h \
+    srcpackages/widget/label/labelfactory.h \
+    srcpackages/widget/label/labelcontroller.h \
+    srcpackages/widget/label/labelobserver.h \
+    srcpackages/widget/label/labelobservable.h \
+    srcpackages/widget/label/label.h \
+    srcpackages/algorithm/incrementer/incrementer.h
 
 
 

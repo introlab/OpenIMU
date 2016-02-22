@@ -9,25 +9,22 @@ template <class T>
 class InputNode: public AbstractInputNode
 {
 public:
-    InputNode();
-    ~InputNode();
+    InputNode(){isActive = true;}
+    ~InputNode(){}
 
     //Override
-    void Put(T value);
-    T Get();
+    void Put(T value){
+        valueBuf = value;
+        if(isActive) Notify();
+    }
 
-    void SetActive(bool active);
-    void SetStringID(std::string value);
-    std::string GetStringID();
+    //Override
+    T* Get(){
+        return &valueBuf;
+    }
 
 private:
-    Observer* observer;
     T valueBuf;
-
-    bool isActive;
-    std::string stringID;
-
-    void Notify();
 };
 
 #endif // INPUTNODE_H

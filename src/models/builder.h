@@ -21,6 +21,11 @@ public:
 
 private:
     void CreateItems();
+    AbstractAlgorithm* CreateAlgo(std::string algoName, std::string algoID);
+    void CreateInputsAndOutputs(AbstractAlgorithm *node);
+    AbstractInputNode* CreateInput(std::string inputID, bool inputActive, std::string inputType, AbstractAlgorithm* node);
+    AbstractOutputNode *CreateOutput(std::string outputID, std::string outputType, AbstractAlgorithm* node);
+    void CreateConnections();
 
     JsonReader* jsonReader;
     DisplayBuilder* displayBuilder;

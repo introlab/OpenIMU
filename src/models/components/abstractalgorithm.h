@@ -16,6 +16,9 @@ public:
     void AddInput(AbstractInputNode* input);
     void AddOutput(AbstractOutputNode* output);
 
+    std::string GetStringID();
+    void SetStringID(const std::string value);
+
 protected:
     AbstractInputNode* Input(std::string inputID);
     AbstractOutputNode* Output(std::string outputID);
@@ -24,6 +27,8 @@ protected:
     std::vector<AbstractInputNode*> inputs;
     std::vector<AbstractOutputNode*> outputs;
     virtual void work() = 0;
+
+    std::string stringID;
 
 };
 

@@ -1,6 +1,8 @@
 #include "displaybuilder.h"
 #include "components/abstractwidgetfactory.h"
+
 #include "srcpackages/widget/button/buttonfactory.h"
+#include "srcpackages/widget/label/labelfactory.h"
 
 DisplayBuilder::DisplayBuilder()
 {
@@ -14,6 +16,16 @@ AbstractWidgetController *DisplayBuilder::CreateWidget(std::string widgetName, i
     if(widgetName == "Button")
     {
         AbstractWidgetFactory* factory = new ButtonFactory();
+        factory->Generate();
+        widget = factory->GetWidget();
+        widgetList.push_back(widget);
+        display->setWidget(widget, x, y);
+
+        return factory->GetController();
+    }
+    else if(widgetName == "Label")
+    {
+        AbstractWidgetFactory* factory = new LabelFactory();
         factory->Generate();
         widget = factory->GetWidget();
         widgetList.push_back(widget);
