@@ -29,7 +29,15 @@ SOURCES += main.cpp\
     views/display.cpp \
     models/jsonreader.cpp \
     models/builder.cpp \
-    models/components/abstractwidgetcontroller.cpp
+    models/components/abstractwidgetcontroller.cpp \
+    models/displaybuilder.cpp \
+    srcpackages/widget/button/button.cpp \
+    models/components/abstractwidgetfactory.cpp \
+    srcpackages/widget/button/buttonfactory.cpp \
+    srcpackages/widget/button/buttoncontroller.cpp \
+    srcpackages/widget/button/buttonobserver.cpp \
+    srcpackages/widget/button/buttonobservable.cpp \
+    models/components/abstractwidgethandler.cpp
 
 
 HEADERS  += views/mainwindow.h \
@@ -47,7 +55,16 @@ HEADERS  += views/mainwindow.h \
     views/display.h \
     models/jsonreader.h \
     models/builder.h \
-    models/components/abstractwidgetcontroller.h
+    models/components/abstractwidgetcontroller.h \
+    models/displaybuilder.h \
+    srcpackages/widget/button/button.h \
+    models/components/abstractwidgetfactory.h \
+    srcpackages/widget/button/buttonfactory.h \
+    srcpackages/widget/button/buttoncontroller.h \
+    srcpackages/widget/button/buttonobserver.h \
+    srcpackages/widget/button/buttonobservable.h \
+    models/components/abstractwidgethandler.h
+
 
 
 FORMS    += views/mainwindow.ui

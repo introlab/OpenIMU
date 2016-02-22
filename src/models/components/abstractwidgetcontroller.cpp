@@ -11,3 +11,8 @@ void AbstractWidgetController::SetWidget(QWidget *newWidget)
         delete this->widget;
     this->widget = newWidget;
 }
+
+void AbstractWidgetController::Notify(std::string inputID)
+{
+    work();
+}

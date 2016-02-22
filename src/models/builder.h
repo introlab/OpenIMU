@@ -1,9 +1,10 @@
-#ifndef DISPLAYBUILDER_H
-#define DISPLAYBUILDER_H
+#ifndef BUILDER_H
+#define BUILDER_H
 
 #include <QWidget>
 #include <string>
 #include "views/display.h"
+#include "displaybuilder.h"
 #include "jsonreader.h"
 #include "components/abstractalgorithm.h"
 #include "components/abstractinputnode.h"
@@ -15,15 +16,19 @@ class Builder
 {
 public:
     Builder();
-    Display* load(std::string str);
-    JsonReader* jsonReader;
+    Display* load(std::string layoutFile);
+    void Clear();
 
 private:
-    Display* display;
-    std::list<AbstractWidgetController*> widgetList;
+    void CreateItems();
+
+    JsonReader* jsonReader;
+    DisplayBuilder* displayBuilder;
+
+    std::list<AbstractWidgetController*> controllerList;
     std::list<AbstractInputNode*> inputNodeList;
     std::list<AbstractOutputNode*> outputNodeList;
     std::list<AbstractAlgorithm*> algorithmList;
 };
 
-#endif // DISPLAYBUILDER_H
+#endif // BUILDER_H

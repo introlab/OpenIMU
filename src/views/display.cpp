@@ -2,18 +2,11 @@
 
 Display::Display(QWidget *parent) : QWidget(parent)
 {
-
+    this->gridLayout = new QGridLayout();
+    this->setLayout(this->gridLayout);
 }
 
-void Display::setWidget(QWidget *qWidget, int x, int y)
+void Display::setWidget(AbstractWidgetHandler *widget, int x, int y)
 {
-
+    this->gridLayout->addWidget((QWidget*)widget, x, y);
 }
-
-QWidget *Display::getWidget(int x, int y)
-{
-    //TODO everything;
-    //QWidget* temp = new QWidget();
-    return new QWidget();
-}
-

@@ -3,28 +3,30 @@
 
 Builder::Builder()
 {
-    this->jsonReader = new JsonReader();
+    displayBuilder = new DisplayBuilder();
 }
 
-Display *Builder::load(std::string str)
+Display *Builder::load(std::string layoutFile)
 {
-    /*
-    layoutReader.loadFile("../config/layout1.json");
+    this->jsonReader = new JsonReader();
+    jsonReader->loadFile(layoutFile);
+    this->CreateItems();
 
-    for(Json::Value widgetDesc = layoutReader.getNextWidget(); layoutReader.hasWidget(); widgetDesc = layoutReader.getNextWidget())
+    return displayBuilder->GetDisplay();
+}
+
+void Builder::CreateItems(){
+    for(Json::Value widgetDesc = jsonReader->getNextWidget(); jsonReader->hasWidget(); widgetDesc = jsonReader->getNextWidget())
     {
         std::string widgetName = widgetDesc["widget"].asString();
         int xPos = widgetDesc["pos"]["x"].asInt();
         int yPos = widgetDesc["pos"]["y"].asInt();
 
-        mainWindow.AddCustomWidget(createWidget(widgetName), xPos, yPos);
-
-        std::cout << "name: " << widgetName
-                  << " xPos: " << xPos
-                  << " yPos: " << yPos
-                  << std::endl;
+        this->controllerList.push_back(this->displayBuilder->CreateWidget(widgetName, xPos, yPos));
     }
-    */
-    return new Display();
+}
 
+void Builder::Clear()
+{
+    this->displayBuilder->Clear();
 }
