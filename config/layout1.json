@@ -2,6 +2,8 @@
 "layout":
 [
 {"widget": "Button", "pos": {"x": 0, "y": 0}},
+{"widget": "Label", "pos": {"x": 0, "y": 1}},
+{"widget": "Label", "pos": {"x": 1, "y": 0}},
 {"widget": "Button", "pos": {"x": 1, "y": 1}}
 ]
 }

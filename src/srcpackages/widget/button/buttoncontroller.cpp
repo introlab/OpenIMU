@@ -1,4 +1,5 @@
 #include "buttoncontroller.h"
+#include "models/components/outputnode.h"
 
 ButtonController::ButtonController(Button *button)
 {
@@ -7,7 +8,7 @@ ButtonController::ButtonController(Button *button)
 
 void ButtonController::NotifyClick()
 {
-    std::cout<<"CLICKED!"<<std::endl;
+    work();
 }
 
 void ButtonController::Notify(std::string inputID)
@@ -17,5 +18,6 @@ void ButtonController::Notify(std::string inputID)
 
 void ButtonController::work()
 {
-
+    std::cout<<"CLICKED!"<<std::endl;
+    ((OutputNode<int>*)this->Output("click"))->Send(54321);
 }
