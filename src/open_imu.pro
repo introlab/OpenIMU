@@ -31,12 +31,12 @@ SOURCES += main.cpp\
     models/builder.cpp \
     models/components/abstractwidgetcontroller.cpp \
     models/displaybuilder.cpp \
-    packages/widget/button.cpp \
+    packages/widget/button/button.cpp \
     models/components/abstractwidgetfactory.cpp \
-    packages/widget/buttonfactory.cpp \
-    packages/widget/buttoncontroller.cpp \
-    packages/widget/buttonobserver.cpp \
-    packages/widget/buttonobservable.cpp \
+    packages/widget/button/buttonfactory.cpp \
+    packages/widget/button/buttoncontroller.cpp \
+    packages/widget/button/buttonobserver.cpp \
+    packages/widget/button/buttonobservable.cpp \
     models/components/abstractwidgethandler.cpp
 
 
@@ -57,12 +57,12 @@ HEADERS  += views/mainwindow.h \
     models/builder.h \
     models/components/abstractwidgetcontroller.h \
     models/displaybuilder.h \
-    packages/widget/button.h \
+    packages/widget/button/button.h \
     models/components/abstractwidgetfactory.h \
-    packages/widget/buttonfactory.h \
-    packages/widget/buttoncontroller.h \
-    packages/widget/buttonobserver.h \
-    packages/widget/buttonobservable.h \
+    packages/widget/button/buttonfactory.h \
+    packages/widget/button/buttoncontroller.h \
+    packages/widget/button/buttonobserver.h \
+    packages/widget/button/buttonobservable.h \
     models/components/abstractwidgethandler.h
 
 
