@@ -42,7 +42,8 @@ SOURCES += main.cpp\
     srcpackages/widget/label/labelcontroller.cpp \
     srcpackages/widget/label/labelobserver.cpp \
     srcpackages/widget/label/labelobservable.cpp \
-    srcpackages/widget/label/label.cpp
+    srcpackages/widget/label/label.cpp \
+    srcpackages/algorithm/incrementer/incrementer.cpp
 
 
 HEADERS  += views/mainwindow.h \
@@ -73,7 +74,8 @@ HEADERS  += views/mainwindow.h \
     srcpackages/widget/label/labelcontroller.h \
     srcpackages/widget/label/labelobserver.h \
     srcpackages/widget/label/labelobservable.h \
-    srcpackages/widget/label/label.h
+    srcpackages/widget/label/label.h \
+    srcpackages/algorithm/incrementer/incrementer.h
 
 
 
