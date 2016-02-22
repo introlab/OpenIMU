@@ -10,6 +10,17 @@ AbstractAlgorithm::~AbstractAlgorithm()
 
 }
 
+void AbstractAlgorithm::SetStringID(const std::string value)
+{
+    stringID = value;
+}
+
+std::string AbstractAlgorithm::GetStringID()
+{
+    return stringID;
+}
+
+
 void AbstractAlgorithm::Notify(std::string inputID)
 {
     work();

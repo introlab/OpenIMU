@@ -1,9 +1,30 @@
 {
-"layout":
+"widgets":
 [
-{"widget": "Button", "pos": {"x": 0, "y": 0}},
-{"widget": "Label", "pos": {"x": 0, "y": 1}},
-{"widget": "Label", "pos": {"x": 1, "y": 0}},
-{"widget": "Button", "pos": {"x": 1, "y": 1}}
+{"widget": "Button", "ID": "wB1", "pos": {"x": 0, "y": 0},
+"inputs":[],"outputs":[{"ID":"click", "dataType": "int"}]
+},
+{"widget": "Label", "ID": "wL1", "pos": {"x": 0, "y": 1},
+"inputs":[
+{"ID":"a", "active": true, "dataType": "int"}
+],"outputs":[]
+},
+{"widget": "Label", "ID": "wL2", "pos": {"x": 1, "y": 0},
+"inputs":[
+{"ID":"a", "active": true, "dataType": "int"}
+],"outputs":[]
+},
+{"widget": "Button", "ID": "wB2", "pos": {"x": 1, "y": 1},
+"inputs":[],"outputs":[{"ID":"click", "dataType": "int"}]
+}
+],
+"algorithms":
+[
+{"algo": "Incrementer", "ID": "incrementer1",
+"inputs":[],"outputs":[{"ID":"a", "dataType": "int"}]
+}
+],
+"connections":
+[
 ]
 }
