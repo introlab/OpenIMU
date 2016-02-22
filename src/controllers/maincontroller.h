@@ -9,9 +9,9 @@ class MainController
 public:
     MainController(MainWindow* mainWindow);
 private:
-    void AddTab(std::string layoutName);
+    void UpdateTab(std::string layoutName);
     MainWindow* mainWindow;
-    Builder* displayBuilder;
+    Builder* builder;
 };
 
 #endif // MAINCONTROLLER_H

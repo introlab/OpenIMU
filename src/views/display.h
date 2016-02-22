@@ -4,19 +4,17 @@
 #include <QWidget>
 #include <list>
 #include <QGridLayout>
+#include "models/components/abstractwidgethandler.h"
 
 class Display : public QWidget
 {
     Q_OBJECT
 public:
     explicit Display(QWidget *parent = 0);
-    void setWidget(QWidget* qWidget,int x,int y);
-    QWidget* getWidget(int x,int y);
+    void setWidget(AbstractWidgetHandler *widget, int x, int y);
 
 private:
-    std::list<QWidget*> listW;
-    //<QWidget*> listWidget;
-    QGridLayout gridLayout;
+    QGridLayout* gridLayout;
 
 signals:
 

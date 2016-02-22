@@ -9,9 +9,11 @@ class AbstractWidgetController: public AbstractAlgorithm
 public:
     AbstractWidgetController();
     void SetWidget(QWidget* newWidget);
+    virtual void Notify(std::string inputID);
 
-private:
+protected:
     QWidget* widget;
+    virtual void work() = 0;
 };
 
 #endif // ABSTRACTWIDGETCONTROLLER_H

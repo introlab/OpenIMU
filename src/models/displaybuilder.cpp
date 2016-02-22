@@ -1,26 +1,26 @@
 #include "displaybuilder.h"
-#include "packages/widgets/plot/plot.h"
-#include "packages/widgets/plot/plotcontroller.h"
+#include "components/abstractwidgetfactory.h"
+
+#include "packages/widget/buttonfactory.h"
 
 DisplayBuilder::DisplayBuilder()
 {
-    display = new Display();
+    this->display = new Display();
 }
 
 AbstractWidgetController *DisplayBuilder::CreateWidget(std::string widgetName, int x, int y)
 {
-    QWidget* widget;
+    AbstractWidgetHandler* widget;
     AbstractWidgetController* wController;
-    if(widgetName == "graph")
+    if(widgetName == "Button")
     {
-        widget = new Plot();
+        AbstractWidgetFactory* factory = new ButtonFactory();
+        factory->Generate();
+        widget = factory->GetWidget();
         widgetList.push_back(widget);
+        display->setWidget(widget, x, y);
 
-        wController = new PlotController(widget);
-    }
-    else if(widgetName == "button")
-    {
-
+        return factory->GetController();
     }
 }
 
@@ -31,7 +31,7 @@ Display *DisplayBuilder::GetDisplay()
 
 void DisplayBuilder::Clear()
 {
-    for (std::list<QWidget*>::const_iterator iterator = widgetList.begin(), end = widgetList.end(); iterator != end; ++iterator) {
+    for (std::list<AbstractWidgetHandler*>::const_iterator iterator = widgetList.begin(), end = widgetList.end(); iterator != end; ++iterator) {
         delete *iterator;
     }
     delete display;
