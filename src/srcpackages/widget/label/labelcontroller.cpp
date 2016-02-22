@@ -13,6 +13,6 @@ void LabelController::Notify(std::string inputID)
 
 void LabelController::work()
 {
-    int a = *((InputNode<int>*)this->Input("a"))->Get();
+    int a = *(int*)((InputNode<int>*)this->Input("a"))->Get();
     ((Label*)this->widget)->SetText(a);
 }

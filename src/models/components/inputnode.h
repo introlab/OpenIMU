@@ -19,8 +19,8 @@ public:
     }
 
     //Override
-    T* Get(){
-        return &valueBuf;
+    void* Get(){
+        return (void*)&valueBuf;
     }
 
 private:
