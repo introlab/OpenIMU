@@ -21,7 +21,8 @@
 "algorithms":
 [
 {"algo": "Incrementer", "ID": "incrementer1",
-"inputs":[],"outputs":[{"ID":"a", "dataType": "int"}]
+"inputs":[{"ID":"click", "active": true, "dataType": "int"}],
+"outputs":[{"ID":"a", "dataType": "int"}]
 }
 ],
 "connections":
