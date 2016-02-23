@@ -1,21 +1,30 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
-#include <QLabel>
+#include <qwt_plot.h>
+#include <qwt_plot_curve.h>
+
+#include <list>
+
 #include "graphobservable.h"
 #include "models/components/abstractwidgethandler.h"
 #include "models/components/abstractwidgetcontroller.h"
 
-class Graph: public QLabel, public GraphObservable, public AbstractWidgetHandler
+class Graph: public QwtPlot, public GraphObservable, public AbstractWidgetHandler
 {
     Q_OBJECT
-public:
+public:    
     Graph();
+
+    void setData(short x[], short y[], int lenght);
+
 
 signals:
 
 private slots:
 
+private:
+    QwtPlotCurve* curve1;
 };
 
 #endif // GRAPH_H

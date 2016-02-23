@@ -90,6 +90,7 @@ HEADERS  += views/mainwindow.h \
 
 
 FORMS    += views/mainwindow.ui
+DEFINES += QWT_DLL
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../qwt-6.1.2/lib/ -lqwt
@@ -98,3 +99,4 @@ else:unix: LIBS += -L$$PWD/../../qwt-6.1.2/lib/ -lqwt
 
 INCLUDEPATH += $$PWD/../../qwt-6.1.2
 DEPENDPATH += $$PWD/../../qwt-6.1.2
+

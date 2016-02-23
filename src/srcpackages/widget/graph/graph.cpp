@@ -1,6 +1,8 @@
 #include "graph.h"
 
-Graph::Graph(): QLabel()
+
+Graph::Graph():QwtPlot()
 {
-    this->setText("LABEL!");
+    curve1 = new QwtPlotCurve();
+    curve1->attach(this);
 }
