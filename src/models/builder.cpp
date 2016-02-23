@@ -12,9 +12,15 @@ Display *Builder::load(std::string layoutFile)
 {
     this->jsonReader = new JsonReader();
     jsonReader->loadFile(layoutFile);
+    displayName = jsonReader->getDisplayName();
     this->CreateItems();
 
     return displayBuilder->GetDisplay();
+}
+
+std::string Builder::getDisplayName()
+{
+    return this->displayName;
 }
 
 void Builder::CreateItems(){

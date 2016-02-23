@@ -10,6 +10,7 @@ public:
     JsonReader();
 
     void loadFile(std::string str);
+    std::string getDisplayName();
     void save();
 
     Json::Value getNextWidget();

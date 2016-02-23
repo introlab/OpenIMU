@@ -36,6 +36,11 @@ void JsonReader::loadFile(std::string str)
     fileLoaded = true;
 }
 
+std::string JsonReader::getDisplayName()
+{
+    return root["DisplayName"].asString();
+}
+
 void JsonReader::save()
 {
 

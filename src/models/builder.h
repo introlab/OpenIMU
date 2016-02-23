@@ -17,6 +17,7 @@ class Builder
 public:
     Builder();
     Display* load(std::string layoutFile);
+    std::string getDisplayName();
     void Clear();
 
 private:
@@ -28,6 +29,7 @@ private:
     void CreateConnections();
 
     JsonReader* jsonReader;
+    std::string displayName;
     DisplayBuilder* displayBuilder;
 
     std::list<AbstractWidgetController*> controllerList;
