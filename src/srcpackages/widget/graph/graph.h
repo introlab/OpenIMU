@@ -16,7 +16,7 @@ class Graph: public QwtPlot, public GraphObservable, public AbstractWidgetHandle
 public:    
     Graph();
 
-    void setData(short x[], short y[], int lenght);
+    void setData(double x[], double y[], int length);
 
 
 signals:
