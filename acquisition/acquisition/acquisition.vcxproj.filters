@@ -18,30 +18,48 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SensorDataPerDay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SensorDataPerHour.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SensorDataPerSecond.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SensorReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="AccelerometerReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AccelerometerDataPerSecond.cpp">
+    <ClCompile Include="GyroscopeReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AccelerometerDataPerHour.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AccelerometerDataPerDay.cpp">
+    <ClCompile Include="MagnetometerReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SensorDataPerDay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SensorDataPerHour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SensorDataPerSecond.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SensorReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="AccelerometerReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AccelerometerDataPerSecond.h">
+    <ClInclude Include="GyroscopeReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AccelerometerDataPerHour.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AccelerometerDataPerDay.h">
+    <ClInclude Include="MagnetometerReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
