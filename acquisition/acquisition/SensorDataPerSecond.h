@@ -3,11 +3,11 @@
 
 using namespace std;
 
-class AccelerometerDataPerSecond
+class SensorDataPerSecond
 {
 public:
-	AccelerometerDataPerSecond(void);
-	~AccelerometerDataPerSecond(void);
+	SensorDataPerSecond(void);
+	~SensorDataPerSecond(void);
 	
 	void setTimestamp(int value);
 	int getTimestamp();
