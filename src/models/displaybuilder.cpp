@@ -4,6 +4,7 @@
 #include "srcpackages/widget/button/buttonfactory.h"
 #include "srcpackages/widget/label/labelfactory.h"
 #include "srcpackages/widget/graph/graphfactory.h"
+#include "srcpackages/widget/lcdnumber/lcdnumberfactory.h"
 
 DisplayBuilder::DisplayBuilder()
 {
@@ -37,6 +38,16 @@ AbstractWidgetController *DisplayBuilder::CreateWidget(std::string widgetName, i
     else if(widgetName == "Graph")
     {
         AbstractWidgetFactory* factory = new GraphFactory();
+        factory->Generate();
+        widget = factory->GetWidget();
+        widgetList.push_back(widget);
+        display->setWidget(widget, x, y);
+
+        return factory->GetController();
+    }
+    else if(widgetName == "LCD")
+    {
+        AbstractWidgetFactory* factory = new LcdNumberFactory();
         factory->Generate();
         widget = factory->GetWidget();
         widgetList.push_back(widget);

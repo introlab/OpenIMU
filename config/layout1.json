@@ -1,5 +1,8 @@
 {
-"DisplayName": "Resume",
+"DisplayName": "LCD Number Test",
 "widgets":
-[]
+[
+{"widget": "LCD", "ID": "LCD1", "pos": {"x": 0, "y": 0}},
+{"widget": "LCD", "ID": "LCD2", "pos": {"x": 1, "y": 0}}
+]
 }

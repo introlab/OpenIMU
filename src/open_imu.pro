@@ -48,7 +48,12 @@ SOURCES += main.cpp\
     srcpackages/widget/graph/graphcontroller.cpp \
     srcpackages/widget/graph/graphobserver.cpp \
     srcpackages/widget/graph/graphobservable.cpp \
-    srcpackages/widget/graph/graph.cpp
+    srcpackages/widget/graph/graph.cpp \
+    srcpackages/widget/lcdnumber/lcdnumberfactory.cpp \
+    srcpackages/widget/lcdnumber/lcdnumbercontroller.cpp \
+    srcpackages/widget/lcdnumber/lcdnumberobserver.cpp \
+    srcpackages/widget/lcdnumber/lcdnumberobservable.cpp \
+    srcpackages/widget/lcdnumber/lcdnumber.cpp
 
 
 HEADERS  += views/mainwindow.h \
@@ -85,7 +90,12 @@ HEADERS  += views/mainwindow.h \
     srcpackages/widget/graph/graphcontroller.h \
     srcpackages/widget/graph/graphobserver.h \
     srcpackages/widget/graph/graphobservable.h \
-    srcpackages/widget/graph/graph.h
+    srcpackages/widget/graph/graph.h \
+    srcpackages/widget/lcdnumber/lcdnumberfactory.h \
+    srcpackages/widget/lcdnumber/lcdnumbercontroller.h \
+    srcpackages/widget/lcdnumber/lcdnumberobserver.h \
+    srcpackages/widget/lcdnumber/lcdnumberobservable.h \
+    srcpackages/widget/lcdnumber/lcdnumber.h
 
 
 
