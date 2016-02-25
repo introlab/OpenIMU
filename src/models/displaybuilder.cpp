@@ -15,46 +15,33 @@ AbstractWidgetController *DisplayBuilder::CreateWidget(std::string widgetName, i
 {
     AbstractWidgetHandler* widget;
     AbstractWidgetController* wController;
+    AbstractWidgetFactory* factory;
     if(widgetName == "Button")
     {
-        AbstractWidgetFactory* factory = new ButtonFactory();
-        factory->Generate();
-        widget = factory->GetWidget();
-        widgetList.push_back(widget);
-        display->setWidget(widget, x, y);
-
-        return factory->GetController();
+        factory = new ButtonFactory();
     }
     else if(widgetName == "Label")
     {
-        AbstractWidgetFactory* factory = new LabelFactory();
-        factory->Generate();
-        widget = factory->GetWidget();
-        widgetList.push_back(widget);
-        display->setWidget(widget, x, y);
-
-        return factory->GetController();
+        factory = new LabelFactory();
     }
     else if(widgetName == "Graph")
     {
-        AbstractWidgetFactory* factory = new GraphFactory();
-        factory->Generate();
-        widget = factory->GetWidget();
-        widgetList.push_back(widget);
-        display->setWidget(widget, x, y);
-
-        return factory->GetController();
+        factory = new GraphFactory();
     }
     else if(widgetName == "LCD")
     {
-        AbstractWidgetFactory* factory = new LcdNumberFactory();
-        factory->Generate();
-        widget = factory->GetWidget();
-        widgetList.push_back(widget);
-        display->setWidget(widget, x, y);
-
-        return factory->GetController();
+        factory = new LcdNumberFactory();
     }
+    else {
+        return 0;
+    }
+
+    factory->Generate();
+    widget = factory->GetWidget();
+    widgetList.push_back(widget);
+    display->setWidget(widget, x, y);
+    return factory->GetController();
+
 }
 
 Display *DisplayBuilder::GetDisplay()
