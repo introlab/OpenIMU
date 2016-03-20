@@ -1,9 +1,12 @@
 #include "applicationmenubar.h"
+#include "widget.h"
 
 ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
 {
+    parent = parent;
     fichier = new QMenu("Fichier");
-    fichier->addMenu(new QMenu("menu1_SubMenu"));
+    QAction* actionOuvrir = new QAction("Ouvrir",fichier);
+    fichier->addAction(actionOuvrir);
     edition = new QMenu("Édition");
     algorithme = new QMenu("Algorithme");
     affichage = new QMenu("Affichage");
@@ -14,5 +17,7 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     this->addMenu(algorithme);
     this->addMenu(affichage);
     this->addMenu(aide);
+
+    connect(actionOuvrir, SIGNAL(triggered()), parent, SLOT(openFile()));
 }
 

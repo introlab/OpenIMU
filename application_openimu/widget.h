@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <qwt_plot.h>
+#include <string>
 
 namespace Ui {
      class Widget;
@@ -13,13 +14,14 @@ class Widget : public QwtPlot {
 public:
      Widget(QWidget *parent = 0);
      ~Widget();
-
+    void setFolderPath(std::string path);
+    void setupPlot();
 protected:
      void changeEvent(QEvent *e);
 
 private:
      Ui::Widget *ui;
-     void setupPlot();
+     std::string m_folderPath;
 };
 
 #endif // WIDGET_H

@@ -9,14 +9,17 @@ Widget::Widget(QWidget *parent) : QwtPlot(parent),
      ui(new Ui::Widget)
 {
      ui->setupUi(this);
-     this->setupPlot();
+     m_folderPath = "";
 }
 
 Widget::~Widget()
 {
      delete ui;
 }
-
+void Widget::setFolderPath(std::string path)
+{
+    m_folderPath = path;
+}
 void Widget::changeEvent(QEvent *e)
 {
     QWidget::changeEvent(e);
@@ -56,7 +59,8 @@ void Widget::setupPlot() {
     vector<signed short> z;
     vector<float> t;
     int size =0;
-    AccelerometerReader accReader("C:\\Users\\stef\\Desktop\\Projet S7-S8\\data_step");
+    //"C:\\Users\\stef\\Desktop\\Projet S7-S8\\data_step"
+    AccelerometerReader accReader(m_folderPath);
 
     accReader.LoadSensorData();
     vector<SensorDataPerDay> availableData = accReader.GetAccelerometerData();
