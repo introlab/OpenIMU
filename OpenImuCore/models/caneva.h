@@ -14,6 +14,8 @@ public:
 private:
     void loadFile(std::string filename);
     void createBlocks();
+    void createInputs(Block *block, Json::Value inputs);
+    void createOutputs(Block *block, Json::Value outputs);
 
     std::vector<Block*> blocks;
 

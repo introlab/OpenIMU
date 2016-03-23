@@ -33,10 +33,10 @@ void Block::Notify(std::string inputID)
 void Block::work()
 {
     if(blockType == "add")
-    std::cout<<"WORK ADD!\n";
+    std::cout<<"WORK ADD!\n\n";
 
     if(blockType == "sub")
-        std::cout<<"WORK SUB!\n";
+        std::cout<<"WORK SUB!\n\n";
 }
 
 void Block::AddInput(InputNode* input)

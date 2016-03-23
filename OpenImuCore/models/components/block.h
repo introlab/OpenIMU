@@ -19,13 +19,13 @@ public:
     void Notify(std::string inputID);
     void AddInput(InputNode* input);
     void AddOutput(OutputNode* output);
+    InputNode* GetInput(std::string inputID);
+    OutputNode* GetOutput(std::string inputID);
 
     std::string GetStringID();
     void SetStringID(const std::string value);
 
 private:
-    InputNode* GetInput(std::string inputID);
-    OutputNode* GetOutput(std::string inputID);
 
     std::vector<InputNode*> inputs;
     std::vector<OutputNode*> outputs;

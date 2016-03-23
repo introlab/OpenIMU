@@ -42,11 +42,15 @@ void Caneva::loadFile(std::string filename)
 
 void Caneva::createBlocks()
 {
-    for(Json::ValueIterator itr = root["ListBlock"].begin() ; itr != root["ListBlock"].end() ; itr++)
+    for(Json::ValueIterator it = root["ListBlock"].begin() ; it != root["ListBlock"].end() ; it++)
     {
-        std::cout<<(*itr)["type"].asString()<<std::endl;
+        std::cout<<"Block: "<<(*it)["type"].asString()<<std::endl;
 
-        Block* block = new Block((*itr)["type"].asString());
+        Block* block = new Block((*it)["type"].asString());
+        block->SetStringID((*it)["ID"].asString());
+
+        createInputs(block,(*it)["inputs"]);
+        createOutputs(block,(*it)["outputs"]);
 
         blocks.push_back(block);
 
@@ -54,3 +58,28 @@ void Caneva::createBlocks()
     }
 }
 
+void Caneva::createInputs(Block* block, Json::Value inputs)
+{
+    std::cout<<"Inputs: ";
+    for(Json::ValueIterator it = inputs.begin() ; it != inputs.end() ; it++)
+    {
+        InputNode* input = new InputNode();
+        input->SetStringID((*it)["ID"].asString());
+        block->AddInput(input);
+        std::cout<<(*it)["ID"].asString()<<", ";
+    }
+    std::cout<<std::endl;
+}
+
+void Caneva::createOutputs(Block *block, Json::Value outputs)
+{
+    std::cout<<"Outputs: ";
+    for(Json::ValueIterator it = outputs.begin() ; it != outputs.end() ; it++)
+    {
+        OutputNode* output = new OutputNode();
+        output->SetStringID((*it)["ID"].asString());
+        block->AddOutput(output);
+        std::cout<<(*it)["ID"].asString()<<", ";
+    }
+    std::cout<<std::endl;
+}

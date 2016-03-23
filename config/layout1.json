@@ -1,6 +1,14 @@
 {
 "ListBlock":[
-{"type": "add", "ID": "block1"},
-{"type": "sub", "ID": "block2"}
+{
+ "type": "add", "ID": "block1",
+ "inputs":[{"ID":"input1"},{"ID":"input2"}],
+ "outputs":[{"ID":"output1"}]
+},
+{
+ "type": "sub", "ID": "block2",
+ "inputs":[{"ID":"input1"}],
+ "outputs":[{"ID":"output1"},{"ID":"output2"}]
+}
 ]
 }
