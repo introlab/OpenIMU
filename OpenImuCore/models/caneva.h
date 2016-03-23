@@ -16,7 +16,9 @@ private:
     void createBlocks();
     void createInputs(Block *block, Json::Value inputs);
     void createOutputs(Block *block, Json::Value outputs);
+    void makeConnections();
 
+    Block* getBlock(std::string ID);
     std::vector<Block*> blocks;
 
     Json::Reader reader;

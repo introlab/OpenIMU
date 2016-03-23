@@ -7,7 +7,7 @@
 class InputNode
 {
 public:
-    InputNode(){}
+    InputNode(){valueBuf=0;}
     ~InputNode(){}
     void SetObserver(Observer* newObserver){observer = newObserver;}
 

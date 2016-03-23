@@ -33,8 +33,9 @@ private:
 
     std::string stringID;
 
-
+    //Temp
     std::string blockType;
+    int inputSemaphore;
 
 };
 
