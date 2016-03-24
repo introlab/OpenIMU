@@ -1,15 +1,20 @@
 #include "vblabel.h"
+#include <QSGSimpleRectNode>
 
-VBLabel::VBLabel(QQuickItem *parent):
-    QQuickItem(parent)
+VBLabel::VBLabel()
 {
     // By default, QQuickItem does not draw anything. If you subclass
     // QQuickItem to create a visual item, you will need to uncomment the
     // following line and re-implement updatePaintNode()
 
-    // setFlag(ItemHasContents, true);
+    setFlag(ItemHasContents, true);
 }
 
 VBLabel::~VBLabel()
 {
+}
+
+QSGNode *VBLabel::updatePaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *)
+{
+    return new QSGSimpleRectNode(boundingRect(), Qt::blue);
 }

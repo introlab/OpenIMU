@@ -5,12 +5,11 @@
 
 class VBLabel : public QQuickItem
 {
-    Q_OBJECT
-    Q_DISABLE_COPY(VBLabel)
-
 public:
-    VBLabel(QQuickItem *parent = 0);
+    VBLabel();
     ~VBLabel();
+
+    QSGNode* updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* ) override;
 };
 
 #endif // VBLABEL_H

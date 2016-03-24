@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QQmlApplicationEngine>
 
 namespace Ui {
 class MainWindow;

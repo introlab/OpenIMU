@@ -16,7 +16,9 @@ FORMS    += mainwindow.ui
 RESOURCES += qml.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH = C:/Users/dror2202/Documents/OpenQML
+QML_IMPORT_PATH = $$PWD/..
+
+QSG_RENDERER_DEBUG=dump
 
 # Default rules for deployment.
 include(deployment.pri)

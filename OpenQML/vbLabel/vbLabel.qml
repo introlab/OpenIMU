@@ -6,6 +6,8 @@ Rectangle {
     width:100; height:100; color:"blue"
 
     Label{
-        text:"Hello world"
+        text: "Hello world"
+        color: "white"
+        anchors.centerIn: parent
     }
 }
