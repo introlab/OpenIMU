@@ -40,14 +40,14 @@ void Block::Notify(std::string inputID)
 
 void Block::work()
 {
-    if(blockType == "mul")
+    if(blockType == "add")
     {
         // out = a + b
-        std::cout<<"WORKING ON MUL!\n";
+        std::cout<<"WORKING ON ADD!\n";
 
-        int sum = GetInput("input1")->Get() * GetInput("input2")->Get();
+        int sum = GetInput("input1")->Get() + GetInput("input2")->Get();
 
-        std::cout<<"mul result: "<<sum<<std::endl<<std::endl;
+        std::cout<<"add result: "<<sum<<std::endl<<std::endl;
 
         GetOutput("output1")->Send(sum);
     }
@@ -62,6 +62,32 @@ void Block::work()
 
         std::cout<<"sub result1: "<<res1<<std::endl;
         std::cout<<"sub result2: "<<res2<<std::endl<<std::endl;
+
+        GetOutput("output1")->Send(res1);
+        GetOutput("output2")->Send(res2);
+    }
+    else if(blockType == "mul")
+    {
+        // out = a + b
+        std::cout<<"WORKING ON MUL!\n";
+
+        int product = GetInput("input1")->Get() * GetInput("input2")->Get();
+
+        std::cout<<"mul result: "<<product<<std::endl<<std::endl;
+
+        GetOutput("output1")->Send(product);
+    }
+    else if(blockType == "div")
+    {
+        //out1 = int(a / b)
+        //out2 = int(b / a)
+        std::cout<<"WORKING ON DIV!\n\n";
+
+        int res1 = GetInput("input1")->Get() - GetInput("input2")->Get();
+        int res2 = GetInput("input2")->Get() - GetInput("input1")->Get();
+
+        std::cout<<"div result1: "<<res1<<std::endl;
+        std::cout<<"div result2: "<<res2<<std::endl<<std::endl;
 
         GetOutput("output1")->Send(res1);
         GetOutput("output2")->Send(res2);

@@ -1,7 +1,7 @@
 {
 "ListBlock":[
 {
- "type": "mul", "ID": "block1",
+ "type": "add", "ID": "block1",
  "inputs":[{"ID":"input1"},{"ID":"input2"}],
  "outputs":[{"ID":"output1"}]
 },
@@ -20,7 +20,7 @@
 },
 {
  "from":"block2",
- "out" :"output1",
+ "out" :"output2",
  "to"  :"block1",
  "in"  :"input2"
 }

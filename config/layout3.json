@@ -1,7 +1,0 @@
-{
-"DisplayName": "Donnees",
-"widgets":
-[
-{"widget": "Graph", "ID": "Graph1", "pos": {"x": 0, "y": 0}}
-]
-}
