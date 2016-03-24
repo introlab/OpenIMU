@@ -7,7 +7,7 @@ Block::Block()
 Block::Block(std::string blockType)
 {
     this->blockType = blockType;
-    inputSemaphore = 2;
+    inputSemaphore = 0;
 }
 
 Block::~Block()
@@ -34,7 +34,7 @@ void Block::Notify(std::string inputID)
     inputSemaphore--;
     if(inputSemaphore == 0){
         work();
-        inputSemaphore = 2;
+        inputSemaphore = inputs.size();
     }
 }
 
@@ -72,6 +72,7 @@ void Block::AddInput(InputNode* input)
 {
     inputs.push_back(input);
     input->SetObserver(this);
+    inputSemaphore++;
 }
 
 void Block::AddOutput(OutputNode* output)

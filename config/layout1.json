@@ -20,7 +20,7 @@
 },
 {
  "from":"block2",
- "out" :"output2",
+ "out" :"output1",
  "to"  :"block1",
  "in"  :"input2"
 }
