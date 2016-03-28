@@ -11,23 +11,29 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = application_openimu
 TEMPLATE = app
 
-INCLUDEPATH += $$PWD/../../qwt-6.1.2/src
+INCLUDEPATH += $$PWD/../../qwt-6.1.2/src $$PWD/models/json
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../qwt-6.1.2/lib/ -lqwt
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../qwt-6.1.2/lib/ -lqwtd
 else:unix: LIBS += -L$$PWD/../../qwt-6.1.2/lib/ -lqwt
 
-CONFIG += c++11
+CONFIG += c++11 console
 
 SOURCES += main.cpp\
-     widget.cpp \
+    widget.cpp \
     SensorDataPerDay.cpp \
     SensorDataPerHour.cpp \
     SensorDataPerSecond.cpp \
     SensorReader.cpp \
     AccelerometerReader.cpp \
     applicationmenubar.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    models/components/inputnode.cpp \
+    models/components/observer.cpp \
+    models/components/outputnode.cpp \
+    models/json/jsoncpp.cpp \
+    models/components/block.cpp \
+    models/caneva.cpp
 
 HEADERS += widget.h \
     SensorDataPerDay.h \
@@ -36,6 +42,13 @@ HEADERS += widget.h \
     SensorReader.h \
     AccelerometerReader.h \
     applicationmenubar.h \
-    mainwindow.h
+    mainwindow.h \
+    models/components/inputnode.h \
+    models/components/observer.h \
+    models/components/outputnode.h \
+    models/json/json/json-forwards.h \
+    models/json/json/json.h \
+    models/components/block.h \
+    models/caneva.h
 
 FORMS += widget.ui

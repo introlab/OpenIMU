@@ -6,7 +6,7 @@
  "outputs":[{"ID":"output1"}]
 },
 {
- "type": "sub", "ID": "block2",
+ "type": "div", "ID": "block2",
  "inputs":[{"ID":"input1"},{"ID":"input2"}],
  "outputs":[{"ID":"output1"},{"ID":"output2"}]
 }
