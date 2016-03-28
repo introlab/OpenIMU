@@ -21,11 +21,11 @@ CONFIG += c++11 console
 
 SOURCES += main.cpp\
     widget.cpp \
-    SensorDataPerDay.cpp \
-    SensorDataPerHour.cpp \
-    SensorDataPerSecond.cpp \
-    SensorReader.cpp \
-    AccelerometerReader.cpp \
+    acquisition/SensorDataPerDay.cpp \
+    acquisition/SensorDataPerHour.cpp \
+    acquisition/SensorDataPerSecond.cpp \
+    acquisition/SensorReader.cpp \
+    acquisition/AccelerometerReader.cpp \
     applicationmenubar.cpp \
     mainwindow.cpp \
     models/components/inputnode.cpp \
@@ -36,11 +36,11 @@ SOURCES += main.cpp\
     models/caneva.cpp
 
 HEADERS += widget.h \
-    SensorDataPerDay.h \
-    SensorDataPerHour.h \
-    SensorDataPerSecond.h \
-    SensorReader.h \
-    AccelerometerReader.h \
+    acquisition/SensorDataPerDay.h \
+    acquisition/SensorDataPerHour.h \
+    acquisition/SensorDataPerSecond.h \
+    acquisition/SensorReader.h \
+    acquisition/AccelerometerReader.h \
     applicationmenubar.h \
     mainwindow.h \
     models/components/inputnode.h \

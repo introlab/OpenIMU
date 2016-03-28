@@ -249,3 +249,9 @@ build-open_imu-Desktop_Qt_5_5_1_MSVC2013_64bit-Release/
 build-open_imu-Desktop_Qt_5_5_1_MSVC2013_64bit-Profile/
 build-open_imu-Desktop_Qt_5_5_1_MinGW_32bit_304cdc-Debug/
 build-OpenImuCore-Desktop_Qt_5_5_1_MinGW_32bit-Debug/
+build-application_openimu-Desktop_Qt_5_5_1_MinGW_32bit-Debug/Makefile
+build-application_openimu-Desktop_Qt_5_5_1_MinGW_32bit-Debug/Makefile.Debug
+build-application_openimu-Desktop_Qt_5_5_1_MinGW_32bit-Debug/Makefile.Release
+build-application_openimu-Desktop_Qt_5_5_1_MinGW_32bit-Debug/object_script.application_openimu.Debug
+build-application_openimu-Desktop_Qt_5_5_1_MinGW_32bit-Debug/object_script.application_openimu.Release
+build-application_openimu-Desktop_Qt_5_5_1_MinGW_32bit-Debug/ui_widget.h

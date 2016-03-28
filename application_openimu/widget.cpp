@@ -2,7 +2,7 @@
 #include "ui_widget.h"
 #include <qwt_legend.h>
 #include <qwt_plot_curve.h>
-#include "AccelerometerReader.h"
+#include "acquisition/AccelerometerReader.h"
 #include <vector>
 
 Widget::Widget(QWidget *parent) : QwtPlot(parent),
