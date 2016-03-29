@@ -11,11 +11,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = application_openimu
 TEMPLATE = app
 
-INCLUDEPATH += $$PWD/../../qwt-6.1.2/src $$PWD/models/json
+INCLUDEPATH += $$PWD/../../../qwt-6.1.2/src $$PWD/models/json
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../qwt-6.1.2/lib/ -lqwt
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../qwt-6.1.2/lib/ -lqwtd
-else:unix: LIBS += -L$$PWD/../../qwt-6.1.2/lib/ -lqwt
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../qwt-6.1.2/lib/ -lqwt
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../qwt-6.1.2/lib/ -lqwtd
+else:unix: LIBS += -L$$PWD/../../../qwt-6.1.2/lib/ -lqwt
 
 CONFIG += c++11
 
@@ -62,3 +62,4 @@ HEADERS += widget.h \
     models/components/blockType/blockFactory.h
 
 FORMS += widget.ui
+
