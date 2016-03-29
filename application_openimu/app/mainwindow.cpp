@@ -4,6 +4,7 @@
 #include <QPalette>
 #include <qlabel.h>
 #include "acquisition/SensorReader.h"
+#include "customqmlscene.h"
 
 using namespace std;
 
@@ -31,6 +32,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     textLabel->setFont(f);
     mainLayout->addWidget(textLabel);
     mainLayout->addWidget(filesWidget);
+
+    CustomQmlScene* scene = new CustomQmlScene("layout1.qml", this);
+    mainLayout->addWidget(scene);
+
     mainWidget = new QWidget;
     mainWidget->setLayout(mainLayout);
 

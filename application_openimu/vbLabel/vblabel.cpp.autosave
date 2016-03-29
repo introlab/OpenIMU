@@ -18,7 +18,11 @@ QSGNode *VBLabel::updatePaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeD
 {
     auto node = static_cast<QSGSimpleRectNode*>(oldNode);
     if(!node)
-        node =  new QSGSimpleRectNode(boundingRect(), Qt::green);
+        node =  new QSGSimpleRectNode(boundingRect(),Qt::green);
     node->setRect(boundingRect());
     return node;
+}
+work()
+{
+    
 }

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += qml quick core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -38,7 +38,8 @@ SOURCES += main.cpp\
     models/components/blockType/subBlock.cpp \
     models/components/blockType/mulBlock.cpp \
     models/components/blockType/divBlock.cpp \
-    models/components/blockType/blockFactory.cpp
+    models/components/blockType/blockFactory.cpp \
+    customqmlscene.cpp
 
 HEADERS += widget.h \
     acquisition/SensorDataPerDay.h \
@@ -59,7 +60,19 @@ HEADERS += widget.h \
     models/components/blockType/subBlock.h \
     models/components/blockType/mulBlock.h \
     models/components/blockType/divBlock.h \
-    models/components/blockType/blockFactory.h
+    models/components/blockType/blockFactory.h \
+    customqmlscene.h
 
 FORMS += widget.ui
+
+RESOURCES += qml.qrc
+
+# Additional import path used to resolve QML modules in Qt Creator's code model
+QML_IMPORT_PATH = $$PWD/..
+
+QSG_RENDERER_DEBUG=dump
+
+# Default rules for deployment.
+include(deployment.pri)
+
 
