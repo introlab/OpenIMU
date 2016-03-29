@@ -17,7 +17,7 @@ win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../qwt-6.1.2/lib/ -lqwt
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../qwt-6.1.2/lib/ -lqwtd
 else:unix: LIBS += -L$$PWD/../../qwt-6.1.2/lib/ -lqwt
 
-CONFIG += c++11 console
+CONFIG += c++11
 
 SOURCES += main.cpp\
     widget.cpp \

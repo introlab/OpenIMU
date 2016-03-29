@@ -9,6 +9,8 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     fichier->addAction(actionOuvrir);
     edition = new QMenu("Édition");
     algorithme = new QMenu("Algorithme");
+    QAction* actionNombreDePas = new QAction("Nombre de pas",algorithme);
+    algorithme->addAction(actionNombreDePas);
     affichage = new QMenu("Affichage");
     aide = new QMenu("Aide");
 
@@ -19,5 +21,6 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     this->addMenu(aide);
 
     connect(actionOuvrir, SIGNAL(triggered()), parent, SLOT(openFile()));
+    connect(actionNombreDePas, SIGNAL(triggered()), parent, SLOT(computeSteps()));
 }
 
