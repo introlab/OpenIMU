@@ -12,8 +12,6 @@ class Block : public Observer
 public:
     Block();
 
-    //Temp
-    Block(std::string blockType);
 
     ~Block();
     void Notify(std::string inputID);
@@ -25,17 +23,18 @@ public:
     std::string GetStringID();
     void SetStringID(const std::string value);
 
+
 private:
-
-    std::vector<InputNode*> inputs;
-    std::vector<OutputNode*> outputs;
-    void work();
-
     std::string stringID;
 
     //Temp
     std::string blockType;
-    int inputSemaphore;
+    int inputSemaphore=0;
+
+protected:
+    virtual void work();
+    std::vector<InputNode*> inputs;
+    std::vector<OutputNode*> outputs;
 
 };
 

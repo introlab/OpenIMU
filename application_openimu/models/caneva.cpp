@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <iostream>
+#include "components/blockType/blockFactory.h"
 
 Caneva::Caneva(std::string filename)
 {
@@ -46,11 +47,14 @@ void Caneva::loadFile(std::string filename)
     }
 }
 
+
 void Caneva::createBlocks()
 {
     for(Json::ValueIterator it = root["ListBlock"].begin() ; it != root["ListBlock"].end() ; it++)
     {
-        Block* block = new Block((*it)["type"].asString());
+        BlockFactory* blockFactory = new BlockFactory();
+        Block* block = new Block();
+        block = blockFactory->createBlockType((*it)["type"].asString());
         block->SetStringID((*it)["ID"].asString());
 
         createInputs(block,(*it)["inputs"]);

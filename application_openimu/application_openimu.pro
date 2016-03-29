@@ -33,7 +33,12 @@ SOURCES += main.cpp\
     models/components/outputnode.cpp \
     models/json/jsoncpp.cpp \
     models/components/block.cpp \
-    models/caneva.cpp
+    models/caneva.cpp \
+    models/components/blockType/addBlock.cpp \
+    models/components/blockType/subBlock.cpp \
+    models/components/blockType/mulBlock.cpp \
+    models/components/blockType/divBlock.cpp \
+    models/components/blockType/blockFactory.cpp
 
 HEADERS += widget.h \
     acquisition/SensorDataPerDay.h \
@@ -49,6 +54,11 @@ HEADERS += widget.h \
     models/json/json/json-forwards.h \
     models/json/json/json.h \
     models/components/block.h \
-    models/caneva.h
+    models/caneva.h \
+    models/components/blockType/addBlock.h \
+    models/components/blockType/subBlock.h \
+    models/components/blockType/mulBlock.h \
+    models/components/blockType/divBlock.h \
+    models/components/blockType/blockFactory.h
 
 FORMS += widget.ui
