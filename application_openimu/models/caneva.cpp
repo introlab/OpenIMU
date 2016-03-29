@@ -50,9 +50,9 @@ void Caneva::loadFile(std::string filename)
 
 void Caneva::createBlocks()
 {
+    BlockFactory* blockFactory = new BlockFactory();
     for(Json::ValueIterator it = root["ListBlock"].begin() ; it != root["ListBlock"].end() ; it++)
     {
-        BlockFactory* blockFactory = new BlockFactory();
         Block* block = new Block();
         block = blockFactory->createBlockType((*it)["type"].asString());
         block->SetStringID((*it)["ID"].asString());
