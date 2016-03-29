@@ -18,7 +18,7 @@ class MainWindow : public QMainWindow
 
     public slots:
     void openFile();
-    void computeSteps();
+    void computeSteps(std::string t);
 
     private:
        QVBoxLayout *mainLayout;
@@ -27,7 +27,6 @@ class MainWindow : public QMainWindow
        QWidget *filesWidget;
        Widget *plotWidget ;
        ApplicationMenuBar* menu ;
-       bool plotDisplay;
     };
 
 #endif // MAINWINDOW_H
