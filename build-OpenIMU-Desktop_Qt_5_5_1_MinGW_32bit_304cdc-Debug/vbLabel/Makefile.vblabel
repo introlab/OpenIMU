@@ -350,11 +350,11 @@ clean: debug-clean release-clean  FORCE
 distclean: debug-distclean release-distclean  FORCE
 	-$(DEL_FILE) Makefile.vblabel
 
-C:/Users/DRAGON/Documents/OpenIMU/build-OpenIMU-Desktop_Qt_5_5_1_MinGW_32bit-Debug/vbLabel/qmldir: C:/Users/DRAGON/Documents/OpenIMU/application_openimu/vbLabel/qmldir
-	$(COPY_FILE) "C:\Users\DRAGON\Documents\OpenIMU\application_openimu\vbLabel\qmldir" "C:\Users\DRAGON\Documents\OpenIMU\build-OpenIMU-Desktop_Qt_5_5_1_MinGW_32bit-Debug\vbLabel\qmldir"
+C:/Users/dror2202/Documents/OpenIMU/build-OpenIMU-Desktop_Qt_5_5_1_MinGW_32bit_304cdc-Debug/vbLabel/qmldir: C:/Users/dror2202/Documents/OpenIMU/application_openimu/vbLabel/qmldir
+	$(COPY_FILE) "C:\Users\dror2202\Documents\OpenIMU\application_openimu\vbLabel\qmldir" "C:\Users\dror2202\Documents\OpenIMU\build-OpenIMU-Desktop_Qt_5_5_1_MinGW_32bit_304cdc-Debug\vbLabel\qmldir"
 
-C:/Users/DRAGON/Documents/OpenIMU/application_openimu/vbLabel/../qmldir: C:/Users/DRAGON/Documents/OpenIMU/application_openimu/vbLabel/qmldir
-	$(COPY_FILE) "C:\Users\DRAGON\Documents\OpenIMU\application_openimu\vbLabel\qmldir" "C:\Users\DRAGON\Documents\OpenIMU\application_openimu\vbLabel\..\qmldir"
+C:/Users/dror2202/Documents/OpenIMU/application_openimu/vbLabel/../qmldir: C:/Users/dror2202/Documents/OpenIMU/application_openimu/vbLabel/qmldir
+	$(COPY_FILE) "C:\Users\dror2202\Documents\OpenIMU\application_openimu\vbLabel\qmldir" "C:\Users\dror2202\Documents\OpenIMU\application_openimu\vbLabel\..\qmldir"
 
 copy_qmllib:
 

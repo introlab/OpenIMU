@@ -19,7 +19,15 @@ INPUT(
 ./debug\mulBlock.o
 ./debug\divBlock.o
 ./debug\blockFactory.o
+./debug\customqmlscene.o
+./debug\GyroscopeReader.o
+./debug\MagnetometerReader.o
+./debug\applicationmenu.o
+./debug\toolbarcontroller.o
+./debug\toolbarview.o
+./debug\qrc_qml.o
 ./debug\moc_widget.o
 ./debug\moc_applicationmenubar.o
 ./debug\moc_mainwindow.o
+./debug\moc_applicationmenu.o
 );

@@ -5,6 +5,7 @@
 #include <qlabel.h>
 #include "acquisition/SensorReader.h"
 #include "customqmlscene.h"
+#include "controllers/toolbarcontroller.h"
 
 using namespace std;
 
@@ -13,28 +14,34 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     this->setWindowTitle(QString::fromUtf8("Open-IMU"));
     this->setMinimumSize(500,500);
     plotDisplay = false;
+
+    mainLayout = new QVBoxLayout;
+    mainLayout->setMargin(0);
+
+    //Set Menu Bar v1
+    /*
     menu = new ApplicationMenuBar(this);
     menu->setMaximumHeight(20);
+    mainLayout->addWidget(menu);
+    */
+
+    //Set Menu Bar v2
+    toolbarController = new ToolbarController();
+    mainLayout->addWidget(toolbarController->getToolbar());
+    //---Set Menu Bar v2
+
     filesWidget = new QWidget();
     QPalette Pal(palette());
 
     // set black background
-    Pal.setColor(QPalette::Background, Qt::white);
+    Pal.setColor(QPalette::Background, Qt::gray);
     filesWidget->setAutoFillBackground(true);
-    filesWidget->setMaximumWidth(200);
     filesWidget->setPalette(Pal);
 
-    mainLayout = new QVBoxLayout;
-    mainLayout->setMargin(0);
-    mainLayout->addWidget(menu);
-    QFont f( "Arial", 12, QFont::ExtraLight);
-    QLabel * textLabel = new QLabel("Explorateur");
-    textLabel->setFont(f);
-    mainLayout->addWidget(textLabel);
     mainLayout->addWidget(filesWidget);
 
-    CustomQmlScene* scene = new CustomQmlScene("layout1.qml", this);
-    mainLayout->addWidget(scene);
+    //CustomQmlScene* scene = new CustomQmlScene("layout1.qml", this);
+    //mainLayout->addWidget(scene);
 
     mainWidget = new QWidget;
     mainWidget->setLayout(mainLayout);

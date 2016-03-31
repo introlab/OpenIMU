@@ -6,6 +6,8 @@
 #include "applicationmenubar.h"
 #include <QVBoxLayout>
 #include "string.h"
+#include "controllers/toolbarcontroller.h"
+
 
 class MainWindow : public QMainWindow
     {
@@ -21,6 +23,7 @@ class MainWindow : public QMainWindow
     void computeSteps();
 
     private:
+       ToolbarController *toolbarController;
        QVBoxLayout *mainLayout;
        QHBoxLayout *filesSelected;
        QWidget *mainWidget;

@@ -19,7 +19,15 @@ INPUT(
 ./release\mulBlock.o
 ./release\divBlock.o
 ./release\blockFactory.o
+./release\customqmlscene.o
+./release\GyroscopeReader.o
+./release\MagnetometerReader.o
+./release\applicationmenu.o
+./release\toolbarcontroller.o
+./release\toolbarview.o
+./release\qrc_qml.o
 ./release\moc_widget.o
 ./release\moc_applicationmenubar.o
 ./release\moc_mainwindow.o
+./release\moc_applicationmenu.o
 );

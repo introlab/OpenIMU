@@ -39,7 +39,12 @@ SOURCES += main.cpp\
     models/components/blockType/mulBlock.cpp \
     models/components/blockType/divBlock.cpp \
     models/components/blockType/blockFactory.cpp \
-    customqmlscene.cpp
+    customqmlscene.cpp \
+    acquisition/GyroscopeReader.cpp \
+    acquisition/MagnetometerReader.cpp \
+    applicationmenu.cpp \
+    controllers/toolbarcontroller.cpp \
+    views/toolbarview.cpp
 
 HEADERS += widget.h \
     acquisition/SensorDataPerDay.h \
@@ -61,7 +66,13 @@ HEADERS += widget.h \
     models/components/blockType/mulBlock.h \
     models/components/blockType/divBlock.h \
     models/components/blockType/blockFactory.h \
-    customqmlscene.h
+    customqmlscene.h \
+    acquisition/GyroscopeReader.h \
+    acquisition/MagnetometerReader.h \
+    models/components/blockType/blockType.h \
+    applicationmenu.h \
+    controllers/toolbarcontroller.h \
+    views/toolbarview.h
 
 FORMS += widget.ui
 
