@@ -26,8 +26,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     */
 
     //Set Menu Bar v2
-    toolbarController = new ToolbarController();
-    mainLayout->addWidget(toolbarController->getToolbar());
+    //toolbarController = new ToolbarController();
+    //mainLayout->addWidget(toolbarController->getToolbar());
     //---Set Menu Bar v2
 
     filesWidget = new QWidget();
@@ -40,8 +40,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     mainLayout->addWidget(filesWidget);
 
-    //CustomQmlScene* scene = new CustomQmlScene("layout1.qml", this);
-    //mainLayout->addWidget(scene);
+    CustomQmlScene* scene = new CustomQmlScene("layout1.qml", this);
+    mainLayout->addWidget(scene);
 
     mainWidget = new QWidget;
     mainWidget->setLayout(mainLayout);

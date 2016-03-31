@@ -1,5 +1,5 @@
 //Must be Singleton
-
+/*
 #include "toolbarcontroller.h"
 
 ToolbarController::ToolbarController(QWidget *parent)
@@ -41,5 +41,6 @@ void ToolbarController::setToolbar(const ToolbarView &value)
 {
     toolbar = value;
 }
+*/
 
 

@@ -23,8 +23,6 @@ INPUT(
 ./release\GyroscopeReader.o
 ./release\MagnetometerReader.o
 ./release\applicationmenu.o
-./release\toolbarcontroller.o
-./release\toolbarview.o
 ./release\qrc_qml.o
 ./release\moc_widget.o
 ./release\moc_applicationmenubar.o
