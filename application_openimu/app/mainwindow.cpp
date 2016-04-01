@@ -18,12 +18,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     mainLayout = new QVBoxLayout;
     mainLayout->setMargin(0);
 
-    //Set Menu Bar v1
-    /*
+    //Set Menu Bar
     menu = new ApplicationMenuBar(this);
     menu->setMaximumHeight(20);
     mainLayout->addWidget(menu);
-    */
+
 
     //Set Menu Bar v2
     //toolbarController = new ToolbarController();

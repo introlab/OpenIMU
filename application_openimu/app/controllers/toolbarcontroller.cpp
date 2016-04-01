@@ -29,7 +29,7 @@ void ToolbarController:: computeSteps(){
     plotWidget->setFolderPath(folderName.toStdString());
     plotWidget->setupPlot();
     mainLayout->addWidget(plotWidget);
-    plotDisplay = true;*/
+    plotDisplay = true;*//*
 }
 
 ToolbarView ToolbarController::getToolbar() const
