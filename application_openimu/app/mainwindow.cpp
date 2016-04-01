@@ -19,9 +19,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     mainLayout->setMargin(0);
 
     //Set Menu Bar v2
-    toolbarController = new ToolbarController();
-    toolbarController->setFixedHeight(20);
-    mainLayout->setMenuBar(toolbarController->toolbar);
+    //toolbarController = new ToolbarController();
+    //toolbarController->setFixedHeight(20);
+    //mainLayout->setMenuBar(toolbarController->toolbar);
     //---Set Menu Bar v2
 
     filesWidget = new QWidget();

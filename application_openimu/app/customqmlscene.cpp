@@ -1,5 +1,6 @@
 #include "customqmlscene.h"
 #include <QQuickView>
+#include <QQuickItem>
 #include <iostream>
 #include <QQmlApplicationEngine>
 #include <qboxlayout.h>
@@ -14,7 +15,9 @@ CustomQmlScene::CustomQmlScene(std::string filename, QWidget* parent = 0): QWidg
     if(view->status()!=QQuickView::Ready)
         qDebug("can't initialise view");
     widget->setMinimumSize(500,100);
-    QQuickItem* container = view->rootObject();
+    QQuickItem* container = new QQuickItem();
+    container = view->rootObject();
+    container->setProperty("color","red");
     QVBoxLayout* mainLayout = new QVBoxLayout();
     mainLayout->addWidget(widget);
     this->setLayout(mainLayout);
