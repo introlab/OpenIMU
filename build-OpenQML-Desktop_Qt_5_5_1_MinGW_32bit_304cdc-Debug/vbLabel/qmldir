@@ -1,3 +1,0 @@
-module blocks.visual.label
-VBLabel 1.0 vbLabel.qml
-plugin vbLabel
