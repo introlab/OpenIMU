@@ -18,16 +18,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     mainLayout = new QVBoxLayout;
     mainLayout->setMargin(0);
 
-    //Set Menu Bar v1
-    /*
-    menu = new ApplicationMenuBar(this);
-    menu->setMaximumHeight(20);
-    mainLayout->addWidget(menu);
-    */
-
     //Set Menu Bar v2
-    //toolbarController = new ToolbarController();
-    //mainLayout->addWidget(toolbarController->getToolbar());
+    toolbarController = new ToolbarController();
+    toolbarController->setFixedHeight(20);
+    mainLayout->setMenuBar(toolbarController->toolbar);
     //---Set Menu Bar v2
 
     filesWidget = new QWidget();
@@ -38,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     filesWidget->setAutoFillBackground(true);
     filesWidget->setPalette(Pal);
 
-    mainLayout->addWidget(filesWidget);
+    //mainLayout->addWidget(filesWidget);
 
     CustomQmlScene* scene = new CustomQmlScene("layout1.qml", this);
     mainLayout->addWidget(scene);

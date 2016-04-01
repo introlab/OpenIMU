@@ -7,19 +7,17 @@
 #include <QMainWindow>
 #include <views/toolbarview.h>
 
-class ToolbarController: public QObject
+class ToolbarController: public QWidget
 {
+
 public:
-    ToolbarController(QWidget *parent = 0);
+    ToolbarController();
 
-    ToolbarView getToolbar() const;
-    void setToolbar(const ToolbarView &value);
-
+    ToolbarView *toolbar = 0;
 public slots:
     void openFile();
     void computeSteps();
-private:
-    ToolbarView toolbar;
+
 };
 
 #endif // TOOLBARCONTROLLER_H

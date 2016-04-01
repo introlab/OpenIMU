@@ -43,8 +43,8 @@ SOURCES += main.cpp\
     acquisition/GyroscopeReader.cpp \
     acquisition/MagnetometerReader.cpp \
     applicationmenu.cpp \
-    #controllers/toolbarcontroller.cpp \
-    #views/toolbarview.cpp
+    views/toolbarview.cpp\
+    controllers/toolbarcontroller.cpp
 
 HEADERS += widget.h \
     acquisition/SensorDataPerDay.h \
@@ -71,8 +71,9 @@ HEADERS += widget.h \
     acquisition/MagnetometerReader.h \
     models/components/blockType/blockType.h \
     applicationmenu.h \
-    #controllers/toolbarcontroller.h \
-    #views/toolbarview.h
+    views/toolbarview.h\
+    controllers/toolbarcontroller.h
+
 
 FORMS += widget.ui
 

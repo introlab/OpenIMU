@@ -4,11 +4,12 @@
 #include <QMenuBar>
 
 
+
 class ToolbarView : public QMenuBar
 {
 public:
-    ToolbarView(QObject *parent = 0);
-private:
+    ToolbarView(QWidget *parent);
+
     QMenu* fichier;
     QMenu* edition;
     QMenu* algorithme;
