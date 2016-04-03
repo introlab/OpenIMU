@@ -32,7 +32,7 @@ void Widget::changeEvent(QEvent *e)
     }
 }
 void Widget::setupPlot() {
-
+    this->detachItems(QwtPlotItem::Rtti_PlotItem, true);
     this->setTitle("Accelerometer Data");
     this->setCanvasBackground(QColor(Qt::white));
 
