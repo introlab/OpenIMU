@@ -22,6 +22,7 @@ class MainWindow : public QMainWindow
     void computeSteps();
 
     private:
+       bool test;
        QVBoxLayout *mainLayout;
        QHBoxLayout *hLayout;
        QWidget *mainWidget;

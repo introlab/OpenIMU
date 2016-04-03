@@ -16,6 +16,7 @@ Widget::~Widget()
 {
      delete ui;
 }
+
 void Widget::setFolderPath(std::string path)
 {
     m_folderPath = path;
@@ -32,7 +33,7 @@ void Widget::changeEvent(QEvent *e)
     }
 }
 void Widget::setupPlot() {
-
+    this->detachItems(QwtPlotItem::Rtti_PlotItem, true);
     this->setTitle("Accelerometer Data");
     this->setCanvasBackground(QColor(Qt::white));
 

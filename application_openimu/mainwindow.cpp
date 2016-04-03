@@ -10,7 +10,10 @@ using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
+    test=false;
     this->setWindowTitle(QString::fromUtf8("Open-IMU"));
+    plotWidget = new Widget();
+    plotWidget->setVisible(false);
     this->setMinimumSize(700,600);
     menu = new ApplicationMenuBar(this);
     menu->setMaximumHeight(20);
@@ -87,29 +90,17 @@ void MainWindow:: openFile(){
 
         filesWidget->setLayout(filesLayout);
         filesLayout->addStretch();
+        hLayout->addWidget(plotWidget);
+        hLayout->addStretch();
         this->setCentralWidget(mainWidget);
 }
 void MainWindow::onDateSelectedClicked(std::string text){
-    qDebug()<<text.c_str();
-
-    plotWidget = new Widget(this->parentWidget());
     plotWidget->setFolderPath(text);
     plotWidget->setupPlot();
-    if(hLayout->takeAt(1) !=NULL)
-    {
-        QLayoutItem *child;
-        while ((child = hLayout->takeAt(1)) != 0) {
-            hLayout->removeWidget(child->widget());
-            delete child->widget();
-            delete child;
-        }
-    }
-    hLayout->addWidget(plotWidget);
-}
+    plotWidget->setVisible(true);
+
+   }
 
 void MainWindow:: computeSteps(){
-   /* plotWidget = new Widget(this->parentWidget());
-    plotWidget->setFolderPath(text);
-    plotWidget->setupPlot();
-    mainLayout->addWidget(plotWidget);*/
+
 }
