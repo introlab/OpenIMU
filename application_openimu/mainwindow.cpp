@@ -11,18 +11,20 @@ using namespace std;
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     this->setWindowTitle(QString::fromUtf8("Open-IMU"));
-    this->setMinimumSize(500,500);
+    this->setMinimumSize(700,600);
     menu = new ApplicationMenuBar(this);
     menu->setMaximumHeight(20);
     filesWidget = new QWidget();
     QPalette Pal(palette());
 
-    // set black background
-    Pal.setColor(QPalette::Background, Qt::white);
-    filesWidget->setAutoFillBackground(true);
+    filesWidget->setMinimumWidth(150);
+    filesWidget->setMinimumHeight(580);
     filesWidget->setMaximumWidth(200);
-    filesWidget->setPalette(Pal);
-    filesWidget->setStyleSheet("border: 1px solid red");
+
+    hLayout = new QHBoxLayout;
+    hLayout->addWidget(filesWidget);
+    hLayout->addStretch();
+
     mainLayout = new QVBoxLayout;
     mainLayout->setMargin(0);
     mainLayout->addWidget(menu);
@@ -30,7 +32,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QLabel * textLabel = new QLabel("Explorateur");
     textLabel->setFont(f);
     mainLayout->addWidget(textLabel);
-    mainLayout->addWidget(filesWidget);
+    mainLayout->addLayout(hLayout);
+    mainLayout->addStretch();
     mainWidget = new QWidget;
     mainWidget->setLayout(mainLayout);
 
@@ -53,16 +56,58 @@ void MainWindow:: openFile(){
         SensorReader *reader = new SensorReader();
         vector<string> x = reader->listFiles(folderName.toStdString());
         QVBoxLayout *filesLayout = new QVBoxLayout;
+// To do: better handling, remove this part
+        filesWidget = new QWidget();
+        filesWidget->setMinimumWidth(150);
+        filesWidget->setMinimumHeight(580);
+        filesWidget->setMaximumWidth(200);
+        filesWidget->setStyleSheet( "border-radius: 5px; "
+                                     "border: 1px solid black;"
+                                   );
+        hLayout = new QHBoxLayout;
+        hLayout->addWidget(filesWidget);
+        hLayout->addStretch();
 
+        mainWidget = new QWidget;
+        mainLayout = new QVBoxLayout(mainWidget);
+        mainLayout->setMargin(0);
+        mainLayout->addWidget(menu);
+        QFont f( "Arial", 12, QFont::ExtraLight);
+        QLabel * textLabel = new QLabel("Explorateur");
+        textLabel->setFont(f);
+        mainLayout->addWidget(textLabel);
+        mainLayout->addLayout(hLayout);
+        mainLayout->addStretch();
+//************
         foreach (string t , x){
-            DateSelectorLabel* fileName = new DateSelectorLabel(getFileName(t).c_str());
+            DateSelectorLabel* fileName = new DateSelectorLabel(t.c_str());
             filesLayout->addWidget(fileName,0,0);
-            connect(fileName, SIGNAL(clicked(std::string)), this, SLOT(computeSteps(std::string)));
-        }
+            connect(fileName, SIGNAL(clicked(std::string)), this, SLOT(onDateSelectedClicked(std::string)));
+            }
+
         filesWidget->setLayout(filesLayout);
+        filesLayout->addStretch();
+        this->setCentralWidget(mainWidget);
 }
-void MainWindow:: computeSteps(std::string text){
-    qDebug() << "here"<<text.c_str();
+void MainWindow::onDateSelectedClicked(std::string text){
+    qDebug()<<text.c_str();
+
+    plotWidget = new Widget(this->parentWidget());
+    plotWidget->setFolderPath(text);
+    plotWidget->setupPlot();
+    if(hLayout->takeAt(1) !=NULL)
+    {
+        QLayoutItem *child;
+        while ((child = hLayout->takeAt(1)) != 0) {
+            delete child->widget();
+            delete child;
+        }
+    }
+    hLayout->addWidget(plotWidget);
+    hLayout->addStretch();
+}
+
+void MainWindow:: computeSteps(){
    /* plotWidget = new Widget(this->parentWidget());
     plotWidget->setFolderPath(text);
     plotWidget->setupPlot();

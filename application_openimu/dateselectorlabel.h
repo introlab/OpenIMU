@@ -13,6 +13,8 @@ signals:
     void clicked(std::string text);
 protected:
     void mousePressEvent(QMouseEvent* event);
+private:
+    std::string fullPath;
 };
 
 #endif // DATESELECTORLABEL_H

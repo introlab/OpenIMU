@@ -62,7 +62,7 @@ void Widget::setupPlot() {
     //"C:\\Users\\stef\\Desktop\\Projet S7-S8\\data_step"
     AccelerometerReader accReader(m_folderPath);
 
-    accReader.LoadSensorData();
+    accReader.LoadSensorData(false);
     vector<SensorDataPerDay> availableData = accReader.GetAccelerometerData();
 
     for(int i = 0; i< availableData.size();i++){

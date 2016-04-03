@@ -45,11 +45,12 @@ vector<string> SensorReader::listFiles(string x)
 	if ((dir = opendir (x.c_str())) != NULL) {
 		/* print all the files and directories within directory */
 		while ((ent = readdir (dir)) != NULL ) {
-            if (/*ent->d_type == 0x8000 &&*/ string(ent->d_name).find(sensorType)!=std::string::npos )
+            if (/*ent->d_type == 0x8000 &&*/  string(ent->d_name).find(sensorType)!=std::string::npos )
 			{
                 //printf ("%s \n",x+"\\"+string(ent->d_name));
+               if(string(ent->d_name)!= "." && string(ent->d_name) != ".." )
 				paths.push_back(x+"\\"+ent->d_name);
-			}
+            }
 		}
 		closedir (dir);
 	} else {
@@ -121,22 +122,37 @@ SensorDataPerSecond SensorReader::readSensorDataSecond(BYTE* fileBuf, int start)
 	//printf("Acceleration X: %d \n",	AcceleroData.getXAxisValues().at(4));
 	return AcceleroData;
 }
-void SensorReader:: LoadSensorData(){
-	findpaths();
-	for(string i : subdirs) 
-	{
-		SensorDataPerDay x;
-		std::size_t found = i.find_last_of("/\\");
-		int dayNumber = stoi(i.substr(found+1)) ;
-		std::cout << " num: " << dayNumber << '\n';
-		x.setDayNumber(dayNumber);
-		vector<string> files = listFiles(i);
-		for (string j : files)
-		{
-			x.addHourData(GetOneHourSensorData(j));
-		}
-		data.push_back(x);
-	}
+void SensorReader:: LoadSensorData(bool cond){
+    if(cond){
+    findpaths();
+        for(string i : subdirs)
+        {
+            SensorDataPerDay x;
+            std::size_t found = i.find_last_of("/\\");
+            int dayNumber = stoi(i.substr(found+1)) ;
+            std::cout << " num: " << dayNumber << '\n';
+            x.setDayNumber(dayNumber);
+            vector<string> files = listFiles(i);
+            for (string j : files)
+            {
+                x.addHourData(GetOneHourSensorData(j));
+            }
+            data.push_back(x);
+        }
+    }
+    else{
+        SensorDataPerDay x;
+        std::size_t found = folderPath.find_last_of("/\\");
+        int dayNumber = stoi(folderPath.substr(found+1)) ;
+        std::cout << " num: " << dayNumber << '\n';
+        x.setDayNumber(dayNumber);
+        vector<string> files = listFiles(folderPath);
+        for (string j : files)
+        {
+            x.addHourData(GetOneHourSensorData(j));
+        }
+        data.push_back(x);
+    }
 }
 
 void SensorReader::findpaths()

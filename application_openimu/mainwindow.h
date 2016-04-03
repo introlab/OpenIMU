@@ -18,11 +18,12 @@ class MainWindow : public QMainWindow
 
     public slots:
     void openFile();
-    void computeSteps(std::string t);
+    void onDateSelectedClicked(std::string t);
+    void computeSteps();
 
     private:
        QVBoxLayout *mainLayout;
-       QHBoxLayout *filesSelected;
+       QHBoxLayout *hLayout;
        QWidget *mainWidget;
        QWidget *filesWidget;
        Widget *plotWidget ;
