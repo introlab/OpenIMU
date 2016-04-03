@@ -45,6 +45,7 @@ SOURCES += main.cpp\
     applicationmenu.cpp \
     #controllers/toolbarcontroller.cpp \
     #views/toolbarview.cpp
+    dateselectorlabel.cpp
 
 HEADERS += widget.h \
     acquisition/SensorDataPerDay.h \
@@ -73,6 +74,7 @@ HEADERS += widget.h \
     applicationmenu.h \
     #controllers/toolbarcontroller.h \
     #views/toolbarview.h
+    dateselectorlabel.h
 
 FORMS += widget.ui
 
