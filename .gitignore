@@ -255,3 +255,15 @@ build-application_openimu-Desktop_Qt_5_5_1_MinGW_32bit-Debug/Makefile.Release
 build-application_openimu-Desktop_Qt_5_5_1_MinGW_32bit-Debug/object_script.application_openimu.Debug
 build-application_openimu-Desktop_Qt_5_5_1_MinGW_32bit-Debug/object_script.application_openimu.Release
 build-application_openimu-Desktop_Qt_5_5_1_MinGW_32bit-Debug/ui_widget.h
+build-application_openimu-Kit_Qt-Debug/Makefile
+build-application_openimu-Kit_Qt-Debug/Makefile.Debug
+build-application_openimu-Kit_Qt-Debug/Makefile.Release
+build-application_openimu-Kit_Qt-Debug/object_script.application_openimu.Debug
+build-application_openimu-Kit_Qt-Debug/object_script.application_openimu.Release
+build-application_openimu-Kit_Qt-Debug/ui_widget.h
+build-application_openimu-Kit_Qt-Release/Makefile
+build-application_openimu-Kit_Qt-Release/Makefile.Debug
+build-application_openimu-Kit_Qt-Release/Makefile.Release
+build-application_openimu-Kit_Qt-Release/object_script.application_openimu.Debug
+build-application_openimu-Kit_Qt-Release/object_script.application_openimu.Release
+build-application_openimu-Kit_Qt-Release/ui_widget.h
