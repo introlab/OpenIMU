@@ -99,12 +99,12 @@ void MainWindow::onDateSelectedClicked(std::string text){
     {
         QLayoutItem *child;
         while ((child = hLayout->takeAt(1)) != 0) {
+            hLayout->removeWidget(child->widget());
             delete child->widget();
             delete child;
         }
     }
     hLayout->addWidget(plotWidget);
-    hLayout->addStretch();
 }
 
 void MainWindow:: computeSteps(){
