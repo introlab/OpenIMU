@@ -21,6 +21,6 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     this->addMenu(aide);
 
     connect(actionOuvrir, SIGNAL(triggered()), parent, SLOT(openFile()));
-    connect(actionNombreDePas, SIGNAL(triggered()), parent, SLOT(computeSteps()));
+    //connect(actionNombreDePas, SIGNAL(triggered()), parent, SLOT(computeSteps()));
 }
 

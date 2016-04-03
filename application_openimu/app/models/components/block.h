@@ -29,7 +29,7 @@ private:
 
     //Temp
     std::string blockType;
-    int inputSemaphore=0;
+    int inputSemaphore;
 
 protected:
     virtual void work();

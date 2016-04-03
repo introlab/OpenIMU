@@ -20,17 +20,17 @@ class MainWindow : public QMainWindow
 
     public slots:
     void openFile();
+    void onDateSelectedClicked(std::string t);
     void computeSteps();
 
     private:
        ToolbarController *toolbarController;
        QVBoxLayout *mainLayout;
-       QHBoxLayout *filesSelected;
+       QHBoxLayout *hLayout;
        QWidget *mainWidget;
        QWidget *filesWidget;
        Widget *plotWidget ;
        ApplicationMenuBar* menu ;
-       bool plotDisplay;
     };
 
 #endif // MAINWINDOW_H

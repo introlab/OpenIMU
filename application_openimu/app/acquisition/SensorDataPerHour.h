@@ -11,7 +11,6 @@ public:
 
 	vector<SensorDataPerSecond> getAccelerometerDataPerHour();
 	void addAccelerometerDataSecond(SensorDataPerSecond x);
-	vector<double> computeNormOfAcceleration();
 	void displayDataPerHour();
 
 private:
