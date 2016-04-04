@@ -5,7 +5,6 @@
 #include <QVBoxLayout>
 #include "applicationmenubar.h"
 #include "mainwindow.h"
-#include "models/caneva.h"
 
 int main(int argc, char *argv[])
 {
