@@ -3,6 +3,7 @@
 
 ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
 {
+    this->setMinimumWidth(parent->width());
     parent = parent;
     fichier = new QMenu("Fichier");
     QAction* actionOuvrir = new QAction("Ouvrir",fichier);
@@ -21,6 +22,6 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     this->addMenu(aide);
 
     connect(actionOuvrir, SIGNAL(triggered()), parent, SLOT(openFile()));
-    //connect(actionNombreDePas, SIGNAL(triggered()), parent, SLOT(computeSteps()));
+    connect(actionNombreDePas, SIGNAL(triggered()), parent, SLOT(computeSteps()));
 }
 
