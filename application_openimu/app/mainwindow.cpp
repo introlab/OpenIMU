@@ -6,6 +6,7 @@
 #include "acquisition/SensorReader.h"
 #include "customqmlscene.h"
 #include "controllers/toolbarcontroller.h"
+#include "models/caneva.h"
 
 using namespace std;
 
@@ -19,9 +20,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     mainLayout->setMargin(0);
 
     //Set Menu Bar v2
-    //toolbarController = new ToolbarController();
-    //toolbarController->setFixedHeight(20);
-    //mainLayout->setMenuBar(toolbarController->toolbar);
+    toolbarController = new ToolbarController();
+    toolbarController->setFixedHeight(20);
+    mainLayout->setMenuBar(toolbarController->toolbar);
     //---Set Menu Bar v2
 
     filesWidget = new QWidget();
@@ -40,7 +41,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     mainWidget = new QWidget;
     mainWidget->setLayout(mainLayout);
 
-    this->setCentralWidget(mainWidget);
+    this->setCentralWidget(mainWidget); 
+
+    //Caneva caneva("../config/layout1.json");
+
 }
 
 string MainWindow::getFileName(string s){
