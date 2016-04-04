@@ -11,6 +11,7 @@ using namespace std;
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     this->setWindowTitle(QString::fromUtf8("Open-IMU"));
+    this->setStyleSheet("background: white");
     plotWidget = new Widget();
     plotWidget->setVisible(false);
     this->setMinimumSize(700,600);
@@ -63,9 +64,6 @@ void MainWindow:: openFile(){
         filesWidget->setMinimumWidth(150);
         filesWidget->setMinimumHeight(580);
         filesWidget->setMaximumWidth(200);
-        filesWidget->setStyleSheet( "border-radius: 5px; "
-                                     "border: 1px solid black;"
-                                   );
         hLayout = new QHBoxLayout;
         hLayout->addWidget(filesWidget);
         hLayout->addStretch();
@@ -97,9 +95,8 @@ void MainWindow::onDateSelectedClicked(std::string text){
     plotWidget->setFolderPath(text);
     plotWidget->setupPlot();
     plotWidget->setVisible(true);
-
    }
 
 void MainWindow:: computeSteps(){
-
+    qDebug()<<"Lance calcul";
 }
