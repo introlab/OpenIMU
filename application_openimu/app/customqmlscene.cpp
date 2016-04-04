@@ -18,6 +18,9 @@ CustomQmlScene::CustomQmlScene(std::string filename, QWidget* parent = 0): QWidg
     QQuickItem* container = new QQuickItem();
     container = view->rootObject();
     container->setProperty("color","red");
+
+    std::cout<<container->findChildren();
+
     QVBoxLayout* mainLayout = new QVBoxLayout();
     mainLayout->addWidget(widget);
     this->setLayout(mainLayout);
