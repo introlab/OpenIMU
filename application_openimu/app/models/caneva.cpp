@@ -4,6 +4,11 @@
 #include <iostream>
 #include "components/blockType/blockFactory.h"
 
+Caneva::Caneva()
+{
+    Caneva("../../config/layout1.json");
+}
+
 Caneva::Caneva(std::string filename)
 {
     loadFile(filename);
@@ -15,12 +20,25 @@ Caneva::Caneva(std::string filename)
     //test
     getBlock("block2")->GetInput("input1")->Put(2);
     getBlock("block2")->GetInput("input2")->Put(5);
+
+    int result = getBlock("block1")->GetOutput("output1")->getValueBuf();
+    std::cout << "result in Caneva " << result << std::endl ;
 }
 
 Caneva::~Caneva()
 {
     for(auto it = blocks.begin() ; it != blocks.end() ; it++)
         delete(*it);
+}
+
+Caneva* Caneva::_instance = 0;
+
+Caneva* Caneva::getInstance()
+{
+    if (_instance == 0)
+        _instance = new Caneva();
+    return _instance;
+
 }
 
 void Caneva::loadFile(std::string filename)

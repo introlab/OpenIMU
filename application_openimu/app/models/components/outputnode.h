@@ -15,6 +15,8 @@ public:
     void SetStringID(const std::string value);
     std::string GetStringID();
 
+    int getValueBuf() const;
+    void setValueBuf(int value);
 
 private:
     int valueBuf;

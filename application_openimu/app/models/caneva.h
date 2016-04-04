@@ -8,17 +8,25 @@
 class Caneva
 {
 public:
-    Caneva(std::string filename);
-    ~Caneva();
 
+    static Caneva* getInstance();
+    ~Caneva();
+    Block* getBlock(std::string ID);
+
+protected:
+    Caneva();
 private:
+    static Caneva* _instance;
+    Caneva(std::string filename);
+
+
     void loadFile(std::string filename);
     void createBlocks();
     void createInputs(Block *block, Json::Value inputs);
     void createOutputs(Block *block, Json::Value outputs);
     void makeConnections();
 
-    Block* getBlock(std::string ID);
+
     std::vector<Block*> blocks;
 
     Json::Reader reader;

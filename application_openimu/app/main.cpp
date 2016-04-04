@@ -9,7 +9,7 @@
 
 int main(int argc, char *argv[])
 {
-    //Caneva caneva("../config/layout1.json");
+    Caneva::getInstance();
     QApplication a(argc, argv);
 
     MainWindow *window = new MainWindow();
