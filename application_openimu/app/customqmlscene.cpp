@@ -9,6 +9,9 @@ CustomQmlScene::CustomQmlScene(std::string filename, QWidget* parent = 0): QWidg
 {
     filename = "qrc:/" + filename;
     QQuickView* view = new QQuickView();
+
+    view->engine()->addImportPath("../jbQuick/.");
+
     QWidget* widget = QWidget::createWindowContainer(view, this);
     view->setSource(QUrl((QString)filename.c_str()));
 
@@ -16,10 +19,13 @@ CustomQmlScene::CustomQmlScene(std::string filename, QWidget* parent = 0): QWidg
         qDebug("can't initialise view");
     widget->setMinimumSize(500,100);
     QQuickItem* container = new QQuickItem();
-    container = view->rootObject();
-    container->setProperty("color","red");
 
-    std::cout<<container->findChildren();
+
+
+    //container = view->rootObject();
+    //container->setProperty("color","red");
+
+    //std::cout<<container->findChildren();
 
     QVBoxLayout* mainLayout = new QVBoxLayout();
     mainLayout->addWidget(widget);

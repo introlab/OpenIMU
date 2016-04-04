@@ -2,21 +2,29 @@ import QtQuick 2.5
 import QtQuick.Window 2.2
 import blocks.visual.label 1.0
 
-//Rectangle {
-//    property alias text: textItem.text
-//    width: 156
-//    height: 35
-//    Text {
-//        width: 150
-//        height: 20
-//        text: qsTr("Hello World")
-//        id: textItem
-//    }
-//}
+//import "."
+import jbQuick.Charts 1.0
 
+Chart{
+    id: chart_pie;
 
-VBLabel{
-    visible:true
-    width:200
-    height:200
+    width:300;
+    height:300;
+
+    chartAnimated: true;
+    chartAnimationEasing: Easing.Linear;
+    chartAnimationDuration: 1000;
+    chartType: Charts.ChartType.PIE;
+    chartOptions: {"segmentStrokeColor": "#ECECEC"};
+    chartData: [
+        {value: 15, color: "#6AA84F"},
+        {value:  3, color: "#DC3912"},
+        {value:  5, color: "#FF9900"}];
 }
+
+
+
+
+
+
+
