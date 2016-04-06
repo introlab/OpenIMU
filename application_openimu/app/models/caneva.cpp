@@ -6,35 +6,18 @@
 
 Caneva::Caneva(std::string filename, CustomQmlScene *scene)
 {
-    Caneva("../../config/layout1.json");
-}
-
-{
     loadFile(filename);
 
     createBlocks();
     createVBlocks(scene);
 
     makeConnections();
-
-    int result = getBlock("block1")->GetOutput("output1")->getValueBuf();
-    std::cout << "result in Caneva " << result << std::endl ;
 }
 
 Caneva::~Caneva()
 {
     for(auto it = blocks.begin() ; it != blocks.end() ; it++)
         delete(*it);
-}
-
-Caneva* Caneva::_instance = 0;
-
-Caneva* Caneva::getInstance()
-{
-    if (_instance == 0)
-        _instance = new Caneva();
-    return _instance;
-
 }
 
 void Caneva::test()

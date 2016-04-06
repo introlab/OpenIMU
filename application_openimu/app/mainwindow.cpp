@@ -16,9 +16,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     plotWidget = new Widget();
     plotWidget->setVisible(false);
     this->setMinimumSize(700,600);
-    toolbarController = new ToolbarController();
-    toolbarController->setFixedHeight(20);
-    mainLayout->setMenuBar(toolbarController->toolbar);
     filesWidget = new QWidget();
     QPalette Pal(palette());
 
@@ -30,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     hLayout->addWidget(filesWidget);
     hLayout->addStretch();
 
+    menu = new ApplicationMenuBar(this);
     mainLayout = new QVBoxLayout;
     mainLayout->setMargin(0);
     mainLayout->addWidget(menu);
@@ -44,6 +42,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     this->setCentralWidget(mainWidget); 
 
+    scene = new CustomQmlScene("layout1.qml", this);
+    hLayout->addWidget(scene);
     Caneva caneva("../../config/layout1.json", scene);
 
     caneva.test();
@@ -95,6 +95,8 @@ void MainWindow:: openFile(){
         filesLayout->addStretch();
         hLayout->addWidget(plotWidget);
         hLayout->addStretch();
+        hLayout->addWidget(scene);
+
         this->setCentralWidget(mainWidget);
 }
 void MainWindow::onDateSelectedClicked(std::string text){
