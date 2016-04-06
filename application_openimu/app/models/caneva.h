@@ -10,11 +10,14 @@ class Caneva
 {
 public:
     Caneva(std::string filename, CustomQmlScene* scene);
+    
     ~Caneva();
+    Block* getBlock(std::string ID);
 
     void test();
 
 private:
+
     void loadFile(std::string filename);
     void createBlocks();
     void createVBlocks(CustomQmlScene *scene);
@@ -22,7 +25,6 @@ private:
     void createOutputs(Block *block, Json::Value outputs);
     void makeConnections();
 
-    Block* getBlock(std::string ID);
     std::vector<Block*> blocks;
 
     Json::Reader reader;

@@ -15,7 +15,7 @@ public:
 	
 	SensorDataPerHour GetOneHourSensorData(string x);
 	vector<SensorDataPerDay> GetAccelerometerData();
-	void LoadSensorData();
+    void LoadSensorData(bool cond);
 	SensorDataPerSecond readSensorDataSecond(BYTE* fileBuf, int start);
 
 	long getFileSize(FILE *file);

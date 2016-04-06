@@ -22,9 +22,6 @@ void SensorDataPerHour::addAccelerometerDataSecond(SensorDataPerSecond x)
 	}
 		data.push_back(x);
 }
-vector<double> SensorDataPerHour:: computeNormOfAcceleration(){
-
-}
 void SensorDataPerHour::displayDataPerHour()
 {
 	for (int i=0; i<data.size(); ++i)

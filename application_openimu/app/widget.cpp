@@ -10,6 +10,7 @@ Widget::Widget(QWidget *parent) : QwtPlot(parent),
 {
      ui->setupUi(this);
      m_folderPath = "";
+
 }
 
 Widget::~Widget()
@@ -32,12 +33,11 @@ void Widget::changeEvent(QEvent *e)
     }
 }
 void Widget::setupPlot() {
-
-    this->setTitle("Accelerometer Data");
+    this->detachItems(QwtPlotItem::Rtti_PlotItem, true);
+    this->setTitle("Données acquises par l'accéléromètre");
     this->setCanvasBackground(QColor(Qt::white));
-
     this->setAutoReplot(false);
-    this->setMinimumWidth(400);
+    this->setMinimumWidth(500);
 
     // legend
     QwtLegend *legend = new QwtLegend;
@@ -45,24 +45,23 @@ void Widget::setupPlot() {
     this->insertLegend(legend, QwtPlot::BottomLegend);
 
     // axis
-    this->setAxisTitle(QwtPlot::xBottom, "Axe temporelle");
-    this->setAxisTitle(QwtPlot::yLeft, "x,y,z Axis");
+    this->setAxisTitle(QwtPlot::xBottom, "Axe temporelle (s)");
+    this->setAxisTitle(QwtPlot::yLeft, "Axe x,y,z");
 
     //data
     // add curves
-    QwtPlotCurve *curve1 = new QwtPlotCurve("X Axis");
-    QwtPlotCurve *curve2 = new QwtPlotCurve("Y Axis");
-    QwtPlotCurve *curve3 = new QwtPlotCurve("Z Axis");
+    QwtPlotCurve *curve1 = new QwtPlotCurve("Axe X");
+    QwtPlotCurve *curve2 = new QwtPlotCurve("Axe Y");
+    QwtPlotCurve *curve3 = new QwtPlotCurve("Axe Z");
 
     vector<signed short> x;
     vector<signed short> y;
     vector<signed short> z;
     vector<float> t;
-    int size =0;
-    //"C:\\Users\\stef\\Desktop\\Projet S7-S8\\data_step"
+
     AccelerometerReader accReader(m_folderPath);
 
-    accReader.LoadSensorData();
+    accReader.LoadSensorData(false);
     vector<SensorDataPerDay> availableData = accReader.GetAccelerometerData();
 
     for(int i = 0; i< availableData.size();i++){

@@ -46,7 +46,9 @@ SOURCES += main.cpp\
     views/toolbarview.cpp\
     controllers/toolbarcontroller.cpp \
     models/components/quickiteminputnode.cpp \
-    models/components/quickitemoutputnode.cpp
+    models/components/quickitemoutputnode.cpp \
+    dateselectorlabel.cpp
+
 
 HEADERS += widget.h \
     acquisition/SensorDataPerDay.h \
@@ -76,8 +78,8 @@ HEADERS += widget.h \
     views/toolbarview.h\
     controllers/toolbarcontroller.h \
     models/components/quickiteminputnode.h \
-    models/components/quickitemoutputnode.h
-
+    models/components/quickitemoutputnode.h \
+    dateselectorlabel.h
 
 FORMS += widget.ui
 

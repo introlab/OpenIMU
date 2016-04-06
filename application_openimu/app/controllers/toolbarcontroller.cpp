@@ -1,27 +1,14 @@
 //Must be Singleton
-
+/*
 #include "toolbarcontroller.h"
-#include <QFileDialog>
-#include <iostream>
 
-ToolbarController::ToolbarController()
+ToolbarController::ToolbarController(QWidget *parent)
 {
-
-    this->toolbar = new ToolbarView(this);
-
-    QAction* actionOuvrir = new QAction("Ouvrir",this->toolbar->fichier);
-    this->toolbar->fichier->addAction(actionOuvrir);
-
-    connect(actionOuvrir, &QAction::triggered,this,&ToolbarController::openFile);
-
-
+    toolbar = new ToolbarView(this);
 }
 
-void ToolbarController:: openFile(){    
-   std::cout<<"Hello";
-
-   //QString folderName = QFileDialog::getExistingDirectory(this, tr("Open File"),"/path/to/file/");
-    /*
+void ToolbarController:: openFile(){
+    if(!plotDisplay){
         QString folderName = QFileDialog::getExistingDirectory(this, tr("Open File"),"/path/to/file/");
         qDebug() << "List items = " << folderName;
         SensorReader *reader = new SensorReader();
@@ -33,20 +20,27 @@ void ToolbarController:: openFile(){
             filesLayout->addWidget(new QLabel(getFileName(t).c_str(),filesWidget));
         }
         filesWidget->setLayout(filesLayout);
-     */
 
+    }
 }
 void ToolbarController:: computeSteps(){
-/*
-    plotWidget = new Widget(this->parentWidget());
+
+  /* plotWidget = new Widget(this->parentWidget());
     plotWidget->setFolderPath(folderName.toStdString());
     plotWidget->setupPlot();
     mainLayout->addWidget(plotWidget);
-    plotDisplay = true;
-    */
+    plotDisplay = true;*//*
 }
 
+ToolbarView ToolbarController::getToolbar() const
+{
+    return toolbar;
+}
 
-
+void ToolbarController::setToolbar(const ToolbarView &value)
+{
+    toolbar = value;
+}
+*/
 
 

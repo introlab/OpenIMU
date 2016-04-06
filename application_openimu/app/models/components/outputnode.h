@@ -14,7 +14,8 @@ public:
     virtual std::string GetID(){return "";}
     void SetStringID(const std::string value);
     std::string GetStringID();
-
+    int getValueBuf() const;
+	
 protected:
     int valueBuf;
 

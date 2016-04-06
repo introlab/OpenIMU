@@ -3,6 +3,7 @@
 
 ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
 {
+    this->setMinimumWidth(parent->width());
     parent = parent;
     fichier = new QMenu("Fichier");
     QAction* actionOuvrir = new QAction("Ouvrir",fichier);

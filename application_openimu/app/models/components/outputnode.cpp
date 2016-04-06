@@ -38,3 +38,13 @@ std::string OutputNode::GetStringID()
 {
     return stringID;
 }
+
+int OutputNode::getValueBuf() const
+{
+    return valueBuf;
+}
+
+void OutputNode::setValueBuf(int value)
+{
+    valueBuf = value;
+}

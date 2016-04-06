@@ -3,9 +3,8 @@
 #include <QFileDialog>
 #include <QPalette>
 #include <qlabel.h>
+#include "dateselectorlabel.h"
 #include "acquisition/SensorReader.h"
-#include "customqmlscene.h"
-#include "controllers/toolbarcontroller.h"
 #include "models/caneva.h"
 
 using namespace std;
@@ -13,31 +12,33 @@ using namespace std;
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     this->setWindowTitle(QString::fromUtf8("Open-IMU"));
-    this->setMinimumSize(500,500);
-    plotDisplay = false;
-
-    mainLayout = new QVBoxLayout;
-    mainLayout->setMargin(0);
-
-    //Set Menu Bar v2
+    this->setStyleSheet("background: white");
+    plotWidget = new Widget();
+    plotWidget->setVisible(false);
+    this->setMinimumSize(700,600);
     toolbarController = new ToolbarController();
     toolbarController->setFixedHeight(20);
     mainLayout->setMenuBar(toolbarController->toolbar);
-    //---Set Menu Bar v2
-
     filesWidget = new QWidget();
     QPalette Pal(palette());
 
-    // set black background
-    Pal.setColor(QPalette::Background, Qt::gray);
-    filesWidget->setAutoFillBackground(true);
-    filesWidget->setPalette(Pal);
+    filesWidget->setMinimumWidth(150);
+    filesWidget->setMinimumHeight(580);
+    filesWidget->setMaximumWidth(200);
 
-    //mainLayout->addWidget(filesWidget);
+    hLayout = new QHBoxLayout;
+    hLayout->addWidget(filesWidget);
+    hLayout->addStretch();
 
-    CustomQmlScene* scene = new CustomQmlScene("layout1.qml", this);
-    mainLayout->addWidget(scene);
-
+    mainLayout = new QVBoxLayout;
+    mainLayout->setMargin(0);
+    mainLayout->addWidget(menu);
+    QFont f( "Arial", 12, QFont::ExtraLight);
+    QLabel * textLabel = new QLabel("Explorateur");
+    textLabel->setFont(f);
+    mainLayout->addWidget(textLabel);
+    mainLayout->addLayout(hLayout);
+    mainLayout->addStretch();
     mainWidget = new QWidget;
     mainWidget->setLayout(mainLayout);
 
@@ -59,26 +60,49 @@ string MainWindow::getFileName(string s){
 }
 
 void MainWindow:: openFile(){
-    if(!plotDisplay){
         QString folderName = QFileDialog::getExistingDirectory(this, tr("Open File"),"/path/to/file/");
         qDebug() << "List items = " << folderName;
         SensorReader *reader = new SensorReader();
         vector<string> x = reader->listFiles(folderName.toStdString());
         QVBoxLayout *filesLayout = new QVBoxLayout;
+// To do: better handling, remove this part
+        filesWidget = new QWidget();
+        filesWidget->setMinimumWidth(150);
+        filesWidget->setMinimumHeight(580);
+        filesWidget->setMaximumWidth(200);
+        hLayout = new QHBoxLayout;
+        hLayout->addWidget(filesWidget);
+        hLayout->addStretch();
+
+        mainWidget = new QWidget;
+        mainLayout = new QVBoxLayout(mainWidget);
+        mainLayout->setMargin(0);
+        mainLayout->addWidget(menu);
+        QFont f( "Arial", 12, QFont::ExtraLight);
+        QLabel * textLabel = new QLabel("Explorateur");
+        textLabel->setFont(f);
+        mainLayout->addWidget(textLabel);
+        mainLayout->addLayout(hLayout);
+        mainLayout->addStretch();
+//************
         foreach (string t , x){
+            DateSelectorLabel* fileName = new DateSelectorLabel(t.c_str());
+            filesLayout->addWidget(fileName,0,0);
+            connect(fileName, SIGNAL(clicked(std::string)), this, SLOT(onDateSelectedClicked(std::string)));
+            }
 
-            //qDebug() << "List items = " << getFileName(t).c_str();
-            filesLayout->addWidget(new QLabel(getFileName(t).c_str(),filesWidget));
-        }
         filesWidget->setLayout(filesLayout);
-
-    }
+        filesLayout->addStretch();
+        hLayout->addWidget(plotWidget);
+        hLayout->addStretch();
+        this->setCentralWidget(mainWidget);
 }
-void MainWindow:: computeSteps(){
-
-  /* plotWidget = new Widget(this->parentWidget());
-    plotWidget->setFolderPath(folderName.toStdString());
+void MainWindow::onDateSelectedClicked(std::string text){
+    plotWidget->setFolderPath(text);
     plotWidget->setupPlot();
-    mainLayout->addWidget(plotWidget);
-    plotDisplay = true;*/
+    plotWidget->setVisible(true);
+   }
+
+void MainWindow:: computeSteps(){
+    qDebug()<<"Lance calcul";
 }
