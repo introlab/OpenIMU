@@ -28,7 +28,7 @@ void Caneva::test()
     getBlock("adder")->GetInput("input2")->Put(asd);
     getBlock("subber")->GetInput("input2")->Put(asd);
 
-    setSliderLimitValues(0,10);
+    setSliderLimitValues(0,100);
 }
 
 void Caneva::setSliderLimitValues(int min, int max){

@@ -5,11 +5,6 @@ OutputNode::OutputNode()
 
 }
 
-OutputNode::~OutputNode()
-{
-
-}
-
 void OutputNode::Send(int value[])
 {
     for(int i = 0; i<MAX_ARRAY_SIZE; i++) valueBuf[i] = value[i];

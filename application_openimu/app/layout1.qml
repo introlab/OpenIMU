@@ -76,36 +76,33 @@ Rectangle{
 
             console.log("!!!!data is ", data.toString());
         }
-
-        Label {
-            y : parent.height -20
-            x : 0
-           text: "Tranche horaire: "
-           font.pixelSize: 14
-           color: "steelblue"
-         }
-
-        Slider {
-            id: slider
-            property string id: "slider";
-            QuickItemInputNode{
-                id: inputSliderMinimumValue;
-            }
-            QuickItemInputNode{
-                id: inputSliderMaximumValue;
-            }
-            width: parent.width -225
-            y : parent.height -20
-            x : 125
-            minimumValue: inputSliderMinimumValue.valueBuf
-            maximumValue: inputSliderMaximumValue.valueBuf
-            stepSize: 1
-            onValueChanged: test.text = "De " + value.toPrecision(3) +" h à "+ maximumValue + " h"
-        }
     }
+    Label {
+        y : parent.height -20
+        x : 0
+       text: "Tranche horaire: "
+       font.pixelSize: 14
+       color: "steelblue"
+     }
+
+    Slider {
+        id: slider
+        property string id: "slider";
+        QuickItemInputNode{
+            id: inputSliderMinimumValue;
+        }
+        QuickItemInputNode{
+            id: inputSliderMaximumValue;
+        }
+        width: parent.width -225
+        y : parent.height -20
+        x : 125
+        minimumValue: inputSliderMinimumValue.value[0]
+        maximumValue: inputSliderMaximumValue.value[0]
+        stepSize: 1
+        onValueChanged: test.text = "De " + value.toPrecision(3) +" h à "+ maximumValue + " h"
+    }
+
 }
-
-
-
 
 

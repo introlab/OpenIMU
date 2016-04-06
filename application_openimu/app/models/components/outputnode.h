@@ -8,7 +8,6 @@ class OutputNode
 {
 public:
     OutputNode();
-    ~OutputNode();
     void Send(int value[]);
     void AddDest(InputNode *input);
     virtual std::string GetID(){return "";}

@@ -18,11 +18,17 @@
 ],
 "ListVBlock":[
 {
- "type": "Chart", "ID": "chart_pie",
+ "type": "Chart", "ID": "chart_line",
  "inputs":[{"ID":"input1"},{"ID":"input2"},{"ID":"input3"}],
  "outputs":[]
+},
+{
+ "type": "Slider", "ID": "slider",
+ "inputs":[{"ID":"inputSliderMinimumValue"},{"ID":"inputSliderMaximumValue"}],
+ "outputs":[]
 }
-],
+]
+,
 "ListConnection":[
 {
  "from":"adder",
@@ -45,19 +51,19 @@
 {
  "from":"adder",
  "out" :"output1",
- "to"  :"chart_pie",
+ "to"  :"chart_line",
  "in"  :"input1"
 },
 {
  "from":"subber",
  "out" :"output1",
- "to"  :"chart_pie",
+ "to"  :"chart_line",
  "in"  :"input2"
 },
 {
  "from":"multiplier",
  "out" :"output1",
- "to"  :"chart_pie",
+ "to"  :"chart_line",
  "in"  :"input3"
 }
 ]
