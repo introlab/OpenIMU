@@ -5,6 +5,7 @@
 #include <qlabel.h>
 #include "dateselectorlabel.h"
 #include "acquisition/SensorReader.h"
+#include "models/caneva.h"
 
 using namespace std;
 
@@ -15,8 +16,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     plotWidget = new Widget();
     plotWidget->setVisible(false);
     this->setMinimumSize(700,600);
-    menu = new ApplicationMenuBar(this);
-    menu->setMaximumHeight(20);
     filesWidget = new QWidget();
     QPalette Pal(palette());
 
@@ -28,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     hLayout->addWidget(filesWidget);
     hLayout->addStretch();
 
+    menu = new ApplicationMenuBar(this);
     mainLayout = new QVBoxLayout;
     mainLayout->setMargin(0);
     mainLayout->addWidget(menu);
@@ -40,7 +40,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     mainWidget = new QWidget;
     mainWidget->setLayout(mainLayout);
 
-    this->setCentralWidget(mainWidget);
+    this->setCentralWidget(mainWidget); 
+
+    scene = new CustomQmlScene("layout1.qml", this);
+    hLayout->addWidget(scene);
+    Caneva caneva("../../config/layout1.json", scene);
+
+    caneva.test();
 }
 
 string MainWindow::getFileName(string s){
@@ -89,6 +95,8 @@ void MainWindow:: openFile(){
         filesLayout->addStretch();
         hLayout->addWidget(plotWidget);
         hLayout->addStretch();
+        hLayout->addWidget(scene);
+
         this->setCentralWidget(mainWidget);
 }
 void MainWindow::onDateSelectedClicked(std::string text){

@@ -14,14 +14,15 @@ public:
     virtual std::string GetID(){return "";}
     void SetStringID(const std::string value);
     std::string GetStringID();
-
     int getValueBuf() const;
     void setValueBuf(int value);
+	
+protected:
+    int valueBuf;
 
 private:
-    int valueBuf;
-    std::vector<InputNode*> inputs;
     void NotifyAll();
+    std::vector<InputNode*> inputs;
     std::string stringID;
 };
 

@@ -1,28 +1,64 @@
 {
 "ListBlock":[
 {
- "type": "add", "ID": "block1",
+ "type": "add", "ID": "adder",
  "inputs":[{"ID":"input1"},{"ID":"input2"}],
  "outputs":[{"ID":"output1"}]
 },
 {
- "type": "sub", "ID": "block2",
+ "type": "sub", "ID": "subber",
+ "inputs":[{"ID":"input1"},{"ID":"input2"}],
+ "outputs":[{"ID":"output1"},{"ID":"output2"}]
+},
+{
+ "type": "mul", "ID": "multiplier",
  "inputs":[{"ID":"input1"},{"ID":"input2"}],
  "outputs":[{"ID":"output1"},{"ID":"output2"}]
 }
 ],
+"ListVBlock":[
+{
+ "type": "Chart", "ID": "chart_pie",
+ "inputs":[{"ID":"input1"},{"ID":"input2"},{"ID":"input3"}],
+ "outputs":[]
+}
+],
 "ListConnection":[
 {
- "from":"block2",
+ "from":"adder",
  "out" :"output1",
- "to"  :"block1",
+ "to"  :"subber",
  "in"  :"input1"
 },
 {
- "from":"block2",
+ "from":"subber",
  "out" :"output2",
- "to"  :"block1",
+ "to"  :"multiplier",
+ "in"  :"input1"
+},
+{
+ "from":"subber",
+ "out" :"output2",
+ "to"  :"multiplier",
  "in"  :"input2"
+},
+{
+ "from":"adder",
+ "out" :"output1",
+ "to"  :"chart_pie",
+ "in"  :"input1"
+},
+{
+ "from":"subber",
+ "out" :"output1",
+ "to"  :"chart_pie",
+ "in"  :"input2"
+},
+{
+ "from":"multiplier",
+ "out" :"output1",
+ "to"  :"chart_pie",
+ "in"  :"input3"
 }
 ]
 }

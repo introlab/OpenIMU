@@ -7,20 +7,22 @@
 class InputNode
 {
 public:
-    InputNode(){valueBuf=0;}
-    ~InputNode(){}
+    InputNode(){valueBuf=0;observer=0;}
+
     void SetObserver(Observer* newObserver){observer = newObserver;}
 
     int Get();
-    void Put(int value);
+    virtual void Put(int value);
 
     void SetStringID(const std::string value);
     std::string GetStringID();
 
-private:
+protected:
     int valueBuf;
-    Observer* observer;
     std::string stringID;
+
+private:
+    Observer* observer;
 
     void Notify();
 };

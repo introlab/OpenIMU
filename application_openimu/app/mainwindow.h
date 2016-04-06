@@ -7,6 +7,7 @@
 #include <QVBoxLayout>
 #include "string.h"
 #include "controllers/toolbarcontroller.h"
+#include "customqmlscene.h"
 
 
 class MainWindow : public QMainWindow
@@ -31,6 +32,7 @@ class MainWindow : public QMainWindow
        QWidget *filesWidget;
        Widget *plotWidget ;
        ApplicationMenuBar* menu ;
+       CustomQmlScene* scene;
     };
 
 #endif // MAINWINDOW_H

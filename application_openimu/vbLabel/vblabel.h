@@ -8,7 +8,7 @@ class VBLabel : public QQuickItem
 public:
     VBLabel();
     ~VBLabel();
-
+    
     QSGNode* updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* ) override;
 };
 

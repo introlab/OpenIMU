@@ -4,28 +4,26 @@
 #include <string>
 #include <json/json.h>
 #include "components/block.h"
+#include "customqmlscene.h"
 
 class Caneva
 {
 public:
-
-    static Caneva* getInstance();
+    Caneva(std::string filename, CustomQmlScene* scene);
+    
     ~Caneva();
     Block* getBlock(std::string ID);
 
-protected:
-    Caneva();
-private:
-    static Caneva* _instance;
-    Caneva(std::string filename);
+    void test();
 
+private:
 
     void loadFile(std::string filename);
     void createBlocks();
+    void createVBlocks(CustomQmlScene *scene);
     void createInputs(Block *block, Json::Value inputs);
     void createOutputs(Block *block, Json::Value outputs);
     void makeConnections();
-
 
     std::vector<Block*> blocks;
 
