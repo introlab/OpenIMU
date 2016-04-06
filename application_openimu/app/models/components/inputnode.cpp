@@ -1,11 +1,11 @@
 #include "inputnode.h"
 
-void InputNode::Put(int value){
-    valueBuf = value;
+void InputNode::Put(int value[]){
+    for(int i = 0; i<MAX_ARRAY_SIZE; i++) valueBuf[i] = value[i];
     Notify();
 }
 
-int InputNode::Get(){
+int* InputNode::Get(){
     return valueBuf;
 }
 

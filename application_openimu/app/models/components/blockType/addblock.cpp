@@ -16,12 +16,9 @@
 void AddBlock::work()
 {
   // out = in1 + in2
-  std::cout<<"WORKING ON ADD!\n";
-
-  int sum = Block::GetInput("input1")->Get() + Block::GetInput("input2")->Get();
-
-  std::cout<<"add result: "<<sum<<std::endl<<std::endl;
-
-  Block::GetOutput("output1")->Send(sum);
+  int* in1 = Block::GetInput("input1")->Get();
+  int* in2 = Block::GetInput("input2")->Get();
+  for(int i = 0; i<MAX_ARRAY_SIZE; i++) out[i] = in1[i]+in2[i];
+  Block::GetOutput("output1")->Send(out);
 }
 

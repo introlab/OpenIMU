@@ -1,3 +1,4 @@
+
 #include "widget.h"
 #include <QApplication>
 #include <QMainWindow>
@@ -5,6 +6,7 @@
 #include <QVBoxLayout>
 #include "applicationmenubar.h"
 #include "mainwindow.h"
+
 
 int main(int argc, char *argv[])
 {

@@ -9,6 +9,9 @@ public:
     MulBlock();
     ~MulBlock();
     void work();
+
+private:
+    int out[MAX_ARRAY_SIZE];
 };
 
 #endif // MULBLOCK_H

@@ -9,16 +9,16 @@ class OutputNode
 public:
     OutputNode();
     ~OutputNode();
-    void Send(int value);
+    void Send(int value[]);
     void AddDest(InputNode *input);
     virtual std::string GetID(){return "";}
     void SetStringID(const std::string value);
     std::string GetStringID();
-    int getValueBuf() const;
-    void setValueBuf(int value);
+    int* getValueBuf() const;
+    void setValueBuf(int value[]);
 	
 protected:
-    int valueBuf;
+    int valueBuf[MAX_ARRAY_SIZE];
 
 private:
     void NotifyAll();

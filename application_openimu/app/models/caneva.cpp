@@ -23,9 +23,10 @@ Caneva::~Caneva()
 void Caneva::test()
 {
     //testing
-    getBlock("adder")->GetInput("input1")->Put(1);
-    getBlock("adder")->GetInput("input2")->Put(0);
-    getBlock("subber")->GetInput("input2")->Put(0);
+    int asd[] =  {10,20,11,-2,0,-20,-10,-20};
+    getBlock("adder")->GetInput("input1")->Put(asd);
+    getBlock("adder")->GetInput("input2")->Put(asd);
+    getBlock("subber")->GetInput("input2")->Put(asd);
 }
 
 void Caneva::loadFile(std::string filename)

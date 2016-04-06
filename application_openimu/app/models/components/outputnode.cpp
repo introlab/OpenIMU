@@ -10,9 +10,9 @@ OutputNode::~OutputNode()
 
 }
 
-void OutputNode::Send(int value)
+void OutputNode::Send(int value[])
 {
-    valueBuf = value;
+    for(int i = 0; i<MAX_ARRAY_SIZE; i++) valueBuf[i] = value[i];
     NotifyAll();
 }
 
@@ -39,12 +39,12 @@ std::string OutputNode::GetStringID()
     return stringID;
 }
 
-int OutputNode::getValueBuf() const
+int *OutputNode::getValueBuf() const
 {
-    return valueBuf;
+    return (int *)valueBuf;
 }
 
-void OutputNode::setValueBuf(int value)
+void OutputNode::setValueBuf(int value[])
 {
-    valueBuf = value;
+    for(int i = 0; i<MAX_ARRAY_SIZE; i++) valueBuf[i] = value[i];
 }

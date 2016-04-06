@@ -3,12 +3,17 @@
 QuickItemInputNode::QuickItemInputNode(): InputNode()
 {
     id = "";
-    valueBuf = 0;
 }
 
 
-void QuickItemInputNode::Put(int value)
+void QuickItemInputNode::Put(int value[])
 {
-    valueBuf = value;
-    emit valueBufChanged(valueBuf);
+    for(int i = 0; i<MAX_ARRAY_SIZE; i++)
+    {
+        if(i<this->value.count())
+            this->value[i] = value[i];
+        else
+            this->value.append(value[i]);
+    }
+    emit valueChanged(this->value);
 }

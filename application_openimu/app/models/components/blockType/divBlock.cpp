@@ -13,14 +13,14 @@ void DivBlock::work()
 {
     //out1 = int(in1 / in2)
     //out2 = int(in2 / in1)
-    std::cout<<"WORKING ON DIV!\n\n";
 
-    int res1 = Block::GetInput("input1")->Get() / Block::GetInput("input2")->Get();
-    int res2 = Block::GetInput("input2")->Get() / Block::GetInput("input1")->Get();
+    int* in1 = Block::GetInput("input1")->Get();
+    int* in2 = Block::GetInput("input2")->Get();
+    for(int i = 0; i<MAX_ARRAY_SIZE; i++){
+        out1[i] = in1[i]/in2[i];
+        out2[i] = in2[i]/in1[i];
+    }
 
-    std::cout<<"div result1: "<<res1<<std::endl;
-    std::cout<<"div result2: "<<res2<<std::endl<<std::endl;
-
-    Block::GetOutput("output1")->Send(res1);
-    Block::GetOutput("output2")->Send(res2);
+    Block::GetOutput("output1")->Send(out1);
+    Block::GetOutput("output2")->Send(out2);
 }

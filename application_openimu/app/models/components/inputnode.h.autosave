@@ -7,7 +7,7 @@
 #ifndef MAX_ARRAY_SIZE
 #define MAX_ARRAY_SIZE 0x08
 #endif
-static const int a = 2;
+
 class InputNode
 {
 public:

@@ -9,6 +9,9 @@ class AddBlock : public Block
         AddBlock();
         ~AddBlock();
         void work();
+
+private:
+        int out[MAX_ARRAY_SIZE];
 };
 
 #endif // ADDBLOCK_H
