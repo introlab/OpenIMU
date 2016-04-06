@@ -44,10 +44,13 @@ SOURCES += main.cpp\
     acquisition/MagnetometerReader.cpp \
     applicationmenu.cpp \
     views/toolbarview.cpp\
-    controllers/toolbarcontroller.cpp \
     models/components/quickiteminputnode.cpp \
     models/components/quickitemoutputnode.cpp \
-    dateselectorlabel.cpp
+    dateselectorlabel.cpp \
+    models/components/blockType/podometerBlock.cpp \
+    algorithm/podometer/KalmanFilter.cpp \
+    algorithm/podometer/Podometer.cpp
+
 
 
 HEADERS += widget.h \
@@ -76,10 +79,12 @@ HEADERS += widget.h \
     models/components/blockType/blockType.h \
     applicationmenu.h \
     views/toolbarview.h\
-    controllers/toolbarcontroller.h \
     models/components/quickiteminputnode.h \
     models/components/quickitemoutputnode.h \
-    dateselectorlabel.h
+    dateselectorlabel.h \
+    models/components/blockType/podometerblock.h \
+    algorithm/podometer/KalmanFilter.h \
+    algorithm/podometer/Podometer.h
 
 FORMS += widget.ui
 

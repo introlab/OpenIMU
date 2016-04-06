@@ -7,7 +7,8 @@ DateSelectorLabel::DateSelectorLabel(const QString& text, QWidget* parent)
     this->setMaximumHeight(20);
     QFont f( "Arial", 8, QFont::ExtraLight);
     this->setFont(f);
-
+    this->setStyleSheet("border-radius: 2px;"
+                        "border: 1px solid black;");
     std::string s = text.toStdString();
     char sep = '/';
     size_t i = s.rfind(sep, s.length());

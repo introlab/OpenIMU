@@ -15,7 +15,7 @@ public:
     Block* getBlock(std::string ID);
 
     void test();
-
+    void setSliderLimitValues(int min, int max);
 private:
 
     void loadFile(std::string filename);
