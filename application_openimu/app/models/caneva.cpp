@@ -23,9 +23,13 @@ Caneva::~Caneva()
 void Caneva::test()
 {
     //testing
-    getBlock("adder")->GetInput("input1")->Put(1);
-    getBlock("adder")->GetInput("input2")->Put(0);
-    getBlock("subber")->GetInput("input2")->Put(0);
+    getBlock("slider")->GetInput("inputSliderMinimumValue")->Put(0);
+    getBlock("slider")->GetInput("inputSliderMaximumValue")->Put(10);
+}
+void Caneva::setSliderLimitValues(int min, int max){
+
+    getBlock("slider")->GetInput("inputSliderMinimumValue")->Put(min);
+    getBlock("slider")->GetInput("inputSliderMaximumValue")->Put(max);
 }
 
 void Caneva::loadFile(std::string filename)

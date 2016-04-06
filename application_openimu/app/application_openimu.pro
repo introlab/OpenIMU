@@ -44,7 +44,6 @@ SOURCES += main.cpp\
     acquisition/MagnetometerReader.cpp \
     applicationmenu.cpp \
     views/toolbarview.cpp\
-    controllers/toolbarcontroller.cpp \
     models/components/quickiteminputnode.cpp \
     models/components/quickitemoutputnode.cpp \
     dateselectorlabel.cpp \
@@ -80,7 +79,6 @@ HEADERS += widget.h \
     models/components/blockType/blockType.h \
     applicationmenu.h \
     views/toolbarview.h\
-    controllers/toolbarcontroller.h \
     models/components/quickiteminputnode.h \
     models/components/quickitemoutputnode.h \
     dateselectorlabel.h \
