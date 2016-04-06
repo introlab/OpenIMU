@@ -40,6 +40,7 @@ void Block::work()
 
 void Block::AddInput(InputNode* input)
 {
+    if(!input) return;
     inputs.push_back(input);
     input->SetObserver(this);
     inputSemaphore++;
@@ -47,6 +48,7 @@ void Block::AddInput(InputNode* input)
 
 void Block::AddOutput(OutputNode* output)
 {
+    if(!output) return;
     outputs.push_back(output);
 }
 

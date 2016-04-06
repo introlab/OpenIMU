@@ -43,8 +43,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     this->setCentralWidget(mainWidget); 
 
-    //Caneva caneva("../config/layout1.json");
+    Caneva caneva("../../config/layout1.json", scene);
 
+    caneva.test();
 }
 
 string MainWindow::getFileName(string s){

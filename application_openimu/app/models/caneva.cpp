@@ -4,23 +4,28 @@
 #include <iostream>
 #include "components/blockType/blockFactory.h"
 
-Caneva::Caneva(std::string filename)
+Caneva::Caneva(std::string filename, CustomQmlScene *scene)
 {
     loadFile(filename);
 
     createBlocks();
+    createVBlocks(scene);
 
     makeConnections();
-
-    //test
-    getBlock("block2")->GetInput("input1")->Put(2);
-    getBlock("block2")->GetInput("input2")->Put(5);
 }
 
 Caneva::~Caneva()
 {
     for(auto it = blocks.begin() ; it != blocks.end() ; it++)
         delete(*it);
+}
+
+void Caneva::test()
+{
+    //testing
+    getBlock("adder")->GetInput("input1")->Put(1);
+    getBlock("adder")->GetInput("input2")->Put(0);
+    getBlock("subber")->GetInput("input2")->Put(0);
 }
 
 void Caneva::loadFile(std::string filename)
@@ -64,6 +69,29 @@ void Caneva::createBlocks()
     }
 }
 
+void Caneva::createVBlocks(CustomQmlScene *scene)
+{
+    for(Json::ValueIterator it = root["ListVBlock"].begin() ; it != root["ListVBlock"].end() ; it++)
+    {
+        Block* block = new Block();
+        block->SetStringID((*it)["ID"].asString());
+
+        // get inputs
+        for(Json::ValueIterator in = (*it)["inputs"].begin() ; in != (*it)["inputs"].end() ; in++)
+        {
+            block->AddInput(scene->getInputNode((*it)["ID"].asString().c_str(),(*in)["ID"].asString().c_str()));
+        }
+
+        // get outputs
+        for(Json::ValueIterator out = (*it)["outputs"].begin() ; out != (*it)["outputs"].end() ; out++)
+        {
+            block->AddOutput(scene->getOutputNode((*it)["ID"].asString().c_str(),(*out)["ID"].asString().c_str()));
+        }
+
+        blocks.push_back(block);
+    }
+}
+
 void Caneva::createInputs(Block* block, Json::Value inputs)
 {
     for(Json::ValueIterator it = inputs.begin() ; it != inputs.end() ; it++)
@@ -88,7 +116,16 @@ void Caneva::makeConnections()
 {
     for(Json::ValueIterator it = root["ListConnection"].begin() ; it != root["ListConnection"].end() ; it++)
     {
-        getBlock((*it)["from"].asString())->GetOutput((*it)["out"].asString())->AddDest(getBlock((*it)["to"].asString())->GetInput((*it)["in"].asString()));
+        //getBlock((*it)["from"].asString())->GetOutput((*it)["out"].asString())->AddDest(getBlock((*it)["to"].asString())->GetInput((*it)["in"].asString()));
+        Block* from = getBlock((*it)["from"].asString());
+        if(!from) return;
+        OutputNode* out = from->GetOutput((*it)["out"].asString());
+        if(!out) return;
+        Block* to = getBlock((*it)["to"].asString());
+        if(!to) return;
+        InputNode* in = to->GetInput((*it)["in"].asString());
+        if(!in) return;
+        out->AddDest(in);
     }
 }
 

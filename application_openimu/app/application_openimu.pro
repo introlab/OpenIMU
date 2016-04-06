@@ -44,7 +44,9 @@ SOURCES += main.cpp\
     acquisition/MagnetometerReader.cpp \
     applicationmenu.cpp \
     views/toolbarview.cpp\
-    controllers/toolbarcontroller.cpp
+    controllers/toolbarcontroller.cpp \
+    models/components/quickiteminputnode.cpp \
+    models/components/quickitemoutputnode.cpp
 
 HEADERS += widget.h \
     acquisition/SensorDataPerDay.h \
@@ -72,7 +74,9 @@ HEADERS += widget.h \
     models/components/blockType/blockType.h \
     applicationmenu.h \
     views/toolbarview.h\
-    controllers/toolbarcontroller.h
+    controllers/toolbarcontroller.h \
+    models/components/quickiteminputnode.h \
+    models/components/quickitemoutputnode.h
 
 
 FORMS += widget.ui

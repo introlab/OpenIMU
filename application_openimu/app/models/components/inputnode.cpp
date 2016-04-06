@@ -21,5 +21,7 @@ std::string InputNode::GetStringID()
 
 void InputNode::Notify()
 {
+    //@TODO REMOVE this line is ugly!!!
+    if(observer)
     observer->Notify(stringID);
 }

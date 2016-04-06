@@ -15,11 +15,12 @@ public:
     void SetStringID(const std::string value);
     std::string GetStringID();
 
+protected:
+    int valueBuf;
 
 private:
-    int valueBuf;
-    std::vector<InputNode*> inputs;
     void NotifyAll();
+    std::vector<InputNode*> inputs;
     std::string stringID;
 };
 
