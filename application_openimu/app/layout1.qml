@@ -30,15 +30,41 @@ Rectangle{
         width:parent.width;
         height:parent.height;
 
+
         chartAnimated: true;
         chartAnimationEasing: Easing.Linear;
         chartAnimationDuration: 1000;
-        chartType: Charts.ChartType.PIE;
+        chartType: Charts.ChartType.LINE;
         chartOptions: {"segmentStrokeColor": "#ECECEC"};
-        chartData: [
-            {value:  input1.valueBuf, color: "#6AA84F"},
-            {value:  input2.valueBuf, color: "#DC3912"},
-            {value:  input3.valueBuf, color: "#FF9900"}];
+
+        Component.onCompleted: {
+
+        var data = {
+
+            labels: [10,20,30,40,50,60,70],
+
+            datasets: [
+                        {
+                        fillColor : "rgba(0,128,128,0)",
+                        strokeColor : "rgba(0,128,128,1)",
+                        pointColor : "rgba(0,128,128,1)",
+                        data : [65, 59, 80, 56, 55, 40]
+                        },
+                        {
+                        fillColor : "rgba(0,255,255,0)",
+                        strokeColor : "rgba(0,255,255,1)",
+                        pointColor : "rgba(0,255,255,1)",
+                        data : [55, 49, 70, 71, 46, 55, 30]
+                        }
+                    ]
+
+        }
+        chart_pie.chartData = data
+        }
+
+
+
+
 
 
 
