@@ -2,7 +2,7 @@ import QtQuick 2.5
 import QtQuick.Window 2.2
 import blocks.visual.label 1.0
 import quickItemInputNode 1.0
-
+import QtQuick.Controls 1.4
 //import "."
 import jbQuick.Charts 1.0
 Rectangle{
@@ -10,8 +10,19 @@ Rectangle{
     width:parent.width;
     height:parent.height;
     anchors.centerIn: parent;
+    Label{
+        QuickItemInputNode{
+            id: inputStepNumber;
+        }
+        id: label_steps
+         property string id: "label_steps";
+        text: "Steps: "+inputStepNumber.valueBuf
+        y:0
 
+
+    }
     Chart{
+        y:50
         //identity and internal maping
         id: chart_pie;
         property string id: "chart_pie";

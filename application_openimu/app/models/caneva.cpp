@@ -22,10 +22,10 @@ Caneva::~Caneva()
 
 void Caneva::test()
 {
-    //testing
-    getBlock("adder")->GetInput("input1")->Put(1);
-    getBlock("adder")->GetInput("input2")->Put(0);
-    getBlock("subber")->GetInput("input2")->Put(0);
+    //testing.get
+    getBlock("podoBlock")->GetInput("podoTrigger")->Put(0);
+   int steps = getBlock("podoBlock")->GetOutput("podoOutput")->getValueBuf();
+   getBlock("label_steps")->GetInput("inputStepNumber")->Put(steps);
 }
 
 void Caneva::loadFile(std::string filename)

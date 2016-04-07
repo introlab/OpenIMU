@@ -1,25 +1,18 @@
 {
-"ListBlock":[
-{
- "type": "add", "ID": "adder",
- "inputs":[{"ID":"input1"},{"ID":"input2"}],
- "outputs":[{"ID":"output1"}]
-},
-{
- "type": "sub", "ID": "subber",
- "inputs":[{"ID":"input1"},{"ID":"input2"}],
- "outputs":[{"ID":"output1"},{"ID":"output2"}]
-},
-{
- "type": "mul", "ID": "multiplier",
- "inputs":[{"ID":"input1"},{"ID":"input2"}],
- "outputs":[{"ID":"output1"},{"ID":"output2"}]
-}
-],
+"ListBlock":[{
+ "type": "podo", "ID": "podoBlock",
+ "inputs":[{"ID":"podoTrigger"}],
+ "outputs":[{"ID":"podoOutput"}]
+}],
 "ListVBlock":[
 {
  "type": "Chart", "ID": "chart_pie",
  "inputs":[{"ID":"input1"},{"ID":"input2"},{"ID":"input3"}],
+ "outputs":[]
+},
+{
+ "type": "Label", "ID": "label_steps",
+ "inputs":[{"ID":"inputStepNumber"}],
  "outputs":[]
 }
 ],

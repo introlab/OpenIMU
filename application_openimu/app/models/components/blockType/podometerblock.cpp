@@ -31,7 +31,6 @@ void PodometerBlock::work()
 
   Podometer podometer;
   podometer.execute(accelerometerData);
-
-  Block::GetOutput("output1")->Send(podometer.getStepCount());
+  Block::GetOutput("podoOutput")->Sendpodometer.getStepCount();
 }
 

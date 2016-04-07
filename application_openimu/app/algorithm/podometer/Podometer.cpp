@@ -177,15 +177,11 @@ void Podometer::execute(vector<SensorDataPerDay> accelerometerData)
 						update();
 						detectSteps(accelerationAmplitude);
 					}
-				}
-				cout << "Vous avez fait " << getStepCount() << " pas.\n";
-			}
-			int x = 0;
+                }
+            }
 		}
 	}
 
-	cout << "Vous avez fait " << getStepCount() << " pas au total.\n";
-	int x;
-	cin >> x;
+    cout << "Vous avez fait " << getStepCount() << " pas au total.\n";
 }
 	
