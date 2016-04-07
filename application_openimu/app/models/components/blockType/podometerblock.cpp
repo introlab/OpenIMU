@@ -4,8 +4,8 @@
 #include "../block.h"
 #include <iostream>
 #include <vector>
-#include "../inputnode.h"
-#include "../outputnode.h"
+#include "../abstractinputnode.h"
+#include "../abstractoutputnode.h"
 
  PodometerBlock::PodometerBlock() : Block()
  {

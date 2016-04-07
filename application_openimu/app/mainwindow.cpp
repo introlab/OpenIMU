@@ -41,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     scene = new CustomQmlScene("layout1.qml", this);
     hLayout->addWidget(scene);
-    caneva = new Caneva("../../config/layout1.json", scene);
+    caneva = new Caneva("../../config/test_float.json", scene);
     caneva->test();
 }
 

@@ -1,28 +1,23 @@
-#ifndef OUTPUT_H
-#define OUTPUT_H
+#ifndef OUTPUTNODE_H
+#define OUTPUTNODE_H
 
-#include "inputnode.h"
-#include <vector>
+#include "abstractoutputnode.h"
 
-class OutputNode
+template <class T>
+class OutputNode: public AbstractOutputNode
 {
 public:
-    OutputNode();
-    void Send(std::vector<int> value);
-    void AddDest(InputNode *input);
-    virtual std::string GetID(){return "";}
-    void SetStringID(const std::string value);
-    std::string GetStringID();
-    std::vector<int> getValueBuf() const;
-    void setValueBuf(std::vector<int> value);
-	
-protected:
-    std::vector<int> valueBuf;
+    OutputNode(): AbstractOutputNode() {}
+    void Send(std::vector<T> value){
+        valueBuf = value;
+        NotifyAll();
+    }
+    std::vector<T> getValueBuf() const {return valueBuf;}
+    void setValueBuf(std::vector<T> value) {valueBuf = value;}
 
-private:
-    void NotifyAll();
-    std::vector<InputNode*> inputs;
-    std::string stringID;
+
+protected:
+    std::vector<T> valueBuf;
 };
 
-#endif // OUTPUT_H
+#endif // OUTPUTNODE_H

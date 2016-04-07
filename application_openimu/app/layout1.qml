@@ -59,7 +59,7 @@ Rectangle{
         ];*/
 
         chartData: {
-            'labels':input1.value,
+            'labels':input2.value,
             'datasets':[
                 {'fillColor': "rgba(0,128,128,0)",'pointColor': "rgba(255,0,0,1)",'strokeColor': "rgba(255,0,0,1)",'data': input1.value},
                 {'fillColor': "rgba(0,128,128,0)",'pointColor': "rgba(0,255,0,1)",'strokeColor': "rgba(0,255,0,1)",'data': input2.value},

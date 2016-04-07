@@ -2,8 +2,8 @@
 #include "../block.h"
 #include <iostream>
 #include <vector>
-#include "../inputnode.h"
-#include "../outputnode.h"
+#include "../abstractinputnode.h"
+#include "../abstractoutputnode.h"
 
 SubBlock::SubBlock(): Block()
 {
@@ -20,8 +20,8 @@ void SubBlock::work()
     //out1 = in1 - in2
     //out2 = in2 - in1
 
-    std::vector<int> in1 = Block::GetInput("input1")->Get();
-    std::vector<int> in2 = Block::GetInput("input2")->Get();
+    std::vector<int> in1 = Block::GetInput<int>("input1")->Get();
+    std::vector<int> in2 = Block::GetInput<int>("input2")->Get();
     out1=in1;
     out2=in2;
     for(int i = 0; i<in1.size(); i++){
@@ -29,6 +29,6 @@ void SubBlock::work()
         out2[i] -= in1[i];
     }
 
-    Block::GetOutput("output1")->Send(out1);
-    Block::GetOutput("output2")->Send(out2);
+    Block::GetOutput<int>("output1")->Send(out1);
+    Block::GetOutput<int>("output2")->Send(out2);
 }

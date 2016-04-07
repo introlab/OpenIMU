@@ -5,21 +5,33 @@
 #include <QThread>
 #include <QVector>
 
-class QuickItemOutputNode: public QObject, public OutputNode
+template <class T>
+class WorkerThread;
+
+template <class T>
+class QuickItemOutputNode: public QObject, public OutputNode<T>
 {
     Q_OBJECT
     Q_PROPERTY(QString id READ getId WRITE setId)
-    Q_PROPERTY(QVector<int> value READ getValue WRITE setValue)
+    Q_PROPERTY(QVector<T> value READ getValue WRITE setValue)
 public:
-    QuickItemOutputNode();
+    QuickItemOutputNode(): QObject(), OutputNode<T>() {}
 
     QString getId(){return id;}
     void setId(QString i){id = i;}
 
-    QVector<int> getValue(){return value;}
-    void setValue(QVector<int> value);
+    QVector<T> getValue(){return value;}
+    void setValue(QVector<T> value){
+        this->value = value;
+        this->setValueBuf( value.toStdVector());
 
-    QVector<int> value;
+        WorkerThread<T> *workerThread = new WorkerThread<T>(this, this->getValueBuf());
+        QObject::connect(workerThread, &WorkerThread<T>::finished, workerThread, &QObject::deleteLater);
+        workerThread->start();
+    }
+
+
+    QVector<T> value;
     QString id;
 
 signals:
@@ -27,19 +39,29 @@ signals:
 
 };
 
-
+template <class T>
 class WorkerThread : public QThread
 {
     Q_OBJECT
 public:
-    WorkerThread(QuickItemOutputNode* outputNode, std::vector<int> value)
+    WorkerThread(QuickItemOutputNode<T>* outputNode, std::vector<T> value)
         {this->outputNode = outputNode; this->value = value;}
     void run() Q_DECL_OVERRIDE
         {outputNode->Send(value);}
 private:
-    QuickItemOutputNode* outputNode;
-    std::vector<int> value;
+    QuickItemOutputNode<T>* outputNode;
+    std::vector<T> value;
 };
 
 
+
+class QuickItemOutputNodeInt: public QuickItemOutputNode<int>{
+public:
+    QuickItemOutputNodeInt() :QuickItemOutputNode<int>() {}
+};
+
+class QuickItemOutputNodeDouble: public QuickItemOutputNode<double>{
+public:
+    QuickItemOutputNodeDouble() :QuickItemOutputNode<double>() {}
+};
 #endif // QUICKITEMOUTPUTNODE_H
