@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include "components/blockType/blockFactory.h"
+#include "acquisition/AccelerometerReader.h"
 
 Caneva::Caneva(std::string filename, CustomQmlScene *scene)
 {
@@ -22,18 +23,42 @@ Caneva::~Caneva()
 
 void Caneva::test()
 {
-    //testing
-    std::vector<int> asd =  {10,20,11,-2,0,-20,-10,-20};
-    getBlock("adder")->GetInput("input1")->Put(asd);
-    getBlock("adder")->GetInput("input2")->Put(asd);
-    getBlock("subber")->GetInput("input2")->Put(asd);
+    vector<int> steps;
+    vector<int> in;
+    in.push_back(0);
+    getBlock("podoBlock")->GetInput("podoTrigger")->Put(in);
+    steps= (getBlock("podoBlock")->GetOutput("podoOutput")->getValueBuf());
+    getBlock("label_steps")->GetInput("inputStepNumber")->Put(in);
+
 
     setSliderLimitValues(0,100);
 }
 
+void Caneva::setGraphData(std::string folderPath){
+    vector<int> time ;
+    vector<int> xaxis;
+    vector<int> yaxis;
+    vector<int> zaxis;
+
+    for(int i = 0; i< 30;i++){
+            time.push_back(i);
+            xaxis.push_back(i+2);
+            yaxis.push_back(i+4);
+            zaxis.push_back(i*2);
+    }
+    //to do: add values from BD
+    getBlock("chart_line")->GetInput("inputTimeAxis")->Put(time);
+    getBlock("chart_line")->GetInput("inputXAxis")->Put(xaxis);
+    getBlock("chart_line")->GetInput("inputYAxis")->Put(yaxis);
+    getBlock("chart_line")->GetInput("inputZAxis")->Put(zaxis);
+
+}
+
 void Caneva::setSliderLimitValues(int min, int max){
-    getBlock("slider")->GetInput("inputSliderMinimumValue")->Put(std::vector<int>({min}));
-    getBlock("slider")->GetInput("inputSliderMaximumValue")->Put(std::vector<int>({max}));
+  std::vector<int> minv =  {min};
+  std::vector<int> maxv =  {max};
+  getBlock("slider")->GetInput("inputSliderMinimumValue")->Put(minv);
+  getBlock("slider")->GetInput("inputSliderMaximumValue")->Put(maxv);
 }
 
 void Caneva::loadFile(std::string filename)

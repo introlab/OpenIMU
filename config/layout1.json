@@ -1,34 +1,28 @@
 {
 "ListBlock":[
 {
- "type": "add", "ID": "adder",
- "inputs":[{"ID":"input1"},{"ID":"input2"}],
- "outputs":[{"ID":"output1"}]
-},
-{
- "type": "sub", "ID": "subber",
- "inputs":[{"ID":"input1"},{"ID":"input2"}],
- "outputs":[{"ID":"output1"},{"ID":"output2"}]
-},
-{
- "type": "mul", "ID": "multiplier",
- "inputs":[{"ID":"input1"},{"ID":"input2"}],
- "outputs":[{"ID":"output1"},{"ID":"output2"}]
+ "type": "podo", "ID": "podoBlock",
+ "inputs":[{"ID":"podoTrigger"}],
+ "outputs":[{"ID":"podoOutput"}]
 }
 ],
 "ListVBlock":[
 {
  "type": "Chart", "ID": "chart_line",
- "inputs":[{"ID":"input1"},{"ID":"input2"},{"ID":"input3"}],
+ "inputs":[{"ID":"inputTimeAxis"},{"ID":"inputXAxis"},{"ID":"inputYAxis"},{"ID":"inputZAxis"}],
  "outputs":[]
 },
 {
  "type": "Slider", "ID": "slider",
  "inputs":[{"ID":"inputSliderMinimumValue"},{"ID":"inputSliderMaximumValue"}],
  "outputs":[]
+},
+{
+ "type": "Label", "ID": "label_steps",
+ "inputs":[{"ID":"inputStepNumber"}],
+ "outputs":[]
 }
-]
-,
+],
 "ListConnection":[
 {
  "from":"adder",

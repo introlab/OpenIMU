@@ -6,6 +6,7 @@
 #include "dateselectorlabel.h"
 #include "acquisition/SensorReader.h"
 
+
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
@@ -20,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     filesWidget->setMinimumWidth(150);
     filesWidget->setMinimumHeight(580);
-    filesWidget->setMaximumWidth(200);
+    filesWidget->setMaximumWidth(150);
 
     hLayout = new QHBoxLayout;
     hLayout->addWidget(filesWidget);
@@ -39,10 +40,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     this->setCentralWidget(mainWidget); 
 
-    scene = new CustomQmlScene("layout1.qml", this);
-    hLayout->addWidget(scene);
-    caneva = new Caneva("../../config/layout1.json", scene);
-    caneva->test();
+
 }
 
 void MainWindow:: openFile(){
@@ -55,7 +53,7 @@ void MainWindow:: openFile(){
         filesWidget = new QWidget();
         filesWidget->setMinimumWidth(150);
         filesWidget->setMinimumHeight(580);
-        filesWidget->setMaximumWidth(200);
+        filesWidget->setMaximumWidth(150);
         hLayout = new QHBoxLayout;
         hLayout->addWidget(filesWidget);
 
@@ -78,15 +76,15 @@ void MainWindow:: openFile(){
 
         filesWidget->setLayout(filesLayout);
         filesLayout->addStretch();
-        hLayout->addWidget(plotWidget);
+        scene = new CustomQmlScene("layout1.qml", this);
         hLayout->addWidget(scene);
-        caneva->setSliderLimitValues(0,50);
+        caneva = new Caneva("../../config/layout1.json", scene);
+       // caneva->test();
+        caneva->setSliderLimitValues(0,10);
         this->setCentralWidget(mainWidget);
 }
 void MainWindow::onDateSelectedClicked(std::string text){
-    plotWidget->setFolderPath(text);
-    plotWidget->setupPlot();
-    plotWidget->setVisible(true);
+    caneva->setGraphData(text);
    }
 
 void MainWindow:: computeSteps(){
