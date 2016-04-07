@@ -5,9 +5,9 @@ OutputNode::OutputNode()
 
 }
 
-void OutputNode::Send(int value[])
+void OutputNode::Send(std::vector<int> value)
 {
-    for(int i = 0; i<MAX_ARRAY_SIZE; i++) valueBuf[i] = value[i];
+    valueBuf = value;
     NotifyAll();
 }
 
@@ -34,12 +34,12 @@ std::string OutputNode::GetStringID()
     return stringID;
 }
 
-int *OutputNode::getValueBuf() const
+std::vector<int> OutputNode::getValueBuf() const
 {
-    return (int *)valueBuf;
+    return valueBuf;
 }
 
-void OutputNode::setValueBuf(int value[])
+void OutputNode::setValueBuf(std::vector<int> value)
 {
-    for(int i = 0; i<MAX_ARRAY_SIZE; i++) valueBuf[i] = value[i];
+    valueBuf = value;
 }

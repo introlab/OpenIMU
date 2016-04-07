@@ -1,11 +1,11 @@
 #include "inputnode.h"
 
-void InputNode::Put(int value[]){
-    for(int i = 0; i<MAX_ARRAY_SIZE; i++) valueBuf[i] = value[i];
+void InputNode::Put(std::vector<int> value){
+    valueBuf= value;
     Notify();
 }
 
-int* InputNode::Get(){
+std::vector<int> InputNode::Get(){
     return valueBuf;
 }
 

@@ -11,7 +11,7 @@ public:
     void work();
 
 private:
-    int out[MAX_ARRAY_SIZE];
+    std::vector<int> out;
 };
 
 #endif // MULBLOCK_H

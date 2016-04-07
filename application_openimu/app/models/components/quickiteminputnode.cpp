@@ -6,14 +6,8 @@ QuickItemInputNode::QuickItemInputNode(): InputNode()
 }
 
 
-void QuickItemInputNode::Put(int value[])
+void QuickItemInputNode::Put(std::vector<int> value)
 {
-    for(int i = 0; i<MAX_ARRAY_SIZE; i++)
-    {
-        if(i<this->value.count())
-            this->value[i] = value[i];
-        else
-            this->value.append(value[i]);
-    }
+    this->value = QList<int>::fromVector(QVector<int>::fromStdVector(value));
     emit valueChanged(this->value);
 }

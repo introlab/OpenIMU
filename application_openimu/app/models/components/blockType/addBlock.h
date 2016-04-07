@@ -11,7 +11,7 @@ class AddBlock : public Block
         void work();
 
 private:
-        int out[MAX_ARRAY_SIZE];
+        std::vector<int> out;
 };
 
 #endif // ADDBLOCK_H

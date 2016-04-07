@@ -11,8 +11,8 @@ public:
     void work();
 
 private:
-    int out1[MAX_ARRAY_SIZE];
-    int out2[MAX_ARRAY_SIZE];
+    std::vector<int> out1;
+    std::vector<int> out2;
 };
 
 #endif // DIVBLOCK_H

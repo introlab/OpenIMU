@@ -8,16 +8,16 @@ class OutputNode
 {
 public:
     OutputNode();
-    void Send(int value[]);
+    void Send(std::vector<int> value);
     void AddDest(InputNode *input);
     virtual std::string GetID(){return "";}
     void SetStringID(const std::string value);
     std::string GetStringID();
-    int* getValueBuf() const;
-    void setValueBuf(int value[]);
+    std::vector<int> getValueBuf() const;
+    void setValueBuf(std::vector<int> value);
 	
 protected:
-    int valueBuf[MAX_ARRAY_SIZE];
+    std::vector<int> valueBuf;
 
 private:
     void NotifyAll();

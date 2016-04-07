@@ -23,7 +23,7 @@ Caneva::~Caneva()
 void Caneva::test()
 {
     //testing
-    int asd[] =  {10,20,11,-2,0,-20,-10,-20};
+    std::vector<int> asd =  {10,20,11,-2,0,-20,-10,-20};
     getBlock("adder")->GetInput("input1")->Put(asd);
     getBlock("adder")->GetInput("input2")->Put(asd);
     getBlock("subber")->GetInput("input2")->Put(asd);
@@ -32,10 +32,8 @@ void Caneva::test()
 }
 
 void Caneva::setSliderLimitValues(int min, int max){
-    int a[] = {min};
-    int b[] = {max};
-    getBlock("slider")->GetInput("inputSliderMinimumValue")->Put(a);
-    getBlock("slider")->GetInput("inputSliderMaximumValue")->Put(b);
+    getBlock("slider")->GetInput("inputSliderMinimumValue")->Put(std::vector<int>({min}));
+    getBlock("slider")->GetInput("inputSliderMaximumValue")->Put(std::vector<int>({max}));
 }
 
 void Caneva::loadFile(std::string filename)

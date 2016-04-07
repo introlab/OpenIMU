@@ -31,7 +31,7 @@ void PodometerBlock::work()
 
     Podometer podometer;
     podometer.execute(accelerometerData);
-    int podo[] = {podometer.getStepCount()};
+    std::vector<int> podo(podometer.getStepCount());
     Block::GetOutput("output1")->Send(podo);
 }
 

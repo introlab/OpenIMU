@@ -5,13 +5,10 @@ QuickItemOutputNode::QuickItemOutputNode(): QObject(), OutputNode()
 {
 }
 
-void QuickItemOutputNode::setValue(int v[])
+void QuickItemOutputNode::setValue(QVector<int> value)
 {
-    for(int i = 0; i<MAX_ARRAY_SIZE; i++)
-    {
-        value[i] = v[i];
-        valueBuf[i] = v[i];
-    }
+    this->value = value;
+    valueBuf = value.toStdVector();
 
     WorkerThread *workerThread = new WorkerThread(this, valueBuf);
     QObject::connect(workerThread, &WorkerThread::finished, workerThread, &QObject::deleteLater);

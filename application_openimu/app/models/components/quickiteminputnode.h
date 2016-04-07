@@ -3,6 +3,7 @@
 
 #include "inputnode.h"
 #include <QQuickItem>
+#include <QList>
 
 class QuickItemInputNode: public QQuickItem, public InputNode
 {
@@ -11,21 +12,14 @@ class QuickItemInputNode: public QQuickItem, public InputNode
     Q_PROPERTY(QString id READ getId WRITE setId)
 public:
     QuickItemInputNode();
-    void Put(int value[]);
+    void Put(std::vector<int> value);
 
     QString getId(){return id;}
     void setId(QString i){id = i; stringID = i.toUtf8().constData();}
 
-    QList<int> getValue() const
-    {
-       /*QList<int> ql;
-       ql.reserve(2);
-       std::copy(valueBuf + 0, valueBuf + 2, std::back_inserter(ql));
-       return ql;*/
-        return value;
-    }
+    QList<int> getValue() const {return value;}
 
-    void setValue(QList<int> v){for(int i=0; i<MAX_ARRAY_SIZE;i++) value[i] = v[i];}
+    void setValue(QList<int> v){value = v;}
 
 //private:
     QString id;
