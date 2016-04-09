@@ -6,15 +6,16 @@
 #include "applicationmenubar.h"
 #include <QVBoxLayout>
 #include "string.h"
-#include "controllers/toolbarcontroller.h"
 #include "customqmlscene.h"
-
+#include "models/caneva.h"
+#include <QSplitter>
 
 class MainWindow : public QMainWindow
     {
         Q_OBJECT
     public:
        MainWindow(QWidget *parent = 0);
+       ~MainWindow();
        std::string getFileName(std::string s);
 
     signals:
@@ -23,9 +24,11 @@ class MainWindow : public QMainWindow
     void openFile();
     void onDateSelectedClicked(std::string t);
     void computeSteps();
+    void closeWindow();
 
     private:
-       ToolbarController *toolbarController;
+       QSplitter * splitter;
+       Caneva *caneva;
        QVBoxLayout *mainLayout;
        QHBoxLayout *hLayout;
        QWidget *mainWidget;
