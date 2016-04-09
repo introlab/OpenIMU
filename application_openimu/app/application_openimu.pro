@@ -50,7 +50,9 @@ SOURCES += main.cpp\
     dateselectorlabel.cpp \
     models/components/blockType/podometerBlock.cpp \
     algorithm/podometer/KalmanFilter.cpp \
-    algorithm/podometer/Podometer.cpp
+    algorithm/podometer/Podometer.cpp \
+    models/components/blockType/dbwriteblock.cpp \
+    newAcquisition/wimuacquisition.cpp
 
 
 
@@ -86,7 +88,9 @@ HEADERS += widget.h \
     dateselectorlabel.h \
     models/components/blockType/podometerblock.h \
     algorithm/podometer/KalmanFilter.h \
-    algorithm/podometer/Podometer.h
+    algorithm/podometer/Podometer.h \
+    models/components/blockType/dbwriteblock.h \
+    newAcquisition/wimuacquisition.h
 
 FORMS += widget.ui
 
