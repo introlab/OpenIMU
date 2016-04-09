@@ -6,7 +6,7 @@
 #include "dateselectorlabel.h"
 #include "acquisition/SensorReader.h"
 #include "QSplitter"
-
+#include "mytreewidget.h"
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
@@ -21,20 +21,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     splitter = new QSplitter;
     setCentralWidget(splitter);
 
-    QFont f( "Arial", 12, QFont::ExtraLight);
-    QLabel * textLabel = new QLabel("Explorateur");
-    textLabel->setFont(f);
-    mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(textLabel);
-    filesWidget = new QWidget();
-    filesWidget->setMinimumWidth(150);
-    filesWidget->setMinimumHeight(580);
-    filesWidget->setMaximumWidth(150);
-    splitter->addWidget(filesWidget);
-    mainLayout->setMargin(0);
-    mainLayout->addWidget(filesWidget);
     splitter->setHandleWidth(30);
     splitter->setSizes(QList<int>() << 150 << 600);
+
+    tree = new myTreeWidget (this);
+    splitter->addWidget(tree);
+
+
+    //Set QTreeWidget Column Header
+    QTreeWidgetItem* headerItem = new QTreeWidgetItem();
+    headerItem->setText(0,QString("File Name"));
+    tree->setHeaderItem(headerItem);
+    tree->setMaximumWidth(150);
 }
 
 MainWindow::~MainWindow(){
@@ -50,29 +48,59 @@ MainWindow::~MainWindow(){
 
 void MainWindow:: openFile(){
         QString folderName = QFileDialog::getExistingDirectory(this, tr("Open File"),"/path/to/file/");
-        qDebug() << "List items = " << folderName;
+        /*qDebug() << "List items = " << folderName;
         SensorReader *reader = new SensorReader();
         vector<string> x = reader->listFiles(folderName.toStdString());
         QVBoxLayout *filesLayout = new QVBoxLayout;
+
         foreach (string t , x){
             DateSelectorLabel* fileName = new DateSelectorLabel(t.c_str());
             filesLayout->addWidget(fileName,0,0);
             connect(fileName, SIGNAL(clicked(std::string)), this, SLOT(onDateSelectedClicked(std::string)));
             }
-        filesWidget->setLayout(filesLayout);
-        filesLayout->addStretch();
+
+        */
+
+        QDir* rootDir = new QDir(folderName);
+        QFileInfoList filesList = rootDir->entryInfoList();
+
+        foreach(QFileInfo fileInfo, filesList)
+        {
+          QTreeWidgetItem* item = new QTreeWidgetItem();
+          item->setText(0,fileInfo.fileName());
+
+          if(fileInfo.isFile())
+          {
+            item->setText(1,QString::number(fileInfo.size()));
+            item->setIcon(0,*(new QIcon(":/icons/file.png")));
+            item->setText(2,fileInfo.filePath());
+            tree->addTopLevelItem(item);
+          }
+
+          if(fileInfo.isDir() && !fileInfo.fileName().contains("."))
+          {
+            item->setIcon(0,*(new QIcon(":/icons/folder.png")));
+            tree->addChildren(item,fileInfo.filePath());
+            item->setText(2,fileInfo.filePath());
+            tree->addTopLevelItem(item);
+          }
+
+        }
         scene = new CustomQmlScene("layout1.qml", this);
         splitter->addWidget(scene);
         caneva = new Caneva("../../config/layout1.json", scene);
-       // caneva->test();
         caneva->setSliderLimitValues(0,10);
         splitter->setSizes(QList<int>() << 150 << 600);
         setCentralWidget(splitter);
 }
-void MainWindow::onDateSelectedClicked(std::string text){
-    caneva->setGraphData(text);
-   }
 
+void MainWindow::onDateSelectedClicked(std::string text){
+
+   }
+void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int column)
+{
+     caneva->setGraphData(item->text(column).toStdString());
+}
 void MainWindow:: computeSteps(){
     qDebug()<<"Lance calcul";
 }

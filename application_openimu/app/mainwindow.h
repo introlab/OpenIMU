@@ -9,6 +9,7 @@
 #include "customqmlscene.h"
 #include "models/caneva.h"
 #include <QSplitter>
+#include "mytreewidget.h"
 
 class MainWindow : public QMainWindow
     {
@@ -25,6 +26,7 @@ class MainWindow : public QMainWindow
     void onDateSelectedClicked(std::string t);
     void computeSteps();
     void closeWindow();
+    void onTreeItemClicked(QTreeWidgetItem* item, int /*column*/);
 
     private:
        QSplitter * splitter;
@@ -36,6 +38,7 @@ class MainWindow : public QMainWindow
        Widget *plotWidget ;
        ApplicationMenuBar* menu ;
        CustomQmlScene* scene;
+       myTreeWidget  * tree;
     };
 
 #endif // MAINWINDOW_H

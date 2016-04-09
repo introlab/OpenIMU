@@ -52,7 +52,8 @@ SOURCES += main.cpp\
     algorithm/podometer/KalmanFilter.cpp \
     algorithm/podometer/Podometer.cpp \
     models/components/blockType/dbwriteblock.cpp \
-    newAcquisition/wimuacquisition.cpp
+    newAcquisition/wimuacquisition.cpp \
+    mytreewidget.cpp
 
 
 
@@ -90,11 +91,13 @@ HEADERS += widget.h \
     algorithm/podometer/KalmanFilter.h \
     algorithm/podometer/Podometer.h \
     models/components/blockType/dbwriteblock.h \
-    newAcquisition/wimuacquisition.h
+    newAcquisition/wimuacquisition.h \
+    mytreewidget.h
 
 FORMS += widget.ui
 
-RESOURCES += qml.qrc
+RESOURCES += qml.qrc \
+    images.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH = $$PWD/..
