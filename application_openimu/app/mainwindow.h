@@ -6,8 +6,9 @@
 #include "applicationmenubar.h"
 #include <QVBoxLayout>
 #include "string.h"
+#include "controllers/toolbarcontroller.h"
 #include "customqmlscene.h"
-#include "models/caneva.h"
+
 
 class MainWindow : public QMainWindow
     {
@@ -24,7 +25,7 @@ class MainWindow : public QMainWindow
     void computeSteps();
 
     private:
-       Caneva *caneva;
+       ToolbarController *toolbarController;
        QVBoxLayout *mainLayout;
        QHBoxLayout *hLayout;
        QWidget *mainWidget;

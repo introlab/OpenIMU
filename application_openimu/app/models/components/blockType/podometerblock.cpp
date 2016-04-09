@@ -17,6 +17,7 @@
 
 void PodometerBlock::work()
 {
+  // out = podometer.getStepCount();
   std::cout<<"WORKING ON PODOMETER!\n";
 
   //How it should be implemented
