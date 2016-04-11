@@ -3,6 +3,7 @@
 #include "subBlock.h"
 #include "mulBlock.h"
 #include "divBlock.h"
+#include "podometerblock.h"
 
 BlockFactory::BlockFactory()
 {
@@ -25,5 +26,9 @@ Block* BlockFactory::createBlockType(std::string blockType)
     else if(blockType == "div")
     {
         return new DivBlock();
+    }
+    else if(blockType == "podo")
+    {
+        return new PodometerBlock();
     }
 }

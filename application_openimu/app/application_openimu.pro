@@ -41,12 +41,17 @@ SOURCES += main.cpp\
     acquisition/MagnetometerReader.cpp \
     applicationmenu.cpp \
     views/toolbarview.cpp\
+    controllers/toolbarcontroller.cpp \
     dateselectorlabel.cpp \
     models/components/blockType/podometerBlock.cpp \
     algorithm/podometer/KalmanFilter.cpp \
     algorithm/podometer/Podometer.cpp \
     models/components/abstractinputnode.cpp \
-    models/components/abstractoutputnode.cpp
+    models/components/abstractoutputnode.cpp \
+    models/components/blockType/dbwriteblock.cpp \
+    newAcquisition/wimuacquisition.cpp \
+
+    mytreewidget.cpp
 
 
 
@@ -74,6 +79,7 @@ HEADERS += widget.h \
     models/components/blockType/blockType.h \
     applicationmenu.h \
     views/toolbarview.h\
+    controllers/toolbarcontroller.h \
     dateselectorlabel.h \
     models/components/blockType/podometerblock.h \
     algorithm/podometer/KalmanFilter.h \
@@ -85,11 +91,15 @@ HEADERS += widget.h \
     models/components/workerthreads.h \
     models/components/quickitemoutputnodes.h \
     models/components/quickiteminputnodeshandles.h \
-    models/components/quickiteminputnodes.h
+    models/components/quickiteminputnodes.h \
+    models/components/blockType/dbwriteblock.h \
+    newAcquisition/wimuacquisition.h \
+    mytreewidget.h
 
 FORMS += widget.ui
 
-RESOURCES += qml.qrc
+RESOURCES += qml.qrc \
+    images.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH = $$PWD/..

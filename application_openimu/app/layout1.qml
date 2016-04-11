@@ -10,15 +10,23 @@ import QtQuick.Controls.Styles 1.4
 import jbQuick.Charts 1.0
 
 Rectangle{
-
     width:parent.width;
     height:parent.height;
     anchors.centerIn: parent;
 
+    Label{
+        ItemInputNodeInt{
+            id: inputStepNumber;
+        }
+        id: label_steps
+         property string id: "label_steps";
+        text: "Steps: "+ inputStepNumber.value[0]
+        y:0
+}
     Label {
        y:0
-       x: 40
-       text: "DonnÃ©es acquises par l'accÃ©lÃ©romÃ¨tre"
+       x: parent.width/2-150
+       text: "Données acquises par l'accéléromètre"
        font.pixelSize: 22
        color: "steelblue"
      }
@@ -36,7 +44,6 @@ Rectangle{
         //identity and internal maping
         id: chart_line;
         property string id: "chart_line";
-
         InputNodeString{
             id: labels;
         }
@@ -47,19 +54,12 @@ Rectangle{
             id: input2;
         }
 
+
         //ui properties
         width:parent.width;
         height:parent.height-100;
 
         chartType: Charts.ChartType.LINE;
-       /*chartData: [
-            {value:2},
-            {value:3},
-            {value:5},
-            {value:7},
-            {value:11},
-        ];*/
-
         chartData: {
             'labels':labels.value,
             'datasets':[
@@ -68,11 +68,11 @@ Rectangle{
             ]
         };
 
-        chartAnimated: true;
+        chartAnimated: false;
         chartAnimationEasing: Easing.InOutElastic;
         chartAnimationDuration: 1000;
 
-        chartOptions: {"segmentStrokeColor": "#ECECEC"};        
+        chartOptions: {"segmentStrokeColor": "#ECECEC", "bezierCurve": false , "pointDot":true , "showScale": true,"scaleFontSize": 12 };
         Component.onCompleted: {
 
             console.log("!!!!data is ", data.toString());
@@ -101,7 +101,7 @@ Rectangle{
         minimumValue: inputSliderMinimumValue.value[0]
         maximumValue: inputSliderMaximumValue.value[0]
         stepSize: 1
-        onValueChanged: test.text = "De " + value.toPrecision(3) +" h Ã  "+ maximumValue + " h"
+        onValueChanged: test.text = "De " + value.toPrecision(3) +" h à  "+ maximumValue + " h"
     }
 
 }

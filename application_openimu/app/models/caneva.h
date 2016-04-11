@@ -16,6 +16,7 @@ public:
 
     void test();
     void setSliderLimitValues(int min, int max);
+    void setGraphData(std::string filePath);
 private:
 
     void loadFile(std::string filename);

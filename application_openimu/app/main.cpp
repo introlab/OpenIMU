@@ -1,4 +1,3 @@
-
 #include "widget.h"
 #include <QApplication>
 #include <QMainWindow>
@@ -6,7 +5,7 @@
 #include <QVBoxLayout>
 #include "applicationmenubar.h"
 #include "mainwindow.h"
-
+#include "mytreewidget.h"
 
 int main(int argc, char *argv[])
 {
@@ -17,3 +16,6 @@ int main(int argc, char *argv[])
 
     return a.exec();
 }
+
+
+
