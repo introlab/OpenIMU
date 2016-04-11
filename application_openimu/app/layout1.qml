@@ -15,7 +15,7 @@ Rectangle{
     anchors.centerIn: parent;
 
     Label{
-        ItemInputNodeInt{
+        InputNodeInt{
             id: inputStepNumber;
         }
         id: label_steps
@@ -101,7 +101,7 @@ Rectangle{
         minimumValue: inputSliderMinimumValue.value[0]
         maximumValue: inputSliderMaximumValue.value[0]
         stepSize: 1
-        onValueChanged: test.text = "De " + value.toPrecision(3) +" h ра "+ maximumValue + " h"
+        onValueChanged: test.text = "De " + value.toPrecision(3) +" h р  "+ maximumValue + " h"
     }
 
 }

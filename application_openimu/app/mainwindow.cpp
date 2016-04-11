@@ -23,16 +23,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     splitter->setHandleWidth(30);
     splitter->setSizes(QList<int>() << 150 << 600);
-    caneva = new Caneva("../../config/layout1.json", scene);
     tree = new myTreeWidget (this);
     splitter->addWidget(tree);
-
 
     //Set QTreeWidget Column Header
     QTreeWidgetItem* headerItem = new QTreeWidgetItem();
     headerItem->setText(0,QString("File Name"));
     tree->setHeaderItem(headerItem);
     tree->setMaximumWidth(150);
+
+    //default scene
+    scene = new CustomQmlScene("layout1.qml", this);
+    caneva = new Caneva("../../config/layout1.json", scene);
+    splitter->addWidget(scene);
+    caneva->test();
 }
 
 MainWindow::~MainWindow(){
@@ -80,7 +84,7 @@ void MainWindow:: openFile(){
           if(fileInfo.isDir() && !fileInfo.fileName().contains("."))
           {
             item->setIcon(0,*(new QIcon(":/icons/folder.png")));
-            tree->addChildren(item,fileInfo.filePath());
+            tree->myTreeWidget::addChildren(item,fileInfo.filePath());
             item->setText(2,fileInfo.filePath());
             tree->addTopLevelItem(item);
           }

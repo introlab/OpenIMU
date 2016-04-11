@@ -28,7 +28,9 @@ Caneva::~Caneva()
 
 void Caneva::test()
 {
-    vector<int> steps;
+    std::vector<int> steps;
+    std::vector<int> in;
+
     std::vector<std::string> arr_str =  {"a","b","c","d","e","f","g","h"};
     std::vector<int> arr_int =  {10,20,11,-2,0,-20,-10,-20};
     std::vector<double> arr_double=  {-0.3,-0.6,-0.33,0.06,0,0.6,0.3,0.6};
@@ -36,8 +38,6 @@ void Caneva::test()
     getBlock("chart_line")->GetInput<int>("input1")->Put(arr_int);
     getBlock("chart_line")->GetInput<double>("input2")->Put(arr_double);
 
-    vector<int> steps;
-    vector<int> in;
     in.push_back(0);
     getBlock("podoBlock")->GetInput("podoTrigger")->Put(in);
     steps= (getBlock("podoBlock")->GetOutput("podoOutput")->getValueBuf());
@@ -47,10 +47,10 @@ void Caneva::test()
 }
 
 void Caneva::setGraphData(std::string folderPath){
-    vector<int> time ;
-    vector<int> xaxis;
-    vector<int> yaxis;
-    vector<int> zaxis;
+    std::vector<int> time ;
+    std::vector<int> xaxis;
+    std::vector<int> yaxis;
+    std::vector<int> zaxis;
 
     for(int i = 0; i< 30;i++){
             time.push_back(i);
@@ -69,8 +69,6 @@ void Caneva::setGraphData(std::string folderPath){
 void Caneva::setSliderLimitValues(int min, int max){
     getBlock("slider")->GetInput<int>("inputSliderMinimumValue")->Put(std::vector<int>({min}));
     getBlock("slider")->GetInput<int>("inputSliderMaximumValue")->Put(std::vector<int>({max}));
-    getBlock("slider")->GetInput("inputSliderMinimumValue")->Put(minv);
-    getBlock("slider")->GetInput("inputSliderMaximumValue")->Put(maxv);
 }
 
 void Caneva::loadFile(std::string filename)

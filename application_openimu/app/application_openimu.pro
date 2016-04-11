@@ -50,7 +50,6 @@ SOURCES += main.cpp\
     models/components/abstractoutputnode.cpp \
     models/components/blockType/dbwriteblock.cpp \
     newAcquisition/wimuacquisition.cpp \
-
     mytreewidget.cpp
 
 
