@@ -2,7 +2,7 @@
 #define CUSTOMQMLSCENE_H
 
 #include <QWidget>
-#include "models/components/quickiteminputnodes.h"
+#include "models/components/quickiteminputnodeshandles.h"
 #include "models/components/quickitemoutputnodes.h"
 
 class CustomQmlScene: public QWidget
@@ -10,18 +10,18 @@ class CustomQmlScene: public QWidget
 public:
     CustomQmlScene(std::string filename, QWidget *parent);
 
-    AbstractInputNode* getInputNode(QString blockId, QString inputId);
+    QQuickItem* getInputNode(QString blockId, QString inputId);
     template <class T>
-    InputNode<T>* getInputNode(QString blockId, QString inputId)
+    T* getInputNode(QString blockId, QString inputId)
     {
-        return (InputNode<T>*)getInputNode(blockId,inputId);
+        return (T*)getInputNode(blockId,inputId);
     }
 
-    AbstractOutputNode* getOutputNode(QString blockId, QString inputId);
+    QQuickItem* getOutputNode(QString blockId, QString inputId);
     template <class T>
-    OutputNode<T>* getOutputNode(QString blockId, QString inputId)
+    T* getOutputNode(QString blockId, QString inputId)
     {
-        return (OutputNode<T>*)getOutputNode(blockId,inputId);
+        return (T*)getOutputNode(blockId,inputId);
     }
 
 private:

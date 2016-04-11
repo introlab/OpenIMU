@@ -15,21 +15,15 @@ class Block : public Observer
 public:
     Block();
 
-
     ~Block();
-    void Notify(std::string* inputID);
+    void Notify(std::string inputID);
     void AddInput(AbstractInputNode* input);
     void AddOutput(AbstractOutputNode* output);
 
     AbstractInputNode* GetInput(std::string inputID){
         for ( std::vector<AbstractInputNode*>::iterator it = inputs.begin() ; it != inputs.end(); ++it)
         {
-            std::string a = inputID;
-            AbstractInputNode* temp = *it;
-            void* b_ptr = (void*)temp->GetStringID();
-            std::string b = *(temp->GetStringID());
-            std::cout<<"a: "<<a<<std::endl<<"b: "<<b<<std::endl;
-            if(a==b) return *it;
+            if(inputID == (*it)->GetStringID()) return *it;
         }
         return 0; //nullptr
     }

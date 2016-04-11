@@ -1,7 +1,9 @@
 import QtQuick 2.5
 import QtQuick.Window 2.2
 import blocks.visual.label 1.0
-import quickItemInputNodeInt 1.0
+import InputNodeInt 1.0
+import InputNodeDouble 1.0
+import InputNodeString 1.0
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
@@ -35,14 +37,14 @@ Rectangle{
         id: chart_line;
         property string id: "chart_line";
 
-        QuickItemInputNodeInt{
+        InputNodeString{
+            id: labels;
+        }
+        InputNodeInt{
             id: input1;
         }
-        QuickItemInputNodeInt{
+        InputNodeDouble{
             id: input2;
-        }
-        QuickItemInputNodeInt{
-            id: input3;
         }
 
         //ui properties
@@ -59,11 +61,10 @@ Rectangle{
         ];*/
 
         chartData: {
-            'labels':input2.value,
+            'labels':labels.value,
             'datasets':[
                 {'fillColor': "rgba(0,128,128,0)",'pointColor': "rgba(255,0,0,1)",'strokeColor': "rgba(255,0,0,1)",'data': input1.value},
-                {'fillColor': "rgba(0,128,128,0)",'pointColor': "rgba(0,255,0,1)",'strokeColor': "rgba(0,255,0,1)",'data': input2.value},
-                {'fillColor': "rgba(0,128,128,0)",'pointColor': "rgba(0,0,255,1)",'strokeColor': "rgba(0,0,255,1)",'data': input3.value}
+                {'fillColor': "rgba(0,128,128,0)",'pointColor': "rgba(0,255,0,1)",'strokeColor': "rgba(0,255,0,1)",'data': input2.value}
             ]
         };
 
@@ -88,10 +89,10 @@ Rectangle{
     Slider {
         id: slider
         property string id: "slider";
-        QuickItemInputNodeInt{
+        InputNodeInt{
             id: inputSliderMinimumValue;
         }
-        QuickItemInputNodeInt{
+        InputNodeInt{
             id: inputSliderMaximumValue;
         }
         width: parent.width -225

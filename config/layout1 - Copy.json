@@ -1,0 +1,14 @@
+{
+"ListVBlock":[
+{
+ "type": "Chart", "ID": "chart_line",
+ "inputs":[{"ID":"input1"},{"ID":"input2"},{"ID":"input3"}],
+ "outputs":[]
+},
+{
+ "type": "Slider", "ID": "slider",
+ "inputs":[{"ID":"inputSliderMinimumValue"},{"ID":"inputSliderMaximumValue"}],
+ "outputs":[]
+}
+]
+}

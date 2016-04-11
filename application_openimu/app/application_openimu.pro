@@ -28,7 +28,6 @@ SOURCES += main.cpp\
     acquisition/AccelerometerReader.cpp \
     applicationmenubar.cpp \
     mainwindow.cpp \
-    models/components/observer.cpp \
     models/json/jsoncpp.cpp \
     models/components/block.cpp \
     models/caneva.cpp \
@@ -84,8 +83,9 @@ HEADERS += widget.h \
     models/components/abstractoutputnode.h \
     models/components/outputnode.h \
     models/components/workerthreads.h \
-    models/components/quickiteminputnodes.h \
-    models/components/quickitemoutputnodes.h
+    models/components/quickitemoutputnodes.h \
+    models/components/quickiteminputnodeshandles.h \
+    models/components/quickiteminputnodes.h
 
 FORMS += widget.ui
 

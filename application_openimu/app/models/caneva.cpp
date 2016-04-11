@@ -2,9 +2,12 @@
 
 #include <fstream>
 #include <iostream>
+#include "components/block.h"
 #include "components/blockType/blockFactory.h"
 #include "components/inputnode.h"
 #include "components/outputnode.h"
+#include "components/quickiteminputnodes.h"
+//#include "components/quickitemoutputnodes.h"
 
 Caneva::Caneva(std::string filename, CustomQmlScene *scene)
 {
@@ -25,12 +28,12 @@ Caneva::~Caneva()
 void Caneva::test()
 {
     //testing
-    std::vector<int> asd =  {10,20,11,-2,0,-20,-10,-20};
-    std::vector<double> asdf=  {0.1,0.2,0.11,-0.02,0,-0.2,-0.1,-0.2};
-    AbstractInputNode* temp= getBlock("chart_line")->GetInput<int>("input1");
-    temp->Put(asd);
-    getBlock("chart_line")->GetInput<int>("input2")->Put(asd);
-    getBlock("chart_line")->GetInput<int>("input3")->Put(asd);
+    std::vector<std::string> arr_str =  {"a","b","c","d","e","f","g","h"};
+    std::vector<int> arr_int =  {10,20,11,-2,0,-20,-10,-20};
+    std::vector<double> arr_double=  {-0.3,-0.6,-0.33,0.06,0,0.6,0.3,0.6};
+    getBlock("chart_line")->GetInput<std::string>("labels")->Put(arr_str);
+    getBlock("chart_line")->GetInput<int>("input1")->Put(arr_int);
+    getBlock("chart_line")->GetInput<double>("input2")->Put(arr_double);
 
     setSliderLimitValues(0,100);
 }
@@ -91,13 +94,23 @@ void Caneva::createVBlocks(CustomQmlScene *scene)
         // get inputs
         for(Json::ValueIterator in = (*it)["inputs"].begin() ; in != (*it)["inputs"].end() ; in++)
         {
-            block->AddInput(scene->getInputNode((*it)["ID"].asString().c_str(),(*in)["ID"].asString().c_str()));
+            AbstractInputNode* node;
+            if((*in)["TYPE"].asString() == "Int")
+                node = new QuickItemInputNodeInt(scene->getInputNode<QuickItemInputNodeIntHandle>((*it)["ID"].asString().c_str(),(*in)["ID"].asString().c_str()));
+            else if((*in)["TYPE"].asString() == "Double")
+                node = new QuickItemInputNodeDouble(scene->getInputNode<QuickItemInputNodeDoubleHandle>((*it)["ID"].asString().c_str(),(*in)["ID"].asString().c_str()));
+            else if((*in)["TYPE"].asString() == "String")
+                node = new QuickItemInputNodeString(scene->getInputNode<QuickItemInputNodeStringHandle>((*it)["ID"].asString().c_str(),(*in)["ID"].asString().c_str()));
+            else //Default int
+                node = new QuickItemInputNodeInt(scene->getInputNode<QuickItemInputNodeIntHandle>((*it)["ID"].asString().c_str(),(*in)["ID"].asString().c_str()));
+            node->SetStringID((*in)["ID"].asString());
+            block->AddInput(node);
         }
 
         // get outputs
         for(Json::ValueIterator out = (*it)["outputs"].begin() ; out != (*it)["outputs"].end() ; out++)
         {
-            block->AddOutput(scene->getOutputNode((*it)["ID"].asString().c_str(),(*out)["ID"].asString().c_str()));
+            //block->AddOutput(scene->getOutputNode((*it)["ID"].asString().c_str(),(*out)["ID"].asString().c_str()));
         }
 
         blocks.push_back(block);
@@ -110,13 +123,13 @@ void Caneva::createInputs(Block* block, Json::Value inputs)
     {
         if((*it)["TYPE"].asString() == "vfloat"){
             AbstractInputNode* input = new InputNode<double>();
-            input->SetStringID(new std::string((*it)["ID"].asString()));
+            input->SetStringID((*it)["ID"].asString());
             block->AddInput(input);
         }
         else
         {
             AbstractInputNode* input = new InputNode<int>();
-            input->SetStringID(new std::string((*it)["ID"].asString()));
+            input->SetStringID((*it)["ID"].asString());
             block->AddInput(input);
         }
     }

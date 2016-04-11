@@ -10,21 +10,21 @@ class AbstractInputNode
 public:
     AbstractInputNode(){
         observer=0;
-        stringID = new std::string("");
+        stringID = "";
     }
 
     void SetObserver(Observer* newObserver){
-        *(Observer**)((void*)this+0x24) = newObserver;
+        observer = newObserver;
     }
 
     std::vector<int> Get();
     virtual void Put(std::vector<int> value);
 
-    void SetStringID(std::string* value);
-    std::string* GetStringID();
+    void SetStringID(std::string value);
+    std::string GetStringID();
 
 protected:
-    std::string* stringID;
+    std::string stringID;
     std::vector<int> valueBuf;
 
     void Notify();

@@ -4,15 +4,18 @@
 #include <iostream>
 #include <QQmlApplicationEngine>
 #include <qboxlayout.h>
-#include <models/components/quickiteminputnodes.h>
+#include <models/components/quickiteminputnodeshandles.h>
 
 CustomQmlScene::CustomQmlScene(std::string filename, QWidget* parent = 0): QWidget(parent)
 {
-    qmlRegisterType<QuickItemInputNodeInt>("quickItemInputNodeInt", 1, 0, "QuickItemInputNodeInt");
+    qmlRegisterType<QuickItemInputNodeIntHandle>("InputNodeInt", 1, 0, "InputNodeInt");
     qmlRegisterType<QuickItemOutputNodeInt>("quickItemOutputNodeInt", 1, 0, "QuickItemOutputNodeInt");
 
-    qmlRegisterType<QuickItemInputNodeDouble>("quickItemInputNodeDouble", 1, 0, "QuickItemInputNodeDouble");
+    qmlRegisterType<QuickItemInputNodeDoubleHandle>("InputNodeDouble", 1, 0, "InputNodeDouble");
     qmlRegisterType<QuickItemOutputNodeDouble>("quickItemOutputNodeDouble", 1, 0, "QuickItemOutputNodeDouble");
+
+    qmlRegisterType<QuickItemInputNodeStringHandle>("InputNodeString", 1, 0, "InputNodeString");
+    //qmlRegisterType<QuickItemOutputNodeString>("quickItemOutputNodeDouble", 1, 0, "QuickItemOutputNodeDouble");
 
     filename = "qrc:/" + filename;
     QQuickView* view = new QQuickView();
@@ -34,25 +37,25 @@ CustomQmlScene::CustomQmlScene(std::string filename, QWidget* parent = 0): QWidg
     this->setLayout(mainLayout);
 }
 
-AbstractInputNode *CustomQmlScene::getInputNode(QString blockId, QString inputId)
+QQuickItem *CustomQmlScene::getInputNode(QString blockId, QString inputId)
 {
     foreach (QQuickItem *child, container->childItems()) {
       if(child->property("id").toString()==blockId)
           foreach (QQuickItem *input, child->childItems()){
               if(input->property("id").toString()==inputId)
-                  return (AbstractInputNode*)input;
+                  return (QQuickItem*)input;
           }
     }
     return 0;
 }
 
-AbstractOutputNode *CustomQmlScene::getOutputNode(QString blockId, QString inputId)
+QQuickItem *CustomQmlScene::getOutputNode(QString blockId, QString inputId)
 {
     foreach (QQuickItem *child, container->childItems()) {
       if(child->property("id").toString()==blockId)
           foreach (QQuickItem *input, child->childItems()){
               if(input->property("id").toString()==inputId)
-                  return (AbstractOutputNode*)input;
+                  return (QQuickItem*)input;
           }
     }
     return 0;
