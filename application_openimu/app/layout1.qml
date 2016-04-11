@@ -1,7 +1,9 @@
 import QtQuick 2.5
 import QtQuick.Window 2.2
 import blocks.visual.label 1.0
-import quickItemInputNode 1.0
+import InputNodeInt 1.0
+import InputNodeDouble 1.0
+import InputNodeString 1.0
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
@@ -13,7 +15,7 @@ Rectangle{
     anchors.centerIn: parent;
 
     Label{
-        QuickItemInputNode{
+        InputNodeInt{
             id: inputStepNumber;
         }
         id: label_steps
@@ -24,7 +26,7 @@ Rectangle{
     Label {
        y:0
        x: parent.width/2-150
-       text: "DonnÃ©es acquises par l'accÃ©lÃ©romÃ¨tre"
+       text: "Données acquises par l'accéléromètre"
        font.pixelSize: 22
        color: "steelblue"
      }
@@ -42,18 +44,16 @@ Rectangle{
         //identity and internal maping
         id: chart_line;
         property string id: "chart_line";
-        QuickItemInputNode{
-            id: inputTimeAxis;
+        InputNodeString{
+            id: labels;
         }
-        QuickItemInputNode{
-            id: inputXAxis;
+        InputNodeInt{
+            id: input1;
         }
-        QuickItemInputNode{
-            id: inputYAxis;
+        InputNodeDouble{
+            id: input2;
         }
-        QuickItemInputNode{
-            id: inputZAxis;
-        }
+
 
         //ui properties
         width:parent.width;
@@ -61,11 +61,10 @@ Rectangle{
 
         chartType: Charts.ChartType.LINE;
         chartData: {
-            'labels':inputTimeAxis.value,
+            'labels':labels.value,
             'datasets':[
-                {'fillColor': "rgba(0,128,128,0)",'pointColor': "rgba(255,0,0,1)",'strokeColor': "rgba(255,0,0,1)",'data': inputXAxis.value},
-                {'fillColor': "rgba(0,128,128,0)",'pointColor': "rgba(0,255,0,1)",'strokeColor': "rgba(0,255,0,1)",'data': inputYAxis.value},
-                {'fillColor': "rgba(0,128,128,0)",'pointColor': "rgba(0,0,255,1)",'strokeColor': "rgba(0,0,255,1)",'data': inputZAxis.value}
+                {'fillColor': "rgba(0,128,128,0)",'pointColor': "rgba(255,0,0,1)",'strokeColor': "rgba(255,0,0,1)",'data': input1.value},
+                {'fillColor': "rgba(0,128,128,0)",'pointColor': "rgba(0,255,0,1)",'strokeColor': "rgba(0,255,0,1)",'data': input2.value}
             ]
         };
 
@@ -90,10 +89,10 @@ Rectangle{
     Slider {
         id: slider
         property string id: "slider";
-        QuickItemInputNode{
+        InputNodeInt{
             id: inputSliderMinimumValue;
         }
-        QuickItemInputNode{
+        InputNodeInt{
             id: inputSliderMaximumValue;
         }
         width: parent.width -225
@@ -102,7 +101,7 @@ Rectangle{
         minimumValue: inputSliderMinimumValue.value[0]
         maximumValue: inputSliderMaximumValue.value[0]
         stepSize: 1
-        onValueChanged: test.text = "De " + value.toPrecision(3) +" h Ã  "+ maximumValue + " h"
+        onValueChanged: test.text = "De " + value.toPrecision(3) +" h à  "+ maximumValue + " h"
     }
 
 }

@@ -2,15 +2,27 @@
 #define CUSTOMQMLSCENE_H
 
 #include <QWidget>
-#include "models/components/quickiteminputnode.h"
-#include "models/components/quickitemoutputnode.h"
+#include "models/components/quickiteminputnodeshandles.h"
+#include "models/components/quickitemoutputnodes.h"
 
 class CustomQmlScene: public QWidget
 {
 public:
     CustomQmlScene(std::string filename, QWidget *parent);
-    QuickItemInputNode* getInputNode(QString blockId, QString inputId);
-    QuickItemOutputNode* getOutputNode(QString blockId, QString inputId);
+
+    QQuickItem* getInputNode(QString blockId, QString inputId);
+    template <class T>
+    T* getInputNode(QString blockId, QString inputId)
+    {
+        return (T*)getInputNode(blockId,inputId);
+    }
+
+    QQuickItem* getOutputNode(QString blockId, QString inputId);
+    template <class T>
+    T* getOutputNode(QString blockId, QString inputId)
+    {
+        return (T*)getOutputNode(blockId,inputId);
+    }
 
 private:
     QQuickItem* container;

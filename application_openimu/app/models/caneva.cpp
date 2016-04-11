@@ -2,8 +2,13 @@
 
 #include <fstream>
 #include <iostream>
+#include "components/block.h"
 #include "components/blockType/blockFactory.h"
 #include "acquisition/AccelerometerReader.h"
+#include "components/inputnode.h"
+#include "components/outputnode.h"
+#include "components/quickiteminputnodes.h"
+//#include "components/quickitemoutputnodes.h"
 
 Caneva::Caneva(std::string filename, CustomQmlScene *scene)
 {
@@ -23,22 +28,29 @@ Caneva::~Caneva()
 
 void Caneva::test()
 {
-    vector<int> steps;
-    vector<int> in;
+    std::vector<int> steps;
+    std::vector<int> in;
+
+    std::vector<std::string> arr_str =  {"a","b","c","d","e","f","g","h"};
+    std::vector<int> arr_int =  {10,20,11,-2,0,-20,-10,-20};
+    std::vector<double> arr_double=  {-0.3,-0.6,-0.33,0.06,0,0.6,0.3,0.6};
+    getBlock("chart_line")->GetInput<std::string>("labels")->Put(arr_str);
+    getBlock("chart_line")->GetInput<int>("input1")->Put(arr_int);
+    getBlock("chart_line")->GetInput<double>("input2")->Put(arr_double);
+
     in.push_back(0);
     getBlock("podoBlock")->GetInput("podoTrigger")->Put(in);
     steps= (getBlock("podoBlock")->GetOutput("podoOutput")->getValueBuf());
     getBlock("label_steps")->GetInput("inputStepNumber")->Put(in);
-
-
+    
     setSliderLimitValues(0,100);
 }
 
 void Caneva::setGraphData(std::string folderPath){
-    vector<int> time ;
-    vector<int> xaxis;
-    vector<int> yaxis;
-    vector<int> zaxis;
+    std::vector<int> time ;
+    std::vector<int> xaxis;
+    std::vector<int> yaxis;
+    std::vector<int> zaxis;
 
     for(int i = 0; i< 30;i++){
             time.push_back(i);
@@ -55,10 +67,8 @@ void Caneva::setGraphData(std::string folderPath){
 }
 
 void Caneva::setSliderLimitValues(int min, int max){
-  std::vector<int> minv =  {min};
-  std::vector<int> maxv =  {max};
-  getBlock("slider")->GetInput("inputSliderMinimumValue")->Put(minv);
-  getBlock("slider")->GetInput("inputSliderMaximumValue")->Put(maxv);
+    getBlock("slider")->GetInput<int>("inputSliderMinimumValue")->Put(std::vector<int>({min}));
+    getBlock("slider")->GetInput<int>("inputSliderMaximumValue")->Put(std::vector<int>({max}));
 }
 
 void Caneva::loadFile(std::string filename)
@@ -112,13 +122,23 @@ void Caneva::createVBlocks(CustomQmlScene *scene)
         // get inputs
         for(Json::ValueIterator in = (*it)["inputs"].begin() ; in != (*it)["inputs"].end() ; in++)
         {
-            block->AddInput(scene->getInputNode((*it)["ID"].asString().c_str(),(*in)["ID"].asString().c_str()));
+            AbstractInputNode* node;
+            if((*in)["TYPE"].asString() == "Int")
+                node = new QuickItemInputNodeInt(scene->getInputNode<QuickItemInputNodeIntHandle>((*it)["ID"].asString().c_str(),(*in)["ID"].asString().c_str()));
+            else if((*in)["TYPE"].asString() == "Double")
+                node = new QuickItemInputNodeDouble(scene->getInputNode<QuickItemInputNodeDoubleHandle>((*it)["ID"].asString().c_str(),(*in)["ID"].asString().c_str()));
+            else if((*in)["TYPE"].asString() == "String")
+                node = new QuickItemInputNodeString(scene->getInputNode<QuickItemInputNodeStringHandle>((*it)["ID"].asString().c_str(),(*in)["ID"].asString().c_str()));
+            else //Default int
+                node = new QuickItemInputNodeInt(scene->getInputNode<QuickItemInputNodeIntHandle>((*it)["ID"].asString().c_str(),(*in)["ID"].asString().c_str()));
+            node->SetStringID((*in)["ID"].asString());
+            block->AddInput(node);
         }
 
         // get outputs
         for(Json::ValueIterator out = (*it)["outputs"].begin() ; out != (*it)["outputs"].end() ; out++)
         {
-            block->AddOutput(scene->getOutputNode((*it)["ID"].asString().c_str(),(*out)["ID"].asString().c_str()));
+            //block->AddOutput(scene->getOutputNode((*it)["ID"].asString().c_str(),(*out)["ID"].asString().c_str()));
         }
 
         blocks.push_back(block);
@@ -129,9 +149,17 @@ void Caneva::createInputs(Block* block, Json::Value inputs)
 {
     for(Json::ValueIterator it = inputs.begin() ; it != inputs.end() ; it++)
     {
-        InputNode* input = new InputNode();
-        input->SetStringID((*it)["ID"].asString());
-        block->AddInput(input);
+        if((*it)["TYPE"].asString() == "vfloat"){
+            AbstractInputNode* input = new InputNode<double>();
+            input->SetStringID((*it)["ID"].asString());
+            block->AddInput(input);
+        }
+        else
+        {
+            AbstractInputNode* input = new InputNode<int>();
+            input->SetStringID((*it)["ID"].asString());
+            block->AddInput(input);
+        }
     }
 }
 
@@ -139,9 +167,17 @@ void Caneva::createOutputs(Block *block, Json::Value outputs)
 {
     for(Json::ValueIterator it = outputs.begin() ; it != outputs.end() ; it++)
     {
-        OutputNode* output = new OutputNode();
-        output->SetStringID((*it)["ID"].asString());
-        block->AddOutput(output);
+        if((*it)["TYPE"].asString() == "vfloat"){
+            AbstractOutputNode* output = new OutputNode<double>();
+            output->SetStringID((*it)["ID"].asString());
+            block->AddOutput(output);
+        }
+        else
+        {
+            AbstractOutputNode* output = new OutputNode<int>();
+            output->SetStringID((*it)["ID"].asString());
+            block->AddOutput(output);
+        }
     }
 }
 
@@ -152,11 +188,11 @@ void Caneva::makeConnections()
         //getBlock((*it)["from"].asString())->GetOutput((*it)["out"].asString())->AddDest(getBlock((*it)["to"].asString())->GetInput((*it)["in"].asString()));
         Block* from = getBlock((*it)["from"].asString());
         if(!from) return;
-        OutputNode* out = from->GetOutput((*it)["out"].asString());
+        AbstractOutputNode* out = from->GetOutput((*it)["out"].asString());
         if(!out) return;
         Block* to = getBlock((*it)["to"].asString());
         if(!to) return;
-        InputNode* in = to->GetInput((*it)["in"].asString());
+        AbstractInputNode* in = to->GetInput((*it)["in"].asString());
         if(!in) return;
         out->AddDest(in);
     }

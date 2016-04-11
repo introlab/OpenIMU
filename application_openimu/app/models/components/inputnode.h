@@ -1,33 +1,22 @@
 #ifndef INPUTNODE_H
 #define INPUTNODE_H
-#include "observer.h"
 
-#include <iostream>
-#include <vector>
+#include "abstractinputnode.h"
 
-class InputNode
+template <class T>
+class InputNode: public AbstractInputNode
 {
 public:
-    InputNode(){
-        observer=0;
+    InputNode():AbstractInputNode() {}
+    virtual void Put(std::vector<T> value){
+        valueBuf= value;
+        Notify();
     }
 
-    void SetObserver(Observer* newObserver){observer = newObserver;}
-
-    std::vector<int> Get();
-    virtual void Put(std::vector<int> value);
-
-    void SetStringID(const std::string value);
-    std::string GetStringID();
+    std::vector<int> Get(){return valueBuf;}
 
 protected:
-    std::vector<int> valueBuf;
-    std::string stringID;
-
-private:
-    Observer* observer;
-
-    void Notify();
+    std::vector<T> valueBuf;
 };
 
 #endif // INPUTNODE_H

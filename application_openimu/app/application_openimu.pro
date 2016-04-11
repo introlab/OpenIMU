@@ -28,9 +28,6 @@ SOURCES += main.cpp\
     acquisition/AccelerometerReader.cpp \
     applicationmenubar.cpp \
     mainwindow.cpp \
-    models/components/inputnode.cpp \
-    models/components/observer.cpp \
-    models/components/outputnode.cpp \
     models/json/jsoncpp.cpp \
     models/components/block.cpp \
     models/caneva.cpp \
@@ -45,12 +42,12 @@ SOURCES += main.cpp\
     applicationmenu.cpp \
     views/toolbarview.cpp\
     controllers/toolbarcontroller.cpp \
-    models/components/quickiteminputnode.cpp \
-    models/components/quickitemoutputnode.cpp \
     dateselectorlabel.cpp \
     models/components/blockType/podometerBlock.cpp \
     algorithm/podometer/KalmanFilter.cpp \
     algorithm/podometer/Podometer.cpp \
+    models/components/abstractinputnode.cpp \
+    models/components/abstractoutputnode.cpp \
     models/components/blockType/dbwriteblock.cpp \
     newAcquisition/wimuacquisition.cpp \
     mytreewidget.cpp
@@ -65,9 +62,7 @@ HEADERS += widget.h \
     acquisition/AccelerometerReader.h \
     applicationmenubar.h \
     mainwindow.h \
-    models/components/inputnode.h \
     models/components/observer.h \
-    models/components/outputnode.h \
     models/json/json/json-forwards.h \
     models/json/json/json.h \
     models/components/block.h \
@@ -84,12 +79,18 @@ HEADERS += widget.h \
     applicationmenu.h \
     views/toolbarview.h\
     controllers/toolbarcontroller.h \
-    models/components/quickiteminputnode.h \
-    models/components/quickitemoutputnode.h \
     dateselectorlabel.h \
     models/components/blockType/podometerblock.h \
     algorithm/podometer/KalmanFilter.h \
     algorithm/podometer/Podometer.h \
+    models/components/abstractinputnode.h \
+    models/components/inputnode.h \
+    models/components/abstractoutputnode.h \
+    models/components/outputnode.h \
+    models/components/workerthreads.h \
+    models/components/quickitemoutputnodes.h \
+    models/components/quickiteminputnodeshandles.h \
+    models/components/quickiteminputnodes.h \
     models/components/blockType/dbwriteblock.h \
     newAcquisition/wimuacquisition.h \
     mytreewidget.h

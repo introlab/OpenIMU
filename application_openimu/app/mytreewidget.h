@@ -6,8 +6,8 @@
 
 class myTreeWidget:public QTreeWidget
 {
-  Q_OBJECT
-  public:
+    Q_OBJECT
+public:
     myTreeWidget(QWidget* parent):
     QTreeWidget(parent)
     {
@@ -17,8 +17,6 @@ class myTreeWidget:public QTreeWidget
     }
     ~myTreeWidget(){}
 
-  void addChildren(QTreeWidgetItem* item,QString filePath);
-  public slots:
-
+    void addChildren(QTreeWidgetItem* item,QString filePath);
 };
 #endif

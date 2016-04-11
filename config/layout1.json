@@ -9,56 +9,20 @@
 "ListVBlock":[
 {
  "type": "Chart", "ID": "chart_line",
- "inputs":[{"ID":"inputTimeAxis"},{"ID":"inputXAxis"},{"ID":"inputYAxis"},{"ID":"inputZAxis"}],
+ "inputs":[{"ID":"labels","TYPE":"String"},{"ID":"input1","TYPE":"Int"},{"ID":"input2","TYPE":"Double"}],
  "outputs":[]
 },
 {
  "type": "Slider", "ID": "slider",
- "inputs":[{"ID":"inputSliderMinimumValue"},{"ID":"inputSliderMaximumValue"}],
+ "inputs":[{"ID":"inputSliderMinimumValue","TYPE":"Int"},{"ID":"inputSliderMaximumValue","TYPE":"Int"}],
  "outputs":[]
 },
 {
  "type": "Label", "ID": "label_steps",
- "inputs":[{"ID":"inputStepNumber"}],
+ "inputs":[{"ID":"inputStepNumber","TYPE":"Int"}],
  "outputs":[]
 }
 ],
 "ListConnection":[
-{
- "from":"adder",
- "out" :"output1",
- "to"  :"subber",
- "in"  :"input1"
-},
-{
- "from":"subber",
- "out" :"output2",
- "to"  :"multiplier",
- "in"  :"input1"
-},
-{
- "from":"subber",
- "out" :"output2",
- "to"  :"multiplier",
- "in"  :"input2"
-},
-{
- "from":"adder",
- "out" :"output1",
- "to"  :"chart_line",
- "in"  :"input1"
-},
-{
- "from":"subber",
- "out" :"output1",
- "to"  :"chart_line",
- "in"  :"input2"
-},
-{
- "from":"multiplier",
- "out" :"output1",
- "to"  :"chart_line",
- "in"  :"input3"
-}
 ]
 }
