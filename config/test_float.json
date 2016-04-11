@@ -1,25 +1,8 @@
 {
-"ListBlock":[
-{
- "type": "add", "ID": "adder",
- "inputs":[{"ID":"input1"},{"ID":"input2"}],
- "outputs":[{"ID":"output1"}]
-},
-{
- "type": "sub", "ID": "subber",
- "inputs":[{"ID":"input1"},{"ID":"input2"}],
- "outputs":[{"ID":"output1"},{"ID":"output2"}]
-},
-{
- "type": "mul", "ID": "multiplier",
- "inputs":[{"ID":"input1"},{"ID":"input2"}],
- "outputs":[{"ID":"output1"},{"ID":"output2"}]
-}
-],
 "ListVBlock":[
 {
  "type": "Chart", "ID": "chart_line",
- "inputs":[{"ID":"input1"},{"ID":"input2","TYPE":"vfloat"},{"ID":"input3"}],
+ "inputs":[{"ID":"input1"},{"ID":"input2"},{"ID":"input3"}],
  "outputs":[]
 },
 {

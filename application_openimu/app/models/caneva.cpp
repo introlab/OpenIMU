@@ -27,9 +27,10 @@ void Caneva::test()
     //testing
     std::vector<int> asd =  {10,20,11,-2,0,-20,-10,-20};
     std::vector<double> asdf=  {0.1,0.2,0.11,-0.02,0,-0.2,-0.1,-0.2};
-    //getBlock("chart_line")->GetInput<int>("input1")->Put(asd);
-    getBlock("chart_line")->GetInput<double>("input2")->Put(asdf);
-    //getBlock("chart_line")->GetInput<int>("input3")->Put(asd);
+    AbstractInputNode* temp= getBlock("chart_line")->GetInput<int>("input1");
+    temp->Put(asd);
+    getBlock("chart_line")->GetInput<int>("input2")->Put(asd);
+    getBlock("chart_line")->GetInput<int>("input3")->Put(asd);
 
     setSliderLimitValues(0,100);
 }
@@ -109,13 +110,13 @@ void Caneva::createInputs(Block* block, Json::Value inputs)
     {
         if((*it)["TYPE"].asString() == "vfloat"){
             AbstractInputNode* input = new InputNode<double>();
-            input->SetStringID((*it)["ID"].asString());
+            input->SetStringID(new std::string((*it)["ID"].asString()));
             block->AddInput(input);
         }
         else
         {
             AbstractInputNode* input = new InputNode<int>();
-            input->SetStringID((*it)["ID"].asString());
+            input->SetStringID(new std::string((*it)["ID"].asString()));
             block->AddInput(input);
         }
     }

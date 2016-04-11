@@ -14,14 +14,15 @@ class QuickItemInputNodeInt: public QQuickItem, public InputNode<int>
 public:
     QuickItemInputNodeInt(): InputNode<int>() {id = "";}
 
-    void Put(std::vector<int> value){
+    void Put(std::vector<int> value)Q_DECL_OVERRIDE{
+        std::cout<<"WTF1";
         this->value = QList<int>::fromVector(QVector<int>::fromStdVector(value));
         emit valueChanged(this->value);
     }
 
 
     QString getId(){return id;}
-    void setId(QString i){id = i; this->SetStringID(i.toUtf8().constData());}
+    void setId(QString i){id = i; this->SetStringID(new std::string(i.toUtf8().constData()));}
 
     QList<int> getValue() const {return value;}
 
@@ -44,14 +45,18 @@ class QuickItemInputNodeDouble: public QQuickItem, public InputNode<double>
 public:
     QuickItemInputNodeDouble(): InputNode<double>() {id = "";}
 
-    void Put(std::vector<double> value){
+    void Put(std::vector<double> value)Q_DECL_OVERRIDE {
+        std::cout<<"WTF2";
         this->value = QList<double>::fromVector(QVector<double>::fromStdVector(value));
+        //TODO REMOVE only for a test
+        this->InputNode::Put(value);
         emit valueChanged(this->value);
     }
 
 
     QString getId(){return id;}
-    void setId(QString i){id = i; this->SetStringID(i.toUtf8().constData());}
+    void setId(QString i){id = i; this->SetStringID(new std::string(i.toUtf8().constData()));}
+    //void setId(QString i){id = i; this->SetStringID(new std::string("inputTEST"));}
 
     QList<double> getValue() const {return value;}
 

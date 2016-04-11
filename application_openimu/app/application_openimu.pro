@@ -75,8 +75,6 @@ HEADERS += widget.h \
     models/components/blockType/blockType.h \
     applicationmenu.h \
     views/toolbarview.h\
-    models/components/quickiteminputnode.h \
-    models/components/quickitemoutputnode.h \
     dateselectorlabel.h \
     models/components/blockType/podometerblock.h \
     algorithm/podometer/KalmanFilter.h \
@@ -84,7 +82,10 @@ HEADERS += widget.h \
     models/components/abstractinputnode.h \
     models/components/inputnode.h \
     models/components/abstractoutputnode.h \
-    models/components/outputnode.h
+    models/components/outputnode.h \
+    models/components/workerthreads.h \
+    models/components/quickiteminputnodes.h \
+    models/components/quickitemoutputnodes.h
 
 FORMS += widget.ui
 

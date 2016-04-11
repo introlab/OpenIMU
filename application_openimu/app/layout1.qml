@@ -1,7 +1,7 @@
 import QtQuick 2.5
 import QtQuick.Window 2.2
 import blocks.visual.label 1.0
-import quickItemInputNode 1.0
+import quickItemInputNodeInt 1.0
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
@@ -35,13 +35,13 @@ Rectangle{
         id: chart_line;
         property string id: "chart_line";
 
-        QuickItemInputNode{
+        QuickItemInputNodeInt{
             id: input1;
         }
-        QuickItemInputNode{
+        QuickItemInputNodeInt{
             id: input2;
         }
-        QuickItemInputNode{
+        QuickItemInputNodeInt{
             id: input3;
         }
 
@@ -88,10 +88,10 @@ Rectangle{
     Slider {
         id: slider
         property string id: "slider";
-        QuickItemInputNode{
+        QuickItemInputNodeInt{
             id: inputSliderMinimumValue;
         }
-        QuickItemInputNode{
+        QuickItemInputNodeInt{
             id: inputSliderMaximumValue;
         }
         width: parent.width -225

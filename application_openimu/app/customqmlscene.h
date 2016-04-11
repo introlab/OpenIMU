@@ -2,8 +2,8 @@
 #define CUSTOMQMLSCENE_H
 
 #include <QWidget>
-#include "models/components/quickiteminputnode.h"
-#include "models/components/quickitemoutputnode.h"
+#include "models/components/quickiteminputnodes.h"
+#include "models/components/quickitemoutputnodes.h"
 
 class CustomQmlScene: public QWidget
 {

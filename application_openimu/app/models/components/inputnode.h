@@ -8,7 +8,7 @@ class InputNode: public AbstractInputNode
 {
 public:
     InputNode():AbstractInputNode() {}
-    virtual void Put(std::vector<T> value){
+    virtual void Put(std::vector<T> value){std::cout<<"WTF4";
         valueBuf= value;
         Notify();
     }

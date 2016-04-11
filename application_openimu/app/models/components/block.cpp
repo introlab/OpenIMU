@@ -24,8 +24,9 @@ std::string Block::GetStringID()
 }
 
 
-void Block::Notify(std::string inputID)
+void Block::Notify(std::string* inputID)
 {
+    std::cout<<"WTF3";
     inputSemaphore--;
     if(inputSemaphore == 0){
         work();
@@ -41,8 +42,8 @@ void Block::work()
 void Block::AddInput(AbstractInputNode* input)
 {
     if(!input) return;
-    inputs.push_back(input);
     input->SetObserver(this);
+    inputs.push_back(input);
     inputSemaphore++;
 }
 

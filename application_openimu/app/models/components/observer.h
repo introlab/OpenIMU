@@ -7,7 +7,7 @@ class Observer
 {
 public:
     Observer();
-    virtual void Notify(std::string) = 0;
+    virtual void Notify(std::string*) = 0;
 };
 
 #endif // OBSERVER_H
