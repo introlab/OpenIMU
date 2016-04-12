@@ -1,6 +1,5 @@
 import QtQuick 2.5
 import QtQuick.Window 2.2
-import blocks.visual.label 1.0
 import InputNodeInt 1.0
 import InputNodeDouble 1.0
 import InputNodeString 1.0
