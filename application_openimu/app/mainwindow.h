@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "widget.h"
 #include "applicationmenubar.h"
 #include <QVBoxLayout>
 #include "string.h"
@@ -35,7 +34,6 @@ class MainWindow : public QMainWindow
        QHBoxLayout *hLayout;
        QWidget *mainWidget;
        QWidget *filesWidget;
-       Widget *plotWidget ;
        ApplicationMenuBar* menu ;
        CustomQmlScene* scene;
        myTreeWidget  * tree;
