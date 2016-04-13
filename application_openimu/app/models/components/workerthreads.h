@@ -32,4 +32,22 @@ private:
     std::vector<double> value;
 };
 
+//Thread String
+class WorkerThreadString : public QThread
+{
+    Q_OBJECT
+public:
+    WorkerThreadString(OutputNode<std::string>* outputNode, QList<QString> value)
+        {this->outputNode = outputNode;
+         foreach(QString str, value){
+             this->value.push_back(str.toStdString());
+         }
+        }
+    void run() Q_DECL_OVERRIDE
+        {outputNode->Send(value);}
+private:
+    OutputNode<std::string>* outputNode;
+    std::vector<std::string> value;
+};
+
 #endif // WORKERTHREADS_H

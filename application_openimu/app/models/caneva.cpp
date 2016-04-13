@@ -28,21 +28,12 @@ Caneva::~Caneva()
 
 void Caneva::test()
 {
-    std::vector<int> steps;
-    std::vector<int> in;
-
     std::vector<std::string> arr_str =  {"a","b","c","d","e","f","g","h"};
     std::vector<int> arr_int =  {10,20,11,-2,0,-20,-10,-20};
-    std::vector<double> arr_double=  {-0.3,-0.6,-0.33,0.06,0,0.6,0.3,0.6};
-    getBlock("chart_line")->GetInput<std::string>("labels")->Put(arr_str);
-    getBlock("chart_line")->GetInput<int>("input1")->Put(arr_int);
-    getBlock("chart_line")->GetInput<double>("input2")->Put(arr_double);
 
-    in.push_back(0);
-    getBlock("podoBlock")->GetInput("podoTrigger")->Put(in);
-    steps= (getBlock("podoBlock")->GetOutput("podoOutput")->getValueBuf());
-    getBlock("label_steps")->GetInput("inputStepNumber")->Put(in);
-    
+    getBlock("chart_line")->GetInput<std::string>("labels")->Put(arr_str);
+    getBlock("multiplier")->GetInput<int>("input1")->Put(arr_int);
+
     setSliderLimitValues(0,100);
 }
 
@@ -139,6 +130,35 @@ void Caneva::createVBlocks(CustomQmlScene *scene)
         for(Json::ValueIterator out = (*it)["outputs"].begin() ; out != (*it)["outputs"].end() ; out++)
         {
             //block->AddOutput(scene->getOutputNode((*it)["ID"].asString().c_str(),(*out)["ID"].asString().c_str()));
+
+            AbstractOutputNode* node;
+            if((*out)["TYPE"].asString() == "Int")
+            {
+                QuickItemOutputNodeInt* vNode = scene->getInputNode<QuickItemOutputNodeInt>((*it)["ID"].asString().c_str(),(*out)["ID"].asString().c_str());
+                node = new OutputNode<int>();
+                vNode->setOutputNode((OutputNode<int>*)node);
+            }
+            else if((*out)["TYPE"].asString() == "Double")
+            {
+                QuickItemOutputNodeDouble* vNode = scene->getInputNode<QuickItemOutputNodeDouble>((*it)["ID"].asString().c_str(),(*out)["ID"].asString().c_str());
+                node = new OutputNode<double>();
+                vNode->setOutputNode((OutputNode<double>*)node);
+            }
+            else if((*out)["TYPE"].asString() == "String")
+            {
+                QuickItemOutputNodeString* vNode = scene->getInputNode<QuickItemOutputNodeString>((*it)["ID"].asString().c_str(),(*out)["ID"].asString().c_str());
+                node = new OutputNode<std::string>();
+                vNode->setOutputNode((OutputNode<std::string>*)node);
+            }
+            else //Default int
+            {
+                QuickItemOutputNodeInt* vNode = scene->getInputNode<QuickItemOutputNodeInt>((*it)["ID"].asString().c_str(),(*out)["ID"].asString().c_str());
+                node = new OutputNode<int>();
+                vNode->setOutputNode((OutputNode<int>*)node);
+            }
+
+            node->SetStringID((*out)["ID"].asString());
+            block->AddOutput(node);
         }
 
         blocks.push_back(block);

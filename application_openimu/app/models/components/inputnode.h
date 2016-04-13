@@ -13,7 +13,7 @@ public:
         Notify();
     }
 
-    std::vector<int> Get(){return valueBuf;}
+    std::vector<T> Get(){return valueBuf;}
 
 protected:
     std::vector<T> valueBuf;
