@@ -12,10 +12,10 @@ QT_CHARTS_USE_NAMESPACE
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     fileSelectedName = "";
+
     this->setWindowTitle(QString::fromUtf8("Open-IMU"));
     this->setStyleSheet("background: white");
     this->setMinimumSize(700,600);
-    //this->setStyleSheet("background-color:rgba(216, 222, 219, 0.8);");
     menu = new ApplicationMenuBar(this);
     this->setMenuBar(menu);
 
@@ -35,12 +35,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     tree->setHeaderItem(headerItem);
     tree->setMaximumWidth(150);
 
- //default scene
- // scene = new CustomQmlScene("test_slider_chart.qml", this);
- //  caneva = new Caneva("../../config/test_slider_chart.json", scene);
+    //default scene
+    // scene = new CustomQmlScene("test_slider_chart.qml", this);
+    //  caneva = new Caneva("../../config/test_slider_chart.json", scene);
     tabWidget = new QTabWidget;
+    tabWidget->setTabsClosable(true);
+    connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
     dataView = new QWidget();
     tabWidget->addTab(dataView,"Données accéléromètre");
+    tabWidget->tabBar()->tabButton(0, QTabBar::RightSide)->hide();
     splitter->addWidget(tabWidget);
     splitter->setSizes(QList<int>() << 150 << 600);
     setCentralWidget(splitter);
@@ -89,10 +92,7 @@ void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int column)
         if(fileSelectedName != "" && fileSelectedName.contains("ACC")){
             std::string reconstructedPath= folderName.toStdString()+"/"+fileSelectedName.toStdString();
             AccDataDisplay *dataDisplay = new AccDataDisplay(reconstructedPath);
-            tabWidget->removeTab(0);
-              if (dataDisplay->getChartView())
-                  tabWidget->insertTab(0, dataDisplay->getChartView(), "Données accéléromètre");
-
+            replaceTab(dataDisplay->getCentralView(),"Données accéléromètre");
         }
         else{
             QMessageBox msgBox;
@@ -106,12 +106,49 @@ void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int column)
 void MainWindow:: computeSteps(){
     CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
     Caneva* canevaSteps = new Caneva("../../config/displayStepNumber.json", sceneSteps);
-    tabWidget->addTab(sceneSteps,"Compteur de pas");
+    replaceTab(sceneSteps,"Compteur de pas");
 }
 void MainWindow::computeActivityTime(){
     CustomQmlScene* sceneTime = new CustomQmlScene("displayActivityTime.qml", this);
     Caneva* canevaTime = new Caneva("../../config/displayActivityTime.json", sceneTime);
-    tabWidget->addTab(sceneTime,"Temps d'activité");
+    replaceTab(sceneTime,"Temps d'activité");
+
+}
+void MainWindow::replaceTab(QWidget * replacement, std::string label)
+{
+    int index = 0;
+    bool found  = false;
+    QString currentTabText;
+
+    for(int i=0; i<tabWidget->count();i++){
+        currentTabText = tabWidget->tabText(i);
+        if(currentTabText == QString::fromStdString(label)){
+            index = i;
+            found = true;
+        }
+    }
+    if(found){
+        tabWidget->removeTab(index);
+        if (replacement)
+            tabWidget->insertTab(index, replacement, QString::fromStdString(label));
+    }
+    else
+    {
+        tabWidget->addTab(replacement,QString::fromStdString(label));
+    }
+}
+void MainWindow::closeTab(int index){
+
+    if (index == -1) {
+        return;
+    }
+    QWidget* tabItem = tabWidget->widget(index);
+    // Removes the tab at position index from this stack of widgets.
+    // The page widget itself is not deleted.
+    tabWidget->removeTab(index);
+
+    delete(tabItem);
+    tabItem = nullptr;
 }
 void MainWindow::closeWindow(){
     this->close();

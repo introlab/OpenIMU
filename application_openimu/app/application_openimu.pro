@@ -49,7 +49,6 @@ SOURCES += main.cpp\
     customqmlscene.cpp \
     acquisition/GyroscopeReader.cpp \
     acquisition/MagnetometerReader.cpp \
-    controllers/toolbarcontroller.cpp \
     dateselectorlabel.cpp \
     models/components/blockType/podometerBlock.cpp \
     algorithm/podometer/KalmanFilter.cpp \
@@ -85,7 +84,6 @@ HEADERS += widget.h \
     acquisition/GyroscopeReader.h \
     acquisition/MagnetometerReader.h \
     models/components/blockType/blockType.h \
-    controllers/toolbarcontroller.h \
     dateselectorlabel.h \
     models/components/blockType/podometerblock.h \
     algorithm/podometer/KalmanFilter.h \
