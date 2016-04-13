@@ -3,5 +3,6 @@
         <file>displayDataAccelerometer.qml</file>
         <file>displayStepNumber.qml</file>
         <file>displayActivityTime.qml</file>
+	<file>test_slider_chart.qml</file>
     </qresource>
 </RCC>

@@ -18,10 +18,10 @@ public:
 	
 protected:
     std::vector<int> valueBuf;
-    void NotifyAll();
+    virtual void NotifyAll() = 0;
+    std::vector<AbstractInputNode*> inputs;
 
 private:
-    std::vector<AbstractInputNode*> inputs;
     std::string stringID;
 };
 

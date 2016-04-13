@@ -35,6 +35,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     tree->setHeaderItem(headerItem);
     tree->setMaximumWidth(150);
 
+ //default scene
+ // scene = new CustomQmlScene("test_slider_chart.qml", this);
+ //  caneva = new Caneva("../../config/test_slider_chart.json", scene);
     tabWidget = new QTabWidget;
     dataView = new QWidget();
     tabWidget->addTab(dataView,"Données accéléromètre");
