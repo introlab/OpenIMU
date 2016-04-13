@@ -33,8 +33,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     tree->setMaximumWidth(150);
 
     //default scene
-    scene = new CustomQmlScene("layout1.qml", this);
-    caneva = new Caneva("../../config/layout1.json", scene);
+    scene = new CustomQmlScene("test_slider_chart.qml", this);
+    caneva = new Caneva("../../config/test_slider_chart.json", scene);
     splitter->addWidget(scene);
     caneva->test();
 }
