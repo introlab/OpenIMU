@@ -66,7 +66,7 @@ SET(headers
        applicationmenu.h
        views/toolbarview.h
 #      Not implemented ???
-#controllers/toolbarcontroller.h
+#       controllers/toolbarcontroller.h
        dateselectorlabel.h
        models/components/blockType/podometerblock.h
        algorithm/podometer/KalmanFilter.h
@@ -96,6 +96,16 @@ SET(qrc
 SET(qml
 
 )
+
+#TODO Fix the QML_IMPORT_PATH
+set (QML_IMPORT_PATH
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
+)
+set (QML2_IMPORT_PATH ${QML_IMPORT_PATH})
+add_definitions(-DQML_IMPORT_PATH=${QML_IMPORT_PATH})
+add_definitions(-DQML2_IMPORT_PATH=${QML2_IMPORT_PATH})
+
+
 
 #Binary dir Required for ui_ files includes
 include_directories(
