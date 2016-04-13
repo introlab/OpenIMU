@@ -16,7 +16,7 @@ public:
     Block();
 
     ~Block();
-    void Notify(std::string inputID);
+    virtual void Notify(std::string inputID);
     void AddInput(AbstractInputNode* input);
     void AddOutput(AbstractOutputNode* output);
 

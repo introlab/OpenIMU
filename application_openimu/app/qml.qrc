@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>test_slider_chart.qml</file>
         <file>layout1.qml</file>
     </qresource>
 </RCC>
