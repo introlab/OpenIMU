@@ -36,7 +36,6 @@ SOURCES += main.cpp\
     acquisition/MagnetometerReader.cpp \
     applicationmenu.cpp \
     views/toolbarview.cpp\
-    controllers/toolbarcontroller.cpp \
     dateselectorlabel.cpp \
     models/components/blockType/podometerBlock.cpp \
     algorithm/podometer/KalmanFilter.cpp \
