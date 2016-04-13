@@ -1,16 +1,17 @@
 #include "mainwindow.h"
 #include "iostream"
 #include <QFileDialog>
-#include <QPalette>
-#include <qlabel.h>
-#include "dateselectorlabel.h"
-#include "acquisition/SensorReader.h"
 #include "QSplitter"
 #include "mytreewidget.h"
-using namespace std;
+#include "accdatadisplay.h"
+#include "QMessageBox"
+
+//using namespace std;
+QT_CHARTS_USE_NAMESPACE
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
+    fileSelectedName = "";
     this->setWindowTitle(QString::fromUtf8("Open-IMU"));
     this->setStyleSheet("background: white");
     this->setMinimumSize(700,600);
@@ -35,68 +36,72 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     tree->setMaximumWidth(150);
 
     tabWidget = new QTabWidget;
-    scene = new CustomQmlScene("displayDataAccelerometer.qml", this);
-    tabWidget->addTab(scene,"Données accéléromètre");
+    dataView = new QWidget();
+    tabWidget->addTab(dataView,"Données accéléromètre");
     splitter->addWidget(tabWidget);
-    caneva = new Caneva("../../config/displayDataAccelerometer.json", scene);
-    caneva->setSliderLimitValues(0,10);
     splitter->setSizes(QList<int>() << 150 << 600);
     setCentralWidget(splitter);
-
-   /* scene = new CustomQmlScene("layout1.qml", this);
-    splitter->addWidget(scene);
-    caneva = new Caneva("../../config/layout1.json", scene);*/
 }
 
 MainWindow::~MainWindow(){
     delete splitter;
     delete caneva;
-    delete mainLayout;
-    delete hLayout;
     delete mainWidget;
-    delete filesWidget;
     delete menu ;
     delete scene;
 }
 
 void MainWindow:: openFile(){
-        QString folderName = QFileDialog::getExistingDirectory(this, tr("Ouvrir Fichier"),"/path/to/file/");
-        QDir* rootDir = new QDir(folderName);
-        QFileInfoList filesList = rootDir->entryInfoList();
+    folderName = QFileDialog::getExistingDirectory(this, tr("Ouvrir Fichier"),"/path/to/file/");
+    QDir* rootDir = new QDir(folderName);
+    QFileInfoList filesList = rootDir->entryInfoList();
 
-        foreach(QFileInfo fileInfo, filesList)
+    foreach(QFileInfo fileInfo, filesList)
+    {
+        QTreeWidgetItem* item = new QTreeWidgetItem();
+        item->setText(0,fileInfo.fileName());
+
+        if(fileInfo.isFile())
         {
-          QTreeWidgetItem* item = new QTreeWidgetItem();
-          item->setText(0,fileInfo.fileName());
-
-          if(fileInfo.isFile())
-          {
             item->setText(1,QString::number(fileInfo.size()));
             item->setIcon(0,*(new QIcon(":/icons/file.png")));
             item->setText(2,fileInfo.filePath());
             tree->addTopLevelItem(item);
-          }
+        }
 
-          if(fileInfo.isDir() && !fileInfo.fileName().contains("."))
-          {
+        if(fileInfo.isDir() && !fileInfo.fileName().contains("."))
+        {
             item->setIcon(0,*(new QIcon(":/icons/folder.png")));
             tree->myTreeWidget::addChildren(item,fileInfo.filePath());
             item->setText(2,fileInfo.filePath());
             tree->addTopLevelItem(item);
-          }
-
         }
+
+    }
 }
-
-void MainWindow::onDateSelectedClicked(std::string text){
-
-   }
 void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int column)
 {
-     caneva->setGraphData(item->text(column).toStdString());
+    if(item->parent()!=NULL){
+        fileSelectedName= "/"+item->parent()->text(column)+"/"+item->text(column);
+        if(fileSelectedName != "" && fileSelectedName.contains("ACC")){
+            std::string reconstructedPath= folderName.toStdString()+"/"+fileSelectedName.toStdString();
+            AccDataDisplay *dataDisplay = new AccDataDisplay(reconstructedPath);
+            tabWidget->removeTab(0);
+              if (dataDisplay->getChartView())
+                  tabWidget->insertTab(0, dataDisplay->getChartView(), "Données accéléromètre");
+
+        }
+        else{
+            QMessageBox msgBox;
+            msgBox.setText("Le fichier séléctionné est invalide");
+            msgBox.setInformativeText("Choissisez un fichier de type ACC.DAT");
+            msgBox.setStandardButtons(QMessageBox::Ok);
+            msgBox.exec();
+        }
+    }
 }
 void MainWindow:: computeSteps(){
-   CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
+    CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
     Caneva* canevaSteps = new Caneva("../../config/displayStepNumber.json", sceneSteps);
     tabWidget->addTab(sceneSteps,"Compteur de pas");
 }
