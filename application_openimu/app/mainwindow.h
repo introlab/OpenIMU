@@ -27,6 +27,7 @@ class MainWindow : public QMainWindow
     void computeSteps();
     void closeWindow();
     void onTreeItemClicked(QTreeWidgetItem* item, int /*column*/);
+    void computeActivityTime();
 
     private:
        QSplitter * splitter;
@@ -39,6 +40,7 @@ class MainWindow : public QMainWindow
        ApplicationMenuBar* menu ;
        CustomQmlScene* scene;
        myTreeWidget  * tree;
+       QTabWidget *tabWidget;
     };
 
 #endif // MAINWINDOW_H

@@ -13,12 +13,11 @@
 Caneva::Caneva(std::string filename, CustomQmlScene *scene)
 {
     loadFile(filename);
-
     createBlocks();
     createVBlocks(scene);
-
     makeConnections();
 }
+
 
 Caneva::~Caneva()
 {
@@ -52,7 +51,7 @@ void Caneva::setGraphData(std::string folderPath){
     std::vector<int> yaxis;
     std::vector<int> zaxis;
 
-    for(int i = 0; i< 30;i++){
+    for(int i = 0; i< 10;i++){
             time.push_back(i);
             xaxis.push_back(i+2);
             yaxis.push_back(i+4);

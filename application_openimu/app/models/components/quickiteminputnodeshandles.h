@@ -91,7 +91,7 @@ public:
     QList<QString> value;
 
 signals:
-    valueChanged(QList<QString>);
+    void valueChanged(QList<QString>);
 };
 
 

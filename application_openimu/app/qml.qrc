@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
-        <file>layout1.qml</file>
+        <file>displayDataAccelerometer.qml</file>
+        <file>displayStepNumber.qml</file>
+        <file>displayActivityTime.qml</file>
     </qresource>
 </RCC>

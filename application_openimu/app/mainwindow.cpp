@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     this->setWindowTitle(QString::fromUtf8("Open-IMU"));
     this->setStyleSheet("background: white");
     this->setMinimumSize(700,600);
-
+    //this->setStyleSheet("background-color:rgba(216, 222, 219, 0.8);");
     menu = new ApplicationMenuBar(this);
     this->setMenuBar(menu);
 
@@ -22,21 +22,30 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     setCentralWidget(splitter);
 
     splitter->setHandleWidth(30);
+    splitter->handle(1);
     splitter->setSizes(QList<int>() << 150 << 600);
+    splitter->setFixedWidth(150);
     tree = new myTreeWidget (this);
     splitter->addWidget(tree);
 
     //Set QTreeWidget Column Header
     QTreeWidgetItem* headerItem = new QTreeWidgetItem();
-    headerItem->setText(0,QString("File Name"));
+    headerItem->setText(0,QString("Explorateur de fichier"));
     tree->setHeaderItem(headerItem);
     tree->setMaximumWidth(150);
 
-    //default scene
-    scene = new CustomQmlScene("layout1.qml", this);
-    caneva = new Caneva("../../config/layout1.json", scene);
+    tabWidget = new QTabWidget;
+    scene = new CustomQmlScene("displayDataAccelerometer.qml", this);
+    tabWidget->addTab(scene,"Données accéléromètre");
+    splitter->addWidget(tabWidget);
+    caneva = new Caneva("../../config/displayDataAccelerometer.json", scene);
+    caneva->setSliderLimitValues(0,10);
+    splitter->setSizes(QList<int>() << 150 << 600);
+    setCentralWidget(splitter);
+
+   /* scene = new CustomQmlScene("layout1.qml", this);
     splitter->addWidget(scene);
-    caneva->test();
+    caneva = new Caneva("../../config/layout1.json", scene);*/
 }
 
 MainWindow::~MainWindow(){
@@ -51,20 +60,7 @@ MainWindow::~MainWindow(){
 }
 
 void MainWindow:: openFile(){
-        QString folderName = QFileDialog::getExistingDirectory(this, tr("Open File"),"/path/to/file/");
-        /*qDebug() << "List items = " << folderName;
-        SensorReader *reader = new SensorReader();
-        vector<string> x = reader->listFiles(folderName.toStdString());
-        QVBoxLayout *filesLayout = new QVBoxLayout;
-
-        foreach (string t , x){
-            DateSelectorLabel* fileName = new DateSelectorLabel(t.c_str());
-            filesLayout->addWidget(fileName,0,0);
-            connect(fileName, SIGNAL(clicked(std::string)), this, SLOT(onDateSelectedClicked(std::string)));
-            }
-
-        */
-
+        QString folderName = QFileDialog::getExistingDirectory(this, tr("Ouvrir Fichier"),"/path/to/file/");
         QDir* rootDir = new QDir(folderName);
         QFileInfoList filesList = rootDir->entryInfoList();
 
@@ -90,12 +86,6 @@ void MainWindow:: openFile(){
           }
 
         }
-        scene = new CustomQmlScene("layout1.qml", this);
-        splitter->addWidget(scene);
-        caneva = new Caneva("../../config/layout1.json", scene);
-        caneva->setSliderLimitValues(0,10);
-        splitter->setSizes(QList<int>() << 150 << 600);
-        setCentralWidget(splitter);
 }
 
 void MainWindow::onDateSelectedClicked(std::string text){
@@ -106,7 +96,14 @@ void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int column)
      caneva->setGraphData(item->text(column).toStdString());
 }
 void MainWindow:: computeSteps(){
-    qDebug()<<"Lance calcul";
+   CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
+    Caneva* canevaSteps = new Caneva("../../config/displayStepNumber.json", sceneSteps);
+    tabWidget->addTab(sceneSteps,"Compteur de pas");
+}
+void MainWindow::computeActivityTime(){
+    CustomQmlScene* sceneTime = new CustomQmlScene("displayActivityTime.qml", this);
+    Caneva* canevaTime = new Caneva("../../config/displayActivityTime.json", sceneTime);
+    tabWidget->addTab(sceneTime,"Temps d'activité");
 }
 void MainWindow::closeWindow(){
     this->close();
