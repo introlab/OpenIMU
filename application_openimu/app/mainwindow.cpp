@@ -90,9 +90,8 @@ void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int column)
             std::string reconstructedPath= folderName.toStdString()+"/"+fileSelectedName.toStdString();
             AccDataDisplay *dataDisplay = new AccDataDisplay(reconstructedPath);
             tabWidget->removeTab(0);
-              if (dataDisplay->getChartView())
-                  tabWidget->insertTab(0, dataDisplay->getChartView(), "Données accéléromètre");
-
+              if (dataDisplay->getCentralView())
+             tabWidget->insertTab(0, dataDisplay->getCentralView(), "Données accéléromètre");
         }
         else{
             QMessageBox msgBox;
