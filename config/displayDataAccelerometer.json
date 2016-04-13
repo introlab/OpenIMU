@@ -8,18 +8,12 @@
 ],
 "ListVBlock":[
 {
- "type": "Chart", "ID": "chart_line",
- "inputs":[{"ID":"labels","TYPE":"String"},{"ID":"input1","TYPE":"Int"},{"ID":"input2","TYPE":"Double"}],
+ "type": "Chart", "ID": "chart_line", "inputs":[{"ID":"inputTimeAxis","TYPE":"Int"},{"ID":"inputXAxis","TYPE":"Int"},{"ID":"inputYAxis","TYPE":"Int"},{"ID":"inputZAxis","TYPE":"Int"}],
  "outputs":[]
 },
 {
  "type": "Slider", "ID": "slider",
  "inputs":[{"ID":"inputSliderMinimumValue","TYPE":"Int"},{"ID":"inputSliderMaximumValue","TYPE":"Int"}],
- "outputs":[]
-},
-{
- "type": "Label", "ID": "label_steps",
- "inputs":[{"ID":"inputStepNumber","TYPE":"Int"}],
  "outputs":[]
 }
 ],

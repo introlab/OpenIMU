@@ -1,0 +1,11 @@
+{
+"ListBlock":[
+],
+"ListVBlock":[
+{
+ "type": "Label", "ID": "test", "inputs":[{"ID":"inputLabel","TYPE":"String"}],
+ "outputs":[]
+},],
+"ListConnection":[
+]
+}
