@@ -48,7 +48,7 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
 }
 void AccDataDisplay::sliderValueChanged(int value)
 {
-    chart->setTitle("Slider Value is: "+ QString::number(value) );
+    //chart->setTitle("Slider Value is: "+ QString::number(value) );
     chart->removeAllSeries();
     fillChartSeries(value);
     chartView->setChart(chart);

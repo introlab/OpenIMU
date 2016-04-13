@@ -28,6 +28,8 @@ class MainWindow : public QMainWindow
     void closeWindow();
     void onTreeItemClicked(QTreeWidgetItem* item, int /*column*/);
     void computeActivityTime();
+    void closeTab(int);
+    void replaceTab(QWidget * replacement, std::string label);
 
     private:
        QString folderName;
