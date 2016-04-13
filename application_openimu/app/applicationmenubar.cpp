@@ -1,5 +1,7 @@
 #include "applicationmenubar.h"
-#include "widget.h"
+
+//DL - Where is widget.h
+//#include "widget.h"
 
 ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
 {

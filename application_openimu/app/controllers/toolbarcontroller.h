@@ -9,6 +9,7 @@
 
 class ToolbarController: public QWidget
 {
+    Q_OBJECT
 
 public:
     ToolbarController();
