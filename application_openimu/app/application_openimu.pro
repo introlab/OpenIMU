@@ -58,7 +58,8 @@ SOURCES += main.cpp\
     models/components/blockType/dbwriteblock.cpp \
     newAcquisition/wimuacquisition.cpp \
     mytreewidget.cpp \
-    accdatadisplay.cpp
+    accdatadisplay.cpp \
+    models/components/blockType/activitytrackerblock.cpp
 
 
 
@@ -99,7 +100,8 @@ HEADERS += widget.h \
     models/components/blockType/dbwriteblock.h \
     newAcquisition/wimuacquisition.h \
     mytreewidget.h \
-    accdatadisplay.h
+    accdatadisplay.h \
+    models/components/blockType/activitytrackerblock.h
 
 FORMS += widget.ui
 
