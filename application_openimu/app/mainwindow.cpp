@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     //default scene
     scene = new CustomQmlScene("layout1.qml", this);
-    caneva = new Caneva("../../config/layout1.json", scene);
+    caneva = new Caneva("config/layout1.json", scene);
     splitter->addWidget(scene);
     caneva->test();
 }
@@ -92,7 +92,7 @@ void MainWindow:: openFile(){
         }
         scene = new CustomQmlScene("layout1.qml", this);
         splitter->addWidget(scene);
-        caneva = new Caneva("../../config/layout1.json", scene);
+        caneva = new Caneva("config/layout1.json", scene);
         caneva->setSliderLimitValues(0,10);
         splitter->setSizes(QList<int>() << 150 << 600);
         setCentralWidget(splitter);
