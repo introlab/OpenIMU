@@ -10,13 +10,13 @@
 CustomQmlScene::CustomQmlScene(std::string filename, QWidget* parent = 0): QWidget(parent)
 {
     qmlRegisterType<QuickItemInputNodeIntHandle>("InputNodeInt", 1, 0, "InputNodeInt");
-    qmlRegisterType<QuickItemOutputNodeInt>("quickItemOutputNodeInt", 1, 0, "QuickItemOutputNodeInt");
+    qmlRegisterType<QuickItemOutputNodeInt>("OutputNodeInt", 1, 0, "OutputNodeInt");
 
     qmlRegisterType<QuickItemInputNodeDoubleHandle>("InputNodeDouble", 1, 0, "InputNodeDouble");
-    qmlRegisterType<QuickItemOutputNodeDouble>("quickItemOutputNodeDouble", 1, 0, "QuickItemOutputNodeDouble");
+    qmlRegisterType<QuickItemOutputNodeDouble>("OutputNodeDouble", 1, 0, "OutputNodeDouble");
 
     qmlRegisterType<QuickItemInputNodeStringHandle>("InputNodeString", 1, 0, "InputNodeString");
-    //qmlRegisterType<QuickItemOutputNodeString>("quickItemOutputNodeDouble", 1, 0, "QuickItemOutputNodeDouble");
+    qmlRegisterType<QuickItemOutputNodeString>("OutputNodeString", 1, 0, "OutputNodeString");
 
     filename = "qrc:/" + filename;
     QQuickView* view = new QQuickView();

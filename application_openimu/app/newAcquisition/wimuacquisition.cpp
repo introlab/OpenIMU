@@ -41,26 +41,27 @@ WimuAcquisition::WimuAcquisition(std::string filename,int freq)
     // This also checks if the file exists and/or can be opened for reading correctly
     if ((file = fopen(filePath, "rb")) == NULL)
         std::cout << "Could not open specified file" << std::endl;
-    else
+    else{
         std::cout << "File opened successfully" << std::endl;
 
-    // Get the size of the file in bytes
-    long fileSize = getFileSize(file);
+        // Get the size of the file in bytes
+        long fileSize = getFileSize(file);
 
-    // Allocate space in the buffer for the whole file
-    fileBuf = new BYTE[fileSize];
+        // Allocate space in the buffer for the whole file
+        fileBuf = new BYTE[fileSize];
 
-    // Read the file in to the buffer
-    fread(fileBuf, fileSize, 1, file);
-    int numberOfSecondsInFile = fileSize/304;
-    for(int i=0; i< numberOfSecondsInFile ; i++)
-    {
-        std::vector<frame> b=readSensorDataSecond(fileBuf,i*304,freq);
-        data.insert(data.end(), b.begin(), b.end());
+        // Read the file in to the buffer
+        fread(fileBuf, fileSize, 1, file);
+        int numberOfSecondsInFile = fileSize/304;
+        for(int i=0; i< numberOfSecondsInFile ; i++)
+        {
+            std::vector<frame> b=readSensorDataSecond(fileBuf,i*304,freq);
+            data.insert(data.end(), b.begin(), b.end());
+        }
     }
 }
 
- std::vector<frame> WimuAcquisition::readSensorDataSecond(BYTE* fileBuf, int start,int freq)
+std::vector<frame> WimuAcquisition::readSensorDataSecond(BYTE* fileBuf, int start,int freq)
 {
     std::vector<frame> tmp;
     int time=0;

@@ -9,6 +9,7 @@
 #include "models/caneva.h"
 #include <QSplitter>
 #include "mytreewidget.h"
+#include <QWidget>
 
 class MainWindow : public QMainWindow
     {
@@ -22,21 +23,24 @@ class MainWindow : public QMainWindow
 
     public slots:
     void openFile();
-    void onDateSelectedClicked(std::string t);
     void computeSteps();
     void closeWindow();
     void onTreeItemClicked(QTreeWidgetItem* item, int /*column*/);
+    void computeActivityTime();
+    void closeTab(int);
+    void replaceTab(QWidget * replacement, std::string label);
 
     private:
+       QString folderName;
        QSplitter * splitter;
        Caneva *caneva;
-       QVBoxLayout *mainLayout;
-       QHBoxLayout *hLayout;
        QWidget *mainWidget;
-       QWidget *filesWidget;
        ApplicationMenuBar* menu ;
        CustomQmlScene* scene;
        myTreeWidget  * tree;
+       QTabWidget *tabWidget;
+       QString fileSelectedName;
+       QWidget *dataView;
     };
 
 #endif // MAINWINDOW_H

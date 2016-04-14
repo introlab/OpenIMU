@@ -6,12 +6,22 @@
 
 QT       += qml quick core gui
 
+
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = application_openimu
 TEMPLATE = app
 
 INCLUDEPATH += $$PWD/models/json
+INCLUDEPATH += $$PWD/../../../build-qtcharts-Kit_Qt-Debug/include
+
+
+#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../build-qtcharts-Kit_Qt-Debug/lib/ -lQt5Charts
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../build-qtcharts-Kit_Qt-Debug/lib/ -lQt5Chartsd
+#else:unix: LIBS += -L$$PWD/../../../build-qtcharts-Kit_Qt-Debug/lib/ -lQt5Charts
+
+QT += charts
 
 CONFIG += c++11
 
@@ -34,8 +44,6 @@ SOURCES += main.cpp\
     customqmlscene.cpp \
     acquisition/GyroscopeReader.cpp \
     acquisition/MagnetometerReader.cpp \
-    applicationmenu.cpp \
-    views/toolbarview.cpp\
     dateselectorlabel.cpp \
     models/components/blockType/podometerBlock.cpp \
     algorithm/podometer/KalmanFilter.cpp \
@@ -44,7 +52,8 @@ SOURCES += main.cpp\
     models/components/abstractoutputnode.cpp \
     models/components/blockType/dbwriteblock.cpp \
     newAcquisition/wimuacquisition.cpp \
-    mytreewidget.cpp
+    mytreewidget.cpp \
+    accdatadisplay.cpp
 
 
 
@@ -70,9 +79,6 @@ HEADERS += \
     acquisition/GyroscopeReader.h \
     acquisition/MagnetometerReader.h \
     models/components/blockType/blockType.h \
-    applicationmenu.h \
-    views/toolbarview.h\
-    controllers/toolbarcontroller.h \
     dateselectorlabel.h \
     models/components/blockType/podometerblock.h \
     algorithm/podometer/KalmanFilter.h \
@@ -87,7 +93,8 @@ HEADERS += \
     models/components/quickiteminputnodes.h \
     models/components/blockType/dbwriteblock.h \
     newAcquisition/wimuacquisition.h \
-    mytreewidget.h
+    mytreewidget.h \
+    accdatadisplay.h
 
 FORMS += widget.ui
 

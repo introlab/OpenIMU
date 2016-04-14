@@ -2,6 +2,7 @@
 #define OUTPUTNODE_H
 
 #include "abstractoutputnode.h"
+#include "inputnode.h"
 
 template <class T>
 class OutputNode: public AbstractOutputNode
@@ -15,6 +16,12 @@ public:
     std::vector<T> getValueBuf() const {return valueBuf;}
     void setValueBuf(std::vector<T> value) {valueBuf = value;}
 
+    void NotifyAll(){
+        for (typename std::vector<AbstractInputNode*>::iterator it = inputs.begin() ; it != inputs.end(); ++it)
+        {
+            ((InputNode<T>*)(*it))->Put(valueBuf);
+        }
+    }
 
 protected:
     std::vector<T> valueBuf;
