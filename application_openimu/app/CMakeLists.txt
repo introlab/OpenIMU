@@ -1,6 +1,8 @@
 find_package(Qt5Core    REQUIRED)
 find_package(Qt5Gui     REQUIRED)
 find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Quick   REQUIRED)
+find_package(Qt5Charts	REQUIRED)
 
 #TODO
 #Add subdirectories here
@@ -23,10 +25,7 @@ SET(srcs
     customqmlscene.cpp
     acquisition/GyroscopeReader.cpp
     acquisition/MagnetometerReader.cpp
-    applicationmenu.cpp
     views/toolbarview.cpp
-  #  Not implemented ???
- #   controllers/toolbarcontroller.cpp
     dateselectorlabel.cpp
     models/components/blockType/podometerBlock.cpp
     algorithm/podometer/KalmanFilter.cpp
@@ -36,6 +35,7 @@ SET(srcs
     models/components/blockType/dbwriteblock.cpp
     newAcquisition/wimuacquisition.cpp
     mytreewidget.cpp
+    accdatadisplay.cpp
 )
 
 
@@ -63,10 +63,7 @@ SET(headers
        acquisition/GyroscopeReader.h
        acquisition/MagnetometerReader.h
        models/components/blockType/blockType.h
-       applicationmenu.h
        views/toolbarview.h
-#      Not implemented ???
-#       controllers/toolbarcontroller.h
        dateselectorlabel.h
        models/components/blockType/podometerblock.h
        algorithm/podometer/KalmanFilter.h
@@ -82,6 +79,7 @@ SET(headers
        models/components/blockType/dbwriteblock.h
        newAcquisition/wimuacquisition.h
        mytreewidget.h
+       accdatadisplay.h
 )
 
 SET(uis
@@ -127,8 +125,9 @@ QT5_WRAP_CPP(moc_srcs ${headers})
 
 #Application
 add_executable(application_openimu main.cpp ${srcs} ${headers} ${moc_srcs} ${moc_uis} ${srcs_qrc} ${qml})
-qt5_use_modules(application_openimu Sql Core Network Xml XmlPatterns Gui Widgets Quick)
+qt5_use_modules(application_openimu Sql Core Network Xml XmlPatterns Gui Widgets Quick Charts)
 TARGET_LINK_LIBRARIES(application_openimu vbLabel)
+
 
 
 
