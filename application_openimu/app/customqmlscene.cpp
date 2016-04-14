@@ -5,6 +5,7 @@
 #include <QQmlApplicationEngine>
 #include <qboxlayout.h>
 #include <models/components/quickiteminputnodeshandles.h>
+#include <QApplication>
 
 CustomQmlScene::CustomQmlScene(std::string filename, QWidget* parent = 0): QWidget(parent)
 {
@@ -20,7 +21,12 @@ CustomQmlScene::CustomQmlScene(std::string filename, QWidget* parent = 0): QWidg
     filename = "qrc:/" + filename;
     QQuickView* view = new QQuickView();
 
-    view->engine()->addImportPath("../jbQuick/.");
+    //view->engine()->addImportPath("../jbQuick/.");
+    //view->engine()->addImportPath(QApplication::applicationDirPath() + "/jbQuick/.");
+    view->engine()->addImportPath(QApplication::applicationDirPath() + "/qml");
+
+    //DL test import paths
+    qDebug() << "Current Import paths : " << view->engine()->importPathList();
 
 
     QWidget* widget = QWidget::createWindowContainer(view, this);

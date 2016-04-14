@@ -1,4 +1,3 @@
-#include "widget.h"
 #include <QApplication>
 #include <QMainWindow>
 #include <QMenuBar>

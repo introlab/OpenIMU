@@ -13,13 +13,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = application_openimu
 TEMPLATE = app
 
-INCLUDEPATH += $$PWD/../../../qwt-6.1.2/src $$PWD/models/json
+INCLUDEPATH += $$PWD/models/json
 INCLUDEPATH += $$PWD/../../../build-qtcharts-Kit_Qt-Debug/include
 
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../qwt-6.1.2/lib/ -lqwt
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../qwt-6.1.2/lib/ -lqwtd
-else:unix: LIBS += -L$$PWD/../../../qwt-6.1.2/lib/ -lqwt
 
 #win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../build-qtcharts-Kit_Qt-Debug/lib/ -lQt5Charts
 #else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../build-qtcharts-Kit_Qt-Debug/lib/ -lQt5Chartsd
@@ -30,7 +26,6 @@ QT += charts
 CONFIG += c++11
 
 SOURCES += main.cpp\
-    widget.cpp \
     acquisition/SensorDataPerDay.cpp \
     acquisition/SensorDataPerHour.cpp \
     acquisition/SensorDataPerSecond.cpp \
@@ -63,7 +58,7 @@ SOURCES += main.cpp\
 
 
 
-HEADERS += widget.h \
+HEADERS += \
     acquisition/SensorDataPerDay.h \
     acquisition/SensorDataPerHour.h \
     acquisition/SensorDataPerSecond.h \
