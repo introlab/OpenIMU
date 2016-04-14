@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <time.h>
 std::vector<frame> WimuAcquisition::getData()
 {
     return data;
@@ -81,4 +82,27 @@ std::vector<frame> WimuAcquisition::readSensorDataSecond(BYTE* fileBuf, int star
         tmp.push_back(leFrame);
     }
     return tmp;
+}
+std::vector<std::string> WimuAcquisition::getDates()
+{
+	std::vector<std::string> result;
+    long lastTimestamp = -1;
+	for (int i=0;i<data.size();i++)
+    {
+		long long t = data.at(i).timestamp/1000;
+		int day =t/86000;
+		int lastday=lastTimestamp/86000;
+		if(lastTimestamp==-1 || day!=lastday)
+        {
+            __time64_t ltime = t;
+			std::string ladate = _ctime64( &ltime );
+			result.push_back(ladate);
+        }
+        lastTimestamp = t;
+    }
+	return result;
+}
+int WimuAcquisition::getDataSize()
+{
+	return data.size();
 }

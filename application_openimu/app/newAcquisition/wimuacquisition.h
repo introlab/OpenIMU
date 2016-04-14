@@ -8,7 +8,7 @@ struct frame {
   int x;
   int y;
   int z;
-  int timestamp; //en ms
+  long long timestamp; //in ms
 };
 
 class WimuAcquisition
@@ -23,6 +23,8 @@ public:
     long getFileSize(FILE *file);
     std::vector<frame> getData();
     void setData(std::vector<frame> value);
+    std::vector<std::string> getDates();
+	int getDataSize();
 };
 
 #endif // WIMUACQUISITION_H
