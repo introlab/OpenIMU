@@ -36,13 +36,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     tree->setMaximumWidth(150);
 
     //default scene
-    //scene = new CustomQmlScene("test_slider_chart.qml", this);
-    //caneva = new Caneva("config/test_slider_chart.json", scene);
+    scene = new CustomQmlScene("test_slider_chart.qml", this);
+    caneva = new Caneva("config/test_slider_chart.json", scene);
     tabWidget = new QTabWidget;
     tabWidget->setTabsClosable(true);
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
     dataView = new QWidget();
-    tabWidget->addTab(dataView,"Données accéléromètre");
+    tabWidget->addTab(scene,"Données accéléromètre");
     tabWidget->tabBar()->tabButton(0, QTabBar::RightSide)->hide();
     splitter->addWidget(tabWidget);
     splitter->setSizes(QList<int>() << 150 << 600);
