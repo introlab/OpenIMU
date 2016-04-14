@@ -24,8 +24,6 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
         chart = new QChart();
         chart->legend()->show();
         chart->legend()->setAlignment(Qt::AlignBottom);
-        chart->setAnimationDuration(1000);
-        chart->setAnimationEasingCurve(QEasingCurve::InOutQuad);
         fillChartSeries(0);
 
         chart->createDefaultAxes();
