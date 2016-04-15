@@ -15,16 +15,25 @@ Rectangle{
     height:parent.height;
     anchors.centerIn: parent;
 
+    Label {
+        y : 0
+        x : 0
+        text: "Compteur de pas"
+        font.pixelSize: 14
+        color: "steelblue"
+    }
+
     ChartView {
+        y : 50
         width: 400
         height: 300
-        theme: ChartView.ChartThemeBrownSand
+        theme: ChartView.ChartThemeBlueIcy
         antialiasing: true
 
         PieSeries {
             id: pieSeries
-            PieSlice { label: "eaten"; value: 94.9 }
-            PieSlice { label: "not yet eaten"; value: 5.1 }
+            PieSlice { label: "Jour 1"; value: 2220 }
+            PieSlice { label: "Jour 2"; value: 8800 }
         }
 }
 }

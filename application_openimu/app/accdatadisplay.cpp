@@ -1,5 +1,6 @@
 #include "accdatadisplay.h"
 #include "newAcquisition/wimuacquisition.h"
+#include <math.h>
 
 #include <QPropertyAnimation>
 
@@ -24,8 +25,7 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
         chart = new QChart();
         chart->legend()->show();
         chart->legend()->setAlignment(Qt::AlignBottom);
-        chart->setAnimationDuration(1000);
-        chart->setAnimationEasingCurve(QEasingCurve::InOutQuad);
+        chart->setTheme(QChart::ChartThemeDark);
         fillChartSeries(0);
 
         chart->createDefaultAxes();
@@ -36,14 +36,33 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
 
         centralWidget = new QWidget();
         layout = new QVBoxLayout(centralWidget);
+        //Initialize Checkbox and Label
+        checkboxX = new QCheckBox("Axe X");
+        checkboxY = new QCheckBox("Axe Y");
+        checkboxZ = new QCheckBox("Axe Z");
+
+        checkboxX->setChecked(true);
+        checkboxY->setChecked(true);
+        checkboxZ->setChecked(true);
+
+        QHBoxLayout *hbox = new QHBoxLayout();
+        hbox->addStretch();
+        hbox->addWidget(checkboxX);
+        hbox->addWidget(checkboxY);
+        hbox->addWidget(checkboxZ);
+        hbox->addStretch();
 
         //Initialize Slider
         slider = new QSlider();
         slider->setOrientation(Qt::Horizontal);
         layout->addWidget(chartView);
+        layout->addLayout(hbox);
         layout->addWidget(slider);
 
         connect(slider,SIGNAL(valueChanged(int)),this,SLOT(sliderValueChanged(int)));
+        connect(checkboxX, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayXAxis(int)));
+        connect(checkboxY, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayYAxis(int)));
+        connect(checkboxZ, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayZAxis(int)));
     }
 }
 void AccDataDisplay::sliderValueChanged(int value)
@@ -53,6 +72,34 @@ void AccDataDisplay::sliderValueChanged(int value)
     fillChartSeries(value);
     chartView->setChart(chart);
 }
+void AccDataDisplay::slotDisplayXAxis(int value){
+    if(value){
+        chart->addSeries(lineseriesX);
+        chartView->setChart(chart);
+    }else{
+        chart->removeSeries(lineseriesX);
+        chartView->setChart(chart);
+    }
+}
+void AccDataDisplay::slotDisplayYAxis(int value){
+    if(value){
+         chart->addSeries(lineseriesY);
+         chartView->setChart(chart);
+    }else{
+        chart->removeSeries(lineseriesY);
+        chartView->setChart(chart);
+    }
+}
+void AccDataDisplay::slotDisplayZAxis(int value){
+    if(value){
+         chart->addSeries(lineseriesZ);
+         chartView->setChart(chart);
+    }else{
+        chart->removeSeries(lineseriesZ);
+        chartView->setChart(chart);
+    }
+}
+
 void AccDataDisplay::fillChartSeries(int i){
 
     vector<signed short> x;
@@ -89,9 +136,9 @@ void AccDataDisplay::fillChartSeries(int i){
 
     for(unsigned int i = 0; i <x.size(); i++)
     {
-        lineseriesX->append(QPoint(t.at(i),x.at(i)));
-        lineseriesY->append(QPoint(t.at(i),y.at(i)));
-        lineseriesZ->append(QPoint(t.at(i),z.at(i)));
+        lineseriesX->append(t.at(i),x.at(i));
+        lineseriesY->append(t.at(i),y.at(i));
+        lineseriesZ->append(t.at(i),z.at(i));
     }
     chart->addSeries(lineseriesX);
     chart->addSeries(lineseriesY);

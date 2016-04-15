@@ -9,6 +9,7 @@
 #include <QtCharts/QLegend>
 #include <QtCharts/QValueAxis>
 #include <QSlider>
+#include <QCheckBox>
 #include "acquisition/AccelerometerReader.h"
 
 QT_CHARTS_USE_NAMESPACE
@@ -24,6 +25,9 @@ public:
     void fillChartSeries(int i);
 public slots:
     void sliderValueChanged(int value);
+    void slotDisplayXAxis(int value);
+    void slotDisplayYAxis(int value);
+    void slotDisplayZAxis(int value);
 
 private:
     QChart * chart;
@@ -31,6 +35,11 @@ private:
     QLineSeries *lineseriesX;
     QLineSeries *lineseriesY;
     QLineSeries *lineseriesZ;
+
+    QCheckBox *checkboxX;
+    QCheckBox *checkboxY;
+    QCheckBox *checkboxZ;
+
     QSlider *slider;
     QWidget *centralWidget;
     QVBoxLayout* layout;

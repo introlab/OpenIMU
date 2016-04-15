@@ -36,14 +36,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     tree->setMaximumWidth(150);
 
     //default scene
-    scene = new CustomQmlScene("test_slider_chart.qml", this);
-    caneva = new Caneva("config/test_slider_chart.json", scene);
+    //scene = new CustomQmlScene("test_slider_chart.qml", this);
+    //caneva = new Caneva("config/test_slider_chart.json", scene);
     tabWidget = new QTabWidget;
     tabWidget->setTabsClosable(true);
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
     dataView = new QWidget();
-    tabWidget->addTab(scene,"Données accéléromètre");
+    tabWidget->addTab(dataView,"Données accéléromètre");
     tabWidget->tabBar()->tabButton(0, QTabBar::RightSide)->hide();
+    tabWidget->setCurrentWidget(tabWidget->widget(0));
     splitter->addWidget(tabWidget);
     splitter->setSizes(QList<int>() << 150 << 600);
     setCentralWidget(splitter);
@@ -129,12 +130,15 @@ void MainWindow::replaceTab(QWidget * replacement, std::string label)
     }
     if(found){
         tabWidget->removeTab(index);
-        if (replacement)
+        if (replacement){
             tabWidget->insertTab(index, replacement, QString::fromStdString(label));
+            tabWidget->setCurrentWidget(tabWidget->widget(index));
+        }
     }
     else
     {
         tabWidget->addTab(replacement,QString::fromStdString(label));
+        tabWidget->setCurrentWidget(tabWidget->widget(tabWidget->count()-1));
     }
 }
 void MainWindow::closeTab(int index){

@@ -22,7 +22,7 @@ Rectangle{
         font.pixelSize: 14
         color: "steelblue"
     }
-/* Chart {
+    Chart {
         id: chart_polar;
         width: parent.width;
         height: parent.width;
@@ -40,7 +40,7 @@ Rectangle{
 
             console.log("!!!!data is ");
         }
- }*/
+    }
 }
 
 
