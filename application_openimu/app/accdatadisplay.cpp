@@ -12,12 +12,9 @@ AccDataDisplay::AccDataDisplay()
 }
 AccDataDisplay::AccDataDisplay(std::string filePath){
 
-    WimuAcquisition acceleroData = WimuAcquisition(filePath,50);
-
-    accReader = new AccelerometerReader(filePath);
-
-    accReader->LoadSensorData(false);
-    availableData = accReader->GetAccelerometerData();
+    acceleroData = new WimuAcquisition(filePath,50);
+    availableData = acceleroData->getData();
+    sliceData = availableData;
 
     if(availableData.size()>0)
     {
@@ -26,7 +23,7 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
         chart->legend()->show();
         chart->legend()->setAlignment(Qt::AlignBottom);
         chart->setTheme(QChart::ChartThemeDark);
-        fillChartSeries(0);
+        fillChartSeries();
 
         chart->createDefaultAxes();
         chart->setTitle("Données accéléromètre");
@@ -54,6 +51,9 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
 
         //Initialize Slider
         slider = new QSlider();
+        int tempDiff = WimuAcquisition::maxTime(availableData).timestamp- WimuAcquisition::minTime(availableData).timestamp ;
+        slider->setMinimum(0);
+        slider->setMaximum(tempDiff);
         slider->setOrientation(Qt::Horizontal);
         layout->addWidget(chartView);
         layout->addLayout(hbox);
@@ -67,10 +67,11 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
 }
 void AccDataDisplay::sliderValueChanged(int value)
 {
-    //chart->setTitle("Slider Value is: "+ QString::number(value) );
+    sliceData = acceleroData->getData(WimuAcquisition::minTime(availableData).timestamp + value, WimuAcquisition::maxTime(availableData).timestamp);
     chart->removeAllSeries();
-    fillChartSeries(value);
+    fillChartSeries();
     chartView->setChart(chart);
+
 }
 void AccDataDisplay::slotDisplayXAxis(int value){
     if(value){
@@ -83,8 +84,8 @@ void AccDataDisplay::slotDisplayXAxis(int value){
 }
 void AccDataDisplay::slotDisplayYAxis(int value){
     if(value){
-         chart->addSeries(lineseriesY);
-         chartView->setChart(chart);
+        chart->addSeries(lineseriesY);
+        chartView->setChart(chart);
     }else{
         chart->removeSeries(lineseriesY);
         chartView->setChart(chart);
@@ -92,34 +93,28 @@ void AccDataDisplay::slotDisplayYAxis(int value){
 }
 void AccDataDisplay::slotDisplayZAxis(int value){
     if(value){
-         chart->addSeries(lineseriesZ);
-         chartView->setChart(chart);
+        chart->addSeries(lineseriesZ);
+        chartView->setChart(chart);
     }else{
         chart->removeSeries(lineseriesZ);
         chartView->setChart(chart);
     }
 }
 
-void AccDataDisplay::fillChartSeries(int i){
+void AccDataDisplay::fillChartSeries(){
 
-    vector<signed short> x;
-    vector<signed short> y;
-    vector<signed short> z;
-    vector<float> t;
+    std::vector<signed short> x;
+    std::vector<signed short> y;
+    std::vector<signed short> z;
+    std::vector<float> t;
 
-    for(int k = i; k <availableData.at(0).getDataPerDay().at(0).getAccelerometerDataPerHour().size();k++){
-        for(float i=0.0;i<0.98;i+=0.02)
-        {
-            t.push_back(i+k);
-        }
+    for(int k = 0; k <sliceData.size(); k++){
 
-        vector<signed short> tmpx = availableData.at(0).getDataPerDay().at(0).getAccelerometerDataPerHour().at(k).getXAxisValues();
-        vector<signed short> tmpy = availableData.at(0).getDataPerDay().at(0).getAccelerometerDataPerHour().at(k).getYAxisValues();
-        vector<signed short> tmpz = availableData.at(0).getDataPerDay().at(0).getAccelerometerDataPerHour().at(k).getZAxisValues();
+        x.push_back(sliceData.at(k).x);
+        y.push_back(sliceData.at(k).y);
+        z.push_back(sliceData.at(k).z);
 
-        x.insert(x.end(),tmpx.begin(),tmpx.end());
-        y.insert(y.end(),tmpy.begin(),tmpy.end());
-        z.insert(z.end(),tmpz.begin(),tmpz.end());
+        t.push_back(k); // TO DO Replace w/ real value
     }
 
     lineseriesX = new QtCharts::QLineSeries();

@@ -34,7 +34,7 @@ void Caneva::test()
     //getBlock("multiplier")->GetInput<int>("input1")->Put(arr_int);
     //setSliderLimitValues(0,100);
 
-    getBlock("col1.label_title_value")->GetInput<std::string>("inputTitle")->Put(arr_str);//std::vector<std::string>({"Compteur"}));
+    getBlock("col1.label_title_value")->GetInput<std::string>("inputTitle")->Put(std::vector<std::string>({"Nombre de pas: "}));
     getBlock("col1.row1.chart_bar")->GetInput<std::string>("x")->Put(arr_str);
     getBlock("col1.row1.chart_bar")->GetInput<int>("y")->Put(arr_int);
 

@@ -23,7 +23,7 @@ Rectangle{
                 id: inputTitle;
             }
             property string id: "label_title_value";
-            text: "test"//inputTitle.value[0]
+            text: inputTitle.value[0]
             font.pixelSize: 14
             color: "steelblue"
         }

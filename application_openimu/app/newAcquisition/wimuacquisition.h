@@ -5,9 +5,9 @@
 typedef unsigned char BYTE;
 
 struct frame {
-  int x;
-  int y;
-  int z;
+  signed short int x;
+  signed short int y;
+  signed short int z;
   long long timestamp; //in ms
 };
 struct string_timestamp{

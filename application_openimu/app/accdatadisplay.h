@@ -10,7 +10,7 @@
 #include <QtCharts/QValueAxis>
 #include <QSlider>
 #include <QCheckBox>
-#include "acquisition/AccelerometerReader.h"
+#include "newAcquisition/wimuacquisition.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -22,7 +22,7 @@ public:
     AccDataDisplay();
     AccDataDisplay(std::string filePath);
     QWidget *getCentralView();
-    void fillChartSeries(int i);
+    void fillChartSeries();
 public slots:
     void sliderValueChanged(int value);
     void slotDisplayXAxis(int value);
@@ -43,8 +43,10 @@ private:
     QSlider *slider;
     QWidget *centralWidget;
     QVBoxLayout* layout;
-    AccelerometerReader* accReader;
-    vector<SensorDataPerDay> availableData;
+
+    WimuAcquisition * acceleroData;
+    std::vector<frame> availableData;
+    std::vector<frame> sliceData;
 };
 
 #endif // ACCDATADISPLAY_H

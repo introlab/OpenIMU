@@ -18,14 +18,16 @@ Rectangle{
          property string id: "col1";
         spacing: 5
 
+
         Label {
             InputNodeString{
                 id: inputTitle;
             }
             property string id: "label_title_value";
-            text: "test"//inputTitle.value[0]
+            text: inputTitle.value[0]
             font.pixelSize: 14
             color: "steelblue"
+            anchors.margins: 10
         }
 
         Row{
