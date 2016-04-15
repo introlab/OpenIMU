@@ -1,6 +1,5 @@
 import QtQuick 2.5
 import QtQuick.Window 2.2
-//import blocks.visual.label 1.0
 import InputNodeInt 1.0
 import InputNodeDouble 1.0
 import InputNodeString 1.0
@@ -15,37 +14,26 @@ Rectangle{
     height:parent.height;
     anchors.centerIn: parent;
 
-    Item{
-        id:test
-        property var valueString: ""
-        property var valueInt : ""
-        property var valuearray :""
-        property var valueLabel:""
-        property var valueData:""
-    }
-
-
-
     Column{
-
+         property string id: "col1";
         spacing: 5
 
         Label {
             InputNodeString{
-                id: inputtitle;
+                id: inputTitle;
             }
-            text: inputtitle.value + test.valueString
+            property string id: "label_title_value";
+            text: "test"//inputTitle.value[0]
             font.pixelSize: 14
             color: "steelblue"
         }
 
-
         Row{
-
+            property string id: "row1";
             Chart{
-                id: chart_bar
+                property string id: "chart_bar"
 
-                InputNodeInt{
+                InputNodeString{
                     id:x
                 }
                 InputNodeInt{
@@ -59,50 +47,46 @@ Rectangle{
                 chartAnimationDuration: 1000;
                 chartType: Charts.ChartType.BAR;
                 chartData: {
-                    'labels': x.value,
-                    'datasets':[
-                        {'fillColor': "rgba(0,128,128,0)",'strokeColor': "rgba(255,0,0,1)",'data':  y.value},
-                    ]};
-                }
-
+                    'labels': y.value,
+                            'datasets':[
+                                {'fillColor': "rgba(0,128,128,0)",'strokeColor': "rgba(255,0,0,1)",'data':  y.value},
+                            ]};
+            }
 
             Column{
                 spacing: 10
-
+                property string id: "col2";
                 Label {
-                    id: vtotal
+                    property string id: "vtotalLabel"
                     InputNodeInt{
                         id: inputvtotal;
                     }
-                    text: "Totale de la journée :" + inputvtotal.value + test.valueInt
+                    text: "Totale de la journée :" + inputvtotal.value[0]
                 }
                 Label{
-                    id:vmoy
+                    property string id:"vmoyLabel"
                     InputNodeInt{
                         id: inputvmoy;
                     }
-                    text:"Valeur moyenne : " + inputvmoy.value +  test.valueInt
+                    text:"Valeur moyenne : " + inputvmoy.value[0]
                 }
                 Label{
-                    id:vmax
+                    property string id:"vmaxLabel"
                     InputNodeInt{
                         id: inputvmax;
                     }
-                    text:"Valeur maximum : " + inputvmax.value + test.valueInt
+                    text:"Valeur maximum : " + inputvmax.value[0]
                 }
                 Label{
-                    id:vmin
+                    property string id:"vminLabel"
                     InputNodeInt{
                         id: inputvmin;
                     }
-                    text:"Valeur minimum : " + inputvmin.value + test.valueInt
+                    text:"Valeur minimum : " + inputvmin.value[0]
                 }
             }
         }
     }
-
-
-
 }
 
 

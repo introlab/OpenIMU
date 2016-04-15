@@ -4,6 +4,7 @@
 #include "mulBlock.h"
 #include "divBlock.h"
 #include "podometerblock.h"
+#include "activitytrackerblock.h"
 
 BlockFactory::BlockFactory()
 {
@@ -30,5 +31,8 @@ Block* BlockFactory::createBlockType(std::string blockType)
     else if(blockType == "podo")
     {
         return new PodometerBlock();
+    }
+    else if(blockType == "activity"){
+        return new ActivityTrackerBlock();
     }
 }

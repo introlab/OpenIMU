@@ -43,14 +43,29 @@ CustomQmlScene::CustomQmlScene(std::string filename, QWidget* parent = 0): QWidg
     this->setLayout(mainLayout);
 }
 
-QQuickItem *CustomQmlScene::getInputNode(QString blockId, QString inputId)
+QQuickItem *CustomQmlScene::getInputNode(QString blockId, QString inputId, QQuickItem * container)
 {
-    foreach (QQuickItem *child, container->childItems()) {
-      if(child->property("id").toString()==blockId)
-          foreach (QQuickItem *input, child->childItems()){
-              if(input->property("id").toString()==inputId)
-                  return (QQuickItem*)input;
-          }
+    if(!container)
+        container = this->container;
+
+    QStringList path = blockId.split(".");
+    if(path.length() <= 1){
+        foreach (QQuickItem *child, container->childItems()) {
+            if(child->property("id").toString()==blockId)
+                foreach (QQuickItem *input, child->childItems()){
+                    if(input->property("id").toString()==inputId)
+                        return (QQuickItem*)input;
+                }
+        }
+    }
+    else {
+        foreach (QQuickItem *child, container->childItems()) {
+            if(child->property("id").toString()==path[0])
+            {
+              path.removeFirst();
+              return getInputNode(path.join("."),inputId,child);
+            }
+        }
     }
     return 0;
 }
