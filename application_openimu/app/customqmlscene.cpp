@@ -45,6 +45,9 @@ CustomQmlScene::CustomQmlScene(std::string filename, QWidget* parent = 0): QWidg
 
 QQuickItem *CustomQmlScene::getInputNode(QString blockId, QString inputId, QQuickItem * container)
 {
+    if(!container)
+        container = this->container;
+
     QStringList path = blockId.split(".");
     if(path.length() <= 1){
         foreach (QQuickItem *child, container->childItems()) {

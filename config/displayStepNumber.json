@@ -1,11 +1,36 @@
 {
-"ListBlock":[
-],
+"ListBlock":[],
 "ListVBlock":[
 {
- "type": "Label", "ID": "test", "inputs":[{"ID":"inputLabel","TYPE":"String"}],
+ "type": "Label", "ID": "col1.label_title_value",
+ "inputs":[{"ID":"inputTitle","TYPE":"String"}],
  "outputs":[]
-},],
-"ListConnection":[
-]
+},
+{
+ "type": "Chart", "ID": "col1.row1.chart_bar",
+ "inputs":[{"ID":"x","TYPE":"String"},{"ID":"y","TYPE":"Int"}],
+ "outputs":[]
+},
+{
+ "type": "Label", "ID": "col1.row1.col2.vtotalLabel",
+ "inputs":[{"ID":"inputvtotal","TYPE":"Int"}],
+ "outputs":[]
+},
+{
+ "type": "Label", "ID": "col1.row1.col2.vmoyLabel",
+ "inputs":[{"ID":"inputvmoy","TYPE":"Int"}],
+ "outputs":[]
+},
+{
+ "type": "Label", "ID": "col1.row1.col2.vmaxLabel",
+ "inputs":[{"ID":"inputvmax","TYPE":"Int"}],
+ "outputs":[]
+},
+{
+ "type": "Label", "ID": "col1.row1.col2.vminLabel",
+ "inputs":[{"ID":"inputvmin","TYPE":"Int"}],
+ "outputs":[]
+}
+],
+"ListConnection":[]
 }

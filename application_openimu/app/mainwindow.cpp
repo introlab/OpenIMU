@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     fileSelectedName = "";
 
     this->setWindowTitle(QString::fromUtf8("Open-IMU"));
-    this->setStyleSheet("background: white");
+    this->setStyleSheet("background: rgba(246, 254, 254,0.8)");
     this->setMinimumSize(700,600);
     menu = new ApplicationMenuBar(this);
     this->setMenuBar(menu);
@@ -108,6 +108,7 @@ void MainWindow:: computeSteps(){
     CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
     Caneva* canevaSteps = new Caneva("../../config/displayStepNumber.json", sceneSteps);
     replaceTab(sceneSteps,"Compteur de pas");
+    canevaSteps->test();
 }
 void MainWindow::computeActivityTime(){
     CustomQmlScene* sceneTime = new CustomQmlScene("displayActivityTime.qml", this);
