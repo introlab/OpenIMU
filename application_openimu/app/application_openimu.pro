@@ -54,7 +54,7 @@ SOURCES += main.cpp\
     newAcquisition/wimuacquisition.cpp \
     mytreewidget.cpp \
     accdatadisplay.cpp \
-    models/components/blockType/activitytrackerblock.cpp
+    models/components/blockType/activitytrackerblock.cpp \
     dialogs/aboutdialog.cpp \
     dialogs/helpdialog.cpp
 
@@ -98,7 +98,7 @@ HEADERS += \
     newAcquisition/wimuacquisition.h \
     mytreewidget.h \
     accdatadisplay.h \
-    models/components/blockType/activitytrackerblock.h
+    models/components/blockType/activitytrackerblock.h \
     dialogs/aboutdialog.h \
     dialogs/helpdialog.h
 
