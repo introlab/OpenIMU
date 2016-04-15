@@ -53,7 +53,9 @@ SOURCES += main.cpp\
     models/components/blockType/dbwriteblock.cpp \
     newAcquisition/wimuacquisition.cpp \
     mytreewidget.cpp \
-    accdatadisplay.cpp
+    accdatadisplay.cpp \
+    dialogs/aboutdialog.cpp \
+    dialogs/helpdialog.cpp
 
 
 
@@ -94,9 +96,13 @@ HEADERS += \
     models/components/blockType/dbwriteblock.h \
     newAcquisition/wimuacquisition.h \
     mytreewidget.h \
-    accdatadisplay.h
+    accdatadisplay.h \
+    dialogs/aboutdialog.h \
+    dialogs/helpdialog.h
 
-FORMS += widget.ui
+FORMS += widget.ui \
+    help.ui \
+    about.ui
 
 RESOURCES += qml.qrc \
     images.qrc

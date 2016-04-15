@@ -10,6 +10,8 @@
 #include <QSplitter>
 #include "mytreewidget.h"
 #include <QWidget>
+#include "dialogs/aboutdialog.h"
+#include "dialogs/helpdialog.h"
 
 class MainWindow : public QMainWindow
     {
@@ -29,6 +31,8 @@ class MainWindow : public QMainWindow
     void computeActivityTime();
     void closeTab(int);
     void replaceTab(QWidget * replacement, std::string label);
+    void openAbout();
+    void openHelp();
 
     private:
        QString folderName;
@@ -41,6 +45,8 @@ class MainWindow : public QMainWindow
        QTabWidget *tabWidget;
        QString fileSelectedName;
        QWidget *dataView;
+       AboutDialog *aboutDialog;
+       HelpDialog *helpDialog;
     };
 
 #endif // MAINWINDOW_H
