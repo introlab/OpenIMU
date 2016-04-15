@@ -70,14 +70,29 @@ QQuickItem *CustomQmlScene::getInputNode(QString blockId, QString inputId, QQuic
     return 0;
 }
 
-QQuickItem *CustomQmlScene::getOutputNode(QString blockId, QString inputId)
+QQuickItem *CustomQmlScene::getOutputNode(QString blockId, QString outputId, QQuickItem *container)
 {
-    foreach (QQuickItem *child, container->childItems()) {
-      if(child->property("id").toString()==blockId)
-          foreach (QQuickItem *input, child->childItems()){
-              if(input->property("id").toString()==inputId)
-                  return (QQuickItem*)input;
-          }
+    if(!container)
+        container = this->container;
+
+    QStringList path = blockId.split(".");
+    if(path.length() <= 1){
+        foreach (QQuickItem *child, container->childItems()) {
+            if(child->property("id").toString()==blockId)
+                foreach (QQuickItem *output, child->childItems()){
+                    if(output->property("id").toString()==outputId)
+                        return (QQuickItem*)output;
+                }
+        }
+    }
+    else {
+        foreach (QQuickItem *child, container->childItems()) {
+            if(child->property("id").toString()==path[0])
+            {
+              path.removeFirst();
+              return getOutputNode(path.join("."),outputId,child);
+            }
+        }
     }
     return 0;
 }
