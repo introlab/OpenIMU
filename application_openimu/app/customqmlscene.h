@@ -10,7 +10,7 @@ class CustomQmlScene: public QWidget
 public:
     CustomQmlScene(std::string filename, QWidget *parent);
 
-    QQuickItem* getInputNode(QString blockId, QString inputId);
+    QQuickItem* getInputNode(QString blockId, QString inputId, QQuickItem *container = this.container);
     template <class T>
     T* getInputNode(QString blockId, QString inputId)
     {
