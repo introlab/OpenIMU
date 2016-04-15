@@ -10,7 +10,10 @@ struct frame {
   int z;
   long long timestamp; //in ms
 };
-
+struct string_timestamp{
+	long long timestamp;
+	std::string date;
+};
 class WimuAcquisition
 {
 private:
@@ -23,8 +26,11 @@ public:
     long getFileSize(FILE *file);
     std::vector<frame> getData();
     void setData(std::vector<frame> value);
-    std::vector<std::string> getDates();
+    std::vector<string_timestamp> getDates();
 	int getDataSize();
+	std::vector<frame> getData(long long start,long long end);
+	static string_timestamp maxTime(std::vector<frame> frames);
+	static string_timestamp minTime(std::vector<frame> frames);
 };
 
 #endif // WIMUACQUISITION_H
