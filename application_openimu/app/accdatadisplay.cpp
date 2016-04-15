@@ -1,5 +1,6 @@
 #include "accdatadisplay.h"
 #include "newAcquisition/wimuacquisition.h"
+#include <math.h>
 
 #include <QPropertyAnimation>
 
@@ -11,12 +12,9 @@ AccDataDisplay::AccDataDisplay()
 }
 AccDataDisplay::AccDataDisplay(std::string filePath){
 
-    WimuAcquisition acceleroData = WimuAcquisition(filePath,50);
-
-    accReader = new AccelerometerReader(filePath);
-
-    accReader->LoadSensorData(false);
-    availableData = accReader->GetAccelerometerData();
+    acceleroData = new WimuAcquisition(filePath,50);
+    availableData = acceleroData->getData();
+    sliceData = availableData;
 
     if(availableData.size()>0)
     {
@@ -24,9 +22,8 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
         chart = new QChart();
         chart->legend()->show();
         chart->legend()->setAlignment(Qt::AlignBottom);
-        chart->setAnimationDuration(1000);
-        chart->setAnimationEasingCurve(QEasingCurve::InOutQuad);
-        fillChartSeries(0);
+        chart->setTheme(QChart::ChartThemeDark);
+        fillChartSeries();
 
         chart->createDefaultAxes();
         chart->setTitle("Données accéléromètre");
@@ -36,43 +33,88 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
 
         centralWidget = new QWidget();
         layout = new QVBoxLayout(centralWidget);
+        //Initialize Checkbox and Label
+        checkboxX = new QCheckBox("Axe X");
+        checkboxY = new QCheckBox("Axe Y");
+        checkboxZ = new QCheckBox("Axe Z");
+
+        checkboxX->setChecked(true);
+        checkboxY->setChecked(true);
+        checkboxZ->setChecked(true);
+
+        QHBoxLayout *hbox = new QHBoxLayout();
+        hbox->addStretch();
+        hbox->addWidget(checkboxX);
+        hbox->addWidget(checkboxY);
+        hbox->addWidget(checkboxZ);
+        hbox->addStretch();
 
         //Initialize Slider
         slider = new QSlider();
+        int tempDiff = WimuAcquisition::maxTime(availableData).timestamp- WimuAcquisition::minTime(availableData).timestamp ;
+        slider->setMinimum(0);
+        slider->setMaximum(tempDiff);
         slider->setOrientation(Qt::Horizontal);
         layout->addWidget(chartView);
+        layout->addLayout(hbox);
         layout->addWidget(slider);
 
         connect(slider,SIGNAL(valueChanged(int)),this,SLOT(sliderValueChanged(int)));
+        connect(checkboxX, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayXAxis(int)));
+        connect(checkboxY, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayYAxis(int)));
+        connect(checkboxZ, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayZAxis(int)));
     }
 }
 void AccDataDisplay::sliderValueChanged(int value)
 {
-    //chart->setTitle("Slider Value is: "+ QString::number(value) );
+    sliceData = acceleroData->getData(WimuAcquisition::minTime(availableData).timestamp + value, WimuAcquisition::maxTime(availableData).timestamp);
     chart->removeAllSeries();
-    fillChartSeries(value);
+    fillChartSeries();
     chartView->setChart(chart);
+
 }
-void AccDataDisplay::fillChartSeries(int i){
+void AccDataDisplay::slotDisplayXAxis(int value){
+    if(value){
+        chart->addSeries(lineseriesX);
+        chartView->setChart(chart);
+    }else{
+        chart->removeSeries(lineseriesX);
+        chartView->setChart(chart);
+    }
+}
+void AccDataDisplay::slotDisplayYAxis(int value){
+    if(value){
+        chart->addSeries(lineseriesY);
+        chartView->setChart(chart);
+    }else{
+        chart->removeSeries(lineseriesY);
+        chartView->setChart(chart);
+    }
+}
+void AccDataDisplay::slotDisplayZAxis(int value){
+    if(value){
+        chart->addSeries(lineseriesZ);
+        chartView->setChart(chart);
+    }else{
+        chart->removeSeries(lineseriesZ);
+        chartView->setChart(chart);
+    }
+}
 
-    vector<signed short> x;
-    vector<signed short> y;
-    vector<signed short> z;
-    vector<float> t;
+void AccDataDisplay::fillChartSeries(){
 
-    for(int k = i; k <availableData.at(0).getDataPerDay().at(0).getAccelerometerDataPerHour().size();k++){
-        for(float i=0.0;i<0.98;i+=0.02)
-        {
-            t.push_back(i+k);
-        }
+    std::vector<signed short> x;
+    std::vector<signed short> y;
+    std::vector<signed short> z;
+    std::vector<float> t;
 
-        vector<signed short> tmpx = availableData.at(0).getDataPerDay().at(0).getAccelerometerDataPerHour().at(k).getXAxisValues();
-        vector<signed short> tmpy = availableData.at(0).getDataPerDay().at(0).getAccelerometerDataPerHour().at(k).getYAxisValues();
-        vector<signed short> tmpz = availableData.at(0).getDataPerDay().at(0).getAccelerometerDataPerHour().at(k).getZAxisValues();
+    for(int k = 0; k <sliceData.size(); k++){
 
-        x.insert(x.end(),tmpx.begin(),tmpx.end());
-        y.insert(y.end(),tmpy.begin(),tmpy.end());
-        z.insert(z.end(),tmpz.begin(),tmpz.end());
+        x.push_back(sliceData.at(k).x);
+        y.push_back(sliceData.at(k).y);
+        z.push_back(sliceData.at(k).z);
+
+        t.push_back(k); // TO DO Replace w/ real value
     }
 
     lineseriesX = new QtCharts::QLineSeries();
@@ -89,9 +131,9 @@ void AccDataDisplay::fillChartSeries(int i){
 
     for(unsigned int i = 0; i <x.size(); i++)
     {
-        lineseriesX->append(QPoint(t.at(i),x.at(i)));
-        lineseriesY->append(QPoint(t.at(i),y.at(i)));
-        lineseriesZ->append(QPoint(t.at(i),z.at(i)));
+        lineseriesX->append(t.at(i),x.at(i));
+        lineseriesY->append(t.at(i),y.at(i));
+        lineseriesZ->append(t.at(i),z.at(i));
     }
     chart->addSeries(lineseriesX);
     chart->addSeries(lineseriesY);

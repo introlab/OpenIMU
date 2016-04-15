@@ -30,10 +30,19 @@ void Caneva::test()
     std::vector<std::string> arr_str =  {"a","b","c","d","e","f","g","h"};
     std::vector<int> arr_int =  {10,20,11,-2,0,-20,-10,-20};
 
-    getBlock("chart_line")->GetInput<std::string>("labels")->Put(arr_str);
-    getBlock("multiplier")->GetInput<int>("input1")->Put(arr_int);
+    //getBlock("chart_line")->GetInput<std::string>("labels")->Put(arr_str);
+    //getBlock("multiplier")->GetInput<int>("input1")->Put(arr_int);
+    //setSliderLimitValues(0,100);
 
-    setSliderLimitValues(0,100);
+    getBlock("col1.label_title_value")->GetInput<std::string>("inputTitle")->Put(std::vector<std::string>({"Nombre de pas: "}));
+    getBlock("col1.row1.chart_bar")->GetInput<std::string>("x")->Put(arr_str);
+    getBlock("col1.row1.chart_bar")->GetInput<int>("y")->Put(arr_int);
+
+    getBlock("col1.row1.col2.vtotalLabel")->GetInput<int>("inputvtotal")->Put(std::vector<int>({100}));
+    getBlock("col1.row1.col2.vmoyLabel")->GetInput<int>("inputvmoy")->Put(std::vector<int>({10}));
+    getBlock("col1.row1.col2.vmaxLabel")->GetInput<int>("inputvmax")->Put(std::vector<int>({15}));
+    getBlock("col1.row1.col2.vminLabel")->GetInput<int>("inputvmin")->Put(std::vector<int>({12}));
+
 }
 
 void Caneva::setGraphData(std::string folderPath){
@@ -43,10 +52,10 @@ void Caneva::setGraphData(std::string folderPath){
     std::vector<int> zaxis;
 
     for(int i = 0; i< 10;i++){
-            time.push_back(i);
-            xaxis.push_back(i+2);
-            yaxis.push_back(i+4);
-            zaxis.push_back(i*2);
+        time.push_back(i);
+        xaxis.push_back(i+2);
+        yaxis.push_back(i+4);
+        zaxis.push_back(i*2);
     }
     //to do: add values from BD
     getBlock("chart_line")->GetInput("inputTimeAxis")->Put(time);

@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     fileSelectedName = "";
 
     this->setWindowTitle(QString::fromUtf8("Open-IMU"));
-    this->setStyleSheet("background: white");
+    this->setStyleSheet("background: rgba(246, 254, 254,0.8)");
     this->setMinimumSize(700,600);
     menu = new ApplicationMenuBar(this);
     this->setMenuBar(menu);
@@ -36,14 +36,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     tree->setMaximumWidth(150);
 
     //default scene
-    scene = new CustomQmlScene("test_slider_chart.qml", this);
-    caneva = new Caneva("config/test_slider_chart.json", scene);
+    //scene = new CustomQmlScene("test_slider_chart.qml", this);
+    //caneva = new Caneva("config/test_slider_chart.json", scene);
     tabWidget = new QTabWidget;
     tabWidget->setTabsClosable(true);
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
     dataView = new QWidget();
-    tabWidget->addTab(scene,"Données accéléromètre");
+    tabWidget->addTab(dataView,"Données accéléromètre");
     tabWidget->tabBar()->tabButton(0, QTabBar::RightSide)->hide();
+    tabWidget->setCurrentWidget(tabWidget->widget(0));
     splitter->addWidget(tabWidget);
     splitter->setSizes(QList<int>() << 150 << 600);
     setCentralWidget(splitter);
@@ -108,6 +109,7 @@ void MainWindow:: computeSteps(){
     CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
     Caneva* canevaSteps = new Caneva("../../config/displayStepNumber.json", sceneSteps);
     replaceTab(sceneSteps,"Compteur de pas");
+    canevaSteps->test();
 }
 void MainWindow::computeActivityTime(){
     CustomQmlScene* sceneTime = new CustomQmlScene("displayActivityTime.qml", this);
@@ -141,12 +143,15 @@ void MainWindow::replaceTab(QWidget * replacement, std::string label)
     }
     if(found){
         tabWidget->removeTab(index);
-        if (replacement)
+        if (replacement){
             tabWidget->insertTab(index, replacement, QString::fromStdString(label));
+            tabWidget->setCurrentWidget(tabWidget->widget(index));
+        }
     }
     else
     {
         tabWidget->addTab(replacement,QString::fromStdString(label));
+        tabWidget->setCurrentWidget(tabWidget->widget(tabWidget->count()-1));
     }
 }
 void MainWindow::closeTab(int index){

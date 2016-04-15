@@ -1,7 +1,6 @@
 #include "podometerBlock.h"
 #include "../../algorithm/podometer/Podometer.h"
 #include "../../acquisition/AccelerometerReader.h"
-#include "../block.h"
 #include <iostream>
 #include <vector>
 #include "../abstractinputnode.h"
