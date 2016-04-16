@@ -1,5 +1,5 @@
-#ifndef IALGO_H
-#define IALGO_H
+#ifndef BLOCK_H
+#define BLOCK_H
 
 #include <iostream>
 #include <vector>
@@ -64,4 +64,4 @@ protected:
 
 };
 
-#endif // IALGO_H
+#endif // BLOCK_H

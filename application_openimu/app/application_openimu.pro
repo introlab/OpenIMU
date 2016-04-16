@@ -56,8 +56,7 @@ SOURCES += main.cpp\
     models/components/blockType/activitytrackerblock.cpp \
     models/components/blockgenerator.cpp \
     dialogs/aboutdialog.cpp \
-    dialogs/helpdialog.cpp \
-    models/components/blockgenerator.cpp
+    dialogs/helpdialog.cpp
 
 
 
