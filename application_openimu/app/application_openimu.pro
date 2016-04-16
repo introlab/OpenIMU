@@ -54,7 +54,11 @@ SOURCES += main.cpp\
     mytreewidget.cpp \
     accdatadisplay.cpp \
     models/components/blockType/activitytrackerblock.cpp \
+    models/components/blockgenerator.cpp \
+    dialogs/aboutdialog.cpp \
+    dialogs/helpdialog.cpp \
     models/components/blockgenerator.cpp
+
 
 
 
@@ -96,10 +100,14 @@ HEADERS += \
     mytreewidget.h \
     accdatadisplay.h \
     models/components/blockType/activitytrackerblock.h \
+    dialogs/aboutdialog.h \
+    dialogs/helpdialog.h \
     models/components/blockplugin.h \
     models/components/blockgenerator.h
 
-FORMS += widget.ui
+FORMS += widget.ui \
+    help.ui \
+    about.ui
 
 RESOURCES += qml.qrc \
     images.qrc

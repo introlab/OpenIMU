@@ -19,18 +19,24 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     algorithme->addAction(actionNombreDePas);
     QAction* actionTempsActif = new QAction("Temps d'activité",algorithme);
     algorithme->addAction(actionTempsActif);
-    affichage = new QMenu("Affichage");
+    //affichage = new QMenu("Affichage");
     aide = new QMenu("Aide");
+    QAction* actionAPropos = new QAction("À propos",aide);
+    aide->addAction(actionAPropos);
+    QAction* actionAide = new QAction("Aide",aide);
+    aide->addAction(actionAide);
 
     this->addMenu(fichier);
     this->addMenu(edition);
     this->addMenu(algorithme);
-    this->addMenu(affichage);
+    //this->addMenu(affichage);
     this->addMenu(aide);
 
     connect(actionOuvrir, SIGNAL(triggered()), parent, SLOT(openFile()));
     connect(actionNombreDePas, SIGNAL(triggered()), parent, SLOT(computeSteps()));
     connect(actionTempsActif,SIGNAL(triggered()),parent,SLOT(computeActivityTime()));
     connect(actionQuitter,SIGNAL(triggered()),parent,SLOT(closeWindow()));
+    connect(actionAPropos,SIGNAL(triggered()),parent,SLOT(openAbout()));
+    connect(actionAide,SIGNAL(triggered()),parent,SLOT(openHelp()));
 }
 

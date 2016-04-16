@@ -107,6 +107,7 @@ void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int column)
         }
     }
 }
+
 void MainWindow:: computeSteps(){
     CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
     Caneva* canevaSteps = new Caneva("../../config/displayStepNumber.json", sceneSteps);
@@ -119,6 +120,17 @@ void MainWindow::computeActivityTime(){
     replaceTab(sceneTime,"Temps d'activité");
 
 }
+void MainWindow::openAbout(){
+
+    aboutDialog = new AboutDialog(this);
+    aboutDialog->exec();
+}
+
+void MainWindow::openHelp(){
+    helpDialog = new HelpDialog(this);
+    helpDialog->exec();
+}
+
 void MainWindow::replaceTab(QWidget * replacement, std::string label)
 {
     int index = 0;
