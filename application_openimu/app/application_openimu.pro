@@ -38,7 +38,6 @@ SOURCES += main.cpp\
     models/caneva.cpp \
     models/components/blockType/addBlock.cpp \
     models/components/blockType/subBlock.cpp \
-    models/components/blockType/mulBlock.cpp \
     models/components/blockType/divBlock.cpp \
     models/components/blockType/blockFactory.cpp \
     customqmlscene.cpp \
@@ -54,7 +53,8 @@ SOURCES += main.cpp\
     newAcquisition/wimuacquisition.cpp \
     mytreewidget.cpp \
     accdatadisplay.cpp \
-    models/components/blockType/activitytrackerblock.cpp
+    models/components/blockType/activitytrackerblock.cpp \
+    models/components/blockgenerator.cpp
 
 
 
@@ -73,7 +73,6 @@ HEADERS += \
     models/caneva.h \
     models/components/blockType/addBlock.h \
     models/components/blockType/subBlock.h \
-    models/components/blockType/mulBlock.h \
     models/components/blockType/divBlock.h \
     models/components/blockType/blockFactory.h \
     customqmlscene.h \
@@ -96,7 +95,9 @@ HEADERS += \
     newAcquisition/wimuacquisition.h \
     mytreewidget.h \
     accdatadisplay.h \
-    models/components/blockType/activitytrackerblock.h
+    models/components/blockType/activitytrackerblock.h \
+    models/components/blockplugin.h \
+    models/components/blockgenerator.h
 
 FORMS += widget.ui
 
@@ -110,5 +111,8 @@ QSG_RENDERER_DEBUG=dump
 
 # Default rules for deployment.
 include(deployment.pri)
+
+DISTFILES += \
+    blockplugin.json
 
 

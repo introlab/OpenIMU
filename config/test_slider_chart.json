@@ -1,7 +1,7 @@
 {
 "ListBlock":[
 {
- "type": "mul", "ID": "multiplier",
+ "type": "mulblock", "ID": "multiplier",
  "inputs":[{"ID":"input1","TYPE":"Int"},{"ID":"input2","TYPE":"Int"}],
  "outputs":[{"ID":"output1","TYPE":"Int"}]
 }

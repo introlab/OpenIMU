@@ -1,10 +1,13 @@
 #include "blockFactory.h"
 #include "addBlock.h"
 #include "subBlock.h"
-#include "mulBlock.h"
 #include "divBlock.h"
 #include "podometerblock.h"
 #include "activitytrackerblock.h"
+
+#include "../blockgenerator.h"
+#include "../blockplugin.h"
+#include <QPluginLoader>
 
 BlockFactory::BlockFactory()
 {
@@ -20,10 +23,6 @@ Block* BlockFactory::createBlockType(std::string blockType)
     {
         return new SubBlock();
     }
-    else if(blockType == "mul")
-    {
-        return new MulBlock();
-    }
     else if(blockType == "div")
     {
         return new DivBlock();
@@ -34,5 +33,12 @@ Block* BlockFactory::createBlockType(std::string blockType)
     }
     else if(blockType == "activity"){
         return new ActivityTrackerBlock();
+    }
+    else
+    {
+#ifndef QT_NO_DEBUG
+        blockType+="d";
+#endif
+        return ((BlockGenerator*)((BlockGenerator*)QPluginLoader(QString::fromStdString(blockType)).instance())->getNewBlock())->getNewBlock();
     }
 }
