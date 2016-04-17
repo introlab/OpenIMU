@@ -112,12 +112,13 @@ void MainWindow:: computeSteps(){
     CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
     Caneva* canevaSteps = new Caneva("../../config/displayStepNumber.json", sceneSteps);
     replaceTab(sceneSteps,"Compteur de pas");
-    canevaSteps->test();
+    canevaSteps->testSteps();
 }
 void MainWindow::computeActivityTime(){
     CustomQmlScene* sceneTime = new CustomQmlScene("displayActivityTime.qml", this);
     Caneva* canevaTime = new Caneva("../../config/displayActivityTime.json", sceneTime);
     replaceTab(sceneTime,"Temps d'activité");
+    canevaTime->testActivity();
 
 }
 void MainWindow::openAbout(){
