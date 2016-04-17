@@ -93,7 +93,7 @@ void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int column)
         if(fileSelectedName != "" && fileSelectedName.contains("ACC")){
             std::string reconstructedPath= folderName.toStdString()+"/"+fileSelectedName.toStdString();
             AccDataDisplay *dataDisplay = new AccDataDisplay(reconstructedPath);
-            replaceTab(dataDisplay->getCentralView(),"Données accéléromètre");
+            replaceTab(dataDisplay,"Données accéléromètre");
         }
         else{
             QMessageBox msgBox;

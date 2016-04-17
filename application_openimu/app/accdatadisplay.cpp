@@ -1,7 +1,6 @@
 #include "accdatadisplay.h"
 #include "newAcquisition/wimuacquisition.h"
 #include <math.h>
-
 #include <QPropertyAnimation>
 
 QT_CHARTS_USE_NAMESPACE
@@ -23,7 +22,7 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
         chart->legend()->show();
         chart->legend()->setAlignment(Qt::AlignBottom);
         chart->setTheme(QChart::ChartThemeDark);
-        fillChartSeries();
+
 
         chart->createDefaultAxes();
         chart->setTitle("Données accéléromètre");
@@ -31,8 +30,15 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
         chartView = new QChartView(chart);
         chartView->setRenderHint(QPainter::Antialiasing);
 
-        centralWidget = new QWidget();
-        layout = new QVBoxLayout(centralWidget);
+        layout = new QVBoxLayout(this);
+        //Initialize Recording Date
+        QHBoxLayout *hboxDate = new QHBoxLayout();
+        QLabel* dateRecorded = new QLabel();
+        dateRecorded->setText(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(WimuAcquisition::minTime(availableData).date));
+        hboxDate->addStretch();
+        hboxDate->addWidget(dateRecorded);
+        hboxDate->addStretch();
+        layout->addLayout(hboxDate);
         //Initialize Checkbox and Label
         checkboxX = new QCheckBox("Axe X");
         checkboxY = new QCheckBox("Axe Y");
@@ -57,12 +63,19 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
         slider->setOrientation(Qt::Horizontal);
         layout->addWidget(chartView);
         layout->addLayout(hbox);
-        layout->addWidget(slider);
+
+        rSlider = new RangeSlider(this);
+        rSlider->setStartHour(WimuAcquisition::minTime(availableData).timestamp);
+        rSlider->setEndHour(WimuAcquisition::maxTime(availableData).timestamp);
+        rSlider->setRangeValues(WimuAcquisition::minTime(availableData).timestamp, WimuAcquisition::maxTime(availableData).timestamp);
+        layout->addWidget(rSlider);
 
         connect(slider,SIGNAL(valueChanged(int)),this,SLOT(sliderValueChanged(int)));
         connect(checkboxX, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayXAxis(int)));
         connect(checkboxY, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayYAxis(int)));
         connect(checkboxZ, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayZAxis(int)));
+
+        fillChartSeries();
     }
 }
 void AccDataDisplay::sliderValueChanged(int value)
@@ -71,6 +84,15 @@ void AccDataDisplay::sliderValueChanged(int value)
     chart->removeAllSeries();
     fillChartSeries();
     chartView->setChart(chart);
+
+}
+void AccDataDisplay::leftSliderValueChanged(int value)
+{
+    rSlider->setStartHour(value);
+}
+void AccDataDisplay::rightSliderValueChanged(int value)
+{
+    rSlider->setEndHour(value);
 
 }
 void AccDataDisplay::slotDisplayXAxis(int value){
@@ -135,11 +157,14 @@ void AccDataDisplay::fillChartSeries(){
         lineseriesY->append(t.at(i),y.at(i));
         lineseriesZ->append(t.at(i),z.at(i));
     }
-    chart->addSeries(lineseriesX);
-    chart->addSeries(lineseriesY);
-    chart->addSeries(lineseriesZ);
-}
-QWidget * AccDataDisplay::getCentralView(){
-    return centralWidget;
-}
+        if(checkboxX->isChecked())
+            chart->addSeries(lineseriesX);
 
+        if(checkboxY->isChecked())
+            chart->addSeries(lineseriesY);
+
+        if(checkboxZ->isChecked())
+            chart->addSeries(lineseriesZ);
+
+    chart->createDefaultAxes();
+}

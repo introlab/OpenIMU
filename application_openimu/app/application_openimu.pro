@@ -56,7 +56,8 @@ SOURCES += main.cpp\
     accdatadisplay.cpp \
     models/components/blockType/activitytrackerblock.cpp \
     dialogs/aboutdialog.cpp \
-    dialogs/helpdialog.cpp
+    dialogs/helpdialog.cpp \
+    rangeslider.cpp
 
 
 
@@ -100,7 +101,8 @@ HEADERS += \
     accdatadisplay.h \
     models/components/blockType/activitytrackerblock.h \
     dialogs/aboutdialog.h \
-    dialogs/helpdialog.h
+    dialogs/helpdialog.h \
+    rangeslider.h
 
 FORMS += widget.ui \
     help.ui \
