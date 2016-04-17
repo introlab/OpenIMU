@@ -12,6 +12,7 @@
 #include <QWidget>
 #include "dialogs/aboutdialog.h"
 #include "dialogs/helpdialog.h"
+#include <QStatusBar>
 
 class MainWindow : public QMainWindow
     {
@@ -47,6 +48,7 @@ class MainWindow : public QMainWindow
        QWidget *dataView;
        AboutDialog *aboutDialog;
        HelpDialog *helpDialog;
+       QStatusBar * statusBar;
     };
 
 #endif // MAINWINDOW_H
