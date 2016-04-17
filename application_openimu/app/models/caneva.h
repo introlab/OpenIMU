@@ -15,6 +15,8 @@ public:
     Block* getBlock(std::string ID);
 
     void test();
+    void testSteps();
+    void testActivity();
     void test_slider_chart();
     void setSliderLimitValues(int min, int max);
     void setGraphData(std::string filePath);

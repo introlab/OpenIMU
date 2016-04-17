@@ -11,23 +11,26 @@
 #include <QSlider>
 #include <QCheckBox>
 #include "newAcquisition/wimuacquisition.h"
+#include "rangeslider.h"
 
 QT_CHARTS_USE_NAMESPACE
 
-class AccDataDisplay : public QObject
+class AccDataDisplay : public QWidget
 {
     Q_OBJECT
 
 public:
     AccDataDisplay();
     AccDataDisplay(std::string filePath);
-    QWidget *getCentralView();
     void fillChartSeries();
+
 public slots:
     void sliderValueChanged(int value);
     void slotDisplayXAxis(int value);
     void slotDisplayYAxis(int value);
     void slotDisplayZAxis(int value);
+    void leftSliderValueChanged(int value);
+    void rightSliderValueChanged(int value);
 
 private:
     QChart * chart;
@@ -40,8 +43,8 @@ private:
     QCheckBox *checkboxY;
     QCheckBox *checkboxZ;
 
+    RangeSlider *rSlider;
     QSlider *slider;
-    QWidget *centralWidget;
     QVBoxLayout* layout;
 
     WimuAcquisition * acceleroData;

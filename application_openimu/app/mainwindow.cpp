@@ -18,7 +18,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     this->setMinimumSize(700,600);
     menu = new ApplicationMenuBar(this);
     this->setMenuBar(menu);
-
+    statusBar = new QStatusBar();
+    this->setStatusBar(statusBar);
     splitter = new QSplitter;
     setCentralWidget(splitter);
 
@@ -36,10 +37,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     tree->setMaximumWidth(150);
 
     //default scene
-    scene = new CustomQmlScene("test_slider_chart.qml", this);
-    caneva = new Caneva("../../config/test_slider_chart.json", scene);
+    //scene = new CustomQmlScene("test_slider_chart.qml", this);
+    //caneva = new Caneva("../../config/test_slider_chart.json", scene);
     tabWidget = new QTabWidget;
-    tabWidget->addTab(scene,"Test slider with chart");
+    //tabWidget->addTab(scene,"Test slider with chart");
     tabWidget->setTabsClosable(true);
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
     dataView = new QWidget();
@@ -49,8 +50,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     splitter->addWidget(tabWidget);
     splitter->setSizes(QList<int>() << 150 << 600);
     setCentralWidget(splitter);
-
-    caneva->test_slider_chart();
+    statusBar->showMessage(tr("Prêt"));
+   // caneva->test_slider_chart();
 }
 
 MainWindow::~MainWindow(){
@@ -65,7 +66,7 @@ void MainWindow:: openFile(){
     folderName = QFileDialog::getExistingDirectory(this, tr("Ouvrir Fichier"),"/path/to/file/");
     QDir* rootDir = new QDir(folderName);
     QFileInfoList filesList = rootDir->entryInfoList();
-
+    statusBar->showMessage(QString::fromStdString("Dossier séléctionné: ")+ folderName);
     foreach(QFileInfo fileInfo, filesList)
     {
         QTreeWidgetItem* item = new QTreeWidgetItem();
@@ -91,12 +92,15 @@ void MainWindow:: openFile(){
 }
 void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int column)
 {
+
     if(item->parent()!=NULL){
         fileSelectedName= "/"+item->parent()->text(column)+"/"+item->text(column);
+        QString status = QString::fromStdString("Fichier séléctionné: ") + fileSelectedName;
+        statusBar->showMessage(status);
         if(fileSelectedName != "" && fileSelectedName.contains("ACC")){
             std::string reconstructedPath= folderName.toStdString()+"/"+fileSelectedName.toStdString();
             AccDataDisplay *dataDisplay = new AccDataDisplay(reconstructedPath);
-            replaceTab(dataDisplay->getCentralView(),"Données accéléromètre");
+            replaceTab(dataDisplay,"Données accéléromètre");
         }
         else{
             QMessageBox msgBox;
@@ -112,12 +116,15 @@ void MainWindow:: computeSteps(){
     CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
     Caneva* canevaSteps = new Caneva("../../config/displayStepNumber.json", sceneSteps);
     replaceTab(sceneSteps,"Compteur de pas");
-    canevaSteps->test();
+    canevaSteps->testSteps();
+    statusBar->showMessage(tr("Ouverture compteur de pas"));
 }
 void MainWindow::computeActivityTime(){
     CustomQmlScene* sceneTime = new CustomQmlScene("displayActivityTime.qml", this);
     Caneva* canevaTime = new Caneva("../../config/displayActivityTime.json", sceneTime);
     replaceTab(sceneTime,"Temps d'activité");
+    canevaTime->testActivity();
+    statusBar->showMessage(tr("Ouverture temps d'activité"));
 
 }
 void MainWindow::openAbout(){

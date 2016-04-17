@@ -44,23 +44,48 @@ void Caneva::test_slider_chart()
 
 }
 
-void Caneva::test()
+void Caneva::testSteps()
 {
     std::vector<std::string> arr_str =  {"a","b","c","d","e","f","g","h"};
     std::vector<int> arr_int =  {10,20,11,-2,0,-20,-10,-20};
 
-    //getBlock("chart_line")->GetInput<std::string>("labels")->Put(arr_str);
-    //getBlock("multiplier")->GetInput<int>("input1")->Put(arr_int);
-    //setSliderLimitValues(0,100);
+    getBlock("col1.label_title_value")->GetInput<std::string>("inputTitle")->Put(std::vector<std::string>({"Compteur de pas: "}));
 
-    getBlock("col1.label_title_value")->GetInput<std::string>("inputTitle")->Put(std::vector<std::string>({"Nombre de pas: "}));
-    getBlock("col1.row1.chart_bar")->GetInput<std::string>("x")->Put(arr_str);
-    getBlock("col1.row1.chart_bar")->GetInput<int>("y")->Put(arr_int);
+    getBlock("col1.row1.col2.label_step")->GetInput<int>("inputStepNumber")->Put(std::vector<int>({100}));
+    getBlock("col1.row2.col4.label_start_date")->GetInput<int>("inputStartDate")->Put(std::vector<int>({100}));
+    getBlock("col1.row2.col4.label_end_date")->GetInput<int>("inputEndDate")->Put(std::vector<int>({100}));
+    getBlock("col1.row2.col4.label_days")->GetInput<int>("inputDaysAvailable")->Put(std::vector<int>({100}));
 
-    getBlock("col1.row1.col2.vtotalLabel")->GetInput<int>("inputvtotal")->Put(std::vector<int>({100}));
-    getBlock("col1.row1.col2.vmoyLabel")->GetInput<int>("inputvmoy")->Put(std::vector<int>({10}));
-    getBlock("col1.row1.col2.vmaxLabel")->GetInput<int>("inputvmax")->Put(std::vector<int>({15}));
-    getBlock("col1.row1.col2.vminLabel")->GetInput<int>("inputvmin")->Put(std::vector<int>({12}));
+    getBlock("col1.row2.col3.chart_step")->GetInput<std::string>("x")->Put(arr_str);
+    getBlock("col1.row2.col3.chart_step")->GetInput<int>("y")->Put(arr_int);
+
+    getBlock("col1.row2.col4.vtotalLabel")->GetInput<int>("inputvtotal")->Put(std::vector<int>({100}));
+    getBlock("col1.row2.col4.vmoyLabel")->GetInput<int>("inputvmoy")->Put(std::vector<int>({10}));
+    getBlock("col1.row2.col4.vmaxLabel")->GetInput<int>("inputvmax")->Put(std::vector<int>({15}));
+    getBlock("col1.row2.col4.vminLabel")->GetInput<int>("inputvmin")->Put(std::vector<int>({12}));
+
+}
+void Caneva::testActivity()
+{
+    std::vector<std::string> arr_str =  {"a","b","c","d","e","f","g","h"};
+    std::vector<int> arr_int =  {10,20,11,-2,0,-20,-10,-20};
+
+    getBlock("col1.label_title_value")->GetInput<std::string>("inputTitle")->Put(std::vector<std::string>({"Temps d'activité: "}));
+
+    getBlock("col1.row1.col2.label_active_time")->GetInput<int>("inputActiveTime")->Put(std::vector<int>({100}));
+    getBlock("col1.row1.col2.label_passive_time")->GetInput<int>("inputPassiveTime")->Put(std::vector<int>({100}));
+
+    getBlock("col1.row2.col4.label_start_date")->GetInput<int>("inputStartDate")->Put(std::vector<int>({100}));
+    getBlock("col1.row2.col4.label_end_date")->GetInput<int>("inputEndDate")->Put(std::vector<int>({100}));
+    getBlock("col1.row2.col4.label_days")->GetInput<int>("inputDaysAvailable")->Put(std::vector<int>({100}));
+
+    getBlock("col1.row2.col3.chart_pie")->GetInput<int>("x")->Put(std::vector<int>({70}));
+    getBlock("col1.row2.col3.chart_pie")->GetInput<int>("y")->Put(std::vector<int>({30}));
+
+    getBlock("col1.row2.col4.vtotalLabel")->GetInput<int>("inputvtotal")->Put(std::vector<int>({100}));
+    getBlock("col1.row2.col4.vmoyLabel")->GetInput<int>("inputvmoy")->Put(std::vector<int>({10}));
+    getBlock("col1.row2.col4.vmaxLabel")->GetInput<int>("inputvmax")->Put(std::vector<int>({15}));
+    getBlock("col1.row2.col4.vminLabel")->GetInput<int>("inputvmin")->Put(std::vector<int>({12}));
 
 }
 
