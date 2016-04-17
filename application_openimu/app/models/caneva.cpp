@@ -10,6 +10,8 @@
 #include "components/quickiteminputnodes.h"
 //#include "components/quickitemoutputnodes.h"
 
+#include "newAcquisition/wimuacquisition.h"
+
 Caneva::Caneva(std::string filename, CustomQmlScene *scene)
 {
     loadFile(filename);
@@ -34,6 +36,11 @@ void Caneva::test_slider_chart()
     getBlock("chart_line")->GetInput<std::string>("labels")->Put(arr_str);
     getBlock("multiplier")->GetInput<int>("input1")->Put(arr_int);
     setSliderLimitValues(0,100);
+
+    std::string filePath = "C:\Users\DRAGON\Documents\data_step\10\ACC_4.DAT";
+    acceleroData = new WimuAcquisition(filePath,50);
+    availableData = acceleroData->getData();
+
 
 }
 
