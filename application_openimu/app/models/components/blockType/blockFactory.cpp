@@ -39,6 +39,10 @@ Block* BlockFactory::createBlockType(std::string blockType)
 #ifndef QT_NO_DEBUG
         blockType+="d";
 #endif
-        return ((BlockGenerator*)((BlockGenerator*)QPluginLoader(QString::fromStdString(blockType)).instance())->getNewBlock())->getNewBlock();
+        QString fileName = QString::fromStdString(blockType);
+        QPluginLoader* ploader = new QPluginLoader(fileName);
+        BlockGenerator* loader = (BlockGenerator*)ploader->instance();
+        BlockGenerator* generator = (BlockGenerator*)loader->getNewBlock();
+        return generator->getNewBlock();
     }
 }

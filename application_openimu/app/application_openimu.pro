@@ -56,8 +56,8 @@ SOURCES += main.cpp\
     models/components/blockType/activitytrackerblock.cpp \
     models/components/blockgenerator.cpp \
     dialogs/aboutdialog.cpp \
-    dialogs/helpdialog.cpp
-
+    dialogs/helpdialog.cpp \
+    rangeslider.cpp
 
 
 
@@ -102,7 +102,8 @@ HEADERS += \
     dialogs/aboutdialog.h \
     dialogs/helpdialog.h \
     models/components/blockplugin.h \
-    models/components/blockgenerator.h
+    models/components/blockgenerator.h \
+    rangeslider.h
 
 FORMS += widget.ui \
     help.ui \

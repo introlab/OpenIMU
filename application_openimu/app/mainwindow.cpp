@@ -36,10 +36,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     tree->setMaximumWidth(150);
 
     //default scene
-    scene = new CustomQmlScene("test_slider_chart.qml", this);
-    caneva = new Caneva("../../config/test_slider_chart.json", scene);
+    //scene = new CustomQmlScene("test_slider_chart.qml", this);
+    //caneva = new Caneva("../../config/test_slider_chart.json", scene);
     tabWidget = new QTabWidget;
-    tabWidget->addTab(scene,"Test slider with chart");
+    //tabWidget->addTab(scene,"Test slider with chart");
     tabWidget->setTabsClosable(true);
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
     dataView = new QWidget();
@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     splitter->setSizes(QList<int>() << 150 << 600);
     setCentralWidget(splitter);
 
-    caneva->test_slider_chart();
+   // caneva->test_slider_chart();
 }
 
 MainWindow::~MainWindow(){
@@ -96,7 +96,7 @@ void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int column)
         if(fileSelectedName != "" && fileSelectedName.contains("ACC")){
             std::string reconstructedPath= folderName.toStdString()+"/"+fileSelectedName.toStdString();
             AccDataDisplay *dataDisplay = new AccDataDisplay(reconstructedPath);
-            replaceTab(dataDisplay->getCentralView(),"Données accéléromètre");
+            replaceTab(dataDisplay,"Données accéléromètre");
         }
         else{
             QMessageBox msgBox;
@@ -112,12 +112,13 @@ void MainWindow:: computeSteps(){
     CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
     Caneva* canevaSteps = new Caneva("../../config/displayStepNumber.json", sceneSteps);
     replaceTab(sceneSteps,"Compteur de pas");
-    canevaSteps->test();
+    canevaSteps->testSteps();
 }
 void MainWindow::computeActivityTime(){
     CustomQmlScene* sceneTime = new CustomQmlScene("displayActivityTime.qml", this);
     Caneva* canevaTime = new Caneva("../../config/displayActivityTime.json", sceneTime);
     replaceTab(sceneTime,"Temps d'activité");
+    canevaTime->testActivity();
 
 }
 void MainWindow::openAbout(){
