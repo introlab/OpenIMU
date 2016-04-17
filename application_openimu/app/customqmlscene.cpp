@@ -4,7 +4,7 @@
 #include <iostream>
 #include <QQmlApplicationEngine>
 #include <qboxlayout.h>
-#include <models/components/quickiteminputnodeshandles.h>
+#include "models/components/quickiteminputnodeshandles.h"
 #include <QApplication>
 
 CustomQmlScene::CustomQmlScene(std::string filename, QWidget* parent = 0): QWidget(parent)

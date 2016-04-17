@@ -38,7 +38,6 @@ SOURCES += main.cpp\
     models/caneva.cpp \
     models/components/blockType/addBlock.cpp \
     models/components/blockType/subBlock.cpp \
-    models/components/blockType/mulBlock.cpp \
     models/components/blockType/divBlock.cpp \
     models/components/blockType/blockFactory.cpp \
     customqmlscene.cpp \
@@ -55,6 +54,7 @@ SOURCES += main.cpp\
     mytreewidget.cpp \
     accdatadisplay.cpp \
     models/components/blockType/activitytrackerblock.cpp \
+    models/components/blockgenerator.cpp \
     dialogs/aboutdialog.cpp \
     dialogs/helpdialog.cpp \
     rangeslider.cpp
@@ -76,7 +76,6 @@ HEADERS += \
     models/caneva.h \
     models/components/blockType/addBlock.h \
     models/components/blockType/subBlock.h \
-    models/components/blockType/mulBlock.h \
     models/components/blockType/divBlock.h \
     models/components/blockType/blockFactory.h \
     customqmlscene.h \
@@ -102,6 +101,8 @@ HEADERS += \
     models/components/blockType/activitytrackerblock.h \
     dialogs/aboutdialog.h \
     dialogs/helpdialog.h \
+    models/components/blockplugin.h \
+    models/components/blockgenerator.h \
     rangeslider.h
 
 FORMS += widget.ui \
@@ -118,5 +119,8 @@ QSG_RENDERER_DEBUG=dump
 
 # Default rules for deployment.
 include(deployment.pri)
+
+DISTFILES += \
+    blockplugin.json
 
 

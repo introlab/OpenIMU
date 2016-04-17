@@ -4,7 +4,7 @@
 #include <string>
 #include <json/json.h>
 #include "components/block.h"
-#include "customqmlscene.h"
+#include "../customqmlscene.h"
 
 class Caneva
 {
@@ -15,6 +15,7 @@ public:
     Block* getBlock(std::string ID);
 
     void test();
+    void test_slider_chart();
     void setSliderLimitValues(int min, int max);
     void setGraphData(std::string filePath);
 private:

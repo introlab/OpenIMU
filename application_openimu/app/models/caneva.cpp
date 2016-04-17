@@ -4,7 +4,7 @@
 #include <iostream>
 #include "components/block.h"
 #include "components/blockType/blockFactory.h"
-#include "acquisition/AccelerometerReader.h"
+#include "../acquisition/AccelerometerReader.h"
 #include "components/inputnode.h"
 #include "components/outputnode.h"
 #include "components/quickiteminputnodes.h"
@@ -23,6 +23,18 @@ Caneva::~Caneva()
 {
     for(auto it = blocks.begin() ; it != blocks.end() ; it++)
         delete(*it);
+}
+
+void Caneva::test_slider_chart()
+{
+
+    std::vector<std::string> arr_str =  {"a","b","c","d","e","f","g","h"};
+    std::vector<int> arr_int =  {10,20,11,-2,0,-20,-10,-20};
+
+    getBlock("chart_line")->GetInput<std::string>("labels")->Put(arr_str);
+    getBlock("multiplier")->GetInput<int>("input1")->Put(arr_int);
+    setSliderLimitValues(0,100);
+
 }
 
 void Caneva::test()

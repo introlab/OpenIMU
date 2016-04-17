@@ -37,8 +37,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     //default scene
     //scene = new CustomQmlScene("test_slider_chart.qml", this);
-    //caneva = new Caneva("config/test_slider_chart.json", scene);
+    //caneva = new Caneva("../../config/test_slider_chart.json", scene);
     tabWidget = new QTabWidget;
+    //tabWidget->addTab(scene,"Test slider with chart");
     tabWidget->setTabsClosable(true);
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
     dataView = new QWidget();
@@ -48,6 +49,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     splitter->addWidget(tabWidget);
     splitter->setSizes(QList<int>() << 150 << 600);
     setCentralWidget(splitter);
+
+   // caneva->test_slider_chart();
 }
 
 MainWindow::~MainWindow(){

@@ -288,3 +288,6 @@ build-OpenIMU-Desktop_Qt_5_5_1_MinGW_32bit_304cdc-Debug/vbLabel/Makefile.vblabel
 build-OpenIMU-Desktop_Qt_5_5_1_MinGW_32bit_304cdc-Debug/vbLabel/qmldir
 application_openimu/doc/
 build-OpenIMU-Desktop_Qt_5_5_1_MinGW_32bit-Release/
+build-test_plugin-Desktop_Qt_5_5_1_MinGW_32bit-Debug/
+build-test_plugin-Desktop_Qt_5_5_1_MinGW_32bit-Release/
+build-test_use_plugin-Desktop_Qt_5_5_1_MinGW_32bit-Debug/
