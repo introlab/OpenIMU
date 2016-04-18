@@ -29,6 +29,7 @@ public slots:
     void slotDisplayXAxis(int value);
     void slotDisplayYAxis(int value);
     void slotDisplayZAxis(int value);
+    void slotDisplayNorme(int value);
     void leftSliderValueChanged(int value);
     void rightSliderValueChanged(int value);
 
@@ -38,10 +39,12 @@ private:
     QLineSeries *lineseriesX;
     QLineSeries *lineseriesY;
     QLineSeries *lineseriesZ;
+    QLineSeries *lineseriesAccNorm;
 
     QCheckBox *checkboxX;
     QCheckBox *checkboxY;
     QCheckBox *checkboxZ;
+    QCheckBox *checkboxAccNorm;
 
     RangeSlider *rSlider;
     QSlider *slider;

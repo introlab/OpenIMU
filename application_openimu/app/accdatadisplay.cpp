@@ -34,7 +34,7 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
         //Initialize Recording Date
         QHBoxLayout *hboxDate = new QHBoxLayout();
         QLabel* dateRecorded = new QLabel();
-        dateRecorded->setText(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(WimuAcquisition::minTime(availableData).date));
+        dateRecorded->setText(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(acceleroData->getDates().back().date));
         hboxDate->addStretch();
         hboxDate->addWidget(dateRecorded);
         hboxDate->addStretch();
@@ -43,16 +43,19 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
         checkboxX = new QCheckBox("Axe X");
         checkboxY = new QCheckBox("Axe Y");
         checkboxZ = new QCheckBox("Axe Z");
+        checkboxAccNorm = new QCheckBox("Norme");
 
         checkboxX->setChecked(true);
         checkboxY->setChecked(true);
         checkboxZ->setChecked(true);
+        checkboxAccNorm->setChecked(false);
 
         QHBoxLayout *hbox = new QHBoxLayout();
         hbox->addStretch();
         hbox->addWidget(checkboxX);
         hbox->addWidget(checkboxY);
         hbox->addWidget(checkboxZ);
+        hbox->addWidget(checkboxAccNorm);
         hbox->addStretch();
 
         //Initialize Slider
@@ -65,16 +68,18 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
         layout->addLayout(hbox);
 
         rSlider = new RangeSlider(this);
-        rSlider->setStartHour(WimuAcquisition::minTime(availableData).timestamp);
-        rSlider->setEndHour(WimuAcquisition::maxTime(availableData).timestamp);
-        rSlider->setRangeValues(WimuAcquisition::minTime(availableData).timestamp, WimuAcquisition::maxTime(availableData).timestamp);
+        long long min = WimuAcquisition::minTime(availableData).timestamp;
+        long long max = WimuAcquisition::maxTime(availableData).timestamp;
+        rSlider->setStartHour(min/1000);
+        rSlider->setEndHour(max/1000);
+        rSlider->setRangeValues(0,(long long)(max-min)/1000);
         layout->addWidget(rSlider);
 
         connect(slider,SIGNAL(valueChanged(int)),this,SLOT(sliderValueChanged(int)));
         connect(checkboxX, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayXAxis(int)));
         connect(checkboxY, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayYAxis(int)));
         connect(checkboxZ, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayZAxis(int)));
-
+        connect(checkboxAccNorm, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayNorme(int)));
         fillChartSeries();
     }
 }
@@ -84,15 +89,23 @@ void AccDataDisplay::sliderValueChanged(int value)
     chart->removeAllSeries();
     fillChartSeries();
     chartView->setChart(chart);
-
+}
+void AccDataDisplay::slotDisplayNorme(int value){
+    if(value){
+        chart->addSeries(lineseriesAccNorm);
+        chartView->setChart(chart);
+    }else{
+        chart->removeSeries(lineseriesAccNorm);
+        chartView->setChart(chart);
+    }
 }
 void AccDataDisplay::leftSliderValueChanged(int value)
 {
-    rSlider->setStartHour(value);
+    rSlider->setStartHour(WimuAcquisition::minTime(availableData).timestamp+value);
 }
 void AccDataDisplay::rightSliderValueChanged(int value)
 {
-    rSlider->setEndHour(value);
+    rSlider->setEndHour(WimuAcquisition::maxTime(availableData).timestamp-value);
 
 }
 void AccDataDisplay::slotDisplayXAxis(int value){
@@ -128,6 +141,7 @@ void AccDataDisplay::fillChartSeries(){
     std::vector<signed short> x;
     std::vector<signed short> y;
     std::vector<signed short> z;
+    std::vector<signed short> norm_acc;
     std::vector<float> t;
 
     for(int k = 0; k <sliceData.size(); k++){
@@ -135,7 +149,7 @@ void AccDataDisplay::fillChartSeries(){
         x.push_back(sliceData.at(k).x);
         y.push_back(sliceData.at(k).y);
         z.push_back(sliceData.at(k).z);
-
+        norm_acc.push_back(sqrt(pow(sliceData.at(k).x,2.0) + pow(sliceData.at(k).y,2.0) + pow(sliceData.at(k).z,2.0)));
         t.push_back(k); // TO DO Replace w/ real value
     }
 
@@ -151,20 +165,31 @@ void AccDataDisplay::fillChartSeries(){
     lineseriesZ->setName("Axe Z");
     lineseriesZ->setUseOpenGL(true);
 
+    lineseriesAccNorm = new QtCharts::QLineSeries();
+    lineseriesAccNorm->setName("Norme");
+    QPen pen(QRgb(0xF60008));
+        pen.setWidth(1);
+    lineseriesAccNorm->setPen(pen);
+    lineseriesAccNorm->setUseOpenGL(true);
+
     for(unsigned int i = 0; i <x.size(); i++)
     {
         lineseriesX->append(t.at(i),x.at(i));
         lineseriesY->append(t.at(i),y.at(i));
         lineseriesZ->append(t.at(i),z.at(i));
+        lineseriesAccNorm->append(t.at(i),norm_acc.at(i));
     }
-        if(checkboxX->isChecked())
-            chart->addSeries(lineseriesX);
+    if(checkboxX->isChecked())
+        chart->addSeries(lineseriesX);
 
-        if(checkboxY->isChecked())
-            chart->addSeries(lineseriesY);
+    if(checkboxY->isChecked())
+        chart->addSeries(lineseriesY);
 
-        if(checkboxZ->isChecked())
-            chart->addSeries(lineseriesZ);
+    if(checkboxZ->isChecked())
+        chart->addSeries(lineseriesZ);
+
+    if(checkboxAccNorm->isChecked())
+        chart->addSeries(lineseriesAccNorm);
 
     chart->createDefaultAxes();
 }

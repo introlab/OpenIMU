@@ -36,7 +36,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     tree->setHeaderItem(headerItem);
     tree->setMaximumWidth(150);
 
+    //default scene
+   // scene = new CustomQmlScene("test_slider_chart.qml", this);
+   // caneva = new Caneva("config/test_slider_chart.json", scene);
     tabWidget = new QTabWidget;
+    //tabWidget->addTab(scene,"Test slider with chart");
     tabWidget->setTabsClosable(true);
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
     QWidget * homeWidget = new QWidget(); //To do create classe Home widget
@@ -45,8 +49,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     font.setBold(true);
     QVBoxLayout* homeLayout = new QVBoxLayout(homeWidget);
     QLabel * homeLabel = new QLabel("Open IMU");
-    QLabel * descriptionLabel = new QLabel("Open Source Analytics & Visualisation Software");
-    QLabel * descriptionLabel2 = new QLabel("for Inertial Measurement Units");
+    QLabel * descriptionLabel = new QLabel("Logiciel de visualisation et d'analyse, Open Source");
+    QLabel * descriptionLabel2 = new QLabel("pour centrale inertielle");
     homeLabel->setFont(font);
     descriptionLabel->setFont(font);
     descriptionLabel2->setFont(font);
@@ -142,7 +146,7 @@ void MainWindow:: displayRawAccData()
 }
 void MainWindow:: computeSteps(){
     CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
-    Caneva* canevaSteps = new Caneva("config/displayStepNumber.json", sceneSteps);
+    Caneva* canevaSteps = new Caneva("../../config/displayStepNumber.json", sceneSteps);
     replaceTab(sceneSteps,"Compteur de pas");
     canevaSteps->testSteps();
     statusBar->showMessage(tr("Ouverture compteur de pas"));
@@ -152,7 +156,7 @@ void MainWindow::computeActivityTime(){
     std::string reconsrtructPath = folderName.toStdString()+"/"+fileSelectedName.toStdString();
     if(reconsrtructPath != "/" ){
         CustomQmlScene* sceneTime = new CustomQmlScene("displayActivityTime.qml", this);
-        Caneva* canevaTime = new Caneva("config/displayActivityTime.json", sceneTime);
+        Caneva* canevaTime = new Caneva("../../config/displayActivityTime.json", sceneTime);
         replaceTab(sceneTime,"Temps d'activité");
         canevaTime->testActivity(reconsrtructPath);
     }
