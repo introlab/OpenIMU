@@ -1,3 +1,0 @@
-"C:\Program Files (x86)\CMake\bin\cmake.exe" -E remove -f CMakeFiles\test_pipeline.dir/objects.a
-C:\Qt\Tools\mingw492_32\bin\ar.exe cr CMakeFiles\test_pipeline.dir/objects.a @CMakeFiles\test_pipeline.dir\objects1.rsp
-C:\Qt\Tools\mingw492_32\bin\g++.exe     -Wl,--whole-archive CMakeFiles\test_pipeline.dir/objects.a -Wl,--no-whole-archive  -o test_pipeline.exe -Wl,--out-implib,libtest_pipeline.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\test_pipeline.dir\linklibs.rsp

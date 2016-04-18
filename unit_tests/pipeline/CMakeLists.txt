@@ -7,18 +7,30 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Quick   REQUIRED)
 find_package(Qt5Charts	REQUIRED)
 
+
+#MINGW COMPILE FLAGS
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
+
 enable_testing(true)
 
 SET(srcs
     ${CMAKE_CURRENT_SOURCE_DIR}/testpipeline.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../application_openimu/app/customqmlscene.cpp
     )
 
 SET(headers
     ${CMAKE_CURRENT_SOURCE_DIR}/testpipeline.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../application_openimu/app/customqmlscene.h
     )
 
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../application_openimu/app/models ${CMAKE_CURRENT_BINARY_DIR}/models)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../application_openimu/app/newAcquisition ${CMAKE_CURRENT_BINARY_DIR}/newAcquisition)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../application_openimu/app/algorithm ${CMAKE_CURRENT_BINARY_DIR}/algorithm)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../application_openimu/app/acquisition ${CMAKE_CURRENT_BINARY_DIR}/acquisition)
+
+
 include_directories(
-    ../../app/models/json
+    ../../application_openimu/app/models/json
     )
 
 # Tell CMake to run moc when necessary:

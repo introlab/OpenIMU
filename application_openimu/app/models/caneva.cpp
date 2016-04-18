@@ -10,7 +10,7 @@
 #include "components/quickiteminputnodes.h"
 //#include "components/quickitemoutputnodes.h"
 
-#include "newAcquisition/wimuacquisition.h"
+#include "../newAcquisition/wimuacquisition.h"
 
 Caneva::Caneva(std::string filename, CustomQmlScene *scene)
 {
@@ -226,8 +226,8 @@ void Caneva::createInputs(Block* block, Json::Value inputs)
 {
     for(Json::ValueIterator it = inputs.begin() ; it != inputs.end() ; it++)
     {
-        if((*it)["TYPE"].asString() == "vfloat"){
-            AbstractInputNode* input = new InputNode<double>();
+        if((*it)["TYPE"].asString() == "Float"){
+            AbstractInputNode* input = new InputNode<float>();
             input->SetStringID((*it)["ID"].asString());
             block->AddInput(input);
         }
@@ -264,8 +264,8 @@ void Caneva::createOutputs(Block *block, Json::Value outputs)
 {
     for(Json::ValueIterator it = outputs.begin() ; it != outputs.end() ; it++)
     {
-        if((*it)["TYPE"].asString() == "vfloat"){
-            AbstractOutputNode* output = new OutputNode<double>();
+        if((*it)["TYPE"].asString() == "Float"){
+            AbstractOutputNode* output = new OutputNode<float>();
             output->SetStringID((*it)["ID"].asString());
             block->AddOutput(output);
         }
