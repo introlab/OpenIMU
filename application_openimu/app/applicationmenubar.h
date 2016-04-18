@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QMenuBar>
 #include <QMainWindow>
+#include <QShortcut>
 
 class ApplicationMenuBar : public QMenuBar
 {
@@ -17,9 +18,8 @@ public slots:
 
 private:
     QMenu* fichier;
-    QMenu* edition;
     QMenu* algorithme;
-    QMenu* affichage;
+    QMenu* vue;
     QMenu* aide;
 };
 
