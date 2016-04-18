@@ -16,7 +16,7 @@ public:
 
     void test();
     void testSteps();
-    void testActivity();
+    void testActivity(std::string filename);
     void test_slider_chart();
     void setSliderLimitValues(int min, int max);
     void setGraphData(std::string filePath);

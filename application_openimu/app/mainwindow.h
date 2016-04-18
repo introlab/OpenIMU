@@ -26,6 +26,7 @@ class MainWindow : public QMainWindow
 
     public slots:
     void openFile();
+    void displayRawAccData();
     void computeSteps();
     void closeWindow();
     void onTreeItemClicked(QTreeWidgetItem* item, int /*column*/);

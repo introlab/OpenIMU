@@ -13,13 +13,15 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     fichier->addAction(actionOuvrir);
     fichier->addSeparator();
     fichier->addAction(actionQuitter);
-    edition = new QMenu("Édition");
+    //edition = new QMenu("Édition");
     algorithme = new QMenu("Algorithme");
     QAction* actionNombreDePas = new QAction("Compteur de pas",algorithme);
     algorithme->addAction(actionNombreDePas);
     QAction* actionTempsActif = new QAction("Temps d'activité",algorithme);
     algorithme->addAction(actionTempsActif);
-    //affichage = new QMenu("Affichage");
+    affichage = new QMenu("Affichage");
+    QAction* actionDonneeBrutes = new QAction("Données brutes",affichage);
+    affichage->addAction(actionDonneeBrutes);
     aide = new QMenu("Aide");
     QAction* actionAPropos = new QAction("À propos",aide);
     aide->addAction(actionAPropos);
@@ -27,11 +29,12 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     aide->addAction(actionAide);
 
     this->addMenu(fichier);
-    this->addMenu(edition);
+    //this->addMenu(edition);
+    this->addMenu(affichage);
     this->addMenu(algorithme);
-    //this->addMenu(affichage);
     this->addMenu(aide);
 
+    connect(actionDonneeBrutes, SIGNAL(triggered()), parent, SLOT(displayRawAccData()));
     connect(actionOuvrir, SIGNAL(triggered()), parent, SLOT(openFile()));
     connect(actionNombreDePas, SIGNAL(triggered()), parent, SLOT(computeSteps()));
     connect(actionTempsActif,SIGNAL(triggered()),parent,SLOT(computeActivityTime()));
