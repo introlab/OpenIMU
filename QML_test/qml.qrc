@@ -1,8 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>main.qml</file>
-        <file>MainForm.ui.qml</file>
-        <file>Button.qml</file>
-        <file>Algo/AlgoBlock.qml</file>
-    </qresource>
-</RCC>

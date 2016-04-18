@@ -1,3 +1,0 @@
-{"widget": "LCD",
-"inputs":[{"ID":"input", "dataType": "int"}],"outputs":[]
-}
