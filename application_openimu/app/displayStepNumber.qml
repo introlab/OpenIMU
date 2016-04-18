@@ -27,7 +27,7 @@ Rectangle{
                 id: inputTitle;
             }
             property string id: "label_title_value";
-            x: parent.x + parent.width/2.5
+            x: parent.x + parent.width/2 - this.width/2
             text: inputTitle.value[0]
             font.pixelSize: 20
             color: "steelblue"
@@ -47,7 +47,9 @@ Rectangle{
 
                 Label {
                      text: "Analyse de pas journaliere"
-                     font.pixelSize: 14
+                     font.pixelSize: 18
+                     font.underline:true
+                     color: "steelblue"
                      y: parent.y +300
                 }
 
@@ -78,6 +80,8 @@ Rectangle{
                 Label {
                      text: "Analyse de pas tendancielle"
                      font.pixelSize: 14
+                     font.underline:true
+                     color:"steelblue"
                 }
 
                 Chart{
@@ -103,18 +107,21 @@ Rectangle{
             }
 
             Column{
-                spacing: 10
+                spacing: this.height/(this.children.length+3)
+
                 property string id: "col4";
                 width:0.5*parent.width;
                 height:parent.height;
                 x : parent.x + 300;
+
+
                 Label {
                     InputNodeInt{
                         id: inputStartDate;
                     }
                     property string id: "label_start_date";
 
-                     text: "Date de debut:" + inputStartDate.value[0]
+                     text: "Date de debut: " + inputStartDate.value[0]
                      font.pixelSize: 14
                 }
 
