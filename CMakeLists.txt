@@ -46,4 +46,8 @@ SET(CMAKE_VERBOSE_MAKEFILE ON)
 add_subdirectory(application_openimu)
 add_subdirectory(config)
 add_subdirectory(plugins)
+add_subdirectory(unit_tests)
+
+enable_testing(true)
+include_directories(unit_tests)
 
