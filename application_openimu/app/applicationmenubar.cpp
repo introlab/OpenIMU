@@ -7,31 +7,42 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
 {
     this->setMinimumWidth(parent->width());
     parent = parent;
-    fichier = new QMenu("Fichier");
-    QAction* actionOuvrir = new QAction("Ouvrir",fichier);
-    QAction* actionQuitter = new QAction("Quitter",fichier);
+    fichier = new QMenu("&Fichier");
+    QAction* actionOuvrir = new QAction("&Ouvrir",fichier);
+    actionOuvrir->setShortcut(QKeySequence("Ctrl+O"));
+    QAction* actionQuitter = new QAction("&Quitter",fichier);
+    actionQuitter->setShortcut(QKeySequence("Ctrl+Q"));
     fichier->addAction(actionOuvrir);
     fichier->addSeparator();
     fichier->addAction(actionQuitter);
-    edition = new QMenu("Édition");
-    algorithme = new QMenu("Algorithme");
-    QAction* actionNombreDePas = new QAction("Compteur de pas",algorithme);
+
+    algorithme = new QMenu("Al&gorithme");
+    QAction* actionNombreDePas = new QAction("&Compteur de pas",algorithme);
+    actionNombreDePas->setShortcut(QKeySequence("Ctrl+C"));
+    QAction* actionTempsActif = new QAction("&Temps d'activité",algorithme);
+    actionTempsActif->setShortcut(QKeySequence("Ctrl+T"));
     algorithme->addAction(actionNombreDePas);
-    QAction* actionTempsActif = new QAction("Temps d'activité",algorithme);
     algorithme->addAction(actionTempsActif);
-    //affichage = new QMenu("Affichage");
-    aide = new QMenu("Aide");
-    QAction* actionAPropos = new QAction("À propos",aide);
+
+    vue = new QMenu("&Vue");
+    QAction* actionDonneeBrutes = new QAction("&Données brutes",vue);
+    actionDonneeBrutes->setShortcut(QKeySequence("Ctrl+D"));
+    vue->addAction(actionDonneeBrutes);
+
+    aide = new QMenu("&Aide");
+    QAction* actionAPropos = new QAction("À &propos",aide);
+    actionAPropos->setShortcut(QKeySequence("Ctrl+A"));
+    QAction* actionAide = new QAction("&Aide",aide);
+    actionAide->setShortcut(QKeySequence("Ctrl+H"));
     aide->addAction(actionAPropos);
-    QAction* actionAide = new QAction("Aide",aide);
     aide->addAction(actionAide);
 
     this->addMenu(fichier);
-    this->addMenu(edition);
+    this->addMenu(vue);
     this->addMenu(algorithme);
-    //this->addMenu(affichage);
     this->addMenu(aide);
 
+    connect(actionDonneeBrutes, SIGNAL(triggered()), parent, SLOT(displayRawAccData()));
     connect(actionOuvrir, SIGNAL(triggered()), parent, SLOT(openFile()));
     connect(actionNombreDePas, SIGNAL(triggered()), parent, SLOT(computeSteps()));
     connect(actionTempsActif,SIGNAL(triggered()),parent,SLOT(computeActivityTime()));

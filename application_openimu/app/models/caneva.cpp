@@ -60,12 +60,10 @@ void Caneva::testSteps()
     getBlock("col1.row2.col4.vminLabel")->GetInput<int>("inputvmin")->Put(std::vector<int>({12}));
 
 }
-void Caneva::testActivity()
+void Caneva::testActivity(std::string filePath)
 {
     std::vector<std::string> arr_str =  {"a","b","c","d","e","f","g","h"};
     std::vector<int> arr_int =  {10,20,11,-2,0,-20,-10,-20};
-
-    std::string filePath = "C:/Users/DRAGON/Documents/data_step/10/ACC_4.DAT";
     WimuAcquisition* acceleroData = new WimuAcquisition(filePath,50);
     std::vector<frame> availableData = acceleroData->getData();
 
