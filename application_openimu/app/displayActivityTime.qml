@@ -27,7 +27,7 @@ Rectangle{
                 id: inputTitle;
             }
             property string id: "label_title_value";
-            x: parent.x + parent.width/2.5
+            x: parent.x + parent.width/2 - this.width/2
             text: inputTitle.value[0]
             font.pixelSize: 20
             color: "steelblue"
@@ -49,6 +49,8 @@ Rectangle{
                     text: "Analyse de temps actif/passif journaliere"
                     font.pixelSize: 14
                     y: parent.y +300
+                    color: "steelblue"
+                    font.underline: true
                 }
 
                 Label {
@@ -86,6 +88,8 @@ Rectangle{
                 Label {
                     text: "Analyse de temps actif/passif tendancielle"
                     font.pixelSize: 14
+                    color: "steelblue"
+                    font.underline: true
                 }
 
                 Chart{
@@ -111,7 +115,7 @@ Rectangle{
             }
 
             Column{
-                spacing: 10
+                spacing: this.height/(this.children.length+3)
                 property string id: "col4";
                 width:0.5*parent.width;
                 height:parent.height;
