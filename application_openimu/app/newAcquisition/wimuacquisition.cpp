@@ -66,7 +66,7 @@ WimuAcquisition::WimuAcquisition(std::string filename,int freq)
  std::vector<frame> WimuAcquisition::readSensorDataSecond(BYTE* fileBuf, int start,int freq)
 {
     std::vector<frame> tmp;
-    int time=0;
+    long long time=0;
     for (int i = start; i < start+4; i++)
     {
         time+=fileBuf[i]*pow(0x100,i-start);

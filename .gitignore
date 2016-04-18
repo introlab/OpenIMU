@@ -295,3 +295,5 @@ build-madgwickPlugin-Desktop_Qt_5_5_1_MinGW_32bit-Debug/
 build-madgwickPlugin-Desktop_Qt_5_5_1_MinGW_32bit-Release/
 plugins/build-mulplugin-Desktop_Qt_5_5_1_MinGW_32bit-Debug/
 unit_tests/build-pipeline-Desktop_Qt_5_5_1_MinGW_32bit-Debug/
+build-application_openimu-Desktop_Qt_5_5_1_MinGW_32bit_qt_55_w-Default/
+build-OpenIMU-Desktop_Qt_5_5_1_MinGW_32bit_qt_55_w-Debug/

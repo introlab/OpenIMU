@@ -12,9 +12,9 @@ class RangeSlider : public QWidget
     Q_OBJECT
 public:
     explicit RangeSlider(QWidget *parent = 0);
-    void setRangeValues(int min, int max);
-    void setStartHour(int min);
-    void setEndHour(int max);
+    void setRangeValues(long long min, long long max);
+    void setStartHour(long long min);
+    void setEndHour(long long max);
 signals:
 
 public slots:

@@ -28,14 +28,16 @@ RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent)
     connect(rightSlider,SIGNAL(valueChanged(int)),parent,SLOT(rightSliderValueChanged(int)));
 
 }
-void RangeSlider::setRangeValues(int min, int max){
-    leftSlider->setMinimum(min/1000);
-    rightSlider->setMaximum(max/1000);
-    rightSlider->setValue(max/1000);
+void RangeSlider::setRangeValues(long long min, long long max){
+    leftSlider->setMinimum(min);
+    leftSlider->setMaximum(max);
+    rightSlider->setMaximum(max);
+    rightSlider->setMinimum(min);
+    rightSlider->setValue(max);
 }
 
-void RangeSlider::setStartHour(int min){
-    std::time_t _time =(time_t) min/1000;
+void RangeSlider::setStartHour(long long min){
+    std::time_t _time =(time_t) min;
     char buffer[32];
     std::strftime(buffer, 32, "%H:%M", gmtime (&_time));
     QString text;
@@ -44,8 +46,8 @@ void RangeSlider::setStartHour(int min){
     leftLabel->setText(text);
 }
 
-void RangeSlider::setEndHour(int max){
-    std::time_t _time =(time_t) max/1000;
+void RangeSlider::setEndHour(long long max){
+    std::time_t _time =(time_t) max;
     char buffer[32];
     std::strftime(buffer, 32, "%H:%M", gmtime (&_time));
     QString text;
