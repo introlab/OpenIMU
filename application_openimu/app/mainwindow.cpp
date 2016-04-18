@@ -43,8 +43,25 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     //tabWidget->addTab(scene,"Test slider with chart");
     tabWidget->setTabsClosable(true);
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
-    dataView = new QWidget();
-    tabWidget->addTab(dataView,"Données accéléromètre");
+    QWidget * homeWidget = new QWidget(); //To do create classe Home widget
+    QFont font;
+    font.setPointSize(14);
+    font.setBold(true);
+    QVBoxLayout* homeLayout = new QVBoxLayout(homeWidget);
+    QLabel * homeLabel = new QLabel("Open IMU");
+    QLabel * descriptionLabel = new QLabel("Open Source Analytics & Visualisation Software");
+     QLabel * descriptionLabel2 = new QLabel("for Inertial Measurement Units");
+    homeLabel->setFont(font);
+    descriptionLabel->setFont(font);
+    descriptionLabel2->setFont(font);
+    homeLayout->addWidget(homeLabel);
+    homeLayout->addWidget(descriptionLabel);
+    homeLayout->addWidget(descriptionLabel2);
+    homeLayout -> setAlignment(homeLabel,Qt::AlignCenter);
+    homeLayout -> setAlignment(descriptionLabel,Qt::AlignCenter);
+    homeLayout -> setAlignment(descriptionLabel2,Qt::AlignCenter);
+    homeWidget->setLayout(homeLayout);
+    tabWidget->addTab(homeWidget,"Accueil");
     tabWidget->tabBar()->tabButton(0, QTabBar::RightSide)->hide();
     tabWidget->setCurrentWidget(tabWidget->widget(0));
     splitter->addWidget(tabWidget);
@@ -75,6 +92,7 @@ void MainWindow:: openFile(){
         if(fileInfo.isFile())
         {
             item->setText(1,QString::number(fileInfo.size()));
+            tree->myTreeWidget::addChildren(item,fileInfo.filePath());
             item->setIcon(0,*(new QIcon(":/icons/file.png")));
             item->setText(2,fileInfo.filePath());
             tree->addTopLevelItem(item);
@@ -111,7 +129,21 @@ void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int column)
         }
     }
 }
-
+void MainWindow:: displayRawAccData()
+{
+    if(fileSelectedName != "" && fileSelectedName.contains("ACC")){
+        std::string reconstructedPath= folderName.toStdString()+"/"+fileSelectedName.toStdString();
+        AccDataDisplay *dataDisplay = new AccDataDisplay(reconstructedPath);
+        replaceTab(dataDisplay,"Données accéléromètre");
+    }
+    else{
+        QMessageBox msgBox;
+        msgBox.setText("Le fichier séléctionné est invalide");
+        msgBox.setInformativeText("Choissisez un fichier de type ACC.DAT");
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.exec();
+    }
+}
 void MainWindow:: computeSteps(){
     CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
     Caneva* canevaSteps = new Caneva("../../config/displayStepNumber.json", sceneSteps);
@@ -123,7 +155,7 @@ void MainWindow::computeActivityTime(){
     CustomQmlScene* sceneTime = new CustomQmlScene("displayActivityTime.qml", this);
     Caneva* canevaTime = new Caneva("../../config/displayActivityTime.json", sceneTime);
     replaceTab(sceneTime,"Temps d'activité");
-    canevaTime->testActivity();
+    canevaTime->testActivity(folderName.toStdString()+"/"+fileSelectedName.toStdString());
     statusBar->showMessage(tr("Ouverture temps d'activité"));
 
 }
@@ -144,6 +176,12 @@ void MainWindow::replaceTab(QWidget * replacement, std::string label)
     bool found  = false;
     QString currentTabText;
 
+    for(int i=0; i<tabWidget->count();i++){
+        currentTabText = tabWidget->tabText(i);
+        if(currentTabText == "Accueil"){
+            tabWidget->removeTab(i);
+        }
+    }
     for(int i=0; i<tabWidget->count();i++){
         currentTabText = tabWidget->tabText(i);
         if(currentTabText == QString::fromStdString(label)){
