@@ -36,11 +36,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     tree->setHeaderItem(headerItem);
     tree->setMaximumWidth(150);
 
-    //default scene
-    //scene = new CustomQmlScene("test_slider_chart.qml", this);
-    //caneva = new Caneva("../../config/test_slider_chart.json", scene);
     tabWidget = new QTabWidget;
-    //tabWidget->addTab(scene,"Test slider with chart");
     tabWidget->setTabsClosable(true);
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
     QWidget * homeWidget = new QWidget(); //To do create classe Home widget
@@ -146,14 +142,14 @@ void MainWindow:: displayRawAccData()
 }
 void MainWindow:: computeSteps(){
     CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
-    Caneva* canevaSteps = new Caneva("../../config/displayStepNumber.json", sceneSteps);
+    Caneva* canevaSteps = new Caneva("config/displayStepNumber.json", sceneSteps);
     replaceTab(sceneSteps,"Compteur de pas");
     canevaSteps->testSteps();
     statusBar->showMessage(tr("Ouverture compteur de pas"));
 }
 void MainWindow::computeActivityTime(){
     CustomQmlScene* sceneTime = new CustomQmlScene("displayActivityTime.qml", this);
-    Caneva* canevaTime = new Caneva("../../config/displayActivityTime.json", sceneTime);
+    Caneva* canevaTime = new Caneva("config/displayActivityTime.json", sceneTime);
     replaceTab(sceneTime,"Temps d'activité");
     canevaTime->testActivity(folderName.toStdString()+"/"+fileSelectedName.toStdString());
     statusBar->showMessage(tr("Ouverture temps d'activité"));
