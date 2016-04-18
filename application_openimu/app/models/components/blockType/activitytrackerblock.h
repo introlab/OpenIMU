@@ -24,9 +24,6 @@ private:
     };
 
     unsigned char inputStatus;
-
-    void updateBufferSize();
-
 };
 
 #endif // ACTIVITYTRACKERBLOCK_H
