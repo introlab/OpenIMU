@@ -1,5 +1,11 @@
 {
-"ListBlock":[],
+"ListBlock":[
+{
+ "type": "activity", "ID": "activity",
+ "inputs":[{"ID":"accelData","TYPE":"Frame"},{"ID":"normalG","TYPE":"SShort"},{"ID":"threshold","TYPE":"UShort"},{"ID":"bufferSize","TYPE":"UShort"}],
+ "outputs":[{"ID":"activeTime","TYPE":"LongLong"},{"ID":"passiveTime","TYPE":"LongLong"}]
+}
+],
 "ListVBlock":[
 {
  "type": "Label", "ID": "col1.label_title_value",

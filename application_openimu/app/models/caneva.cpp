@@ -10,6 +10,8 @@
 #include "components/quickiteminputnodes.h"
 //#include "components/quickitemoutputnodes.h"
 
+#include "newAcquisition/wimuacquisition.h"
+
 Caneva::Caneva(std::string filename, CustomQmlScene *scene)
 {
     loadFile(filename);
@@ -62,6 +64,18 @@ void Caneva::testActivity()
 {
     std::vector<std::string> arr_str =  {"a","b","c","d","e","f","g","h"};
     std::vector<int> arr_int =  {10,20,11,-2,0,-20,-10,-20};
+
+    std::string filePath = "C:/Users/DRAGON/Documents/data_step/10/ACC_4.DAT";
+    WimuAcquisition* acceleroData = new WimuAcquisition(filePath,50);
+    std::vector<frame> availableData = acceleroData->getData();
+
+    getBlock("activity")->GetInput<frame>("accelData")->Put(availableData);
+    getBlock("activity")->GetInput<unsigned short>("threshold")->Put({15000});
+    getBlock("activity")->GetInput<signed short>("normalG")->Put({11000});
+    getBlock("activity")->GetInput<unsigned short>("bufferSize")->Put({50*60});
+
+    long long totalActiveTime = getBlock("activity")->GetOutput("activeTime")->getValueBuf()[0];
+    long long totalPassiveTime = getBlock("activity")->GetOutput("passiveTime")->getValueBuf()[0];
 
     getBlock("col1.label_title_value")->GetInput<std::string>("inputTitle")->Put(std::vector<std::string>({"Temps d'activité: "}));
 
@@ -219,6 +233,26 @@ void Caneva::createInputs(Block* block, Json::Value inputs)
             input->SetStringID((*it)["ID"].asString());
             block->AddInput(input);
         }
+        else if((*it)["TYPE"].asString() == "LongLong"){
+            AbstractInputNode* input = new InputNode<long long>();
+            input->SetStringID((*it)["ID"].asString());
+            block->AddInput(input);
+        }
+        else if((*it)["TYPE"].asString() == "SShort"){
+            AbstractInputNode* input = new InputNode<signed short>();
+            input->SetStringID((*it)["ID"].asString());
+            block->AddInput(input);
+        }
+        else if((*it)["TYPE"].asString() == "UShort"){
+            AbstractInputNode* input = new InputNode<unsigned short>();
+            input->SetStringID((*it)["ID"].asString());
+            block->AddInput(input);
+        }
+        else if((*it)["TYPE"].asString() == "Frame"){
+            AbstractInputNode* input = new InputNode<frame>();
+            input->SetStringID((*it)["ID"].asString());
+            block->AddInput(input);
+        }
         else
         {
             AbstractInputNode* input = new InputNode<int>();
@@ -234,6 +268,26 @@ void Caneva::createOutputs(Block *block, Json::Value outputs)
     {
         if((*it)["TYPE"].asString() == "vfloat"){
             AbstractOutputNode* output = new OutputNode<double>();
+            output->SetStringID((*it)["ID"].asString());
+            block->AddOutput(output);
+        }
+        else if((*it)["TYPE"].asString() == "LongLong"){
+            AbstractOutputNode* output = new OutputNode<long long>();
+            output->SetStringID((*it)["ID"].asString());
+            block->AddOutput(output);
+        }
+        else if((*it)["TYPE"].asString() == "SShort"){
+            AbstractOutputNode* output = new OutputNode<signed short>();
+            output->SetStringID((*it)["ID"].asString());
+            block->AddOutput(output);
+        }
+        else if((*it)["TYPE"].asString() == "UShort"){
+            AbstractOutputNode* output = new OutputNode<unsigned short>();
+            output->SetStringID((*it)["ID"].asString());
+            block->AddOutput(output);
+        }
+        else if((*it)["TYPE"].asString() == "Frame"){
+            AbstractOutputNode* output = new OutputNode<frame>();
             output->SetStringID((*it)["ID"].asString());
             block->AddOutput(output);
         }
