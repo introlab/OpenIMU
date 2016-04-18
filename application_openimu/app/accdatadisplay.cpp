@@ -44,11 +44,13 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
         checkboxY = new QCheckBox("Axe Y");
         checkboxZ = new QCheckBox("Axe Z");
         checkboxAccNorm = new QCheckBox("Norme");
+        checkboxMovingAverage = new QCheckBox("Moyenne mobile");
 
         checkboxX->setChecked(true);
         checkboxY->setChecked(true);
         checkboxZ->setChecked(true);
         checkboxAccNorm->setChecked(false);
+        checkboxMovingAverage->setChecked(false);
 
         QHBoxLayout *hbox = new QHBoxLayout();
         hbox->addStretch();
@@ -56,6 +58,7 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
         hbox->addWidget(checkboxY);
         hbox->addWidget(checkboxZ);
         hbox->addWidget(checkboxAccNorm);
+        hbox->addWidget(checkboxMovingAverage);
         hbox->addStretch();
 
         //Initialize Slider
@@ -80,6 +83,8 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
         connect(checkboxY, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayYAxis(int)));
         connect(checkboxZ, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayZAxis(int)));
         connect(checkboxAccNorm, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayNorme(int)));
+        connect(checkboxMovingAverage, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayMovingAverage(int)));
+
         fillChartSeries();
     }
 }
@@ -98,6 +103,16 @@ void AccDataDisplay::slotDisplayNorme(int value){
         chart->removeSeries(lineseriesAccNorm);
         chartView->setChart(chart);
     }
+}
+void AccDataDisplay::slotDisplayMovingAverage(int value){
+    if(value){
+        chart->addSeries(lineseriesMovingAverage);
+        chartView->setChart(chart);
+    }else{
+        chart->removeSeries(lineseriesMovingAverage);
+        chartView->setChart(chart);
+    }
+
 }
 void AccDataDisplay::leftSliderValueChanged(int value)
 {
@@ -135,13 +150,31 @@ void AccDataDisplay::slotDisplayZAxis(int value){
         chartView->setChart(chart);
     }
 }
-
+std::vector<signed short> AccDataDisplay::movingAverage(int windowSize)
+{
+    double sum=0;
+     std::vector<signed short> filteredData;
+    for(int j=0;j<windowSize;j++)
+    {
+        sum+=sqrt(pow(sliceData.at(j).x,2.0)+ pow(sliceData.at(j).y,2.0) + pow(sliceData.at(j).z,2.0));
+    }
+    filteredData.push_back(sum/windowSize);
+    for (int i=1;i<sliceData.size()-windowSize;i++)
+    {
+        sum-=sqrt(pow(sliceData.at(i-1).x,2.0)+pow(sliceData.at(i-1).y,2.0)+ pow(sliceData.at(i-1).z,2.0));
+        sum+=sqrt(pow(sliceData.at(i+windowSize-1).x,2.0)+pow(sliceData.at(i+windowSize-1).y,2.0)+ pow(sliceData.at(i+windowSize-1).z,2.0));
+        filteredData.push_back(sum/windowSize);
+    }
+    return filteredData;
+}
 void AccDataDisplay::fillChartSeries(){
 
     std::vector<signed short> x;
     std::vector<signed short> y;
     std::vector<signed short> z;
     std::vector<signed short> norm_acc;
+    std::vector<signed short> filtered_data;
+    filtered_data = movingAverage(10);
     std::vector<float> t;
 
     for(int k = 0; k <sliceData.size(); k++){
@@ -154,23 +187,36 @@ void AccDataDisplay::fillChartSeries(){
     }
 
     lineseriesX = new QtCharts::QLineSeries();
+    QPen penX(QRgb(0xCF000F));
+    lineseriesX->setPen(penX);
     lineseriesX->setName("Axe X");
     lineseriesX->setUseOpenGL(true);
 
+
     lineseriesY = new QtCharts::QLineSeries();
+    QPen penY(QRgb(0x00b16A));
+    lineseriesY->setPen(penY);
     lineseriesY->setName("Axe Y");
     lineseriesY->setUseOpenGL(true);
 
     lineseriesZ = new QtCharts::QLineSeries();
+    QPen penZ(QRgb(0x4183D7));
+    lineseriesZ->setPen(penZ);
     lineseriesZ->setName("Axe Z");
     lineseriesZ->setUseOpenGL(true);
 
     lineseriesAccNorm = new QtCharts::QLineSeries();
     lineseriesAccNorm->setName("Norme");
-    QPen pen(QRgb(0xF60008));
-        pen.setWidth(1);
+
+    QPen pen(QRgb(0xdadfe1));
     lineseriesAccNorm->setPen(pen);
     lineseriesAccNorm->setUseOpenGL(true);
+
+    lineseriesMovingAverage = new QtCharts::QLineSeries();
+    QPen penM(QRgb(0xf89406));
+    lineseriesMovingAverage->setPen(penM);
+    lineseriesMovingAverage->setName("Moyenne mobile");
+    lineseriesMovingAverage->setUseOpenGL(true);
 
     for(unsigned int i = 0; i <x.size(); i++)
     {
@@ -178,6 +224,10 @@ void AccDataDisplay::fillChartSeries(){
         lineseriesY->append(t.at(i),y.at(i));
         lineseriesZ->append(t.at(i),z.at(i));
         lineseriesAccNorm->append(t.at(i),norm_acc.at(i));
+    }
+    for(unsigned int i = 0; i <filtered_data.size(); i++)
+    {
+        lineseriesMovingAverage->append(t.at(i),filtered_data.at(i));
     }
     if(checkboxX->isChecked())
         chart->addSeries(lineseriesX);
@@ -190,6 +240,9 @@ void AccDataDisplay::fillChartSeries(){
 
     if(checkboxAccNorm->isChecked())
         chart->addSeries(lineseriesAccNorm);
+
+    if(checkboxMovingAverage->isChecked())
+        chart->addSeries(lineseriesMovingAverage);
 
     chart->createDefaultAxes();
 }

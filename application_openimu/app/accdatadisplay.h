@@ -30,6 +30,8 @@ public slots:
     void slotDisplayYAxis(int value);
     void slotDisplayZAxis(int value);
     void slotDisplayNorme(int value);
+    void slotDisplayMovingAverage(int value);
+    std::vector<signed short> movingAverage(int windowSize);
     void leftSliderValueChanged(int value);
     void rightSliderValueChanged(int value);
 
@@ -40,11 +42,13 @@ private:
     QLineSeries *lineseriesY;
     QLineSeries *lineseriesZ;
     QLineSeries *lineseriesAccNorm;
+    QLineSeries *lineseriesMovingAverage;
 
     QCheckBox *checkboxX;
     QCheckBox *checkboxY;
     QCheckBox *checkboxZ;
     QCheckBox *checkboxAccNorm;
+    QCheckBox *checkboxMovingAverage;
 
     RangeSlider *rSlider;
     QSlider *slider;
