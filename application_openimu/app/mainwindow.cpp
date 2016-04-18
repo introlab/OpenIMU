@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QVBoxLayout* homeLayout = new QVBoxLayout(homeWidget);
     QLabel * homeLabel = new QLabel("Open IMU");
     QLabel * descriptionLabel = new QLabel("Open Source Analytics & Visualisation Software");
-     QLabel * descriptionLabel2 = new QLabel("for Inertial Measurement Units");
+    QLabel * descriptionLabel2 = new QLabel("for Inertial Measurement Units");
     homeLabel->setFont(font);
     descriptionLabel->setFont(font);
     descriptionLabel2->setFont(font);
@@ -64,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     splitter->setSizes(QList<int>() << 150 << 600);
     setCentralWidget(splitter);
     statusBar->showMessage(tr("Prêt"));
-   // caneva->test_slider_chart();
+    // caneva->test_slider_chart();
 }
 
 MainWindow::~MainWindow(){
@@ -148,10 +148,22 @@ void MainWindow:: computeSteps(){
     statusBar->showMessage(tr("Ouverture compteur de pas"));
 }
 void MainWindow::computeActivityTime(){
-    CustomQmlScene* sceneTime = new CustomQmlScene("displayActivityTime.qml", this);
-    Caneva* canevaTime = new Caneva("config/displayActivityTime.json", sceneTime);
-    replaceTab(sceneTime,"Temps d'activité");
-    canevaTime->testActivity(folderName.toStdString()+"/"+fileSelectedName.toStdString());
+
+    std::string reconsrtructPath = folderName.toStdString()+"/"+fileSelectedName.toStdString();
+    if(reconsrtructPath != "/" ){
+        CustomQmlScene* sceneTime = new CustomQmlScene("displayActivityTime.qml", this);
+        Caneva* canevaTime = new Caneva("config/displayActivityTime.json", sceneTime);
+        replaceTab(sceneTime,"Temps d'activité");
+        canevaTime->testActivity(reconsrtructPath);
+    }
+    else{
+        QMessageBox msgBox;
+        msgBox.setText("Pas de fichier séléctionné");
+        msgBox.setInformativeText("Choissisez un fichier de type ACC.DAT");
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.exec();
+    }
+
     statusBar->showMessage(tr("Ouverture temps d'activité"));
 
 }
