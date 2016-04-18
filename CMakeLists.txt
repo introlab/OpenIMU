@@ -45,4 +45,5 @@ SET(CMAKE_VERBOSE_MAKEFILE ON)
 
 add_subdirectory(application_openimu)
 add_subdirectory(config)
+add_subdirectory(plugins)
 
