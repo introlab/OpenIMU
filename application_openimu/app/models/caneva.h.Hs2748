@@ -2,7 +2,7 @@
 #define CANEVA_H
 
 #include <string>
-#include "json/json/json.h"
+#include "json/json.h"
 #include "components/block.h"
 #include "../customqmlscene.h"
 

@@ -4,15 +4,15 @@
 #include <QObject>
 #include <QtTest/QtTest>
 
-class TestQString : public QObject
+class TestPipeline : public QObject
 {
     Q_OBJECT
 public:
-    TestQString(QObject *parent = 0);
+    TestPipeline(QObject *parent = 0);
 
 private slots:
-    void toUpper_data();
-    void toUpper();
+    void testsJSON();
+    void testsJSON_data();
 };
 
 #endif // TESTQSTRING_H
