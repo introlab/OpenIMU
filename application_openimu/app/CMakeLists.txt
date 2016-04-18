@@ -4,86 +4,40 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Quick   REQUIRED)
 find_package(Qt5Charts	REQUIRED)
 
-#TODO
-#Add subdirectories here
+
+add_subdirectory(acquisition)
+add_subdirectory(algorithm)
+add_subdirectory(dialogs)
+add_subdirectory(models)
+add_subdirectory(newAcquisition)
+add_subdirectory(views)
+
 SET(srcs
-    acquisition/SensorDataPerDay.cpp
-    acquisition/SensorDataPerHour.cpp
-    acquisition/SensorDataPerSecond.cpp
-    acquisition/SensorReader.cpp
-    acquisition/AccelerometerReader.cpp
-    applicationmenubar.cpp
-    mainwindow.cpp
-    models/json/jsoncpp.cpp
-    models/components/block.cpp
-    models/caneva.cpp
-    models/components/blockType/addBlock.cpp
-    models/components/blockType/subBlock.cpp
-    models/components/blockType/mulBlock.cpp
-    models/components/blockType/divBlock.cpp
-    models/components/blockType/blockFactory.cpp
-    customqmlscene.cpp
-    acquisition/GyroscopeReader.cpp
-    acquisition/MagnetometerReader.cpp
-    views/toolbarview.cpp
-    dateselectorlabel.cpp
-    models/components/blockType/podometerBlock.cpp
-    algorithm/podometer/KalmanFilter.cpp
-    algorithm/podometer/Podometer.cpp
-    models/components/abstractinputnode.cpp
-    models/components/abstractoutputnode.cpp
-    models/components/blockType/dbwriteblock.cpp
-    newAcquisition/wimuacquisition.cpp
-    mytreewidget.cpp
+    ${srcs}
     accdatadisplay.cpp
+    applicationmenubar.cpp
+    customqmlscene.cpp
+    dateselectorlabel.cpp
+    mainwindow.cpp
+    mytreewidget.cpp
+    rangeslider.cpp
 )
 
-
-#TODO
-#Add subdirectories here
 SET(headers
-    acquisition/SensorDataPerDay.h
-       acquisition/SensorDataPerHour.h
-       acquisition/SensorDataPerSecond.h
-       acquisition/SensorReader.h
-       acquisition/AccelerometerReader.h
-       applicationmenubar.h
-       mainwindow.h
-       models/components/observer.h
-       models/json/json/json-forwards.h
-       models/json/json/json.h
-       models/components/block.h
-       models/caneva.h
-       models/components/blockType/addBlock.h
-       models/components/blockType/subBlock.h
-       models/components/blockType/mulBlock.h
-       models/components/blockType/divBlock.h
-       models/components/blockType/blockFactory.h
-       customqmlscene.h
-       acquisition/GyroscopeReader.h
-       acquisition/MagnetometerReader.h
-       models/components/blockType/blockType.h
-       views/toolbarview.h
-       dateselectorlabel.h
-       models/components/blockType/podometerblock.h
-       algorithm/podometer/KalmanFilter.h
-       algorithm/podometer/Podometer.h
-       models/components/abstractinputnode.h
-       models/components/inputnode.h
-       models/components/abstractoutputnode.h
-       models/components/outputnode.h
-       models/components/workerthreads.h
-       models/components/quickitemoutputnodes.h
-       models/components/quickiteminputnodeshandles.h
-       models/components/quickiteminputnodes.h
-       models/components/blockType/dbwriteblock.h
-       newAcquisition/wimuacquisition.h
-       mytreewidget.h
-       accdatadisplay.h
+    ${headers}
+    accdatadisplay.h
+    applicationmenubar.h
+    customqmlscene.h
+    dateselectorlabel.h
+    mainwindow.h
+    mytreewidget.h
+    rangeslider.h
 )
 
 SET(uis
     widget.ui
+    help.ui
+    about.ui
 )
 
 SET(qrc
@@ -127,7 +81,7 @@ QT5_WRAP_CPP(moc_srcs ${headers})
 #Application
 add_executable(application_openimu main.cpp ${srcs} ${headers} ${moc_srcs} ${moc_uis} ${srcs_qrc} ${qml})
 qt5_use_modules(application_openimu Sql Core Network Xml XmlPatterns Gui Widgets Quick Charts)
-TARGET_LINK_LIBRARIES(application_openimu vbLabel)
+TARGET_LINK_LIBRARIES(application_openimu)
 
 
 

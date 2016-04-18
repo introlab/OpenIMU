@@ -1,3 +1,3 @@
-add_subdirectory(madgwickPlugin)
-add_subdirectory(mulPlugin)
-add_subdirectory(vbLabelPlugin)
+#add_subdirectory(madgwickPlugin)
+#add_subdirectory(mulPlugin)
+#add_subdirectory(vbLabelPlugin)
