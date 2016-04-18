@@ -126,7 +126,7 @@ Rectangle{
                     }
                     property string id: "label_start_date";
 
-                    text: "Date de debut:" + inputStartDate.value[0]
+                    text: "Date de debut: " + inputStartDate.value[0]
                     font.pixelSize: 14
                 }
 
@@ -153,7 +153,7 @@ Rectangle{
                     InputNodeInt{
                         id: inputvtotal;
                     }
-                    text: "Temps d'activité total sur les données :" + inputvtotal.value[0]
+                    text: "Temps d'activité total sur les données:" + inputvtotal.value[0]
                     font.pixelSize: 14
                 }
                 Label{
@@ -161,7 +161,7 @@ Rectangle{
                     InputNodeInt{
                         id: inputvmoy;
                     }
-                    text:"Valeur moyenne : " + inputvmoy.value[0]
+                    text:"Valeur moyenne: " + inputvmoy.value[0]
                     font.pixelSize: 14
                 }
                 Label{
@@ -169,7 +169,7 @@ Rectangle{
                     InputNodeInt{
                         id: inputvmax;
                     }
-                    text:"Valeur maximum : " + inputvmax.value[0]
+                    text:"Valeur maximum: " + inputvmax.value[0]
                     font.pixelSize: 14
                 }
                 Label{
@@ -177,7 +177,7 @@ Rectangle{
                     InputNodeInt{
                         id: inputvmin;
                     }
-                    text:"Valeur minimum : " + inputvmin.value[0]
+                    text:"Valeur minimum: " + inputvmin.value[0]
                     font.pixelSize: 14
                 }
             }

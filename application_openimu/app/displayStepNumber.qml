@@ -47,7 +47,7 @@ Rectangle{
 
                 Label {
                      text: "Analyse de pas journaliere"
-                     font.pixelSize: 18
+                     font.pixelSize: 14
                      font.underline:true
                      color: "steelblue"
                      y: parent.y +300
@@ -148,7 +148,7 @@ Rectangle{
                     InputNodeInt{
                         id: inputvtotal;
                     }
-                    text: "Totale de pas dans l'échantillon :" + inputvtotal.value[0]
+                    text: "Totale de pas dans l'échantillon: " + inputvtotal.value[0]
                     font.pixelSize: 14
                 }
                 Label{
@@ -156,7 +156,7 @@ Rectangle{
                     InputNodeInt{
                         id: inputvmoy;
                     }
-                    text:"Valeur moyenne : " + inputvmoy.value[0]
+                    text:"Valeur moyenne: " + inputvmoy.value[0]
                     font.pixelSize: 14
                 }
                 Label{
@@ -164,7 +164,7 @@ Rectangle{
                     InputNodeInt{
                         id: inputvmax;
                     }
-                    text:"Valeur maximum : " + inputvmax.value[0]
+                    text:"Valeur maximum: " + inputvmax.value[0]
                     font.pixelSize: 14
                 }
                 Label{
@@ -172,7 +172,7 @@ Rectangle{
                     InputNodeInt{
                         id: inputvmin;
                     }
-                    text:"Valeur minimum : " + inputvmin.value[0]
+                    text:"Valeur minimum: " + inputvmin.value[0]
                     font.pixelSize: 14
                 }
             }
