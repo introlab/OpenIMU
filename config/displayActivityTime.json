@@ -29,12 +29,12 @@
 },
 {
  "type": "Label", "ID": "col1.row2.col4.label_start_date",
- "inputs":[{"ID":"inputStartDate","TYPE":"Int"}],
+ "inputs":[{"ID":"inputStartDate","TYPE":"String"}],
  "outputs":[]
 },
 {
  "type": "Label", "ID": "col1.row2.col4.label_end_date",
- "inputs":[{"ID":"inputEndDate","TYPE":"Int"}],
+ "inputs":[{"ID":"inputEndDate","TYPE":"String"}],
  "outputs":[]
 },
 {
@@ -63,5 +63,6 @@
  "outputs":[]
 }
 ],
-"ListConnection":[]
+"ListConnection":[
+]
 }
