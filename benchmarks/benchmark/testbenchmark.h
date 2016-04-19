@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTest>
+#include "../../application_openimu/app/models/caneva.h"
 
 class TestBenchmark : public QObject
 {
@@ -12,11 +13,12 @@ public:
 
 signals:
 
-public slots:
 private slots:
-    void simple();
-    void multiple();
-    void multiple_data();
+    void multiple_delay();
+    void multiple_delay_data();
+
+private:
+    Caneva* caneva;
 };
 
 #endif // TESTBENCHMARK_H

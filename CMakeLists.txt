@@ -47,7 +47,9 @@ add_subdirectory(application_openimu)
 add_subdirectory(config)
 add_subdirectory(plugins)
 add_subdirectory(unit_tests)
+add_subdirectory(benchmarks)
 
 enable_testing(true)
 include_directories(unit_tests)
+include_directories(benchmarks)
 
