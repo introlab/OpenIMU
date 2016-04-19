@@ -4,8 +4,7 @@
 stepCounter::stepCounter(std::vector<frame> *_data,int windowSize)
 {
 	data=_data;
-	movingAverage(windowSize);
-	detect_peak(1100);
+    movingAverage(windowSize);
 }
 
 
