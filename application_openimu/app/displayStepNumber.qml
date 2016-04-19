@@ -116,7 +116,7 @@ Rectangle{
 
 
                 Label {
-                    InputNodeInt{
+                    InputNodeString{
                         id: inputStartDate;
                     }
                     property string id: "label_start_date";
@@ -126,7 +126,7 @@ Rectangle{
                 }
 
                 Label {
-                    InputNodeInt{
+                    InputNodeString{
                         id: inputEndDate;
                     }
                     property string id: "label_end_date";

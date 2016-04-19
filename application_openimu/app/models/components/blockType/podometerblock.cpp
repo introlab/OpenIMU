@@ -20,6 +20,10 @@ void PodometerBlock::work()
     int stepNumber = 0;
     stepCounter* sc = new stepCounter(&accData,10);
     stepNumber = sc->detect_peak(1100);
+    int moy = ((stepNumber/2)+stepNumber)/2;
     GetOutput<int>("stepNumber")->Send({stepNumber});
+    GetOutput<int>("stepNumberChart")->Send({stepNumber/2,stepNumber});
+    GetOutput<int>("stepNumberMoyenne")->Send({moy});
+    GetOutput<int>("stepNumberMin")->Send({stepNumber/2});
 }
 

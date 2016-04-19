@@ -3,7 +3,7 @@
 {
  "type": "podometer", "ID": "podometer",
  "inputs":[{"ID":"accelData","TYPE":"Frame"}],
- "outputs":[{"ID":"stepNumber","TYPE":"Int"}]
+ "outputs":[{"ID":"stepNumber","TYPE":"Int"}, {"ID":"stepNumberChart","TYPE":"Int"}, {"ID":"stepNumberMoyenne","TYPE":"Int"}, {"ID":"stepNumberMin","TYPE":"Int"}]
 }
 ],
 "ListVBlock":[
@@ -24,12 +24,12 @@
 },
 {
  "type": "Label", "ID": "col1.row2.col4.label_start_date",
- "inputs":[{"ID":"inputStartDate","TYPE":"Int"}],
+ "inputs":[{"ID":"inputStartDate","TYPE":"String"}],
  "outputs":[]
 },
 {
  "type": "Label", "ID": "col1.row2.col4.label_end_date",
- "inputs":[{"ID":"inputEndDate","TYPE":"Int"}],
+ "inputs":[{"ID":"inputEndDate","TYPE":"String"}],
  "outputs":[]
 },
 {
@@ -64,6 +64,36 @@
 "out":"stepNumber",
 "to":"col1.row1.col2.label_step",
 "in":"inputStepNumber"
+},
+{
+"from":"podometer",
+"out":"stepNumber",
+"to":"col1.row2.col4.vtotalLabel",
+"in":"inputvtotal"
+},
+{
+"from":"podometer",
+"out":"stepNumberMoyenne",
+"to":"col1.row2.col4.vmoyLabel",
+"in":"inputvmoy"
+},
+{
+"from":"podometer",
+"out":"stepNumberMin",
+"to":"col1.row2.col4.vminLabel",
+"in":"inputvmin"
+},
+{
+"from":"podometer",
+"out":"stepNumber",
+"to":"col1.row2.col4.vmaxLabel",
+"in":"inputvmax"
+},
+{
+"from":"podometer",
+"out":"stepNumberChart",
+"to":"col1.row2.col3.chart_step",
+"in":"y"
 }
 ]
 }
