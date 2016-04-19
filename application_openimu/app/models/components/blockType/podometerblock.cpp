@@ -1,10 +1,10 @@
 #include "podometerBlock.h"
-#include "../../algorithm/podometer/Podometer.h"
-#include "../../acquisition/AccelerometerReader.h"
+#include "../../algorithm/podometer2/stepCounter.h"
 #include <iostream>
 #include <vector>
 #include "../abstractinputnode.h"
 #include "../abstractoutputnode.h"
+#include "../../newAcquisition/wimuacquisition.h"
 
  PodometerBlock::PodometerBlock() : Block()
  {
@@ -16,20 +16,10 @@
 
 void PodometerBlock::work()
 {
-  // out = podometer.getStepCount();
-  std::cout<<"WORKING ON PODOMETER!\n";
-
-  //How it should be implemented
-  //vector<SensorDataPerDay> accelerometerData = Block::GetInput("input1")->Get();
-
-  //To be deleted
-  AccelerometerReader accReader("C:\\Users\\autum\\Documents\\OpenIMU\\data wimu2\\21");
-  accReader.LoadSensorData(false);
-
-  vector<SensorDataPerDay> accelerometerData = accReader.GetAccelerometerData();
-
-  Podometer podometer;
-  podometer.execute(accelerometerData);
-  //Block::GetOutput("podoOutput")->Send(podometer.getStepCount());
+    std::vector<frame> accData = GetInput<frame>("accelData")->Get();
+    int stepNumber = 0;
+    stepCounter* sc = new stepCounter(&accData,10);
+    stepNumber = sc->detect_peak(1100);
+    GetOutput<int>("stepNumber")->Send({stepNumber});
 }
 

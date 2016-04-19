@@ -37,8 +37,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     tree->setMaximumWidth(150);
 
     //default scene
-   // scene = new CustomQmlScene("test_slider_chart.qml", this);
-   // caneva = new Caneva("config/test_slider_chart.json", scene);
+    // scene = new CustomQmlScene("test_slider_chart.qml", this);
+    // caneva = new Caneva("config/test_slider_chart.json", scene);
     tabWidget = new QTabWidget;
     //tabWidget->addTab(scene,"Test slider with chart");
     tabWidget->setTabsClosable(true);
@@ -145,11 +145,21 @@ void MainWindow:: displayRawAccData()
     }
 }
 void MainWindow:: computeSteps(){
-    CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
-    Caneva* canevaSteps = new Caneva("../../config/displayStepNumber.json", sceneSteps);
-    replaceTab(sceneSteps,"Compteur de pas");
-    canevaSteps->testSteps();
-    statusBar->showMessage(tr("Ouverture compteur de pas"));
+    std::string reconsrtructPath = folderName.toStdString()+"/"+fileSelectedName.toStdString();
+    if(reconsrtructPath != "/" ){
+        CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
+        Caneva* canevaSteps = new Caneva("../../config/displayStepNumber.json", sceneSteps);
+        replaceTab(sceneSteps,"Compteur de pas");
+        canevaSteps->testSteps(reconsrtructPath);
+        statusBar->showMessage(tr("Ouverture compteur de pas"));
+    }
+    else{
+        QMessageBox msgBox;
+        msgBox.setText("Pas de fichier séléctionné");
+        msgBox.setInformativeText("Choissisez un fichier de type ACC.DAT");
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.exec();
+    }
 }
 void MainWindow::computeActivityTime(){
 

@@ -39,14 +39,18 @@ void Caneva::test_slider_chart()
 
 }
 
-void Caneva::testSteps()
+void Caneva::testSteps(std::string filePath)
 {
     std::vector<std::string> arr_str =  {"a","b","c","d","e","f","g","h"};
     std::vector<int> arr_int =  {10,20,11,-2,0,-20,-10,-20};
 
+    WimuAcquisition* acceleroData = new WimuAcquisition(filePath,50);
+    std::vector<frame> availableData = acceleroData->getData();
+
+    getBlock("podometer")->GetInput<frame>("accelData")->Put(availableData);
+
     getBlock("col1.label_title_value")->GetInput<std::string>("inputTitle")->Put(std::vector<std::string>({"Compteur de pas: "}));
 
-    getBlock("col1.row1.col2.label_step")->GetInput<int>("inputStepNumber")->Put(std::vector<int>({100}));
     getBlock("col1.row2.col4.label_start_date")->GetInput<int>("inputStartDate")->Put(std::vector<int>({100}));
     getBlock("col1.row2.col4.label_end_date")->GetInput<int>("inputEndDate")->Put(std::vector<int>({100}));
     getBlock("col1.row2.col4.label_days")->GetInput<int>("inputDaysAvailable")->Put(std::vector<int>({100}));

@@ -17,11 +17,12 @@ RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent)
 
     mainLayout = new QHBoxLayout();
 
-    mainLayout->addWidget(leftLabel);
-    mainLayout->addWidget(leftSlider);
-    mainLayout->addWidget(rightSlider);
-    mainLayout->addWidget(rightLabel);
 
+    mainLayout->addWidget(leftLabel);
+    // mainLayout->addWidget(leftSlider);
+    // mainLayout->addWidget(rightSlider);
+    mainLayout->addWidget(rightLabel);
+    mainLayout->addStretch();
     this->setLayout(mainLayout);
 
     connect(leftSlider,SIGNAL(valueChanged(int)),parent,SLOT(leftSliderValueChanged(int)));

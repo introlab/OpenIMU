@@ -27,7 +27,7 @@ Block* BlockFactory::createBlockType(std::string blockType)
     {
         return new DivBlock();
     }
-    else if(blockType == "podo")
+    else if(blockType == "podometer")
     {
         return new PodometerBlock();
     }

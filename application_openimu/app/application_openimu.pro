@@ -57,7 +57,8 @@ SOURCES += main.cpp\
     models/components/blockgenerator.cpp \
     dialogs/aboutdialog.cpp \
     dialogs/helpdialog.cpp \
-    rangeslider.cpp
+    rangeslider.cpp \
+    algorithm/podometer2/stepCounter.cpp
 
 
 
@@ -103,7 +104,8 @@ HEADERS += \
     dialogs/helpdialog.h \
     models/components/blockplugin.h \
     models/components/blockgenerator.h \
-    rangeslider.h
+    rangeslider.h \
+    algorithm/podometer2/stepCounter.h
 
 FORMS += widget.ui \
     help.ui \

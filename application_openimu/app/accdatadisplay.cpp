@@ -25,7 +25,7 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
 
 
         chart->createDefaultAxes();
-        chart->setTitle("Données accéléromètre");
+        chart->setTitle("Données accéléromètre (en ms)");
 
         chartView = new QChartView(chart);
         chartView->setRenderHint(QPainter::Antialiasing);
@@ -183,7 +183,7 @@ void AccDataDisplay::fillChartSeries(){
         y.push_back(sliceData.at(k).y);
         z.push_back(sliceData.at(k).z);
         norm_acc.push_back(sqrt(pow(sliceData.at(k).x,2.0) + pow(sliceData.at(k).y,2.0) + pow(sliceData.at(k).z,2.0)));
-        t.push_back(k); // TO DO Replace w/ real value
+        t.push_back(k*20); // TO DO Replace w/ real value
     }
 
     lineseriesX = new QtCharts::QLineSeries();
