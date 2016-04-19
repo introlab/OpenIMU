@@ -1,5 +1,11 @@
 {
-"ListBlock":[],
+"ListBlock":[
+{
+ "type": "podometer", "ID": "podometer",
+ "inputs":[{"ID":"accelData","TYPE":"Frame"}],
+ "outputs":[{"ID":"stepNumber","TYPE":"Int"}]
+}
+],
 "ListVBlock":[
 {
  "type": "Label", "ID": "col1.label_title_value",
@@ -52,5 +58,12 @@
  "outputs":[]
 }
 ],
-"ListConnection":[]
+"ListConnection":[
+{
+"from":"podometer",
+"out":"stepNumber",
+"to":"col1.row1.col2.label_step",
+"in":"inputStepNumber"
+}
+]
 }
