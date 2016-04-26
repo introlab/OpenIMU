@@ -1,0 +1,2 @@
+add_subdirectory(benchmark)
+include_directories(benchmark)

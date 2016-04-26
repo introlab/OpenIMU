@@ -1,0 +1,13 @@
+{
+"ListBlock":[
+{
+ "type": "madgwickblock", "ID": "madgwick",
+ "inputs":[{"ID":"accelData","TYPE":"Frame"},{"ID":"gyroData","TYPE":"Frame"},{"ID":"magnetoData","TYPE":"Frame"},{"ID":"sampleRate","TYPE":"Float"}],
+ "outputs":[{"ID":"roll","TYPE":"Float"},{"ID":"pitch","TYPE":"Float"},{"ID":"yaw","TYPE":"Float"}]
+}
+],
+"ListVBlock":[
+],
+"ListConnection":[
+]
+}

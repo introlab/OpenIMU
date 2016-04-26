@@ -1,0 +1,22 @@
+{
+"ListBlock":[
+{
+ "type": "podo", "ID": "podoBlock",
+ "inputs":[{"ID":"podoTrigger"}],
+ "outputs":[{"ID":"podoOutput"}]
+}
+],
+"ListVBlock":[
+{
+ "type": "Chart", "ID": "chart_line", "inputs":[{"ID":"inputTimeAxis","TYPE":"Int"},{"ID":"inputXAxis","TYPE":"Int"},{"ID":"inputYAxis","TYPE":"Int"},{"ID":"inputZAxis","TYPE":"Int"}],
+ "outputs":[]
+},
+{
+ "type": "Slider", "ID": "slider",
+ "inputs":[{"ID":"inputSliderMinimumValue","TYPE":"Int"},{"ID":"inputSliderMaximumValue","TYPE":"Int"}],
+ "outputs":[]
+}
+],
+"ListConnection":[
+]
+}

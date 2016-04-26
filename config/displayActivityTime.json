@@ -1,0 +1,68 @@
+{
+"ListBlock":[
+{
+ "type": "activity", "ID": "activity",
+ "inputs":[{"ID":"accelData","TYPE":"Frame"},{"ID":"normalG","TYPE":"SShort"},{"ID":"threshold","TYPE":"UShort"},{"ID":"bufferSize","TYPE":"UShort"}],
+ "outputs":[{"ID":"activeTime","TYPE":"LongLong"},{"ID":"passiveTime","TYPE":"LongLong"}]
+}
+],
+"ListVBlock":[
+{
+ "type": "Label", "ID": "col1.label_title_value",
+ "inputs":[{"ID":"inputTitle","TYPE":"String"}],
+ "outputs":[]
+},
+{
+ "type": "Label", "ID": "col1.row1.col2.label_active_time",
+ "inputs":[{"ID":"inputActiveTime","TYPE":"Int"}],
+ "outputs":[]
+},
+{
+ "type": "Label", "ID": "col1.row1.col2.label_passive_time",
+ "inputs":[{"ID":"inputPassiveTime","TYPE":"Int"}],
+ "outputs":[]
+},
+{
+ "type": "Chart", "ID": "col1.row2.col3.chart_pie",
+ "inputs":[{"ID":"x","TYPE":"Int"},{"ID":"y","TYPE":"Int"}],
+ "outputs":[]
+},
+{
+ "type": "Label", "ID": "col1.row2.col4.label_start_date",
+ "inputs":[{"ID":"inputStartDate","TYPE":"String"}],
+ "outputs":[]
+},
+{
+ "type": "Label", "ID": "col1.row2.col4.label_end_date",
+ "inputs":[{"ID":"inputEndDate","TYPE":"String"}],
+ "outputs":[]
+},
+{
+ "type": "Label", "ID": "col1.row2.col4.label_days",
+ "inputs":[{"ID":"inputDaysAvailable","TYPE":"Int"}],
+ "outputs":[]
+},
+{
+ "type": "Label", "ID": "col1.row2.col4.vtotalLabel",
+ "inputs":[{"ID":"inputvtotal","TYPE":"Int"}],
+ "outputs":[]
+},
+{
+ "type": "Label", "ID": "col1.row2.col4.vmoyLabel",
+ "inputs":[{"ID":"inputvmoy","TYPE":"Int"}],
+ "outputs":[]
+},
+{
+ "type": "Label", "ID": "col1.row2.col4.vmaxLabel",
+ "inputs":[{"ID":"inputvmax","TYPE":"Int"}],
+ "outputs":[]
+},
+{
+ "type": "Label", "ID": "col1.row2.col4.vminLabel",
+ "inputs":[{"ID":"inputvmin","TYPE":"Int"}],
+ "outputs":[]
+}
+],
+"ListConnection":[
+]
+}
