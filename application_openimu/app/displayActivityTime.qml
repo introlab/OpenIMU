@@ -1,6 +1,7 @@
 import QtQuick 2.5
 import QtQuick.Window 2.2
 import InputNodeInt 1.0
+import OutputNodeInt 1.0
 import InputNodeDouble 1.0
 import InputNodeString 1.0
 import QtQuick.Controls 1.4
@@ -111,6 +112,39 @@ Rectangle{
                         {value: y.value[0],color: "#6AA84F"},
 
                     ];
+                }
+                Row{
+                    property string id: "row3";
+                    Label {
+                        text: "Threshold :"
+                        font.pixelSize: 12
+                        color: "black"
+                    }
+                    TextInput{
+                        property string id: "threshold";
+                        inputMethodHints: Qt.ImhFormattedNumbersOnly
+                        text: "800"
+                        OutputNodeInt{
+                            id: outThreshold;
+                            value: [parent.text*1];
+                        }
+                    }
+
+                    Label {
+                        text: "     Normale :"
+                        font.pixelSize: 12
+                        color: "black"
+                    }
+                    TextInput{
+                        property string id: "norm";
+                        inputMethodHints: Qt.ImhFormattedNumbersOnly
+                        text: "3000"
+
+                        OutputNodeInt{
+                            id: outNorm;
+                            value: [parent.text*1];
+                        }
+                    }
                 }
             }
 

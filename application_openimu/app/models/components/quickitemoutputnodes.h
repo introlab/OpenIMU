@@ -14,7 +14,7 @@ class QuickItemOutputNodeInt: public QQuickItem
     Q_PROPERTY(QString id READ getId WRITE setId)
     Q_PROPERTY(QList<int> value READ getValue WRITE setValue)
 public:
-    QuickItemOutputNodeInt(): QQuickItem() {}
+    QuickItemOutputNodeInt(): QQuickItem() {outputNode = 0;}
 
     QString getId(){return id;}
     void setId(QString i){id = i;}
@@ -23,6 +23,7 @@ public:
     void setValue(QList<int> v){
         value = v;
 
+        if(!outputNode) return;
         WorkerThreadInt *workerThread = new WorkerThreadInt(outputNode, value.toVector().toStdVector());
         QObject::connect(workerThread, &WorkerThreadInt::finished, workerThread, &QObject::deleteLater);
         workerThread->start();
@@ -46,7 +47,7 @@ class QuickItemOutputNodeDouble: public QQuickItem
     Q_PROPERTY(QString id READ getId WRITE setId)
     Q_PROPERTY(QList<double> value READ getValue WRITE setValue)
 public:
-    QuickItemOutputNodeDouble(): QQuickItem() {}
+    QuickItemOutputNodeDouble(): QQuickItem() {outputNode = 0;}
 
     QString getId(){return id;}
     void setId(QString i){id = i;}
@@ -55,6 +56,7 @@ public:
     void setValue(QList<double> v){
         value = v;
 
+        if(!outputNode) return;
         WorkerThreadDouble *workerThread = new WorkerThreadDouble(outputNode, value.toVector().toStdVector());
         QObject::connect(workerThread, &WorkerThreadDouble::finished, workerThread, &QObject::deleteLater);
         workerThread->start();
@@ -79,7 +81,7 @@ class QuickItemOutputNodeString: public QQuickItem
     Q_PROPERTY(QString id READ getId WRITE setId)
     Q_PROPERTY(QList<QString> value READ getValue WRITE setValue)
 public:
-    QuickItemOutputNodeString(): QQuickItem() {}
+    QuickItemOutputNodeString(): QQuickItem() {outputNode = 0;}
 
     QString getId(){return id;}
     void setId(QString i){id = i;}
@@ -88,6 +90,7 @@ public:
     void setValue(QList<QString> v){
         value = v;
 
+        if(!outputNode) return;
         WorkerThreadString *workerThread = new WorkerThreadString(outputNode, value);
         QObject::connect(workerThread, &WorkerThreadString::finished, workerThread, &QObject::deleteLater);
         workerThread->start();

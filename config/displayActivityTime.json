@@ -2,8 +2,8 @@
 "ListBlock":[
 {
  "type": "activity", "ID": "activity",
- "inputs":[{"ID":"accelData","TYPE":"Frame"},{"ID":"normalG","TYPE":"SShort"},{"ID":"threshold","TYPE":"UShort"},{"ID":"bufferSize","TYPE":"UShort"}],
- "outputs":[{"ID":"activeTime","TYPE":"LongLong"},{"ID":"passiveTime","TYPE":"LongLong"}]
+ "inputs":[{"ID":"accelData","TYPE":"Frame"},{"ID":"normalG","TYPE":"Int"},{"ID":"threshold","TYPE":"Int"},{"ID":"bufferSize","TYPE":"Int"}],
+ "outputs":[{"ID":"activeTime","TYPE":"Int"},{"ID":"passiveTime","TYPE":"Int"}]
 }
 ],
 "ListVBlock":[
@@ -61,8 +61,48 @@
  "type": "Label", "ID": "col1.row2.col4.vminLabel",
  "inputs":[{"ID":"inputvmin","TYPE":"Int"}],
  "outputs":[]
+},
+{
+ "type": "Label", "ID": "col1.row2.col3.row3.threshold",
+ "inputs":[],
+ "outputs":[{"ID":"outThreshold","TYPE":"Int"}]
+},
+{
+ "type": "Label", "ID": "col1.row2.col3.row3.norm",
+ "inputs":[],
+ "outputs":[{"ID":"outNorm","TYPE":"Int"}]
 }
 ],
-"ListConnection":[
+"ListConnection":[{
+	"from":"activity",
+	"out":"activeTime",
+	"to":"col1.row2.col3.chart_pie",
+	"in":"x"
+},{
+	"from":"activity",
+	"out":"passiveTime",
+	"to":"col1.row2.col3.chart_pie",
+	"in":"y"
+},{
+	"from":"activity",
+	"out":"activeTime",
+	"to":"col1.row1.col2.label_active_time",
+	"in":"inputActiveTime"
+},{
+	"from":"activity",
+	"out":"passiveTime",
+	"to":"col1.row1.col2.label_passive_time",
+	"in":"inputPassiveTime"
+},{
+	"from":"col1.row2.col3.row3.threshold",
+	"out":"outThreshold",
+	"to":"activity",
+	"in":"threshold"
+},{
+	"from":"col1.row2.col3.row3.norm",
+	"out":"outNorm",
+	"to":"activity",
+	"in":"normalG"
+}
 ]
 }
