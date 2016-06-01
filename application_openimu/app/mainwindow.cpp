@@ -62,7 +62,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     homeLayout -> setAlignment(descriptionLabel2,Qt::AlignCenter);
     homeWidget->setLayout(homeLayout);
     tabWidget->addTab(homeWidget,"Accueil");
-    tabWidget->tabBar()->tabButton(0, QTabBar::RightSide)->hide();
+
+    qDebug() << tabWidget->tabBar();
+    qDebug() << tabWidget->tabBar()->tabButton(0,QTabBar::RightSide);
+
+    //DL - crash on OSX...
+    //tabWidget->tabBar()->tabButton(0, QTabBar::RightSide)->hide();
     tabWidget->setCurrentWidget(tabWidget->widget(0));
     splitter->addWidget(tabWidget);
     splitter->setSizes(QList<int>() << 150 << 600);
