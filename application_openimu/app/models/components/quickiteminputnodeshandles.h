@@ -30,7 +30,7 @@ public:
     QList<int> value;
 
 signals:
-    valueChanged(QList<int>);
+    void valueChanged(QList<int>);
 };
 
 
@@ -59,7 +59,7 @@ public:
     QList<double> value;
 
 signals:
-    valueChanged(QList<double>);
+    void valueChanged(QList<double>);
 };
 
 
