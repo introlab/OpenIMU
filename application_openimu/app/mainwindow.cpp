@@ -62,7 +62,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     homeLayout -> setAlignment(descriptionLabel2,Qt::AlignCenter);
     homeWidget->setLayout(homeLayout);
     tabWidget->addTab(homeWidget,"Accueil");
-    tabWidget->tabBar()->tabButton(0, QTabBar::RightSide)->hide();
+
+    qDebug() << tabWidget->tabBar();
+    qDebug() << tabWidget->tabBar()->tabButton(0,QTabBar::RightSide);
+
+    //DL - crash on OSX...
+    //tabWidget->tabBar()->tabButton(0, QTabBar::RightSide)->hide();
     tabWidget->setCurrentWidget(tabWidget->widget(0));
     splitter->addWidget(tabWidget);
     splitter->setSizes(QList<int>() << 150 << 600);
@@ -155,7 +160,7 @@ void MainWindow:: computeSteps(){
     std::string reconsrtructPath = folderName.toStdString()+"/"+fileSelectedName.toStdString();
     if(reconsrtructPath != "/" ){
         CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
-        Caneva* canevaSteps = new Caneva("../../config/displayStepNumber.json", sceneSteps);
+        Caneva* canevaSteps = new Caneva("config/displayStepNumber.json", sceneSteps);
         replaceTab(sceneSteps,"Compteur de pas");
         canevaSteps->testSteps(reconsrtructPath);
         statusBar->showMessage(tr("Ouverture compteur de pas"));
@@ -170,10 +175,10 @@ void MainWindow:: computeSteps(){
 }
 void MainWindow::computeActivityTime(){
 
-    std::string reconsrtructPath = folderName.toStdString()+"/"+fileSelectedName.toStdString();
+    std::string reconsrtructPath = folderName.toStdString()+fileSelectedName.toStdString();
     if(reconsrtructPath != "/" ){
         CustomQmlScene* sceneTime = new CustomQmlScene("displayActivityTime.qml", this);
-        Caneva* canevaTime = new Caneva("../../config/displayActivityTime.json", sceneTime);
+        Caneva* canevaTime = new Caneva("config/displayActivityTime.json", sceneTime);
         replaceTab(sceneTime,"Temps d'activité");
         canevaTime->testActivity(reconsrtructPath);
     }

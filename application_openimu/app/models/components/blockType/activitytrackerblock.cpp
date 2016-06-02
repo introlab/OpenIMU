@@ -36,11 +36,11 @@ void ActivityTrackerBlock::Notify(std::string strId)
 void ActivityTrackerBlock::work()
 {
     //clean the signal
-    std::vector<unsigned short> normalDelta;
-    signed int normalBuf = 0;
+    std::vector<int> normalDelta;
+    int normalBuf = 0;
 
-    signed short gravity = GetInput<signed short>("normalG")->Get()[0];
-    signed short i_gravity_2 = -gravity*gravity;
+    int gravity = GetInput<int>("normalG")->Get()[0];
+    int i_gravity_2 = -gravity*gravity;
 
     std::vector<frame> accData = GetInput<frame>("accelData")->Get();
 
@@ -51,8 +51,8 @@ void ActivityTrackerBlock::work()
     }
 
     //Moving average
-    unsigned short bufferSize = GetInput<unsigned short>("bufferSize")->Get()[0];
-    unsigned int average = 0;
+    int bufferSize = GetInput<int>("bufferSize")->Get()[0];
+    int average = 0;
 
     //first load
     for(int i = 0; i<bufferSize; i++){
@@ -60,10 +60,10 @@ void ActivityTrackerBlock::work()
     }
 
     //Calculate active time
-    unsigned int threshold = GetInput<unsigned short>("threshold")->Get()[0];
+    int threshold = GetInput<int>("threshold")->Get()[0];
     threshold *= bufferSize;
-    long long activeTimeStart = 0;
-    long long totalActiveTime = 0;
+    int activeTimeStart = 0;
+    int totalActiveTime = 0;
     bool lastIsActive = false;
     bool isActive = false;
 
@@ -86,10 +86,13 @@ void ActivityTrackerBlock::work()
         totalActiveTime += (accData[dataCount-1].timestamp - activeTimeStart);
 
     //Calculate complement
-    long long totalPassiveTime = accData[dataCount-1].timestamp - accData[0].timestamp - totalActiveTime;
+    int totalPassiveTime = accData[dataCount-1].timestamp - accData[0].timestamp - totalActiveTime;
 
     //output the result
-    GetOutput("activeTime")->Send({totalActiveTime});
-    GetOutput("passiveTime")->Send({totalPassiveTime});
+    std::vector<int> out1 = std::vector<int>{(int)totalActiveTime/1000};
+    std::vector<int> out2 = std::vector<int>{(int)totalPassiveTime/1000};
+
+    GetOutput<int>("activeTime")->Send(out1);
+    GetOutput<int>("passiveTime")->Send(out2);
 
 }

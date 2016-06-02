@@ -1,7 +1,10 @@
 #include "wimuacquisition.h"
 #include <fstream>
 #include <math.h>
+#ifdef WIN32
+//Needed???
 #include <windows.h>
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <time.h>
