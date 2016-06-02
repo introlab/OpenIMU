@@ -1,3 +1,7 @@
 [submodule "application_openimu/qml/jbQuick/Charts"]
 	path = application_openimu/qml/jbQuick/Charts
 	url = git://github.com/jwintz/qchart.js.git
+[submodule "third_party/qtchart"]
+	path = third_party/qtchart
+	url = https://github.com/qtproject/qtcharts.git
+	branch = 5.6

@@ -62,7 +62,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     homeLayout -> setAlignment(descriptionLabel2,Qt::AlignCenter);
     homeWidget->setLayout(homeLayout);
     tabWidget->addTab(homeWidget,"Accueil");
-    tabWidget->tabBar()->tabButton(0, QTabBar::RightSide)->hide();
+
+    qDebug() << tabWidget->tabBar();
+    qDebug() << tabWidget->tabBar()->tabButton(0,QTabBar::RightSide);
+
+    //DL - crash on OSX...
+    //tabWidget->tabBar()->tabButton(0, QTabBar::RightSide)->hide();
     tabWidget->setCurrentWidget(tabWidget->widget(0));
     splitter->addWidget(tabWidget);
     splitter->setSizes(QList<int>() << 150 << 600);
@@ -80,54 +85,61 @@ MainWindow::~MainWindow(){
 }
 
 void MainWindow:: openFile(){
-    folderName = QFileDialog::getExistingDirectory(this, tr("Ouvrir Fichier"),"/path/to/file/");
-    QDir* rootDir = new QDir(folderName);
-    QFileInfoList filesList = rootDir->entryInfoList();
-    statusBar->showMessage(QString::fromStdString("Dossier séléctionné: ")+ folderName);
-    foreach(QFileInfo fileInfo, filesList)
-    {
-        QTreeWidgetItem* item = new QTreeWidgetItem();
-        item->setText(0,fileInfo.fileName());
-
-        if(fileInfo.isFile())
+    folderName = QFileDialog::getExistingDirectory(this, tr("Sélectionner dossier"),"/path/to/file/");
+    if(!folderName.isEmpty()){
+        QDir* rootDir = new QDir(folderName);
+        QFileInfoList filesList = rootDir->entryInfoList();
+        statusBar->showMessage(QString::fromStdString("Dossier séléctionné: ")+ folderName);
+        foreach(QFileInfo fileInfo, filesList)
         {
-            item->setText(1,QString::number(fileInfo.size()));
-            tree->myTreeWidget::addChildren(item,fileInfo.filePath());
-            item->setIcon(0,*(new QIcon(":/icons/file.png")));
-            item->setText(2,fileInfo.filePath());
-            tree->addTopLevelItem(item);
-        }
+            QTreeWidgetItem* item = new QTreeWidgetItem();
+            item->setText(0,fileInfo.fileName());
 
-        if(fileInfo.isDir() && !fileInfo.fileName().contains("."))
-        {
-            item->setIcon(0,*(new QIcon(":/icons/folder.png")));
-            tree->myTreeWidget::addChildren(item,fileInfo.filePath());
-            item->setText(2,fileInfo.filePath());
-            tree->addTopLevelItem(item);
-        }
+            if(fileInfo.isFile())
+            {
+                item->setText(1,QString::number(fileInfo.size()));
+                tree->myTreeWidget::addChildren(item,fileInfo.filePath());
+                item->setIcon(0,*(new QIcon(":/icons/file.png")));
+                item->setText(2,fileInfo.filePath());
+                tree->addTopLevelItem(item);
+            }
 
+            if(fileInfo.isDir() && !fileInfo.fileName().contains("."))
+            {
+                item->setIcon(0,*(new QIcon(":/icons/folder.png")));
+                tree->myTreeWidget::addChildren(item,fileInfo.filePath());
+                item->setText(2,fileInfo.filePath());
+                tree->addTopLevelItem(item);
+            }
+
+        }
+    }else{
+        statusBar->showMessage(QString::fromStdString(" Aucun dossier séléctionné ")+ folderName);
     }
 }
 void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int column)
 {
-
     if(item->parent()!=NULL){
         fileSelectedName= "/"+item->parent()->text(column)+"/"+item->text(column);
-        QString status = QString::fromStdString("Fichier séléctionné: ") + fileSelectedName;
-        statusBar->showMessage(status);
-        if(fileSelectedName != "" && fileSelectedName.contains("ACC")){
-            std::string reconstructedPath= folderName.toStdString()+"/"+fileSelectedName.toStdString();
-            AccDataDisplay *dataDisplay = new AccDataDisplay(reconstructedPath);
-            replaceTab(dataDisplay,"Données accéléromètre");
-        }
-        else{
-            QMessageBox msgBox;
-            msgBox.setText("Le fichier séléctionné est invalide");
-            msgBox.setInformativeText("Choissisez un fichier de type ACC.DAT");
-            msgBox.setStandardButtons(QMessageBox::Ok);
-            msgBox.exec();
-        }
     }
+    else{
+        fileSelectedName = item->text(column);
+    }
+    QString status = QString::fromStdString("Fichier séléctionné: ") + fileSelectedName;
+    statusBar->showMessage(status);
+    if(fileSelectedName != "" && fileSelectedName.contains("ACC")){
+        std::string reconstructedPath= folderName.toStdString()+"/"+fileSelectedName.toStdString();
+        AccDataDisplay *dataDisplay = new AccDataDisplay(reconstructedPath);
+        replaceTab(dataDisplay,"Données accéléromètre");
+    }
+    else{
+        QMessageBox msgBox;
+        msgBox.setText("Le fichier séléctionné est invalide");
+        msgBox.setInformativeText("Choissisez un fichier de type ACC.DAT");
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.exec();
+    }
+
 }
 void MainWindow:: displayRawAccData()
 {
@@ -148,7 +160,7 @@ void MainWindow:: computeSteps(){
     std::string reconsrtructPath = folderName.toStdString()+"/"+fileSelectedName.toStdString();
     if(reconsrtructPath != "/" ){
         CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
-        Caneva* canevaSteps = new Caneva("../../config/displayStepNumber.json", sceneSteps);
+        Caneva* canevaSteps = new Caneva("config/displayStepNumber.json", sceneSteps);
         replaceTab(sceneSteps,"Compteur de pas");
         canevaSteps->testSteps(reconsrtructPath);
         statusBar->showMessage(tr("Ouverture compteur de pas"));
@@ -163,10 +175,10 @@ void MainWindow:: computeSteps(){
 }
 void MainWindow::computeActivityTime(){
 
-    std::string reconsrtructPath = folderName.toStdString()+"/"+fileSelectedName.toStdString();
+    std::string reconsrtructPath = folderName.toStdString()+fileSelectedName.toStdString();
     if(reconsrtructPath != "/" ){
         CustomQmlScene* sceneTime = new CustomQmlScene("displayActivityTime.qml", this);
-        Caneva* canevaTime = new Caneva("../../config/displayActivityTime.json", sceneTime);
+        Caneva* canevaTime = new Caneva("config/displayActivityTime.json", sceneTime);
         replaceTab(sceneTime,"Temps d'activité");
         canevaTime->testActivity(reconsrtructPath);
     }
