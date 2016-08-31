@@ -1,4 +1,4 @@
-#include "testbenchmark.h"
+#include "TestBenchmark.h"
 
 TestBenchmark::TestBenchmark(QObject *parent) : QObject(parent)
 {

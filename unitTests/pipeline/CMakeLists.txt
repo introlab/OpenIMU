@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.11)
-project(test_benchmark)
+project(test_pipeline)
 
 find_package(Qt5Core    REQUIRED)
 find_package(Qt5Gui     REQUIRED)
@@ -14,12 +14,12 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
 enable_testing(true)
 
 SET(srcs
-    ${CMAKE_CURRENT_SOURCE_DIR}/TestBenchmark.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TestPipeline.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../applicationOpenimu/app/CustomQmlScene.cpp
     )
 
 SET(headers
-    ${CMAKE_CURRENT_SOURCE_DIR}/TestBenchmark.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/TestPipeline.h
     ${CMAKE_CURRENT_SOURCE_DIR}/../../applicationOpenimu/app/CustomQmlScene.h
     )
 
@@ -42,8 +42,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5Test REQUIRED)
 
-add_executable(test_benchmark main.cpp ${srcs} ${headers})
-add_test(test_benchmark test_benchmark)
-qt5_use_modules(test_benchmark Sql Core Network Xml XmlPatterns Gui Widgets Quick Charts)
+add_executable(test_pipeline main.cpp ${srcs} ${headers})
+add_test(test_pipeline test_pipeline)
+qt5_use_modules(test_pipeline Sql Core Network Xml XmlPatterns Gui Widgets Quick Charts)
 
-target_link_libraries(test_benchmark Qt5::Test)
+target_link_libraries(test_pipeline Qt5::Test)
