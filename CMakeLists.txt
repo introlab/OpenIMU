@@ -43,13 +43,13 @@ SET (LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 SET(CMAKE_VERBOSE_MAKEFILE ON)
 
 
-add_subdirectory(application_openimu)
+add_subdirectory(applicationOpenimu)
 add_subdirectory(config)
 add_subdirectory(plugins)
-add_subdirectory(unit_tests)
+add_subdirectory(unitTests)
 add_subdirectory(benchmarks)
 
 enable_testing(true)
-include_directories(unit_tests)
+include_directories(unitTests)
 include_directories(benchmarks)
 
