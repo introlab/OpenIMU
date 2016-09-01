@@ -1,17 +1,12 @@
 
 SET(srcs
     ${srcs}
-    ${CMAKE_CURRENT_SOURCE_DIR}/KalmanFilter.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Podometer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/StepCounter.cpp
     PARENT_SCOPE
 )
 
 SET(headers
     ${headers}
-    ${CMAKE_CURRENT_SOURCE_DIR}/KalmanFilter.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/Podometer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/StepCounter.h
     PARENT_SCOPE
 )
-
-
-

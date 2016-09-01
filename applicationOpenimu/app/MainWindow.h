@@ -6,7 +6,7 @@
 #include <QVBoxLayout>
 #include "string.h"
 #include "CustomQmlScene.h"
-#include "models/Caneva.h"
+#include "core/Caneva.h"
 #include <QSplitter>
 #include "MyTreeWidget.h"
 #include <QWidget>

@@ -13,7 +13,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = application_openimu
 TEMPLATE = app
 
-INCLUDEPATH += $$PWD/models/json
+INCLUDEPATH += $$PWD/core/json
 INCLUDEPATH += $$PWD/../../../build-qtcharts-Kit_Qt-Debug/include
 
 
@@ -26,86 +26,68 @@ QT += charts
 CONFIG += c++11
 
 SOURCES += main.cpp\
-    acquisition/SensorDataPerDay.cpp \
-    acquisition/SensorDataPerHour.cpp \
-    acquisition/SensorDataPerSecond.cpp \
-    acquisition/SensorReader.cpp \
-    acquisition/AccelerometerReader.cpp \
     applicationmenubar.cpp \
     mainwindow.cpp \
-    models/json/jsoncpp.cpp \
-    models/components/block.cpp \
-    models/caneva.cpp \
-    models/components/blockType/addBlock.cpp \
-    models/components/blockType/subBlock.cpp \
-    models/components/blockType/divBlock.cpp \
-    models/components/blockType/blockFactory.cpp \
+    core/json/jsoncpp.cpp \
+    core/components/block.cpp \
+    core/caneva.cpp \
+    core/components/blockType/addBlock.cpp \
+    core/components/blockType/subBlock.cpp \
+    core/components/blockType/divBlock.cpp \
+    core/components/blockType/blockFactory.cpp \
     customqmlscene.cpp \
-    acquisition/GyroscopeReader.cpp \
-    acquisition/MagnetometerReader.cpp \
     dateselectorlabel.cpp \
-    models/components/blockType/podometerBlock.cpp \
-    algorithm/podometer/KalmanFilter.cpp \
-    algorithm/podometer/Podometer.cpp \
-    models/components/abstractinputnode.cpp \
-    models/components/abstractoutputnode.cpp \
-    models/components/blockType/dbwriteblock.cpp \
-    newAcquisition/wimuacquisition.cpp \
+    core/components/blockType/podometerBlock.cpp \
+    core/components/abstractinputnode.cpp \
+    core/components/abstractoutputnode.cpp \
+    core/components/blockType/dbwriteblock.cpp \
+    acquisition/wimuacquisition.cpp \
     mytreewidget.cpp \
     accdatadisplay.cpp \
-    models/components/blockType/activitytrackerblock.cpp \
-    models/components/blockgenerator.cpp \
+    core/components/blockType/activitytrackerblock.cpp \
+    core/components/blockgenerator.cpp \
     dialogs/aboutdialog.cpp \
     dialogs/helpdialog.cpp \
     rangeslider.cpp \
-    algorithm/podometer2/stepCounter.cpp
+    algorithm/podometer/stepCounter.cpp
 
 
 
 HEADERS += \
-    acquisition/SensorDataPerDay.h \
-    acquisition/SensorDataPerHour.h \
-    acquisition/SensorDataPerSecond.h \
-    acquisition/SensorReader.h \
-    acquisition/AccelerometerReader.h \
     applicationmenubar.h \
     mainwindow.h \
-    models/components/observer.h \
-    models/json/json/json-forwards.h \
-    models/json/json/json.h \
-    models/components/block.h \
-    models/caneva.h \
-    models/components/blockType/addBlock.h \
-    models/components/blockType/subBlock.h \
-    models/components/blockType/divBlock.h \
-    models/components/blockType/blockFactory.h \
+    core/components/observer.h \
+    core/json/json/json-forwards.h \
+    core/json/json/json.h \
+    core/components/block.h \
+    core/caneva.h \
+    core/components/blockType/addBlock.h \
+    core/components/blockType/subBlock.h \
+    core/components/blockType/divBlock.h \
+    core/components/blockType/blockFactory.h \
     customqmlscene.h \
-    acquisition/GyroscopeReader.h \
-    acquisition/MagnetometerReader.h \
-    models/components/blockType/blockType.h \
+    core/components/blockType/blockType.h \
     dateselectorlabel.h \
-    models/components/blockType/podometerblock.h \
-    algorithm/podometer/KalmanFilter.h \
-    algorithm/podometer/Podometer.h \
-    models/components/abstractinputnode.h \
-    models/components/inputnode.h \
-    models/components/abstractoutputnode.h \
-    models/components/outputnode.h \
-    models/components/workerthreads.h \
-    models/components/quickitemoutputnodes.h \
-    models/components/quickiteminputnodeshandles.h \
-    models/components/quickiteminputnodes.h \
-    models/components/blockType/dbwriteblock.h \
-    newAcquisition/wimuacquisition.h \
+    core/components/blockType/podometerblock.h \
+    core/components/abstractinputnode.h \
+    core/components/inputnode.h \
+    core/components/abstractoutputnode.h \
+    core/components/outputnode.h \
+    core/components/workerthreads.h \
+    core/components/quickitemoutputnodes.h \
+    core/components/quickiteminputnodeshandles.h \
+    core/components/quickiteminputnodes.h \
+    core/components/blockType/dbwriteblock.h \
+    acquisition/wimuacquisition.h \
     mytreewidget.h \
     accdatadisplay.h \
-    models/components/blockType/activitytrackerblock.h \
+    core/components/blockType/activitytrackerblock.h \
     dialogs/aboutdialog.h \
     dialogs/helpdialog.h \
-    models/components/blockplugin.h \
-    models/components/blockgenerator.h \
+    core/components/blockplugin.h \
+    core/components/blockgenerator.h \
     rangeslider.h \
-    algorithm/podometer2/stepCounter.h
+    algorithm/podometer/stepCounter.h
 
 FORMS += widget.ui \
     help.ui \

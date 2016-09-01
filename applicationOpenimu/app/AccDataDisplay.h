@@ -10,7 +10,7 @@
 #include <QtCharts/QValueAxis>
 #include <QSlider>
 #include <QCheckBox>
-#include "newAcquisition/WimuAcquisition.h"
+#include "acquisition/WimuAcquisition.h"
 #include "RangeSlider.h"
 
 QT_CHARTS_USE_NAMESPACE

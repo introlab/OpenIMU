@@ -1,5 +1,5 @@
 #pragma once
-#include "../../newAcquisition/WimuAcquisition.h"
+#include "../../acquisition/WimuAcquisition.h"
 
 class StepCounter
 {

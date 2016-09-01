@@ -1,10 +1,10 @@
 #include "podometerBlock.h"
-#include "../../algorithm/podometer2/StepCounter.h"
+#include "../../algorithm/podometer/StepCounter.h"
 #include <iostream>
 #include <vector>
 #include "../AbstractInputNode.h"
 #include "../AbstractOutputNode.h"
-#include "../../newAcquisition/WimuAcquisition.h"
+#include "../../acquisition/WimuAcquisition.h"
 
  PodometerBlock::PodometerBlock() : Block()
  {

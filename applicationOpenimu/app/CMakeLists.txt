@@ -4,13 +4,10 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Quick   REQUIRED)
 find_package(Qt5Charts	REQUIRED)
 
-
-add_subdirectory(acquisition)
 add_subdirectory(algorithm)
 add_subdirectory(dialogs)
-add_subdirectory(models)
-add_subdirectory(newAcquisition)
-add_subdirectory(views)
+add_subdirectory(core)
+add_subdirectory(acquisition)
 
 SET(srcs
     ${srcs}

@@ -4,13 +4,12 @@
 #include <iostream>
 #include "components/Block.h"
 #include "components/blockType/BlockFactory.h"
-#include "../acquisition/AccelerometerReader.h"
 #include "components/InputNode.h"
 #include "components/OutputNode.h"
 #include "components/QuickItemInputNodes.h"
 //#include "components/QuickItemOutputNodes.h"
 
-#include "../newAcquisition/wimuacquisition.h"
+#include "../acquisition/wimuacquisition.h"
 
 Caneva::Caneva(std::string filename, CustomQmlScene *scene)
 {

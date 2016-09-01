@@ -1,7 +1,7 @@
 #include "DbWriteBlock.h"
 #include "../InputNode.h"
 #include "../OutputNode.h"
-#include "../../../newAcquisition/WimuAcquisition.h"
+#include "../../../acquisition/WimuAcquisition.h"
 #include <iostream>
 DBWriteBlock::DBWriteBlock()
 {

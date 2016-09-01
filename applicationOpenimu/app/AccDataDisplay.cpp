@@ -1,5 +1,5 @@
 #include "AccDataDisplay.h"
-#include "newAcquisition/WimuAcquisition.h"
+#include "acquisition/WimuAcquisition.h"
 #include <math.h>
 #include <QPropertyAnimation>
 
