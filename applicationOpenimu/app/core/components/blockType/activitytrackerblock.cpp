@@ -1,5 +1,5 @@
 #include "ActivityTrackerBlock.h"
-#include "../../acquisition/WimuAcquisition.h"
+#include "../../../acquisition/WimuAcquisition.h"
 #include <math.h>
 
 ActivityTrackerBlock::ActivityTrackerBlock()

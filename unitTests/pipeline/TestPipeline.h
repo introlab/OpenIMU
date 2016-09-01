@@ -3,8 +3,7 @@
 
 #include <QObject>
 #include <QtTest/QtTest>
-#include "../../applicationOpenimu/app/models/Caneva.h"
-
+#include "../../applicationOpenimu/app/core/Caneva.h"
 class TestPipeline : public QObject
 {
     Q_OBJECT

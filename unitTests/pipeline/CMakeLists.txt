@@ -23,8 +23,6 @@ SET(headers
     ${CMAKE_CURRENT_SOURCE_DIR}/../../applicationOpenimu/app/CustomQmlScene.h
     )
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../applicationOpenimu/app/models ${CMAKE_CURRENT_BINARY_DIR}/models)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../applicationOpenimu/app/newAcquisition ${CMAKE_CURRENT_BINARY_DIR}/newAcquisition)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../applicationOpenimu/app/algorithm ${CMAKE_CURRENT_BINARY_DIR}/algorithm)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../applicationOpenimu/app/acquisition ${CMAKE_CURRENT_BINARY_DIR}/acquisition)
 

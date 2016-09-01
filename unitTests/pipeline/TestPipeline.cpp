@@ -1,10 +1,10 @@
 #include "TestPipeline.h"
 
-#include "../../applicationOpenimu/app/models/components/Block.h"
-#include "../../applicationOpenimu/app/models/components/InputNode.h"
-#include "../../applicationOpenimu/app/models/components/OutputNode.h"
-#include "../../applicationOpenimu/app/models/json/json/json.h"
-#include "../../applicationOpenimu/app/models/Caneva.h"
+#include "../../applicationOpenimu/app/core/components/Block.h"
+#include "../../applicationOpenimu/app/core/components/InputNode.h"
+#include "../../applicationOpenimu/app/core/components/OutputNode.h"
+#include "../../applicationOpenimu/app/core/json/json/json.h"
+#include "../../applicationOpenimu/app/core/Caneva.h"
 #include <string>
 #include <vector>
 #include <QtGlobal>
