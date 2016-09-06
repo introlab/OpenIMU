@@ -4,10 +4,12 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Quick   REQUIRED)
 find_package(Qt5Charts	REQUIRED)
 
-add_subdirectory(algorithm)
-add_subdirectory(dialogs)
-add_subdirectory(core)
 add_subdirectory(acquisition)
+add_subdirectory(algorithm)
+add_subdirectory(core)
+add_subdirectory(dialogs)
+
+
 
 SET(srcs
     ${srcs}
@@ -63,7 +65,7 @@ add_definitions(-DQML2_IMPORT_PATH=${QML2_IMPORT_PATH})
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/models/json
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/json
     ${CMAKE_CURRENT_SOURCE_DIR}/views
     )
 
