@@ -13,7 +13,7 @@ SET(srcs
 
 SET(headers
     ${headers}
-    ${CMAKE_CURRENT_SOURCE_DIR}/Activitytrackerblock.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/ActivityTrackerblock.h
     ${CMAKE_CURRENT_SOURCE_DIR}/Addblock.h
     ${CMAKE_CURRENT_SOURCE_DIR}/BlockFactory.h
     ${CMAKE_CURRENT_SOURCE_DIR}/BlockType.h

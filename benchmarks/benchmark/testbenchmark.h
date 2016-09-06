@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QTest>
-#include "../../applicationOpenimu/app/models/Caneva.h"
+#include "../../applicationOpenimu/app/core/Caneva.h"
 
 class TestBenchmark : public QObject
 {
