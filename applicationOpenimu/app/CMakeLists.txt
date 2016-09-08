@@ -8,7 +8,7 @@ add_subdirectory(acquisition)
 add_subdirectory(algorithm)
 add_subdirectory(core)
 add_subdirectory(dialogs)
-
+add_subdirectory(logger)
 
 
 SET(srcs
