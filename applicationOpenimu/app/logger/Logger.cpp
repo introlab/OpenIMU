@@ -11,12 +11,13 @@ Logger Logger::m_instance=Logger();
 
 Logger::Logger()
 {
+    LOG.start("logs.txt");
 }
 
 Logger::~Logger()
 {
     if(m_instance.active){
-        m_instance.Close();
+        m_instance.close();
     }
 }
 
@@ -32,7 +33,7 @@ Logger& Logger::Instance()
  * logFile is the name of the file you want to create
  * The default folder is the binary_function
 */
-void Logger::Start(string logFile){
+void Logger::start(string logFile){
     //Status variables modification
     m_instance.active = true;
     //Open filestream
@@ -43,7 +44,7 @@ void Logger::Start(string logFile){
  * Msg is the message you want to write in the logger
  * Automatically add the timestamp and a break line
 */
-void Logger::Write(string Msg){
+void Logger::write(string Msg){
     // current date/time based on current system
     time_t now = time(0);
 
@@ -60,7 +61,7 @@ void Logger::Write(string Msg){
 /* Close function of the logger
  * Automatically called in the Destruction function of the classe (~Logger())
 */
-void Logger::Close(){
+void Logger::close(){
     //Status variables modifications
     m_instance.active = false;
     //Close filestream

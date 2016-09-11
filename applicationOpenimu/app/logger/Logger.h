@@ -6,15 +6,14 @@
 #include <iostream>
 
 using namespace std;
-
-
+/*To use the logger simply include the Logger.h and call LOG.write("String to log")*/
 class Logger
 {
 public:
     static Logger& Instance();
-    void Write(string Msg);
-    void Start(string logFile);
-    void Close();
+    void write(string Msg);
+    void start(string logFile);
+    void close();
 private:
     //OPERATOR and stuff
     Logger& operator= (const Logger&){}
