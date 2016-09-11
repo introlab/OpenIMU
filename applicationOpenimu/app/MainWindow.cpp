@@ -6,7 +6,6 @@
 #include "AccDataDisplay.h"
 #include "QMessageBox"
 
-//using namespace std;
 QT_CHARTS_USE_NAMESPACE
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
@@ -66,14 +65,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     qDebug() << tabWidget->tabBar();
     qDebug() << tabWidget->tabBar()->tabButton(0,QTabBar::RightSide);
 
-    //DL - crash on OSX...
-    //tabWidget->tabBar()->tabButton(0, QTabBar::RightSide)->hide();
     tabWidget->setCurrentWidget(tabWidget->widget(0));
     splitter->addWidget(tabWidget);
     splitter->setSizes(QList<int>() << 150 << 600);
     setCentralWidget(splitter);
     statusBar->showMessage(tr("Prêt"));
-    // caneva->test_slider_chart();
 }
 
 MainWindow::~MainWindow(){

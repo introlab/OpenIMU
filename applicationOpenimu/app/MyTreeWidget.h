@@ -1,6 +1,5 @@
 #ifndef MYTREEWIDGET_H
 #define MYTREEWIDGET_H
-//myTreeWidget.h file
 #include <QtGui>
 #include <QTreeWidget>
 

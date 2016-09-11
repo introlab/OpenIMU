@@ -7,7 +7,6 @@
 #include "components/InputNode.h"
 #include "components/OutputNode.h"
 #include "components/QuickItemInputNodes.h"
-//#include "components/QuickItemOutputNodes.h"
 
 #include "../acquisition/wimuacquisition.h"
 
@@ -55,12 +54,6 @@ void Caneva::testSteps(std::string filePath)
     getBlock("col1.row2.col4.label_days")->GetInput<int>("inputDaysAvailable")->Put(std::vector<int>({2}));
 
     getBlock("col1.row2.col3.chart_step")->GetInput<std::string>("x")->Put(arr_str);
-   // getBlock("col1.row2.col3.chart_step")->GetInput<int>("y")->Put(arr_int);
-
-    //getBlock("col1.row2.col4.vtotalLabel")->GetInput<int>("inputvtotal")->Put(std::vector<int>({1}));
-    //getBlock("col1.row2.col4.vmoyLabel")->GetInput<int>("inputvmoy")->Put(std::vector<int>({10}));
-   // getBlock("col1.row2.col4.vmaxLabel")->GetInput<int>("inputvmax")->Put(std::vector<int>({15}));
-   // getBlock("col1.row2.col4.vminLabel")->GetInput<int>("inputvmin")->Put(std::vector<int>({12}));
 
 }
 void Caneva::testActivity(std::string filePath)
@@ -178,8 +171,6 @@ void Caneva::createVBlocks(CustomQmlScene *scene)
         // get outputs
         for(Json::ValueIterator out = (*it)["outputs"].begin() ; out != (*it)["outputs"].end() ; out++)
         {
-            //block->AddOutput(scene->getOutputNode((*it)["ID"].asString().c_str(),(*out)["ID"].asString().c_str()));
-
             AbstractOutputNode* node;
             if((*out)["TYPE"].asString() == "Int")
             {
@@ -294,7 +285,6 @@ void Caneva::makeConnections()
 {
     for(Json::ValueIterator it = root["ListConnection"].begin() ; it != root["ListConnection"].end() ; it++)
     {
-        //getBlock((*it)["from"].asString())->GetOutput((*it)["out"].asString())->AddDest(getBlock((*it)["to"].asString())->GetInput((*it)["in"].asString()));
         Block* from = getBlock((*it)["from"].asString());
         if(!from) return;
         AbstractOutputNode* out = from->GetOutput((*it)["out"].asString());

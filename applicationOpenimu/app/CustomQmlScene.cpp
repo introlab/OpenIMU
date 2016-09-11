@@ -21,8 +21,6 @@ CustomQmlScene::CustomQmlScene(std::string filename, QWidget* parent = 0): QWidg
     filename = "qrc:/" + filename;
     QQuickView* view = new QQuickView();
 
-    //view->engine()->addImportPath("../jbQuick/.");
-    //view->engine()->addImportPath(QApplication::applicationDirPath() + "/jbQuick/.");
     view->engine()->addImportPath(QApplication::applicationDirPath() + "/qml");
 
     //DL test import paths

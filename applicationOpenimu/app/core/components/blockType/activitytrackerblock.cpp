@@ -35,7 +35,7 @@ void ActivityTrackerBlock::Notify(std::string strId)
 
 void ActivityTrackerBlock::work()
 {
-    //clean the signal
+    //Clean the signal
     std::vector<int> normalDelta;
     int normalBuf = 0;
 
@@ -54,7 +54,7 @@ void ActivityTrackerBlock::work()
     int bufferSize = GetInput<int>("bufferSize")->Get()[0];
     int average = 0;
 
-    //first load
+    //First load
     for(int i = 0; i<bufferSize; i++){
         average += normalDelta[i];
     }
@@ -81,14 +81,14 @@ void ActivityTrackerBlock::work()
         }
     }
 
-    //add the rest if data ended while in activity
+    //Add the rest if data ended while in activity
     if(isActive)
         totalActiveTime += (accData[dataCount-1].timestamp - activeTimeStart);
 
     //Calculate complement
     int totalPassiveTime = accData[dataCount-1].timestamp - accData[0].timestamp - totalActiveTime;
 
-    //output the result
+    //Output the result
     std::vector<int> out1 = std::vector<int>{(int)totalActiveTime/1000};
     std::vector<int> out2 = std::vector<int>{(int)totalPassiveTime/1000};
 

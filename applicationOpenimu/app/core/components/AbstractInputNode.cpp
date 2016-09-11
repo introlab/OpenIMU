@@ -22,7 +22,6 @@ std::string AbstractInputNode::GetStringID()
 
 void AbstractInputNode::Notify()
 {
-    //@TODO REMOVE this line is ugly!!!
     if(observer)
-    observer->Notify(stringID);
+       observer->Notify(stringID);
 }

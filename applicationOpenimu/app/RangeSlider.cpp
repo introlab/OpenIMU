@@ -19,8 +19,6 @@ RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent)
 
 
     mainLayout->addWidget(leftLabel);
-    // mainLayout->addWidget(leftSlider);
-    // mainLayout->addWidget(rightSlider);
     mainLayout->addWidget(rightLabel);
     mainLayout->addStretch();
     this->setLayout(mainLayout);

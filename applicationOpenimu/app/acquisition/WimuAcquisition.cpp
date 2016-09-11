@@ -2,7 +2,6 @@
 #include <fstream>
 #include <math.h>
 #ifdef WIN32
-//Needed???
 #include <windows.h>
 #endif
 #include <sys/types.h>
@@ -99,13 +98,7 @@ std::vector<string_timestamp> WimuAcquisition::getDates()
 		if(lastTimestamp==-1 || day!=lastday)
         {
 			string_timestamp tmp;
-            /*__time64_t ltime = t;
-			
-			tmp.date = _ctime64( &ltime );
-			tmp.date.erase(tmp.date.size() - 1);
-			tmp.timestamp = data.at(i).timestamp;*/
-			std::time_t _time =(time_t) t;
-			//ctime(_time);
+                        std::time_t _time =(time_t) t;
 			char buffer[32];
 			// Format: Mo, 15.06.2009 20:20:00
 			tmp.timestamp = data.at(i).timestamp;

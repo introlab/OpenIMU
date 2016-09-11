@@ -1,8 +1,5 @@
 #include "ApplicationMenubar.h"
 
-//DL - Where is widget.h
-//#include "widget.h"
-
 ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
 {
     this->setMinimumWidth(parent->width());
