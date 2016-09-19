@@ -23,3 +23,8 @@ std::vector<QString> DbBlock::getDaysInDB()
 
     return listSavedDays;
 }
+
+ bool DbBlock::addRecordInDB(QString recordName, QString imuType, QString folderPath)
+ {
+    return true;
+ }

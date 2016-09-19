@@ -1,6 +1,7 @@
 #include "RecordsDialog.h"
 #include <QFileDialog>
 #include <QString>
+#include<QFile>
 
 RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
 {
@@ -10,29 +11,31 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
 
     mainLayout = new QVBoxLayout(this);
     selectRecord = new QPushButton("Sélectionner un enregistrement");
-    addRecord = new QPushButton("Ajouter enregistrement");
-    fileSelected = new QLabel("Fichier sélectionné");
+    addRecord = new QPushButton("Ajouter l'enregistrement");
+    folderSelected = new QLabel("Fichier sélectionné");
     recordName = new QLineEdit;
-    imuSelect = new QComboBox;
+    imuSelectComboBox = new QComboBox;
+    selectedImu = new QLabel("None");
 
     recordName->setMinimumHeight(20);
     recordName->setPlaceholderText(tr("Nom de l'enregistrement"));
-    imuSelect->addItem(tr("WimU"));
-    imuSelect->addItem(tr("Deslys trigno"));
-    imuSelect->addItem(tr("XSens"));
+    imuSelectComboBox->addItem(tr("WimU"));
+    imuSelectComboBox->addItem(tr("Deslys trigno"));
+    imuSelectComboBox->addItem(tr("XSens"));
 
     mainLayout->addSpacing(10);
     mainLayout->addWidget(selectRecord);
     mainLayout->addSpacing(5);
-    mainLayout->addWidget(imuSelect);
+    mainLayout->addWidget(imuSelectComboBox);
     mainLayout->addWidget(recordName);
-    mainLayout->addWidget(fileSelected);
+    mainLayout->addWidget(folderSelected);
     mainLayout->addSpacing(5);
     mainLayout->addWidget(addRecord);
     mainLayout->addSpacing(10);
 
     connect(addRecord, SIGNAL(clicked()), this, SLOT(addRecordSlot()));
     connect(selectRecord, SIGNAL(clicked()), this, SLOT(selectRecordSlot()));
+    connect(imuSelectComboBox, SIGNAL(currentIndexChanged(QString)), selectedImu, SLOT(setText(QString)));
 
     this->setStyleSheet(         "QPushButton{"
                                  "background-color: rgba(239, 73, 73,0.7);"
@@ -43,6 +46,8 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
                                  "font: 12px;"
                                  "min-width: 10em;"
                                  "padding: 6px; }"
+                                 "QPushButton:pressed {"
+                                 "background-color: rgba(82, 165, 92, 0.7);"
                                  );
 }
 
@@ -54,15 +59,18 @@ RecordsDialog::~RecordsDialog()
 
 void RecordsDialog::selectRecordSlot()
 {
+    QFile *file;
     QString folderToAdd = QFileDialog::getExistingDirectory(this, tr("Sélectionner dossier"),"/path/to/file/");
-     if(!folderToAdd.isEmpty()){
-         fileSelected->setText(QString::fromStdString("Dossier séléctionné: ")+ folderToAdd);
+    file = new QFile(folderToAdd);
+    if(!folderToAdd.isEmpty()){
+         folderSelected->setText(QString::fromStdString("Dossier séléctionné: ")+ file->fileName().section("/",-1,-1));
      }else{
-          fileSelected->setText(QString::fromStdString(" Aucun dossier séléctionné ")+ folderToAdd);
+          folderSelected->setText(QString::fromStdString(" Aucun dossier séléctionné ")+ file->fileName());
      }
 }
 
 void RecordsDialog::addRecordSlot()
 {
-    this->accept();
+    databaseAccess = new DbBlock;
+    databaseAccess->addRecordInDB(recordName->text(),selectedImu->text(),folderSelected->text());
 }

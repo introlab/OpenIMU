@@ -11,6 +11,7 @@ class DbBlock : public Block
         ~DbBlock();
         void work();
         std::vector<QString> getDaysInDB();
+        bool addRecordInDB(QString recordName, QString imuType, QString folderPath);
 };
 
 #endif // DBWRITEBLOCK_H

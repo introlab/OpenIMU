@@ -5,6 +5,7 @@
 #include<QHBoxLayout>
 #include<QLineEdit>
 #include<QComboBox>
+#include "core/components/blockType/DbBlock.h"
 
 class RecordsDialog : public QDialog
 {
@@ -23,9 +24,11 @@ private slots:
   private:
 
     QPushButton *selectRecord;
-    QLabel* fileSelected;
+    QLabel* folderSelected;
     QPushButton *addRecord;
     QVBoxLayout *mainLayout;
     QLineEdit *recordName;
-    QComboBox* imuSelect;
+    QComboBox* imuSelectComboBox;
+    DbBlock * databaseAccess;
+    QLabel* selectedImu;
 };
