@@ -4,7 +4,7 @@
 
 RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
 {
-    this->setMinimumSize(300,150);
+    this->setMinimumSize(300,200);
     this->setWindowTitle(QString::fromUtf8("Enregistrements"));
 
 
@@ -12,10 +12,22 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
     selectRecord = new QPushButton("Sélectionner un enregistrement");
     addRecord = new QPushButton("Ajouter enregistrement");
     fileSelected = new QLabel("Fichier sélectionné");
+    recordName = new QLineEdit;
+    imuSelect = new QComboBox;
+
+    recordName->setMinimumHeight(20);
+    recordName->setPlaceholderText(tr("Nom de l'enregistrement"));
+    imuSelect->addItem(tr("WimU"));
+    imuSelect->addItem(tr("Deslys trigno"));
+    imuSelect->addItem(tr("XSens"));
 
     mainLayout->addSpacing(10);
     mainLayout->addWidget(selectRecord);
+    mainLayout->addSpacing(5);
+    mainLayout->addWidget(imuSelect);
+    mainLayout->addWidget(recordName);
     mainLayout->addWidget(fileSelected);
+    mainLayout->addSpacing(5);
     mainLayout->addWidget(addRecord);
     mainLayout->addSpacing(10);
 
@@ -28,7 +40,7 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
                                  "border-width: 2px;"
                                  "border-radius: 10px;"
                                  "border-color: white;"
-                                 "font: 14px;"
+                                 "font: 12px;"
                                  "min-width: 10em;"
                                  "padding: 6px; }"
                                  );
