@@ -5,6 +5,9 @@
 #include "MyTreeWidget.h"
 #include "AccDataDisplay.h"
 #include "QMessageBox"
+#include <QListWidgetItem>
+#include<vector>
+
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -15,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     this->setWindowTitle(QString::fromUtf8("Open-IMU"));
     this->setStyleSheet("background: rgba(246, 254, 254,0.8)");
     this->setMinimumSize(700,600);
+
     menu = new ApplicationMenuBar(this);
     this->setMenuBar(menu);
     statusBar = new QStatusBar();
@@ -27,9 +31,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     splitter->setSizes(QList<int>() << 150 << 600);
     splitter->setFixedWidth(150);
     tree = new myTreeWidget (this);
+
+    //Implementation listWidget for days in dB
+  //  splitter->addWidget(populateDaysFromDataBase());
     splitter->addWidget(tree);
 
-    //Set QTreeWidget Column Header
+   //Set QTreeWidget Column Header
     QTreeWidgetItem* headerItem = new QTreeWidgetItem();
     headerItem->setText(0,QString("Explorateur de fichier"));
     tree->setHeaderItem(headerItem);
@@ -80,6 +87,27 @@ MainWindow::~MainWindow(){
     delete scene;
 }
 
+QListWidget* MainWindow::populateDaysFromDataBase()
+{
+    QListWidget* listWidget = new QListWidget(this);
+    for(QString day: databaseAccess->getDaysInDB())
+    {
+        QListWidgetItem *newItem = new QListWidgetItem;
+        newItem->setText(day);
+        listWidget->insertItem(listWidget->count(), newItem);
+    }
+    connect(listWidget, SIGNAL(itemClicked(QListWidgetItem *)), SLOT(dateClicked(QListWidgetItem *)));
+    return listWidget;
+}
+
+void MainWindow::dateClicked(QListWidgetItem *item)
+{
+    if(item)
+    {
+        statusBar->showMessage(item->text());
+    }
+}
+
 void MainWindow:: openFile(){
     folderName = QFileDialog::getExistingDirectory(this, tr("Sélectionner dossier"),"/path/to/file/");
     if(!folderName.isEmpty()){
@@ -113,6 +141,13 @@ void MainWindow:: openFile(){
         statusBar->showMessage(QString::fromStdString(" Aucun dossier séléctionné ")+ folderName);
     }
 }
+
+void MainWindow:: openRecordDialog()
+{
+    rDialog = new RecordsDialog;
+    rDialog->show();
+}
+
 void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int column)
 {
     if(item->parent()!=NULL){

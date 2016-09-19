@@ -13,6 +13,9 @@
 #include "dialogs/AboutDialog.h"
 #include "dialogs/HelpDialog.h"
 #include <QStatusBar>
+#include<QListWidget>
+#include "core/components/blockType/DbBlock.h"
+#include"dialogs/RecordsDialog.h"
 
 class MainWindow : public QMainWindow
     {
@@ -26,6 +29,7 @@ class MainWindow : public QMainWindow
 
     public slots:
     void openFile();
+    void openRecordDialog();
     void displayRawAccData();
     void computeSteps();
     void closeWindow();
@@ -35,6 +39,8 @@ class MainWindow : public QMainWindow
     void replaceTab(QWidget * replacement, std::string label);
     void openAbout();
     void openHelp();
+    void dateClicked(QListWidgetItem *item);
+    QListWidget* populateDaysFromDataBase();
 
     private:
        QString folderName;
@@ -50,6 +56,8 @@ class MainWindow : public QMainWindow
        AboutDialog *aboutDialog;
        HelpDialog *helpDialog;
        QStatusBar * statusBar;
+       DbBlock * databaseAccess = new DbBlock;
+       RecordsDialog * rDialog;
     };
 
 #endif // MAINWINDOW_H
