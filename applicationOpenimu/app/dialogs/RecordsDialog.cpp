@@ -5,7 +5,7 @@
 
 RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
 {
-    this->setMinimumSize(300,200);
+    this->setMinimumSize(300,210);
     this->setWindowTitle(QString::fromUtf8("Enregistrements"));
 
 
@@ -32,7 +32,6 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
     mainLayout->addSpacing(5);
     mainLayout->addWidget(addRecord);
     mainLayout->addSpacing(10);
-
     connect(addRecord, SIGNAL(clicked()), this, SLOT(addRecordSlot()));
     connect(selectRecord, SIGNAL(clicked()), this, SLOT(selectRecordSlot()));
     connect(imuSelectComboBox, SIGNAL(currentIndexChanged(QString)), selectedImu, SLOT(setText(QString)));
@@ -73,4 +72,7 @@ void RecordsDialog::addRecordSlot()
 {
     databaseAccess = new DbBlock;
     databaseAccess->addRecordInDB(recordName->text(),selectedImu->text(),folderSelected->text());
+    QLabel* successLabel = new QLabel(recordName->text()+" ajouté avec succès");
+    mainLayout->addWidget(successLabel);
+    mainLayout->setAlignment(successLabel,Qt::AlignCenter);
 }

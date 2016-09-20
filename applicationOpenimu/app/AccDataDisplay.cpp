@@ -2,6 +2,7 @@
 #include "acquisition/WimuAcquisition.h"
 #include <math.h>
 #include <QPropertyAnimation>
+#include "graph/ChartView.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -11,6 +12,9 @@ AccDataDisplay::AccDataDisplay()
 }
 AccDataDisplay::AccDataDisplay(std::string filePath){
 
+    this->grabGesture(Qt::PanGesture);
+    this->grabGesture(Qt::PinchGesture);
+
     acceleroData = new WimuAcquisition(filePath,50);
     availableData = acceleroData->getData();
     sliceData = availableData;
@@ -18,7 +22,7 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
     if(availableData.size()>0)
     {
 
-        chart = new QChart();
+        chart = new DataChart();
         chart->legend()->show();
         chart->legend()->setAlignment(Qt::AlignBottom);
         chart->setTheme(QChart::ChartThemeDark);
@@ -26,8 +30,9 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
 
         chart->createDefaultAxes();
         chart->setTitle("Données accéléromètre (en ms)");
+        chart->setAnimationOptions(QChart::SeriesAnimations);
 
-        chartView = new QChartView(chart);
+        chartView = new ChartView(chart);
         chartView->setRenderHint(QPainter::Antialiasing);
 
         layout = new QVBoxLayout(this);

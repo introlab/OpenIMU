@@ -12,6 +12,8 @@
 #include <QCheckBox>
 #include "acquisition/WimuAcquisition.h"
 #include "RangeSlider.h"
+#include "graph/DataChart.h"
+#include "graph/ChartView.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -36,8 +38,8 @@ public slots:
     void rightSliderValueChanged(int value);
 
 private:
-    QChart * chart;
-    QChartView *chartView;
+    DataChart * chart;
+    ChartView *chartView;
     QLineSeries *lineseriesX;
     QLineSeries *lineseriesY;
     QLineSeries *lineseriesZ;

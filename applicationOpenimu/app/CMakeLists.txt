@@ -9,7 +9,7 @@ add_subdirectory(algorithm)
 add_subdirectory(core)
 add_subdirectory(dialogs)
 add_subdirectory(logger)
-
+add_subdirectory(graph)
 
 SET(srcs
     ${srcs}

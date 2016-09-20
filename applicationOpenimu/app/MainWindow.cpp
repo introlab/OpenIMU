@@ -15,6 +15,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     fileSelectedName = "";
 
+    this->grabGesture(Qt::PanGesture);
+    this->grabGesture(Qt::PinchGesture);
+
     this->setWindowTitle(QString::fromUtf8("Open-IMU"));
     this->setStyleSheet("background: rgba(246, 254, 254,0.8)");
     this->setMinimumSize(700,600);
@@ -73,6 +76,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     qDebug() << tabWidget->tabBar()->tabButton(0,QTabBar::RightSide);
 
     tabWidget->setCurrentWidget(tabWidget->widget(0));
+    tabWidget->grabGesture(Qt::PanGesture);
+    tabWidget->grabGesture(Qt::PinchGesture);
     splitter->addWidget(tabWidget);
     splitter->setSizes(QList<int>() << 150 << 600);
     setCentralWidget(splitter);
