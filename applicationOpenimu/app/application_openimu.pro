@@ -10,7 +10,7 @@ QT       += qml quick core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = application_openimu
+TARGET = applicationOpenimu
 TEMPLATE = app
 
 INCLUDEPATH += $$PWD/core/json

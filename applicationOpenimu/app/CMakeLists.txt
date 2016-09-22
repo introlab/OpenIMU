@@ -80,9 +80,9 @@ QT5_WRAP_CPP(moc_srcs ${headers})
 
 
 #Application
-add_executable(application_openimu Main.cpp ${srcs} ${headers} ${moc_srcs} ${moc_uis} ${srcs_qrc} ${qml})
-qt5_use_modules(application_openimu Sql Core Network Xml XmlPatterns Gui Widgets Quick Charts)
-TARGET_LINK_LIBRARIES(application_openimu)
+add_executable(applicationOpenimu Main.cpp ${srcs} ${headers} ${moc_srcs} ${moc_uis} ${srcs_qrc} ${qml})
+qt5_use_modules(applicationOpenimu Sql Core Network Xml XmlPatterns Gui Widgets Quick Charts)
+TARGET_LINK_LIBRARIES(applicationOpenimu)
 
 
 
