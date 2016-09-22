@@ -58,8 +58,9 @@ class getRecords(Resource):
 
 class GetData(Resource):
     def get(self):
-        uuid = request.args.get('uuid', '')
-
+        uuid = request.args.get('uuid')
+        if uuid is None:
+            abort(401,message='enter valid uuid')
         schema = schemas.Record()
         record,errors = schema.dump(mongo.db.record.find_one({'_id': ObjectId(uuid)}))
         #if errors:
@@ -85,3 +86,15 @@ class GetData(Resource):
         #if errors:
             #abort(401, message=str(errors))
         return result
+
+class DeleteData(Resource):
+    def get(self):
+        uuid = request.args.get('uuid')
+        if uuid is None:
+            abort(401,message='enter valid uuid')
+        res1 = mongo.db.accelerometres.delete_many({'ref':ObjectId(uuid)})
+        res2 = mongo.db.gyrometres.delete_many({'ref':ObjectId(uuid)})
+        res3 = mongo.db.magnetometres.delete_many({'ref':ObjectId(uuid)})
+        res4 = mongo.db.record.delete_many({'_id':ObjectId(uuid)})
+        result = res1.deleted_count+res2.deleted_count+res3.deleted_count+res4.deleted_count
+        return 'Affected ' + str(result)     + ' entries.'

@@ -20,6 +20,6 @@ api = Api(app)
 api.add_resource(resources.InsertRecord, '/insertrecord')
 api.add_resource(resources.getRecords, '/records')
 api.add_resource(resources.GetData, '/data')
-
+api.add_resource(resources.DeleteData, '/delete')
 if __name__ == '__main__':
     app.run(debug=True, host='127.0.0.1')
