@@ -6,6 +6,8 @@ from lib_openimu import  conf
 from algos.fft import run, invert
 from shared import mongo
 import schemas
+
+
 class InsertRecord(Resource):
     def post(self):
         schema = schemas.RecordRequest()
@@ -45,3 +47,11 @@ class InsertRecord(Resource):
         mongo.db.magnetometres.insert(magnetometres)
 #---------------------------------------------------------------
         return str(uuid)
+
+class getRecords(Resource):
+    def get(self):
+        res = []
+        for a in mongo.db.record.find({},{'name':1,'_id':1}):
+            res.append(a)
+        schema = schemas.Record(many=True)
+        return schema.dump(res)
