@@ -3,15 +3,26 @@
 
 #include "../Block.h"
 #include<QString>
+#include<QNetworkReply>
+#include<QNetworkAccessManager>
 
-class DbBlock : public Block
+class DbBlock : public QObject
 {
+    Q_OBJECT
+
     public:
         DbBlock();
         ~DbBlock();
-        void work();
+
         std::vector<QString> getDaysInDB();
         bool addRecordInDB(QString recordName, QString imuType, QString folderPath);
+        void requete(const QString &, const QString &);
+
+       public slots:
+           void reponseRecue(QNetworkReply*);
+
+     private:
+        QNetworkAccessManager* manager;
 };
 
 #endif // DBWRITEBLOCK_H
