@@ -1,20 +1,20 @@
-#include "TestPipeline.h"
+#include "testmultiply.h"
 
-#include "../../applicationOpenimu/app/core/components/Block.h"
-#include "../../applicationOpenimu/app/core/components/InputNode.h"
-#include "../../applicationOpenimu/app/core/components/OutputNode.h"
-#include "../../applicationOpenimu/app/core/json/json/json.h"
-#include "../../applicationOpenimu/app/core/Caneva.h"
+#include "../applicationOpenimu/app/core/components/Block.h"
+#include "../applicationOpenimu/app/core/components/InputNode.h"
+#include "../applicationOpenimu/app/core/components/OutputNode.h"
+#include "../applicationOpenimu/app/core/json/json/json.h"
+#include "../applicationOpenimu/app/core/Caneva.h"
 #include <string>
 #include <vector>
 #include <QtGlobal>
 
-TestPipeline::TestPipeline(QObject *parent) : QObject(parent)
+TestMultiply::TestMultiply(QObject *parent) : QObject(parent)
 {
     caneva = new Caneva("../savefiles/test_block_mul.json",0);
 }
 
-void TestPipeline::testsJSON()
+void TestMultiply::testsJSON()
 {
     QFETCH(std::vector<float> , input1);
     QFETCH(std::vector<float> , input2);
@@ -29,7 +29,7 @@ void TestPipeline::testsJSON()
         qFuzzyCompare(calculated[i],result[i]);
 }
 
-void TestPipeline::testsJSON_data()
+void TestMultiply::testsJSON_data()
 {
     QTest::addColumn<std::vector<float> >("input1");
     QTest::addColumn<std::vector<float> >("input2");
