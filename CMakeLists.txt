@@ -23,19 +23,6 @@ IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE Debug)
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
- FIND_PACKAGE(Doxygen)
-  if (NOT DOXYGEN_FOUND)
-    message(FATAL_ERROR
-      "Doxygen is needed to build the documentation. Please install it correctly")
-  endif()
-
-  add_custom_target (doc ALL
-                     ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile
-                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/doc
-                     )
-
-
-
 #MINGW COMPILE FLAGS
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
