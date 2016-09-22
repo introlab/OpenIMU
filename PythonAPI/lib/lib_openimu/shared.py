@@ -1,4 +1,4 @@
 from flask_marshmallow import Marshmallow
-from flask.ext.pymongo import PyMongo
+from flask_pymongo import PyMongo
 ma = Marshmallow()
 mongo = PyMongo()

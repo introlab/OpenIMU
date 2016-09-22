@@ -16,7 +16,7 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
     recordName = new QLineEdit;
     imuSelectComboBox = new QComboBox;
     selectedImu = new QLabel("None");
-
+    successLabel = new QLabel();
     recordName->setMinimumHeight(20);
     recordName->setPlaceholderText(tr("Nom de l'enregistrement"));
     imuSelectComboBox->addItem(tr("WimU"));
@@ -72,7 +72,9 @@ void RecordsDialog::addRecordSlot()
 {
     databaseAccess = new DbBlock;
     databaseAccess->addRecordInDB(recordName->text(),selectedImu->text(),folderSelected->text());
-    QLabel* successLabel = new QLabel(recordName->text()+" ajouté avec succès");
+    databaseAccess->requete(recordName->text(),selectedImu->text());
+
+    successLabel->setText(recordName->text()+" ajouté avec succès");
     mainLayout->addWidget(successLabel);
     mainLayout->setAlignment(successLabel,Qt::AlignCenter);
 }

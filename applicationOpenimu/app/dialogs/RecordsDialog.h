@@ -31,4 +31,5 @@ private slots:
     QComboBox* imuSelectComboBox;
     DbBlock * databaseAccess;
     QLabel* selectedImu;
+    QLabel* successLabel;
 };
