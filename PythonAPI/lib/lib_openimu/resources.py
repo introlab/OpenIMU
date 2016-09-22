@@ -6,7 +6,7 @@ from lib_openimu import  conf
 from algos.fft import run, invert
 from shared import mongo
 import schemas
-
+from bson.objectid import ObjectId
 
 class InsertRecord(Resource):
     def post(self):
@@ -24,15 +24,17 @@ class InsertRecord(Resource):
 #---------------------------------------------------------------
         schema = schemas.Sensor(many=True)
         accelerometres,errors = schema.dump(data['accelerometres'])
-        result = []
+        if errors:
+            abort(401, message=str(errors))
         for datum in accelerometres:
             datum['ref'] = uuid
 
-        mongo.db.accelerometre.insert(accelerometres)
+        mongo.db.accelerometres.insert(accelerometres)
 #---------------------------------------------------------------
         schema = schemas.Sensor(many=True)
         gyrometres,errors = schema.dump(data['gyrometres'])
-        result = []
+        if errors:
+            abort(401, message=str(errors))
         for datum in gyrometres:
             datum['ref'] = uuid
 
@@ -40,7 +42,8 @@ class InsertRecord(Resource):
 #---------------------------------------------------------------
         schema = schemas.Sensor(many=True)
         magnetometres,errors = schema.dump(data['magnetometres'])
-        result = []
+        if errors:
+            abort(401, message=str(errors))
         for datum in magnetometres:
             datum['ref'] = uuid
 
@@ -50,8 +53,35 @@ class InsertRecord(Resource):
 
 class getRecords(Resource):
     def get(self):
-        res = []
-        for a in mongo.db.record.find({},{'name':1,'_id':1}):
-            res.append(a)
         schema = schemas.Record(many=True)
-        return schema.dump(res)
+        return schema.dump(mongo.db.record.find({},{'name':1,'_id':1}))
+
+class GetData(Resource):
+    def get(self):
+        uuid = request.args.get('uuid', '')
+
+        schema = schemas.Record()
+        record,errors = schema.dump(mongo.db.record.find_one({'_id': ObjectId(uuid)}))
+        #if errors:
+        #    abort(401, message=str(errors))
+#--------------------------------------------------------------
+        schema = schemas.Sensor(many=True)
+        accelerometres,errors = schema.dump(mongo.db.accelerometres.find({'ref': ObjectId(uuid)}))
+        if errors:
+            abort(401, message=str(errors))
+#--------------------------------------------------------------
+        schema = schemas.Sensor(many=True)
+        magnetometres,errors = schema.dump(mongo.db.magnetometres.find({'ref': ObjectId(uuid)}))
+        if errors:
+            abort(401, message=str(errors))
+#--------------------------------------------------------------
+        schema = schemas.Sensor(many=True)
+        gyrometres,errors = schema.dump(mongo.db.gyrometres.find({'ref': ObjectId(uuid)}))
+        if errors:
+            abort(401, message=str(errors))
+#--------------------------------------------------------------
+        schema = schemas.RecordRequest()
+        result,errors = schema.load(dict([('record', record), ('accelerometres', accelerometres), ('magnetometres', magnetometres), ('gyrometres',gyrometres)]))
+        #if errors:
+            #abort(401, message=str(errors))
+        return result
