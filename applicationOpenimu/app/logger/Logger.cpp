@@ -50,7 +50,7 @@ void Logger::write(string Msg){
 
     // convert now to string form
     char* dt = ctime(&now);
-    if (m_instance.fileStream and m_instance.active){
+    if (m_instance.fileStream && m_instance.active){
         m_instance.fileStream << dt << "    " << Msg.c_str() << endl;
         }
     else{

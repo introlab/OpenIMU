@@ -35,20 +35,20 @@ void TestPipeline::testsJSON_data()
     QTest::addColumn<std::vector<float> >("input2");
     QTest::addColumn<std::vector<float> >("result");
 
-    QTest::newRow("1") << std::vector<float>({1.1,2.2,3.3}) // input1
-                       << std::vector<float>({1.1,2.2,3.3}) // input2
-                       << std::vector<float>({1.21,4.84,10.89}); // output
+    QTest::newRow("1") << std::vector<float>({1.1f,2.2f,3.3f}) // input1
+                       << std::vector<float>({1.1f,2.2f,3.3f}) // input2
+                       << std::vector<float>({1.21f,4.84f,10.89f}); // output
 
-    QTest::newRow("2") << std::vector<float>({-1.1,-2.2,-3.3}) // input1
-                       << std::vector<float>({1.1,2.2,3.3}) // input2
-                       << std::vector<float>({-1.21,-4.84,-10.89}); // output
+    QTest::newRow("2") << std::vector<float>({-1.1f,-2.2f,-3.3f}) // input1
+                       << std::vector<float>({1.1f,2.2f,3.3f}) // input2
+                       << std::vector<float>({-1.21f,-4.84f,-10.89f}); // output
 
-    QTest::newRow("3") << std::vector<float>({-1.1,-2.2,-3.3}) // input1
-                       << std::vector<float>({-1.1,-2.2,-3.3}) // input2
-                       << std::vector<float>({1.21,4.84,10.89}); // output
+    QTest::newRow("3") << std::vector<float>({-1.1f,-2.2f,-3.3f}) // input1
+                       << std::vector<float>({-1.1f,-2.2f,-3.3f}) // input2
+                       << std::vector<float>({1.21f,4.84f,10.89f}); // output
 
 
-    QTest::newRow("4") << std::vector<float>({1,2,3}) // input1
-                       << std::vector<float>({0,0,0}) // input2
-                       << std::vector<float>({0,0,0}); // output
+    QTest::newRow("4") << std::vector<float>({1.0f,2.0f,3.0f}) // input1
+                       << std::vector<float>({0.0f,0.0f,0.0f}) // input2
+                       << std::vector<float>({0.0f,0.0f,0.0f}); // output
 }
