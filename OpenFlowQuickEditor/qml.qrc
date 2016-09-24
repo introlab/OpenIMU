@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>MainForm.ui.qml</file>
+        <file>Editor.qml</file>
+        <file>BlockListModel.qml</file>
+        <file>BlockListDelegate.qml</file>
+        <file>BlockListView.qml</file>
+    </qresource>
+</RCC>
