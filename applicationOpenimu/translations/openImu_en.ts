@@ -39,6 +39,14 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>ApplicationMenuBar</name>
+    <message>
+        <location filename="../app/ApplicationMenuBar.cpp" line="51"/>
+        <source>&amp;Langue</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Help</name>
     <message>
         <location filename="../app/help.ui" line="14"/>
@@ -63,22 +71,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../app/MainWindow.cpp" line="84"/>
+        <location filename="../app/MainWindow.cpp" line="87"/>
         <source>Prêt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="117"/>
+        <location filename="../app/MainWindow.cpp" line="120"/>
         <source>Sélectionner dossier</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="202"/>
+        <location filename="../app/MainWindow.cpp" line="205"/>
         <source>Ouverture compteur de pas</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="229"/>
+        <location filename="../app/MainWindow.cpp" line="232"/>
         <source>Ouverture temps d&apos;activité</source>
         <translation type="unfinished"></translation>
     </message>

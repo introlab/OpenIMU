@@ -11,6 +11,9 @@
 
 QT_CHARTS_USE_NAMESPACE
 
+const QString frenchText = "French";
+const QString englishText = "English";
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     fileSelectedName = "";
@@ -35,8 +38,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     splitter->setFixedWidth(150);
     tree = new myTreeWidget (this);
 
-    //Implementation listWidget for days in dB
-  //  splitter->addWidget(populateDaysFromDataBase());
+   //Implementation listWidget for days in dB
+   //  splitter->addWidget(populateDaysFromDataBase());
     splitter->addWidget(tree);
 
    //Set QTreeWidget Column Header
@@ -229,6 +232,19 @@ void MainWindow::computeActivityTime(){
     statusBar->showMessage(tr("Ouverture temps d'activité"));
 
 }
+
+void MainWindow::setApplicationInEnglish()
+{
+    menu->setUncheck(frenchText);
+    //TODO: Olivier, insert change language logic here
+}
+
+void MainWindow::setApplicationInFrench()
+{
+    menu->setUncheck(englishText);
+    //TODO: Olivier, insert change language logic here
+}
+
 void MainWindow::openAbout(){
 
     aboutDialog = new AboutDialog(this);

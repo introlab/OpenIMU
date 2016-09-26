@@ -11,6 +11,7 @@ class ApplicationMenuBar : public QMenuBar
     Q_OBJECT
 public:
    ApplicationMenuBar(QWidget *parent = 0);
+   void setUncheck(QString language);
 
 signals:
 
@@ -21,6 +22,11 @@ private:
     QMenu* algorithme;
     QMenu* vue;
     QMenu* aide;
+    QMenu* preference;
+    QMenu* preferenceLangue;
+
+    QAction* actionEnglish;
+    QAction* actionFrench;
 };
 
 #endif // APPLICATIONMENUBAR_H

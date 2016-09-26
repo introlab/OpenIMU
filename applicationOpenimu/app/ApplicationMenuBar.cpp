@@ -20,7 +20,7 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     fichier->addSeparator();
     fichier->addAction(actionQuitter);
 
-    algorithme = new QMenu("Al&gorithme");
+    algorithme = new QMenu("&Algorithme");
     QAction* actionNombreDePas = new QAction("&Compteur de pas",algorithme);
     actionNombreDePas->setShortcut(QKeySequence("Ctrl+C"));
     QAction* actionTempsActif = new QAction("&Temps d'activité",algorithme);
@@ -41,10 +41,23 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     aide->addAction(actionAPropos);
     aide->addAction(actionAide);
 
+    actionEnglish = new QAction("&English",aide);
+    actionFrench = new QAction("&French",aide);
+
+    actionEnglish->setCheckable(true);
+    actionFrench->setCheckable(true);
+
+    preference = new QMenu("&Preferences");
+    preferenceLangue = preference->addMenu(tr("&Langue"));
+    preferenceLangue->addAction(actionEnglish);
+    preferenceLangue->addAction(actionFrench);
+
     this->addMenu(fichier);
     this->addMenu(vue);
     this->addMenu(algorithme);
     this->addMenu(aide);
+    this->addMenu(preference);
+
 
     connect(actionDonneeBrutes, SIGNAL(triggered()), parent, SLOT(displayRawAccData()));
     connect(actionOuvrir, SIGNAL(triggered()), parent, SLOT(openFile()));
@@ -54,5 +67,18 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     connect(actionQuitter,SIGNAL(triggered()),parent,SLOT(closeWindow()));
     connect(actionAPropos,SIGNAL(triggered()),parent,SLOT(openAbout()));
     connect(actionAide,SIGNAL(triggered()),parent,SLOT(openHelp()));
+    connect(actionEnglish,SIGNAL(triggered()),parent,SLOT(setApplicationInEnglish()));
+    connect(actionFrench,SIGNAL(triggered()),parent,SLOT(setApplicationInFrench()));
 }
 
+void ApplicationMenuBar::setUncheck(const QString uncheck)
+{
+    if(uncheck == "French")
+    {
+        actionFrench->setChecked(false);
+    }
+    if(uncheck == "English")
+    {
+         actionEnglish->setChecked(false);
+    }
+}

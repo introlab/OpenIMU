@@ -24,6 +24,7 @@ class MainWindow : public QMainWindow
        MainWindow(QWidget *parent = 0);
        ~MainWindow();
        std::string getFileName(std::string s);
+       void retranslateUi();
 
     signals:
 
@@ -40,6 +41,9 @@ class MainWindow : public QMainWindow
     void openAbout();
     void openHelp();
     void dateClicked(QListWidgetItem *item);
+    void setApplicationInEnglish();
+    void setApplicationInFrench();
+
     QListWidget* populateDaysFromDataBase();
 
     private:
