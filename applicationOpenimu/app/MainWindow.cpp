@@ -2,7 +2,6 @@
 #include "iostream"
 #include <QFileDialog>
 #include "QSplitter"
-#include "MyTreeWidget.h"
 #include "AccDataDisplay.h"
 #include "QMessageBox"
 #include <QListWidgetItem>

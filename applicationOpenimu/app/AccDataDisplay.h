@@ -11,7 +11,7 @@
 #include <QSlider>
 #include <QCheckBox>
 #include "acquisition/WimuAcquisition.h"
-#include "RangeSlider.h"
+#include "widgets/RangeSlider.h"
 #include "graph/DataChart.h"
 #include "graph/ChartView.h"
 

@@ -11,27 +11,20 @@ add_subdirectory(core)
 add_subdirectory(dialogs)
 add_subdirectory(logger)
 add_subdirectory(graph)
+add_subdirectory(widgets)
 
 SET(srcs
     ${srcs}
     AccdataDisplay.cpp
-    ApplicationMenuBar.cpp
     CustomQmlScene.cpp
-    DateSelectorLabel.cpp
     MainWindow.cpp
-    MyTreeWidget.cpp
-    RangeSlider.cpp
 )
 
 SET(headers
     ${headers}
     AccDataDisplay.h
-    ApplicationMenuBar.h
     CustomQmlScene.h
-    DateSelectorLabel.h
     MainWindow.h
-    MyTreeWidget.h
-    RangeSlider.h
 )
 
 SET(uis

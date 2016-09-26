@@ -2,13 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "ApplicationMenubar.h"
+#include "widgets/ApplicationMenubar.h"
 #include <QVBoxLayout>
 #include "string.h"
 #include "CustomQmlScene.h"
 #include "core/Caneva.h"
 #include <QSplitter>
-#include "MyTreeWidget.h"
+#include "widgets/MyTreeWidget.h"
 #include <QWidget>
 #include "dialogs/AboutDialog.h"
 #include "dialogs/HelpDialog.h"
