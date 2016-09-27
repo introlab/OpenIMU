@@ -39,11 +39,115 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>AccDataDisplay</name>
+    <message>
+        <location filename="../app/AccDataDisplay.cpp" line="32"/>
+        <source>Données accéléromètre (en ms)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AccDataDisplay.cpp" line="48"/>
+        <location filename="../app/AccDataDisplay.cpp" line="197"/>
+        <source>Axe X</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AccDataDisplay.cpp" line="49"/>
+        <location filename="../app/AccDataDisplay.cpp" line="204"/>
+        <source>Axe Y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AccDataDisplay.cpp" line="50"/>
+        <location filename="../app/AccDataDisplay.cpp" line="210"/>
+        <source>Axe Z</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AccDataDisplay.cpp" line="51"/>
+        <location filename="../app/AccDataDisplay.cpp" line="214"/>
+        <source>Norme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AccDataDisplay.cpp" line="52"/>
+        <location filename="../app/AccDataDisplay.cpp" line="223"/>
+        <source>Moyenne mobile</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ApplicationMenuBar</name>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="7"/>
+        <source>&amp;Fichier</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="9"/>
+        <source>&amp;Ajouter Enregistrement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="12"/>
+        <source>&amp;Ouvrir Enregistrement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="15"/>
+        <source>&amp;Quitter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="23"/>
+        <source>&amp;Algorithme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="24"/>
+        <source>&amp;Compteur de pas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="26"/>
+        <source>&amp;Temps d&apos;activité</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="32"/>
+        <source>&amp;Données brutes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="37"/>
+        <source>À &amp;propos</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="39"/>
+        <source>&amp;Aide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="44"/>
+        <source>&amp;English</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="45"/>
+        <source>&amp;French</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="50"/>
+        <source>&amp;Preferences</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <location filename="../app/widgets/ApplicationMenuBar.cpp" line="51"/>
         <source>&amp;Langue</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>	</translatorcomment>
+        <translation>Langue</translation>
     </message>
 </context>
 <context>
@@ -71,6 +175,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
+        <location filename="../app/MainWindow.cpp" line="46"/>
+        <source>Explorateur de fichier</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="63"/>
+        <source>Logiciel de visualisation et d&apos;analyse, Open Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="64"/>
+        <source>pour centrale inertielle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="75"/>
+        <location filename="../app/MainWindow.cpp" line="274"/>
+        <source>Accueil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../app/MainWindow.cpp" line="86"/>
         <source>Prêt</source>
         <translation type="unfinished"></translation>
@@ -81,21 +206,148 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="204"/>
+        <location filename="../app/MainWindow.cpp" line="123"/>
+        <source>Dossier séléctionné: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="148"/>
+        <source>Aucun dossier séléctionné </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="166"/>
+        <source>Fichier séléctionné: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="171"/>
+        <location filename="../app/MainWindow.cpp" line="189"/>
+        <source>Données accéléromètre</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="177"/>
+        <location filename="../app/MainWindow.cpp" line="195"/>
+        <source>Le fichier séléctionné est invalide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="178"/>
+        <location filename="../app/MainWindow.cpp" line="196"/>
+        <location filename="../app/MainWindow.cpp" line="215"/>
+        <location filename="../app/MainWindow.cpp" line="234"/>
+        <source>Choissisez un fichier de type ACC.DAT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="206"/>
+        <source>Compteur de pas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="210"/>
         <source>Ouverture compteur de pas</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="231"/>
+        <location filename="../app/MainWindow.cpp" line="214"/>
+        <location filename="../app/MainWindow.cpp" line="233"/>
+        <source>Pas de fichier séléctionné</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="226"/>
+        <source>Temps d&apos;activité</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="239"/>
         <source>Ouverture temps d&apos;activité</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QWidget</name>
+    <message>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="10"/>
+        <source>Enregistrements</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="14"/>
+        <source>Sélectionner un enregistrement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="15"/>
+        <source>Ajouter l&apos;enregistrement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="16"/>
+        <source>Fichier sélectionné</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="19"/>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="22"/>
+        <source>Nom de l&apos;enregistrement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="23"/>
+        <source>WimU</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="24"/>
+        <source>Deslys trigno</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="25"/>
+        <source>XSens</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RangeSlider</name>
+    <message>
+        <location filename="../app/widgets/RangeSlider.cpp" line="43"/>
+        <source>Heure de début: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/RangeSlider.cpp" line="53"/>
+        <source>Heure de fin: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>RecordsDialog</name>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="62"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="63"/>
         <source>Sélectionner dossier</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="66"/>
+        <source>Dossier séléctionné: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="68"/>
+        <source> Aucun dossier séléctionné </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="78"/>
+        <source> ajouté avec succès</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

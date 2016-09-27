@@ -1,7 +1,7 @@
 #include "AbstractInputNode.h"
 
 void AbstractInputNode::Put(std::vector<int> value){
-    std::cout<<"WTF5";
+    std::cout<<"AbstractInputNode::Put(std::vector<int> value)";
     valueBuf= value;
     Notify();
 }

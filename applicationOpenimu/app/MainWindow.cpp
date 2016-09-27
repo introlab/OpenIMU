@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
    //Set QTreeWidget Column Header
     QTreeWidgetItem* headerItem = new QTreeWidgetItem();
-    headerItem->setText(0,QString("Explorateur de fichier"));
+    headerItem->setText(0,QString(tr("Explorateur de fichier")));
     tree->setHeaderItem(headerItem);
     tree->setMaximumWidth(150);
 
@@ -60,8 +60,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     font.setBold(true);
     QVBoxLayout* homeLayout = new QVBoxLayout(homeWidget);
     QLabel * homeLabel = new QLabel("Open IMU");
-    QLabel * descriptionLabel = new QLabel("Logiciel de visualisation et d'analyse, Open Source");
-    QLabel * descriptionLabel2 = new QLabel("pour centrale inertielle");
+    QLabel * descriptionLabel = new QLabel(tr("Logiciel de visualisation et d'analyse, Open Source"));
+    QLabel * descriptionLabel2 = new QLabel(tr("pour centrale inertielle"));
     homeLabel->setFont(font);
     descriptionLabel->setFont(font);
     descriptionLabel2->setFont(font);
@@ -72,7 +72,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     homeLayout -> setAlignment(descriptionLabel,Qt::AlignCenter);
     homeLayout -> setAlignment(descriptionLabel2,Qt::AlignCenter);
     homeWidget->setLayout(homeLayout);
-    tabWidget->addTab(homeWidget,"Accueil");
+    tabWidget->addTab(homeWidget,tr("Accueil"));
 
     qDebug() << tabWidget->tabBar();
     qDebug() << tabWidget->tabBar()->tabButton(0,QTabBar::RightSide);
@@ -120,7 +120,7 @@ void MainWindow:: openFile(){
     if(!folderName.isEmpty()){
         QDir* rootDir = new QDir(folderName);
         QFileInfoList filesList = rootDir->entryInfoList();
-        statusBar->showMessage(QString::fromStdString("Dossier séléctionné: ")+ folderName);
+        statusBar->showMessage(tr("Dossier séléctionné: ")+ folderName);
         foreach(QFileInfo fileInfo, filesList)
         {
             QTreeWidgetItem* item = new QTreeWidgetItem();
@@ -145,7 +145,7 @@ void MainWindow:: openFile(){
 
         }
     }else{
-        statusBar->showMessage(QString::fromStdString(" Aucun dossier séléctionné ")+ folderName);
+        statusBar->showMessage(tr("Aucun dossier séléctionné ")+ folderName);
     }
 }
 
@@ -163,17 +163,19 @@ void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int column)
     else{
         fileSelectedName = item->text(column);
     }
-    QString status = QString::fromStdString("Fichier séléctionné: ") + fileSelectedName;
+    QString status = tr("Fichier séléctionné: ") + fileSelectedName;
     statusBar->showMessage(status);
     if(fileSelectedName != "" && fileSelectedName.contains("ACC")){
         std::string reconstructedPath= folderName.toStdString()+"/"+fileSelectedName.toStdString();
         AccDataDisplay *dataDisplay = new AccDataDisplay(reconstructedPath);
-        replaceTab(dataDisplay,"Données accéléromètre");
+        QString dataAcc = tr("Données accéléromètre");
+        std::string sDataAcc = dataAcc.toUtf8().constData();
+        replaceTab(dataDisplay, sDataAcc);
     }
     else{
         QMessageBox msgBox;
-        msgBox.setText("Le fichier séléctionné est invalide");
-        msgBox.setInformativeText("Choissisez un fichier de type ACC.DAT");
+        msgBox.setText(tr("Le fichier séléctionné est invalide"));
+        msgBox.setInformativeText(tr("Choissisez un fichier de type ACC.DAT"));
         msgBox.setStandardButtons(QMessageBox::Ok);
         msgBox.exec();
     }
@@ -184,12 +186,14 @@ void MainWindow:: displayRawAccData()
     if(fileSelectedName != "" && fileSelectedName.contains("ACC")){
         std::string reconstructedPath= folderName.toStdString()+"/"+fileSelectedName.toStdString();
         AccDataDisplay *dataDisplay = new AccDataDisplay(reconstructedPath);
-        replaceTab(dataDisplay,"Données accéléromètre");
+        QString dataAcc = tr("Données accéléromètre");
+        std::string sDataAcc = dataAcc.toUtf8().constData();
+        replaceTab(dataDisplay,sDataAcc);
     }
     else{
         QMessageBox msgBox;
-        msgBox.setText("Le fichier séléctionné est invalide");
-        msgBox.setInformativeText("Choissisez un fichier de type ACC.DAT");
+        msgBox.setText(tr("Le fichier séléctionné est invalide"));
+        msgBox.setInformativeText(tr("Choissisez un fichier de type ACC.DAT"));
         msgBox.setStandardButtons(QMessageBox::Ok);
         msgBox.exec();
     }
@@ -199,14 +203,16 @@ void MainWindow:: computeSteps(){
     if(reconsrtructPath != "/" ){
         CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
         Caneva* canevaSteps = new Caneva("config/displayStepNumber.json", sceneSteps);
-        replaceTab(sceneSteps,"Compteur de pas");
+        QString stepCount = tr("Compteur de pas");
+        std::string sStepCount = stepCount.toUtf8().constData();
+        replaceTab(sceneSteps,sStepCount);
         canevaSteps->testSteps(reconsrtructPath);
         statusBar->showMessage(tr("Ouverture compteur de pas"));
     }
     else{
         QMessageBox msgBox;
-        msgBox.setText("Pas de fichier séléctionné");
-        msgBox.setInformativeText("Choissisez un fichier de type ACC.DAT");
+        msgBox.setText(tr("Pas de fichier séléctionné"));
+        msgBox.setInformativeText(tr("Choissisez un fichier de type ACC.DAT"));
         msgBox.setStandardButtons(QMessageBox::Ok);
         msgBox.exec();
     }
@@ -217,13 +223,15 @@ void MainWindow::computeActivityTime(){
     if(reconsrtructPath != "/" ){
         CustomQmlScene* sceneTime = new CustomQmlScene("displayActivityTime.qml", this);
         Caneva* canevaTime = new Caneva("config/displayActivityTime.json", sceneTime);
-        replaceTab(sceneTime,"Temps d'activité");
+        QString actTime = tr("Temps d'activité");
+        std::string sActTime = actTime.toUtf8().constData();
+        replaceTab(sceneTime,sActTime);
         canevaTime->testActivity(reconsrtructPath);
     }
     else{
         QMessageBox msgBox;
-        msgBox.setText("Pas de fichier séléctionné");
-        msgBox.setInformativeText("Choissisez un fichier de type ACC.DAT");
+        msgBox.setText(tr("Pas de fichier séléctionné"));
+        msgBox.setInformativeText(tr("Choissisez un fichier de type ACC.DAT"));
         msgBox.setStandardButtons(QMessageBox::Ok);
         msgBox.exec();
     }
@@ -263,7 +271,7 @@ void MainWindow::replaceTab(QWidget * replacement, std::string label)
 
     for(int i=0; i<tabWidget->count();i++){
         currentTabText = tabWidget->tabText(i);
-        if(currentTabText == "Accueil"){
+        if(currentTabText == tr("Accueil")){
             tabWidget->removeTab(i);
         }
     }

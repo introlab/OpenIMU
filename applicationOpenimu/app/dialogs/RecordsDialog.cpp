@@ -6,22 +6,23 @@
 RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
 {
     this->setMinimumSize(300,210);
-    this->setWindowTitle(QString::fromUtf8("Enregistrements"));
+
+    this->setWindowTitle(QWidget::tr("Enregistrements"));
 
 
     mainLayout = new QVBoxLayout(this);
-    selectRecord = new QPushButton("Sélectionner un enregistrement");
-    addRecord = new QPushButton("Ajouter l'enregistrement");
-    folderSelected = new QLabel("Fichier sélectionné");
+    selectRecord = new QPushButton(QWidget::tr("Sélectionner un enregistrement"));
+    addRecord = new QPushButton(QWidget::tr("Ajouter l'enregistrement"));
+    folderSelected = new QLabel(QWidget::tr("Fichier sélectionné"));
     recordName = new QLineEdit;
     imuSelectComboBox = new QComboBox;
-    selectedImu = new QLabel("None");
+    selectedImu = new QLabel(QWidget::tr("None"));
     successLabel = new QLabel();
     recordName->setMinimumHeight(20);
-    recordName->setPlaceholderText(tr("Nom de l'enregistrement"));
-    imuSelectComboBox->addItem(tr("WimU"));
-    imuSelectComboBox->addItem(tr("Deslys trigno"));
-    imuSelectComboBox->addItem(tr("XSens"));
+    recordName->setPlaceholderText(QWidget::tr("Nom de l'enregistrement"));
+    imuSelectComboBox->addItem(QWidget::tr("WimU"));
+    imuSelectComboBox->addItem(QWidget::tr("Deslys trigno"));
+    imuSelectComboBox->addItem(QWidget::tr("XSens"));
 
     mainLayout->addSpacing(10);
     mainLayout->addWidget(selectRecord);
@@ -62,9 +63,9 @@ void RecordsDialog::selectRecordSlot()
     QString folderToAdd = QFileDialog::getExistingDirectory(this, tr("Sélectionner dossier"),"/path/to/file/");
     file = new QFile(folderToAdd);
     if(!folderToAdd.isEmpty()){
-         folderSelected->setText(QString::fromStdString("Dossier séléctionné: ")+ file->fileName().section("/",-1,-1));
+         folderSelected->setText(tr("Dossier séléctionné: ")+ file->fileName().section("/",-1,-1));
      }else{
-          folderSelected->setText(QString::fromStdString(" Aucun dossier séléctionné ")+ file->fileName());
+          folderSelected->setText(tr(" Aucun dossier séléctionné ") + file->fileName());
      }
 }
 
@@ -74,7 +75,7 @@ void RecordsDialog::addRecordSlot()
     databaseAccess->addRecordInDB(recordName->text(),selectedImu->text(),folderSelected->text());
     databaseAccess->requete(recordName->text(),selectedImu->text());
 
-    successLabel->setText(recordName->text()+" ajouté avec succès");
+    successLabel->setText(recordName->text()+tr(" ajouté avec succès"));
     mainLayout->addWidget(successLabel);
     mainLayout->setAlignment(successLabel,Qt::AlignCenter);
 }

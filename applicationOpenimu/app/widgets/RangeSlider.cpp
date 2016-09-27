@@ -40,7 +40,7 @@ void RangeSlider::setStartHour(long long min){
     char buffer[32];
     std::strftime(buffer, 32, "%H:%M", gmtime (&_time));
     QString text;
-    text.append("Heure de début: ");
+    text.append(tr("Heure de début: "));
     text.append(buffer);
     leftLabel->setText(text);
 }
@@ -50,7 +50,7 @@ void RangeSlider::setEndHour(long long max){
     char buffer[32];
     std::strftime(buffer, 32, "%H:%M", gmtime (&_time));
     QString text;
-    text.append("Heure de fin: ");
+    text.append(tr("Heure de fin: "));
     text.append(buffer);
     rightLabel->setText(text);
 }

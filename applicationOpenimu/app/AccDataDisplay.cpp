@@ -29,7 +29,7 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
 
 
         chart->createDefaultAxes();
-        chart->setTitle("Données accéléromètre (en ms)");
+        chart->setTitle(tr("Données accéléromètre (en ms)"));
         chart->setAnimationOptions(QChart::SeriesAnimations);
 
         chartView = new ChartView(chart);
@@ -45,11 +45,11 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
         hboxDate->addStretch();
         layout->addLayout(hboxDate);
         //Initialize Checkbox and Label
-        checkboxX = new QCheckBox("Axe X");
-        checkboxY = new QCheckBox("Axe Y");
-        checkboxZ = new QCheckBox("Axe Z");
-        checkboxAccNorm = new QCheckBox("Norme");
-        checkboxMovingAverage = new QCheckBox("Moyenne mobile");
+        checkboxX = new QCheckBox(tr("Axe X"));
+        checkboxY = new QCheckBox(tr("Axe Y"));
+        checkboxZ = new QCheckBox(tr("Axe Z"));
+        checkboxAccNorm = new QCheckBox(tr("Norme"));
+        checkboxMovingAverage = new QCheckBox(tr("Moyenne mobile"));
 
         checkboxX->setChecked(true);
         checkboxY->setChecked(true);
@@ -194,24 +194,24 @@ void AccDataDisplay::fillChartSeries(){
     lineseriesX = new QtCharts::QLineSeries();
     QPen penX(QRgb(0xCF000F));
     lineseriesX->setPen(penX);
-    lineseriesX->setName("Axe X");
+    lineseriesX->setName(tr("Axe X"));
     lineseriesX->setUseOpenGL(true);
 
 
     lineseriesY = new QtCharts::QLineSeries();
     QPen penY(QRgb(0x00b16A));
     lineseriesY->setPen(penY);
-    lineseriesY->setName("Axe Y");
+    lineseriesY->setName(tr("Axe Y"));
     lineseriesY->setUseOpenGL(true);
 
     lineseriesZ = new QtCharts::QLineSeries();
     QPen penZ(QRgb(0x4183D7));
     lineseriesZ->setPen(penZ);
-    lineseriesZ->setName("Axe Z");
+    lineseriesZ->setName(tr("Axe Z"));
     lineseriesZ->setUseOpenGL(true);
 
     lineseriesAccNorm = new QtCharts::QLineSeries();
-    lineseriesAccNorm->setName("Norme");
+    lineseriesAccNorm->setName(tr("Norme"));
 
     QPen pen(QRgb(0xdadfe1));
     lineseriesAccNorm->setPen(pen);
@@ -220,7 +220,7 @@ void AccDataDisplay::fillChartSeries(){
     lineseriesMovingAverage = new QtCharts::QLineSeries();
     QPen penM(QRgb(0xf89406));
     lineseriesMovingAverage->setPen(penM);
-    lineseriesMovingAverage->setName("Moyenne mobile");
+    lineseriesMovingAverage->setName(tr("Moyenne mobile"));
     lineseriesMovingAverage->setUseOpenGL(true);
 
     for(unsigned int i = 0; i <x.size(); i++)

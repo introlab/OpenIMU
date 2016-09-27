@@ -4,15 +4,15 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
 {
     this->setMinimumWidth(parent->width());
     parent = parent;
-    fichier = new QMenu("&Fichier");
+    fichier = new QMenu(tr("&Fichier"));
 
-    QAction* actionAjouterEnregistrement = new QAction("&Ajouter Enregistrement", fichier);
+    QAction* actionAjouterEnregistrement = new QAction(tr("&Ajouter Enregistrement"), fichier);
     actionAjouterEnregistrement->setShortcut(QKeySequence("Ctrl+R"));
 
-    QAction* actionOuvrir = new QAction("&Ouvrir Enregistrement",fichier);
+    QAction* actionOuvrir = new QAction(tr("&Ouvrir Enregistrement"),fichier);
     actionOuvrir->setShortcut(QKeySequence("Ctrl+O"));
 
-    QAction* actionQuitter = new QAction("&Quitter",fichier);
+    QAction* actionQuitter = new QAction(tr("&Quitter"),fichier);
     actionQuitter->setShortcut(QKeySequence("Ctrl+Q"));
 
     fichier->addAction(actionAjouterEnregistrement);
@@ -20,34 +20,34 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     fichier->addSeparator();
     fichier->addAction(actionQuitter);
 
-    algorithme = new QMenu("&Algorithme");
-    QAction* actionNombreDePas = new QAction("&Compteur de pas",algorithme);
+    algorithme = new QMenu(tr("&Algorithme"));
+    QAction* actionNombreDePas = new QAction(tr("&Compteur de pas"),algorithme);
     actionNombreDePas->setShortcut(QKeySequence("Ctrl+C"));
-    QAction* actionTempsActif = new QAction("&Temps d'activité",algorithme);
+    QAction* actionTempsActif = new QAction(tr("&Temps d'activité"),algorithme);
     actionTempsActif->setShortcut(QKeySequence("Ctrl+T"));
     algorithme->addAction(actionNombreDePas);
     algorithme->addAction(actionTempsActif);
 
     vue = new QMenu("&Vue");
-    QAction* actionDonneeBrutes = new QAction("&Données brutes",vue);
+    QAction* actionDonneeBrutes = new QAction(tr("&Données brutes"),vue);
     actionDonneeBrutes->setShortcut(QKeySequence("Ctrl+D"));
     vue->addAction(actionDonneeBrutes);
 
     aide = new QMenu("&Aide");
-    QAction* actionAPropos = new QAction("À &propos",aide);
+    QAction* actionAPropos = new QAction(tr("À &propos"),aide);
     actionAPropos->setShortcut(QKeySequence("Ctrl+A"));
-    QAction* actionAide = new QAction("&Aide",aide);
+    QAction* actionAide = new QAction(tr("&Aide"),aide);
     actionAide->setShortcut(QKeySequence("Ctrl+H"));
     aide->addAction(actionAPropos);
     aide->addAction(actionAide);
 
-    actionEnglish = new QAction("&English",aide);
-    actionFrench = new QAction("&French",aide);
+    actionEnglish = new QAction(tr("&English"),aide);
+    actionFrench = new QAction(tr("&French"),aide);
 
     actionEnglish->setCheckable(true);
     actionFrench->setCheckable(true);
 
-    preference = new QMenu("&Preferences");
+    preference = new QMenu(tr("&Preferences"));
     preferenceLangue = preference->addMenu(tr("&Langue"));
     preferenceLangue->addAction(actionEnglish);
     preferenceLangue->addAction(actionFrench);
