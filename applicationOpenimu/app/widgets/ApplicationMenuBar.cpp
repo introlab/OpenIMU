@@ -55,9 +55,8 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     this->addMenu(fichier);
     this->addMenu(vue);
     this->addMenu(algorithme);
-    this->addMenu(aide);
     this->addMenu(preference);
-
+    this->addMenu(aide);
 
     connect(actionDonneeBrutes, SIGNAL(triggered()), parent, SLOT(displayRawAccData()));
     connect(actionOuvrir, SIGNAL(triggered()), parent, SLOT(openFile()));

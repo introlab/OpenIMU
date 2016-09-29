@@ -17,10 +17,14 @@ RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent)
 
     mainLayout = new QHBoxLayout();
 
-
+    mainLayout->addStretch();
     mainLayout->addWidget(leftLabel);
+    mainLayout->addWidget(leftSlider);
+    mainLayout->addWidget(rightSlider);
     mainLayout->addWidget(rightLabel);
     mainLayout->addStretch();
+    mainLayout->addStretch();
+
     this->setLayout(mainLayout);
 
     connect(leftSlider,SIGNAL(valueChanged(int)),parent,SLOT(leftSliderValueChanged(int)));
@@ -28,11 +32,11 @@ RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent)
 
 }
 void RangeSlider::setRangeValues(long long min, long long max){
-    leftSlider->setMinimum(min);
-    leftSlider->setMaximum(max);
-    rightSlider->setMaximum(max);
-    rightSlider->setMinimum(min);
-    rightSlider->setValue(max);
+    leftSlider->setMinimum(0);
+    leftSlider->setMaximum(100);
+    rightSlider->setMaximum(100);
+    rightSlider->setMinimum(0);
+    rightSlider->setValue(0);
 }
 
 void RangeSlider::setStartHour(long long min){
