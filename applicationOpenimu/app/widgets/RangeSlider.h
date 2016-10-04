@@ -21,8 +21,6 @@ signals:
 public slots:
 
 private:
-    QSlider *rightSlider;
-    QSlider *leftSlider;
     QLabel * rightLabel;
     QLabel * leftLabel;
     QHBoxLayout* mainLayout;

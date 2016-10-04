@@ -9,7 +9,7 @@ RangeSlider {
     background: Rectangle {
         x: control.leftPadding
         y: control.topPadding + control.availableHeight / 2 - height / 2
-        implicitWidth: 280
+        implicitWidth: 320
         implicitHeight: 2
         width: control.availableWidth
         height: implicitHeight

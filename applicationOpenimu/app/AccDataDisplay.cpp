@@ -4,6 +4,7 @@
 #include <QPropertyAnimation>
 #include "graph/ChartView.h"
 #include <QQuickView>
+#include <QPushButton>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -40,11 +41,29 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
 
         //Initialize Recording Date
         QHBoxLayout *hboxDate = new QHBoxLayout();
+
+        QPushButton* pbtn = new QPushButton("Reset Zoom");
+        connect(pbtn, SIGNAL (released()), this, SLOT (handleResetZoomBtn()));
+
+        pbtn->setStyleSheet(
+             "border-style: outset;"
+             "border-width: 2px;"
+             "border-radius: 10px;"
+             "border-color: beige;"
+             "font: bold 10px;"
+             "min-width: 6em;"
+             "padding: 4px");
+
+        pbtn->setStyleSheet("QPushButton{background-color: #ecf0f1;  border-width: 2px; border-radius: 10px;font: bold 10px; min-width: 6em; padding: 4px;}"
+            "QPushButton:focus:hover{ QPushButton{background-color: red;  border-width: 2px; border-radius: 10px; font: bold 10px; min-width: 6em; padding: 4px;}"
+            "QPushButton:focus:pressed{{QPushButton{background-color: green;  border-width: 2px; border-radius: 10px; font: bold 10px; min-width: 6em; padding: 4px;}");
+
         QLabel* dateRecorded = new QLabel();
         dateRecorded->setText(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(acceleroData->getDates().back().date));
         hboxDate->addStretch();
         hboxDate->addWidget(dateRecorded);
         hboxDate->addStretch();
+        hboxDate->addWidget(pbtn);
 
         //Initialize Checkbox and Label
         checkboxX = new QCheckBox(tr("Axe X"));
@@ -92,6 +111,10 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
 
         fillChartSeries();
     }
+}
+void AccDataDisplay::handleResetZoomBtn()
+{
+    chart->zoomReset();
 }
 void AccDataDisplay::slotDisplayNorme(int value){
     if(value){

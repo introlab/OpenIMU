@@ -2,19 +2,20 @@
 #include <time.h>
 #include <ctime>
 #include<QQuickView>
+#include<QQuickItem>
 
 RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent)
 {
-    rightSlider = new QSlider();
-    leftSlider = new QSlider();
+ // rightSlider = new QSlider();
+ // leftSlider = new QSlider();
     rightLabel = new QLabel();
     leftLabel = new QLabel();
 
-    leftSlider->setOrientation(Qt::Orientation::Horizontal);
-    rightSlider->setOrientation(Qt::Orientation::Horizontal);
+ //   leftSlider->setOrientation(Qt::Orientation::Horizontal);
+ //   rightSlider->setOrientation(Qt::Orientation::Horizontal);
 
-    leftSlider->setContentsMargins(10,10,0,10);
-    rightSlider->setContentsMargins(0,10,10,10);
+ //   leftSlider->setContentsMargins(10,10,0,10);
+ //   rightSlider->setContentsMargins(0,10,10,10);
 
     mainLayout = new QHBoxLayout();
 
@@ -24,7 +25,8 @@ RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent)
     container->setMaximumSize(400, 50);
     container->setFocusPolicy(Qt::TabFocus);
     view->setSource(QUrl("../applicationOpenImu/app/rangeSlider.qml"));
-
+    //QObject *object = view->rootObject();
+    //QObject::connect(object, SIGNAL(mySignal(int)), parent, SLOT(leftSliderValueChanged(int)));
     mainLayout->addWidget(leftLabel);
     mainLayout->addWidget(container);
     mainLayout->addWidget(rightLabel);
@@ -37,23 +39,23 @@ RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent)
     rightLabel->setSizePolicy(spLeft);
 
     QSizePolicy spRight(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    spRight.setHorizontalStretch(3);
+    spRight.setHorizontalStretch(4);
     container->setSizePolicy(spRight);
 
-    connect(leftSlider,SIGNAL(valueChanged(int)),parent,SLOT(leftSliderValueChanged(int)));
-    connect(rightSlider,SIGNAL(valueChanged(int)),parent,SLOT(rightSliderValueChanged(int)));
+    //connect(leftSlider,SIGNAL(valueChanged(int)),parent,SLOT(leftSliderValueChanged(int)));
+    //connect(rightSlider,SIGNAL(valueChanged(int)),parent,SLOT(rightSliderValueChanged(int)));
 
 }
 void RangeSlider::setLeftSliderRange(long long min, long long max){
-    if(leftSlider)
-    {
-        leftSlider->setMinimum(0);
-        leftSlider->setMaximum(10);
-    }
+  //  if(leftSlider)
+  //  {
+  //      leftSlider->setMinimum(0);
+  //      leftSlider->setMaximum(10);
+  //  }
 }
 void RangeSlider::setRightSliderRange(long long min, long long max){
-    rightSlider->setMaximum(10);
-    rightSlider->setMinimum(0);
+  //  rightSlider->setMaximum(10);
+ //   rightSlider->setMinimum(0);
 }
 
 void RangeSlider::setStartHour(long long min){

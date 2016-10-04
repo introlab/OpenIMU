@@ -41,37 +41,37 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AccDataDisplay</name>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="33"/>
+        <location filename="../app/AccDataDisplay.cpp" line="34"/>
         <source>Données accéléromètre (en ms)</source>
         <translation>Accelerometer data(in ms)</translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="50"/>
-        <location filename="../app/AccDataDisplay.cpp" line="198"/>
+        <location filename="../app/AccDataDisplay.cpp" line="69"/>
+        <location filename="../app/AccDataDisplay.cpp" line="221"/>
         <source>Axe X</source>
         <translation>X axis</translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="51"/>
-        <location filename="../app/AccDataDisplay.cpp" line="205"/>
+        <location filename="../app/AccDataDisplay.cpp" line="70"/>
+        <location filename="../app/AccDataDisplay.cpp" line="228"/>
         <source>Axe Y</source>
         <translation>Y axis</translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="52"/>
-        <location filename="../app/AccDataDisplay.cpp" line="211"/>
+        <location filename="../app/AccDataDisplay.cpp" line="71"/>
+        <location filename="../app/AccDataDisplay.cpp" line="234"/>
         <source>Axe Z</source>
         <translation>Z axis</translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="53"/>
-        <location filename="../app/AccDataDisplay.cpp" line="215"/>
+        <location filename="../app/AccDataDisplay.cpp" line="72"/>
+        <location filename="../app/AccDataDisplay.cpp" line="238"/>
         <source>Norme</source>
         <translation>Norm</translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="54"/>
-        <location filename="../app/AccDataDisplay.cpp" line="224"/>
+        <location filename="../app/AccDataDisplay.cpp" line="73"/>
+        <location filename="../app/AccDataDisplay.cpp" line="247"/>
         <source>Moyenne mobile</source>
         <translation>Mobile average</translation>
     </message>
@@ -326,12 +326,12 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">End Hour:</translation>
     </message>
     <message>
-        <location filename="../app/widgets/RangeSlider.cpp" line="64"/>
+        <location filename="../app/widgets/RangeSlider.cpp" line="66"/>
         <source>Début: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/RangeSlider.cpp" line="74"/>
+        <location filename="../app/widgets/RangeSlider.cpp" line="76"/>
         <source>Fin: </source>
         <translation type="unfinished"></translation>
     </message>

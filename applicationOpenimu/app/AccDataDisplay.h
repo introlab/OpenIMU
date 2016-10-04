@@ -36,6 +36,7 @@ public slots:
     std::vector<signed short> movingAverage(int windowSize);
     void leftSliderValueChanged(int value);
     void rightSliderValueChanged(int value);
+    void handleResetZoomBtn();
 
 private:
     DataChart * chart;
