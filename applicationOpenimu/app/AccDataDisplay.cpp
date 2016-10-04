@@ -3,6 +3,7 @@
 #include <math.h>
 #include <QPropertyAnimation>
 #include "graph/ChartView.h"
+#include <QQuickView>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -36,6 +37,7 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
         chartView->setRenderHint(QPainter::Antialiasing);
 
         layout = new QVBoxLayout(this);
+
         //Initialize Recording Date
         QHBoxLayout *hboxDate = new QHBoxLayout();
         QLabel* dateRecorded = new QLabel();
@@ -43,7 +45,7 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
         hboxDate->addStretch();
         hboxDate->addWidget(dateRecorded);
         hboxDate->addStretch();
-        layout->addLayout(hboxDate);
+
         //Initialize Checkbox and Label
         checkboxX = new QCheckBox(tr("Axe X"));
         checkboxY = new QCheckBox(tr("Axe Y"));
@@ -66,24 +68,22 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
         hbox->addWidget(checkboxMovingAverage);
         hbox->addStretch();
 
-        //Initialize Slider
-        slider = new QSlider();
-        int tempDiff = WimuAcquisition::maxTime(availableData).timestamp- WimuAcquisition::minTime(availableData).timestamp ;
-        slider->setMinimum(0);
-        slider->setMaximum(tempDiff);
-        slider->setOrientation(Qt::Horizontal);
-        layout->addWidget(chartView);
-        layout->addLayout(hbox);
 
-        rSlider = new RangeSlider(this);
+
         long long min = WimuAcquisition::minTime(availableData).timestamp;
         long long max = WimuAcquisition::maxTime(availableData).timestamp;
+
+        rSlider = new RangeSlider(this);
         rSlider->setStartHour(min/1000);
         rSlider->setEndHour(max/1000);
-        rSlider->setRangeValues(0,(long long)(max-min)/1000);
+        rSlider->setLeftSliderRange(min,max);
+        rSlider->setRightSliderRange((long long)(max/2),max);
+
+        layout->addLayout(hboxDate);
+        layout->addWidget(chartView);
+        layout->addLayout(hbox);
         layout->addWidget(rSlider);
 
-        connect(slider,SIGNAL(valueChanged(int)),this,SLOT(sliderValueChanged(int)));
         connect(checkboxX, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayXAxis(int)));
         connect(checkboxY, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayYAxis(int)));
         connect(checkboxZ, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayZAxis(int)));
@@ -92,13 +92,6 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
 
         fillChartSeries();
     }
-}
-void AccDataDisplay::sliderValueChanged(int value)
-{
-    sliceData = acceleroData->getData(WimuAcquisition::minTime(availableData).timestamp + value, WimuAcquisition::maxTime(availableData).timestamp);
-    chart->removeAllSeries();
-    fillChartSeries();
-    chartView->setChart(chart);
 }
 void AccDataDisplay::slotDisplayNorme(int value){
     if(value){
@@ -121,11 +114,19 @@ void AccDataDisplay::slotDisplayMovingAverage(int value){
 }
 void AccDataDisplay::leftSliderValueChanged(int value)
 {
-    rSlider->setStartHour(WimuAcquisition::minTime(availableData).timestamp+value);
+    rSlider->setStartHour(WimuAcquisition::minTime(availableData).timestamp + value);
+    sliceData = acceleroData->getData(WimuAcquisition::minTime(availableData).timestamp + value, WimuAcquisition::maxTime(availableData).timestamp);
+    chart->removeAllSeries();
+    fillChartSeries();
+    chartView->setChart(chart);
 }
 void AccDataDisplay::rightSliderValueChanged(int value)
 {
     rSlider->setEndHour(WimuAcquisition::maxTime(availableData).timestamp-value);
+    sliceData = acceleroData->getData(WimuAcquisition::minTime(availableData).timestamp + value, WimuAcquisition::maxTime(availableData).timestamp);
+    chart->removeAllSeries();
+    fillChartSeries();
+    chartView->setChart(chart);
 
 }
 void AccDataDisplay::slotDisplayXAxis(int value){

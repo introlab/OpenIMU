@@ -41,37 +41,37 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AccDataDisplay</name>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="32"/>
+        <location filename="../app/AccDataDisplay.cpp" line="33"/>
         <source>Données accéléromètre (en ms)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="48"/>
-        <location filename="../app/AccDataDisplay.cpp" line="197"/>
+        <location filename="../app/AccDataDisplay.cpp" line="50"/>
+        <location filename="../app/AccDataDisplay.cpp" line="198"/>
         <source>Axe X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="49"/>
-        <location filename="../app/AccDataDisplay.cpp" line="204"/>
+        <location filename="../app/AccDataDisplay.cpp" line="51"/>
+        <location filename="../app/AccDataDisplay.cpp" line="205"/>
         <source>Axe Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="50"/>
-        <location filename="../app/AccDataDisplay.cpp" line="210"/>
+        <location filename="../app/AccDataDisplay.cpp" line="52"/>
+        <location filename="../app/AccDataDisplay.cpp" line="211"/>
         <source>Axe Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="51"/>
-        <location filename="../app/AccDataDisplay.cpp" line="214"/>
+        <location filename="../app/AccDataDisplay.cpp" line="53"/>
+        <location filename="../app/AccDataDisplay.cpp" line="215"/>
         <source>Norme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="52"/>
-        <location filename="../app/AccDataDisplay.cpp" line="223"/>
+        <location filename="../app/AccDataDisplay.cpp" line="54"/>
+        <location filename="../app/AccDataDisplay.cpp" line="224"/>
         <source>Moyenne mobile</source>
         <translation type="unfinished"></translation>
     </message>
@@ -318,13 +318,13 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RangeSlider</name>
     <message>
-        <location filename="../app/widgets/RangeSlider.cpp" line="47"/>
-        <source>Heure de début: </source>
+        <location filename="../app/widgets/RangeSlider.cpp" line="64"/>
+        <source>Début: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/RangeSlider.cpp" line="57"/>
-        <source>Heure de fin: </source>
+        <location filename="../app/widgets/RangeSlider.cpp" line="74"/>
+        <source>Fin: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>

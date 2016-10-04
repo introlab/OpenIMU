@@ -27,7 +27,7 @@ public:
     void fillChartSeries();
 
 public slots:
-    void sliderValueChanged(int value);
+
     void slotDisplayXAxis(int value);
     void slotDisplayYAxis(int value);
     void slotDisplayZAxis(int value);
@@ -53,7 +53,6 @@ private:
     QCheckBox *checkboxMovingAverage;
 
     RangeSlider *rSlider;
-    QSlider *slider;
     QVBoxLayout* layout;
 
     WimuAcquisition * acceleroData;
