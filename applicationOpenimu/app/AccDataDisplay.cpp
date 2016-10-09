@@ -17,7 +17,8 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
     this->grabGesture(Qt::PanGesture);
     this->grabGesture(Qt::PinchGesture);
 
-    acceleroData = new WimuAcquisition(filePath,50);
+    acceleroData = new WimuAcquisition(filePath,"","",50);
+    acceleroData->initialize();
     availableData = acceleroData->getData();
     sliceData = availableData;
 
@@ -86,7 +87,6 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
         hbox->addWidget(checkboxAccNorm);
         hbox->addWidget(checkboxMovingAverage);
         hbox->addStretch();
-
 
 
         long long min = WimuAcquisition::minTime(availableData).timestamp;

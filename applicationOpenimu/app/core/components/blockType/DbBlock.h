@@ -15,7 +15,7 @@ class DbBlock : public QObject
         ~DbBlock();
 
         std::vector<QString> getDaysInDB();
-        bool addRecordInDB(QString recordName, QString imuType, QString folderPath);
+        bool addRecordInDB(QString& json);
         void requete(const QString &, const QString &);
 
        public slots:

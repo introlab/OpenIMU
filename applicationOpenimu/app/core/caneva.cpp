@@ -42,7 +42,8 @@ void Caneva::testSteps(std::string filePath)
     std::vector<std::string> arr_str =  {"Jour 1", "Jour analyse"};
     std::vector<int> arr_int =  {10,20,11,-2,0,-20,-10,-20};
 
-    WimuAcquisition* acceleroData = new WimuAcquisition(filePath,50);
+    WimuAcquisition* acceleroData = new WimuAcquisition(filePath,"","",50);
+    acceleroData->initialize();
     std::vector<frame> availableData = acceleroData->getData();
 
     getBlock("podometer")->GetInput<frame>("accelData")->Put(availableData);
@@ -58,7 +59,8 @@ void Caneva::testSteps(std::string filePath)
 }
 void Caneva::testActivity(std::string filePath)
 {
-    WimuAcquisition* acceleroData = new WimuAcquisition(filePath,50);
+    WimuAcquisition* acceleroData = new WimuAcquisition(filePath,"","",50);
+    acceleroData->initialize();
     std::vector<frame> availableData = acceleroData->getData();
 
     getBlock("activity")->GetInput<frame>("accelData")->Put(availableData);

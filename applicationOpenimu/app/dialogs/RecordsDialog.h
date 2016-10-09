@@ -24,6 +24,7 @@ private slots:
   private:
 
     QPushButton *selectRecord;
+    QString folderToAdd;
     QLabel* folderSelected;
     QPushButton *addRecord;
     QVBoxLayout *mainLayout;

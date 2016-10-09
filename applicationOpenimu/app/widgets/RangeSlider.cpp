@@ -25,8 +25,9 @@ RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent)
     container->setMaximumSize(400, 50);
     container->setFocusPolicy(Qt::TabFocus);
     view->setSource(QUrl("../applicationOpenImu/app/rangeSlider.qml"));
-    //QObject *object = view->rootObject();
-    //QObject::connect(object, SIGNAL(mySignal(int)), parent, SLOT(leftSliderValueChanged(int)));
+    QObject *object = view->rootObject();
+    QObject::connect(object, SIGNAL(qmlSignal(QVariant)),this, SLOT(cppSlot(QVariant)));
+
     mainLayout->addWidget(leftLabel);
     mainLayout->addWidget(container);
     mainLayout->addWidget(rightLabel);
@@ -46,6 +47,16 @@ RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent)
     //connect(rightSlider,SIGNAL(valueChanged(int)),parent,SLOT(rightSliderValueChanged(int)));
 
 }
+
+void RangeSlider:: cppSlot(const QVariant &v) {
+      qDebug() << "Called the C++ slot with value:" << v;
+
+    /*  QQuickItem *item =
+          qobject_cast<QQuickItem*>(v.value<QObject*>());
+      qDebug() << "Item dimensions:" << item->width()
+               << item->height();*/
+   }
+
 void RangeSlider::setLeftSliderRange(long long min, long long max){
   //  if(leftSlider)
   //  {

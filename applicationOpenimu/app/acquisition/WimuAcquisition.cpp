@@ -27,18 +27,89 @@ WimuAcquisition::~WimuAcquisition()
 {
 
 }
-long WimuAcquisition::getFileSize(FILE *file)
+
+void WimuAcquisition::Serialize( Json::Value& root,std::string recordName,  std::string date,std::string& output )
 {
-    long lCurPos, lEndPos;
-    lCurPos = ftell(file);
-    fseek(file, 0, 2);
-    lEndPos = ftell(file);
-    fseek(file, lCurPos, 0);
-    return lEndPos;
+   // serialize
+   Json::Value mainRoot;
+
+   Json::Value init(Json::objectValue);
+   init["name"] = recordName;
+   init["date"] = "10/09/2016";
+   init["format"] = "m_TestString";
+
+   //Acc
+   Json::Value temp(Json::arrayValue);
+   for (size_t j = 0; j != data.size(); j++)
+   {
+       Json::Value obj(Json::objectValue);
+       obj["x"] = data.at(j).x;
+       obj["y"] = data.at(j).y;
+       obj["z"] = data.at(j).z;
+       obj["t"] = data.at(j).timestamp;
+       temp.append(obj);
+   }
+
+   //Gyr
+   Json::Value temp1(Json::arrayValue);
+   for (size_t j = 0; j != dataGyro.size(); j++)
+   {
+       Json::Value obj1(Json::objectValue);
+       obj1["x"] = dataGyro.at(j).x;
+       obj1["y"] = dataGyro.at(j).y;
+       obj1["z"] = dataGyro.at(j).z;
+       obj1["t"] = dataGyro.at(j).timestamp;
+       temp1.append(obj1);
+   }
+
+   //Mag
+   Json::Value temp2(Json::arrayValue);
+   for (size_t j = 0; j != dataMagneto.size(); j++)
+   {
+       Json::Value obj2(Json::objectValue);
+       obj2["x"] = dataMagneto.at(j).x;
+       obj2["y"] = dataMagneto.at(j).y;
+       obj2["z"] = dataMagneto.at(j).z;
+       obj2["t"] = dataMagneto.at(j).timestamp;
+       temp2.append(obj2);
+   }
+   mainRoot["record"]= init;
+   mainRoot["accelerometres"]= temp;
+   mainRoot["gyrometres"]= temp1;
+   mainRoot["magnetometres"]= temp2;
+
+   Json::StyledWriter writer;
+   output = writer.write(mainRoot);
 }
-WimuAcquisition::WimuAcquisition(std::string filename,int freq)
+
+void WimuAcquisition::Deserialize( Json::Value& root )
 {
-    const char *filePath = filename.c_str();
+   // deserialize primitives
+  // m_nTestInt = root.get("testintA",0).asInt();
+  // m_fTestFloat = root.get("testfloatA", 0.0).asDouble();
+  // m_TestString = root.get("teststringA", "").asString();
+  // m_bTestBool = root.get("testboolA", false).as();
+}
+
+void WimuAcquisition::initialize()
+{
+    if(!fileAcc.empty())
+    {
+         extractAcceleroData();
+    }
+    if(!fileGyro.empty())
+    {
+        extractGyrometerData();
+    }
+    if(!fileMagneto.empty())
+    {
+        extractMagnetomer();
+    }
+}
+
+void WimuAcquisition::extractAcceleroData()
+{
+    const char *filePath = fileAcc.c_str();
     BYTE *fileBuf;			// Pointer to our buffered data
     FILE *file = NULL;		// File pointer
 
@@ -63,6 +134,82 @@ WimuAcquisition::WimuAcquisition(std::string filename,int freq)
         std::vector<frame> b=readSensorDataSecond(fileBuf,i*304,freq);
         data.insert(data.end(), b.begin(), b.end());
     }
+}
+
+void WimuAcquisition::extractGyrometerData()
+{
+    const char *filePath = fileGyro.c_str();
+    BYTE *fileBuf;			// Pointer to our buffered data
+    FILE *file = NULL;		// File pointer
+
+    // Open the file in binary mode using the "rb" format string
+    // This also checks if the file exists and/or can be opened for reading correctly
+    if ((file = fopen(filePath, "rb")) == NULL)
+        std::cout << "Could not open specified file" << std::endl;
+    else
+        std::cout << "File opened successfully" << std::endl;
+
+    // Get the size of the file in bytes
+    long fileSize = getFileSize(file);
+
+    // Allocate space in the buffer for the whole file
+    fileBuf = new BYTE[fileSize];
+
+    // Read the file in to the buffer
+    fread(fileBuf, fileSize, 1, file);
+    int numberOfSecondsInFile = fileSize/304;
+    for(int i=0; i< numberOfSecondsInFile ; i++)
+    {
+        std::vector<frame> b=readSensorDataSecond(fileBuf,i*304,freq);
+        dataGyro.insert(dataGyro.end(), b.begin(), b.end());
+    }
+}
+
+void WimuAcquisition::extractMagnetomer()
+{
+    const char *filePath = fileMagneto.c_str();
+    BYTE *fileBuf;			// Pointer to our buffered data
+    FILE *file = NULL;		// File pointer
+
+    // Open the file in binary mode using the "rb" format string
+    // This also checks if the file exists and/or can be opened for reading correctly
+    if ((file = fopen(filePath, "rb")) == NULL)
+        std::cout << "Could not open specified file" << std::endl;
+    else
+        std::cout << "File opened successfully" << std::endl;
+
+    // Get the size of the file in bytes
+    long fileSize = getFileSize(file);
+
+    // Allocate space in the buffer for the whole file
+    fileBuf = new BYTE[fileSize];
+
+    // Read the file in to the buffer
+    fread(fileBuf, fileSize, 1, file);
+    int numberOfSecondsInFile = fileSize/304;
+    for(int i=0; i< numberOfSecondsInFile ; i++)
+    {
+        std::vector<frame> b=readSensorDataSecond(fileBuf,i*304,freq);
+        dataMagneto.insert(dataMagneto.end(), b.begin(), b.end());
+    }
+}
+
+long WimuAcquisition::getFileSize(FILE *file)
+{
+    long lCurPos, lEndPos;
+    lCurPos = ftell(file);
+    fseek(file, 0, 2);
+    lEndPos = ftell(file);
+    fseek(file, lCurPos, 0);
+    return lEndPos;
+}
+WimuAcquisition::WimuAcquisition(std::string filenameAccelero, std::string filenameGyro,std::string filenameMagneto, int frequence)
+{
+    this->fileAcc = filenameAccelero;
+    this->fileGyro = filenameGyro;
+    this->fileMagneto = filenameMagneto;
+    this->freq = frequence;
+
 }
 
  std::vector<frame> WimuAcquisition::readSensorDataSecond(BYTE* fileBuf, int start,int freq)

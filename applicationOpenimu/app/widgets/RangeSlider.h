@@ -19,6 +19,7 @@ public:
 signals:
 
 public slots:
+    void cppSlot(const QVariant &v);
 
 private:
     QLabel * rightLabel;

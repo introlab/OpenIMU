@@ -41,36 +41,36 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AccDataDisplay</name>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="34"/>
+        <location filename="../app/AccDataDisplay.cpp" line="35"/>
         <source>Données accéléromètre (en ms)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="69"/>
+        <location filename="../app/AccDataDisplay.cpp" line="70"/>
         <location filename="../app/AccDataDisplay.cpp" line="221"/>
         <source>Axe X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="70"/>
+        <location filename="../app/AccDataDisplay.cpp" line="71"/>
         <location filename="../app/AccDataDisplay.cpp" line="228"/>
         <source>Axe Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="71"/>
+        <location filename="../app/AccDataDisplay.cpp" line="72"/>
         <location filename="../app/AccDataDisplay.cpp" line="234"/>
         <source>Axe Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="72"/>
+        <location filename="../app/AccDataDisplay.cpp" line="73"/>
         <location filename="../app/AccDataDisplay.cpp" line="238"/>
         <source>Norme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="73"/>
+        <location filename="../app/AccDataDisplay.cpp" line="74"/>
         <location filename="../app/AccDataDisplay.cpp" line="247"/>
         <source>Moyenne mobile</source>
         <translation type="unfinished"></translation>
@@ -270,47 +270,47 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QWidget</name>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="10"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="16"/>
         <source>Enregistrements</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="14"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="19"/>
         <source>Sélectionner un enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="15"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="20"/>
         <source>Ajouter l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="16"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="21"/>
         <source>Fichier sélectionné</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="19"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="24"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="22"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="27"/>
         <source>Nom de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="23"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="28"/>
         <source>WimU</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="24"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="29"/>
         <source>Deslys trigno</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="25"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="30"/>
         <source>XSens</source>
         <translation type="unfinished"></translation>
     </message>
@@ -318,12 +318,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RangeSlider</name>
     <message>
-        <location filename="../app/widgets/RangeSlider.cpp" line="66"/>
+        <location filename="../app/widgets/RangeSlider.cpp" line="77"/>
         <source>Début: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/RangeSlider.cpp" line="76"/>
+        <location filename="../app/widgets/RangeSlider.cpp" line="87"/>
         <source>Fin: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -331,23 +331,23 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RecordsDialog</name>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="63"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="68"/>
         <source>Sélectionner dossier</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="66"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="71"/>
         <source>Dossier séléctionné: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="68"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="73"/>
         <source> Aucun dossier séléctionné </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="78"/>
-        <source> ajouté avec succès</source>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="124"/>
+        <source> Ajouté avec succès</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

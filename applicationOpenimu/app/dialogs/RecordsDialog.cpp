@@ -2,13 +2,18 @@
 #include <QFileDialog>
 #include <QString>
 #include<QFile>
+#include"acquisition/WimuAcquisition.h"
+#include "acquisition/CJsonSerializer.h"
+#include<QtDebug>
+#include <fstream>
+#include <string>
+#include <iostream>
 
 RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
 {
     this->setMinimumSize(300,210);
 
     this->setWindowTitle(QWidget::tr("Enregistrements"));
-
 
     mainLayout = new QVBoxLayout(this);
     selectRecord = new QPushButton(QWidget::tr("Sélectionner un enregistrement"));
@@ -60,7 +65,7 @@ RecordsDialog::~RecordsDialog()
 void RecordsDialog::selectRecordSlot()
 {
     QFile *file;
-    QString folderToAdd = QFileDialog::getExistingDirectory(this, tr("Sélectionner dossier"),"/path/to/file/");
+    folderToAdd = QFileDialog::getExistingDirectory(this, tr("Sélectionner dossier"),"/path/to/file/");
     file = new QFile(folderToAdd);
     if(!folderToAdd.isEmpty()){
          folderSelected->setText(tr("Dossier séléctionné: ")+ file->fileName().section("/",-1,-1));
@@ -71,11 +76,52 @@ void RecordsDialog::selectRecordSlot()
 
 void RecordsDialog::addRecordSlot()
 {
-    databaseAccess = new DbBlock;
-    databaseAccess->addRecordInDB(recordName->text(),selectedImu->text(),folderSelected->text());
-    databaseAccess->requete(recordName->text(),selectedImu->text());
+    QDir* dir = new QDir(folderToAdd);
+      dir->setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+      qDebug() << "Scanning: " << dir->path();
+      QStringList fileList = dir->entryList();
+      std::string output;
+      std::string filePathAcc = "";
+      std::string filePathGyr = "";
+      std::string filePathMag = "";
 
-    successLabel->setText(recordName->text()+tr(" ajouté avec succès"));
+      for (int i=0; i<fileList.count(); i++)
+      {
+          if(fileList[i].contains("ACC"))
+          {
+              qDebug() << "Found file: " << fileList[i];
+              filePathAcc = folderToAdd.toStdString()+"/"+fileList[i].toStdString();
+              qDebug() << QString::fromStdString(filePathAcc);
+          }
+          else if(fileList[i].contains("GYR"))
+          {
+              qDebug() << "Found file: " << fileList[i];
+              filePathGyr = folderToAdd.toStdString()+"/"+fileList[i].toStdString();
+              qDebug() << QString::fromStdString(filePathGyr);
+          }
+          else if(fileList[i].contains("MAG"))
+          {
+              qDebug() << "Found file: " << fileList[i];
+              filePathMag = folderToAdd.toStdString()+"/"+fileList[i].toStdString();
+              qDebug() << QString::fromStdString(filePathMag);
+          }
+      }
+
+      WimuAcquisition* acceleroData = new WimuAcquisition(filePathAcc,filePathGyr,filePathMag,50);
+      acceleroData->initialize();
+
+      CJsonSerializer::Serialize(acceleroData,recordName->text().toStdString(),"", output);
+      qDebug("OUTPUT:");
+      QString qstr = QString::fromStdString(output);
+      qDebug()<<qstr;
+      std::ofstream out("recordToAdd.json");
+      out << output;
+      out.close();
+
+
+    databaseAccess = new DbBlock;
+    databaseAccess->addRecordInDB(QString::fromStdString(output));
+    successLabel->setText(recordName->text()+tr(" Ajouté avec succès"));
     mainLayout->addWidget(successLabel);
     mainLayout->setAlignment(successLabel,Qt::AlignCenter);
 }
