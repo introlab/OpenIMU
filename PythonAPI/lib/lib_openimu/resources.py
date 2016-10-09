@@ -1,11 +1,17 @@
 from collections import defaultdict
 import datetime
 from flask import jsonify, request, make_response
-from flask_restful import Resource, Api, abort
+from flask_restful import Resource, Api, abort,reqparse
 from lib_openimu import  conf
-from algos.fft import run, invert
+#from algos.fft import run, invert
+import algos.activityTracker
+import algos
 from shared import mongo
 import schemas
+import numpy
+from math import sqrt
+
+
 from bson.objectid import ObjectId
 
 class InsertRecord(Resource):
@@ -98,3 +104,51 @@ class DeleteData(Resource):
         res4 = mongo.db.record.delete_many({'_id':ObjectId(uuid)})
         result = res1.deleted_count+res2.deleted_count+res3.deleted_count+res4.deleted_count
         return 'Affected ' + str(result)     + ' entries.'
+
+class TestInsert(Resource):
+    def get(self):
+        snaps = []
+        amp = 100
+        fs = 20
+
+        uudi = ObjectId('57ed3f20e0034625e8fa61f1')
+        dict = [
+            {'x': int(amp*numpy.sin (2*numpy.pi*r/fs)),
+             'y': int(amp*numpy.sin (2*numpy.pi*r/fs)),
+             'z': int(amp*numpy.sin (2*numpy.pi*r/fs)),
+             't': r,
+             'ref': uudi
+            } for r in range(1, fs)]
+        schema = schemas.Sensor(many=True)
+        result, _ = schema.load(dict)
+
+        mongo.db.accelerometres.insert(result)
+        return 1
+
+
+class Tracker_Activity(Resource):
+    def get(self):
+        schema = schemas.Sensor(many=True)
+        accelerometres,errors = schema.dump(mongo.db.accelerometres.find())
+
+        total = algos.activityTracker.run(accelerometres)
+        #activity = algos.activity_tracker()
+        #activity.getInput()
+        #activity.run()
+        response = total
+        return response
+
+
+class Algo(Resource):
+    def get(self):
+        modulename = 'algos.'+request.args.get('filename')
+        print(modulename)
+        my_module = __import__(modulename, globals(), locals(), ['ActivityTracker'], -1)
+        my_object = my_module.ActivityTracker()
+        print(my_object.test())
+
+        #my_class = getattr(module,'Test').object
+
+        instance = my_object.test()
+
+        return instance

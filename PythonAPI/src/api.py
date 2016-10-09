@@ -2,7 +2,7 @@
 import sys
 
 from flask import Flask, request, jsonify, make_response
-from flask_restful import Resource, Api, abort
+from flask_restful import Resource, Api, abort,reqparse
 
 sys.path.append('..//lib')
 from lib_openimu import conf, resources
@@ -21,5 +21,9 @@ api.add_resource(resources.InsertRecord, '/insertrecord')
 api.add_resource(resources.getRecords, '/records')
 api.add_resource(resources.GetData, '/data')
 api.add_resource(resources.DeleteData, '/delete')
+api.add_resource(resources.TestInsert, '/testinsert')
+api.add_resource(resources.Tracker_Activity, '/trackeractivity')
+api.add_resource(resources.Algo,'/algo',)
+
 if __name__ == '__main__':
     app.run(debug=True, host='127.0.0.1')
