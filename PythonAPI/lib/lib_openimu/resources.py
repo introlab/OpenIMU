@@ -9,8 +9,6 @@ from shared import mongo
 import schemas
 import numpy
 from math import sqrt
-
-
 from bson.objectid import ObjectId
 
 class InsertRecord(Resource):
@@ -66,6 +64,7 @@ class GetData(Resource):
         uuid = request.args.get('uuid')
         if uuid is None:
             abort(401,message='enter valid uuid')
+            return
         schema = schemas.Record()
         record,errors = schema.dump(mongo.db.record.find_one({'_id': ObjectId(uuid)}))
         #if errors:
@@ -110,25 +109,25 @@ class TestInsert(Resource):
         amp = 100
         fs = 20
 
-        uudi = ObjectId('57ed3f20e0034625e8fa61f1')
+        uuid = ObjectId('57ed3f20e0034625e8fa61f1')
         dict = [
             {'x': int(amp*numpy.sin (2*numpy.pi*r/fs)),
              'y': int(amp*numpy.sin (2*numpy.pi*r/fs)),
              'z': int(amp*numpy.sin (2*numpy.pi*r/fs)),
              't': r,
-             'ref': uudi
+             '_id': uuid
             } for r in range(1, fs)]
         schema = schemas.Sensor(many=True)
         result, _ = schema.load(dict)
 
         mongo.db.accelerometres.insert(result)
-        return 1
+        return str(uuid)
 
 
 class Tracker_Activity(Resource):
     def get(self):
         schema = schemas.Sensor(many=True)
-        accelerometres,errors = schema.dump(mongo.db.accelerometres.find())
+        accelerometres,errors = schema.dump(mongo.db.accelerometres.find({'ref': ObjectId(uuid)}))
 
         total = algos.activityTracker.run(accelerometres)
         #activity = algos.activity_tracker()
@@ -141,13 +140,12 @@ class Tracker_Activity(Resource):
 class Algo(Resource):
     def get(self):
         modulename = 'algos.'+request.args.get('filename')
-        print(modulename)
-        my_module = __import__(modulename, globals(), locals(), ['ActivityTracker'], -1)
-        my_object = my_module.ActivityTracker()
-        print(my_object.test())
 
-        #my_class = getattr(module,'Test').object
+        my_module = __import__(modulename, globals(), locals(), [request.args.get('filename')], -1)
+        print(my_module)
+        print('db:' + str(mongo))
+        my_class = getattr(my_module,request.args.get('filename'))
+        instance = my_class()
+        instance.load(database=mongo, request=request)
 
-        instance = my_object.test()
-
-        return instance
+        return instance.run()
