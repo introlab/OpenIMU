@@ -326,12 +326,12 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">End Hour:</translation>
     </message>
     <message>
-        <location filename="../app/widgets/RangeSlider.cpp" line="77"/>
+        <location filename="../app/widgets/RangeSlider.cpp" line="91"/>
         <source>Début: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/RangeSlider.cpp" line="87"/>
+        <location filename="../app/widgets/RangeSlider.cpp" line="101"/>
         <source>Fin: </source>
         <translation type="unfinished"></translation>
     </message>
