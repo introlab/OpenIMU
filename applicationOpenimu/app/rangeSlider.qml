@@ -5,7 +5,12 @@ RangeSlider {
     id: control
     first.value: 0
     second.value: 1
-	signal qmlSignal(var anObject)
+    signal firstUpdated(var val)
+    first.onValueChanged: firstUpdated(first.value)
+
+    signal secondUpdated(var val)
+    second.onValueChanged: secondUpdated(second.value)
+
     background: Rectangle {
         x: control.leftPadding
         y: control.topPadding + control.availableHeight / 2 - height / 2

@@ -3,6 +3,7 @@
 #include <ctime>
 #include<QQuickView>
 #include<QQuickItem>
+#include<QSlider>
 
 RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent)
 {
@@ -25,8 +26,12 @@ RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent)
     container->setMaximumSize(400, 50);
     container->setFocusPolicy(Qt::TabFocus);
     view->setSource(QUrl("../applicationOpenImu/app/rangeSlider.qml"));
-    QObject *object = view->rootObject();
-    QObject::connect(object, SIGNAL(qmlSignal(QVariant)),this, SLOT(cppSlot(QVariant)));
+
+    // Get pointers to first and second values in range slider
+    QQuickItem *object = view->rootObject();
+
+    QObject::connect(object, SIGNAL(firstUpdated(QVariant)),this, SLOT(firstUpdated(QVariant)));
+    QObject::connect(object, SIGNAL(secondUpdated(QVariant)),this, SLOT(secondUpdated(QVariant)));
 
     mainLayout->addWidget(leftLabel);
     mainLayout->addWidget(container);
@@ -48,8 +53,17 @@ RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent)
 
 }
 
-void RangeSlider:: cppSlot(const QVariant &v) {
-      qDebug() << "Called the C++ slot with value:" << v;
+void RangeSlider:: firstUpdated(const QVariant &v) {
+      qDebug() << "Called the C++ slot with low value:" << v;
+
+    /*  QQuickItem *item =
+          qobject_cast<QQuickItem*>(v.value<QObject*>());
+      qDebug() << "Item dimensions:" << item->width()
+               << item->height();*/
+   }
+
+void RangeSlider:: secondUpdated(const QVariant &v) {
+      qDebug() << "Called the C++ slot with high value:" << v;
 
     /*  QQuickItem *item =
           qobject_cast<QQuickItem*>(v.value<QObject*>());
