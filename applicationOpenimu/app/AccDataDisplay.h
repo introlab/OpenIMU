@@ -15,6 +15,12 @@
 #include "graph/DataChart.h"
 #include "graph/ChartView.h"
 
+#include<QNetworkReply>
+#include<QNetworkRequest>
+#include<QNetworkAccessManager>
+#include"../../acquisition/CJsonSerializer.h"
+#include"../../acquisition/WimuRecord.h"
+
 QT_CHARTS_USE_NAMESPACE
 
 class AccDataDisplay : public QWidget
@@ -25,6 +31,7 @@ public:
     AccDataDisplay();
     AccDataDisplay(std::string filePath);
     void fillChartSeries();
+    bool getDataFromUUIDFromDB(std::string uuid);
 
 public slots:
 
@@ -37,6 +44,7 @@ public slots:
     void leftSliderValueChanged(int value);
     void rightSliderValueChanged(int value);
     void handleResetZoomBtn();
+    void reponseRecue(QNetworkReply* reply);
 
 private:
     DataChart * chart;
@@ -56,7 +64,7 @@ private:
     RangeSlider *rSlider;
     QVBoxLayout* layout;
 
-    WimuAcquisition * acceleroData;
+    WimuAcquisition acceleroData;
     std::vector<frame> availableData;
     std::vector<frame> sliceData;
 };

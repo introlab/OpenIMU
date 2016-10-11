@@ -1,5 +1,6 @@
 #include "CJsonSerializer.h"
 #include"../core/json/json/json.h"
+#include<QDebug>
 
 bool CJsonSerializer::Serialize( IJsonSerializable* pObj,  std::string recordName,  std::string date,  std::string& output )
 {
@@ -19,6 +20,8 @@ bool CJsonSerializer::Deserialize( IJsonSerializable* pObj, std::string& input )
 
    Json::Value deserializeRoot;
    Json::Reader reader;
+
+   qDebug() << "here deserialize cjson";
 
    if ( !reader.parse(input, deserializeRoot) )
       return false;

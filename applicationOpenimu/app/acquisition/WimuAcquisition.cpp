@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <ctime>
+#include<QDebug>
 
 std::vector<frame> WimuAcquisition::getData()
 {
@@ -85,10 +86,44 @@ void WimuAcquisition::Serialize( Json::Value& root,std::string recordName,  std:
 void WimuAcquisition::Deserialize( Json::Value& root )
 {
    // deserialize primitives
-  // m_nTestInt = root.get("testintA",0).asInt();
-  // m_fTestFloat = root.get("testfloatA", 0.0).asDouble();
-  // m_TestString = root.get("teststringA", "").asString();
-  // m_bTestBool = root.get("testboolA", false).as();
+
+    Json::Value accData = root.get("accelerometres", "");
+    for(int i =0; i<accData.size(); i++)
+    {
+        frame temp;
+        temp.timestamp = accData[i].get("t", "").asLargestInt();
+        temp.x = accData[i].get("x", "").asInt();
+        temp.y = accData[i].get("y", "").asInt();
+        temp.z = accData[i].get("z", "").asInt();
+
+        data.push_back(temp);
+    }
+
+    Json::Value gyrData = root.get("gyrometres", "");
+    for(int i =0; i<gyrData.size(); i++)
+    {
+        frame temp;
+        temp.timestamp = gyrData[i].get("t", "").asLargestInt();
+        temp.x = gyrData[i].get("x", "").asInt();
+        temp.y = gyrData[i].get("y", "").asInt();
+        temp.z = gyrData[i].get("z", "").asInt();
+
+        dataGyro.push_back(temp);
+    }
+
+    Json::Value magData = root.get("magnetometres", "");
+    for(int i =0; i<magData.size(); i++)
+    {
+        frame temp;
+        temp.timestamp = magData[i].get("t", "").asLargestInt();
+        temp.x = magData[i].get("x", "").asInt();
+        temp.y = magData[i].get("y", "").asInt();
+        temp.z = magData[i].get("z", "").asInt();
+
+        dataMagneto.push_back(temp);
+    }
+    qDebug() << data.size();
+
 }
 
 void WimuAcquisition::initialize()

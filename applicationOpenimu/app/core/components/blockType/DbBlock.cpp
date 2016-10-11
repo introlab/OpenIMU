@@ -25,9 +25,6 @@ std::vector<QString> DbBlock::getDaysInDB()
  {
 
      QNetworkAccessManager *manager = new QNetworkAccessManager();
-
-     //json = "{\"record\":{\"name\" : \"zebi\",\"date\" : \"10/09/2016\",\"format\":\"lol\"}, \"accelerometres\" : [{\"x\":1,\"y\":2,\"z\":3,\"t\":4},{\"x\":1,\"y\":2,\"z\":3,\"t\":4}],\"magnetometres\" : [{\"x\":1,\"y\":2,\"z\":3,\"t\":4},{\"x\":1,\"y\":2,\"z\":3,\"t\":4}],\"gyrometres\" : [{\"x\":1,\"y\":2,\"z\":3,\"t\":4}, {\"x\":1,\"y\":2,\"z\":3,\"t\":4}]}";
-
      QByteArray dataByteArray (json.toStdString().c_str(),json.toStdString().length());                                                                                                                  //Your webservice URL
 
      QNetworkRequest request(QUrl("http://127.0.0.1:5000/insertrecord"));
@@ -52,14 +49,17 @@ std::vector<QString> DbBlock::getDaysInDB()
      return true;
  }
 
- void DbBlock::requete(const QString & pseudo, const QString & password)
+ bool DbBlock::getRecordsFromDB()
  {
-     QNetworkRequest request(QUrl("http://127.0.0.1:5000/hello"));
-     request.setRawHeader("User-Agent", "User Agent");
-     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+     QNetworkRequest request(QUrl("http://127.0.0.1:5000/records"));
+     request.setRawHeader("User-Agent", "ApplicationNameV01");
+     request.setRawHeader("Content-Type", "application/json");
 
+     QNetworkAccessManager *manager = new QNetworkAccessManager();
      QNetworkReply *reply = manager->get(request);
-      Q_UNUSED(reply);
+     bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), this,SLOT(reponseRecue(QNetworkReply*)));
+
+     return true;
  }
 
  void DbBlock::reponseRecue(QNetworkReply* reply)
@@ -67,13 +67,17 @@ std::vector<QString> DbBlock::getDaysInDB()
      if (reply->error() == QNetworkReply::NoError)
     {
         qDebug() << "connection";
-        qDebug() << reply->readAll();
-
+        std::string testReponse = reply->readAll();// "[{ \"_id\" : \"foo\", \"name\" : \"test\"},{ \"_id\" : \"foo2\", \"name\" : \"test2\"}]\n";
+        WimuRecord record;
+        CJsonSerializer::Deserialize(&record, testReponse);
     }
     else
     {
-        qDebug() << reply->readAll();
         qDebug() << "error connect";
+        qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
+        qDebug() << "Request failed, " << reply->errorString();
+        qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
+        qDebug() << reply->readAll();
     }
     delete reply;
  }

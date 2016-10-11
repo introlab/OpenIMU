@@ -1,3 +1,6 @@
+#ifndef CJSONSERIALIZER_H
+#define CJSONSERIALIZER_H
+
 #include "IJsonSerializable.h"
 
 class CJsonSerializer
@@ -9,3 +12,5 @@ public:
 private:
    CJsonSerializer( void ) {}
 };
+
+#endif
