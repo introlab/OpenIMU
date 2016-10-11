@@ -1,6 +1,7 @@
 
 SET(srcs
     ${srcs}
+    ${CMAKE_CURRENT_SOURCE_DIR}/ActivityBlock.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ActivityTrackerBlock.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/AddBlock.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/BlockFactory.cpp
@@ -14,6 +15,7 @@ SET(srcs
 
 SET(headers
     ${headers}
+    ${CMAKE_CURRENT_SOURCE_DIR}/ActivityBlock.h
     ${CMAKE_CURRENT_SOURCE_DIR}/ActivityTrackerBlock.h
     ${CMAKE_CURRENT_SOURCE_DIR}/Addblock.h
     ${CMAKE_CURRENT_SOURCE_DIR}/BlockFactory.h
