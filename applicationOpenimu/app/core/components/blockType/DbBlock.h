@@ -5,6 +5,8 @@
 #include<QString>
 #include<QNetworkReply>
 #include<QNetworkAccessManager>
+#include"../../acquisition/CJsonSerializer.h"
+#include"../../acquisition/WimuRecord.h"
 
 class DbBlock : public QObject
 {
@@ -13,13 +15,12 @@ class DbBlock : public QObject
     public:
         DbBlock();
         ~DbBlock();
-
         std::vector<QString> getDaysInDB();
-        bool addRecordInDB(QString json);
-        void requete(const QString &, const QString &);
+        bool addRecordInDB(QString& json);
+        bool getRecordsFromDB();
 
-       public slots:
-           void reponseRecue(QNetworkReply*);
+public slots:
+        void reponseRecue(QNetworkReply* reply);
 
      private:
         QNetworkAccessManager* manager;

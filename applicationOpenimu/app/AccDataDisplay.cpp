@@ -5,6 +5,7 @@
 #include "graph/ChartView.h"
 #include <QQuickView>
 #include <QPushButton>
+#include <QEventLoop>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -12,15 +13,62 @@ AccDataDisplay::AccDataDisplay()
 {
 
 }
-AccDataDisplay::AccDataDisplay(std::string filePath){
+
+bool AccDataDisplay::getDataFromUUIDFromDB(std::string uuid)
+{
+    std::string url = "http://127.0.0.1:5000/data?uuid="+uuid;
+    QNetworkRequest request(QUrl(QString::fromStdString(url)));
+    request.setRawHeader("User-Agent", "ApplicationNameV01");
+    request.setRawHeader("Content-Type", "application/json");
+
+    QNetworkAccessManager *manager = new QNetworkAccessManager();
+    QNetworkReply *reply = manager->get(request);
+    QEventLoop loop;
+    bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,SLOT(quit()));
+    loop.exec();
+    reponseRecue(reply);
+    return true;
+}
+
+void AccDataDisplay::reponseRecue(QNetworkReply* reply)
+{
+    if (reply->error() == QNetworkReply::NoError)
+   {
+       qDebug() << "connection UUID";
+       std::string testReponse =  reply->readAll();//"{\"record\":{\"name\" : \"zebi\",\"date\" : \"10/09/2016\",\"format\":\"lol\"}, \"accelerometres\" : [{\"x\":1,\"y\":2,\"z\":3,\"t\":4},{\"x\":1,\"y\":2,\"z\":3,\"t\":4}],\"magnetometres\" : [{\"x\":1,\"y\":2,\"z\":3,\"t\":4},{\"x\":1,\"y\":2,\"z\":3,\"t\":4}],\"gyrometres\" : [{\"x\":1,\"y\":2,\"z\":3,\"t\":4}, {\"x\":1,\"y\":2,\"z\":3,\"t\":4}]}";
+       qDebug() << QString::fromStdString(testReponse);
+
+       CJsonSerializer::Deserialize(&acceleroData, testReponse);
+
+   }
+   else
+   {
+       qDebug() << "error connect";
+       qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
+       qDebug() << "Request failed, " << reply->errorString();
+       qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
+       qDebug() << reply->readAll();
+   }
+   delete reply;
+}
+
+AccDataDisplay::AccDataDisplay(std::string uuid){
 
     this->grabGesture(Qt::PanGesture);
     this->grabGesture(Qt::PinchGesture);
 
-    acceleroData = new WimuAcquisition(filePath,"","",50);
-    acceleroData->initialize();
-    availableData = acceleroData->getData();
+  //  acceleroData = new WimuAcquisition(uuid,"","",50);
+  //  acceleroData->initialize();
+
+    //** Retrieving data from BD
+    getDataFromUUIDFromDB(uuid);
+    //**
+
+    availableData = acceleroData.getData();
     sliceData = availableData;
+
+
+    qDebug() << "available data " << availableData.size();
 
     if(availableData.size()>0)
     {
@@ -60,7 +108,7 @@ AccDataDisplay::AccDataDisplay(std::string filePath){
             "QPushButton:focus:pressed{{QPushButton{background-color: green;  border-width: 2px; border-radius: 10px; font: bold 10px; min-width: 6em; padding: 4px;}");
 
         QLabel* dateRecorded = new QLabel();
-        dateRecorded->setText(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(acceleroData->getDates().back().date));
+        dateRecorded->setText(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(acceleroData.getDates().back().date));
         hboxDate->addStretch();
         hboxDate->addWidget(dateRecorded);
         hboxDate->addStretch();
@@ -138,7 +186,7 @@ void AccDataDisplay::slotDisplayMovingAverage(int value){
 void AccDataDisplay::leftSliderValueChanged(int value)
 {
     rSlider->setStartHour(WimuAcquisition::minTime(availableData).timestamp + value);
-    sliceData = acceleroData->getData(WimuAcquisition::minTime(availableData).timestamp + value, WimuAcquisition::maxTime(availableData).timestamp);
+    sliceData = acceleroData.getData(WimuAcquisition::minTime(availableData).timestamp + value, WimuAcquisition::maxTime(availableData).timestamp);
     chart->removeAllSeries();
     fillChartSeries();
     chartView->setChart(chart);
@@ -146,7 +194,7 @@ void AccDataDisplay::leftSliderValueChanged(int value)
 void AccDataDisplay::rightSliderValueChanged(int value)
 {
     rSlider->setEndHour(WimuAcquisition::maxTime(availableData).timestamp-value);
-    sliceData = acceleroData->getData(WimuAcquisition::minTime(availableData).timestamp + value, WimuAcquisition::maxTime(availableData).timestamp);
+    sliceData = acceleroData.getData(WimuAcquisition::minTime(availableData).timestamp + value, WimuAcquisition::maxTime(availableData).timestamp);
     chart->removeAllSeries();
     fillChartSeries();
     chartView->setChart(chart);

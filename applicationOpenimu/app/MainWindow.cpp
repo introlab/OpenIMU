@@ -6,7 +6,7 @@
 #include "QMessageBox"
 #include <QListWidgetItem>
 #include<vector>
-
+#include<QDebug>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -35,23 +35,22 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     splitter->handle(1);
     splitter->setSizes(QList<int>() << 150 << 600);
     splitter->setFixedWidth(150);
-    tree = new myTreeWidget (this);
 
-   //Implementation listWidget for days in dB
+    listWidget = new MyListWidget(this);
+    connect(listWidget, SIGNAL(itemClicked(QListWidgetItem*)),this, SLOT(onListItemClicked(QListWidgetItem*)));
+
+    listWidget->setAlternatingRowColors(true);
+    listWidget->setStyleSheet("alternate-background-color:#ecf0f1;background-color:#white;");
+
+    //Implementation listWidget for days in dB
    //  splitter->addWidget(populateDaysFromDataBase());
-    splitter->addWidget(tree);
+    splitter->addWidget(listWidget);
 
-   //Set QTreeWidget Column Header
-    QTreeWidgetItem* headerItem = new QTreeWidgetItem();
-    headerItem->setText(0,QString(tr("Explorateur de fichier")));
-    tree->setHeaderItem(headerItem);
-    tree->setMaximumWidth(150);
-
-    //default scene
-    // scene = new CustomQmlScene("test_slider_chart.qml", this);
-    // caneva = new Caneva("config/test_slider_chart.json", scene);
+    QListWidgetItem *headerItem  = new QListWidgetItem();
+    headerItem->setText(QString(tr("Enregistrements")));
+    listWidget->addItem(headerItem);
+    listWidget->setMaximumWidth(150);
     tabWidget = new QTabWidget;
-    //tabWidget->addTab(scene,"Test slider with chart");
     tabWidget->setTabsClosable(true);
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
     QWidget * homeWidget = new QWidget(); //To do create classe Home widget
@@ -94,6 +93,20 @@ MainWindow::~MainWindow(){
     delete scene;
 }
 
+void MainWindow::onListItemClicked(QListWidgetItem* item)
+{
+    for(int i=0; i<record.m_WimuRecordList.size();i++)
+    {
+        if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text().toStdString()) == 0)
+        {
+            AccDataDisplay *dataDisplay = new AccDataDisplay(record.m_WimuRecordList.at(i).m_recordId);// C://Users//stef//Desktop//Projet S7-S8//data_step//10//ACC_4.DAT");
+            QString dataAcc = tr("Données accéléromètre");
+            std::string sDataAcc = dataAcc.toUtf8().constData();
+            replaceTab(dataDisplay, sDataAcc);
+        }
+    }
+}
+
 QListWidget* MainWindow::populateDaysFromDataBase()
 {
     QListWidget* listWidget = new QListWidget(this);
@@ -116,37 +129,7 @@ void MainWindow::dateClicked(QListWidgetItem *item)
 }
 
 void MainWindow:: openFile(){
-    folderName = QFileDialog::getExistingDirectory(this, tr("Sélectionner dossier"),"/path/to/file/");
-    if(!folderName.isEmpty()){
-        QDir* rootDir = new QDir(folderName);
-        QFileInfoList filesList = rootDir->entryInfoList();
-        statusBar->showMessage(tr("Dossier séléctionné: ")+ folderName);
-        foreach(QFileInfo fileInfo, filesList)
-        {
-            QTreeWidgetItem* item = new QTreeWidgetItem();
-            item->setText(0,fileInfo.fileName());
-
-            if(fileInfo.isFile())
-            {
-                item->setText(1,QString::number(fileInfo.size()));
-                tree->myTreeWidget::addChildren(item,fileInfo.filePath());
-                item->setIcon(0,*(new QIcon(":/icons/file.png")));
-                item->setText(2,fileInfo.filePath());
-                tree->addTopLevelItem(item);
-            }
-
-            if(fileInfo.isDir() && !fileInfo.fileName().contains("."))
-            {
-                item->setIcon(0,*(new QIcon(":/icons/folder.png")));
-                tree->myTreeWidget::addChildren(item,fileInfo.filePath());
-                item->setText(2,fileInfo.filePath());
-                tree->addTopLevelItem(item);
-            }
-
-        }
-    }else{
-        statusBar->showMessage(tr("Aucun dossier séléctionné ")+ folderName);
-    }
+    getRecordsFromDB();
 }
 
 void MainWindow:: openRecordDialog()
@@ -308,6 +291,44 @@ void MainWindow::closeTab(int index){
     delete(tabItem);
     tabItem = nullptr;
 }
+
 void MainWindow::closeWindow(){
     this->close();
+}
+
+bool MainWindow::getRecordsFromDB()
+{
+    QNetworkRequest request(QUrl("http://127.0.0.1:5000/records"));
+    request.setRawHeader("User-Agent", "ApplicationNameV01");
+    request.setRawHeader("Content-Type", "application/json");
+
+    QNetworkAccessManager *manager = new QNetworkAccessManager();
+    QNetworkReply *reply = manager->get(request);
+    bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), this,SLOT(reponseRecue(QNetworkReply*)));
+
+    return true;
+}
+
+void MainWindow::reponseRecue(QNetworkReply* reply)
+{
+    if (reply->error() == QNetworkReply::NoError)
+   {
+       qDebug() << "connection main";
+       std::string testReponse = reply->readAll();
+       CJsonSerializer::Deserialize(&record, testReponse);
+
+       for(int i=0; i<record.m_WimuRecordList.size();i++)
+       {
+           listWidget->addItem(QString::fromStdString(record.m_WimuRecordList.at(i).m_recordName));
+       }
+   }
+   else
+   {
+       qDebug() << "error connect";
+       qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
+       qDebug() << "Request failed, " << reply->errorString();
+       qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
+       qDebug() << reply->readAll();
+   }
+   delete reply;
 }

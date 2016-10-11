@@ -9,6 +9,7 @@
 #include "core/Caneva.h"
 #include <QSplitter>
 #include "widgets/MyTreeWidget.h"
+#include "widgets/MyListWidget.h"
 #include <QWidget>
 #include "dialogs/AboutDialog.h"
 #include "dialogs/HelpDialog.h"
@@ -16,6 +17,10 @@
 #include<QListWidget>
 #include "core/components/blockType/DbBlock.h"
 #include"dialogs/RecordsDialog.h"
+#include<QNetworkReply>
+#include<QNetworkAccessManager>
+#include"../../acquisition/CJsonSerializer.h"
+#include"../../acquisition/WimuRecord.h"
 
 class MainWindow : public QMainWindow
     {
@@ -25,10 +30,12 @@ class MainWindow : public QMainWindow
        ~MainWindow();
        std::string getFileName(std::string s);
        void retranslateUi();
+       bool getRecordsFromDB();
 
     signals:
 
     public slots:
+
     void openFile();
     void openRecordDialog();
     void displayRawAccData();
@@ -43,6 +50,8 @@ class MainWindow : public QMainWindow
     void dateClicked(QListWidgetItem *item);
     void setApplicationInEnglish();
     void setApplicationInFrench();
+    void reponseRecue(QNetworkReply* reply);
+    void onListItemClicked(QListWidgetItem* item);
 
     QListWidget* populateDaysFromDataBase();
 
@@ -53,7 +62,7 @@ class MainWindow : public QMainWindow
        QWidget *mainWidget;
        ApplicationMenuBar* menu ;
        CustomQmlScene* scene;
-       myTreeWidget  * tree;
+       MyListWidget  * listWidget;
        QTabWidget *tabWidget;
        QString fileSelectedName;
        QWidget *dataView;
@@ -62,6 +71,7 @@ class MainWindow : public QMainWindow
        QStatusBar * statusBar;
        DbBlock * databaseAccess = new DbBlock;
        RecordsDialog * rDialog;
+       WimuRecord record;
     };
 
 #endif // MAINWINDOW_H
