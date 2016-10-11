@@ -19,3 +19,17 @@ class RecordRequest(Schema):
     accelerometres = fields.Nested(Sensor, many=True)
     magnetometres = fields.Nested(Sensor, many=True)
     gyrometres = fields.Nested(Sensor, many=True)
+
+class TimeFilter(Schema):
+    beginDateTime = fields.DateTime(as_string = False)
+    endDateTime = fields.DateTime(as_string=False)
+
+class DataSort(Schema):
+    sortedColumn = fields.String()
+    # Sort: 1 = Ascending, 2 = Descending, Any other values = No sort.
+    sortDirection = fields.Int(as_string= False)
+
+class DataRequestWithOptions(Schema):
+    timeFilter = fields.Nested(TimeFilter)
+    sort = fields.Nested(DataSort)
+    recordId = fields.UUID()

@@ -59,6 +59,66 @@ class getRecords(Resource):
         schema = schemas.Record(many=True)
         return schema.dump(mongo.db.record.find({},{'name':1,'_id':1}))
 
+class getDataWithOptions(Resource):
+    def get(self):
+        schemaDataRequestWithOptions = schemas.DataRequestWithOptions()
+        dataRequestWithOptions, dataRequestWithOptionsErrors = schemaDataRequestWithOptions.load(request.json)
+        if dataRequestWithOptionsErrors:
+            abort(401, message=str(dataRequestWithOptionsErrors))
+
+        # Retrieve Filter
+        timeFilterSchema = schemas.TimeFilter()
+        timeFilterData, timeFilterErrors = timeFilterSchema.load(dataRequestWithOptions['timeFilter'])
+        if timeFilterErrors:
+            abort(401, message=str(timeFilterErrors))
+
+        # Retrieve Sort
+        sortSchema = schemas.DataSort()
+        sortData, sortErrors = sortSchema.load(dataRequestWithOptions['sort'])
+        if sortErrors:
+            abort(401, message=str(sortErrors))
+
+        # Retrieve UUID
+        uuidData, uuidErrors = schemaDataRequestWithOptions.load(dataRequestWithOptions['recordId'])
+        if uuidErrors:
+            abort(401, message='enter valid uuid')
+            return
+
+        recordSchema = schemas.Record()
+
+        # Build request
+        #  No filter, no sort. Just return all the record matching the UUID
+        if (timeFilterData is None) & (sortData is None):
+            return recordSchema.dump(mongo.db.record.find({}, {'name': 1, '_id': uuidData}))
+
+        # Filter and Sort the record that matches the UUID
+        if (timeFilterData is not None) & (sortData is not None):
+            start = timeFilterData['beginDateTime']
+            end = timeFilterData['endDateTime']
+            if sortData['sortedDirection'] == 1:
+                return recordSchema.dump(
+                    mongo.db.record.find({}, {'_id': uuidData, 'date':{'$lt': end, '$gte': start}}).sort(sortData['sortedColumn'], mongo.ASCENDING))
+            elif sortData['sortedDirection'] == 2:
+                return recordSchema.dump(
+                    mongo.db.record.find({}, {'_id': uuidData, 'date':{'$lt': end, '$gte': start}}).sort(sortData['sortedColumn'], mongo.DESCENDING))
+            else:
+                return recordSchema.dump(mongo.db.record.find({'_id': uuidData, 'date':{'$lt': end, '$gte': start}}))
+
+        # Filter only the record that matches the UUID
+        if (timeFilterData is not None) & (sortData is None):
+            start = timeFilterData['beginDateTime']
+            end = timeFilterData['endDateTime']
+            return recordSchema.dump(mongo.db.record.find({'_id': uuidData, 'date':{'$lt': end, '$gte': start}}))
+
+        # Sort only the record that matches the UUID
+        if (timeFilterData is None) & (sortData is not None):
+            if sortData['sortedDirection'] == 1:
+                return recordSchema.dump(mongo.db.record.find({'_id': uuidData}).sort(sortData['sortedColumn'], mongo.ASCENDING))
+            elif sortData['sortedDirection'] == 2:
+                return recordSchema.dump(mongo.db.record.find({'_id': uuidData}).sort(sortData['sortedColumn'], mongo.DESCENDING))
+            else:
+                return recordSchema.dump(mongo.db.record.find({'_id': uuidData}))
+
 class GetData(Resource):
     def get(self):
         uuid = request.args.get('uuid')
