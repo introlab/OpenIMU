@@ -315,7 +315,7 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
        qDebug() << "connection main";
        std::string testReponse = reply->readAll();
        CJsonSerializer::Deserialize(&record, testReponse);
-       listWidget->clear();
+
        for(int i=0; i<record.m_WimuRecordList.size();i++)
        {
            listWidget->addItem(QString::fromStdString(record.m_WimuRecordList.at(i).m_recordName));

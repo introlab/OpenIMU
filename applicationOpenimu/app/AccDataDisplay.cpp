@@ -181,8 +181,10 @@ void AccDataDisplay::slotDisplayMovingAverage(int value){
 void AccDataDisplay::leftSliderValueChanged(double value)
 {
     lSliderValue = value;
-    //rSlider->setStartHour(WimuAcquisition::minTime(availableData).timestamp + value);
-    //sliceData = acceleroData.getData(WimuAcquisition::minTime(availableData).timestamp + value, WimuAcquisition::maxTime(availableData).timestamp);
+    int tmpmin = int(sliceData.size()*lSliderValue/50);
+    tmpmin = WimuAcquisition::minTime(availableData).timestamp + tmpmin;
+    qDebug() << tmpmin;
+    rSlider->setStartHour(tmpmin);
     chart->removeAllSeries();
     fillChartSeries();
     chartView->setChart(chart);
@@ -190,8 +192,10 @@ void AccDataDisplay::leftSliderValueChanged(double value)
 void AccDataDisplay::rightSliderValueChanged(double value)
 {
     rSliderValue = value;
-    //rSlider->setEndHour(WimuAcquisition::maxTime(availableData).timestamp-value);
-    //sliceData = acceleroData.getData(WimuAcquisition::minTime(availableData).timestamp + value, WimuAcquisition::maxTime(availableData).timestamp);
+    int tmpmax = int(sliceData.size()*rSliderValue/50);
+    tmpmax = WimuAcquisition::minTime(availableData).timestamp + tmpmax;
+    qDebug() << tmpmax;
+    rSlider->setEndHour(tmpmax);
     chart->removeAllSeries();
     fillChartSeries();
     chartView->setChart(chart);
@@ -333,12 +337,9 @@ void AccDataDisplay::fillChartSeries(){
 }
 
 void AccDataDisplay:: firstUpdated(const QVariant &v) {
-      qDebug() << "Called the C++ slot with low value:" << v;
       leftSliderValueChanged(v.toDouble());
-
 }
 
 void AccDataDisplay:: secondUpdated(const QVariant &v) {
-      qDebug() << "Called the C++ slot with high value:" << v;
       rightSliderValueChanged(v.toDouble());
 }

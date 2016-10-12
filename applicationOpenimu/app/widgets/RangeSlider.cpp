@@ -45,7 +45,7 @@ RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent)
 void RangeSlider::setStartHour(long long min){
     std::time_t _time =(time_t) min;
     char buffer[32];
-    std::strftime(buffer, 32, "%H:%M", gmtime (&_time));
+    std::strftime(buffer, 32, "%H:%M:%S", gmtime (&_time));
     QString text;
     text.append(tr("Début: "));
     text.append(buffer);
@@ -55,7 +55,7 @@ void RangeSlider::setStartHour(long long min){
 void RangeSlider::setEndHour(long long max){
     std::time_t _time =(time_t) max;
     char buffer[32];
-    std::strftime(buffer, 32, "%H:%M", gmtime (&_time));
+    std::strftime(buffer, 32, "%H:%M:%S", gmtime (&_time));
     QString text;
     text.append(tr("Fin: "));
     text.append(buffer);
