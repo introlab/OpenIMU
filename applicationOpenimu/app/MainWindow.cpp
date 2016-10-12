@@ -16,7 +16,6 @@ const QString englishText = "English";
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     fileSelectedName = "";
-
     this->grabGesture(Qt::PanGesture);
     this->grabGesture(Qt::PinchGesture);
 
@@ -27,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     menu = new ApplicationMenuBar(this);
     this->setMenuBar(menu);
     statusBar = new QStatusBar();
+    statusBar->setStyleSheet("background-color:rgba(230, 233, 239,0.2);");
     this->setStatusBar(statusBar);
     splitter = new QSplitter;
     setCentralWidget(splitter);
@@ -35,12 +35,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     splitter->handle(1);
     splitter->setSizes(QList<int>() << 150 << 600);
     splitter->setFixedWidth(150);
-
+    splitter->setStyleSheet("background-color:rgba(230, 233, 239,0.2);");
     listWidget = new MyListWidget(this);
     connect(listWidget, SIGNAL(itemClicked(QListWidgetItem*)),this, SLOT(onListItemClicked(QListWidgetItem*)));
 
     listWidget->setAlternatingRowColors(true);
-    listWidget->setStyleSheet("alternate-background-color:#ecf0f1;background-color:#white;");
+    listWidget->setStyleSheet("alternate-background-color:#ecf0f1;background-color:white;");
 
     //Implementation listWidget for days in dB
    //  splitter->addWidget(populateDaysFromDataBase());
@@ -52,25 +52,29 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     listWidget->setMaximumWidth(150);
     tabWidget = new QTabWidget;
     tabWidget->setTabsClosable(true);
+    tabWidget->setStyleSheet("background-color:white;");
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
     QWidget * homeWidget = new QWidget(); //To do create classe Home widget
-    QFont font;
-    font.setPointSize(14);
-    font.setBold(true);
     QVBoxLayout* homeLayout = new QVBoxLayout(homeWidget);
-    QLabel * homeLabel = new QLabel("Open IMU");
-    QLabel * descriptionLabel = new QLabel(tr("Logiciel de visualisation et d'analyse, Open Source"));
-    QLabel * descriptionLabel2 = new QLabel(tr("pour centrale inertielle"));
+    QLabel * homeLabel = new QLabel("Open IMU,logiciel de visualisation et d'analyse pour centrale inertielle");
+   // QWidget* logo = new QWidget;
+
+    QPixmap pic("../applicationOpenimu/app/logo.png");
+    QPixmap scaled=pic.scaled ( 400, 200, Qt::KeepAspectRatio, Qt::FastTransformation );
+
+    QLabel *label = new QLabel(this);
+    label->setMaximumWidth(800);
+    label->setPixmap(scaled);
+    label->setAlignment(Qt::AlignCenter);
+    QFont font;
+    font.setPointSize(10);
     homeLabel->setFont(font);
-    descriptionLabel->setFont(font);
-    descriptionLabel2->setFont(font);
+
     homeLayout->addWidget(homeLabel);
-    homeLayout->addWidget(descriptionLabel);
-    homeLayout->addWidget(descriptionLabel2);
-    homeLayout -> setAlignment(homeLabel,Qt::AlignCenter);
-    homeLayout -> setAlignment(descriptionLabel,Qt::AlignCenter);
-    homeLayout -> setAlignment(descriptionLabel2,Qt::AlignCenter);
     homeWidget->setLayout(homeLayout);
+    homeLayout->addWidget(label);
+    homeLayout->addSpacing(100);
+    homeLayout -> setAlignment(homeLabel,Qt::AlignCenter);
     tabWidget->addTab(homeWidget,tr("Accueil"));
 
     qDebug() << tabWidget->tabBar();
@@ -100,6 +104,7 @@ void MainWindow::onListItemClicked(QListWidgetItem* item)
     {
         if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text().toStdString()) == 0)
         {
+            selectedUUID = record.m_WimuRecordList.at(i).m_recordId;
             AccDataDisplay *dataDisplay = new AccDataDisplay(record.m_WimuRecordList.at(i).m_recordId);// C://Users//stef//Desktop//Projet S7-S8//data_step//10//ACC_4.DAT");
             QString dataAcc = tr("Données accéléromètre");
             std::string sDataAcc = dataAcc.toUtf8().constData();
@@ -182,24 +187,50 @@ void MainWindow:: displayRawAccData()
         msgBox.exec();
     }
 }
+bool MainWindow::getDataFromUUIDFromDB(std::string uuid)
+{
+    std::string url = "http://127.0.0.1:5000/data?uuid="+uuid;
+    QNetworkRequest request(QUrl(QString::fromStdString(url)));
+    request.setRawHeader("User-Agent", "ApplicationNameV01");
+    request.setRawHeader("Content-Type", "application/json");
+
+    QNetworkAccessManager *manager = new QNetworkAccessManager();
+    QNetworkReply *reply = manager->get(request);
+    QEventLoop loop;
+    bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,SLOT(quit()));
+    loop.exec();
+    reponseRecueAcc(reply);
+    return true;
+}
+
+void MainWindow::reponseRecueAcc(QNetworkReply* reply)
+{
+    if (reply->error() == QNetworkReply::NoError)
+   {
+       qDebug() << "connection UUID";
+       std::string testReponse =  reply->readAll();
+       CJsonSerializer::Deserialize(&acceleroData, testReponse);
+
+   }
+   else
+   {
+       qDebug() << "error connect";
+       qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
+       qDebug() << "Request failed, " << reply->errorString();
+       qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
+       qDebug() << reply->readAll();
+   }
+   delete reply;
+}
 void MainWindow:: computeSteps(){
-    std::string reconsrtructPath = folderName.toStdString()+"/"+fileSelectedName.toStdString();
-    if(reconsrtructPath != "/" ){
         CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
         Caneva* canevaSteps = new Caneva("config/displayStepNumber.json", sceneSteps);
         QString stepCount = tr("Compteur de pas");
         std::string sStepCount = stepCount.toUtf8().constData();
         replaceTab(sceneSteps,sStepCount);
-        canevaSteps->testSteps(reconsrtructPath);
+        getDataFromUUIDFromDB(selectedUUID);
+        canevaSteps->testSteps(acceleroData);
         statusBar->showMessage(tr("Ouverture compteur de pas"));
-    }
-    else{
-        QMessageBox msgBox;
-        msgBox.setText(tr("Pas de fichier séléctionné"));
-        msgBox.setInformativeText(tr("Choissisez un fichier de type ACC.DAT"));
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        msgBox.exec();
-    }
 }
 void MainWindow::computeActivityTime(){
     if(selectedUUID != ""){
@@ -208,6 +239,8 @@ void MainWindow::computeActivityTime(){
         QString actTime = tr("Temps d'activité");
         std::string sActTime = actTime.toUtf8().constData();
         replaceTab(sceneTime,sActTime);
+
+
         canevaTime->testActivity(selectedUUID);
     }
     else{
@@ -219,13 +252,6 @@ void MainWindow::computeActivityTime(){
     }
 
     statusBar->showMessage(tr("Ouverture temps d'activité"));
-
-}
-
-void MainWindow::computeActivityTime(){
-    std::string activitypercent = dbActivity->run();
-    QString qAP = QString::fromStdString(activitypercent).
-    qDebug() << qAP;
 
 }
 

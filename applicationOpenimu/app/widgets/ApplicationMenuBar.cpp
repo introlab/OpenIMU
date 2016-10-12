@@ -2,6 +2,7 @@
 
 ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
 {
+    this->setStyleSheet("background-color:rgba(230, 233, 239,0.6);");
     this->setMinimumWidth(parent->width());
     parent = parent;
     fichier = new QMenu(tr("&Fichier"));

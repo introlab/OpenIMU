@@ -9,6 +9,11 @@
 #include "components/QuickItemInputNodes.h"
 
 #include "../acquisition/wimuacquisition.h"
+#include <QEventLoop>
+#include<QNetworkReply>
+#include<QNetworkRequest>
+#include<QNetworkAccessManager>
+#include"../../acquisition/CJsonSerializer.h"
 
 Caneva::Caneva(std::string filename, CustomQmlScene *scene)
 {
@@ -37,22 +42,21 @@ void Caneva::test_slider_chart()
 
 }
 
-void Caneva::testSteps(std::string filePath)
+void Caneva::testSteps(WimuAcquisition& acceleroData)
 {
-    std::vector<std::string> arr_str =  {"Jour 1", "Jour analyse"};
-    std::vector<int> arr_int =  {10,20,11,-2,0,-20,-10,-20};
+    std::vector<std::string> arr_str =  {"Jour 1", "Jour 2","Jour 3","Jour 4","Jour 5"};
+    std::vector<int> arr_int =  {10,20,11,2,0,15,-10,-20};
 
-    WimuAcquisition* acceleroData = new WimuAcquisition(filePath,"","",50);
-    acceleroData->initialize();
-    std::vector<frame> availableData = acceleroData->getData();
+    std::vector<frame> availableData = acceleroData.getData();
 
+    qDebug() << "here utp";
     getBlock("podometer")->GetInput<frame>("accelData")->Put(availableData);
 
     getBlock("col1.label_title_value")->GetInput<std::string>("inputTitle")->Put(std::vector<std::string>({"Compteur de pas: "}));
 
-    getBlock("col1.row2.col4.label_start_date")->GetInput<std::string>("inputStartDate")->Put(std::vector<std::string>({acceleroData->getDates().back().date}));
-    getBlock("col1.row2.col4.label_end_date")->GetInput<std::string>("inputEndDate")->Put(std::vector<std::string>({acceleroData->getDates().back().date}));
-    getBlock("col1.row2.col4.label_days")->GetInput<int>("inputDaysAvailable")->Put(std::vector<int>({2}));
+    getBlock("col1.row2.col4.label_start_date")->GetInput<std::string>("inputStartDate")->Put(std::vector<std::string>({acceleroData.getDates().back().date}));
+    getBlock("col1.row2.col4.label_end_date")->GetInput<std::string>("inputEndDate")->Put(std::vector<std::string>({acceleroData.getDates().back().date}));
+    getBlock("col1.row2.col4.label_days")->GetInput<int>("inputDaysAvailable")->Put(std::vector<int>({6}));
 
     getBlock("col1.row2.col3.chart_step")->GetInput<std::string>("x")->Put(arr_str);
 

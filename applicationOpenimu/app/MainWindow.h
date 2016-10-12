@@ -32,11 +32,13 @@ class MainWindow : public QMainWindow
        std::string getFileName(std::string s);
        void retranslateUi();
        bool getRecordsFromDB();
+       bool getDataFromUUIDFromDB(std::string uuid);
 
     signals:
 
     public slots:
 
+    void reponseRecueAcc(QNetworkReply* reply);
     void openFile();
     void openRecordDialog();
     void displayRawAccData();
@@ -75,6 +77,7 @@ class MainWindow : public QMainWindow
        ActivityBlock * dbActivity = new ActivityBlock;
        RecordsDialog * rDialog;
        WimuRecord record;
+       WimuAcquisition acceleroData;
     };
 
 #endif // MAINWINDOW_H
