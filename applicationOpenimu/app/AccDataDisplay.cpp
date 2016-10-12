@@ -135,11 +135,16 @@ AccDataDisplay::AccDataDisplay(std::string uuid){
 
 
         long long min = WimuAcquisition::minTime(availableData).timestamp;
-        long long max = WimuAcquisition::maxTime(availableData).timestamp;
 
         rSlider = new RangeSlider(this);
-        rSlider->setStartHour(min/1000);
-        rSlider->setEndHour(max/1000);
+        int tmpmin = int(sliceData.size()*lSliderValue/50);
+        tmpmin = min + tmpmin;
+
+        int tmpmax = int(sliceData.size()*rSliderValue/50);
+        tmpmax = min + tmpmax;
+
+        rSlider->setStartHour(tmpmin);
+        rSlider->setEndHour(tmpmax);
 
         layout->addLayout(hboxDate);
         layout->addWidget(chartView);
