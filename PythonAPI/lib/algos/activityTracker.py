@@ -14,17 +14,12 @@ class activityTracker(Algorithm):
         return {'Hello' : 'world'}
     def load(self,database,request):
             uuid = request.args.get('uuid')
+            print('db:' +str(database))
+
             schema = schemas.Sensor(many=True)
             ref = database.db.accelerometres.find({'ref': ObjectId(request.args.get('uuid'))})
             acc, errors = schema.dump(ref)
-
-            x = []
-            localmax = max(acc,key=lambda item:item['t'])['t']/1000.
-            for snap in acc:
-                if (localmax - snap['t']/1000.) < 100000000:
-                    x.append(snap)
-
-            self.data =x
+            self.data =acc
             return self.data
     def run(self):
         x = [sqrt(snap.get('x') ** 2 + snap.get('y') ** 2 + snap.get('z') ** 2)
@@ -35,6 +30,4 @@ class activityTracker(Algorithm):
             if abs(n) > 20:
                 total = total + 1
 
-        self.output['activitypercent'] = 100*total/len(diff)
-        print self.output
-        return self.output
+        return 100*total/len(diff)

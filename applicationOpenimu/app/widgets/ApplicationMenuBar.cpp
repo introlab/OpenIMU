@@ -25,12 +25,8 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     actionNombreDePas->setShortcut(QKeySequence("Ctrl+C"));
     QAction* actionTempsActif = new QAction(tr("&Temps d'activité"),algorithme);
     actionTempsActif->setShortcut(QKeySequence("Ctrl+T"));
-    QAction* actionPythonTempsActif = new QAction(tr("&Temps d'activité Python"),algorithme);
-
-
     algorithme->addAction(actionNombreDePas);
     algorithme->addAction(actionTempsActif);
-    algorithme->addAction(actionPythonTempsActif);
 
     vue = new QMenu("&Vue");
     QAction* actionDonneeBrutes = new QAction(tr("&Données brutes"),vue);
@@ -67,7 +63,6 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     connect(actionAjouterEnregistrement, SIGNAL(triggered()), parent, SLOT(openRecordDialog()));
     connect(actionNombreDePas, SIGNAL(triggered()), parent, SLOT(computeSteps()));
     connect(actionTempsActif,SIGNAL(triggered()),parent,SLOT(computeActivityTime()));
-    connect(actionPythonTempsActif,SIGNAL(triggered()),parent,SLOT(computePythonActivityTime()));
     connect(actionQuitter,SIGNAL(triggered()),parent,SLOT(closeWindow()));
     connect(actionAPropos,SIGNAL(triggered()),parent,SLOT(openAbout()));
     connect(actionAide,SIGNAL(triggered()),parent,SLOT(openHelp()));

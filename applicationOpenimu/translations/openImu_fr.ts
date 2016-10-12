@@ -47,31 +47,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../app/AccDataDisplay.cpp" line="115"/>
-        <location filename="../app/AccDataDisplay.cpp" line="285"/>
+        <location filename="../app/AccDataDisplay.cpp" line="276"/>
         <source>Axe X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AccDataDisplay.cpp" line="116"/>
-        <location filename="../app/AccDataDisplay.cpp" line="292"/>
+        <location filename="../app/AccDataDisplay.cpp" line="283"/>
         <source>Axe Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AccDataDisplay.cpp" line="117"/>
-        <location filename="../app/AccDataDisplay.cpp" line="298"/>
+        <location filename="../app/AccDataDisplay.cpp" line="289"/>
         <source>Axe Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AccDataDisplay.cpp" line="118"/>
-        <location filename="../app/AccDataDisplay.cpp" line="302"/>
+        <location filename="../app/AccDataDisplay.cpp" line="293"/>
         <source>Norme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AccDataDisplay.cpp" line="119"/>
-        <location filename="../app/AccDataDisplay.cpp" line="311"/>
+        <location filename="../app/AccDataDisplay.cpp" line="302"/>
         <source>Moyenne mobile</source>
         <translation type="unfinished"></translation>
     </message>
@@ -114,42 +114,37 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="28"/>
-        <source>&amp;Temps d&apos;activité Python</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="36"/>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="32"/>
         <source>&amp;Données brutes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="41"/>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="37"/>
         <source>À &amp;propos</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="43"/>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="39"/>
         <source>&amp;Aide</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="48"/>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="44"/>
         <source>&amp;English</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="49"/>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="45"/>
         <source>&amp;French</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="54"/>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="50"/>
         <source>&amp;Preferences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="55"/>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="51"/>
         <source>&amp;Langue</source>
         <translatorcomment>	</translatorcomment>
         <translation>Langue</translation>
@@ -196,7 +191,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../app/MainWindow.cpp" line="74"/>
-        <location filename="../app/MainWindow.cpp" line="271"/>
+        <location filename="../app/MainWindow.cpp" line="256"/>
         <source>Accueil</source>
         <translation type="unfinished"></translation>
     </message>
@@ -249,13 +244,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../app/MainWindow.cpp" line="208"/>
-        <location filename="../app/MainWindow.cpp" line="229"/>
         <source>Temps d&apos;activité</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/MainWindow.cpp" line="221"/>
-        <location filename="../app/MainWindow.cpp" line="236"/>
         <source>Ouverture temps d&apos;activité</source>
         <translation type="unfinished"></translation>
     </message>

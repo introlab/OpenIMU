@@ -202,6 +202,8 @@ class Algo(Resource):
         modulename = 'algos.'+request.args.get('filename')
 
         my_module = __import__(modulename, globals(), locals(), [request.args.get('filename')], -1)
+        print(my_module)
+        print('db:' + str(mongo))
         my_class = getattr(my_module,request.args.get('filename'))
         instance = my_class()
         instance.load(database=mongo, request=request)
