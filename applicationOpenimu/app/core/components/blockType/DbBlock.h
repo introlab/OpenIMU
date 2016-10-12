@@ -16,7 +16,7 @@ class DbBlock : public QObject
         DbBlock();
         ~DbBlock();
         std::vector<QString> getDaysInDB();
-        bool addRecordInDB(QString& json);
+        bool addRecordInDB(QString json);
         bool getRecordsFromDB();
 
 public slots:

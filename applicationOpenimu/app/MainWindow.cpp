@@ -222,6 +222,21 @@ void MainWindow::computeActivityTime(){
 
 }
 
+void MainWindow::computePythonActivityTime(){
+
+    CustomQmlScene* sceneTime = new CustomQmlScene("displayActivityTime.qml", this);
+    Caneva* canevaTime = new Caneva("config/displayActivityTime.json", sceneTime);
+    QString actTime = tr("Temps d'activité");
+    std::string sActTime = actTime.toUtf8().constData();
+    replaceTab(sceneTime,sActTime);
+    canevaTime->testPythonActivity(selectedUUID);
+
+
+
+    statusBar->showMessage(tr("Ouverture temps d'activité"));
+
+}
+
 void MainWindow::setApplicationInEnglish()
 {
     menu->setUncheck(frenchText);
@@ -313,7 +328,7 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
     if (reply->error() == QNetworkReply::NoError)
    {
        qDebug() << "connection main";
-       std::string testReponse = reply->readAll();
+       std::string testReponse = reply->readAll().toStdString();
        record.m_WimuRecordList.clear();
        CJsonSerializer::Deserialize(&record, testReponse);
 

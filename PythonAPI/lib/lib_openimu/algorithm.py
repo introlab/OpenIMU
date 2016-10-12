@@ -6,7 +6,7 @@
 from resources import getRecords
 
 class Algorithm(object):
-
+    output = {}
     def __init__(self): pass
     # load function :
     #   This method should be called first to load the data

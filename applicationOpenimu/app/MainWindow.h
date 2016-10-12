@@ -32,7 +32,8 @@ class MainWindow : public QMainWindow
        void retranslateUi();
        bool getRecordsFromDB();
 
-    signals:
+
+signals:
 
     public slots:
 
@@ -43,6 +44,7 @@ class MainWindow : public QMainWindow
     void closeWindow();
     void onTreeItemClicked(QTreeWidgetItem* item, int /*column*/);
     void computeActivityTime();
+    void computePythonActivityTime();
     void closeTab(int);
     void replaceTab(QWidget * replacement, std::string label);
     void openAbout();

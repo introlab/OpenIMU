@@ -81,6 +81,26 @@ void Caneva::testActivity(std::string filePath)
 
 }
 
+void Caneva::testPythonActivity(std::string filePath)
+{
+    //getBlock("activity")->GetInput<frame>("accelData")->Put(availableData);
+    getBlock("activity")->GetInput<int>("bufferSize")->Put({50*60});
+    getBlock("activity")->GetInput<int>("threshold")->Put({300});
+    getBlock("activity")->GetInput<int>("normalG")->Put({9000});
+
+    getBlock("col1.label_title_value")->GetInput<std::string>("inputTitle")->Put(std::vector<std::string>({"Temps d'activité: "}));
+
+    getBlock("col1.row2.col4.label_start_date")->GetInput<std::string>("inputStartDate")->Put(std::vector<std::string>({'Start'}));
+    getBlock("col1.row2.col4.label_end_date")->GetInput<std::string>("inputEndDate")->Put(std::vector<std::string>({'End'}));
+    getBlock("col1.row2.col4.label_days")->GetInput<int>("inputDaysAvailable")->Put(std::vector<int>({1}));
+
+    getBlock("col1.row2.col4.vtotalLabel")->GetInput<int>("inputvtotal")->Put(std::vector<int>({100}));
+    getBlock("col1.row2.col4.vmoyLabel")->GetInput<int>("inputvmoy")->Put(std::vector<int>({10}));
+    getBlock("col1.row2.col4.vmaxLabel")->GetInput<int>("inputvmax")->Put(std::vector<int>({15}));
+    getBlock("col1.row2.col4.vminLabel")->GetInput<int>("inputvmin")->Put(std::vector<int>({12}));
+
+}
+
 void Caneva::setGraphData(std::string folderPath){
     std::vector<int> time ;
     std::vector<int> xaxis;

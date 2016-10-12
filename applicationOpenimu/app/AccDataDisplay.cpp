@@ -35,7 +35,7 @@ void AccDataDisplay::reponseRecue(QNetworkReply* reply)
     if (reply->error() == QNetworkReply::NoError)
    {
        qDebug() << "connection UUID";
-       std::string testReponse =  reply->readAll();
+       std::string testReponse =  reply->readAll().toStdString();
        CJsonSerializer::Deserialize(&acceleroData, testReponse);
 
    }

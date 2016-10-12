@@ -20,6 +20,7 @@ public:
     void test_slider_chart();
     void setSliderLimitValues(int min, int max);
     void setGraphData(std::string filePath);
+    void testPythonActivity(std::string filePath);
 private:
 
     void loadFile(std::string filename);
