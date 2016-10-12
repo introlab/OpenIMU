@@ -56,6 +56,7 @@ class MainWindow : public QMainWindow
     QListWidget* populateDaysFromDataBase();
 
     private:
+       std::string selectedUUID;
        QString folderName;
        QSplitter * splitter;
        Caneva *caneva;

@@ -35,9 +35,7 @@ void AccDataDisplay::reponseRecue(QNetworkReply* reply)
     if (reply->error() == QNetworkReply::NoError)
    {
        qDebug() << "connection UUID";
-       std::string testReponse =  reply->readAll();//"{\"record\":{\"name\" : \"zebi\",\"date\" : \"10/09/2016\",\"format\":\"lol\"}, \"accelerometres\" : [{\"x\":1,\"y\":2,\"z\":3,\"t\":4},{\"x\":1,\"y\":2,\"z\":3,\"t\":4}],\"magnetometres\" : [{\"x\":1,\"y\":2,\"z\":3,\"t\":4},{\"x\":1,\"y\":2,\"z\":3,\"t\":4}],\"gyrometres\" : [{\"x\":1,\"y\":2,\"z\":3,\"t\":4}, {\"x\":1,\"y\":2,\"z\":3,\"t\":4}]}";
-       qDebug() << QString::fromStdString(testReponse);
-
+       std::string testReponse =  reply->readAll();
        CJsonSerializer::Deserialize(&acceleroData, testReponse);
 
    }
@@ -57,9 +55,6 @@ AccDataDisplay::AccDataDisplay(std::string uuid){
     this->grabGesture(Qt::PanGesture);
     this->grabGesture(Qt::PinchGesture);
 
-  //  acceleroData = new WimuAcquisition(uuid,"","",50);
-  //  acceleroData->initialize();
-
     //** Retrieving data from BD
     getDataFromUUIDFromDB(uuid);
     //**
@@ -78,6 +73,8 @@ AccDataDisplay::AccDataDisplay(std::string uuid){
         chart->legend()->setAlignment(Qt::AlignBottom);
         chart->setTheme(QChart::ChartThemeDark);
 
+        rSliderValue = 1;
+        lSliderValue = 0;
 
         chart->createDefaultAxes();
         chart->setTitle(tr("Données accéléromètre (en ms)"));
@@ -143,8 +140,6 @@ AccDataDisplay::AccDataDisplay(std::string uuid){
         rSlider = new RangeSlider(this);
         rSlider->setStartHour(min/1000);
         rSlider->setEndHour(max/1000);
-        rSlider->setLeftSliderRange(min,max);
-        rSlider->setRightSliderRange((long long)(max/2),max);
 
         layout->addLayout(hboxDate);
         layout->addWidget(chartView);
@@ -183,18 +178,20 @@ void AccDataDisplay::slotDisplayMovingAverage(int value){
     }
 
 }
-void AccDataDisplay::leftSliderValueChanged(int value)
+void AccDataDisplay::leftSliderValueChanged(double value)
 {
-    rSlider->setStartHour(WimuAcquisition::minTime(availableData).timestamp + value);
-    sliceData = acceleroData.getData(WimuAcquisition::minTime(availableData).timestamp + value, WimuAcquisition::maxTime(availableData).timestamp);
+    lSliderValue = value;
+    //rSlider->setStartHour(WimuAcquisition::minTime(availableData).timestamp + value);
+    //sliceData = acceleroData.getData(WimuAcquisition::minTime(availableData).timestamp + value, WimuAcquisition::maxTime(availableData).timestamp);
     chart->removeAllSeries();
     fillChartSeries();
     chartView->setChart(chart);
 }
-void AccDataDisplay::rightSliderValueChanged(int value)
+void AccDataDisplay::rightSliderValueChanged(double value)
 {
-    rSlider->setEndHour(WimuAcquisition::maxTime(availableData).timestamp-value);
-    sliceData = acceleroData.getData(WimuAcquisition::minTime(availableData).timestamp + value, WimuAcquisition::maxTime(availableData).timestamp);
+    rSliderValue = value;
+    //rSlider->setEndHour(WimuAcquisition::maxTime(availableData).timestamp-value);
+    //sliceData = acceleroData.getData(WimuAcquisition::minTime(availableData).timestamp + value, WimuAcquisition::maxTime(availableData).timestamp);
     chart->removeAllSeries();
     fillChartSeries();
     chartView->setChart(chart);
@@ -229,14 +226,20 @@ void AccDataDisplay::slotDisplayZAxis(int value){
 }
 std::vector<signed short> AccDataDisplay::movingAverage(int windowSize)
 {
+    int tmpmin = int(sliceData.size()*lSliderValue);
+    int tmpmax = int(sliceData.size()*rSliderValue);
     double sum=0;
-     std::vector<signed short> filteredData;
-    for(int j=0;j<windowSize;j++)
+    std::vector<signed short> filteredData;
+    if(tmpmax-tmpmin < windowSize+1)
+    {
+        return filteredData;
+    }
+    for(int j=tmpmin;j<tmpmin+windowSize;j++)
     {
         sum+=sqrt(pow(sliceData.at(j).x,2.0)+ pow(sliceData.at(j).y,2.0) + pow(sliceData.at(j).z,2.0));
     }
     filteredData.push_back(sum/windowSize);
-    for (int i=1;i<sliceData.size()-windowSize;i++)
+    for (int i=tmpmin+1;i<tmpmax-windowSize;i++)
     {
         sum-=sqrt(pow(sliceData.at(i-1).x,2.0)+pow(sliceData.at(i-1).y,2.0)+ pow(sliceData.at(i-1).z,2.0));
         sum+=sqrt(pow(sliceData.at(i+windowSize-1).x,2.0)+pow(sliceData.at(i+windowSize-1).y,2.0)+ pow(sliceData.at(i+windowSize-1).z,2.0));
@@ -253,8 +256,11 @@ void AccDataDisplay::fillChartSeries(){
     std::vector<signed short> filtered_data;
     filtered_data = movingAverage(10);
     std::vector<float> t;
-
-    for(int k = 0; k <sliceData.size(); k++){
+    int tmpmin = int(sliceData.size()*lSliderValue);
+    int tmpmax = int(sliceData.size()*rSliderValue);
+    qDebug() << tmpmin;
+    qDebug() << tmpmax;
+    for(int k = tmpmin; k <tmpmax; k++){
 
         x.push_back(sliceData.at(k).x);
         y.push_back(sliceData.at(k).y);
@@ -262,6 +268,7 @@ void AccDataDisplay::fillChartSeries(){
         norm_acc.push_back(sqrt(pow(sliceData.at(k).x,2.0) + pow(sliceData.at(k).y,2.0) + pow(sliceData.at(k).z,2.0)));
         t.push_back(k*20); // TO DO Replace w/ real value
     }
+
 
     lineseriesX = new QtCharts::QLineSeries();
     QPen penX(QRgb(0xCF000F));
@@ -302,6 +309,7 @@ void AccDataDisplay::fillChartSeries(){
         lineseriesZ->append(t.at(i),z.at(i));
         lineseriesAccNorm->append(t.at(i),norm_acc.at(i));
     }
+    qDebug() << filtered_data.size();
     for(unsigned int i = 0; i <filtered_data.size(); i++)
     {
         lineseriesMovingAverage->append(t.at(i),filtered_data.at(i));
@@ -322,4 +330,15 @@ void AccDataDisplay::fillChartSeries(){
         chart->addSeries(lineseriesMovingAverage);
 
     chart->createDefaultAxes();
+}
+
+void AccDataDisplay:: firstUpdated(const QVariant &v) {
+      qDebug() << "Called the C++ slot with low value:" << v;
+      leftSliderValueChanged(v.toDouble());
+
+}
+
+void AccDataDisplay:: secondUpdated(const QVariant &v) {
+      qDebug() << "Called the C++ slot with high value:" << v;
+      rightSliderValueChanged(v.toDouble());
 }

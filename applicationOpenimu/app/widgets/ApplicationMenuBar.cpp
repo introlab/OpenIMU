@@ -9,7 +9,7 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     QAction* actionAjouterEnregistrement = new QAction(tr("&Ajouter Enregistrement"), fichier);
     actionAjouterEnregistrement->setShortcut(QKeySequence("Ctrl+R"));
 
-    QAction* actionOuvrir = new QAction(tr("&Ouvrir Enregistrement"),fichier);
+    QAction* actionOuvrir = new QAction(tr("&Charger Enregistrement"),fichier);
     actionOuvrir->setShortcut(QKeySequence("Ctrl+O"));
 
     QAction* actionQuitter = new QAction(tr("&Quitter"),fichier);

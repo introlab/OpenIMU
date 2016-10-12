@@ -32,6 +32,8 @@ public:
     AccDataDisplay(std::string filePath);
     void fillChartSeries();
     bool getDataFromUUIDFromDB(std::string uuid);
+    void leftSliderValueChanged(double value);
+    void rightSliderValueChanged(double value);
 
 public slots:
 
@@ -41,10 +43,11 @@ public slots:
     void slotDisplayNorme(int value);
     void slotDisplayMovingAverage(int value);
     std::vector<signed short> movingAverage(int windowSize);
-    void leftSliderValueChanged(int value);
-    void rightSliderValueChanged(int value);
     void handleResetZoomBtn();
     void reponseRecue(QNetworkReply* reply);
+
+    void firstUpdated(const QVariant &v);
+    void secondUpdated(const QVariant &v);
 
 private:
     DataChart * chart;
@@ -67,6 +70,9 @@ private:
     WimuAcquisition acceleroData;
     std::vector<frame> availableData;
     std::vector<frame> sliceData;
+
+    double rSliderValue;
+    double lSliderValue;
 };
 
 #endif // ACCDATADISPLAY_H

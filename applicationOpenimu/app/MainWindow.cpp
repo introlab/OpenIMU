@@ -83,6 +83,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     splitter->setSizes(QList<int>() << 150 << 600);
     setCentralWidget(splitter);
     statusBar->showMessage(tr("Prêt"));
+    getRecordsFromDB();
 }
 
 MainWindow::~MainWindow(){
@@ -201,15 +202,13 @@ void MainWindow:: computeSteps(){
     }
 }
 void MainWindow::computeActivityTime(){
-
-    std::string reconsrtructPath = folderName.toStdString()+fileSelectedName.toStdString();
-    if(reconsrtructPath != "/" ){
+    if(selectedUUID != ""){
         CustomQmlScene* sceneTime = new CustomQmlScene("displayActivityTime.qml", this);
         Caneva* canevaTime = new Caneva("config/displayActivityTime.json", sceneTime);
         QString actTime = tr("Temps d'activité");
         std::string sActTime = actTime.toUtf8().constData();
         replaceTab(sceneTime,sActTime);
-        canevaTime->testActivity(reconsrtructPath);
+        canevaTime->testActivity(selectedUUID);
     }
     else{
         QMessageBox msgBox;
@@ -316,7 +315,7 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
        qDebug() << "connection main";
        std::string testReponse = reply->readAll();
        CJsonSerializer::Deserialize(&record, testReponse);
-
+       listWidget->clear();
        for(int i=0; i<record.m_WimuRecordList.size();i++)
        {
            listWidget->addItem(QString::fromStdString(record.m_WimuRecordList.at(i).m_recordName));

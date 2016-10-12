@@ -12,20 +12,17 @@ class RangeSlider : public QWidget
     Q_OBJECT
 public:
     explicit RangeSlider(QWidget *parent = 0);
-    void setLeftSliderRange(long long min, long long max);
-    void setRightSliderRange(long long min, long long max);
     void setStartHour(long long min);
     void setEndHour(long long max);
 signals:
 
 public slots:
-    void firstUpdated(const QVariant &v);
-    void secondUpdated(const QVariant &v);
 
 private:
     QLabel * rightLabel;
     QLabel * leftLabel;
     QHBoxLayout* mainLayout;
+    QWidget* refParent;
 
 };
 

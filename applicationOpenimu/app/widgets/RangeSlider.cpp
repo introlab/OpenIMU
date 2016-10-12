@@ -7,18 +7,11 @@
 
 RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent)
 {
- // rightSlider = new QSlider();
- // leftSlider = new QSlider();
     rightLabel = new QLabel();
     leftLabel = new QLabel();
 
- //   leftSlider->setOrientation(Qt::Orientation::Horizontal);
- //   rightSlider->setOrientation(Qt::Orientation::Horizontal);
-
- //   leftSlider->setContentsMargins(10,10,0,10);
- //   rightSlider->setContentsMargins(0,10,10,10);
-
     mainLayout = new QHBoxLayout();
+    refParent = parent;
 
     QQuickView *view = new QQuickView();
     QWidget *container = QWidget::createWindowContainer(view, this);
@@ -30,8 +23,8 @@ RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent)
     // Get pointers to first and second values in range slider
     QQuickItem *object = view->rootObject();
 
-    QObject::connect(object, SIGNAL(firstUpdated(QVariant)),this, SLOT(firstUpdated(QVariant)));
-    QObject::connect(object, SIGNAL(secondUpdated(QVariant)),this, SLOT(secondUpdated(QVariant)));
+    QObject::connect(object, SIGNAL(firstUpdated(QVariant)),parent, SLOT(firstUpdated(QVariant)));
+    QObject::connect(object, SIGNAL(secondUpdated(QVariant)),parent, SLOT(secondUpdated(QVariant)));
 
     mainLayout->addWidget(leftLabel);
     mainLayout->addWidget(container);
@@ -47,40 +40,6 @@ RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent)
     QSizePolicy spRight(QSizePolicy::Preferred, QSizePolicy::Preferred);
     spRight.setHorizontalStretch(4);
     container->setSizePolicy(spRight);
-
-    //connect(leftSlider,SIGNAL(valueChanged(int)),parent,SLOT(leftSliderValueChanged(int)));
-    //connect(rightSlider,SIGNAL(valueChanged(int)),parent,SLOT(rightSliderValueChanged(int)));
-
-}
-
-void RangeSlider:: firstUpdated(const QVariant &v) {
-      qDebug() << "Called the C++ slot with low value:" << v;
-
-    /*  QQuickItem *item =
-          qobject_cast<QQuickItem*>(v.value<QObject*>());
-      qDebug() << "Item dimensions:" << item->width()
-               << item->height();*/
-   }
-
-void RangeSlider:: secondUpdated(const QVariant &v) {
-      qDebug() << "Called the C++ slot with high value:" << v;
-
-    /*  QQuickItem *item =
-          qobject_cast<QQuickItem*>(v.value<QObject*>());
-      qDebug() << "Item dimensions:" << item->width()
-               << item->height();*/
-   }
-
-void RangeSlider::setLeftSliderRange(long long min, long long max){
-  //  if(leftSlider)
-  //  {
-  //      leftSlider->setMinimum(0);
-  //      leftSlider->setMaximum(10);
-  //  }
-}
-void RangeSlider::setRightSliderRange(long long min, long long max){
-  //  rightSlider->setMaximum(10);
- //   rightSlider->setMinimum(0);
 }
 
 void RangeSlider::setStartHour(long long min){
