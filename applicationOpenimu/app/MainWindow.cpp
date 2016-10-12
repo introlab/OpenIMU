@@ -222,6 +222,13 @@ void MainWindow::computeActivityTime(){
 
 }
 
+void MainWindow::computeActivityTime(){
+    std::string activitypercent = dbActivity->run();
+    QString qAP = QString::fromStdString(activitypercent).
+    qDebug() << qAP;
+
+}
+
 void MainWindow::setApplicationInEnglish()
 {
     menu->setUncheck(frenchText);

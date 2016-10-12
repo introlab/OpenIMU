@@ -16,6 +16,7 @@
 #include <QStatusBar>
 #include<QListWidget>
 #include "core/components/blockType/DbBlock.h"
+#include "core/components/blockType/ActivityBlock.h"
 #include"dialogs/RecordsDialog.h"
 #include<QNetworkReply>
 #include<QNetworkAccessManager>
@@ -71,6 +72,7 @@ class MainWindow : public QMainWindow
        HelpDialog *helpDialog;
        QStatusBar * statusBar;
        DbBlock * databaseAccess = new DbBlock;
+       ActivityBlock * dbActivity = new ActivityBlock;
        RecordsDialog * rDialog;
        WimuRecord record;
     };
