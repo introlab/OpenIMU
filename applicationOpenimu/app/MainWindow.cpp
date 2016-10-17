@@ -1,13 +1,13 @@
-#include "mainwindow.h"
-#include "iostream"
 #include <QFileDialog>
-#include "QSplitter"
-#include "AccDataDisplay.h"
-#include "QMessageBox"
 #include "QTableView"
 #include <QListWidgetItem>
 #include<vector>
 #include<QDebug>
+
+#include "AccDataDisplay.h"
+#include "QMessageBox"
+#include "mainwindow.h"
+#include "iostream"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -16,7 +16,6 @@ const QString englishText = "English";
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-    fileSelectedName = "";
     this->grabGesture(Qt::PanGesture);
     this->grabGesture(Qt::PinchGesture);
 
@@ -25,33 +24,34 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     this->setMinimumSize(700,600);
 
     menu = new ApplicationMenuBar(this);
-    this->setMenuBar(menu);
     statusBar = new QStatusBar();
-    statusBar->setStyleSheet("background-color:rgba(230, 233, 239,0.2);");
-    this->setStatusBar(statusBar);
-   mainWidget = new MainWidget(this);
-
+    mainWidget = new MainWidget(this);
     listWidget = new MyListWidget(this);
+    tabWidget = new QTabWidget;
+    spinnerStatusBar = new QLabel;
+    movieSpinnerBar = new QMovie("../applicationOpenimu/app/icons/loaderStatusBar.gif");
+
+    spinnerStatusBar->setMovie(movieSpinnerBar);
+    connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
     connect(listWidget, SIGNAL(itemClicked(QListWidgetItem*)),this, SLOT(onListItemClicked(QListWidgetItem*)));
 
+    this->setMenuBar(menu);
+    this->setStatusBar(statusBar);
+
+    statusBar->setStyleSheet("background-color:rgba(230, 233, 239,0.2);");
     listWidget->setAlternatingRowColors(true);
     listWidget->setStyleSheet("alternate-background-color:#ecf0f1;background-color:white;");
 
     mainWidget->mainLayout->addWidget(listWidget);
 
-    QListWidgetItem *headerItem  = new QListWidgetItem();
-    headerItem->setText(QString(tr("Enregistrements")));
-    listWidget->addItem(headerItem);
     listWidget->setMaximumWidth(150);
-    tabWidget = new QTabWidget;
     tabWidget->setTabsClosable(true);
     tabWidget->setStyleSheet("background-color:white;");
-    connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
     QWidget * homeWidget = new QWidget(); //To do create classe Home widget
     QVBoxLayout* homeLayout = new QVBoxLayout(homeWidget);
     QLabel * homeLabel = new QLabel("Open IMU,logiciel de visualisation et d'analyse pour centrale inertielle");
 
-    QPixmap pic("../applicationOpenimu/app/logo.png");
+    QPixmap pic("../applicationOpenimu/app/icons/logo.png");
     QPixmap scaled=pic.scaled ( 400, 200, Qt::KeepAspectRatio, Qt::FastTransformation );
 
     QLabel *label = new QLabel(this);
@@ -104,15 +104,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     // -- END OF Algorithm Tab -- TODO: MOVE BY MADO
 
 
-    qDebug() << tabWidget->tabBar();
-    qDebug() << tabWidget->tabBar()->tabButton(0,QTabBar::RightSide);
-
     tabWidget->setCurrentWidget(tabWidget->widget(0));
     tabWidget->grabGesture(Qt::PanGesture);
     tabWidget->grabGesture(Qt::PinchGesture);
     mainWidget->mainLayout->addWidget(tabWidget);
     setCentralWidget(mainWidget);
     statusBar->showMessage(tr("Prêt"));
+    statusBar->addPermanentWidget(spinnerStatusBar);
     getRecordsFromDB();
 }
 
@@ -129,32 +127,16 @@ void MainWindow::onListItemClicked(QListWidgetItem* item)
         if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text().toStdString()) == 0)
         {
             selectedUUID = record.m_WimuRecordList.at(i).m_recordId;
-            AccDataDisplay *dataDisplay = new AccDataDisplay(record.m_WimuRecordList.at(i).m_recordId);// C://Users//stef//Desktop//Projet S7-S8//data_step//10//ACC_4.DAT");
-            QString dataAcc = tr("Données accéléromètre");
-            std::string sDataAcc = dataAcc.toUtf8().constData();
-            replaceTab(dataDisplay, sDataAcc);
+            spinnerStatusBar->show();
+            movieSpinnerBar->start();
+            getDataFromUUIDFromDB(selectedUUID);
+            recordsTab = new RecordsWidget(acceleroData,record.m_WimuRecordList.at(i));
+            QString recordInfo = tr("Informations enregistrement");
+            std::string srecordInfo = recordInfo.toUtf8().constData();
+            replaceTab(recordsTab, srecordInfo);
+            movieSpinnerBar->stop();
+            spinnerStatusBar->hide();
         }
-    }
-}
-
-QListWidget* MainWindow::populateDaysFromDataBase()
-{
-    QListWidget* listWidget = new QListWidget(this);
-    for(QString day: databaseAccess->getDaysInDB())
-    {
-        QListWidgetItem *newItem = new QListWidgetItem;
-        newItem->setText(day);
-        listWidget->insertItem(listWidget->count(), newItem);
-    }
-    connect(listWidget, SIGNAL(itemClicked(QListWidgetItem *)), SLOT(dateClicked(QListWidgetItem *)));
-    return listWidget;
-}
-
-void MainWindow::dateClicked(QListWidgetItem *item)
-{
-    if(item)
-    {
-        statusBar->showMessage(item->text());
     }
 }
 
@@ -168,49 +150,19 @@ void MainWindow:: openRecordDialog()
     rDialog->show();
 }
 
-void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int column)
+bool MainWindow::getRecordsFromDB()
 {
-    if(item->parent()!=NULL){
-        fileSelectedName= "/"+item->parent()->text(column)+"/"+item->text(column);
-    }
-    else{
-        fileSelectedName = item->text(column);
-    }
-    QString status = tr("Fichier séléctionné: ") + fileSelectedName;
-    statusBar->showMessage(status);
-    if(fileSelectedName != "" && fileSelectedName.contains("ACC")){
-        std::string reconstructedPath= folderName.toStdString()+"/"+fileSelectedName.toStdString();
-        AccDataDisplay *dataDisplay = new AccDataDisplay(reconstructedPath);
-        QString dataAcc = tr("Données accéléromètre");
-        std::string sDataAcc = dataAcc.toUtf8().constData();
-        replaceTab(dataDisplay, sDataAcc);
-    }
-    else{
-        QMessageBox msgBox;
-        msgBox.setText(tr("Le fichier séléctionné est invalide"));
-        msgBox.setInformativeText(tr("Choissisez un fichier de type ACC.DAT"));
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        msgBox.exec();
-    }
+    QNetworkRequest request(QUrl("http://127.0.0.1:5000/records"));
+    request.setRawHeader("User-Agent", "ApplicationNameV01");
+    request.setRawHeader("Content-Type", "application/json");
 
+    QNetworkAccessManager *manager = new QNetworkAccessManager();
+    QNetworkReply *reply = manager->get(request);
+    bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), this ,SLOT(reponseRecue(QNetworkReply*)));
+
+    return true;
 }
-void MainWindow:: displayRawAccData()
-{
-    if(fileSelectedName != "" && fileSelectedName.contains("ACC")){
-        std::string reconstructedPath= folderName.toStdString()+"/"+fileSelectedName.toStdString();
-        AccDataDisplay *dataDisplay = new AccDataDisplay(reconstructedPath);
-        QString dataAcc = tr("Données accéléromètre");
-        std::string sDataAcc = dataAcc.toUtf8().constData();
-        replaceTab(dataDisplay,sDataAcc);
-    }
-    else{
-        QMessageBox msgBox;
-        msgBox.setText(tr("Le fichier séléctionné est invalide"));
-        msgBox.setInformativeText(tr("Choissisez un fichier de type ACC.DAT"));
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        msgBox.exec();
-    }
-}
+
 bool MainWindow::getDataFromUUIDFromDB(std::string uuid)
 {
     std::string url = "http://127.0.0.1:5000/data?uuid="+uuid;
@@ -246,6 +198,33 @@ void MainWindow::reponseRecueAcc(QNetworkReply* reply)
    }
    delete reply;
 }
+
+void MainWindow::reponseRecue(QNetworkReply* reply)
+{
+    if (reply->error() == QNetworkReply::NoError)
+   {
+       qDebug() << "connection main";
+       std::string testReponse = reply->readAll();
+       record.m_WimuRecordList.clear();
+       CJsonSerializer::Deserialize(&record, testReponse);
+
+       listWidget->clear();
+       for(int i=0; i<record.m_WimuRecordList.size();i++)
+       {
+           listWidget->addItem(QString::fromStdString(record.m_WimuRecordList.at(i).m_recordName));
+       }
+   }
+   else
+   {
+       qDebug() << "error connect";
+       qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
+       qDebug() << "Request failed, " << reply->errorString();
+       qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
+       qDebug() << reply->readAll();
+   }
+   delete reply;
+}
+
 void MainWindow:: computeSteps(){
         CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
         Caneva* canevaSteps = new Caneva("config/displayStepNumber.json", sceneSteps);
@@ -352,41 +331,4 @@ void MainWindow::closeWindow(){
     this->close();
 }
 
-bool MainWindow::getRecordsFromDB()
-{
-    QNetworkRequest request(QUrl("http://127.0.0.1:5000/records"));
-    request.setRawHeader("User-Agent", "ApplicationNameV01");
-    request.setRawHeader("Content-Type", "application/json");
-
-    QNetworkAccessManager *manager = new QNetworkAccessManager();
-    QNetworkReply *reply = manager->get(request);
-    bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), this,SLOT(reponseRecue(QNetworkReply*)));
-
-    return true;
-}
-
-void MainWindow::reponseRecue(QNetworkReply* reply)
-{
-    if (reply->error() == QNetworkReply::NoError)
-   {
-       qDebug() << "connection main";
        std::string testReponse(reply->readAll());
-       record.m_WimuRecordList.clear();
-       CJsonSerializer::Deserialize(&record, testReponse);
-
-       listWidget->clear();
-       for(int i=0; i<record.m_WimuRecordList.size();i++)
-       {
-           listWidget->addItem(QString::fromStdString(record.m_WimuRecordList.at(i).m_recordName));
-       }
-   }
-   else
-   {
-       qDebug() << "error connect";
-       qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
-       qDebug() << "Request failed, " << reply->errorString();
-       qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
-       qDebug() << reply->readAll();
-   }
-   delete reply;
-}

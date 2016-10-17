@@ -49,19 +49,6 @@ std::vector<QString> DbBlock::getDaysInDB()
      return true;
  }
 
- bool DbBlock::getRecordsFromDB()
- {
-     QNetworkRequest request(QUrl("http://127.0.0.1:5000/records"));
-     request.setRawHeader("User-Agent", "ApplicationNameV01");
-     request.setRawHeader("Content-Type", "application/json");
-
-     QNetworkAccessManager *manager = new QNetworkAccessManager();
-     QNetworkReply *reply = manager->get(request);
-     bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), this,SLOT(reponseRecue(QNetworkReply*)));
-
-     return true;
- }
-
  void DbBlock::reponseRecue(QNetworkReply* reply)
  {
      if (reply->error() == QNetworkReply::NoError)

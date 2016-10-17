@@ -1,11 +1,8 @@
 #include "AccDataDisplay.h"
-#include "acquisition/WimuAcquisition.h"
+
 #include <math.h>
 #include <QPropertyAnimation>
-#include "graph/ChartView.h"
 #include <QQuickView>
-#include <QPushButton>
-#include <QEventLoop>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -14,51 +11,24 @@ AccDataDisplay::AccDataDisplay()
 
 }
 
-bool AccDataDisplay::getDataFromUUIDFromDB(std::string uuid)
+void AccDataDisplay::showSimplfiedDataDisplay()
 {
-    std::string url = "http://127.0.0.1:5000/data?uuid="+uuid;
-    QNetworkRequest request(QUrl(QString::fromStdString(url)));
-    request.setRawHeader("User-Agent", "ApplicationNameV01");
-    request.setRawHeader("Content-Type", "application/json");
-
-    QNetworkAccessManager *manager = new QNetworkAccessManager();
-    QNetworkReply *reply = manager->get(request);
-    QEventLoop loop;
-    bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,SLOT(quit()));
-    loop.exec();
-    reponseRecue(reply);
-    return true;
+    checkboxX->hide();
+    checkboxY->hide();
+    checkboxZ->hide();
+    checkboxAccNorm->hide();
+    checkboxMovingAverage->hide();
+    rSlider->hide();
+    pbtn->hide();
+    dateRecorded->hide();
 }
 
-void AccDataDisplay::reponseRecue(QNetworkReply* reply)
-{
-    if (reply->error() == QNetworkReply::NoError)
-   {
-       qDebug() << "connection UUID";
-       std::string testReponse =  reply->readAll();
-       CJsonSerializer::Deserialize(&acceleroData, testReponse);
-
-   }
-   else
-   {
-       qDebug() << "error connect";
-       qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
-       qDebug() << "Request failed, " << reply->errorString();
-       qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
-       qDebug() << reply->readAll();
-   }
-   delete reply;
-}
-
-AccDataDisplay::AccDataDisplay(std::string uuid){
+AccDataDisplay::AccDataDisplay(WimuAcquisition accData){
 
     this->grabGesture(Qt::PanGesture);
     this->grabGesture(Qt::PinchGesture);
 
-    //** Retrieving data from BD
-    getDataFromUUIDFromDB(uuid);
-    //**
-
+    acceleroData = accData;
     availableData = acceleroData.getData();
     sliceData = availableData;
 
@@ -88,7 +58,7 @@ AccDataDisplay::AccDataDisplay(std::string uuid){
         //Initialize Recording Date
         QHBoxLayout *hboxDate = new QHBoxLayout();
 
-        QPushButton* pbtn = new QPushButton("Reset Zoom");
+        pbtn = new QPushButton("Reset Zoom");
         connect(pbtn, SIGNAL (released()), this, SLOT (handleResetZoomBtn()));
 
         pbtn->setStyleSheet(
@@ -104,7 +74,7 @@ AccDataDisplay::AccDataDisplay(std::string uuid){
             "QPushButton:focus:hover{ QPushButton{background-color: red;  border-width: 2px; border-radius: 10px; font: bold 10px; min-width: 6em; padding: 4px;}"
             "QPushButton:focus:pressed{{QPushButton{background-color: green;  border-width: 2px; border-radius: 10px; font: bold 10px; min-width: 6em; padding: 4px;}");
 
-        QLabel* dateRecorded = new QLabel();
+        dateRecorded = new QLabel();
         dateRecorded->setText(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(acceleroData.getDates().back().date));
         hboxDate->addStretch();
         hboxDate->addWidget(dateRecorded);
