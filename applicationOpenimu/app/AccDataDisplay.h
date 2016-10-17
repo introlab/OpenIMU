@@ -10,14 +10,15 @@
 #include <QtCharts/QValueAxis>
 #include <QSlider>
 #include <QCheckBox>
+#include <QPushButton>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QNetworkAccessManager>
+
 #include "acquisition/WimuAcquisition.h"
 #include "widgets/RangeSlider.h"
 #include "graph/DataChart.h"
 #include "graph/ChartView.h"
-
-#include<QNetworkReply>
-#include<QNetworkRequest>
-#include<QNetworkAccessManager>
 #include"../../acquisition/CJsonSerializer.h"
 #include"../../acquisition/WimuRecord.h"
 
@@ -29,11 +30,11 @@ class AccDataDisplay : public QWidget
 
 public:
     AccDataDisplay();
-    AccDataDisplay(std::string filePath);
+    AccDataDisplay( WimuAcquisition accData);
     void fillChartSeries();
-    bool getDataFromUUIDFromDB(std::string uuid);
     void leftSliderValueChanged(double value);
     void rightSliderValueChanged(double value);
+    void showSimplfiedDataDisplay();
 
 public slots:
 
@@ -44,8 +45,6 @@ public slots:
     void slotDisplayMovingAverage(int value);
     std::vector<signed short> movingAverage(int windowSize);
     void handleResetZoomBtn();
-    void reponseRecue(QNetworkReply* reply);
-
     void firstUpdated(const QVariant &v);
     void secondUpdated(const QVariant &v);
 
@@ -63,6 +62,8 @@ private:
     QCheckBox *checkboxZ;
     QCheckBox *checkboxAccNorm;
     QCheckBox *checkboxMovingAverage;
+    QLabel* dateRecorded;
+    QPushButton*pbtn;
 
     RangeSlider *rSlider;
     QVBoxLayout* layout;

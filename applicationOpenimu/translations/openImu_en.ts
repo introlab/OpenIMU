@@ -41,37 +41,37 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AccDataDisplay</name>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="80"/>
+        <location filename="../app/AccDataDisplay.cpp" line="50"/>
         <source>Données accéléromètre (en ms)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="115"/>
-        <location filename="../app/AccDataDisplay.cpp" line="285"/>
+        <location filename="../app/AccDataDisplay.cpp" line="85"/>
+        <location filename="../app/AccDataDisplay.cpp" line="255"/>
         <source>Axe X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="116"/>
-        <location filename="../app/AccDataDisplay.cpp" line="292"/>
+        <location filename="../app/AccDataDisplay.cpp" line="86"/>
+        <location filename="../app/AccDataDisplay.cpp" line="262"/>
         <source>Axe Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="117"/>
-        <location filename="../app/AccDataDisplay.cpp" line="298"/>
+        <location filename="../app/AccDataDisplay.cpp" line="87"/>
+        <location filename="../app/AccDataDisplay.cpp" line="268"/>
         <source>Axe Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="118"/>
-        <location filename="../app/AccDataDisplay.cpp" line="302"/>
+        <location filename="../app/AccDataDisplay.cpp" line="88"/>
+        <location filename="../app/AccDataDisplay.cpp" line="272"/>
         <source>Norme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="119"/>
-        <location filename="../app/AccDataDisplay.cpp" line="311"/>
+        <location filename="../app/AccDataDisplay.cpp" line="89"/>
+        <location filename="../app/AccDataDisplay.cpp" line="281"/>
         <source>Moyenne mobile</source>
         <translation type="unfinished"></translation>
     </message>
@@ -174,68 +174,48 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../app/MainWindow.cpp" line="42"/>
-        <source>Enregistrements</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../app/MainWindow.cpp" line="69"/>
-        <location filename="../app/MainWindow.cpp" line="277"/>
+        <location filename="../app/MainWindow.cpp" line="256"/>
         <source>Accueil</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="79"/>
+        <location filename="../app/MainWindow.cpp" line="76"/>
         <source>Prêt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="97"/>
-        <location filename="../app/MainWindow.cpp" line="148"/>
-        <location filename="../app/MainWindow.cpp" line="166"/>
-        <source>Données accéléromètre</source>
+        <location filename="../app/MainWindow.cpp" line="98"/>
+        <source>Informations enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="143"/>
-        <source>Fichier séléctionné: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../app/MainWindow.cpp" line="154"/>
-        <location filename="../app/MainWindow.cpp" line="172"/>
-        <source>Le fichier séléctionné est invalide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../app/MainWindow.cpp" line="155"/>
-        <location filename="../app/MainWindow.cpp" line="173"/>
-        <location filename="../app/MainWindow.cpp" line="237"/>
-        <source>Choissisez un fichier de type ACC.DAT</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../app/MainWindow.cpp" line="216"/>
+        <location filename="../app/MainWindow.cpp" line="195"/>
         <source>Compteur de pas</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="221"/>
+        <location filename="../app/MainWindow.cpp" line="200"/>
         <source>Ouverture compteur de pas</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="227"/>
+        <location filename="../app/MainWindow.cpp" line="206"/>
         <source>Temps d&apos;activité</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="236"/>
+        <location filename="../app/MainWindow.cpp" line="215"/>
         <source>Pas de fichier séléctionné</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="242"/>
+        <location filename="../app/MainWindow.cpp" line="216"/>
+        <source>Choissisez un fichier de type ACC.DAT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="221"/>
         <source>Ouverture temps d&apos;activité</source>
         <translation type="unfinished"></translation>
     </message>

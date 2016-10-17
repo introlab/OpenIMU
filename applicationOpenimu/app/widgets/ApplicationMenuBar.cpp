@@ -59,7 +59,7 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     this->addMenu(preference);
     this->addMenu(aide);
 
-    connect(actionDonneeBrutes, SIGNAL(triggered()), parent, SLOT(displayRawAccData()));
+    //connect(actionDonneeBrutes, SIGNAL(triggered()), parent, SLOT(displayRawAccData()));
     connect(actionOuvrir, SIGNAL(triggered()), parent, SLOT(openFile()));
     connect(actionAjouterEnregistrement, SIGNAL(triggered()), parent, SLOT(openRecordDialog()));
     connect(actionNombreDePas, SIGNAL(triggered()), parent, SLOT(computeSteps()));
