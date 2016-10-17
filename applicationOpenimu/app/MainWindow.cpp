@@ -4,6 +4,7 @@
 #include "QSplitter"
 #include "AccDataDisplay.h"
 #include "QMessageBox"
+#include "QTableView"
 #include <QListWidgetItem>
 #include<vector>
 #include<QDebug>
@@ -67,6 +68,41 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     homeLayout->addSpacing(100);
     homeLayout -> setAlignment(homeLabel,Qt::AlignCenter);
     tabWidget->addTab(homeWidget,tr("Accueil"));
+
+    // -- Algorithm Tab -- TODO: MOVE BY MADO
+    QWidget * algorithmWidget = new QWidget(); //To do create classe Home widget
+    QVBoxLayout* algorithmLayout = new QVBoxLayout(algorithmWidget);
+
+    // -- Algorithm Section
+    QLabel *algorithmLabel = new QLabel(tr("Algorithms"));
+
+    QTableView *algorithmTableView = new QTableView(this);
+   // connect(algorithmTableView, SIGNAL(itemClicked(QTableViewItem*)),this, SLOT(onListItemClicked(QTableViewItem*)));
+
+    //algorithmTableView->setAlternatingRowColors(true);
+    //algorithmTableView->setStyleSheet("alternate-background-color:#ecf0f1;background-color:white;");
+
+    QStandardItemModel *algorithmModel = new QStandardItemModel(this);
+    algorithmModel->setHeaderData(0, Qt::Horizontal, QObject::tr("ID"));
+    algorithmModel->setHeaderData(1, Qt::Horizontal, QObject::tr("Name"));
+    algorithmModel->setHeaderData(2, Qt::Horizontal, QObject::tr("Description"));
+    algorithmModel->setHeaderData(3, Qt::Horizontal, QObject::tr("Author"));
+
+    algorithmTableView->setModel(algorithmModel);
+    algorithmTableView->show();
+
+    // -- Parameter Section
+    QLabel *parameterLabel = new QLabel(tr("Parameter(s)"));
+
+    algorithmLayout->addWidget(algorithmLabel);
+    algorithmLayout->addWidget(algorithmTableView);
+    algorithmLayout->addWidget(parameterLabel);
+    algorithmWidget->setLayout(algorithmLayout);
+
+    tabWidget->addTab(algorithmWidget,tr("Algorithmes"));
+
+    // -- END OF Algorithm Tab -- TODO: MOVE BY MADO
+
 
     qDebug() << tabWidget->tabBar();
     qDebug() << tabWidget->tabBar()->tabButton(0,QTabBar::RightSide);
@@ -196,7 +232,7 @@ void MainWindow::reponseRecueAcc(QNetworkReply* reply)
     if (reply->error() == QNetworkReply::NoError)
    {
        qDebug() << "connection UUID";
-       std::string testReponse =  reply->readAll();
+       std::string testReponse(reply->readAll());
        CJsonSerializer::Deserialize(&acceleroData, testReponse);
 
    }
@@ -334,7 +370,7 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
     if (reply->error() == QNetworkReply::NoError)
    {
        qDebug() << "connection main";
-       std::string testReponse = reply->readAll();
+       std::string testReponse(reply->readAll());
        record.m_WimuRecordList.clear();
        CJsonSerializer::Deserialize(&record, testReponse);
 
