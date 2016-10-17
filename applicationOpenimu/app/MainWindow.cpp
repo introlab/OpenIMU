@@ -28,23 +28,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     statusBar = new QStatusBar();
     statusBar->setStyleSheet("background-color:rgba(230, 233, 239,0.2);");
     this->setStatusBar(statusBar);
-    splitter = new QSplitter;
-    setCentralWidget(splitter);
+   mainWidget = new MainWidget(this);
 
-    splitter->setHandleWidth(30);
-    splitter->handle(1);
-    splitter->setSizes(QList<int>() << 150 << 600);
-    splitter->setFixedWidth(150);
-    splitter->setStyleSheet("background-color:rgba(230, 233, 239,0.2);");
     listWidget = new MyListWidget(this);
     connect(listWidget, SIGNAL(itemClicked(QListWidgetItem*)),this, SLOT(onListItemClicked(QListWidgetItem*)));
 
     listWidget->setAlternatingRowColors(true);
     listWidget->setStyleSheet("alternate-background-color:#ecf0f1;background-color:white;");
 
-    //Implementation listWidget for days in dB
-   //  splitter->addWidget(populateDaysFromDataBase());
-    splitter->addWidget(listWidget);
+    mainWidget->mainLayout->addWidget(listWidget);
 
     QListWidgetItem *headerItem  = new QListWidgetItem();
     headerItem->setText(QString(tr("Enregistrements")));
@@ -57,7 +49,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QWidget * homeWidget = new QWidget(); //To do create classe Home widget
     QVBoxLayout* homeLayout = new QVBoxLayout(homeWidget);
     QLabel * homeLabel = new QLabel("Open IMU,logiciel de visualisation et d'analyse pour centrale inertielle");
-   // QWidget* logo = new QWidget;
 
     QPixmap pic("../applicationOpenimu/app/logo.png");
     QPixmap scaled=pic.scaled ( 400, 200, Qt::KeepAspectRatio, Qt::FastTransformation );
@@ -83,17 +74,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     tabWidget->setCurrentWidget(tabWidget->widget(0));
     tabWidget->grabGesture(Qt::PanGesture);
     tabWidget->grabGesture(Qt::PinchGesture);
-    splitter->addWidget(tabWidget);
-    splitter->setSizes(QList<int>() << 150 << 600);
-    setCentralWidget(splitter);
+    mainWidget->mainLayout->addWidget(tabWidget);
+    setCentralWidget(mainWidget);
     statusBar->showMessage(tr("Prêt"));
     getRecordsFromDB();
 }
 
 MainWindow::~MainWindow(){
-    delete splitter;
     delete caneva;
-    delete mainWidget;
     delete menu ;
     delete scene;
 }

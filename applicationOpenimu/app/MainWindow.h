@@ -7,8 +7,8 @@
 #include "string.h"
 #include "CustomQmlScene.h"
 #include "core/Caneva.h"
-#include <QSplitter>
 #include "widgets/MyTreeWidget.h"
+#include "widgets/MainWidget.h"
 #include "widgets/MyListWidget.h"
 #include <QWidget>
 #include "dialogs/AboutDialog.h"
@@ -61,15 +61,13 @@ class MainWindow : public QMainWindow
     private:
        std::string selectedUUID;
        QString folderName;
-       QSplitter * splitter;
+       MainWidget * mainWidget;
        Caneva *caneva;
-       QWidget *mainWidget;
        ApplicationMenuBar* menu ;
        CustomQmlScene* scene;
        MyListWidget  * listWidget;
        QTabWidget *tabWidget;
        QString fileSelectedName;
-       QWidget *dataView;
        AboutDialog *aboutDialog;
        HelpDialog *helpDialog;
        QStatusBar * statusBar;
