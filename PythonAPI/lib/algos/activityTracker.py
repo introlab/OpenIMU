@@ -7,27 +7,27 @@ import resources
 
 
 class activityTracker(Algorithm):
-    def __init__(self):
-        self.data = None
-        pass
+    data = None
     def test(self):
         return {'Hello' : 'world'}
-    def load(self,database,request):
-            uuid = request.args.get('uuid')
-            print('db:' +str(database))
 
-            schema = schemas.Sensor(many=True)
-            ref = database.db.accelerometres.find({'ref': ObjectId(request.args.get('uuid'))})
-            acc, errors = schema.dump(ref)
-            self.data =acc
-            return self.data
+    def __init__(self):
+        super(activityTracker,self).__init__()
+        self.params.threshold = 0
+        self.params.uuid = 0
+
+
     def run(self):
+        schema = schemas.Sensor(many=True)
+        ref = self.database.db.accelerometres.find({'ref': ObjectId(self.params.uuid)})
+        acc, errors = schema.dump(ref)
+        self.data = acc
         x = [sqrt(snap.get('x') ** 2 + snap.get('y') ** 2 + snap.get('z') ** 2)
              for snap in self.data]
         diff = numpy.diff(x)
         total = 0
         for n in diff:
-            if abs(n) > 20:
+            if abs(n) > self.params.threshold:
                 total = total + 1
 
-        return 100*total/len(diff)
+        return 100*total

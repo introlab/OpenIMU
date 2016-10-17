@@ -3,7 +3,6 @@ import datetime
 from flask import jsonify, request, make_response
 from flask_restful import Resource, Api, abort,reqparse
 from lib_openimu import  conf
-import algos.activityTracker
 import algos
 from shared import mongo
 import schemas
@@ -183,29 +182,32 @@ class TestInsert(Resource):
         mongo.db.accelerometres.insert(result)
         return str(uuid)
 
-
-class Tracker_Activity(Resource):
-    def get(self):
-        schema = schemas.Sensor(many=True)
-        accelerometres,errors = schema.dump(mongo.db.accelerometres.find({'ref': ObjectId(uuid)}))
-
-        total = algos.activityTracker.run(accelerometres)
-        #activity = algos.activity_tracker()
-        #activity.getInput()
-        #activity.run()
-        response = total
-        return response
-
-
 class Algo(Resource):
     def get(self):
         modulename = 'algos.'+request.args.get('filename')
 
         my_module = __import__(modulename, globals(), locals(), [request.args.get('filename')], -1)
-        print(my_module)
-        print('db:' + str(mongo))
         my_class = getattr(my_module,request.args.get('filename'))
         instance = my_class()
-        instance.load(database=mongo, request=request)
-
+        instance.database = mongo
+        instance.load(request.args)
         return instance.run()
+
+class Params(Resource):
+    def get(self):
+        modulename = 'algos.'+request.args.get('filename')
+        my_module = __import__(modulename, globals(), locals(), [request.args.get('filename')], -1)
+        my_class = getattr(my_module,request.args.get('filename'))
+        instance = my_class()
+        #instance.database = mongo
+        return str(instance.params.keys())
+
+class AlgoList(Resource):
+    def get(self):
+        modulename = 'algos'
+        print(algos)
+        package = __import__('algos')
+        print dir(package)
+
+        print([module_name for module_name in dir(package) if not module_name.startswith("__")])
+        return [module_name for module_name in dir(package) if not module_name.startswith("__")]
