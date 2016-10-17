@@ -57,7 +57,7 @@ class MainWindow : public QMainWindow
     bool getRecordsFromDB();
     bool getDataFromUUIDFromDB(std::string uuid);
     void reponseRecueAcc(QNetworkReply* reply);
-
+    void openAlgorithmTab();
     private:
 
    QTabWidget *tabWidget;

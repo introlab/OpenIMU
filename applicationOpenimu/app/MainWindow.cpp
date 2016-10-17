@@ -68,7 +68,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     homeLayout->addSpacing(100);
     homeLayout -> setAlignment(homeLabel,Qt::AlignCenter);
     tabWidget->addTab(homeWidget,tr("Accueil"));
-
+/*
     // -- Algorithm Tab -- TODO: MOVE BY MADO
     QWidget * algorithmWidget = new QWidget(); //To do create classe Home widget
     QVBoxLayout* algorithmLayout = new QVBoxLayout(algorithmWidget);
@@ -103,7 +103,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     // -- END OF Algorithm Tab -- TODO: MOVE BY MADO
 
-
+*/
     tabWidget->setCurrentWidget(tabWidget->widget(0));
     tabWidget->grabGesture(Qt::PanGesture);
     tabWidget->grabGesture(Qt::PinchGesture);
@@ -130,7 +130,7 @@ void MainWindow::onListItemClicked(QListWidgetItem* item)
             spinnerStatusBar->show();
             movieSpinnerBar->start();
             getDataFromUUIDFromDB(selectedUUID);
-            recordsTab = new RecordsWidget(acceleroData,record.m_WimuRecordList.at(i));
+            recordsTab = new RecordsWidget(this,acceleroData,record.m_WimuRecordList.at(i));
             QString recordInfo = tr("Informations enregistrement");
             std::string srecordInfo = recordInfo.toUtf8().constData();
             replaceTab(recordsTab, srecordInfo);
@@ -148,6 +148,11 @@ void MainWindow:: openRecordDialog()
 {
     rDialog = new RecordsDialog;
     rDialog->show();
+}
+
+void MainWindow::openAlgorithmTab()
+{
+
 }
 
 bool MainWindow::getRecordsFromDB()
@@ -330,5 +335,3 @@ void MainWindow::closeTab(int index){
 void MainWindow::closeWindow(){
     this->close();
 }
-
-       std::string testReponse(reply->readAll());

@@ -16,11 +16,12 @@ class RecordsWidget: public QWidget
 
     public:
     RecordsWidget();
-    RecordsWidget(WimuAcquisition data, RecordInfo record);
+    RecordsWidget(QWidget *parent,WimuAcquisition data, RecordInfo record);
 
     ~RecordsWidget();
 
     public slots:
+    void openFullGraphSlot();
 
     private:
     QGridLayout* layout;

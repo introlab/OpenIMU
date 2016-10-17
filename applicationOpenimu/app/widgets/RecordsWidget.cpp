@@ -1,11 +1,7 @@
 #include "RecordsWidget.h"
 
-RecordsWidget::RecordsWidget()
-{
 
-}
-
-RecordsWidget::RecordsWidget(WimuAcquisition data, RecordInfo rcd)
+RecordsWidget::RecordsWidget(QWidget *parent,WimuAcquisition data, RecordInfo rcd):QWidget(parent)
 {
     layout = new QGridLayout;
     this->setLayout(layout);
@@ -41,9 +37,15 @@ RecordsWidget::RecordsWidget(WimuAcquisition data, RecordInfo rcd)
                          "min-width: 10em;"
                          "padding: 6px; }"
      );
+
+    connect(seeFullGraphBtn, SIGNAL(clicked()), this, SLOT(openFullGraphSlot()));
+    connect(goToNextStep, SIGNAL(clicked()), parent, SLOT(openAlgorithmTab()));
 }
 
 RecordsWidget::~RecordsWidget()
 {
+
+}
+void RecordsWidget::openFullGraphSlot(){
 
 }
