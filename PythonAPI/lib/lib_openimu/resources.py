@@ -9,6 +9,7 @@ import schemas
 import numpy
 from math import sqrt
 from bson.objectid import ObjectId
+import os
 
 class InsertRecord(Resource):
     def post(self):
@@ -202,12 +203,12 @@ class Params(Resource):
         #instance.database = mongo
         return str(instance.params.keys())
 
+
 class AlgoList(Resource):
     def get(self):
-        modulename = 'algos'
-        print(algos)
-        package = __import__('algos')
-        print dir(package)
+        files = [os.path.splitext(file)[0]
+                for file in os.listdir("../lib/algos")
+                 if (file.endswith(".py") and not file.startswith('__'))
+                ]
 
-        print([module_name for module_name in dir(package) if not module_name.startswith("__")])
-        return [module_name for module_name in dir(package) if not module_name.startswith("__")]
+        return files
