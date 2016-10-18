@@ -212,3 +212,26 @@ class AlgoList(Resource):
                 ]
 
         return files
+
+class Position(Resource):
+    def get(self):
+        schema = schemas.Position(many=True)
+        positions,errors = schema.dump(mongo.db.position.find())
+        if errors:
+            abort(401, message=str(errors))
+        return positions
+
+    def post(self):
+        schema = schemas.Position()
+        position, errors = schema.load(request.json)
+        if errors:
+            abort(401, message=str(errors))
+        mongo.db.position.insert(position)
+        return
+
+    def delete(self):
+        name = request.args.get('pos')
+        if name is None:
+            abort(401,message='enter valid name')
+        res = mongo.db.position.delete_many({'name':name})
+        return 'Affected ' + str(res.deleted_count) + ' entries.'
