@@ -1,5 +1,5 @@
 from collections import defaultdict
-import datetime
+import datetime as dt
 from flask import jsonify, request, make_response
 from flask_restful import Resource, Api, abort,reqparse
 from lib_openimu import  conf
@@ -57,8 +57,8 @@ class InsertRecord(Resource):
 class getRecords(Resource):
     def get(self):
         schema = schemas.Record(many=True)
-        return schema.dump(mongo.db.record.find({},{'name':1,'_id':1}))
-
+        return schema.dump(mongo.db.record.find())
+        
 class getDataWithOptions(Resource):
     def get(self):
         schemaDataRequestWithOptions = schemas.DataRequestWithOptions()
