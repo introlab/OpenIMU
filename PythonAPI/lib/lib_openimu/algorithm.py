@@ -9,7 +9,7 @@ from resources import getRecords
 import json
 
 class Algorithm(object):
-    _params = None
+    _params = {}
     _database = None
 
 

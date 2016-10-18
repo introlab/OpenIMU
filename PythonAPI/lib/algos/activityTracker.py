@@ -3,7 +3,6 @@ from bson.objectid import ObjectId
 import numpy
 from algorithm import Algorithm
 from  lib_openimu import schemas
-import resources
 
 
 class activityTracker(Algorithm):
@@ -15,7 +14,6 @@ class activityTracker(Algorithm):
         super(activityTracker,self).__init__()
         self.params.threshold = 0
         self.params.uuid = 0
-
 
     def run(self):
         schema = schemas.Sensor(many=True)
