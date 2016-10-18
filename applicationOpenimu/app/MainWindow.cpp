@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     this->setWindowTitle(QString::fromUtf8("Open-IMU"));
     this->setStyleSheet("background: rgba(246, 254, 254,0.8)");
-    this->setMinimumSize(700,600);
+    this->setMinimumSize(900,700);
 
     menu = new ApplicationMenuBar(this);
     statusBar = new QStatusBar();
@@ -152,7 +152,8 @@ void MainWindow:: openRecordDialog()
 
 void MainWindow::openAlgorithmTab()
 {
-
+    algorithmTab = new AlgorithmTab();
+    replaceTab(algorithmTab,"Algorithmes");
 }
 
 bool MainWindow::getRecordsFromDB()
