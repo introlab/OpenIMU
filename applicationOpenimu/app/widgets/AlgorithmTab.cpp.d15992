@@ -9,21 +9,24 @@ AlgorithmTab::AlgorithmTab(QWidget * parent) : QWidget(parent)
         algorithmLabel = new QLabel(tr("Algorithmes"));
         algorithmTableWidget = new QTableWidget(this);
 
+        //connect(algorithmTableView, SIGNAL(itemClicked(QTableViewItem*)),this, SLOT(onListItemClicked(QTableViewItem*)));
+        //algorithmTableView->setAlternatingRowColors(true);
+        //algorithmTableView->setStyleSheet("alternate-background-color:#ecf0f1;background-color:white;");
+
         algorithmTableWidget->setRowCount(10);
         algorithmTableWidget->setColumnCount(4);
 
         algorithmTableHeaders<<"Id"<<"Nom"<<"Description"<<"Auteur";
         algorithmTableWidget->setHorizontalHeaderLabels(algorithmTableHeaders);
-        algorithmTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        algorithmTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-        algorithmTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-        algorithmTableWidget->setStyleSheet("alternate-background-color:black;background-color:white;");
-        //algorithmTableWidget->verticalHeader()->setVisible(false);
-
 
         algorithmTableWidget->setItem(0, 1, new QTableWidgetItem("Hello"));
+        algorithmTableWidget->setFlags(!Qt::ItemIsEditable);
 
-        connect(algorithmTableWidget, SIGNAL(doubleClicked(const QModelIndex& )), this, SLOT(openParametersWindow(const QModelIndex &)));
+        connect(this, SIGNAL(doubleClicked(const QModelIndex& )), this, SLOT(OpenParametersWindow(const QModelIndex&)));
+
+
+        //algorithmTableWidget->setModel(algorithmModel);
+        //algorithmTableWidget->show();
 
         // -- Parameter Section
         parameterLabel = new QLabel(tr("Paramètre(s)"));
@@ -32,12 +35,10 @@ AlgorithmTab::AlgorithmTab(QWidget * parent) : QWidget(parent)
         algorithmLayout->addWidget(algorithmTableWidget);
         algorithmLayout->addWidget(parameterLabel);
         this->setLayout(algorithmLayout);
+
 }
 
-void AlgorithmTab::openParametersWindow(const QModelIndex &index)
+void AlgorithmTab::OpenParametersWindow( QModelIndex i )
 {
-    if (index.isValid())
-    {
-        algorithmTableWidget->setItem(index.row(), 2, new QTableWidgetItem("Goodbye"));
-    }
+
 }
