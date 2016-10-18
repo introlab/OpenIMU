@@ -43,7 +43,12 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
 
     recordDetails = new QLabel(tr("Détails de l'enregistrement: "));
     userDetails = new QLineEdit();
-    userDetails->setMinimumHeight(30);
+    userDetails->setMinimumHeight(20);
+
+    spinner = new QLabel();
+    movie = new QMovie("../applicationOpenimu/app/icons/upload_loader.gif");
+
+    spinner->setMovie(movie);
     mainLayout->addWidget(selectRecord,0,0);
 
     mainLayout->addWidget(imuSelectComboBox,1,0);
@@ -60,6 +65,10 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
     mainLayout->addWidget(folderSelected,8,0);
 
     mainLayout->addWidget(addRecord,9,0);
+
+    mainLayout->addWidget(spinner,10,0,Qt::AlignCenter);
+
+    mainLayout->addWidget(successLabel,11,0,Qt::AlignCenter);
 
     connect(addRecord, SIGNAL(clicked()), this, SLOT(addRecordSlot()));
     connect(selectRecord, SIGNAL(clicked()), this, SLOT(selectRecordSlot()));
@@ -99,6 +108,9 @@ void RecordsDialog::selectRecordSlot()
 
 void RecordsDialog::addRecordSlot()
 {
+    spinner->show();
+    movie->start();
+
     QDir* dir = new QDir(folderToAdd);
       dir->setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
       qDebug() << "Scanning: " << dir->path();
@@ -133,7 +145,12 @@ void RecordsDialog::addRecordSlot()
       WimuAcquisition* acceleroData = new WimuAcquisition(filePathAcc,filePathGyr,filePathMag,50);
       acceleroData->initialize();
 
-      CJsonSerializer::Serialize(acceleroData,recordName->text().toStdString(),"", output);
+      RecordInfo info;
+      info.m_recordName = recordName->text().toStdString();
+      info.m_imuType = imuSelectComboBox->currentText().toStdString();
+      info.m_imuPosition = imuPositionComboBox->currentText().toStdString();
+      info.m_recordDetails = userDetails->text().toStdString();
+      CJsonSerializer::Serialize(acceleroData,info,"", output);
       qDebug("OUTPUT:");
       QString qstr = QString::fromStdString(output);
       qDebug()<<qstr;
@@ -144,7 +161,9 @@ void RecordsDialog::addRecordSlot()
 
     databaseAccess = new DbBlock;
     databaseAccess->addRecordInDB(QString::fromStdString(output));
+
+    movie->stop();
+    spinner->hide();
+
     successLabel->setText(recordName->text()+tr(" Ajouté avec succès"));
-    mainLayout->addWidget(successLabel);
-    mainLayout->setAlignment(successLabel,Qt::AlignCenter);
 }

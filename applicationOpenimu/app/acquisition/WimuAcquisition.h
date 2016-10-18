@@ -30,7 +30,7 @@ private:
 public:
     WimuAcquisition();
     ~WimuAcquisition();
-    virtual void Serialize( Json::Value& root, std::string recordName,  std::string date,std::string& output );
+    virtual void Serialize( Json::Value& root, RecordInfo record,  std::string date,std::string& output );
     virtual void Deserialize( Json::Value& root);
 
     void initialize();
