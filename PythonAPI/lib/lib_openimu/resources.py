@@ -200,7 +200,7 @@ class Params(Resource):
         my_module = __import__(modulename, globals(), locals(), [request.args.get('filename')], -1)
         my_class = getattr(my_module,request.args.get('filename'))
         instance = my_class()
-        #instance.database = mongo
+        instance.load(request.args)
         return str(instance.params.keys())
 
 

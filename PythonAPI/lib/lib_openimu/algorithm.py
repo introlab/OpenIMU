@@ -12,6 +12,7 @@ class Algorithm(object):
     _params = None
     _database = None
 
+
     @property
     def database(self):
         return self._database
@@ -30,13 +31,12 @@ class Algorithm(object):
         self._params = Params()
         pass
     # load function :
-    #   This method should be called first to load the data
+    #   This method should be called first to parse the request.args arguments
+    #   Unused request keys are ignored
     def load(self,args = {}):
         for key in self.params:
             self.params[key] = args.get(key)
-        print self.params
-        return 1
-        #raise NotImplementedError('Implement this function')
+        return self.params
 
     def run(self):
         raise NotImplementedError('Implement this function')
@@ -44,10 +44,5 @@ class Algorithm(object):
 class Params(dict):
     __getattr__ = dict.__getitem__
     __setattr__ = dict.__setitem__
-    #def __init__(self,*args, **kwargs):
-    #    super(Params, self).__init__(*args, **kwargs)
-    #    self.__dict__ = self
 
-
-#}
 
