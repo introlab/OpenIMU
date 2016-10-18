@@ -3,7 +3,6 @@ import math
 
 class Record(Schema):
     name = fields.Str()
-    date = fields.Date()
     format = fields.Str()
     position = fields.Str()
     comment = fields.Str()
