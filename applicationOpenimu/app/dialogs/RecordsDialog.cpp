@@ -11,11 +11,11 @@
 
 RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
 {
-    this->setMinimumSize(300,210);
+    this->setMinimumSize(300,310);
 
     this->setWindowTitle(QWidget::tr("Enregistrements"));
 
-    mainLayout = new QVBoxLayout(this);
+    mainLayout = new QGridLayout(this);
     selectRecord = new QPushButton(QWidget::tr("Sélectionner un enregistrement"));
     addRecord = new QPushButton(QWidget::tr("Ajouter l'enregistrement"));
     folderSelected = new QLabel(QWidget::tr("Fichier sélectionné"));
@@ -23,21 +23,44 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
     imuSelectComboBox = new QComboBox;
     selectedImu = new QLabel(QWidget::tr("None"));
     successLabel = new QLabel();
+    recordNaming = new QLabel(tr("Nom de l'enregistrement:"));
     recordName->setMinimumHeight(20);
-    recordName->setPlaceholderText(QWidget::tr("Nom de l'enregistrement"));
+    recordName->setPlaceholderText(QWidget::tr("Wimu_2016_10_18_PatientX"));
+
     imuSelectComboBox->addItem(QWidget::tr("WimU"));
     imuSelectComboBox->addItem(QWidget::tr("Deslys trigno"));
     imuSelectComboBox->addItem(QWidget::tr("XSens"));
 
-    mainLayout->addSpacing(10);
-    mainLayout->addWidget(selectRecord);
-    mainLayout->addSpacing(5);
-    mainLayout->addWidget(imuSelectComboBox);
-    mainLayout->addWidget(recordName);
-    mainLayout->addWidget(folderSelected);
-    mainLayout->addSpacing(5);
-    mainLayout->addWidget(addRecord);
-    mainLayout->addSpacing(10);
+    imuPosition = new QLabel(tr("Position: "));
+    imuPositionComboBox = new QComboBox;
+    imuPositionComboBox->addItem(QWidget::tr("Poignet"));
+    imuPositionComboBox->addItem(QWidget::tr("Hanche"));
+    imuPositionComboBox->addItem(QWidget::tr("Cheville"));
+    imuPositionComboBox->addItem(QWidget::tr("Genoux"));
+    imuPositionComboBox->addItem(QWidget::tr("Coude"));
+    imuPositionComboBox->addItem(QWidget::tr("Tête"));
+    imuPositionComboBox->addItem(QWidget::tr("Cou"));
+
+    recordDetails = new QLabel(tr("Détails de l'enregistrement: "));
+    userDetails = new QLineEdit();
+    userDetails->setMinimumHeight(30);
+    mainLayout->addWidget(selectRecord,0,0);
+
+    mainLayout->addWidget(imuSelectComboBox,1,0);
+
+    mainLayout->addWidget(imuPosition,2,0);
+    mainLayout->addWidget(imuPositionComboBox,3,0);
+
+    mainLayout->addWidget(recordDetails,4,0);
+    mainLayout->addWidget(userDetails,5,0);
+
+    mainLayout->addWidget(recordNaming,6,0);
+    mainLayout->addWidget(recordName,7,0);
+
+    mainLayout->addWidget(folderSelected,8,0);
+
+    mainLayout->addWidget(addRecord,9,0);
+
     connect(addRecord, SIGNAL(clicked()), this, SLOT(addRecordSlot()));
     connect(selectRecord, SIGNAL(clicked()), this, SLOT(selectRecordSlot()));
     connect(imuSelectComboBox, SIGNAL(currentIndexChanged(QString)), selectedImu, SLOT(setText(QString)));

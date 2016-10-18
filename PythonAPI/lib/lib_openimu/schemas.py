@@ -5,6 +5,8 @@ class Record(Schema):
     name = fields.Str()
     date = fields.Date()
     format = fields.Str()
+    position = fields.Str()
+    comment = fields.Str()
     _id = fields.UUID()
 
 class Sensor(Schema):
@@ -33,3 +35,6 @@ class DataRequestWithOptions(Schema):
     timeFilter = fields.Nested(TimeFilter)
     sort = fields.Nested(DataSort)
     recordId = fields.UUID()
+
+class Position(Schema):
+    _id = fields.Str(required=True, error_messages={'required': 'name is required.'})

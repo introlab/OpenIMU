@@ -9,6 +9,7 @@
 #include "acquisition/WimuAcquisition.h"
 #include "acquisition/WimuRecord.h"
 #include "AccDataDisplay.h"
+#include "dialogs/FullGraphDialog.h"
 
 class RecordsWidget: public QWidget
 {
@@ -31,8 +32,10 @@ class RecordsWidget: public QWidget
     QLabel* recordDate;
     QLabel* imuType;
     QLabel* positionImu;
+    QLabel* detailsRecord;
     QPushButton* seeFullGraphBtn;
     QPushButton* goToNextStep;
+    FullGraphDialog *fDialog;
 
 };
 

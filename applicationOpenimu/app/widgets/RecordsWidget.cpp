@@ -1,6 +1,5 @@
 #include "RecordsWidget.h"
 
-
 RecordsWidget::RecordsWidget(QWidget *parent,WimuAcquisition data, RecordInfo rcd):QWidget(parent)
 {
     layout = new QGridLayout;
@@ -13,6 +12,7 @@ RecordsWidget::RecordsWidget(QWidget *parent,WimuAcquisition data, RecordInfo rc
     recordDate = new QLabel(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(acceleroData.getDates().back().date));
     imuType = new QLabel("Centralle inertielle: "+ QString::fromStdString("Wimu")); //TODO: add in bd
     positionImu = new QLabel("Position IMU: "+ QString::fromStdString("Poignet")); //TODO: add in bd
+    detailsRecord = new QLabel("Détails enregistrement: "+ QString::fromStdString("Ex: patient, type de mesure")); //TODO: add in bd
     seeFullGraphBtn = new QPushButton("Graphique détaillé");
     goToNextStep = new QPushButton("Choisir Algorithme");
 
@@ -23,12 +23,13 @@ RecordsWidget::RecordsWidget(QWidget *parent,WimuAcquisition data, RecordInfo rc
     layout->addWidget(recordDate,1,0);
     layout->addWidget(imuType,2,0);
     layout->addWidget(positionImu,3,0);
-    layout->addWidget(dataDisplay,4,0,1,4);
-    layout->addWidget(seeFullGraphBtn,5,0);
-    layout->addWidget(goToNextStep,5,3);
+    layout->addWidget(detailsRecord,4,0);
+    layout->addWidget(dataDisplay,5,0,1,2);
+    layout->addWidget(seeFullGraphBtn,6,0);
+    layout->addWidget(goToNextStep,6,3);
 
     this->setStyleSheet( "QPushButton{"
-                         "background-color: rgba(230, 233, 239,0.6);"
+                         "background-color: rgba(230, 233, 239,1);"
                          "border-style: inset;"
                          "border-width: 2px;"
                          "border-radius: 10px;"
@@ -40,6 +41,7 @@ RecordsWidget::RecordsWidget(QWidget *parent,WimuAcquisition data, RecordInfo rc
 
     connect(seeFullGraphBtn, SIGNAL(clicked()), this, SLOT(openFullGraphSlot()));
     connect(goToNextStep, SIGNAL(clicked()), parent, SLOT(openAlgorithmTab()));
+    fDialog = new FullGraphDialog(acceleroData);
 }
 
 RecordsWidget::~RecordsWidget()
@@ -48,4 +50,8 @@ RecordsWidget::~RecordsWidget()
 }
 void RecordsWidget::openFullGraphSlot(){
 
+    if(!fDialog->isVisible())
+    {
+        fDialog->show();
+    }
 }

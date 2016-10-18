@@ -24,6 +24,7 @@
 #include "../../acquisition/CJsonSerializer.h"
 #include "../../acquisition/WimuRecord.h"
 #include "widgets/RecordsWidget.h"
+#include "widgets/AlgorithmTab.h"
 
 class MainWindow : public QMainWindow
     {
@@ -77,6 +78,7 @@ class MainWindow : public QMainWindow
    WimuRecord record;
    WimuAcquisition acceleroData;
    RecordsWidget* recordsTab;
+   AlgorithmTab* algorithmTab;
    QLabel* spinnerStatusBar;
    QMovie* movieSpinnerBar;
 
