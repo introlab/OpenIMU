@@ -1,4 +1,7 @@
 #include "algorithmtab.h"
+#include "AlgorithmParametersWindow.h"
+#include "QApplication"
+#include "QGuiApplication"
 
 AlgorithmTab::AlgorithmTab(QWidget * parent) : QWidget(parent)
 {
@@ -17,7 +20,7 @@ AlgorithmTab::AlgorithmTab(QWidget * parent) : QWidget(parent)
         algorithmTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
         algorithmTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
         algorithmTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-        algorithmTableWidget->setStyleSheet("alternate-background-color:black;background-color:white;");
+        //algorithmTableWidget->setStyleSheet("QTableView {alternate-background-color:#ecf0f1;selection-background-color: white;}");
         //algorithmTableWidget->verticalHeader()->setVisible(false);
 
 
@@ -39,5 +42,10 @@ void AlgorithmTab::openParametersWindow(const QModelIndex &index)
     if (index.isValid())
     {
         algorithmTableWidget->setItem(index.row(), 2, new QTableWidgetItem("Goodbye"));
+
+        AlgorithmParametersWindow algorithmParametersWindow;
+
+        algorithmParametersWindow.show();
+
     }
 }

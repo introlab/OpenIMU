@@ -79,13 +79,13 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AlgorithmTab</name>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="10"/>
-        <source>Algorithms</source>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="12"/>
+        <source>Algorithmes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="28"/>
-        <source>Parameter(s)</source>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="32"/>
+        <source>Paramètre(s)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -187,72 +187,54 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../app/MainWindow.cpp" line="70"/>
-        <location filename="../app/MainWindow.cpp" line="298"/>
+        <location filename="../app/MainWindow.cpp" line="71"/>
+        <location filename="../app/MainWindow.cpp" line="267"/>
         <source>Accueil</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="112"/>
+        <location filename="../app/MainWindow.cpp" line="81"/>
         <source>Prêt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="258"/>
+        <location filename="../app/MainWindow.cpp" line="227"/>
         <source>Choissisez un fichier de type ACC.DAT</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="237"/>
+        <location filename="../app/MainWindow.cpp" line="206"/>
         <source>Compteur de pas</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="134"/>
+        <location filename="../app/MainWindow.cpp" line="74"/>
+        <source>Algorithmes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="103"/>
         <source>Informations enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="242"/>
+        <location filename="../app/MainWindow.cpp" line="211"/>
         <source>Ouverture compteur de pas</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="248"/>
+        <location filename="../app/MainWindow.cpp" line="217"/>
         <source>Temps d&apos;activité</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="257"/>
+        <location filename="../app/MainWindow.cpp" line="226"/>
         <source>Pas de fichier séléctionné</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="263"/>
+        <location filename="../app/MainWindow.cpp" line="232"/>
         <source>Ouverture temps d&apos;activité</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QObject</name>
-    <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="19"/>
-        <source>ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="20"/>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="21"/>
-        <source>Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="22"/>
-        <source>Author</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -143,7 +143,7 @@ void RecordsDialog::addRecordSlot()
 
 
     databaseAccess = new DbBlock;
-    databaseAccess->addRecordInDB(QString::fromStdString(output));
+    //databaseAccess->addRecordInDB(QString::fromStdString(output));
     successLabel->setText(recordName->text()+tr(" Ajouté avec succès"));
     mainLayout->addWidget(successLabel);
     mainLayout->setAlignment(successLabel,Qt::AlignCenter);
