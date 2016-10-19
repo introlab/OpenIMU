@@ -2,5 +2,9 @@
 
 AlgorithmParametersWindow::AlgorithmParametersWindow()
 {
-    title = new QLabel("Paramètre(s)");
+    parametersLayout = new QVBoxLayout(this);
+    titleLabel = new QLabel("Paramètre(s)");
+
+    parametersLayout->addWidget(titleLabel);
+    this->setLayout(parametersLayout);
 }

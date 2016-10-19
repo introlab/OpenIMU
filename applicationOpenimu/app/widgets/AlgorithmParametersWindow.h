@@ -2,13 +2,16 @@
 #define ALGORITHMPARAMETERSWINDOW_H
 
 #include "QLabel"
+#include "QDialog"
+#include "QVBoxLayout"
 
-class AlgorithmParametersWindow : public QWidget
+class AlgorithmParametersWindow : public QDialog
 {
     public:
         AlgorithmParametersWindow();
     private:
-        QLabel * title;
+        QVBoxLayout * parametersLayout;
+        QLabel * titleLabel;
 };
 
 #endif // ALGORITHMPARAMETERSWINDOW_H

@@ -79,12 +79,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AlgorithmTab</name>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="12"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="13"/>
         <source>Algorithmes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="32"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="41"/>
         <source>Paramètre(s)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -188,52 +188,47 @@ p, li { white-space: pre-wrap; }
     <name>MainWindow</name>
     <message>
         <location filename="../app/MainWindow.cpp" line="71"/>
-        <location filename="../app/MainWindow.cpp" line="267"/>
+        <location filename="../app/MainWindow.cpp" line="266"/>
         <source>Accueil</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="81"/>
+        <location filename="../app/MainWindow.cpp" line="78"/>
         <source>Prêt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="227"/>
+        <location filename="../app/MainWindow.cpp" line="226"/>
         <source>Choissisez un fichier de type ACC.DAT</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="206"/>
+        <location filename="../app/MainWindow.cpp" line="205"/>
         <source>Compteur de pas</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="74"/>
-        <source>Algorithmes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../app/MainWindow.cpp" line="103"/>
+        <location filename="../app/MainWindow.cpp" line="100"/>
         <source>Informations enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="211"/>
+        <location filename="../app/MainWindow.cpp" line="210"/>
         <source>Ouverture compteur de pas</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="217"/>
+        <location filename="../app/MainWindow.cpp" line="216"/>
         <source>Temps d&apos;activité</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="226"/>
+        <location filename="../app/MainWindow.cpp" line="225"/>
         <source>Pas de fichier séléctionné</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="232"/>
+        <location filename="../app/MainWindow.cpp" line="231"/>
         <source>Ouverture temps d&apos;activité</source>
         <translation type="unfinished"></translation>
     </message>
@@ -357,22 +352,22 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="91"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="100"/>
         <source>Sélectionner dossier</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="94"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="103"/>
         <source>Dossier séléctionné: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="96"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="105"/>
         <source> Aucun dossier séléctionné </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="147"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="168"/>
         <source> Ajouté avec succès</source>
         <translation type="unfinished"></translation>
     </message>

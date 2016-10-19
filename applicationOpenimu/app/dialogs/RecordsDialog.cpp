@@ -160,7 +160,7 @@ void RecordsDialog::addRecordSlot()
 
 
     databaseAccess = new DbBlock;
-    //databaseAccess->addRecordInDB(QString::fromStdString(output));
+    databaseAccess->addRecordInDB(QString::fromStdString(output));
 
     movie->stop();
     spinner->hide();

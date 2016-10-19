@@ -2,6 +2,7 @@
 #include "../../MainWindow.h"
 #include "AlgorithmParametersWindow.h"
 #include "ResultsTabWidget.h"
+#include "QHeaderView"
 
 AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
 {
@@ -19,12 +20,20 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
         algorithmTableWidget->setColumnCount(3);
 
         algorithmTableHeaders<<"Nom"<<"Description"<<"Auteur";
+
         algorithmTableWidget->setHorizontalHeaderLabels(algorithmTableHeaders);
+
+        QHeaderView * headerHoriz = algorithmTableWidget->horizontalHeader();
+        QHeaderView * headerVerti = algorithmTableWidget->verticalHeader();
+        headerHoriz->setSectionResizeMode(QHeaderView::Stretch);
+        headerVerti->setSectionResizeMode(QHeaderView::Stretch);
+
         algorithmTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
         algorithmTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
         algorithmTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
         //algorithmTableWidget->setStyleSheet("QTableView {alternate-background-color:#ecf0f1;selection-background-color: white;}");
         //algorithmTableWidget->verticalHeader()->setVisible(false);
+        //algorithmTableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
 
         algorithmTableWidget->setItem(0, 1, new QTableWidgetItem("Hello"));
@@ -68,12 +77,8 @@ void AlgorithmTab::openParametersWindow(const QModelIndex &index)
 {
     if (index.isValid())
     {
-        algorithmTableWidget->setItem(index.row(), 2, new QTableWidgetItem("Goodbye"));
-
-        AlgorithmParametersWindow algorithmParametersWindow;
-
-        algorithmParametersWindow.show();
-
+        AlgorithmParametersWindow * algorithmParametersWindow = new AlgorithmParametersWindow();
+        algorithmParametersWindow->exec();
     }
 }
 
