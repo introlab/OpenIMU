@@ -20,10 +20,21 @@ void AlgorithmList::Serialize( Json::Value& root,RecordInfo infos,  std::string 
 void AlgorithmList::Deserialize(Json::Value& root)
 {
     // deserialize primitives
-    for ( int index = 0; index < root.size(); ++index )
+    Json::Value algo = root.get("algorithms", "");
+    for ( int index = 0; index < algo.size(); ++index )
     {
         AlgorithmInfo temp;
-        temp.name = root[index].get("name", "").asString();
-        temp.params.push_back(root[index].get("params", "").asString());
+        temp.name = algo[index].get("name", "").asString();
+        temp.id = algo[index].get("id", "").asString();
+
+        Json::Value params = algo[index].get("params", "");
+        for ( int indexp = 0; indexp < params.size(); ++indexp )
+        {
+            ParametersInfo pInfo;
+            pInfo.name = params[indexp].get("name", "").asString();
+            temp.parameters.push_back(pInfo);
+
+        }
+        m_algorithmList.push_back(temp);
     }
 }

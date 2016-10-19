@@ -5,10 +5,16 @@
 #include<vector>
 #include "../acquisition/IJsonSerializable.h"
 
+struct ParametersInfo
+{
+    std::string name;
+};
+
 struct AlgorithmInfo
 {
     std::string name;
-    std::vector<std::string> params;
+    std::string id;
+    std::vector<ParametersInfo> parameters;
 };
 
 class AlgorithmList : public IJsonSerializable

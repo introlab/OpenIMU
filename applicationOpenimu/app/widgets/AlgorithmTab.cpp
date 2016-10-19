@@ -3,11 +3,14 @@
 #include "AlgorithmParametersWindow.h"
 #include "ResultsTabWidget.h"
 #include "QHeaderView"
+#include <QEventLoop>
 
 AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
 {
         m_parent = parent;
         m_uuid = uuid;
+
+        getAlgorithmsFromDB();
 
         // -- Layout
         algorithmLayout = new QVBoxLayout(this);
@@ -35,8 +38,11 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
         //algorithmTableWidget->verticalHeader()->setVisible(false);
         //algorithmTableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
-
-        algorithmTableWidget->setItem(0, 1, new QTableWidgetItem("Hello"));
+        for(int i =0; i<algoList.m_algorithmList.size();i++)
+        {
+            QString name = QString::fromStdString(algoList.m_algorithmList.at(i).name);
+            algorithmTableWidget->setItem(i, 0, new QTableWidgetItem(name));
+        }
 
         connect(algorithmTableWidget, SIGNAL(doubleClicked(const QModelIndex& )), this, SLOT(openParametersWindow(const QModelIndex &)));
 
@@ -90,7 +96,11 @@ bool AlgorithmTab::getAlgorithmsFromDB()
 
     QNetworkAccessManager *manager = new QNetworkAccessManager();
     QNetworkReply *reply = manager->get(request);
-    bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), this ,SLOT(reponseRecue(QNetworkReply*)));
+
+    QEventLoop loop;
+    bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,SLOT(quit()));
+    loop.exec();
+    reponseRecue(reply);
 
     return true;
 }
@@ -99,8 +109,7 @@ void AlgorithmTab::reponseRecue(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError)
    {
-       qDebug() << "connection";
-       std::string testReponse(reply->readAll());
+       std::string testReponse = reply->readAll();
        CJsonSerializer::Deserialize(&algoList, testReponse);
    }
    else
