@@ -5,13 +5,26 @@
 #include "QLabel"
 #include "QStandardItemModel"
 #include "QTableWidget"
+#include "../algorithm/AlgorithmList.h"
+#include "../acquisition/CJsonSerializer.h"
+
 #include <QWidget>
+#include <QNetworkReply>
+#include <QNetworkAccessManager>
+#include <QPushButton>
 
 class AlgorithmTab : public QWidget
 {
     Q_OBJECT
 public:
-    explicit AlgorithmTab(QWidget *parent = 0);
+    explicit AlgorithmTab(QWidget *parent, std::string uuid);
+    bool getAlgorithmsFromDB();
+signals:
+
+public slots:
+    void openParametersWindow(const QModelIndex &index);
+    void reponseRecue(QNetworkReply* reply);
+    void openResultTab();
 
 private:
     QVBoxLayout * algorithmLayout;
@@ -24,10 +37,12 @@ private:
     // -- Parameter Section
     QLabel * parameterLabel;
 
-signals:
+    // -- Result Section
+    QPushButton * applyAlgorithm;
+    QWidget* m_parent;
 
-public slots:
-    void openParametersWindow(const QModelIndex &index);
+    std::string m_uuid;
+    AlgorithmList algoList;
 };
 
 #endif // ALGORITHMTAB_H
