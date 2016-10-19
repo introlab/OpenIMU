@@ -303,3 +303,7 @@ benchmarks/build-benchmark-Desktop_Qt_5_5_1_MinGW_32bit-Default/
 build-benchmarks-Desktop_Qt_5_5_1_MinGW_32bit-Default/
 unit_tests/build-pipeline-Desktop_Qt_5_5_1_MinGW_32bit-Default/
 build-openIMU/
+PythonAPI/lib/lib_openimu/schemas.pyc
+PythonAPI/lib/lib_openimu/resources.pyc
+PythonAPI/lib/lib_openimu/conf.pyc
+PythonAPI/lib/lib_openimu/__init__.pyc
