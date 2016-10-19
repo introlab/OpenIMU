@@ -70,9 +70,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     homeLayout -> setAlignment(homeLabel,Qt::AlignCenter);
     tabWidget->addTab(homeWidget,tr("Accueil"));
 
-    QWidget * algorithmWidget = new AlgorithmTab(this);
-    tabWidget->addTab(algorithmWidget,tr("Algorithmes"));
-
     tabWidget->setCurrentWidget(tabWidget->widget(0));
     tabWidget->grabGesture(Qt::PanGesture);
     tabWidget->grabGesture(Qt::PinchGesture);
@@ -158,6 +155,8 @@ void MainWindow::reponseRecueAcc(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError)
    {
+       WimuAcquisition temp; // clean acceleroData, this is dirty
+       acceleroData = temp;
        qDebug() << "connection UUID";
        std::string testReponse(reply->readAll());
        CJsonSerializer::Deserialize(&acceleroData, testReponse);

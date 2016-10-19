@@ -4,6 +4,7 @@
 #include<QGridLayout>
 #include<QLineEdit>
 #include<QComboBox>
+#include<QMovie>
 #include "core/components/blockType/DbBlock.h"
 
 class RecordsDialog : public QDialog
@@ -37,4 +38,6 @@ private slots:
     QLabel* imuPosition;
     QLabel* recordDetails;
     QLineEdit* userDetails;
+    QLabel* spinner;
+    QMovie* movie;
 };

@@ -10,9 +10,9 @@ RecordsWidget::RecordsWidget(QWidget *parent,WimuAcquisition data, RecordInfo rc
 
     recordTitle = new QLabel("Nom de l'enregistrement: "+ QString::fromStdString(record.m_recordName));
     recordDate = new QLabel(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(acceleroData.getDates().back().date));
-    imuType = new QLabel("Centralle inertielle: "+ QString::fromStdString("Wimu")); //TODO: add in bd
-    positionImu = new QLabel("Position IMU: "+ QString::fromStdString("Poignet")); //TODO: add in bd
-    detailsRecord = new QLabel("Détails enregistrement: "+ QString::fromStdString("Ex: patient, type de mesure")); //TODO: add in bd
+    imuType = new QLabel("Centralle inertielle: "+ QString::fromStdString(record.m_imuType));
+    positionImu = new QLabel("Position IMU: "+ QString::fromStdString(record.m_imuPosition));
+    detailsRecord = new QLabel("Détails enregistrement: "+ QString::fromStdString(record.m_recordDetails));
     seeFullGraphBtn = new QPushButton("Graphique détaillé");
     goToNextStep = new QPushButton("Choisir Algorithme");
 
