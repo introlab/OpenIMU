@@ -9,7 +9,7 @@ import schemas
 import numpy
 from math import sqrt
 from bson.objectid import ObjectId
-import os
+import os,json
 
 class InsertRecord(Resource):
     def post(self):
@@ -194,24 +194,37 @@ class Algo(Resource):
         instance.load(request.args)
         return instance.run()
 
-class Params(Resource):
-    def get(self):
-        modulename = 'algos.'+request.args.get('filename')
-        my_module = __import__(modulename, globals(), locals(), [request.args.get('filename')], -1)
-        my_class = getattr(my_module,request.args.get('filename'))
-        instance = my_class()
-        instance.load(request.args)
-        return str(instance.params.keys())
-
-
 class AlgoList(Resource):
     def get(self):
-        files = [os.path.splitext(file)[0]
-                for file in os.listdir("../lib/algos")
-                 if (file.endswith(".py") and not file.startswith('__'))
-                ]
+        jsondict = {}
+        content = []
+        algo = {}
+        id = 0
 
-        return files
+        for file in os.listdir("../lib/algos"):
+            if (file.endswith(".py") and not file.startswith('__')):
+                filename = os.path.splitext(file)[0]
+                id = id + 1
+                modulename = 'algos.' + filename
+                my_module = __import__(modulename, globals(), locals(), [filename], -1)
+                my_class = getattr(my_module, os.path.splitext(file)[0])
+                instance = my_class()
+                instance.load(request.args)
+
+                params = []
+                param = {}
+                for keys in instance.params.keys():
+                    param['name'] =  keys
+                    params.append(param.copy())
+
+                algo['id'] = id
+                algo['name'] = filename
+                algo['params'] = params
+
+                content.append(algo.copy())
+        jsondict['algorithms'] = content
+        jsondict = json.dumps(jsondict)
+        return jsondict
 
 class Position(Resource):
     def get(self):
