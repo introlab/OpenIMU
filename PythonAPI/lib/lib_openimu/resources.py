@@ -1,13 +1,7 @@
-from collections import defaultdict
-import datetime as dt
 from flask import jsonify, request, make_response
 from flask_restful import Resource, Api, abort,reqparse
-from lib_openimu import  conf
-import algos
 from shared import mongo
 import schemas
-import numpy
-from math import sqrt
 from bson.objectid import ObjectId
 import os,json
 
@@ -163,25 +157,6 @@ class DeleteData(Resource):
         result = res1.deleted_count+res2.deleted_count+res3.deleted_count+res4.deleted_count
         return 'Affected ' + str(result)     + ' entries.'
 
-class TestInsert(Resource):
-    def get(self):
-        snaps = []
-        amp = 100
-        fs = 20
-
-        uuid = ObjectId('57ed3f20e0034625e8fa61f1')
-        dict = [
-            {'x': int(amp*numpy.sin (2*numpy.pi*r/fs)),
-             'y': int(amp*numpy.sin (2*numpy.pi*r/fs)),
-             'z': int(amp*numpy.sin (2*numpy.pi*r/fs)),
-             't': r,
-             '_id': uuid
-            } for r in range(1, fs)]
-        schema = schemas.Sensor(many=True)
-        result, _ = schema.load(dict)
-
-        mongo.db.accelerometres.insert(result)
-        return str(uuid)
 
 class Algo(Resource):
     def get(self):
