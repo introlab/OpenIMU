@@ -175,7 +175,6 @@ class AlgoList(Resource):
         content = []
         algo = {}
         id = 0
-
         for file in os.listdir("../lib/algos"):
             if (file.endswith(".py") and not file.startswith('__')):
                 filename = os.path.splitext(file)[0]
@@ -198,8 +197,7 @@ class AlgoList(Resource):
 
                 content.append(algo.copy())
         jsondict['algorithms'] = content
-        jsondict = json.dumps(jsondict)
-        return jsondict
+        return (jsondict)
 
 class Position(Resource):
     def get(self):
