@@ -183,7 +183,7 @@ class AlgoList(Resource):
                 my_module = __import__(modulename, globals(), locals(), [filename], -1)
                 my_class = getattr(my_module, os.path.splitext(file)[0])
                 instance = my_class()
-                instance.load(request.args)
+                #instance.load(request.args)
 
                 params = []
                 param = {}
