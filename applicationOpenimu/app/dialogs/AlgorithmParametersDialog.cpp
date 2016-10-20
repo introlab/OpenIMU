@@ -2,18 +2,18 @@
 #include "../widgets/AlgorithmTab.h"
 #include <QDebug>
 
-AlgorithmParametersDialog::AlgorithmParametersDialog(QWidget * parent, std::vector<ParametersInfo> parametersList)
+AlgorithmParametersDialog::AlgorithmParametersDialog(QWidget * parent, AlgorithmInfo algo)
 {
     m_parent = parent;
-    m_parametersList = parametersList;
+    m_parametersList = algo.parameters;
     titleLabel = new QLabel("Paramètre(s)");
     parametersLayout = new QVBoxLayout(this);
     parametersLayout->addWidget(titleLabel);
 
     // Adds every parameter to the Dialog Window.
-    for(int i = 0; i < parametersList.size(); i++)
+    for(int i = 0; i < m_parametersList.size(); i++)
     {
-        QLabel * itemLabel = new QLabel(parametersList.at(i).name.c_str());
+        QLabel * itemLabel = new QLabel(m_parametersList.at(i).name.c_str());
         QLineEdit * itemLineEdit = new QLineEdit();
 
         parametersLayout->addWidget(itemLabel);

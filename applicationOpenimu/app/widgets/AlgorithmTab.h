@@ -20,12 +20,13 @@ public:
     explicit AlgorithmTab(QWidget *parent, std::string uuid);
     bool getAlgorithmsFromDB();
     void setAlgoParameters(std::vector<ParametersInfo> parametersListUpdated);
-    void createAlgoRequest();
+    bool createAlgoRequest();
 
 signals:
 
 public slots:
     void openParametersWindow(const QModelIndex &index);
+    void reponseAlgoRecue(QNetworkReply* reply);
     void reponseRecue(QNetworkReply* reply);
     void openResultTab();
 
