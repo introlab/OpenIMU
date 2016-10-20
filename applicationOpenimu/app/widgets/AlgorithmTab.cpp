@@ -62,7 +62,7 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
         this->setLayout(algorithmLayout);
 
         this->setStyleSheet( "QPushButton{"
-                             "background-color: rgba(230, 233, 239,1);"
+                             "background-color: rgba(239, 73, 73,0.7);"
                              "border-style: inset;"
                              "border-width: 2px;"
                              "border-radius: 10px;"
@@ -70,6 +70,7 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
                              "font: 12px;"
                              "min-width: 10em;"
                              "padding: 6px; }"
+                             "QPushButton:pressed { background-color: rgba(164, 49, 49, 0.7);}"
          );
 }
 
