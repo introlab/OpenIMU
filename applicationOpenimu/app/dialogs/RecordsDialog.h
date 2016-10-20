@@ -4,6 +4,7 @@
 #include<QGridLayout>
 #include<QLineEdit>
 #include<QComboBox>
+#include<QTextEdit>
 #include<QMovie>
 #include "core/components/blockType/DbBlock.h"
 
@@ -26,6 +27,7 @@ private slots:
     QPushButton *selectRecord;
     QString folderToAdd;
     QLabel* folderSelected;
+    bool isFolderSelected=false;
     QPushButton *addRecord;
     QGridLayout *mainLayout;
     QLabel* recordNaming;
@@ -33,11 +35,12 @@ private slots:
     QComboBox* imuSelectComboBox;
     DbBlock * databaseAccess;
     QLabel* selectedImu;
+    QLabel* selectedImuLabel;
     QLabel* successLabel;
     QComboBox* imuPositionComboBox;
     QLabel* imuPosition;
     QLabel* recordDetails;
-    QLineEdit* userDetails;
+    QTextEdit* userDetails;
     QLabel* spinner;
     QMovie* movie;
 };

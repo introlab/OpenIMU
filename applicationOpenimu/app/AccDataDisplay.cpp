@@ -72,7 +72,7 @@ AccDataDisplay::AccDataDisplay(WimuAcquisition accData){
 
         pbtn->setStyleSheet("QPushButton{background-color: #ecf0f1;  border-width: 2px; border-radius: 10px;font: bold 10px; min-width: 6em; padding: 4px;}"
             "QPushButton:focus:hover{ QPushButton{background-color: red;  border-width: 2px; border-radius: 10px; font: bold 10px; min-width: 6em; padding: 4px;}"
-            "QPushButton:focus:pressed{{QPushButton{background-color: green;  border-width: 2px; border-radius: 10px; font: bold 10px; min-width: 6em; padding: 4px;}");
+            "QPushButton:focus:pressed{{QPushButton{background-color: green;  border-width: 2px; border-radius: 10px; font: bold 10px; min-width: 6em; padding: 4px;}}");
 
         dateRecorded = new QLabel();
         dateRecorded->setText(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(acceleroData.getDates().back().date));

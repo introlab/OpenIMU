@@ -1,12 +1,17 @@
 #include "algorithmtab.h"
 #include "../../MainWindow.h"
-#include "AlgorithmParametersWindow.h"
+#include "../dialogs/AlgorithmParametersDialog.h"
 #include "ResultsTabWidget.h"
+#include "QHeaderView"
+#include <QEventLoop>
+#include <QDebug>
 
 AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
 {
         m_parent = parent;
         m_uuid = uuid;
+
+        getAlgorithmsFromDB();
 
         // -- Layout
         algorithmLayout = new QVBoxLayout(this);
@@ -19,15 +24,26 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
         algorithmTableWidget->setColumnCount(3);
 
         algorithmTableHeaders<<"Nom"<<"Description"<<"Auteur";
+
         algorithmTableWidget->setHorizontalHeaderLabels(algorithmTableHeaders);
+
+        QHeaderView * headerHoriz = algorithmTableWidget->horizontalHeader();
+        QHeaderView * headerVerti = algorithmTableWidget->verticalHeader();
+        headerHoriz->setSectionResizeMode(QHeaderView::Stretch);
+        headerVerti->setSectionResizeMode(QHeaderView::Stretch);
+
         algorithmTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
         algorithmTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
         algorithmTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
         //algorithmTableWidget->setStyleSheet("QTableView {alternate-background-color:#ecf0f1;selection-background-color: white;}");
         //algorithmTableWidget->verticalHeader()->setVisible(false);
+        //algorithmTableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
-
-        algorithmTableWidget->setItem(0, 1, new QTableWidgetItem("Hello"));
+        for(int i =0; i<algoList.m_algorithmList.size();i++)
+        {
+            QString name = QString::fromStdString(algoList.m_algorithmList.at(i).name);
+            algorithmTableWidget->setItem(i, 0, new QTableWidgetItem(name));
+        }
 
         connect(algorithmTableWidget, SIGNAL(doubleClicked(const QModelIndex& )), this, SLOT(openParametersWindow(const QModelIndex &)));
 
@@ -46,7 +62,7 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
         this->setLayout(algorithmLayout);
 
         this->setStyleSheet( "QPushButton{"
-                             "background-color: rgba(230, 233, 239,1);"
+                             "background-color: rgba(239, 73, 73,0.7);"
                              "border-style: inset;"
                              "border-width: 2px;"
                              "border-radius: 10px;"
@@ -54,6 +70,7 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
                              "font: 12px;"
                              "min-width: 10em;"
                              "padding: 6px; }"
+                             "QPushButton:pressed { background-color: rgba(164, 49, 49, 0.7);}"
          );
 }
 
@@ -66,14 +83,21 @@ void AlgorithmTab::openResultTab()
 
 void AlgorithmTab::openParametersWindow(const QModelIndex &index)
 {
-    if (index.isValid())
+    if (index.isValid() && algoList.m_algorithmList.size() != 0)
     {
-        algorithmTableWidget->setItem(index.row(), 2, new QTableWidgetItem("Goodbye"));
+        //Retrieve the selected Algorithm and it's parameters
+        AlgorithmInfo clickedAlgorithm = algoList.m_algorithmList.at(index.row());
 
-        AlgorithmParametersWindow algorithmParametersWindow;
-
-        algorithmParametersWindow.show();
-
+        if(clickedAlgorithm.parameters.size()>0)
+        {
+            AlgorithmParametersDialog * algorithmParametersWindow = new AlgorithmParametersDialog(this, clickedAlgorithm.parameters);
+            algorithmParametersWindow->exec();
+            delete algorithmParametersWindow;
+        }
+        else
+        {
+            //TODO: Find a way to tell the user the algorithm doesn't have parameters.
+        }
     }
 }
 
@@ -85,7 +109,11 @@ bool AlgorithmTab::getAlgorithmsFromDB()
 
     QNetworkAccessManager *manager = new QNetworkAccessManager();
     QNetworkReply *reply = manager->get(request);
-    bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), this ,SLOT(reponseRecue(QNetworkReply*)));
+
+    QEventLoop loop;
+    bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,SLOT(quit()));
+    loop.exec();
+    reponseRecue(reply);
 
     return true;
 }
@@ -94,8 +122,7 @@ void AlgorithmTab::reponseRecue(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError)
    {
-       qDebug() << "connection";
-       std::string testReponse(reply->readAll());
+       std::string testReponse = reply->readAll();
        CJsonSerializer::Deserialize(&algoList, testReponse);
    }
    else

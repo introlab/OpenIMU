@@ -37,6 +37,8 @@ private:
     // -- Parameter Section
     QLabel * parameterLabel;
 
+    QLabel * parameterValues;
+
     // -- Result Section
     QPushButton * applyAlgorithm;
     QWidget* m_parent;
