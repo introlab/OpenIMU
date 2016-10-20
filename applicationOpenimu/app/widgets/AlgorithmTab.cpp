@@ -1,6 +1,6 @@
 #include "algorithmtab.h"
 #include "../../MainWindow.h"
-#include "AlgorithmParametersWindow.h"
+#include "../dialogs/AlgorithmParametersDialog.h"
 #include "ResultsTabWidget.h"
 #include "QHeaderView"
 #include <QEventLoop>
@@ -89,7 +89,7 @@ void AlgorithmTab::openParametersWindow(const QModelIndex &index)
 
         if(clickedAlgorithm.parameters.size()>0)
         {
-            AlgorithmParametersWindow * algorithmParametersWindow = new AlgorithmParametersWindow(this, clickedAlgorithm.parameters);
+            AlgorithmParametersDialog * algorithmParametersWindow = new AlgorithmParametersDialog(this, clickedAlgorithm.parameters);
             algorithmParametersWindow->exec();
             delete algorithmParametersWindow;
         }
