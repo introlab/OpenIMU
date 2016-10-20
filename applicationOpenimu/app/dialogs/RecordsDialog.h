@@ -26,6 +26,7 @@ private slots:
     QPushButton *selectRecord;
     QString folderToAdd;
     QLabel* folderSelected;
+    bool isFolderSelected=false;
     QPushButton *addRecord;
     QGridLayout *mainLayout;
     QLabel* recordNaming;
@@ -33,6 +34,7 @@ private slots:
     QComboBox* imuSelectComboBox;
     DbBlock * databaseAccess;
     QLabel* selectedImu;
+    QLabel* selectedImuLabel;
     QLabel* successLabel;
     QComboBox* imuPositionComboBox;
     QLabel* imuPosition;
