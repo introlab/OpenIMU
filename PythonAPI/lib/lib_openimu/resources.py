@@ -167,7 +167,8 @@ class Algo(Resource):
         instance = my_class()
         instance.database = mongo
         instance.load(request.args)
-        return instance.run()
+        instance.run()
+        return dict(instance.output)
 
 class AlgoList(Resource):
     def get(self):
@@ -183,7 +184,6 @@ class AlgoList(Resource):
                 my_module = __import__(modulename, globals(), locals(), [filename], -1)
                 my_class = getattr(my_module, os.path.splitext(file)[0])
                 instance = my_class()
-                #instance.load(request.args)
 
                 params = []
                 param = {}
@@ -194,8 +194,11 @@ class AlgoList(Resource):
                 algo['id'] = id
                 algo['name'] = filename
                 algo['params'] = params
+                algo['author'] = instance.author
+                algo['description'] = instance.description
 
                 content.append(algo.copy())
+                
         jsondict['algorithms'] = content
         return (jsondict)
 

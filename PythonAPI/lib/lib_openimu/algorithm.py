@@ -10,8 +10,27 @@ import json,unicodedata
 
 class Algorithm(object):
     _params = {}
+    _output = {}
     _database = None
 
+    _information = ""
+    _author = ""
+
+    @property
+    def information(self):
+        return self._information
+
+    @information.setter
+    def information(self, value):
+        self._information = value
+
+    @property
+    def author(self):
+        return self._author
+
+    @author.setter
+    def author(self, value):
+        self._author = value
 
     @property
     def database(self):
@@ -21,14 +40,31 @@ class Algorithm(object):
         self._database=db
 
     @property
+    def infos(self):
+        return self._infos
+    @infos.setter
+    def infos(self, value):
+        self._infos = value
+
+    @property
     def params(self):
         return self._params
     @params.setter
-    def param(self, value):
+    def params(self, value):
         self._params = value
 
+    @property
+    def output(self):
+        return self._output
+
+    @output.setter
+    def output(self, value):
+        self._output = value
+
     def __init__(self):
-        self._params = Params()
+        self._infos = Information()
+        self._params = Dictionnary()
+        self._output = Dictionnary()
         pass
     # load function :
     #   This method should be called first to parse the request.args arguments
@@ -46,8 +82,14 @@ class Algorithm(object):
     def run(self):
         raise NotImplementedError('Implement this function')
 
-class Params(dict):
+class Dictionnary(dict):
     __getattr__ = dict.__getitem__
     __setattr__ = dict.__setitem__
+
+class Information(object):
+
+
+    def __init__(self):
+        pass
 
 
