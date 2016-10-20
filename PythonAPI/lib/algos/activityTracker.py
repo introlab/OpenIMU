@@ -16,6 +16,7 @@ class activityTracker(Algorithm):
         self.params.uuid = 0
 
     def run(self):
+
         schema = schemas.Sensor(many=True)
         ref = self.database.db.accelerometres.find({'ref': ObjectId(self.params.uuid)})
         acc, errors = schema.dump(ref)
@@ -24,8 +25,10 @@ class activityTracker(Algorithm):
              for snap in self.data]
         diff = numpy.diff(x)
         total = 0
+        print self.params.threshold, type(self.params.threshold)
         for n in diff:
+
             if abs(n) > self.params.threshold:
                 total = total + 1
 
-        return 100*total
+        return 100*total/len(diff)

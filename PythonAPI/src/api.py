@@ -24,5 +24,6 @@ api.add_resource(resources.DeleteData, '/delete')
 api.add_resource(resources.Algo,'/algo')
 api.add_resource(resources.AlgoList,'/algolist')
 api.add_resource(resources.Position,'/position')
+api.add_resource(resources.TestInsert,'/testinsert')
 if __name__ == '__main__':
     app.run(debug=True, host='127.0.0.1')

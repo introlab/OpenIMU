@@ -221,3 +221,25 @@ class Position(Resource):
             abort(401,message='enter valid name')
         res = mongo.db.position.delete_many({'name':name})
         return 'Affected ' + str(res.deleted_count) + ' entries.'
+
+
+class TestInsert(Resource):
+    def get(self):
+        import numpy
+        snaps = []
+        amp = 100
+        fs = 20
+
+        uuid = ObjectId('57ed3f20e0034625e8fa61f1')
+        dict = [
+            {'x': int(amp*numpy.sin (2*numpy.pi*r/fs)),
+             'y': int(amp*numpy.sin (2*numpy.pi*r/fs)),
+             'z': int(amp*numpy.sin (2*numpy.pi*r/fs)),
+             't': r,
+             '_id': uuid
+            } for r in range(1, fs)]
+        schema = schemas.Sensor(many=True)
+        result, _ = schema.load(dict)
+
+        mongo.db.accelerometres.insert(result)
+

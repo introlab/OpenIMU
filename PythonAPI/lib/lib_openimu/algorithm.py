@@ -6,7 +6,7 @@
 #
 
 from resources import getRecords
-import json
+import json,unicodedata
 
 class Algorithm(object):
     _params = {}
@@ -35,7 +35,12 @@ class Algorithm(object):
     #   Unused request keys are ignored
     def load(self,args = {}):
         for key in self.params:
-            self.params[key] = args.get(key)
+            temp = args.get(key).encode('utf8')
+            try:
+                x = float(temp)
+            except (TypeError, ValueError):
+                x = temp
+            self.params[key] = x
         return self.params
 
     def run(self):
