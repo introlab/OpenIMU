@@ -23,6 +23,7 @@ class AlgorithmParametersDialog : public QDialog
         QLabel * titleLabel;
         QPushButton * sendParametersButton;
         QWidget* m_parent;
+        std::vector<ParametersInfo> m_parametersList;
 };
 
 #endif // ALGORITHMPARAMETERSWINDOW_H
