@@ -14,7 +14,7 @@ class AlgorithmParametersDialog : public QDialog
     Q_OBJECT
 
     public:
-        AlgorithmParametersDialog(QWidget * parent, std::vector<ParametersInfo> parametersList);
+        AlgorithmParametersDialog(QWidget * parent, AlgorithmInfo algo);
     public slots:
         void parametersSetSlot();
 

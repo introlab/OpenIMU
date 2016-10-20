@@ -77,6 +77,8 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
 
 void AlgorithmTab::setAlgoParameters(std::vector<ParametersInfo> parametersListUpdated)
 {
+    algoList.m_algorithmList.at(selectedIndexRow).parameters.swap(parametersListUpdated);
+    createAlgoRequest();
     qDebug() << "hereee";
     QString temp;
     for(int i=0; i<parametersListUpdated.size();i++)
@@ -87,11 +89,40 @@ void AlgorithmTab::setAlgoParameters(std::vector<ParametersInfo> parametersListU
     }
 
     parameterValues->setText(temp);
-    algoList.m_algorithmList.at(selectedIndexRow).parameters.swap(parametersListUpdated);
+
+}
+
+bool AlgorithmTab::createAlgoRequest()
+{
+    std::string algoName = algoList.m_algorithmList.at(selectedIndexRow).name;
+    std::string url = "http://127.0.0.1:5000/algo?filename="+algoName+"&uuid="+m_uuid;
+
+    for(int i=0; i< algoList.m_algorithmList.at(selectedIndexRow).parameters.size();i++)
+    {
+        if(algoList.m_algorithmList.at(selectedIndexRow).parameters.at(i).name != "uuid")
+        {
+            url = url + "&"+algoList.m_algorithmList.at(selectedIndexRow).parameters.at(i).name +"="+algoList.m_algorithmList.at(selectedIndexRow).parameters.at(i).value;
+        }
+    }
+
+    QNetworkRequest request(QUrl(QString::fromStdString(url)));
+    request.setRawHeader("User-Agent", "ApplicationNameV01");
+    request.setRawHeader("Content-Type", "application/json");
+
+    QNetworkAccessManager *manager = new QNetworkAccessManager();
+    QNetworkReply *reply = manager->get(request);
+
+    QEventLoop loop;
+    bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,SLOT(quit()));
+    loop.exec();
+    reponseAlgoRecue(reply);
+
+    return true;
 }
 
 void AlgorithmTab::openResultTab()
 {
+
     MainWindow * test = (MainWindow*)m_parent;
     ResultsTabWidget* res = new ResultsTabWidget();
     test->replaceTab(res,"Résultats");
@@ -106,7 +137,7 @@ void AlgorithmTab::openParametersWindow(const QModelIndex &index)
         selectedIndexRow = index.row();
         if(clickedAlgorithm.parameters.size()>0)
         {
-            AlgorithmParametersDialog * algorithmParametersWindow = new AlgorithmParametersDialog(this, clickedAlgorithm.parameters);
+            AlgorithmParametersDialog * algorithmParametersWindow = new AlgorithmParametersDialog(this, clickedAlgorithm);
             algorithmParametersWindow->exec();
             delete algorithmParametersWindow;
         }
@@ -144,6 +175,24 @@ void AlgorithmTab::reponseRecue(QNetworkReply* reply)
    else
    {
        qDebug() << "error connect";
+       qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
+       qDebug() << "Request failed, " << reply->errorString();
+       qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
+       qDebug() << reply->readAll();
+   }
+   delete reply;
+}
+
+void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
+{
+    if (reply->error() == QNetworkReply::NoError)
+   {
+       std::string testReponse = reply->readAll();
+       qDebug() << QString::fromStdString(testReponse);
+   }
+   else
+   {
+       qDebug() << "Error connect";
        qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
        qDebug() << "Request failed, " << reply->errorString();
        qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
