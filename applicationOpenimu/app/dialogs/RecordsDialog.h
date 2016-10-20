@@ -4,6 +4,7 @@
 #include<QGridLayout>
 #include<QLineEdit>
 #include<QComboBox>
+#include<QTextEdit>
 #include<QMovie>
 #include "core/components/blockType/DbBlock.h"
 
@@ -39,7 +40,7 @@ private slots:
     QComboBox* imuPositionComboBox;
     QLabel* imuPosition;
     QLabel* recordDetails;
-    QLineEdit* userDetails;
+    QTextEdit* userDetails;
     QLabel* spinner;
     QMovie* movie;
 };

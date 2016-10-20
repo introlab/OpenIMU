@@ -12,8 +12,8 @@
 
 RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
 {
-    this->setMinimumSize(300,310);
-
+    this->setMinimumSize(300,400);
+    this->setMaximumSize(300,400);
     this->setWindowTitle(QWidget::tr("Enregistrements"));
 
     mainLayout = new QGridLayout(this);
@@ -43,9 +43,9 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
     recordName->setPlaceholderText(QWidget::tr("Wimu_2016_10_18_PatientX"));
 
     recordDetails = new QLabel(tr("Détails de l'enregistrement: "));
-    userDetails = new QLineEdit();
+    userDetails = new QTextEdit();
     userDetails->setMinimumHeight(20);
-
+    userDetails->setMaximumHeight(100);
     addRecord = new QPushButton(QWidget::tr("Ajouter l'enregistrement"));
 
     spinner = new QLabel();
@@ -73,7 +73,7 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
 
     mainLayout->addWidget(spinner,11,0,Qt::AlignCenter);
 
-    mainLayout->addWidget(successLabel,12,0,Qt::AlignCenter);
+    mainLayout->addWidget(successLabel,11,0,Qt::AlignCenter);
 
     connect(addRecord, SIGNAL(clicked()), this, SLOT(addRecordSlot()));
 
@@ -89,7 +89,7 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
                                  "font: 12px;"
                                  "min-width: 10em;"
                                  "padding: 6px; }"
-                                 "QPushButton:pressed { background-color: rgba(82, 165, 92, 0.7);}"
+                                 "QPushButton:pressed { background-color: rgba(164, 49, 49, 0.7);}"
                                  );
 }
 
@@ -118,6 +118,7 @@ void RecordsDialog::addRecordSlot()
     spinner->show();
     movie->start();
     QString msgErreur="";
+    successLabel->setText("");
 
     if(recordName->text().isEmpty() || !isFolderSelected)
     {
@@ -177,7 +178,7 @@ void RecordsDialog::addRecordSlot()
           info.m_recordName = recordName->text().toStdString();
           info.m_imuType = imuSelectComboBox->currentText().toStdString();
           info.m_imuPosition = imuPositionComboBox->currentText().toStdString();
-          info.m_recordDetails = userDetails->text().toStdString();
+          info.m_recordDetails = userDetails->toPlainText().toStdString();
           CJsonSerializer::Serialize(acceleroData,info,"", output);
           qDebug("OUTPUT:");
           QString qstr = QString::fromStdString(output);
@@ -188,7 +189,7 @@ void RecordsDialog::addRecordSlot()
 
         databaseAccess = new DbBlock;
         databaseAccess->addRecordInDB(QString::fromStdString(output));
-        successLabel->setText(recordName->text()+tr(" Ajouté avec succès"));
+        successLabel->setText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"));
     }
     movie->stop();
     spinner->hide();
