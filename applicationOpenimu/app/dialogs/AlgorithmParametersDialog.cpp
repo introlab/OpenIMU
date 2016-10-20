@@ -1,9 +1,11 @@
 #include "AlgorithmParametersDialog.h"
 #include "../widgets/AlgorithmTab.h"
+#include <QDebug>
 
 AlgorithmParametersDialog::AlgorithmParametersDialog(QWidget * parent, std::vector<ParametersInfo> parametersList)
 {
     m_parent = parent;
+    m_parametersList = parametersList;
     titleLabel = new QLabel("Paramètre(s)");
     parametersLayout = new QVBoxLayout(this);
     parametersLayout->addWidget(titleLabel);
@@ -27,6 +29,12 @@ AlgorithmParametersDialog::AlgorithmParametersDialog(QWidget * parent, std::vect
 
 void AlgorithmParametersDialog::parametersSetSlot()
 {
-   //AlgorithmTab * parentTab = (AlgorithmTab)m_parent;
-   // parentTab->setAlgoParameters(AlgorithmInfo info);
+    int index=0;
+    foreach(QLineEdit* le, findChildren<QLineEdit*>()) {
+        m_parametersList.at(index).value = le->text().toStdString();
+        index++;
+    }
+   AlgorithmTab * parentTab = (AlgorithmTab*)m_parent;
+   parentTab->setAlgoParameters(m_parametersList);
+
 }

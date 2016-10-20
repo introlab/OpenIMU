@@ -49,7 +49,7 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
 
         // -- Parameter Section
         parameterLabel = new QLabel(tr("Paramètre(s)"));
-
+        parameterValues = new QLabel();
         // -- Result Section
         applyAlgorithm = new QPushButton(tr("Appliquer algorithme"));
         connect(applyAlgorithm, SIGNAL(clicked()),this, SLOT(openResultTab()));
@@ -57,6 +57,7 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
         algorithmLayout->addWidget(algorithmLabel);
         algorithmLayout->addWidget(algorithmTableWidget);
         algorithmLayout->addWidget(parameterLabel);
+        algorithmLayout->addWidget(parameterValues);
         algorithmLayout->addWidget(applyAlgorithm);
 
         this->setLayout(algorithmLayout);
@@ -74,6 +75,21 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
          );
 }
 
+void AlgorithmTab::setAlgoParameters(std::vector<ParametersInfo> parametersListUpdated)
+{
+    qDebug() << "hereee";
+    QString temp;
+    for(int i=0; i<parametersListUpdated.size();i++)
+    {
+        qDebug() << "hereee 2";
+        temp = temp + QString::fromStdString(parametersListUpdated.at(i).name) + QString::fromStdString(parametersListUpdated.at(i).value);
+        qDebug() << temp;
+    }
+
+    parameterValues->setText(temp);
+    algoList.m_algorithmList.at(selectedIndexRow).parameters.swap(parametersListUpdated);
+}
+
 void AlgorithmTab::openResultTab()
 {
     MainWindow * test = (MainWindow*)m_parent;
@@ -87,7 +103,7 @@ void AlgorithmTab::openParametersWindow(const QModelIndex &index)
     {
         //Retrieve the selected Algorithm and it's parameters
         AlgorithmInfo clickedAlgorithm = algoList.m_algorithmList.at(index.row());
-
+        selectedIndexRow = index.row();
         if(clickedAlgorithm.parameters.size()>0)
         {
             AlgorithmParametersDialog * algorithmParametersWindow = new AlgorithmParametersDialog(this, clickedAlgorithm.parameters);

@@ -19,6 +19,9 @@ class AlgorithmTab : public QWidget
 public:
     explicit AlgorithmTab(QWidget *parent, std::string uuid);
     bool getAlgorithmsFromDB();
+    void setAlgoParameters(std::vector<ParametersInfo> parametersListUpdated);
+    void createAlgoRequest();
+
 signals:
 
 public slots:
@@ -44,6 +47,7 @@ private:
     QWidget* m_parent;
 
     std::string m_uuid;
+    int selectedIndexRow;
     AlgorithmList algoList;
 };
 
