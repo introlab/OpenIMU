@@ -1,15 +1,9 @@
-from collections import defaultdict
-import datetime as dt
 from flask import jsonify, request, make_response
 from flask_restful import Resource, Api, abort,reqparse
-from lib_openimu import  conf
-import algos
 from shared import mongo
 import schemas
-import numpy
-from math import sqrt
 from bson.objectid import ObjectId
-import os
+import os,json
 
 class InsertRecord(Resource):
     def post(self):
@@ -163,25 +157,6 @@ class DeleteData(Resource):
         result = res1.deleted_count+res2.deleted_count+res3.deleted_count+res4.deleted_count
         return 'Affected ' + str(result)     + ' entries.'
 
-class TestInsert(Resource):
-    def get(self):
-        snaps = []
-        amp = 100
-        fs = 20
-
-        uuid = ObjectId('57ed3f20e0034625e8fa61f1')
-        dict = [
-            {'x': int(amp*numpy.sin (2*numpy.pi*r/fs)),
-             'y': int(amp*numpy.sin (2*numpy.pi*r/fs)),
-             'z': int(amp*numpy.sin (2*numpy.pi*r/fs)),
-             't': r,
-             '_id': uuid
-            } for r in range(1, fs)]
-        schema = schemas.Sensor(many=True)
-        result, _ = schema.load(dict)
-
-        mongo.db.accelerometres.insert(result)
-        return str(uuid)
 
 class Algo(Resource):
     def get(self):
@@ -194,24 +169,35 @@ class Algo(Resource):
         instance.load(request.args)
         return instance.run()
 
-class Params(Resource):
-    def get(self):
-        modulename = 'algos.'+request.args.get('filename')
-        my_module = __import__(modulename, globals(), locals(), [request.args.get('filename')], -1)
-        my_class = getattr(my_module,request.args.get('filename'))
-        instance = my_class()
-        instance.load(request.args)
-        return str(instance.params.keys())
-
-
 class AlgoList(Resource):
     def get(self):
-        files = [os.path.splitext(file)[0]
-                for file in os.listdir("../lib/algos")
-                 if (file.endswith(".py") and not file.startswith('__'))
-                ]
+        jsondict = {}
+        content = []
+        algo = {}
+        id = 0
+        for file in os.listdir("../lib/algos"):
+            if (file.endswith(".py") and not file.startswith('__')):
+                filename = os.path.splitext(file)[0]
+                id = id + 1
+                modulename = 'algos.' + filename
+                my_module = __import__(modulename, globals(), locals(), [filename], -1)
+                my_class = getattr(my_module, os.path.splitext(file)[0])
+                instance = my_class()
+                instance.load(request.args)
 
-        return files
+                params = []
+                param = {}
+                for keys in instance.params.keys():
+                    param['name'] =  keys
+                    params.append(param.copy())
+
+                algo['id'] = id
+                algo['name'] = filename
+                algo['params'] = params
+
+                content.append(algo.copy())
+        jsondict['algorithms'] = content
+        return (jsondict)
 
 class Position(Resource):
     def get(self):

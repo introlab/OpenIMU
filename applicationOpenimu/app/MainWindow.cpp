@@ -118,7 +118,7 @@ void MainWindow:: openRecordDialog()
 
 void MainWindow::openAlgorithmTab()
 {
-    algorithmTab = new AlgorithmTab();
+    algorithmTab = new AlgorithmTab(this,selectedUUID);
     replaceTab(algorithmTab,"Algorithmes");
 }
 
