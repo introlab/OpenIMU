@@ -29,7 +29,7 @@ RecordsWidget::RecordsWidget(QWidget *parent,WimuAcquisition data, RecordInfo rc
     layout->addWidget(goToNextStep,6,3);
 
     this->setStyleSheet( "QPushButton{"
-                         "background-color: rgba(239, 73, 73,0.7);"
+                         "background-color: rgba(119, 160, 175, 0.7);"
                          "border-style: inset;"
                          "border-width: 2px;"
                          "border-radius: 10px;"
@@ -37,7 +37,7 @@ RecordsWidget::RecordsWidget(QWidget *parent,WimuAcquisition data, RecordInfo rc
                          "font: 12px;"
                          "min-width: 10em;"
                          "padding: 6px; }"
-                         "QPushButton:pressed { background-color: rgba(164, 49, 49, 0.7);}"
+                         "QPushButton:pressed { background-color: rgba(70, 95, 104, 0.7);}"
      );
 
     connect(seeFullGraphBtn, SIGNAL(clicked()), this, SLOT(openFullGraphSlot()));
