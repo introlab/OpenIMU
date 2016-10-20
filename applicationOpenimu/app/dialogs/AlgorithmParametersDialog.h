@@ -9,12 +9,12 @@
 #include <QPushButton>
 #include "../algorithm/AlgorithmList.h"
 
-class AlgorithmParametersWindow : public QDialog
+class AlgorithmParametersDialog : public QDialog
 {
     Q_OBJECT
 
     public:
-        AlgorithmParametersWindow(QWidget * parent, std::vector<ParametersInfo> parametersList);
+        AlgorithmParametersDialog(QWidget * parent, std::vector<ParametersInfo> parametersList);
     public slots:
         void parametersSetSlot();
 
