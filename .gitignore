@@ -308,3 +308,7 @@ PythonAPI/lib/lib_openimu/conf.pyc
 PythonAPI/lib/lib_openimu/resources.pyc
 PythonAPI/lib/lib_openimu/schemas.pyc
 PythonAPI/lib/lib_openimu/shared.pyc
+PythonAPI/lib/lib_openimu/algorithm.pyc
+PythonAPI/lib/algos/fft.pyc
+PythonAPI/lib/algos/activityTracker.pyc
+PythonAPI/lib/algos/AlgoTest.pyc

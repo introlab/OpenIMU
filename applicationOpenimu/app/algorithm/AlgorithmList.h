@@ -8,6 +8,7 @@
 struct ParametersInfo
 {
     std::string name;
+    std::string value;
 };
 
 struct AlgorithmInfo

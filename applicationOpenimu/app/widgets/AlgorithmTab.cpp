@@ -4,6 +4,7 @@
 #include "ResultsTabWidget.h"
 #include "QHeaderView"
 #include <QEventLoop>
+#include <QDebug>
 
 AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
 {
@@ -81,10 +82,21 @@ void AlgorithmTab::openResultTab()
 
 void AlgorithmTab::openParametersWindow(const QModelIndex &index)
 {
-    if (index.isValid())
+    if (index.isValid() && algoList.m_algorithmList.size() != 0)
     {
-        AlgorithmParametersWindow * algorithmParametersWindow = new AlgorithmParametersWindow();
-        algorithmParametersWindow->exec();
+        //Retrieve the selected Algorithm and it's parameters
+        AlgorithmInfo clickedAlgorithm = algoList.m_algorithmList.at(index.row());
+
+        if(clickedAlgorithm.parameters.size()>0)
+        {
+            AlgorithmParametersWindow * algorithmParametersWindow = new AlgorithmParametersWindow(this, clickedAlgorithm.parameters);
+            algorithmParametersWindow->exec();
+            delete algorithmParametersWindow;
+        }
+        else
+        {
+            //TODO: Find a way to tell the user the algorithm doesn't have parameters.
+        }
     }
 }
 

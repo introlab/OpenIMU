@@ -4,14 +4,25 @@
 #include "QLabel"
 #include "QDialog"
 #include "QVBoxLayout"
+#include <QDebug>
+#include <QLineEdit>
+#include <QPushButton>
+#include "../algorithm/AlgorithmList.h"
 
 class AlgorithmParametersWindow : public QDialog
 {
+    Q_OBJECT
+
     public:
-        AlgorithmParametersWindow();
+        AlgorithmParametersWindow(QWidget * parent, std::vector<ParametersInfo> parametersList);
+    public slots:
+        void parametersSetSlot();
+
     private:
         QVBoxLayout * parametersLayout;
         QLabel * titleLabel;
+        QPushButton * sendParametersButton;
+        QWidget* m_parent;
 };
 
 #endif // ALGORITHMPARAMETERSWINDOW_H

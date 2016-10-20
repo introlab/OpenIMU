@@ -79,13 +79,18 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AlgorithmTab</name>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="13"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="20"/>
         <source>Algorithmes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="41"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="51"/>
         <source>Paramètre(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="54"/>
+        <source>Appliquer algorithme</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
