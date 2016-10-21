@@ -14,6 +14,8 @@ struct ParametersInfo
 struct AlgorithmInfo
 {
     std::string name;
+    std::string author;
+    std::string description;
     std::string id;
     std::vector<ParametersInfo> parameters;
 };

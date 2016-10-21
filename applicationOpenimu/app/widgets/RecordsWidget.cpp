@@ -1,6 +1,6 @@
 #include "RecordsWidget.h"
 
-RecordsWidget::RecordsWidget(QWidget *parent,WimuAcquisition data, RecordInfo rcd):QWidget(parent)
+RecordsWidget::RecordsWidget(QWidget *parent,WimuAcquisition& data, RecordInfo rcd):QWidget(parent)
 {
     layout = new QGridLayout;
     this->setLayout(layout);

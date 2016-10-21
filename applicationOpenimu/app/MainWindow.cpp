@@ -4,7 +4,7 @@
 #include<vector>
 #include<QDebug>
 #include "widgets/AlgorithmTab.h"
-
+#include "widgets/ResultsTabWidget.h"
 #include "AccDataDisplay.h"
 #include "QMessageBox"
 #include "mainwindow.h"
@@ -47,7 +47,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     listWidget->setMaximumWidth(150);
     tabWidget->setTabsClosable(true);
-    tabWidget->setStyleSheet("background-color:white;");
     QWidget * homeWidget = new QWidget(); //To do create classe Home widget
     QVBoxLayout* homeLayout = new QVBoxLayout(homeWidget);
     QLabel * homeLabel = new QLabel("Open IMU,logiciel de visualisation et d'analyse pour centrale inertielle");
@@ -69,11 +68,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     homeLayout->addSpacing(100);
     homeLayout -> setAlignment(homeLabel,Qt::AlignCenter);
     tabWidget->addTab(homeWidget,tr("Accueil"));
-
+    tabWidget->setStyleSheet("background: rgb(247, 250, 255,0.6)");
     tabWidget->setCurrentWidget(tabWidget->widget(0));
     tabWidget->grabGesture(Qt::PanGesture);
     tabWidget->grabGesture(Qt::PinchGesture);
     mainWidget->mainLayout->addWidget(tabWidget);
+
     setCentralWidget(mainWidget);
     statusBar->showMessage(tr("Prêt"));
     statusBar->addPermanentWidget(spinnerStatusBar);
@@ -155,8 +155,7 @@ void MainWindow::reponseRecueAcc(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError)
    {
-       WimuAcquisition temp; // clean acceleroData, this is dirty
-       acceleroData = temp;
+       acceleroData.clearData();
        qDebug() << "connection UUID";
        std::string testReponse(reply->readAll());
        CJsonSerializer::Deserialize(&acceleroData, testReponse);
@@ -210,26 +209,7 @@ void MainWindow:: computeSteps(){
         statusBar->showMessage(tr("Ouverture compteur de pas"));
 }
 void MainWindow::computeActivityTime(){
-    if(selectedUUID != ""){
-        CustomQmlScene* sceneTime = new CustomQmlScene("displayActivityTime.qml", this);
-        Caneva* canevaTime = new Caneva("config/displayActivityTime.json", sceneTime);
-        QString actTime = tr("Temps d'activité");
-        std::string sActTime = actTime.toUtf8().constData();
-        replaceTab(sceneTime,sActTime);
-
-
-        canevaTime->testActivity(selectedUUID);
-    }
-    else{
-        QMessageBox msgBox;
-        msgBox.setText(tr("Pas de fichier séléctionné"));
-        msgBox.setInformativeText(tr("Choissisez un fichier de type ACC.DAT"));
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        msgBox.exec();
-    }
-
     statusBar->showMessage(tr("Ouverture temps d'activité"));
-
 }
 
 void MainWindow::setApplicationInEnglish()

@@ -6,12 +6,14 @@
 #include "QStandardItemModel"
 #include "QTableWidget"
 #include "../algorithm/AlgorithmList.h"
+#include "../algorithm/AlgorithmOutput.h"
 #include "../acquisition/CJsonSerializer.h"
 
 #include <QWidget>
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 #include <QPushButton>
+#include <QGroupBox>
 
 class AlgorithmTab : public QWidget
 {
@@ -19,7 +21,7 @@ class AlgorithmTab : public QWidget
 public:
     explicit AlgorithmTab(QWidget *parent, std::string uuid);
     bool getAlgorithmsFromDB();
-    void setAlgoParameters(std::vector<ParametersInfo> parametersListUpdated);
+    void setAlgorithm(AlgorithmInfo algorithmInfo);
     bool createAlgoRequest();
 
 signals:
@@ -31,17 +33,24 @@ public slots:
     void openResultTab();
 
 private:
-    QVBoxLayout * algorithmLayout;
+    QVBoxLayout * algorithmTabLayout;
 
     // -- Algorithm List Section
     QLabel * algorithmLabel;
     QTableWidget * algorithmTableWidget;
     QStringList algorithmTableHeaders;
+    QGroupBox * algorithmListGroupBox;
+    QVBoxLayout * algorithmListLayout;
 
     // -- Parameter Section
-    QLabel * parameterLabel;
-
-    QLabel * parameterValues;
+    QGroupBox * parametersGroupBox;
+    QVBoxLayout * parametersLayout;
+    QLabel * currentSelectionLabel;
+    QLabel * selectedDataLabel;
+    QLabel * selectedDataValues;
+    QLabel * selectedAlgorithmLabel;
+    QLabel * selectedAlgorithmValues;
+    QLabel * parametersLabel;
 
     // -- Result Section
     QPushButton * applyAlgorithm;
@@ -50,6 +59,9 @@ private:
     std::string m_uuid;
     int selectedIndexRow;
     AlgorithmList algoList;
+    AlgorithmInfo selectedAlgorithm;
+
+    void removeChildren(QLayout* layout);
 };
 
 #endif // ALGORITHMTAB_H

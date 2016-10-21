@@ -2,10 +2,16 @@
 #define RESULTSTABWIDGET_H
 
 #include <QWidget>
-#include <QGridLayout>
+#include <QVBoxLayout>
 #include <string>
 #include <QLabel>
-
+#include <QtCharts/QChartView>
+#include <QtCharts/QPieSeries>
+#include <QtCharts/QPieSlice>
+#include "CustomQmlScene.h"
+#include "../core/Caneva.h"
+#include "../algorithm/AlgorithmOutput.h"
+#include "../algorithm/AlgorithmList.h"
 
 class ResultsTabWidget: public QWidget
 {
@@ -13,17 +19,17 @@ class ResultsTabWidget: public QWidget
 
     public:
     ResultsTabWidget();
-    ResultsTabWidget(QWidget *parent);
-
-    ~ResultsTabWidget();
+    ResultsTabWidget(QWidget *parent, AlgorithmInfo &algoInfo, AlgorithmOutput &output);
+     ~ResultsTabWidget();
 
     public slots:
 
     private:
-    QGridLayout* layout;
+    QVBoxLayout* layout;
 
-    QLabel* recordTitle;
+    QLabel* algoName;
     QLabel* recordDate;
+    QWidget* container;
     QLabel* imuType;
 
 };
