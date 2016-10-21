@@ -19,7 +19,6 @@ public slots:
 
 private:
     QMenu* fichier;
-    QMenu* algorithme;
     QMenu* vue;
     QMenu* aide;
     QMenu* preference;

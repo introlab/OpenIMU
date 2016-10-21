@@ -1,7 +1,6 @@
 #ifndef DBBLOCK_H
 #define DBBLOCK_H
 
-#include "../Block.h"
 #include<QString>
 #include<QNetworkReply>
 #include<QNetworkAccessManager>

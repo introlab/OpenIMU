@@ -12,14 +12,11 @@
 
 #include "widgets/ApplicationMenubar.h"
 #include "string.h"
-#include "CustomQmlScene.h"
-#include "core/Caneva.h"
 #include "widgets/MainWidget.h"
 #include "widgets/MyListWidget.h"
 #include "dialogs/AboutDialog.h"
 #include "dialogs/HelpDialog.h"
 #include "core/components/blockType/DbBlock.h"
-#include "core/components/blockType/ActivityBlock.h"
 #include "dialogs/RecordsDialog.h"
 #include "../../acquisition/CJsonSerializer.h"
 #include "../../acquisition/WimuRecord.h"
@@ -42,8 +39,6 @@ class MainWindow : public QMainWindow
 
     void openFile();
     void openRecordDialog();
-    void computeSteps();
-    void computeActivityTime();
     void closeTab(int);
     void replaceTab(QWidget * replacement, std::string label);
     void openAbout();
@@ -66,14 +61,11 @@ class MainWindow : public QMainWindow
    QStatusBar * statusBar;
    std::string selectedUUID;
    MainWidget * mainWidget;
-   Caneva *caneva;
    ApplicationMenuBar* menu ;
-   CustomQmlScene* scene;
    MyListWidget  * listWidget;
    AboutDialog *aboutDialog;
    HelpDialog *helpDialog;
    DbBlock * databaseAccess = new DbBlock;
-   ActivityBlock * dbActivity = new ActivityBlock;
    RecordsDialog * rDialog;
    WimuRecord record;
    WimuAcquisition acceleroData;

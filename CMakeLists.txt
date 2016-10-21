@@ -19,8 +19,8 @@ cmake_policy(SET CMP0043 NEW)
 
 # compile in debug or release mode
 IF(NOT CMAKE_BUILD_TYPE)
-  #SET(CMAKE_BUILD_TYPE Release)
-  SET(CMAKE_BUILD_TYPE Debug)
+  SET(CMAKE_BUILD_TYPE Release)
+  #SET(CMAKE_BUILD_TYPE Debug)
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
 #MINGW or MSVC COMPILE FLAGS
@@ -53,11 +53,9 @@ SET (LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 SET(CMAKE_VERBOSE_MAKEFILE ON)
 
 add_subdirectory(applicationOpenimu)
-add_subdirectory(config)
-add_subdirectory(plugins)
-add_subdirectory(unitTests)
-add_subdirectory(benchmarks)
+#add_subdirectory(unitTests)
+#add_subdirectory(benchmarks)
 
-enable_testing(true)
-include_directories(unitTests)
-include_directories(benchmarks)
+#enable_testing(true)
+#include_directories(unitTests)
+#include_directories(benchmarks)

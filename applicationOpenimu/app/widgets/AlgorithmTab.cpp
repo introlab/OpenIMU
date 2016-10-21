@@ -18,11 +18,22 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
 
         // -- Layout
         algorithmListGroupBox = new QGroupBox();
+        algorithmListGroupBox->setFixedHeight(parent->height()*0.55);
+        algorithmListGroupBox->setStyleSheet("QTabWidget::pane { border: 0; }");
         algorithmListLayout = new QVBoxLayout();
+
+        spacerGroupBox = new QGroupBox();
+        spacerGroupBox->setFixedHeight(parent->height()*0.05);
+        spacerGroupBox->setStyleSheet("QTabWidget::pane { border: 0; }");
+
         parametersGroupBox = new QGroupBox();
+        parametersGroupBox->setFixedHeight(parent->height()*0.30);
         parametersLayout = new QVBoxLayout();
+        parametersGroupBox->setStyleSheet("QTabWidget::pane { border: 0; }");
 
         algorithmTabLayout = new QVBoxLayout(this);
+        algorithmTabLayout->setSpacing(0);
+        algorithmTabLayout->setMargin(0);
 
         // -- Algorithm List Section
         algorithmLabel = new QLabel(tr("Tableau des algorithmes disponibles"));
@@ -67,6 +78,8 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
         selectedAlgorithmLabel = new QLabel(tr("Algorithme sélectionné: "));
         selectedAlgorithmValues = new QLabel(tr(" "));
         parametersLabel = new QLabel(tr("Paramètre(s):"));
+        parametersValues = new QLabel(tr(""));
+        parametersValues->setWordWrap(true);
 
         applyAlgorithm = new QPushButton(tr("Appliquer algorithme"));
         connect(applyAlgorithm, SIGNAL(clicked()),this, SLOT(openResultTab()));
@@ -82,9 +95,11 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
         parametersLayout->addWidget(selectedAlgorithmLabel);
         parametersLayout->addWidget(selectedAlgorithmValues);
         parametersLayout->addWidget(parametersLabel);
+        parametersLayout->addWidget(parametersValues);
         parametersGroupBox->setLayout(parametersLayout);
 
         algorithmTabLayout->addWidget(algorithmListGroupBox);
+        algorithmTabLayout->addWidget(spacerGroupBox);
         algorithmTabLayout->addWidget(parametersGroupBox);
         algorithmTabLayout->addWidget(applyAlgorithm);
 
@@ -92,7 +107,7 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
         this->setStyleSheet( "QPushButton{"
                              "background-color: rgba(119, 160, 175,0.7);"
                              "border-style: inset;"
-                             "border-width: 2px;"
+                             "border-width: 0px;"
                              "border-radius: 10px;"
                              "border-color: white;"
                              "font: 12px;"
@@ -102,30 +117,35 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
                              );
 }
 
+void AlgorithmTab::resetSelectionSection()
+{
+    selectedDataValues->setText("");
+    selectedAlgorithmValues->setText("");
+    parametersValues->setText("");
+}
+
 void AlgorithmTab::setAlgorithm(AlgorithmInfo algorithmInfo)
 {
-    // -- Clear the Parameters section
-    removeChildren(parametersLayout);
-
-    parametersLayout->addWidget(currentSelectionLabel);
-    parametersLayout->addWidget(selectedDataLabel);
-    parametersLayout->addWidget(selectedDataValues);
-    parametersLayout->addWidget(selectedAlgorithmLabel);
-    parametersLayout->addWidget(selectedAlgorithmValues);
-    parametersLayout->addWidget(parametersLabel);
-
+    resetSelectionSection();
     selectedAlgorithm = algoList.m_algorithmList.at(selectedIndexRow);
     selectedAlgorithm.parameters.swap(algorithmInfo.parameters);
 
-    for(int i=0; i<algorithmInfo.parameters.size();i++)
+    if(algorithmInfo.parameters.size() == 0)
     {
-        if(selectedAlgorithm.parameters.at(i).name != "uuid")
+        parametersValues->setText("Aucun paramètre pour cet algorithme");
+    }
+    else
+    {
+        for(int i=0; i<algorithmInfo.parameters.size();i++)
         {
-            QString parameterName = QString::fromStdString(selectedAlgorithm.parameters.at(i).name);
-            QString parameterValue = QString::fromStdString(selectedAlgorithm.parameters.at(i).value);
+            if(selectedAlgorithm.parameters.at(i).name != "uuid")
+            {
+                QString parameterName = QString::fromStdString(selectedAlgorithm.parameters.at(i).name);
+                QString parameterValue = QString::fromStdString(selectedAlgorithm.parameters.at(i).value);
 
-            QLabel * parameterLabel = new QLabel(parameterName + ": " + parameterValue);
-            parametersLayout->addWidget(parameterLabel);
+                QString previousParameters = parametersValues->text();
+                parametersValues->setText(previousParameters + parameterName + ": " + parameterValue+ "\n" );
+            }
         }
     }
     selectedAlgorithmValues->setText(QString::fromStdString(selectedAlgorithm.name));
@@ -152,7 +172,7 @@ void AlgorithmTab::openParametersWindow(const QModelIndex &index)
         }
         else
         {
-            //TODO: Find a way to tell the user the algorithm doesn't have parameters.
+            setAlgorithm( clickedAlgorithm);
         }
     }
 }
@@ -242,17 +262,4 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
        qDebug() << reply->readAll();
    }
    delete reply;
-}
-
-void AlgorithmTab::removeChildren(QLayout* layout)
-{
-    QLayoutItem* child;
-    while(layout->count()!=0)
-    {
-        child = layout->takeAt(0);
-        if(child->layout() != 0)
-        {
-            removeChildren(child->layout());
-        }
-    }
 }
