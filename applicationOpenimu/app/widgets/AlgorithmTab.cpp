@@ -130,7 +130,8 @@ void AlgorithmTab::setAlgorithm(AlgorithmInfo algorithmInfo)
     selectedAlgorithm = algoList.m_algorithmList.at(selectedIndexRow);
     selectedAlgorithm.parameters.swap(algorithmInfo.parameters);
 
-    if(algorithmInfo.parameters.size() == 0)
+    if(algorithmInfo.parameters.size() == 0 ||
+            ((algorithmInfo.parameters.size() == 1) && (algorithmInfo.parameters.at(0).name == "uuid")))
     {
         parametersValues->setText("Aucun paramètre pour cet algorithme");
     }
