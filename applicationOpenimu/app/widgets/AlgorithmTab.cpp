@@ -165,15 +165,17 @@ void AlgorithmTab::openParametersWindow(const QModelIndex &index)
         //Retrieve the selected Algorithm and it's parameters
         AlgorithmInfo clickedAlgorithm = algoList.m_algorithmList.at(index.row());
         selectedIndexRow = index.row();
-        if(clickedAlgorithm.parameters.size()>0)
+
+        if((clickedAlgorithm.parameters.size() <= 0)||
+                ((clickedAlgorithm.parameters.size() == 1) && (clickedAlgorithm.parameters.at(0).name == "uuid")))
+        {
+            setAlgorithm(clickedAlgorithm);
+        }
+        else
         {
             AlgorithmParametersDialog * algorithmParametersWindow = new AlgorithmParametersDialog(this, clickedAlgorithm);
             algorithmParametersWindow->exec();
             delete algorithmParametersWindow;
-        }
-        else
-        {
-            setAlgorithm( clickedAlgorithm);
         }
     }
 }

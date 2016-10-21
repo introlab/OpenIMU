@@ -46,31 +46,31 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="82"/>
+        <location filename="../app/AccDataDisplay.cpp" line="81"/>
         <location filename="../app/AccDataDisplay.cpp" line="248"/>
         <source>Axe X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="83"/>
+        <location filename="../app/AccDataDisplay.cpp" line="82"/>
         <location filename="../app/AccDataDisplay.cpp" line="255"/>
         <source>Axe Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="84"/>
+        <location filename="../app/AccDataDisplay.cpp" line="83"/>
         <location filename="../app/AccDataDisplay.cpp" line="261"/>
         <source>Axe Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="85"/>
+        <location filename="../app/AccDataDisplay.cpp" line="84"/>
         <location filename="../app/AccDataDisplay.cpp" line="265"/>
         <source>Norme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="86"/>
+        <location filename="../app/AccDataDisplay.cpp" line="85"/>
         <location filename="../app/AccDataDisplay.cpp" line="274"/>
         <source>Moyenne mobile</source>
         <translation type="unfinished"></translation>
