@@ -17,7 +17,7 @@ class RecordsWidget: public QWidget
 
     public:
     RecordsWidget();
-    RecordsWidget(QWidget *parent,WimuAcquisition data, RecordInfo record);
+    RecordsWidget(QWidget *parent,WimuAcquisition& data, RecordInfo record);
 
     ~RecordsWidget();
 

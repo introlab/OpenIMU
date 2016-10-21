@@ -34,6 +34,7 @@ public:
     virtual void Deserialize( Json::Value& root);
 
     void initialize();
+    void clearData();
     void extractAcceleroData();
     void extractGyrometerData();
     void extractMagnetomer();

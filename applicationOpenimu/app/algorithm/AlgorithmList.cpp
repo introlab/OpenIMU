@@ -19,6 +19,8 @@ void AlgorithmList::Serialize( Json::Value& root,RecordInfo infos,  std::string 
 
 void AlgorithmList::Deserialize(Json::Value& root)
 {
+    qDebug() << "here res";
+
     // deserialize primitives
     Json::Value algo = root.get("algorithms", "");
     for ( int index = 0; index < algo.size(); ++index )
@@ -26,6 +28,8 @@ void AlgorithmList::Deserialize(Json::Value& root)
         AlgorithmInfo temp;
         temp.name = algo[index].get("name", "").asString();
         temp.id = algo[index].get("id", "").asString();
+        temp.author = algo[index].get("author", "").asString();
+        temp.description = algo[index].get("description", "").asString();
 
         Json::Value params = algo[index].get("params", "");
         for ( int indexp = 0; indexp < params.size(); ++indexp )

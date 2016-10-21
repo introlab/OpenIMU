@@ -143,6 +143,16 @@ void WimuAcquisition::initialize()
     }
 }
 
+void WimuAcquisition::clearData()
+{
+    data.clear();
+    dataMagneto.clear();
+    dataGyro.clear();
+    fileAcc = "";
+    fileGyro = "";
+    fileMagneto = "";
+}
+
 void WimuAcquisition::extractAcceleroData()
 {
     const char *filePath = fileAcc.c_str();
