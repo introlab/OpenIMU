@@ -17,7 +17,7 @@ class fft(Algorithm):
         super(fft,self).__init__()
 
         self.description = "Fast Fourrier Transform Algorithm"
-        self.author = "Remi Drolet"
+        self.author = "OpenIMU Team"
 
 
     def run(self,a):
