@@ -41,37 +41,37 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AccDataDisplay</name>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="50"/>
+        <location filename="../app/AccDataDisplay.cpp" line="47"/>
         <source>Données accéléromètre (en ms)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="85"/>
-        <location filename="../app/AccDataDisplay.cpp" line="255"/>
+        <location filename="../app/AccDataDisplay.cpp" line="82"/>
+        <location filename="../app/AccDataDisplay.cpp" line="248"/>
         <source>Axe X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="86"/>
-        <location filename="../app/AccDataDisplay.cpp" line="262"/>
+        <location filename="../app/AccDataDisplay.cpp" line="83"/>
+        <location filename="../app/AccDataDisplay.cpp" line="255"/>
         <source>Axe Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="87"/>
-        <location filename="../app/AccDataDisplay.cpp" line="268"/>
+        <location filename="../app/AccDataDisplay.cpp" line="84"/>
+        <location filename="../app/AccDataDisplay.cpp" line="261"/>
         <source>Axe Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="88"/>
-        <location filename="../app/AccDataDisplay.cpp" line="272"/>
+        <location filename="../app/AccDataDisplay.cpp" line="85"/>
+        <location filename="../app/AccDataDisplay.cpp" line="265"/>
         <source>Norme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="89"/>
-        <location filename="../app/AccDataDisplay.cpp" line="281"/>
+        <location filename="../app/AccDataDisplay.cpp" line="86"/>
+        <location filename="../app/AccDataDisplay.cpp" line="274"/>
         <source>Moyenne mobile</source>
         <translation type="unfinished"></translation>
     </message>
@@ -79,17 +79,38 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AlgorithmTab</name>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="20"/>
-        <source>Algorithmes</source>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="39"/>
+        <source>Tableau des algorithmes disponibles</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="51"/>
-        <source>Paramètre(s)</source>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="75"/>
+        <source>Sélection courante</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="54"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="76"/>
+        <source>Données sélectionnées: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="77"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="79"/>
+        <source> </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="78"/>
+        <source>Algorithme sélectionné: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="80"/>
+        <source>Paramètre(s):</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="84"/>
         <source>Appliquer algorithme</source>
         <translation type="unfinished"></translation>
     </message>
@@ -177,8 +198,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../app/MainWindow.cpp" line="71"/>
-        <location filename="../app/MainWindow.cpp" line="231"/>
+        <location filename="../app/MainWindow.cpp" line="70"/>
+        <location filename="../app/MainWindow.cpp" line="230"/>
         <source>Accueil</source>
         <translation type="unfinished"></translation>
     </message>

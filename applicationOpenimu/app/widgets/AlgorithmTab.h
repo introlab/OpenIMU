@@ -42,6 +42,9 @@ private:
     QGroupBox * algorithmListGroupBox;
     QVBoxLayout * algorithmListLayout;
 
+    // -- Spacer Section
+    QGroupBox * spacerGroupBox;
+
     // -- Parameter Section
     QGroupBox * parametersGroupBox;
     QVBoxLayout * parametersLayout;
@@ -51,6 +54,7 @@ private:
     QLabel * selectedAlgorithmLabel;
     QLabel * selectedAlgorithmValues;
     QLabel * parametersLabel;
+    QLabel * parametersValues;
 
     // -- Result Section
     QPushButton * applyAlgorithm;
@@ -62,6 +66,7 @@ private:
     AlgorithmInfo selectedAlgorithm;
 
     void removeChildren(QLayout* layout);
+    void resetSelectionSection();
 };
 
 #endif // ALGORITHMTAB_H
