@@ -8,8 +8,6 @@
 #include <QtCharts/QChartView>
 #include <QtCharts/QPieSeries>
 #include <QtCharts/QPieSlice>
-#include "CustomQmlScene.h"
-#include "../core/Caneva.h"
 #include "../algorithm/AlgorithmOutput.h"
 #include "../algorithm/AlgorithmList.h"
 
