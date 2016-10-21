@@ -41,16 +41,7 @@ class stepCounter(Algorithm):
         return self.output
 
     def moving_average(self,data):
-        time = [i.get('t')/1000 for i in data]
-        a = len(time)
-        mint = (min(time))
-        time = [t for t in time if t-mint >100000 ]
-        b = len(time)
-        print a,b, a-b
-        delta = (min(time)) +(max(time)-min(time))
-        maxt = datetime.datetime.fromtimestamp(int(max(time)))
-        mint = datetime.datetime.fromtimestamp(int(min(time)))
-        print maxt-mint
+        
 
         magnetude = [sqrt(i.get('x')**2 + i.get('y')**2 + i.get('z')**2)
                          for i in data]
