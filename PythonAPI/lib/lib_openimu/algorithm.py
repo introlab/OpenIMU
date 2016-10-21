@@ -62,6 +62,16 @@ class Algorithm(object):
         self._output = value
 
     def __init__(self):
+        """
+        At initialization, call the super of the algorithm with this syntax:
+         super(AlgoName,self).__init__()
+        Then, define the values of self.infos.description and self.infos.author.
+        Then, initialize the keys of self.params with this synthax:
+         self.params.foo = 0
+         self.params.bar = "A string"
+        Those are the default values of the parameters. If the url doesn't find those keys in the url, then those values
+        will be used.
+                """
         self._params = Dictionnary()
         self._output = Dictionnary()
         pass
@@ -72,7 +82,7 @@ class Algorithm(object):
         for key in self.params:
             temp = args.get(key).encode('utf8')
             try:
-                x = float(temp)
+                x = int(temp)
             except (TypeError, ValueError):
                 x = temp
             self.params[key] = x
