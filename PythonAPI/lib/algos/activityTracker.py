@@ -33,7 +33,7 @@ class activityTracker(Algorithm):
             if abs(n) > self.params.threshold:
                 total = total + 1
 
-        self.output.activity_percent = 100*total/len(diff)
+        self.output.result = 100*total/len(diff)
         self.output.threshold = self.params.threshold
         self.output.maximum = max(diff)
         self.output.minimum = min(diff)

@@ -20,6 +20,10 @@ int main(int argc, char *argv[])
            qDebug() <<QString("../translations/openImu_") + locale << "loading failed";
     }
 
+    //specify a new font.
+    QFont newFont("Helvetica",9, QFont::Light, false);
+    //set font of application
+    QApplication::setFont(newFont);
 
     MainWindow *window = new MainWindow();
     window->show();

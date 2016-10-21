@@ -7,12 +7,11 @@ ResultsTabWidget::ResultsTabWidget(QWidget *parent,AlgorithmInfo &algoInfo, Algo
     layout = new QVBoxLayout;
     this->setLayout(layout);
 
-    algoName = new QLabel(QString::fromStdString(algoInfo.name));
-    recordDate = new QLabel("Journée d'enregistrement: ");
 
+    algoName = new QLabel(QString::fromStdString(algoInfo.name));
+    algoName->setFont(QFont( "Arial", 12, QFont::Bold));
 
     layout->addWidget(algoName);
-    layout->addWidget(recordDate);
 
     if(algoInfo.name == "activityTracker")
     {

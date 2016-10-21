@@ -2,13 +2,18 @@
 
 RecordsWidget::RecordsWidget(QWidget *parent,WimuAcquisition& data, RecordInfo rcd):QWidget(parent)
 {
+    QVBoxLayout * mainLayout = new QVBoxLayout();
     layout = new QGridLayout;
-    this->setLayout(layout);
+    mainLayout->addSpacing(20);
+    mainLayout->addLayout(layout);
+    mainLayout->addSpacing(20);
+    this->setLayout(mainLayout);
 
     acceleroData = data;
     record = rcd;
 
     recordTitle = new QLabel("Nom de l'enregistrement: "+ QString::fromStdString(record.m_recordName));
+    recordTitle->setFont(QFont( "Arial", 12, QFont::Bold));
     recordDate = new QLabel(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(acceleroData.getDates().back().date));
     imuType = new QLabel("Centralle inertielle: "+ QString::fromStdString(record.m_imuType));
     positionImu = new QLabel("Position IMU: "+ QString::fromStdString(record.m_imuPosition));
