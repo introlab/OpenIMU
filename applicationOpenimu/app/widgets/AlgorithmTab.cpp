@@ -18,16 +18,16 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
 
         // -- Layout
         algorithmListGroupBox = new QGroupBox();
-        algorithmListGroupBox->setFixedHeight(parent->height()*0.55);
+        algorithmListGroupBox->setFixedHeight(300);
         algorithmListGroupBox->setStyleSheet("QTabWidget::pane { border: 0; }");
         algorithmListLayout = new QVBoxLayout();
 
         spacerGroupBox = new QGroupBox();
-        spacerGroupBox->setFixedHeight(parent->height()*0.05);
+        spacerGroupBox->setFixedHeight(50);
         spacerGroupBox->setStyleSheet("QTabWidget::pane { border: 0; }");
 
         parametersGroupBox = new QGroupBox();
-        parametersGroupBox->setFixedHeight(parent->height()*0.30);
+        parametersGroupBox->setFixedHeight(250);
         parametersLayout = new QVBoxLayout();
         parametersGroupBox->setStyleSheet("QTabWidget::pane { border: 0; }");
 
