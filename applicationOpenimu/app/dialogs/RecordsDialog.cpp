@@ -80,17 +80,17 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
     connect(selectRecord, SIGNAL(clicked()), this, SLOT(selectRecordSlot()));
     connect(imuSelectComboBox, SIGNAL(currentIndexChanged(QString)), selectedImu, SLOT(setText(QString)));
 
-    this->setStyleSheet(         "QPushButton{"
-                                 "background-color: rgba(239, 73, 73,0.7);"
-                                 "border-style: inset;"
-                                 "border-width: 2px;"
-                                 "border-radius: 10px;"
-                                 "border-color: white;"
-                                 "font: 12px;"
-                                 "min-width: 10em;"
-                                 "padding: 6px; }"
-                                 "QPushButton:pressed { background-color: rgba(164, 49, 49, 0.7);}"
-                                 );
+    this->setStyleSheet( "QPushButton{"
+                         "background-color: rgba(119, 160, 175,0.7);"
+                         "border-style: inset;"
+                         "border-width: 2px;"
+                         "border-radius: 10px;"
+                         "border-color: white;"
+                         "font: 12px;"
+                         "min-width: 10em;"
+                         "padding: 6px; }"
+                         "QPushButton:pressed { background-color: rgba(70, 95, 104, 0.7);}"
+                         );
 }
 
 RecordsDialog::~RecordsDialog()

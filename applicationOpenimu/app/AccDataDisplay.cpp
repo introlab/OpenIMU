@@ -32,9 +32,6 @@ AccDataDisplay::AccDataDisplay(WimuAcquisition accData){
     availableData = acceleroData.getData();
     sliceData = availableData;
 
-
-    qDebug() << "available data " << availableData.size();
-
     if(availableData.size()>0)
     {
 
@@ -158,7 +155,6 @@ void AccDataDisplay::leftSliderValueChanged(double value)
     lSliderValue = value;
     int tmpmin = int(sliceData.size()*lSliderValue/50);
     tmpmin = WimuAcquisition::minTime(availableData).timestamp + tmpmin;
-    qDebug() << tmpmin;
     rSlider->setStartHour(tmpmin);
     chart->removeAllSeries();
     fillChartSeries();
@@ -169,7 +165,6 @@ void AccDataDisplay::rightSliderValueChanged(double value)
     rSliderValue = value;
     int tmpmax = int(sliceData.size()*rSliderValue/50);
     tmpmax = WimuAcquisition::minTime(availableData).timestamp + tmpmax;
-    qDebug() << tmpmax;
     rSlider->setEndHour(tmpmax);
     chart->removeAllSeries();
     fillChartSeries();
@@ -237,8 +232,6 @@ void AccDataDisplay::fillChartSeries(){
     std::vector<float> t;
     int tmpmin = int(sliceData.size()*lSliderValue);
     int tmpmax = int(sliceData.size()*rSliderValue);
-    qDebug() << tmpmin;
-    qDebug() << tmpmax;
     for(int k = tmpmin; k <tmpmax; k++){
 
         x.push_back(sliceData.at(k).x);
@@ -288,7 +281,6 @@ void AccDataDisplay::fillChartSeries(){
         lineseriesZ->append(t.at(i),z.at(i));
         lineseriesAccNorm->append(t.at(i),norm_acc.at(i));
     }
-    qDebug() << filtered_data.size();
     for(unsigned int i = 0; i <filtered_data.size(); i++)
     {
         lineseriesMovingAverage->append(t.at(i),filtered_data.at(i));
