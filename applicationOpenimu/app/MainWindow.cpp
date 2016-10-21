@@ -81,9 +81,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 }
 
 MainWindow::~MainWindow(){
-    delete caneva;
     delete menu ;
-    delete scene;
 }
 
 void MainWindow::onListItemClicked(QListWidgetItem* item)
@@ -197,39 +195,6 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
        qDebug() << reply->readAll();
    }
    delete reply;
-}
-
-void MainWindow:: computeSteps(){
-        CustomQmlScene* sceneSteps = new CustomQmlScene("displayStepNumber.qml", this);
-        Caneva* canevaSteps = new Caneva("config/displayStepNumber.json", sceneSteps);
-        QString stepCount = tr("Compteur de pas");
-        std::string sStepCount = stepCount.toUtf8().constData();
-        replaceTab(sceneSteps,sStepCount);
-        getDataFromUUIDFromDB(selectedUUID);
-        canevaSteps->testSteps(acceleroData);
-        statusBar->showMessage(tr("Ouverture compteur de pas"));
-}
-void MainWindow::computeActivityTime(){
-    if(selectedUUID != ""){
-        CustomQmlScene* sceneTime = new CustomQmlScene("displayActivityTime.qml", this);
-        Caneva* canevaTime = new Caneva("config/displayActivityTime.json", sceneTime);
-        QString actTime = tr("Temps d'activité");
-        std::string sActTime = actTime.toUtf8().constData();
-        replaceTab(sceneTime,sActTime);
-
-
-        canevaTime->testActivity(selectedUUID);
-    }
-    else{
-        QMessageBox msgBox;
-        msgBox.setText(tr("Pas de fichier séléctionné"));
-        msgBox.setInformativeText(tr("Choissisez un fichier de type ACC.DAT"));
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        msgBox.exec();
-    }
-
-    statusBar->showMessage(tr("Ouverture temps d'activité"));
-
 }
 
 void MainWindow::setApplicationInEnglish()

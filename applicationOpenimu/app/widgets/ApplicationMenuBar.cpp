@@ -21,14 +21,6 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     fichier->addSeparator();
     fichier->addAction(actionQuitter);
 
-    algorithme = new QMenu(tr("&Algorithme"));
-    QAction* actionNombreDePas = new QAction(tr("&Compteur de pas"),algorithme);
-    actionNombreDePas->setShortcut(QKeySequence("Ctrl+C"));
-    QAction* actionTempsActif = new QAction(tr("&Temps d'activité"),algorithme);
-    actionTempsActif->setShortcut(QKeySequence("Ctrl+T"));
-    algorithme->addAction(actionNombreDePas);
-    algorithme->addAction(actionTempsActif);
-
     vue = new QMenu("&Vue");
     QAction* actionDonneeBrutes = new QAction(tr("&Données brutes"),vue);
     actionDonneeBrutes->setShortcut(QKeySequence("Ctrl+D"));
@@ -55,15 +47,12 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
 
     this->addMenu(fichier);
     this->addMenu(vue);
-    this->addMenu(algorithme);
     this->addMenu(preference);
     this->addMenu(aide);
 
     //connect(actionDonneeBrutes, SIGNAL(triggered()), parent, SLOT(displayRawAccData()));
     connect(actionOuvrir, SIGNAL(triggered()), parent, SLOT(openFile()));
     connect(actionAjouterEnregistrement, SIGNAL(triggered()), parent, SLOT(openRecordDialog()));
-    connect(actionNombreDePas, SIGNAL(triggered()), parent, SLOT(computeSteps()));
-    connect(actionTempsActif,SIGNAL(triggered()),parent,SLOT(computeActivityTime()));
     connect(actionQuitter,SIGNAL(triggered()),parent,SLOT(closeWindow()));
     connect(actionAPropos,SIGNAL(triggered()),parent,SLOT(openAbout()));
     connect(actionAide,SIGNAL(triggered()),parent,SLOT(openHelp()));

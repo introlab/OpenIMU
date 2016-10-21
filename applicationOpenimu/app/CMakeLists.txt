@@ -16,14 +16,12 @@ add_subdirectory(widgets)
 SET(srcs
     ${srcs}
     AccdataDisplay.cpp
-    CustomQmlScene.cpp
     MainWindow.cpp
 )
 
 SET(headers
     ${headers}
     AccDataDisplay.h
-    CustomQmlScene.h
     MainWindow.h
 )
 
