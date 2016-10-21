@@ -14,4 +14,4 @@ class AlgoTest(Algorithm):
         super(AlgoTest,self).__init__()
 
         self.description = "Algo Test Algorithm"
-        self.author = "Remi Drolet"
+        self.author = "OpenIMU Team"

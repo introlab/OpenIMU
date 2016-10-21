@@ -62,7 +62,6 @@ class Algorithm(object):
         self._output = value
 
     def __init__(self):
-        self._infos = Information()
         self._params = Dictionnary()
         self._output = Dictionnary()
         pass
@@ -87,8 +86,6 @@ class Dictionnary(dict):
     __setattr__ = dict.__setitem__
 
 class Information(object):
-
-
     def __init__(self):
         pass
 

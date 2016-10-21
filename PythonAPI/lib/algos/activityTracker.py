@@ -22,7 +22,7 @@ class activityTracker(Algorithm):
         super(activityTracker,self).__init__()
 
         self.description = "Activity Time Tracker Algorithm"
-        self.author = "Remi Drolet"
+        self.author = "OpenIMU Team"
 
         self.params.threshold = 0
         self.params.uuid = 0
