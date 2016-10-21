@@ -58,18 +58,17 @@ AccDataDisplay::AccDataDisplay(WimuAcquisition accData){
         pbtn = new QPushButton("Reset Zoom");
         connect(pbtn, SIGNAL (released()), this, SLOT (handleResetZoomBtn()));
 
-        pbtn->setStyleSheet(
-             "border-style: outset;"
-             "border-width: 2px;"
-             "border-radius: 10px;"
-             "border-color: beige;"
-             "font: bold 10px;"
-             "min-width: 6em;"
-             "padding: 4px");
-
-        pbtn->setStyleSheet("QPushButton{background-color: #ecf0f1;  border-width: 2px; border-radius: 10px;font: bold 10px; min-width: 6em; padding: 4px;}"
-            "QPushButton:focus:hover{ QPushButton{background-color: red;  border-width: 2px; border-radius: 10px; font: bold 10px; min-width: 6em; padding: 4px;}"
-            "QPushButton:focus:pressed{{QPushButton{background-color: green;  border-width: 2px; border-radius: 10px; font: bold 10px; min-width: 6em; padding: 4px;}}");
+        this->setStyleSheet( "QPushButton{"
+                             "background-color: rgba(119, 160, 175,0.7);"
+                             "border-style: inset;"
+                             "border-width: 2px;"
+                             "border-radius: 10px;"
+                             "border-color: white;"
+                             "font: 12px;"
+                             "min-width: 10em;"
+                             "padding: 6px; }"
+                             "QPushButton:pressed { background-color: rgba(70, 95, 104, 0.7);}"
+                             );
 
         dateRecorded = new QLabel();
         dateRecorded->setText(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(acceleroData.getDates().back().date));
@@ -232,6 +231,7 @@ void AccDataDisplay::fillChartSeries(){
     std::vector<float> t;
     int tmpmin = int(sliceData.size()*lSliderValue);
     int tmpmax = int(sliceData.size()*rSliderValue);
+
     for(int k = tmpmin; k <tmpmax; k++){
 
         x.push_back(sliceData.at(k).x);
