@@ -9,28 +9,30 @@ import numpy as np
 
 
 class stepCounter(Algorithm):
+    spacing = 75
+
     def __init__(self):
         super(stepCounter, self).__init__()
         self.description = "Algo Test Algorithm"
         self.author = "OpenIMU Team"
 
         self.params.uuid = 0
-        self.params.windowsize = 10
 
     def run(self):
+
         schema = schemas.Sensor(many=True)
         ref = self.database.db.accelerometres.find({'ref': ObjectId(self.params.uuid)})
         data, errors = schema.dump(ref)
 
         filtereddata = self.moving_average(data)
-        peaks = self.find_peaks(filtereddata,spacing = self.params.windowsize)
+        peaks = self.find_peaks(filtereddata,spacing = self.spacing)
 
         # If you have imported matplotlib, you can decomment the following section. It block the cpu.
         #t = np.linspace(0, 1, len(filtereddata))
         #plt.plot(t,filtereddata)
         #plt.plot(t[peaks],filtereddata[peaks],'ro')
         #plt.show()
-        
+
         self.output.result = len(peaks)
 
         return self.output
@@ -38,7 +40,7 @@ class stepCounter(Algorithm):
     def moving_average(self,data):
         magnetude = [sqrt(i.get('x')**2 + i.get('y')**2 + i.get('z')**2)
                          for i in data]
-        N = self.params.windowsize
+        N = self.spacing
         return  np.convolve(magnetude, np.ones((N,))/ N,mode='valid')[(N-1):]
 
     def find_peaks(self,data,spacing = 1, limit = None):
