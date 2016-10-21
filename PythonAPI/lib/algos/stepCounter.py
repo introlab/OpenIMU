@@ -3,7 +3,8 @@ from  lib_openimu import schemas
 from bson.objectid import ObjectId
 from math import sqrt
 import numpy as np
-
+import datetime
+import matplotlib.pyplot as plt
 
 
 
@@ -19,8 +20,6 @@ class stepCounter(Algorithm):
 
     def run(self):
         print "START"
-        emi_peaks = 0
-        absorb_peaks = 0
 
         schema = schemas.Sensor(many=True)
         ref = self.database.db.accelerometres.find({'ref': ObjectId(self.params.uuid)})
@@ -29,6 +28,12 @@ class stepCounter(Algorithm):
         filtereddata = self.moving_average(data)
         peaks = self.find_peaks(filtereddata,spacing = self.params.windowsize)
 
+        t = np.linspace(0,1,len(filtereddata))
+        plt.plot(t,filtereddata)
+        plt.plot(t[peaks],filtereddata[peaks],'ro')
+        plt.show()
+
+
         self.output.step_number = len(peaks)
 
         print "END"
@@ -36,6 +41,7 @@ class stepCounter(Algorithm):
         return self.output
 
     def moving_average(self,data):
+        
 
         magnetude = [sqrt(i.get('x')**2 + i.get('y')**2 + i.get('z')**2)
                          for i in data]
@@ -70,5 +76,5 @@ class stepCounter(Algorithm):
         ind = ind.reshape(ind.size)
         if limit is not None:
             ind = ind[data[ind] > limit]
-        return data[ind]
+        return ind
 
