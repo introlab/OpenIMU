@@ -26,7 +26,6 @@ class ResultsTabWidget: public QWidget
     QVBoxLayout* layout;
 
     QLabel* algoName;
-    QLabel* recordDate;
     QWidget* container;
     QLabel* imuType;
 
