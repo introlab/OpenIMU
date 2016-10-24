@@ -28,8 +28,8 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Le logiciel --------------------------------------------------------------------&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Date de publication: Avril 2016&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Version d&apos;application: Alpha 1.0&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Date de publication: Octobre 2016&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Version d&apos;application: Alpha 2.0&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Autres --------------------------------------------------------------------&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
@@ -79,38 +79,38 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AlgorithmTab</name>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="39"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="34"/>
         <source>Tableau des algorithmes disponibles</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="75"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="70"/>
         <source>Sélection courante</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="76"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="71"/>
         <source>Données sélectionnées: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="77"/>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="79"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="72"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="74"/>
         <source> </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="78"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="73"/>
         <source>Algorithme sélectionné: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="80"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="75"/>
         <source>Paramètre(s):</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="84"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="79"/>
         <source>Appliquer algorithme</source>
         <translation type="unfinished"></translation>
     </message>
@@ -198,18 +198,24 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../app/MainWindow.cpp" line="70"/>
-        <location filename="../app/MainWindow.cpp" line="230"/>
+        <location filename="../app/MainWindow.cpp" line="54"/>
+        <location filename="../app/MainWindow.cpp" line="224"/>
         <source>Accueil</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="78"/>
+        <location filename="../app/MainWindow.cpp" line="62"/>
+        <location filename="../app/MainWindow.cpp" line="96"/>
         <source>Prêt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="98"/>
+        <location filename="../app/MainWindow.cpp" line="85"/>
+        <source>Chargement...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="91"/>
         <source>Informations enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
@@ -310,12 +316,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RangeSlider</name>
     <message>
-        <location filename="../app/widgets/RangeSlider.cpp" line="50"/>
+        <location filename="../app/widgets/RangeSlider.cpp" line="51"/>
         <source>Début: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/RangeSlider.cpp" line="60"/>
+        <location filename="../app/widgets/RangeSlider.cpp" line="61"/>
         <source>Fin: </source>
         <translation type="unfinished"></translation>
     </message>
