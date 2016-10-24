@@ -19,21 +19,16 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
         // -- Layout
         algorithmListGroupBox = new QGroupBox();
         algorithmListGroupBox->setFixedHeight(300);
-        algorithmListGroupBox->setStyleSheet("QTabWidget::pane { border: 0; }");
+        algorithmListGroupBox->setFlat(true);
         algorithmListLayout = new QVBoxLayout();
-
-        spacerGroupBox = new QGroupBox();
-        spacerGroupBox->setFixedHeight(50);
-        spacerGroupBox->setStyleSheet("QTabWidget::pane { border: 0; }");
 
         parametersGroupBox = new QGroupBox();
         parametersGroupBox->setFixedHeight(250);
+        parametersGroupBox->setFlat(true);
         parametersLayout = new QVBoxLayout();
-        parametersGroupBox->setStyleSheet("QTabWidget::pane { border: 0; }");
 
-        algorithmTabLayout = new QVBoxLayout(this);
-        algorithmTabLayout->setSpacing(0);
-        algorithmTabLayout->setMargin(0);
+        algorithmTabLayout = new QVBoxLayout();
+
 
         // -- Algorithm List Section
         algorithmLabel = new QLabel(tr("Tableau des algorithmes disponibles"));
@@ -99,7 +94,7 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
         parametersGroupBox->setLayout(parametersLayout);
 
         algorithmTabLayout->addWidget(algorithmListGroupBox);
-        algorithmTabLayout->addWidget(spacerGroupBox);
+        algorithmTabLayout->addSpacing(50);
         algorithmTabLayout->addWidget(parametersGroupBox);
         algorithmTabLayout->addWidget(applyAlgorithm);
 

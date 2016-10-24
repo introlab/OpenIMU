@@ -20,6 +20,6 @@ void AlgorithmOutput::Deserialize(Json::Value& root)
 {
 
     // deserialize primitives
-    m_algorithmOutput.value = root.get("activity_percent", "").asInt();
+    m_algorithmOutput.value = root.get("result", "").asInt();
 
 }
