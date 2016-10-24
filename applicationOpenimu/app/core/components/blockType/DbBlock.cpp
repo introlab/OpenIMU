@@ -13,7 +13,7 @@ DbBlock::~DbBlock()
 
 std::vector<QString> DbBlock::getDaysInDB()
 {
-    std::cout<<"Request available days in database"<<std::endl;
+    //std::cout<<"Request available days in database"<<std::endl;
     std::vector<QString> listSavedDays; // Insert call to Db returning days available
     listSavedDays.push_back("24 Septembre 2016");
     listSavedDays.push_back("25 Septembre 2016");
@@ -41,9 +41,9 @@ std::vector<QString> DbBlock::getDaysInDB()
 
      result = connect(manager, SIGNAL(finished(QNetworkReply*)), this,SLOT(reponseRecue(QNetworkReply*)));
 
-     qDebug() <<"Connection is success : ? :" << result;
+     //qDebug() <<"Connection is success : ? :" << result;
      if (reply) {
-        qDebug() <<"Reply from server is"<< reply;
+        //qDebug() <<"Reply from server is"<< reply;
      }
     }
      return true;
@@ -53,18 +53,18 @@ std::vector<QString> DbBlock::getDaysInDB()
  {
      if (reply->error() == QNetworkReply::NoError)
     {
-        qDebug() << "connection";
+        //qDebug() << "connection";
         std::string testReponse(reply->readAll());// "[{ \"_id\" : \"foo\", \"name\" : \"test\"},{ \"_id\" : \"foo2\", \"name\" : \"test2\"}]\n";
         WimuRecord record;
         CJsonSerializer::Deserialize(&record, testReponse);
     }
     else
     {
-        qDebug() << "error connect";
-        qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
-        qDebug() << "Request failed, " << reply->errorString();
-        qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
-        qDebug() << reply->readAll();
+        //qDebug() << "error connect";
+        //qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
+        //qDebug() << "Request failed, " << reply->errorString();
+        //qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
+        //qDebug() << reply->readAll();
     }
     delete reply;
  }

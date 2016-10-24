@@ -19,7 +19,7 @@ void AlgorithmList::Serialize( Json::Value& root,RecordInfo infos,  std::string 
 
 void AlgorithmList::Deserialize(Json::Value& root)
 {
-    qDebug() << "here res";
+    //qDebug() << "here res";
 
     // deserialize primitives
     Json::Value algo = root.get("algorithms", "");

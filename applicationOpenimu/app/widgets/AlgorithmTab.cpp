@@ -229,11 +229,11 @@ void AlgorithmTab::reponseRecue(QNetworkReply* reply)
    }
    else
    {
-       qDebug() << "error connect";
-       qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
-       qDebug() << "Request failed, " << reply->errorString();
-       qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
-       qDebug() << reply->readAll();
+       //qDebug() << "error connect";
+       //qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
+       //qDebug() << "Request failed, " << reply->errorString();
+       //qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
+       //qDebug() << reply->readAll();
    }
    delete reply;
 }
@@ -243,7 +243,7 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
     if (reply->error() == QNetworkReply::NoError)
    {
        std::string reponse = reply->readAll();
-       qDebug() << QString::fromStdString(reponse);
+       //qDebug() << QString::fromStdString(reponse);
 
        AlgorithmOutput output;
        CJsonSerializer::Deserialize(&output, reponse);
@@ -253,11 +253,11 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
    }
    else
    {
-       qDebug() << "Error connect";
-       qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
-       qDebug() << "Request failed, " << reply->errorString();
-       qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
-       qDebug() << reply->readAll();
+       //qDebug() << "Error connect";
+       //qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
+       //qDebug() << "Request failed, " << reply->errorString();
+       //qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
+       //qDebug() << reply->readAll();
    }
    delete reply;
 }

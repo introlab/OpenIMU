@@ -123,7 +123,7 @@ void WimuAcquisition::Deserialize( Json::Value& root )
 
         dataMagneto.push_back(temp);
     }
-    qDebug() << data.size();
+    //qDebug() << data.size();
 
 }
 
@@ -162,9 +162,11 @@ void WimuAcquisition::extractAcceleroData()
     // Open the file in binary mode using the "rb" format string
     // This also checks if the file exists and/or can be opened for reading correctly
     if ((file = fopen(filePath, "rb")) == NULL)
-        std::cout << "Could not open specified file" << std::endl;
+        //std::cout << "Could not open specified file" << std::endl;
+        ;
     else
-        std::cout << "File opened successfully" << std::endl;
+        //std::cout << "File opened successfully" << std::endl;
+        ;
 
     // Get the size of the file in bytes
     long fileSize = getFileSize(file);
@@ -191,9 +193,9 @@ void WimuAcquisition::extractGyrometerData()
     // Open the file in binary mode using the "rb" format string
     // This also checks if the file exists and/or can be opened for reading correctly
     if ((file = fopen(filePath, "rb")) == NULL)
-        std::cout << "Could not open specified file" << std::endl;
+        ;//std::cout << "Could not open specified file" << std::endl;
     else
-        std::cout << "File opened successfully" << std::endl;
+        ;//std::cout << "File opened successfully" << std::endl;
 
     // Get the size of the file in bytes
     long fileSize = getFileSize(file);
@@ -220,9 +222,9 @@ void WimuAcquisition::extractMagnetomer()
     // Open the file in binary mode using the "rb" format string
     // This also checks if the file exists and/or can be opened for reading correctly
     if ((file = fopen(filePath, "rb")) == NULL)
-        std::cout << "Could not open specified file" << std::endl;
+        ;//std::cout << "Could not open specified file" << std::endl;
     else
-        std::cout << "File opened successfully" << std::endl;
+        ;//std::cout << "File opened successfully" << std::endl;
 
     // Get the size of the file in bytes
     long fileSize = getFileSize(file);

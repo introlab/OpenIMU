@@ -142,7 +142,7 @@ void RecordsDialog::addRecordSlot()
     {
         QDir* dir = new QDir(folderToAdd);
           dir->setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
-          qDebug() << "Scanning: " << dir->path();
+          //qDebug() << "Scanning: " << dir->path();
           QStringList fileList = dir->entryList();
           std::string output;
           std::string filePathAcc = "";
@@ -153,21 +153,21 @@ void RecordsDialog::addRecordSlot()
           {
               if(fileList[i].contains("ACC"))
               {
-                  qDebug() << "Found file: " << fileList[i];
+                  //qDebug() << "Found file: " << fileList[i];
                   filePathAcc = folderToAdd.toStdString()+"/"+fileList[i].toStdString();
-                  qDebug() << QString::fromStdString(filePathAcc);
+                  //qDebug() << QString::fromStdString(filePathAcc);
               }
               else if(fileList[i].contains("GYR"))
               {
-                  qDebug() << "Found file: " << fileList[i];
+                  //qDebug() << "Found file: " << fileList[i];
                   filePathGyr = folderToAdd.toStdString()+"/"+fileList[i].toStdString();
-                  qDebug() << QString::fromStdString(filePathGyr);
+                  //qDebug() << QString::fromStdString(filePathGyr);
               }
               else if(fileList[i].contains("MAG"))
               {
-                  qDebug() << "Found file: " << fileList[i];
+                  //qDebug() << "Found file: " << fileList[i];
                   filePathMag = folderToAdd.toStdString()+"/"+fileList[i].toStdString();
-                  qDebug() << QString::fromStdString(filePathMag);
+                  //qDebug() << QString::fromStdString(filePathMag);
               }
           }
 
@@ -180,9 +180,9 @@ void RecordsDialog::addRecordSlot()
           info.m_imuPosition = imuPositionComboBox->currentText().toStdString();
           info.m_recordDetails = userDetails->toPlainText().toStdString();
           CJsonSerializer::Serialize(acceleroData,info,"", output);
-          qDebug("OUTPUT:");
+          //qDebug("OUTPUT:");
           QString qstr = QString::fromStdString(output);
-          qDebug()<<qstr;
+          //qDebug()<<qstr;
           std::ofstream out("recordToAdd.json");
           out << output;
           out.close();

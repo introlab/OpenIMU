@@ -65,7 +65,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QProcess p;
     p.start("cmd.exe", QStringList() << "/c" << "..\\PythonAPI\\src\\runapi.bat");
     p.waitForFinished();
-    qDebug() << p.readAllStandardOutput();
+    //qDebug() << p.readAllStandardOutput();
 
     getRecordsFromDB();
 }
@@ -146,18 +146,18 @@ void MainWindow::reponseRecueAcc(QNetworkReply* reply)
     if (reply->error() == QNetworkReply::NoError)
    {
        acceleroData.clearData();
-       qDebug() << "connection UUID";
+       //qDebug() << "connection UUID";
        std::string testReponse(reply->readAll());
        CJsonSerializer::Deserialize(&acceleroData, testReponse);
 
    }
    else
    {
-       qDebug() << "error connect";
-       qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
-       qDebug() << "Request failed, " << reply->errorString();
-       qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
-       qDebug() << reply->readAll();
+       //qDebug() << "error connect";
+       //qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
+       //qDebug() << "Request failed, " << reply->errorString();
+      // qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
+       //qDebug() << reply->readAll();
    }
    delete reply;
 }
@@ -166,7 +166,7 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError)
    {
-       qDebug() << "connection main";
+       //qDebug() << "connection main";
        std::string testReponse(reply->readAll());
        record.m_WimuRecordList.clear();
        CJsonSerializer::Deserialize(&record, testReponse);
@@ -179,11 +179,11 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
    }
    else
    {
-       qDebug() << "error connect";
-       qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
-       qDebug() << "Request failed, " << reply->errorString();
-       qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
-       qDebug() << reply->readAll();
+       //qDebug() << "error connect";
+       //qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
+       //qDebug() << "Request failed, " << reply->errorString();
+       //qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
+       //qDebug() << reply->readAll();
    }
    delete reply;
 }

@@ -54,7 +54,7 @@ void Logger::write(string Msg){
         m_instance.fileStream << dt << "    " << Msg.c_str() << endl;
         }
     else{
-        cout << Msg;
+        ;//cout << Msg;
     }
 }
 
