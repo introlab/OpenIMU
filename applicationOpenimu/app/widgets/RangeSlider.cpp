@@ -18,8 +18,10 @@ RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent)
     container->setMinimumSize(40,40);
     container->setMaximumSize(400, 50);
     container->setFocusPolicy(Qt::TabFocus);
-    #ifdef QT_NO_DEBUG view->setSource(QUrl("OpenImu/applicationOpenImu/app/rangeSlider.qml"));
-    #else view->setSource(QUrl("../applicationOpenImu/app/rangeSlider.qml"));
+    #ifdef QT_NO_DEBUG
+        view->setSource(QUrl("OpenImu/applicationOpenImu/app/rangeSlider.qml"));
+    #else
+        view->setSource(QUrl("../applicationOpenImu/app/rangeSlider.qml"));
     #endif
     // Get pointers to first and second values in range slider
     QQuickItem *object = view->rootObject();

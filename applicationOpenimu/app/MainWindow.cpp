@@ -63,9 +63,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     statusBar->addPermanentWidget(spinnerStatusBar);
 
     QProcess p;
-    #ifdef QT_NO_DEBUG p.start("cmd.exe", QStringList() << "/c" << "OpenImu\\PythonAPI\\src\\runapi.bat");
-    #else p.start("cmd.exe", QStringList() << "/c" << "..\\PythonAPI\\src\\runapi.bat");
-    #endif
+    p.start("cmd.exe", QStringList() << "/c" << "..\\PythonAPI\\src\\runapi.bat");
     p.waitForFinished();
     qDebug() << p.readAllStandardOutput();
 

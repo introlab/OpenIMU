@@ -199,23 +199,23 @@ p, li { white-space: pre-wrap; }
     <name>MainWindow</name>
     <message>
         <location filename="../app/MainWindow.cpp" line="54"/>
-        <location filename="../app/MainWindow.cpp" line="224"/>
+        <location filename="../app/MainWindow.cpp" line="222"/>
         <source>Accueil</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/MainWindow.cpp" line="62"/>
-        <location filename="../app/MainWindow.cpp" line="96"/>
+        <location filename="../app/MainWindow.cpp" line="94"/>
         <source>Prêt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="85"/>
+        <location filename="../app/MainWindow.cpp" line="83"/>
         <source>Chargement...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="91"/>
+        <location filename="../app/MainWindow.cpp" line="89"/>
         <source>Informations enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
@@ -316,12 +316,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RangeSlider</name>
     <message>
-        <location filename="../app/widgets/RangeSlider.cpp" line="51"/>
+        <location filename="../app/widgets/RangeSlider.cpp" line="53"/>
         <source>Début: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/RangeSlider.cpp" line="61"/>
+        <location filename="../app/widgets/RangeSlider.cpp" line="63"/>
         <source>Fin: </source>
         <translation type="unfinished"></translation>
     </message>

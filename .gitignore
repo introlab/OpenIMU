@@ -335,3 +335,5 @@ applicationOpenimu/app/core/caneva_LOCAL_7932.cpp
 applicationOpenimu/app/core/caneva_REMOTE_7932.cpp
 PythonAPI/lib/algos/stepCounter.pyc
 PythonAPI/lib/algos/__init__.pyc
+*.pyc
+OpenImu Installer/openimuInstaller.exe
