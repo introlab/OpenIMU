@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QTextEdit>
 
 class HomeWidget : public QWidget {
     Q_OBJECT
@@ -29,6 +30,7 @@ public:
 
         mainLayout->addWidget(label,Qt::AlignCenter);
         mainLayout->addWidget(homeLabel,Qt::AlignCenter);
+        mainLayout->addSpacing(20);
         QLabel *fonctions = new QLabel("Fonctionnalités:");
         fonctions->setFont(QFont( "Arial", 10, QFont::Bold));
         QLabel *fonction1 =  new QLabel("- Acquisition des données brutes");
@@ -37,13 +39,15 @@ public:
         QLabel *fonction4 =  new QLabel("- Application d'algorithmes");
         QLabel *fonction5 =  new QLabel("- Présentation des données et des résultats");
 
-        QLabel *release = new QLabel("Release notes, version 2.0:");
+        QLabel *release = new QLabel("Notes de version:");
         release->setFont(QFont( "Arial", 10, QFont::Bold));
-        QLabel *release1 = new QLabel("- Sauvegarde en base de données");
-        QLabel *release2 = new QLabel("- Application d'algorithmes en python sur les données ");
-        QLabel *release3 = new QLabel("- Implémentation de l'algorithme: temps d'activité");
-        QLabel *release4 = new QLabel("- Améliorations de l'interface utilisateur");
-        QLabel *release5 = new QLabel("- Centrale inertielle supportée dans cette version: Wimu");
+        QTextEdit* releasete = new QTextEdit();
+        QString* notes = new QString("Version 2.0 - 24/10/2010 \n\n- Sauvegarde en base de données \n\n- Application d'algorithmes en python sur les données \n\n"
+                                     "- Implémentation de l'algorithme: temps d'activité \n\n- Améliorations de l'interface utilisateur \n\n"
+                                     "- Centrale inertielle supportée dans cette version: Wimu");
+        releasete->setPlainText(*notes);
+        releasete->setReadOnly(true);
+
         QLabel *version = new QLabel("Version: Release 2.0");
 
         mainLayout->addWidget(fonctions,Qt::AlignCenter);
@@ -52,12 +56,9 @@ public:
         mainLayout->addWidget(fonction3);
         mainLayout->addWidget(fonction4);
         mainLayout->addWidget(fonction5);
+        mainLayout->addSpacing(50);
         mainLayout->addWidget(release,Qt::AlignCenter);
-        mainLayout->addWidget(release1);
-        mainLayout->addWidget(release2);
-        mainLayout->addWidget(release3);
-        mainLayout->addWidget(release4);
-        mainLayout->addWidget(release5);
+        mainLayout->addWidget(releasete);
         mainLayout->addSpacing(50);
         mainLayout->addWidget(version);
         mainLayout->setAlignment(label,Qt::AlignCenter);

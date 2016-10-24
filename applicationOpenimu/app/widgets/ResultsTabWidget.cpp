@@ -1,5 +1,5 @@
 #include "ResultsTabWidget.h"
-#include <qlcdnumber.h>
+//#include <qlcdnumber.h>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -39,12 +39,12 @@ ResultsTabWidget::ResultsTabWidget(QWidget *parent,AlgorithmInfo &algoInfo, Algo
     }
     else
     {
-      //  QLabel* labelResult = new QLabel(QString::fromStdString(std::to_string(output.m_algorithmOutput.value)));
+        QLabel* labelResult = new QLabel(QString::fromStdString(std::to_string(output.m_algorithmOutput.value)) +" pas" );
         algoName->setFont(QFont( "Arial", 12, QFont::Light));
-        QLCDNumber* number = new QLCDNumber();
-        number->setDecMode();
-        number->display(output.m_algorithmOutput.value);
-        layout->addWidget(number,Qt::AlignCenter);
+      //  QLCDNumber* number = new QLCDNumber();
+      //  number->setDecMode();
+      //  number->display(output.m_algorithmOutput.value);
+        layout->addWidget(labelResult,Qt::AlignCenter);
         layout->addStretch();
     }
 }
