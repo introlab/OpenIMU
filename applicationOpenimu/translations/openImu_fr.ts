@@ -316,12 +316,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RangeSlider</name>
     <message>
-        <location filename="../app/widgets/RangeSlider.cpp" line="53"/>
+        <location filename="../app/widgets/RangeSlider.cpp" line="50"/>
         <source>Début: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/RangeSlider.cpp" line="63"/>
+        <location filename="../app/widgets/RangeSlider.cpp" line="60"/>
         <source>Fin: </source>
         <translation type="unfinished"></translation>
     </message>

@@ -1,8 +1,8 @@
 from math import sqrt
 from bson.objectid import ObjectId
 import numpy
-from algorithm import Algorithm
-from  lib_openimu import schemas
+from lib_openimu.algorithm import Algorithm
+from lib_openimu import schemas
 
 
 class activityTracker(Algorithm):

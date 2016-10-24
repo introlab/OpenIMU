@@ -1,5 +1,5 @@
-from algorithm import Algorithm
-from  lib_openimu import schemas
+from lib_openimu.algorithm import Algorithm
+from lib_openimu import schemas
 from bson.objectid import ObjectId
 from math import sqrt
 import numpy as np

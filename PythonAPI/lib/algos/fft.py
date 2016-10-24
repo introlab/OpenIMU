@@ -1,6 +1,6 @@
 import numpy as np
-from algorithm import Algorithm
-import schemas
+from lib_openimu.algorithm import Algorithm
+from lib_openimu import schemas
 from bson.objectid import ObjectId
 
 class fft(Algorithm):
