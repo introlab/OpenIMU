@@ -4,11 +4,8 @@ from bson.objectid import ObjectId
 from math import sqrt
 import numpy as np
 
-
-
-
-
 class stepCounter(Algorithm):
+    #This is the base threshold for the stepcounter
     spacing = 75
 
     def __init__(self):
@@ -19,13 +16,19 @@ class stepCounter(Algorithm):
         self.params.uuid = 0
 
     def run(self):
-
+        """
+        Algorithm for StepCounter
+        Step 1 : Import the  data from the database
+        Step 2 : Calculate the moving average of the data
+        Step 3 : Find the Peaks within a certain spacing and limit
+        :return: Nothing by default, but self.ouput is still useful to return
+        """
         schema = schemas.Sensor(many=True)
         ref = self.database.db.accelerometres.find({'ref': ObjectId(self.params.uuid)})
         data, errors = schema.dump(ref)
 
         filtereddata = self.moving_average(data)
-        peaks = self.find_peaks(filtereddata,spacing = self.spacing)
+        peaks = self.find_peaks(filtereddata,spacing = self.spacing,limit = 4000)
 
         # If you have imported matplotlib, you can decomment the following section. It block the cpu.
         #t = np.linspace(0, 1, len(filtereddata))
@@ -44,12 +47,11 @@ class stepCounter(Algorithm):
         return  np.convolve(magnetude, np.ones((N,))/ N,mode='valid')[(N-1):]
 
     def find_peaks(self,data,spacing = 1, limit = None):
-
         """Finds peaks in `data` which are of `spacing` width and >=`limit`.
         :param data: values
         :param spacing: minimum spacing to the next peak (should be 1 or more)
         :param limit: peaks should have value greater or equal
-        :return:
+        :return: A list of position of the peaks
         """
         len = data.size
         x = np.zeros(len + 2 * spacing)
