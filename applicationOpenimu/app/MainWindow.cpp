@@ -10,6 +10,7 @@
 #include "QMessageBox"
 #include "mainwindow.h"
 #include "iostream"
+#include <QProcess>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -60,6 +61,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     setCentralWidget(mainWidget);
     statusBar->showMessage(tr("Prêt"));
     statusBar->addPermanentWidget(spinnerStatusBar);
+
+    QProcess p;
+    p.start("cmd.exe", QStringList() << "/c" << "..\\PythonAPI\\src\\runapi.bat");
+    p.waitForFinished();
+    qDebug() << p.readAllStandardOutput();
+
     getRecordsFromDB();
 }
 
