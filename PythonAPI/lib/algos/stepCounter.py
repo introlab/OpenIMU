@@ -25,7 +25,7 @@ class stepCounter(Algorithm):
         data, errors = schema.dump(ref)
 
         filtereddata = self.moving_average(data)
-        peaks = self.find_peaks(filtereddata,spacing = self.spacing)
+        peaks = self.find_peaks(filtereddata,spacing = self.spacing,limit = 4000)
 
         # If you have imported matplotlib, you can decomment the following section. It block the cpu.
         #t = np.linspace(0, 1, len(filtereddata))

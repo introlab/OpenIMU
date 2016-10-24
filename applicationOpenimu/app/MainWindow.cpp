@@ -5,6 +5,7 @@
 #include<QDebug>
 #include "widgets/AlgorithmTab.h"
 #include "widgets/ResultsTabWidget.h"
+#include "widgets/HomeWidget.h"
 #include "AccDataDisplay.h"
 #include "QMessageBox"
 #include "mainwindow.h"
@@ -47,26 +48,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     listWidget->setMaximumWidth(150);
     tabWidget->setTabsClosable(true);
-    QWidget * homeWidget = new QWidget(); //To do create classe Home widget
-    QVBoxLayout* homeLayout = new QVBoxLayout(homeWidget);
-    QLabel * homeLabel = new QLabel("Open IMU,logiciel de visualisation et d'analyse pour centrale inertielle");
+    HomeWidget * homeWidget = new HomeWidget(this); //To do create classe Home widget
 
-    QPixmap pic("../applicationOpenimu/app/icons/logo.png");
-    QPixmap scaled=pic.scaled ( 400, 200, Qt::KeepAspectRatio, Qt::FastTransformation );
-
-    QLabel *label = new QLabel(this);
-    label->setMaximumWidth(800);
-    label->setPixmap(scaled);
-    label->setAlignment(Qt::AlignCenter);
-    QFont font;
-    font.setPointSize(10);
-    homeLabel->setFont(font);
-
-    homeLayout->addWidget(homeLabel);
-    homeWidget->setLayout(homeLayout);
-    homeLayout->addWidget(label);
-    homeLayout->addSpacing(100);
-    homeLayout -> setAlignment(homeLabel,Qt::AlignCenter);
     tabWidget->addTab(homeWidget,tr("Accueil"));
     tabWidget->setStyleSheet("background: rgb(247, 250, 255,0.6)");
     tabWidget->setCurrentWidget(tabWidget->widget(0));
@@ -90,6 +73,7 @@ void MainWindow::onListItemClicked(QListWidgetItem* item)
     {
         if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text().toStdString()) == 0)
         {
+            statusBar->showMessage(tr("Chargement..."));
             selectedUUID = record.m_WimuRecordList.at(i).m_recordId;
             spinnerStatusBar->show();
             movieSpinnerBar->start();
@@ -100,6 +84,7 @@ void MainWindow::onListItemClicked(QListWidgetItem* item)
             replaceTab(recordsTab, srecordInfo);
             movieSpinnerBar->stop();
             spinnerStatusBar->hide();
+            statusBar->showMessage(tr("Prêt"));
         }
     }
 }
