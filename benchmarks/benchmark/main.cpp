@@ -1,4 +1,4 @@
 #include <QtTest/QtTest>
-#include "testbenchmark.h"
+#include "TestBenchmark.h"
 
 QTEST_MAIN(TestBenchmark)

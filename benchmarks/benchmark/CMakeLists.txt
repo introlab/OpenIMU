@@ -8,29 +8,38 @@ find_package(Qt5Quick   REQUIRED)
 find_package(Qt5Charts	REQUIRED)
 
 
-#MINGW COMPILE FLAGS
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
+#MINGW or MSVC COMPILE FLAGS
+IF (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX )
+   MESSAGE( STATUS "Setting flags for GNU GCC")
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
+   SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+   SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wall")
+ENDIF(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+
+IF (MSVC)
+   MESSAGE( STATUS "Setting flags for Visual Studio")
+ENDIF(MSVC)
+
 
 enable_testing(true)
 
 SET(srcs
-    ${CMAKE_CURRENT_SOURCE_DIR}/testbenchmark.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../application_openimu/app/customqmlscene.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TestBenchmark.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../applicationOpenimu/app/CustomQmlScene.cpp
     )
 
 SET(headers
-    ${CMAKE_CURRENT_SOURCE_DIR}/testbenchmark.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../application_openimu/app/customqmlscene.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/TestBenchmark.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../applicationOpenimu/app/CustomQmlScene.h
     )
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../application_openimu/app/models ${CMAKE_CURRENT_BINARY_DIR}/models)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../application_openimu/app/newAcquisition ${CMAKE_CURRENT_BINARY_DIR}/newAcquisition)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../application_openimu/app/algorithm ${CMAKE_CURRENT_BINARY_DIR}/algorithm)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../application_openimu/app/acquisition ${CMAKE_CURRENT_BINARY_DIR}/acquisition)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../applicationOpenimu/app/core ${CMAKE_CURRENT_BINARY_DIR}/core)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../applicationOpenimu/app/algorithm ${CMAKE_CURRENT_BINARY_DIR}/algorithm)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../applicationOpenimu/app/acquisition ${CMAKE_CURRENT_BINARY_DIR}/acquisition)
 
 
 include_directories(
-    ../../application_openimu/app/models/json
+    ../../applicationOpenimu/app/core/json
     )
 
 # Tell CMake to run moc when necessary:

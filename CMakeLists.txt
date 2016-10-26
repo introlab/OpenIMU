@@ -19,14 +19,24 @@ cmake_policy(SET CMP0043 NEW)
 
 # compile in debug or release mode
 IF(NOT CMAKE_BUILD_TYPE)
-  #SET(CMAKE_BUILD_TYPE Release)
-  SET(CMAKE_BUILD_TYPE Debug)
+  SET(CMAKE_BUILD_TYPE Release)
+  #SET(CMAKE_BUILD_TYPE Debug)
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
-#MINGW COMPILE FLAGS
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
-SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wall")
+#MINGW or MSVC COMPILE FLAGS
+IF (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX )
+   MESSAGE( STATUS "Setting flags for GNU GCC")
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
+   SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+   SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wall")
+ENDIF(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+
+IF (MSVC)
+   MESSAGE( STATUS "Setting flags for Visual Studio")
+ENDIF(MSVC)
+
+
+
 
 #Install directory
 MESSAGE( STATUS "Windows version: " ${CMAKE_SYSTEM})
@@ -42,14 +52,10 @@ SET (LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 
 SET(CMAKE_VERBOSE_MAKEFILE ON)
 
+add_subdirectory(applicationOpenimu)
+#add_subdirectory(unitTests)
+#add_subdirectory(benchmarks)
 
-add_subdirectory(application_openimu)
-add_subdirectory(config)
-add_subdirectory(plugins)
-add_subdirectory(unit_tests)
-add_subdirectory(benchmarks)
-
-enable_testing(true)
-include_directories(unit_tests)
-include_directories(benchmarks)
-
+#enable_testing(true)
+#include_directories(unitTests)
+#include_directories(benchmarks)

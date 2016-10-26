@@ -1,5 +1,0 @@
-{
- "type": "mul", "ID": "",
- "inputs":[{"ID":"input1"},{"ID":"input2"}],
- "outputs":[{"ID":"output1"}]
-}

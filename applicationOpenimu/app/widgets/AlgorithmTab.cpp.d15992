@@ -1,0 +1,44 @@
+#include "algorithmtab.h"
+
+AlgorithmTab::AlgorithmTab(QWidget * parent) : QWidget(parent)
+{
+        // -- Layout
+        algorithmLayout = new QVBoxLayout(this);
+
+        // -- Algorithm Section
+        algorithmLabel = new QLabel(tr("Algorithmes"));
+        algorithmTableWidget = new QTableWidget(this);
+
+        //connect(algorithmTableView, SIGNAL(itemClicked(QTableViewItem*)),this, SLOT(onListItemClicked(QTableViewItem*)));
+        //algorithmTableView->setAlternatingRowColors(true);
+        //algorithmTableView->setStyleSheet("alternate-background-color:#ecf0f1;background-color:white;");
+
+        algorithmTableWidget->setRowCount(10);
+        algorithmTableWidget->setColumnCount(4);
+
+        algorithmTableHeaders<<"Id"<<"Nom"<<"Description"<<"Auteur";
+        algorithmTableWidget->setHorizontalHeaderLabels(algorithmTableHeaders);
+
+        algorithmTableWidget->setItem(0, 1, new QTableWidgetItem("Hello"));
+        algorithmTableWidget->setFlags(!Qt::ItemIsEditable);
+
+        connect(this, SIGNAL(doubleClicked(const QModelIndex& )), this, SLOT(OpenParametersWindow(const QModelIndex&)));
+
+
+        //algorithmTableWidget->setModel(algorithmModel);
+        //algorithmTableWidget->show();
+
+        // -- Parameter Section
+        parameterLabel = new QLabel(tr("Paramètre(s)"));
+
+        algorithmLayout->addWidget(algorithmLabel);
+        algorithmLayout->addWidget(algorithmTableWidget);
+        algorithmLayout->addWidget(parameterLabel);
+        this->setLayout(algorithmLayout);
+
+}
+
+void AlgorithmTab::OpenParametersWindow( QModelIndex i )
+{
+
+}
