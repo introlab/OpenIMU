@@ -5,7 +5,6 @@
 #include<QDebug>
 #include "widgets/AlgorithmTab.h"
 #include "widgets/ResultsTabWidget.h"
-#include "widgets/HomeWidget.h"
 #include "AccDataDisplay.h"
 #include "QMessageBox"
 #include "mainwindow.h"
@@ -49,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     listWidget->setMaximumWidth(150);
     tabWidget->setTabsClosable(true);
-    HomeWidget * homeWidget = new HomeWidget(this); //To do create classe Home widget
+    homeWidget = new HomeWidget(this);
 
     tabWidget->addTab(homeWidget,tr("Accueil"));
     tabWidget->setStyleSheet("background: rgb(247, 250, 255,0.6)");
@@ -65,7 +64,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QProcess p;
     p.start("cmd.exe", QStringList() << "/c" << "..\\PythonAPI\\src\\runapi.bat");
     p.waitForFinished();
-    //qDebug() << p.readAllStandardOutput();
 
     getRecordsFromDB();
 }
@@ -110,6 +108,40 @@ void MainWindow::openAlgorithmTab()
 {
     algorithmTab = new AlgorithmTab(this,selectedUUID);
     replaceTab(algorithmTab,"Algorithmes");
+}
+
+void MainWindow::deleteRecord()
+{
+    QMessageBox msgBox;
+    msgBox.setText("Suppression de l'enregistrement");
+    msgBox.setInformativeText("Êtes vous sûr de vouloir supprimer cet enregistrement?");
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Cancel);
+    int ret = msgBox.exec();
+
+    switch (ret) {
+      case QMessageBox::Ok:
+        deleteRecordFromUUID(selectedUUID);
+        getRecordsFromDB();
+        acceleroData.clearData();
+        selectedUUID= "";
+        tabWidget->removeTab(tabWidget->currentIndex());
+        openHomeTab();
+          break;
+      case QMessageBox::Cancel:
+          // Cancel was clicked
+          break;
+      default:
+          // should never be reached
+          break;
+    }
+
+}
+
+void MainWindow::openHomeTab()
+{
+    homeWidget = new HomeWidget(this);
+    replaceTab(homeWidget,"Accueil");
 }
 
 bool MainWindow::getRecordsFromDB()
@@ -166,7 +198,6 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError)
    {
-       //qDebug() << "connection main";
        std::string testReponse(reply->readAll());
        record.m_WimuRecordList.clear();
        CJsonSerializer::Deserialize(&record, testReponse);
@@ -186,6 +217,35 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
        //qDebug() << reply->readAll();
    }
    delete reply;
+}
+
+//Delete specific record
+bool MainWindow::deleteRecordFromUUID(std::string uuid)
+{
+    std::string url = "http://127.0.0.1:5000/delete?uuid="+uuid;
+    QNetworkRequest request(QUrl(QString::fromStdString(url)));
+    request.setRawHeader("User-Agent", "ApplicationNameV01");
+    request.setRawHeader("Content-Type", "application/json");
+
+    QNetworkAccessManager *manager = new QNetworkAccessManager();
+    QNetworkReply *reply = manager->get(request);
+    QEventLoop loop;
+    bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,SLOT(quit()));
+    loop.exec();
+    reponseRecueDelete(reply);
+    return true;
+}
+
+void MainWindow::reponseRecueDelete(QNetworkReply* reply)
+{
+    if (reply->error() == QNetworkReply::NoError)
+   {
+        statusBar->showMessage(tr("Enregistrement effacé avec succès"));
+   }
+   else
+   {
+        statusBar->showMessage(tr("Echec de suppression de l'enregistrement"));
+   }
 }
 
 void MainWindow::setApplicationInEnglish()

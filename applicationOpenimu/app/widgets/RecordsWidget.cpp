@@ -20,11 +20,12 @@ RecordsWidget::RecordsWidget(QWidget *parent,WimuAcquisition& data, RecordInfo r
     detailsRecord = new QLabel("Détails enregistrement: "+ QString::fromStdString(record.m_recordDetails));
     seeFullGraphBtn = new QPushButton("Graphique détaillé");
     goToNextStep = new QPushButton("Choisir Algorithme");
-
+    deleteBtn = new QPushButton("Supprimer enregistrement");
     AccDataDisplay *dataDisplay = new AccDataDisplay(acceleroData);
     dataDisplay->showSimplfiedDataDisplay();
 
     layout->addWidget(recordTitle,0,0);
+    layout->addWidget(deleteBtn,0,3);
     layout->addWidget(recordDate,1,0);
     layout->addWidget(imuType,2,0);
     layout->addWidget(positionImu,3,0);
@@ -45,8 +46,10 @@ RecordsWidget::RecordsWidget(QWidget *parent,WimuAcquisition& data, RecordInfo r
                          "QPushButton:pressed { background-color: rgba(70, 95, 104, 0.7);}"
      );
 
+    deleteBtn->setStyleSheet("background-color: rgba(209, 31, 58, 0.6);");
     connect(seeFullGraphBtn, SIGNAL(clicked()), this, SLOT(openFullGraphSlot()));
     connect(goToNextStep, SIGNAL(clicked()), parent, SLOT(openAlgorithmTab()));
+    connect(deleteBtn, SIGNAL(clicked()), parent, SLOT(deleteRecord()));
     fDialog = new FullGraphDialog(acceleroData);
 }
 

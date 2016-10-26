@@ -22,6 +22,7 @@
 #include "../../acquisition/WimuRecord.h"
 #include "widgets/RecordsWidget.h"
 #include "widgets/AlgorithmTab.h"
+#include "widgets/HomeWidget.h"
 
 class MainWindow : public QMainWindow
     {
@@ -49,11 +50,21 @@ class MainWindow : public QMainWindow
     void onListItemClicked(QListWidgetItem* item);
     void closeWindow();
 
-    void reponseRecue(QNetworkReply* reply);
+    //Getting records from DB
     bool getRecordsFromDB();
+    void reponseRecue(QNetworkReply* reply);
+
+    //Getting data from specific record
     bool getDataFromUUIDFromDB(std::string uuid);
     void reponseRecueAcc(QNetworkReply* reply);
+
+    //Delete specific record
+    bool deleteRecordFromUUID(std::string uuid);
+    void reponseRecueDelete(QNetworkReply* reply);
+
+    void deleteRecord();
     void openAlgorithmTab();
+    void openHomeTab();
     private:
 
    QTabWidget *tabWidget;
@@ -73,6 +84,7 @@ class MainWindow : public QMainWindow
    AlgorithmTab* algorithmTab;
    QLabel* spinnerStatusBar;
    QMovie* movieSpinnerBar;
+   HomeWidget * homeWidget;
 
 };
 

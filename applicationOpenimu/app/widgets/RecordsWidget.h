@@ -33,6 +33,7 @@ class RecordsWidget: public QWidget
     QLabel* imuType;
     QLabel* positionImu;
     QLabel* detailsRecord;
+    QPushButton* deleteBtn;
     QPushButton* seeFullGraphBtn;
     QPushButton* goToNextStep;
     FullGraphDialog *fDialog;
