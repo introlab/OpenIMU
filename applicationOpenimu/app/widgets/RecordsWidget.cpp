@@ -14,7 +14,16 @@ RecordsWidget::RecordsWidget(QWidget *parent,WimuAcquisition& data, RecordInfo r
 
     recordTitle = new QLabel("Nom de l'enregistrement: "+ QString::fromStdString(record.m_recordName));
     recordTitle->setFont(QFont( "Arial", 12, QFont::Bold));
-    recordDate = new QLabel(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(acceleroData.getDates().back().date));
+
+    if(acceleroData.getDates().size()>0)
+    {
+        recordDate = new QLabel(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(acceleroData.getDates().back().date));
+    }
+    else
+    {
+        recordDate = new QLabel("Enregistrement invalide");
+    }
+
     imuType = new QLabel("Centralle inertielle: "+ QString::fromStdString(record.m_imuType));
     positionImu = new QLabel("Position IMU: "+ QString::fromStdString(record.m_imuPosition));
     detailsRecord = new QLabel("Détails enregistrement: "+ QString::fromStdString(record.m_recordDetails));

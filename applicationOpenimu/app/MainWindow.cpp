@@ -64,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QProcess p;
     p.start("cmd.exe", QStringList() << "/c" << "..\\PythonAPI\\src\\runapi.bat");
     p.waitForFinished();
-
+    p.destroyed();
     getRecordsFromDB();
 }
 
@@ -84,12 +84,11 @@ void MainWindow::onListItemClicked(QListWidgetItem* item)
             movieSpinnerBar->start();
             getDataFromUUIDFromDB(selectedUUID);
             recordsTab = new RecordsWidget(this,acceleroData,record.m_WimuRecordList.at(i));
-            QString recordInfo = tr("Informations enregistrement");
-            std::string srecordInfo = recordInfo.toUtf8().constData();
-            replaceTab(recordsTab, srecordInfo);
+            replaceTab(recordsTab,"Informations enregistrement");
             movieSpinnerBar->stop();
             spinnerStatusBar->hide();
             statusBar->showMessage(tr("Prêt"));
+
         }
     }
 }
@@ -178,7 +177,6 @@ void MainWindow::reponseRecueAcc(QNetworkReply* reply)
     if (reply->error() == QNetworkReply::NoError)
    {
        acceleroData.clearData();
-       //qDebug() << "connection UUID";
        std::string testReponse(reply->readAll());
        CJsonSerializer::Deserialize(&acceleroData, testReponse);
 

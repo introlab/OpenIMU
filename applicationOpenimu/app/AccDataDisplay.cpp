@@ -13,14 +13,17 @@ AccDataDisplay::AccDataDisplay()
 
 void AccDataDisplay::showSimplfiedDataDisplay()
 {
-    checkboxX->hide();
-    checkboxY->hide();
-    checkboxZ->hide();
-    checkboxAccNorm->hide();
-    checkboxMovingAverage->hide();
-    rSlider->hide();
-    pbtn->hide();
-    dateRecorded->hide();
+    if(availableData.size()> 0)
+    {
+        checkboxX->hide();
+        checkboxY->hide();
+        checkboxZ->hide();
+        checkboxAccNorm->hide();
+        checkboxMovingAverage->hide();
+        rSlider->hide();
+        pbtn->hide();
+        dateRecorded->hide();
+    }
 }
 
 AccDataDisplay::AccDataDisplay(WimuAcquisition accData){
@@ -32,7 +35,7 @@ AccDataDisplay::AccDataDisplay(WimuAcquisition accData){
     availableData = acceleroData.getData();
     sliceData = availableData;
 
-    if(availableData.size()>0)
+    if(availableData.size()> 0)
     {
 
         chart = new DataChart();

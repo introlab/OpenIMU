@@ -120,7 +120,35 @@ void RecordsDialog::addRecordSlot()
     QString msgErreur="";
     successLabel->setText("");
 
-    if(recordName->text().isEmpty() || !isFolderSelected)
+    QDir* dir = new QDir(folderToAdd);
+    dir->setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+    //qDebug() << "Scanning: " << dir->path();
+    QStringList fileList = dir->entryList();
+    std::string output;
+    std::string filePathAcc = "";
+    std::string filePathGyr = "";
+    std::string filePathMag = "";
+    bool validFolder = false;
+    for (int i=0; i<fileList.count(); i++)
+    {
+        if(fileList[i].contains("ACC"))
+        {
+        filePathAcc = folderToAdd.toStdString()+"/"+fileList[i].toStdString();
+        validFolder = true;
+        }
+        else if(fileList[i].contains("GYR"))
+        {
+        filePathGyr = folderToAdd.toStdString()+"/"+fileList[i].toStdString();
+        validFolder = true;
+        }
+        else if(fileList[i].contains("MAG"))
+        {
+        filePathMag = folderToAdd.toStdString()+"/"+fileList[i].toStdString();
+        validFolder = true;
+        }
+    }
+
+    if(recordName->text().isEmpty() || !isFolderSelected || !validFolder)
     {
         if(recordName->text().isEmpty() && !isFolderSelected)
             msgErreur = tr("Veuillez sélectionner un dossier et ajoutez un nom d'enregistrement");
@@ -131,61 +159,28 @@ void RecordsDialog::addRecordSlot()
         }
         else if(recordName->text().isEmpty())
             msgErreur = tr("Ajoutez un nom d'enregistrement");
+        else if(!validFolder)
+            msgErreur = tr("Le dossier choisi est invalide");
 
 
         QMessageBox messageBox;
 
         messageBox.warning(0,tr("Avertissement"),msgErreur);
         messageBox.setFixedSize(500,200);
-    }
+        }
     else
     {
-        QDir* dir = new QDir(folderToAdd);
-          dir->setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
-          //qDebug() << "Scanning: " << dir->path();
-          QStringList fileList = dir->entryList();
-          std::string output;
-          std::string filePathAcc = "";
-          std::string filePathGyr = "";
-          std::string filePathMag = "";
 
-          for (int i=0; i<fileList.count(); i++)
-          {
-              if(fileList[i].contains("ACC"))
-              {
-                  //qDebug() << "Found file: " << fileList[i];
-                  filePathAcc = folderToAdd.toStdString()+"/"+fileList[i].toStdString();
-                  //qDebug() << QString::fromStdString(filePathAcc);
-              }
-              else if(fileList[i].contains("GYR"))
-              {
-                  //qDebug() << "Found file: " << fileList[i];
-                  filePathGyr = folderToAdd.toStdString()+"/"+fileList[i].toStdString();
-                  //qDebug() << QString::fromStdString(filePathGyr);
-              }
-              else if(fileList[i].contains("MAG"))
-              {
-                  //qDebug() << "Found file: " << fileList[i];
-                  filePathMag = folderToAdd.toStdString()+"/"+fileList[i].toStdString();
-                  //qDebug() << QString::fromStdString(filePathMag);
-              }
-          }
+        WimuAcquisition* acceleroData = new WimuAcquisition(filePathAcc,filePathGyr,filePathMag,50);
+        acceleroData->initialize();
 
-          WimuAcquisition* acceleroData = new WimuAcquisition(filePathAcc,filePathGyr,filePathMag,50);
-          acceleroData->initialize();
-
-          RecordInfo info;
-          info.m_recordName = recordName->text().toStdString();
-          info.m_imuType = imuSelectComboBox->currentText().toStdString();
-          info.m_imuPosition = imuPositionComboBox->currentText().toStdString();
-          info.m_recordDetails = userDetails->toPlainText().toStdString();
-          CJsonSerializer::Serialize(acceleroData,info,"", output);
-          //qDebug("OUTPUT:");
-          QString qstr = QString::fromStdString(output);
-          //qDebug()<<qstr;
-          std::ofstream out("recordToAdd.json");
-          out << output;
-          out.close();
+        RecordInfo info;
+        info.m_recordName = recordName->text().toStdString();
+        info.m_imuType = imuSelectComboBox->currentText().toStdString();
+        info.m_imuPosition = imuPositionComboBox->currentText().toStdString();
+        info.m_recordDetails = userDetails->toPlainText().toStdString();
+        CJsonSerializer::Serialize(acceleroData,info,"", output);
+        QString qstr = QString::fromStdString(output);
 
         databaseAccess = new DbBlock;
         databaseAccess->addRecordInDB(QString::fromStdString(output));
