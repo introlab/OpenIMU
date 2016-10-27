@@ -6,10 +6,10 @@
 #include <QEventLoop>
 #include <QDebug>
 
-AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
+AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget(parent)
 {
         m_parent = parent;
-        m_uuid = uuid;
+        m_selectedRecord = selectedRecord;
 
         //By default
         selectedIndexRow = 0;
@@ -178,7 +178,7 @@ void AlgorithmTab::openParametersWindow(const QModelIndex &index)
 bool AlgorithmTab::createAlgoRequest()
 {
     std::string algoName = selectedAlgorithm.name;
-    std::string url = "http://127.0.0.1:5000/algo?filename="+algoName+"&uuid="+m_uuid;
+    std::string url = "http://127.0.0.1:5000/algo?filename="+algoName+"&uuid="+m_selectedRecord.m_recordId;
 
     for(int i=0; i< selectedAlgorithm.parameters.size();i++)
     {
@@ -248,8 +248,9 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
        AlgorithmOutput output;
        CJsonSerializer::Deserialize(&output, reponse);
        MainWindow * test = (MainWindow*)m_parent;
-       ResultsTabWidget* res = new ResultsTabWidget(this, algoList.m_algorithmList.at(selectedIndexRow), output);
-       test->replaceTab(res,"Résultats");
+       AlgorithmInfo &algoInfo = algoList.m_algorithmList.at(selectedIndexRow);
+       ResultsTabWidget* res = new ResultsTabWidget(this, m_selectedRecord, algoInfo, output);
+       test->replaceTab(res,algoInfo.name + ": " + m_selectedRecord.m_recordName);
    }
    else
    {

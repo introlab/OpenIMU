@@ -18,6 +18,7 @@ class ResultsTabWidget: public QWidget
     public:
     ResultsTabWidget();
     ResultsTabWidget(QWidget *parent, AlgorithmInfo &algoInfo, AlgorithmOutput &output);
+    ResultsTabWidget(QWidget *parent, RecordInfo &recordInfo, AlgorithmInfo &algoInfo, AlgorithmOutput &output);
      ~ResultsTabWidget();
 
     public slots:
@@ -29,6 +30,9 @@ class ResultsTabWidget: public QWidget
     QWidget* container;
     QLabel* imuType;
 
+    RecordInfo m_recordInfo;
+
+    void init(AlgorithmInfo &algoInfo, AlgorithmOutput &output);
 };
 
 #endif

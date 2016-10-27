@@ -19,7 +19,7 @@ class AlgorithmTab : public QWidget
 {
     Q_OBJECT
 public:
-    explicit AlgorithmTab(QWidget *parent, std::string uuid);
+    explicit AlgorithmTab(QWidget *parent, RecordInfo selectedRecord);
     bool getAlgorithmsFromDB();
     void setAlgorithm(AlgorithmInfo algorithmInfo);
     bool createAlgoRequest();
@@ -64,6 +64,8 @@ private:
     int selectedIndexRow;
     AlgorithmList algoList;
     AlgorithmInfo selectedAlgorithm;
+
+    RecordInfo m_selectedRecord;
 
     void removeChildren(QLayout* layout);
     void resetSelectionSection();

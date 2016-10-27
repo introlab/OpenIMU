@@ -82,11 +82,11 @@ void MainWindow::onListItemClicked(QListWidgetItem* item)
         if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text().toStdString()) == 0)
         {
             statusBar->showMessage(tr("Chargement..."));
-            selectedUUID = record.m_WimuRecordList.at(i).m_recordId;
+            selectedRecord = record.m_WimuRecordList.at(i);
             spinnerStatusBar->show();
             movieSpinnerBar->start();
-            getDataFromUUIDFromDB(selectedUUID);
-            recordsTab = new RecordsWidget(this,acceleroData,record.m_WimuRecordList.at(i));
+            getDataFromUUIDFromDB(selectedRecord.m_recordId);
+            recordsTab = new RecordsWidget(this,acceleroData,selectedRecord);
             replaceTab(recordsTab,"Informations enregistrement");
             movieSpinnerBar->stop();
             spinnerStatusBar->hide();
@@ -108,7 +108,7 @@ void MainWindow:: openRecordDialog()
 
 void MainWindow::openAlgorithmTab()
 {
-    algorithmTab = new AlgorithmTab(this,selectedUUID);
+    algorithmTab = new AlgorithmTab(this,selectedRecord);
     replaceTab(algorithmTab,"Algorithmes");
 }
 
@@ -123,10 +123,10 @@ void MainWindow::deleteRecord()
 
     switch (ret) {
       case QMessageBox::Ok:
-        deleteRecordFromUUID(selectedUUID);
+        deleteRecordFromUUID(selectedRecord.m_recordId);
         getRecordsFromDB();
         acceleroData.clearData();
-        selectedUUID= "";
+        selectedRecord.m_recordId = "";
         tabWidget->removeTab(tabWidget->currentIndex());
         openHomeTab();
           break;
