@@ -3,6 +3,8 @@
 #include <math.h>
 #include <QPropertyAnimation>
 #include <QQuickView>
+#include <time.h>
+#include <ctime>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -23,16 +25,18 @@ void AccDataDisplay::showSimplfiedDataDisplay()
         rSlider->hide();
         pbtn->hide();
         dateRecorded->hide();
+        groupBoxAxes->hide();
+        groupBoxSlider->hide();
+        groupBoxSave->hide();
     }
 }
 
-AccDataDisplay::AccDataDisplay(WimuAcquisition accData){
+AccDataDisplay::AccDataDisplay(const WimuAcquisition& accData){
 
     this->grabGesture(Qt::PanGesture);
     this->grabGesture(Qt::PinchGesture);
 
-    acceleroData = accData;
-    availableData = acceleroData.getData();
+    availableData = accData.getData();
     sliceData = availableData;
 
     if(availableData.size()> 0)
@@ -74,7 +78,7 @@ AccDataDisplay::AccDataDisplay(WimuAcquisition accData){
                              );
 
         dateRecorded = new QLabel();
-        dateRecorded->setText(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(acceleroData.getDates().back().date));
+        dateRecorded->setText(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(accData.getDates().back().date));
         hboxDate->addStretch();
         hboxDate->addWidget(dateRecorded);
         hboxDate->addStretch();
@@ -93,6 +97,7 @@ AccDataDisplay::AccDataDisplay(WimuAcquisition accData){
         checkboxAccNorm->setChecked(false);
         checkboxMovingAverage->setChecked(false);
 
+        groupBoxAxes = new QGroupBox(tr("Affichage des axes:"));
         QHBoxLayout *hbox = new QHBoxLayout();
         hbox->addStretch();
         hbox->addWidget(checkboxX);
@@ -101,7 +106,7 @@ AccDataDisplay::AccDataDisplay(WimuAcquisition accData){
         hbox->addWidget(checkboxAccNorm);
         hbox->addWidget(checkboxMovingAverage);
         hbox->addStretch();
-
+        groupBoxAxes->setLayout(hbox);
 
         long long min = WimuAcquisition::minTime(availableData).timestamp;
 
@@ -117,8 +122,19 @@ AccDataDisplay::AccDataDisplay(WimuAcquisition accData){
 
         layout->addLayout(hboxDate);
         layout->addWidget(chartView);
-        layout->addLayout(hbox);
-        layout->addWidget(rSlider);
+        layout->addWidget(groupBoxAxes);
+        groupBoxSlider = new QGroupBox(tr("Sélection Horaire"));
+
+        QVBoxLayout *vbox = new QVBoxLayout;
+        vbox->addWidget(rSlider);
+        groupBoxSlider->setLayout(vbox);
+        layout->addWidget(groupBoxSlider);
+
+        groupBoxSave = new QGroupBox(tr("Modifier l'enregistrement"));
+        QVBoxLayout *vboxSave = new QVBoxLayout;
+        vboxSave->addWidget(new QLabel("Utilisez la sélection horaire pour modifier l'heure de début et de fin puis sauvegardez vos changements"));
+        groupBoxSave->setLayout(vboxSave);
+        layout->addWidget(groupBoxSave);
 
         connect(checkboxX, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayXAxis(int)));
         connect(checkboxY, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayYAxis(int)));
