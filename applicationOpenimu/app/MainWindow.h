@@ -9,6 +9,9 @@
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 #include <QMovie>
+#include <QFuture>
+#include <QFutureWatcher>
+#include <QProcess>
 
 #include "widgets/ApplicationMenubar.h"
 #include "string.h"
@@ -37,54 +40,67 @@ class MainWindow : public QMainWindow
 
     public slots:
 
+        void openFile();
+        void openRecordDialog();
+        void closeTab(int);
+        void replaceTab(QWidget * replacement, std::string label);
+        void openAbout();
+        void openHelp();
+        void setApplicationInEnglish();
+        void setApplicationInFrench();
 
-    void openFile();
-    void openRecordDialog();
-    void closeTab(int);
-    void replaceTab(QWidget * replacement, std::string label);
-    void openAbout();
-    void openHelp();
-    void setApplicationInEnglish();
-    void setApplicationInFrench();
+        void onListItemClicked(QListWidgetItem* item);
+        void closeWindow();
 
-    void onListItemClicked(QListWidgetItem* item);
-    void closeWindow();
+        //Getting records from DB
+        bool getRecordsFromDB();
+        void reponseRecue(QNetworkReply* reply);
 
-    //Getting records from DB
-    bool getRecordsFromDB();
-    void reponseRecue(QNetworkReply* reply);
+        //Getting data from specific record
+        bool getDataFromUUIDFromDB(std::string uuid);
+        void reponseRecueAcc(QNetworkReply* reply);
 
-    //Getting data from specific record
-    bool getDataFromUUIDFromDB(std::string uuid);
-    void reponseRecueAcc(QNetworkReply* reply);
+        //Delete specific record
+        bool deleteRecordFromUUID(std::string uuid);
+        void reponseRecueDelete(QNetworkReply* reply);
 
-    //Delete specific record
-    bool deleteRecordFromUUID(std::string uuid);
-    void reponseRecueDelete(QNetworkReply* reply);
+        void deleteRecord();
+        void openAlgorithmTab();
+        void openHomeTab();
 
-    void deleteRecord();
-    void openAlgorithmTab();
-    void openHomeTab();
+        //Launch the python api
+        static void launchApi(){
+            //qDebug() << "launchApi start";
+            QProcess p;
+            p.start("cmd.exe", QStringList() << "/c" << "..\\PythonAPI\\src\\runapi.bat");
+            p.waitForFinished(1000);
+            p.destroyed();
+            //qDebug() << "launchApi end";
+        }
+
     private:
 
-   QTabWidget *tabWidget;
-   QString folderName;
-   QStatusBar * statusBar;
-   std::string selectedUUID;
-   MainWidget * mainWidget;
-   ApplicationMenuBar* menu ;
-   MyListWidget  * listWidget;
-   AboutDialog *aboutDialog;
-   HelpDialog *helpDialog;
-   DbBlock * databaseAccess = new DbBlock;
-   RecordsDialog * rDialog;
-   WimuRecord record;
-   WimuAcquisition acceleroData;
-   RecordsWidget* recordsTab;
-   AlgorithmTab* algorithmTab;
-   QLabel* spinnerStatusBar;
-   QMovie* movieSpinnerBar;
-   HomeWidget * homeWidget;
+        QTabWidget *tabWidget;
+        QString folderName;
+        QStatusBar * statusBar;
+        std::string selectedUUID;
+        MainWidget * mainWidget;
+        ApplicationMenuBar* menu ;
+        MyListWidget  * listWidget;
+        AboutDialog *aboutDialog;
+        HelpDialog *helpDialog;
+        DbBlock * databaseAccess = new DbBlock;
+        RecordsDialog * rDialog;
+        WimuRecord record;
+        WimuAcquisition acceleroData;
+        RecordsWidget* recordsTab;
+        AlgorithmTab* algorithmTab;
+        QLabel* spinnerStatusBar;
+        QMovie* movieSpinnerBar;
+        HomeWidget * homeWidget;
+
+        QFuture<void> *future;
+        QFutureWatcher<void> *watcher;
 
 };
 

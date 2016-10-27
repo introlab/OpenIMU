@@ -9,7 +9,7 @@
 #include "QMessageBox"
 #include "mainwindow.h"
 #include "iostream"
-#include <QProcess>
+#include <QtConcurrent/QtConcurrentRun>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -61,11 +61,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     statusBar->showMessage(tr("Prêt"));
     statusBar->addPermanentWidget(spinnerStatusBar);
 
-    QProcess p;
-    p.start("cmd.exe", QStringList() << "/c" << "..\\PythonAPI\\src\\runapi.bat");
-    p.waitForFinished();
-    p.destroyed();
+    //Execute launchApi in a thread
+    future = new QFuture<void>;
+    watcher = new QFutureWatcher<void>;
+    *future = QtConcurrent::run(MainWindow::launchApi);
+    watcher->setFuture(*future);
+
     getRecordsFromDB();
+
 }
 
 MainWindow::~MainWindow(){
