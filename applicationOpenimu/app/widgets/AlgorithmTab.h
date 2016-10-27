@@ -5,6 +5,7 @@
 #include "QLabel"
 #include "QStandardItemModel"
 #include "QTableWidget"
+#include "QMessageBox"
 #include "../algorithm/AlgorithmList.h"
 #include "../algorithm/AlgorithmOutput.h"
 #include "../acquisition/CJsonSerializer.h"
@@ -14,6 +15,7 @@
 #include <QNetworkAccessManager>
 #include <QPushButton>
 #include <QGroupBox>
+
 
 class AlgorithmTab : public QWidget
 {
@@ -33,6 +35,7 @@ public slots:
     void openResultTab();
 
 private:
+
     QVBoxLayout * algorithmTabLayout;
 
     // -- Algorithm List Section

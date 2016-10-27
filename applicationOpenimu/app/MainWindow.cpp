@@ -81,7 +81,7 @@ void MainWindow::onListItemClicked(QListWidgetItem* item)
     {
         if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text().toStdString()) == 0)
         {
-            statusBar->showMessage(tr("Chargement..."));
+            statusBar->showMessage(tr("Chargement de l'enregistrement..."));
             selectedRecord = record.m_WimuRecordList.at(i);
             spinnerStatusBar->show();
             movieSpinnerBar->start();
@@ -100,9 +100,9 @@ void MainWindow:: openFile(){
     getRecordsFromDB();
 }
 
-void MainWindow:: openRecordDialog()
+void MainWindow::openRecordDialog()
 {
-    rDialog = new RecordsDialog;
+    rDialog = new RecordsDialog(this);
     rDialog->show();
 }
 
@@ -112,11 +112,18 @@ void MainWindow::openAlgorithmTab()
     replaceTab(algorithmTab,"Algorithmes");
 }
 
+void MainWindow::setStatusBarText(QString txt)
+{
+    statusBar->showMessage(tr(txt.toStdString().c_str()));
+}
+
 void MainWindow::deleteRecord()
 {
     QMessageBox msgBox;
     msgBox.setText("Suppression de l'enregistrement");
     msgBox.setInformativeText("Êtes vous sûr de vouloir supprimer cet enregistrement?");
+
+
     msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
     msgBox.setDefaultButton(QMessageBox::Cancel);
     int ret = msgBox.exec();
@@ -303,6 +310,7 @@ void MainWindow::replaceTab(QWidget * replacement, std::string label)
         tabWidget->addTab(replacement,QString::fromStdString(label));
         tabWidget->setCurrentWidget(tabWidget->widget(tabWidget->count()-1));
     }
+    setStatusBarText(tr("Prêt"));
 }
 void MainWindow::closeTab(int index){
 

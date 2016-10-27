@@ -3,6 +3,7 @@
 #include <QString>
 #include<QFile>
 #include<QMessageBox>
+#include "../MainWindow.h"
 #include"acquisition/WimuAcquisition.h"
 #include "acquisition/CJsonSerializer.h"
 #include<QtDebug>
@@ -10,8 +11,12 @@
 #include <string>
 #include <iostream>
 
+
 RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
 {
+
+    m_parent = parent;
+
     this->setMinimumSize(300,400);
     this->setMaximumSize(300,400);
     this->setWindowTitle(QWidget::tr("Enregistrements"));
@@ -118,6 +123,9 @@ void RecordsDialog::addRecordSlot()
     spinner->show();
     movie->start();
     QString msgErreur="";
+    MainWindow * mainWindow = (MainWindow*)m_parent;
+    mainWindow->setStatusBarText(tr("Insertion de l'enregistrement dans la base de données en cours"));
+
     successLabel->setText("");
 
     QDir* dir = new QDir(folderToAdd);
@@ -180,11 +188,10 @@ void RecordsDialog::addRecordSlot()
         info.m_imuPosition = imuPositionComboBox->currentText().toStdString();
         info.m_recordDetails = userDetails->toPlainText().toStdString();
         CJsonSerializer::Serialize(acceleroData,info,"", output);
-        QString qstr = QString::fromStdString(output);
-
         databaseAccess = new DbBlock;
         databaseAccess->addRecordInDB(QString::fromStdString(output));
         successLabel->setText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"));
+        mainWindow->setStatusBarText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"));
     }
     movie->stop();
     spinner->hide();

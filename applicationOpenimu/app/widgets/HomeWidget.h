@@ -42,8 +42,9 @@ public:
         QLabel *release = new QLabel("Notes de version:");
         release->setFont(QFont( "Arial", 10, QFont::Bold));
         QTextEdit* releasete = new QTextEdit();
-        QString* notes = new QString("Version 2.0 - 24/10/2010 \n\n- Sauvegarde en base de données \n\n- Application d'algorithmes en python sur les données \n\n"
-                                     "- Implémentation de l'algorithme: temps d'activité \n\n- Améliorations de l'interface utilisateur \n\n"
+        releasete->setMinimumHeight(200);
+        QString* notes = new QString("Version 2.0 - 24/10/2010 \n\n- Sauvegarde en base de données \n- Application d'algorithmes en python sur les données \n"
+                                     "- Implémentation de l'algorithme: temps d'activité \n- Améliorations de l'interface utilisateur \n"
                                      "- Centrale inertielle supportée dans cette version: Wimu");
         releasete->setPlainText(*notes);
         releasete->setReadOnly(true);

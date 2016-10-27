@@ -35,6 +35,7 @@ class MainWindow : public QMainWindow
        ~MainWindow();
        std::string getFileName(std::string s);
        void retranslateUi();
+       void setStatusBarText(QString txt);
 
     signals:
 
