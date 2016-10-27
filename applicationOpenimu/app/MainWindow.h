@@ -83,7 +83,7 @@ class MainWindow : public QMainWindow
         QTabWidget *tabWidget;
         QString folderName;
         QStatusBar * statusBar;
-        std::string selectedUUID;
+        RecordInfo selectedRecord;
         MainWidget * mainWidget;
         ApplicationMenuBar* menu ;
         MyListWidget  * listWidget;

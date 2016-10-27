@@ -3,13 +3,26 @@
 
 QT_CHARTS_USE_NAMESPACE
 
+ResultsTabWidget::ResultsTabWidget(QWidget *parent,RecordInfo& recordInfo, AlgorithmInfo &algoInfo, AlgorithmOutput &output):QWidget(parent)
+{
+    m_recordInfo=recordInfo;
+    init(algoInfo, output);
+}
+
 ResultsTabWidget::ResultsTabWidget(QWidget *parent,AlgorithmInfo &algoInfo, AlgorithmOutput &output):QWidget(parent)
+{
+    init(algoInfo, output);
+}
+
+void ResultsTabWidget::init(AlgorithmInfo &algoInfo, AlgorithmOutput &output)
 {
     layout = new QVBoxLayout;
     this->setLayout(layout);
 
-
-    algoName = new QLabel(QString::fromStdString(algoInfo.name));
+    QString titleName = QString::fromStdString(algoInfo.name);
+    titleName += ": ";
+    titleName += QString::fromStdString(m_recordInfo.m_recordName);
+    algoName = new QLabel(titleName);
     algoName->setFont(QFont( "Arial", 12, QFont::Bold));
 
     layout->addWidget(algoName);
