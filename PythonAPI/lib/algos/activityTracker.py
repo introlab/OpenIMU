@@ -22,7 +22,9 @@ class activityTracker(Algorithm):
         self.author = "OpenIMU Team"
 
         self.params.threshold = 0
+        self.infos.threshold = "Magnitude of accelerometers that define activity"
         self.params.uuid = 0
+        self.infos.uuid = "Unique Id of the data"
 
 
     def run(self):

@@ -14,6 +14,7 @@ class stepCounter(Algorithm):
         self.author = "OpenIMU Team"
 
         self.params.uuid = 0
+        self.infos.uuid = "Unique ID"
 
     def run(self):
         """

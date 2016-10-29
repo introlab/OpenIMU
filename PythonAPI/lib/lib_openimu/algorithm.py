@@ -38,6 +38,7 @@ class Algorithm(object):
 
 #Property List
     _params = {}
+    _infos = {}
     _output = {}
     _database = None
 
@@ -86,6 +87,7 @@ class Algorithm(object):
         Those are the default values of the parameters. If the url doesn't find those keys in the url, then those values
         will be used.
                 """
+        self._infos = Dictionnary()
         self._params = Dictionnary()
         self._output = Dictionnary()
         pass
