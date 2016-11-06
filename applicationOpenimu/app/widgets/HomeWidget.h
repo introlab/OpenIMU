@@ -20,7 +20,7 @@ public:
         QLabel * homeLabel = new QLabel("Open IMU,logiciel de visualisation et d'analyse pour centrale inertielle");
         homeLabel->setFont(QFont( "Arial", 10, QFont::Bold));
         QPixmap pic("../applicationOpenimu/app/icons/logo.png");
-        QPixmap scaled=pic.scaled ( 400, 200, Qt::KeepAspectRatio, Qt::FastTransformation );
+        QPixmap scaled=pic.scaled ( 350, 150, Qt::KeepAspectRatio, Qt::FastTransformation );
 
         QLabel *label = new QLabel(this);
         label->setMaximumWidth(400);
@@ -43,9 +43,11 @@ public:
         release->setFont(QFont( "Arial", 10, QFont::Bold));
         QTextEdit* releasete = new QTextEdit();
         releasete->setMinimumHeight(200);
-        QString* notes = new QString("Version 2.0 - 24/10/2010 \n\n- Sauvegarde en base de données \n- Application d'algorithmes en python sur les données \n"
+        QString* notes = new QString("Version 2.0 - 24/10/2016 \n\n- Sauvegarde en base de données \n- Application d'algorithmes en python sur les données \n"
                                      "- Implémentation de l'algorithme: temps d'activité \n- Améliorations de l'interface utilisateur \n"
-                                     "- Centrale inertielle supportée dans cette version: Wimu");
+                                     "- Centrale inertielle supportée dans cette version: Wimu\n\n"
+                                     "Version 2.1 - 06/11/2016 \n\n- Suppression des enregistrements \n- Tabulation pour chaque résultat \n- Crash sur importation résolue"
+                                     "\n- Diminution du temps de lancement de l'application");
         releasete->setPlainText(*notes);
         releasete->setReadOnly(true);
 

@@ -124,7 +124,7 @@ void RecordsDialog::addRecordSlot()
     movie->start();
     QString msgErreur="";
     MainWindow * mainWindow = (MainWindow*)m_parent;
-    mainWindow->setStatusBarText(tr("Insertion de l'enregistrement dans la base de données en cours"));
+    mainWindow->setStatusBarText(tr("Insertion de l'enregistrement dans la base de données en cours..."));
 
     successLabel->setText("");
 
