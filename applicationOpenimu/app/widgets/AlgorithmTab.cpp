@@ -130,7 +130,7 @@ void AlgorithmTab::setAlgorithm(AlgorithmInfo algorithmInfo)
     if(algorithmInfo.parameters.size() == 0 ||
             ((algorithmInfo.parameters.size() == 1) && (algorithmInfo.parameters.at(0).name == "uuid")))
     {
-        parametersValues->setText("Aucun paramètre pour cet algorithme");
+        parametersValues->setText("Aucun paramètre à entrer pour cet algorithme");
     }
     else
     {

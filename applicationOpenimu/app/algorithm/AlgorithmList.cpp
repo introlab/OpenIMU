@@ -36,6 +36,7 @@ void AlgorithmList::Deserialize(Json::Value& root)
         {
             ParametersInfo pInfo;
             pInfo.name = params[indexp].get("name", "").asString();
+            pInfo.description = params[indexp].get("info", "").asString();
             temp.parameters.push_back(pInfo);
 
         }
