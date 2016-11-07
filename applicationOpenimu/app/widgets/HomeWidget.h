@@ -51,7 +51,7 @@ public:
         releasete->setPlainText(*notes);
         releasete->setReadOnly(true);
 
-        QLabel *version = new QLabel("Version: Release 2.0");
+        QLabel *version = new QLabel("Version: Release 2.1");
 
         mainLayout->addWidget(fonctions,Qt::AlignCenter);
         mainLayout->addWidget(fonction1);

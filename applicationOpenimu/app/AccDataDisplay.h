@@ -48,6 +48,7 @@ public slots:
     void handleResetZoomBtn();
     void firstUpdated(const QVariant &v);
     void secondUpdated(const QVariant &v);
+    void slotSaveNewSetRange();
 
 private:
     QGroupBox *groupBoxAxes;
@@ -69,7 +70,7 @@ private:
     QCheckBox *checkboxMovingAverage;
     QLabel* dateRecorded;
     QPushButton*pbtn;
-
+    QPushButton* saveDataSet;
     RangeSlider *rSlider;
     QVBoxLayout* layout;
 
