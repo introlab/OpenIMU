@@ -1,5 +1,6 @@
 #ifndef RECORDSDIALOG_H
 #define RECORDSDIALOG_H
+
 #include<QDialog>
 #include<QPushButton>
 #include<QLabel>
@@ -9,6 +10,7 @@
 #include<QTextEdit>
 #include<QMovie>
 #include "core/components/blockType/DbBlock.h"
+
 class RecordsDialog : public QDialog
 {
     Q_OBJECT
@@ -17,7 +19,7 @@ public:
 
     RecordsDialog(QWidget *parent);
     ~RecordsDialog();
-
+    void reject();
 private slots:
 
     void selectRecordSlot();

@@ -22,7 +22,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     this->grabGesture(Qt::PinchGesture);
 
     this->setWindowTitle(QString::fromUtf8("Open-IMU"));
-    this->setStyleSheet("background: rgba(246, 254, 254,0.8)");
     this->setMinimumSize(900,700);
 
     menu = new ApplicationMenuBar(this);
@@ -59,6 +58,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     setCentralWidget(mainWidget);
     statusBar->showMessage(tr("Prêt"));
+    statusBar->setMinimumHeight(20);
     statusBar->addPermanentWidget(spinnerStatusBar);
 
     //Execute launchApi in a thread

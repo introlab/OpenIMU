@@ -88,7 +88,7 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
     this->setStyleSheet( "QPushButton{"
                          "background-color: rgba(119, 160, 175,0.7);"
                          "border-style: inset;"
-                         "border-width: 2px;"
+                         "border-width: 0.2px;"
                          "border-radius: 10px;"
                          "border-color: white;"
                          "font: 12px;"
@@ -195,4 +195,12 @@ void RecordsDialog::addRecordSlot()
     }
     movie->stop();
     spinner->hide();
+}
+
+void RecordsDialog::reject()
+{
+    QMainWindow* currWin = (QMainWindow*)m_parent;
+    MainWindow* win = (MainWindow*)currWin;
+    win->getRecordsFromDB();
+    QDialog::reject();
 }
