@@ -33,8 +33,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     movieSpinnerBar = new QMovie("../applicationOpenimu/app/icons/loaderStatusBar.gif");
 
     spinnerStatusBar->setMovie(movieSpinnerBar);
-    connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
-    connect(listWidget, SIGNAL(itemClicked(QListWidgetItem*)),this, SLOT(onListItemClicked(QListWidgetItem*)));
 
     this->setMenuBar(menu);
     this->setStatusBar(statusBar);
@@ -43,7 +41,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     listWidget->setAlternatingRowColors(true);
     listWidget->setStyleSheet("alternate-background-color:#ecf0f1;background-color:white;");
 
-    mainWidget->mainLayout->addWidget(listWidget);
+    QPushButton* addRecord = new QPushButton("+");
+    QPushButton* deleteRecord = new QPushButton("-");
+    QVBoxLayout* vlayout = new QVBoxLayout();
+    vlayout->addWidget(addRecord);
+    vlayout->addWidget(listWidget);
+    vlayout->addWidget(deleteRecord);
+    mainWidget->mainLayout->addLayout(vlayout);
 
     listWidget->setMaximumWidth(150);
     tabWidget->setTabsClosable(true);
@@ -67,6 +71,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     *future = QtConcurrent::run(MainWindow::launchApi);
     watcher->setFuture(*future);
 
+    connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
+    connect(listWidget, SIGNAL(itemClicked(QListWidgetItem*)),this, SLOT(onListItemClicked(QListWidgetItem*)));
+    connect(listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)),this, SLOT(onListItemDoubleClicked(QListWidgetItem*)));
+    connect(addRecord, SIGNAL(clicked()), this, SLOT(openRecordDialog()));
+    connect(deleteRecord, SIGNAL(clicked()), this, SLOT(deleteRecordFromList()));
+
     getRecordsFromDB();
 
 }
@@ -76,6 +86,18 @@ MainWindow::~MainWindow(){
 }
 
 void MainWindow::onListItemClicked(QListWidgetItem* item)
+{
+    for(int i=0; i<record.m_WimuRecordList.size();i++)
+    {
+        if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text().toStdString()) == 0)
+        {
+            selectedRecord = record.m_WimuRecordList.at(i);
+            statusBar->showMessage(tr("Prêt"));
+        }
+    }
+}
+
+void MainWindow::onListItemDoubleClicked(QListWidgetItem* item)
 {
     for(int i=0; i<record.m_WimuRecordList.size();i++)
     {
@@ -243,7 +265,12 @@ bool MainWindow::deleteRecordFromUUID(std::string uuid)
     reponseRecueDelete(reply);
     return true;
 }
-
+bool MainWindow::deleteRecordFromList()
+{
+    deleteRecordFromUUID(selectedRecord.m_recordId);
+    getRecordsFromDB();
+    return true;
+}
 void MainWindow::reponseRecueDelete(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError)

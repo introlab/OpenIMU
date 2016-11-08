@@ -51,6 +51,7 @@ class MainWindow : public QMainWindow
         void setApplicationInFrench();
 
         void onListItemClicked(QListWidgetItem* item);
+        void onListItemDoubleClicked(QListWidgetItem* item);
         void closeWindow();
 
         //Getting records from DB
@@ -63,6 +64,7 @@ class MainWindow : public QMainWindow
 
         //Delete specific record
         bool deleteRecordFromUUID(std::string uuid);
+        bool deleteRecordFromList();
         void reponseRecueDelete(QNetworkReply* reply);
 
         void deleteRecord();
