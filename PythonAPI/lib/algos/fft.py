@@ -13,6 +13,7 @@ class fft(Algorithm):
         self.author = "OpenIMU Team"
 
         self.params.uuid = 0
+        self.infos.uuid = "Unique Id of the data"
 
 
     def run(self):

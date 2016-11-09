@@ -10,7 +10,7 @@
 #include <ctime>
 #include<QDebug>
 
-std::vector<frame> WimuAcquisition::getData()
+std::vector<frame> WimuAcquisition::getData() const
 {
     return data;
 }
@@ -281,7 +281,7 @@ WimuAcquisition::WimuAcquisition(std::string filenameAccelero, std::string filen
     }
     return tmp;
 }
-std::vector<string_timestamp> WimuAcquisition::getDates()
+std::vector<string_timestamp> WimuAcquisition::getDates() const
 {
 	std::vector<string_timestamp> result;
     long long lastTimestamp = -1;
@@ -309,7 +309,7 @@ int WimuAcquisition::getDataSize()
 {
 	return data.size();
 }
-std::vector<frame> WimuAcquisition::getData(long long start,long long end)
+ std::vector<frame> WimuAcquisition::getData(long long start,long long end) const
 {
 	std::vector<frame> result;
 	for (frame _frame : data)

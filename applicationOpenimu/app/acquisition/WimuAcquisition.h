@@ -42,11 +42,11 @@ public:
     WimuAcquisition(std::string filenameAccelero, std::string filenameGyro,std::string filenameMagneto, int frequence);
     std::vector<frame>readSensorDataSecond(BYTE* fileBuf, int start,int freq);
     long getFileSize(FILE *file);
-    std::vector<frame> getData();
     void setData(std::vector<frame> value);
-    std::vector<string_timestamp> getDates();
 	int getDataSize();
-	std::vector<frame> getData(long long start,long long end);
+    std::vector<frame> getData()const;
+    std::vector<string_timestamp> getDates()const;
+    std::vector<frame> getData(long long start,long long end)const;
 	static string_timestamp maxTime(std::vector<frame> frames);
 	static string_timestamp minTime(std::vector<frame> frames);
 

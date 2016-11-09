@@ -15,7 +15,9 @@ AlgorithmParametersDialog::AlgorithmParametersDialog(QWidget * parent, Algorithm
     {
         if(p.name != "uuid")
         {
-            QLabel * itemLabel = new QLabel(p.name.c_str());
+            QString parameterText = p.name.c_str() + QString::fromStdString(": ") + p.description.c_str();
+            QLabel * itemLabel = new QLabel( parameterText.at(0).toUpper() + parameterText.mid(1));
+
             QLineEdit * itemLineEdit = new QLineEdit();
 
             parametersLayout->addWidget(itemLabel);

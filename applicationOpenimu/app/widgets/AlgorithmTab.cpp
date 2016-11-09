@@ -1,6 +1,6 @@
 #include "algorithmtab.h"
-#include "../../MainWindow.h"
 #include "../dialogs/AlgorithmParametersDialog.h"
+#include "../../MainWindow.h"
 #include "ResultsTabWidget.h"
 #include "QHeaderView"
 #include <QEventLoop>
@@ -10,6 +10,8 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
 {
         m_parent = parent;
         m_selectedRecord = selectedRecord;
+
+        MainWindow * mainWindow = (MainWindow*)m_parent;
 
         //By default
         selectedIndexRow = 0;
@@ -64,7 +66,7 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
         }
         algorithmTableWidget->setRowCount(algoList.m_algorithmList.size());
 
-        connect(algorithmTableWidget, SIGNAL(doubleClicked(const QModelIndex& )), this, SLOT(openParametersWindow(const QModelIndex &)));
+        connect(algorithmTableWidget, SIGNAL(clicked(const QModelIndex& )), this, SLOT(openParametersWindow(const QModelIndex &)));
 
         // -- Parameter Section
         currentSelectionLabel = new QLabel(tr("Sélection courante"));
@@ -128,7 +130,7 @@ void AlgorithmTab::setAlgorithm(AlgorithmInfo algorithmInfo)
     if(algorithmInfo.parameters.size() == 0 ||
             ((algorithmInfo.parameters.size() == 1) && (algorithmInfo.parameters.at(0).name == "uuid")))
     {
-        parametersValues->setText("Aucun paramètre pour cet algorithme");
+        parametersValues->setText("Aucun paramètre à entrer pour cet algorithme");
     }
     else
     {
@@ -150,7 +152,27 @@ void AlgorithmTab::setAlgorithm(AlgorithmInfo algorithmInfo)
 
 void AlgorithmTab::openResultTab()
 {
-    createAlgoRequest();
+    bool showMessage = false;
+    if(selectedAlgorithm.parameters.size() != 0)
+    {
+        for(int i=0; i< selectedAlgorithm.parameters.size();i++)
+        {
+            if(selectedAlgorithm.parameters.at(i).name != "uuid" && selectedAlgorithm.parameters.at(i).value.empty())
+            {
+                showMessage = true;
+            }
+        }
+        if(showMessage)
+        {
+            QMessageBox messageBox;
+            messageBox.warning(0,tr("Avertissement"),"Veuillez entrer des valeur pour le(s) paramètre(s)");
+            messageBox.setFixedSize(500,200);
+        }
+        else
+        {
+            createAlgoRequest();
+        }
+    }
 }
 
 void AlgorithmTab::openParametersWindow(const QModelIndex &index)
@@ -222,13 +244,16 @@ bool AlgorithmTab::getAlgorithmsFromDB()
 
 void AlgorithmTab::reponseRecue(QNetworkReply* reply)
 {
+    MainWindow * mainWindow = (MainWindow*)m_parent;
     if (reply->error() == QNetworkReply::NoError)
    {
+       mainWindow->setStatusBarText(tr("Application de l'agorithme complété"));
        std::string testReponse = reply->readAll().toStdString();
        CJsonSerializer::Deserialize(&algoList, testReponse);
    }
    else
    {
+       mainWindow->setStatusBarText(tr("Application de l'agorithme non réussi"));
        //qDebug() << "error connect";
        //qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
        //qDebug() << "Request failed, " << reply->errorString();

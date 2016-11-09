@@ -14,6 +14,7 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QNetworkAccessManager>
+#include <QGroupBox>
 
 #include "acquisition/WimuAcquisition.h"
 #include "widgets/RangeSlider.h"
@@ -30,7 +31,7 @@ class AccDataDisplay : public QWidget
 
 public:
     AccDataDisplay();
-    AccDataDisplay( WimuAcquisition accData);
+    AccDataDisplay( const WimuAcquisition& accData);
     void fillChartSeries();
     void leftSliderValueChanged(double value);
     void rightSliderValueChanged(double value);
@@ -47,8 +48,13 @@ public slots:
     void handleResetZoomBtn();
     void firstUpdated(const QVariant &v);
     void secondUpdated(const QVariant &v);
+    void slotSaveNewSetRange();
 
 private:
+    QGroupBox *groupBoxAxes;
+    QGroupBox *groupBoxSlider;
+    QGroupBox *groupBoxSave;
+
     DataChart * chart;
     ChartView *chartView;
     QLineSeries *lineseriesX;
@@ -64,11 +70,10 @@ private:
     QCheckBox *checkboxMovingAverage;
     QLabel* dateRecorded;
     QPushButton*pbtn;
-
+    QPushButton* saveDataSet;
     RangeSlider *rSlider;
     QVBoxLayout* layout;
 
-    WimuAcquisition acceleroData;
     std::vector<frame> availableData;
     std::vector<frame> sliceData;
 

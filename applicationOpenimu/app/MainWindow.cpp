@@ -1,8 +1,8 @@
 #include <QFileDialog>
 #include "QTableView"
 #include <QListWidgetItem>
-#include <vector>
-#include <QDebug>
+#include<vector>
+#include<QDebug>
 #include "widgets/AlgorithmTab.h"
 #include "widgets/ResultsTabWidget.h"
 #include "AccDataDisplay.h"
@@ -10,8 +10,6 @@
 #include "mainwindow.h"
 #include "iostream"
 #include <QtConcurrent/QtConcurrentRun>
-#include <QNetworkReply>
-#include <QNetworkAccessManager>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -24,7 +22,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     this->grabGesture(Qt::PinchGesture);
 
     this->setWindowTitle(QString::fromUtf8("Open-IMU"));
-    this->setStyleSheet("background: rgba(246, 254, 254,0.8)");
     this->setMinimumSize(900,700);
 
     menu = new ApplicationMenuBar(this);
@@ -36,8 +33,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     movieSpinnerBar = new QMovie("../applicationOpenimu/app/icons/loaderStatusBar.gif");
 
     spinnerStatusBar->setMovie(movieSpinnerBar);
-    connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
-    connect(listWidget, SIGNAL(itemClicked(QListWidgetItem*)),this, SLOT(onListItemClicked(QListWidgetItem*)));
 
     this->setMenuBar(menu);
     this->setStatusBar(statusBar);
@@ -46,7 +41,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     listWidget->setAlternatingRowColors(true);
     listWidget->setStyleSheet("alternate-background-color:#ecf0f1;background-color:white;");
 
-    mainWidget->mainLayout->addWidget(listWidget);
+    QPushButton* addRecord = new QPushButton("+");
+    QPushButton* deleteRecord = new QPushButton("-");
+    QVBoxLayout* vlayout = new QVBoxLayout();
+    vlayout->addWidget(addRecord);
+    vlayout->addWidget(listWidget);
+    vlayout->addWidget(deleteRecord);
+    mainWidget->mainLayout->addLayout(vlayout);
 
     listWidget->setMaximumWidth(150);
     tabWidget->setTabsClosable(true);
@@ -61,11 +62,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     setCentralWidget(mainWidget);
     statusBar->showMessage(tr("Prêt"));
+    statusBar->setMinimumHeight(20);
     statusBar->addPermanentWidget(spinnerStatusBar);
-
 
     //Execute launchApi in a thread
     QtConcurrent::run(MainWindow::launchApi);
+
+    connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
+    connect(listWidget, SIGNAL(itemClicked(QListWidgetItem*)),this, SLOT(onListItemClicked(QListWidgetItem*)));
+    connect(listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)),this, SLOT(onListItemDoubleClicked(QListWidgetItem*)));
+    connect(addRecord, SIGNAL(clicked()), this, SLOT(openRecordDialog()));
+    connect(deleteRecord, SIGNAL(clicked()), this, SLOT(deleteRecordFromList()));
+
+    getRecordsFromDB();
 
 }
 
@@ -79,7 +88,19 @@ void MainWindow::onListItemClicked(QListWidgetItem* item)
     {
         if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text().toStdString()) == 0)
         {
-            statusBar->showMessage(tr("Chargement..."));
+            selectedRecord = record.m_WimuRecordList.at(i);
+            statusBar->showMessage(tr("Prêt"));
+        }
+    }
+}
+
+void MainWindow::onListItemDoubleClicked(QListWidgetItem* item)
+{
+    for(int i=0; i<record.m_WimuRecordList.size();i++)
+    {
+        if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text().toStdString()) == 0)
+        {
+            statusBar->showMessage(tr("Chargement de l'enregistrement..."));
             selectedRecord = record.m_WimuRecordList.at(i);
             spinnerStatusBar->show();
             movieSpinnerBar->start();
@@ -98,9 +119,9 @@ void MainWindow:: openFile(){
     getRecordsFromDB();
 }
 
-void MainWindow:: openRecordDialog()
+void MainWindow::openRecordDialog()
 {
-    rDialog = new RecordsDialog;
+    rDialog = new RecordsDialog(this);
     rDialog->show();
 }
 
@@ -110,11 +131,18 @@ void MainWindow::openAlgorithmTab()
     replaceTab(algorithmTab,"Algorithmes");
 }
 
+void MainWindow::setStatusBarText(QString txt)
+{
+    statusBar->showMessage(tr(txt.toStdString().c_str()));
+}
+
 void MainWindow::deleteRecord()
 {
     QMessageBox msgBox;
     msgBox.setText("Suppression de l'enregistrement");
     msgBox.setInformativeText("Êtes vous sûr de vouloir supprimer cet enregistrement?");
+
+
     msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
     msgBox.setDefaultButton(QMessageBox::Cancel);
     int ret = msgBox.exec();
@@ -234,7 +262,12 @@ bool MainWindow::deleteRecordFromUUID(std::string uuid)
     reponseRecueDelete(reply);
     return true;
 }
-
+bool MainWindow::deleteRecordFromList()
+{
+    deleteRecordFromUUID(selectedRecord.m_recordId);
+    getRecordsFromDB();
+    return true;
+}
 void MainWindow::reponseRecueDelete(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError)
@@ -301,6 +334,7 @@ void MainWindow::replaceTab(QWidget * replacement, std::string label)
         tabWidget->addTab(replacement,QString::fromStdString(label));
         tabWidget->setCurrentWidget(tabWidget->widget(tabWidget->count()-1));
     }
+    setStatusBarText(tr("Prêt"));
 }
 void MainWindow::closeTab(int index){
 

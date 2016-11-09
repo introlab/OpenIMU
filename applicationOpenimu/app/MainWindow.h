@@ -33,6 +33,7 @@ class MainWindow : public QMainWindow
        ~MainWindow();
        std::string getFileName(std::string s);
        void retranslateUi();
+       void setStatusBarText(QString txt);
 
     signals:
 
@@ -48,6 +49,7 @@ class MainWindow : public QMainWindow
         void setApplicationInFrench();
 
         void onListItemClicked(QListWidgetItem* item);
+        void onListItemDoubleClicked(QListWidgetItem* item);
         void closeWindow();
 
         //Getting records from DB
@@ -60,6 +62,7 @@ class MainWindow : public QMainWindow
 
         //Delete specific record
         bool deleteRecordFromUUID(std::string uuid);
+        bool deleteRecordFromList();
         void reponseRecueDelete(QNetworkReply* reply);
 
         void deleteRecord();
