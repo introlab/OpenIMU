@@ -18,6 +18,10 @@ const QString englishText = "English";
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
+
+    //Execute launchApi in a thread
+    QtConcurrent::run(MainWindow::launchApi);
+
     this->grabGesture(Qt::PanGesture);
     this->grabGesture(Qt::PinchGesture);
 
@@ -64,9 +68,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     statusBar->showMessage(tr("Prêt"));
     statusBar->setMinimumHeight(20);
     statusBar->addPermanentWidget(spinnerStatusBar);
-
-    //Execute launchApi in a thread
-    QtConcurrent::run(MainWindow::launchApi);
 
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
     connect(listWidget, SIGNAL(itemClicked(QListWidgetItem*)),this, SLOT(onListItemClicked(QListWidgetItem*)));
