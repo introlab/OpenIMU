@@ -22,6 +22,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     //Execute launchApi in a thread
     QtConcurrent::run(MainWindow::launchApi);
 
+    this->setWindowIcon(QIcon("../applicationOpenimu/app/icons/logo.ico"));
+
     this->grabGesture(Qt::PanGesture);
     this->grabGesture(Qt::PinchGesture);
 
