@@ -183,7 +183,8 @@ void RecordsDialog::addRecordSlot()
         QString qstr = QString::fromStdString(output);
 
         databaseAccess = new DbBlock;
-        databaseAccess->addRecordInDB(QString::fromStdString(output));
+        QString temp = QString::fromStdString(output);//TODO remove
+        databaseAccess->addRecordInDB(temp);
         successLabel->setText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"));
     }
     movie->stop();

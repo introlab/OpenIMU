@@ -1,8 +1,8 @@
 #include <QFileDialog>
 #include "QTableView"
 #include <QListWidgetItem>
-#include<vector>
-#include<QDebug>
+#include <vector>
+#include <QDebug>
 #include "widgets/AlgorithmTab.h"
 #include "widgets/ResultsTabWidget.h"
 #include "AccDataDisplay.h"
@@ -10,6 +10,8 @@
 #include "mainwindow.h"
 #include "iostream"
 #include <QtConcurrent/QtConcurrentRun>
+#include <QNetworkReply>
+#include <QNetworkAccessManager>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -61,13 +63,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     statusBar->showMessage(tr("Prêt"));
     statusBar->addPermanentWidget(spinnerStatusBar);
 
-    //Execute launchApi in a thread
-    future = new QFuture<void>;
-    watcher = new QFutureWatcher<void>;
-    *future = QtConcurrent::run(MainWindow::launchApi);
-    watcher->setFuture(*future);
 
-    getRecordsFromDB();
+    //Execute launchApi in a thread
+    QtConcurrent::run(MainWindow::launchApi);
 
 }
 

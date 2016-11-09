@@ -9,8 +9,6 @@
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 #include <QMovie>
-#include <QFuture>
-#include <QFutureWatcher>
 #include <QProcess>
 
 #include "widgets/ApplicationMenubar.h"
@@ -70,12 +68,10 @@ class MainWindow : public QMainWindow
 
         //Launch the python api
         static void launchApi(){
-            //qDebug() << "launchApi start";
-            QProcess p;
-            p.start("cmd.exe", QStringList() << "/c" << "..\\PythonAPI\\src\\runapi.bat");
-            p.waitForFinished(1000);
-            p.destroyed();
-            //qDebug() << "launchApi end";
+            QProcess* p = new QProcess();
+            p->start("cmd.exe", QStringList() << "/c" << "..\\PythonAPI\\src\\runapi.bat");
+            p->waitForFinished(500);
+            p->deleteLater();
         }
 
     private:
@@ -85,7 +81,7 @@ class MainWindow : public QMainWindow
         QStatusBar * statusBar;
         RecordInfo selectedRecord;
         MainWidget * mainWidget;
-        ApplicationMenuBar* menu ;
+        ApplicationMenuBar* menu;
         MyListWidget  * listWidget;
         AboutDialog *aboutDialog;
         HelpDialog *helpDialog;
@@ -98,10 +94,6 @@ class MainWindow : public QMainWindow
         QLabel* spinnerStatusBar;
         QMovie* movieSpinnerBar;
         HomeWidget * homeWidget;
-
-        QFuture<void> *future;
-        QFutureWatcher<void> *watcher;
-
 };
 
 #endif // MAINWINDOW_H
