@@ -1,5 +1,4 @@
-from resources import getRecords
-import json,unicodedata
+from timeit import default_timer as timer
 
 class Algorithm(object):
     """
@@ -45,7 +44,15 @@ class Algorithm(object):
     _information = ""
     _author = ""
 
+
 # Property Getter and Setter
+    @property
+    def timer(self):
+        temp = timer()
+        diff = temp - self._time
+        self._time = timer()
+        return diff
+
     @property
     def information(self):        return self._information
     @information.setter
@@ -87,11 +94,12 @@ class Algorithm(object):
         Those are the default values of the parameters. If the url doesn't find those keys in the url, then those values
         will be used.
                 """
+
+        self._time = timer()
         self._infos = Dictionnary()
         self._params = Dictionnary()
         self._output = Dictionnary()
         pass
-
 
     def load(self,args = {}):
         """
