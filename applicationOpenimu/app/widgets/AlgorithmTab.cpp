@@ -268,8 +268,6 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
     if (reply->error() == QNetworkReply::NoError)
    {
        std::string reponse = reply->readAll().toStdString();
-       //qDebug() << QString::fromStdString(reponse);
-
        AlgorithmOutput output;
        CJsonSerializer::Deserialize(&output, reponse);
        MainWindow * test = (MainWindow*)m_parent;
