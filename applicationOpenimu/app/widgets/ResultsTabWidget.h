@@ -3,7 +3,6 @@
 
 #include <QWidget>
 #include <QtWidgets>
-#include <QVBoxLayout>
 #include <string>
 #include <QLabel>
 #include <QtCharts/QChartView>
@@ -26,12 +25,14 @@ class ResultsTabWidget: public QWidget
 
     public slots:
     void exportToPdfSlot();
+    void exportToDBSlot();
 
     private:
-    QVBoxLayout* layout;
+    QGridLayout* layout;
     QWidget* container;
     QLabel* imuType;
     QPushButton* exportToPdf;
+    QPushButton* saveResultsToDB;
     RecordInfo m_recordInfo;
     QChartView *chartView;
 

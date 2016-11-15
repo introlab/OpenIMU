@@ -42,7 +42,7 @@ RecordsWidget::RecordsWidget(QWidget *parent,const WimuAcquisition& data, Record
     layout->addWidget(dataDisplay,5,0,1,2);
     layout->addWidget(seeFullGraphBtn,6,0);
     layout->addWidget(goToNextStep,6,3);
-
+    layout->setHorizontalSpacing(100);
     this->setStyleSheet( "QPushButton{"
                          "background-color: rgba(119, 160, 175, 0.7);"
                          "border-style: inset;"

@@ -202,6 +202,7 @@ bool AlgorithmTab::createAlgoRequest()
     std::string algoName = selectedAlgorithm.name;
     std::string url = "http://127.0.0.1:5000/algo?filename="+algoName+"&uuid="+m_selectedRecord.m_recordId;
 
+    qDebug()<< QString::fromStdString(url);
     for(int i=0; i< selectedAlgorithm.parameters.size();i++)
     {
         if(selectedAlgorithm.parameters.at(i).name != "uuid")
@@ -254,11 +255,6 @@ void AlgorithmTab::reponseRecue(QNetworkReply* reply)
    else
    {
        mainWindow->setStatusBarText(tr("Application de l'agorithme non réussi"));
-       //qDebug() << "error connect";
-       //qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
-       //qDebug() << "Request failed, " << reply->errorString();
-       //qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
-       //qDebug() << reply->readAll();
    }
    delete reply;
 }
@@ -269,11 +265,14 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
    {
        std::string reponse = reply->readAll().toStdString();
        AlgorithmOutput output;
-       CJsonSerializer::Deserialize(&output, reponse);
-       MainWindow * test = (MainWindow*)m_parent;
-       AlgorithmInfo &algoInfo = algoList.m_algorithmList.at(selectedIndexRow);
-       ResultsTabWidget* res = new ResultsTabWidget(this, m_selectedRecord, algoInfo, output);
-       test->replaceTab(res,algoInfo.name + ": " + m_selectedRecord.m_recordName);
+       if(reponse != "")
+       {
+           CJsonSerializer::Deserialize(&output, reponse);
+           MainWindow * test = (MainWindow*)m_parent;
+           AlgorithmInfo &algoInfo = algoList.m_algorithmList.at(selectedIndexRow);
+           ResultsTabWidget* res = new ResultsTabWidget(this, m_selectedRecord, algoInfo, output);
+           test->replaceTab(res,algoInfo.name + ": " + m_selectedRecord.m_recordName);
+       }
    }
    else
    {
