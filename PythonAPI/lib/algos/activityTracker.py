@@ -58,3 +58,4 @@ class activityTracker(Algorithm):
         self.output.size = len(diff)
         self.output.execute_time = self.timer
         return self.output
+

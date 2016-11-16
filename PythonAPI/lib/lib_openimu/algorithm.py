@@ -101,6 +101,16 @@ class Algorithm(object):
         self._output = Dictionnary()
         pass
 
+    def before_run(self):
+        self.output.runtime_start = self._time
+        raise NotImplemented('default Implementation of before_run')
+
+    # This function need to be overloaded by the algorithm.
+    def after_run(self):
+        self.output.runtime = self.timer
+        raise NotImplemented('default Implementation of after_run')
+
+
     def load(self,args = {}):
         """
         load function :
