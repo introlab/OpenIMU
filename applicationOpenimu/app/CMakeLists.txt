@@ -27,6 +27,7 @@ SET(headers
 )
 
 SET(uis
+    ${uis}
     widget.ui
     help.ui
     about.ui

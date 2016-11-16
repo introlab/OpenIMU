@@ -1,3 +1,6 @@
 [submodule "applicationOpenimu/qml/jbQuick/Charts"]
 	path = applicationOpenimu/qml/jbQuick/Charts
 	url = git://github.com/jwintz/qchart.js.git
+[submodule "applicationOpenimu/app/widgets/MRichTextEditor"]
+	path = applicationOpenimu/app/widgets/MRichTextEditor
+	url = https://github.com/Anchakor/MRichTextEditor.git

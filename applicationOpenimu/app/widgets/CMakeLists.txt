@@ -1,6 +1,6 @@
-
 SET(srcs
     ${srcs}    
+    ${CMAKE_CURRENT_SOURCE_DIR}/AlgorithmDetailedView.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ApplicationMenuBar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MyTreeWidget.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RangeSlider.cpp
@@ -10,11 +10,15 @@ SET(srcs
     ${CMAKE_CURRENT_SOURCE_DIR}/RecordsWidget.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ResultsTabWidget.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/HomeWidget.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/MRichTextEditor/mrichtextedit.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/MRichTextEditor/mtextedit.cpp
+
     PARENT_SCOPE
 )
 
 SET(headers
     ${headers}
+    ${CMAKE_CURRENT_SOURCE_DIR}/AlgorithmDetailedView.h
     ${CMAKE_CURRENT_SOURCE_DIR}/ApplicationMenuBar.h
     ${CMAKE_CURRENT_SOURCE_DIR}/MyTreeWidget.h
     ${CMAKE_CURRENT_SOURCE_DIR}/RangeSlider.h
@@ -24,8 +28,13 @@ SET(headers
     ${CMAKE_CURRENT_SOURCE_DIR}/RecordsWidget.h
     ${CMAKE_CURRENT_SOURCE_DIR}/ResultsTabWidget.h
     ${CMAKE_CURRENT_SOURCE_DIR}/HomeWidget.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/MRichTextEditor/mrichtextedit.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/MRichTextEditor/mtextedit.h
     PARENT_SCOPE
 )
 
-
-
+SET(uis
+    ${uis}
+    ${CMAKE_CURRENT_SOURCE_DIR}/MRichTextEditor/mrichtextedit.ui
+    PARENT_SCOPE
+)

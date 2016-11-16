@@ -24,11 +24,6 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
         algorithmListGroupBox->setFlat(true);
         algorithmListLayout = new QVBoxLayout();
 
-        parametersGroupBox = new QGroupBox();
-        parametersGroupBox->setFixedHeight(250);
-        parametersGroupBox->setFlat(true);
-        parametersLayout = new QVBoxLayout();
-
         algorithmTabLayout = new QVBoxLayout();
 
 
@@ -69,14 +64,7 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
         connect(algorithmTableWidget, SIGNAL(clicked(const QModelIndex& )), this, SLOT(openParametersWindow(const QModelIndex &)));
 
         // -- Parameter Section
-        currentSelectionLabel = new QLabel(tr("Sélection courante"));
-        selectedDataLabel = new QLabel(tr("Données sélectionnées: "));
-        selectedDataValues = new QLabel(tr(" "));
-        selectedAlgorithmLabel = new QLabel(tr("Algorithme sélectionné: "));
-        selectedAlgorithmValues = new QLabel(tr(" "));
-        parametersLabel = new QLabel(tr("Paramètre(s):"));
-        parametersValues = new QLabel(tr(""));
-        parametersValues->setWordWrap(true);
+        algorithmParameters = new AlgorithmDetailedView();
 
         applyAlgorithm = new QPushButton(tr("Appliquer algorithme"));
         connect(applyAlgorithm, SIGNAL(clicked()),this, SLOT(openResultTab()));
@@ -86,18 +74,9 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
         algorithmListLayout->addWidget(algorithmTableWidget);
         algorithmListGroupBox->setLayout(algorithmListLayout);
 
-        parametersLayout->addWidget(currentSelectionLabel);
-        parametersLayout->addWidget(selectedDataLabel);
-        parametersLayout->addWidget(selectedDataValues);
-        parametersLayout->addWidget(selectedAlgorithmLabel);
-        parametersLayout->addWidget(selectedAlgorithmValues);
-        parametersLayout->addWidget(parametersLabel);
-        parametersLayout->addWidget(parametersValues);
-        parametersGroupBox->setLayout(parametersLayout);
-
         algorithmTabLayout->addWidget(algorithmListGroupBox);
         algorithmTabLayout->addSpacing(50);
-        algorithmTabLayout->addWidget(parametersGroupBox);
+        algorithmTabLayout->addWidget(algorithmParameters);
         algorithmTabLayout->addWidget(applyAlgorithm);
 
         this->setLayout(algorithmTabLayout);
@@ -112,42 +91,17 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
                              "padding: 6px; }"
                              "QPushButton:pressed { background-color: rgba(70, 95, 104, 0.7);}"
                              );
-}
 
-void AlgorithmTab::resetSelectionSection()
-{
-    selectedDataValues->setText("");
-    selectedAlgorithmValues->setText("");
-    parametersValues->setText("");
+
 }
 
 void AlgorithmTab::setAlgorithm(AlgorithmInfo algorithmInfo)
 {
-    resetSelectionSection();
+    algorithmParameters->Clear();
     selectedAlgorithm = algoList.m_algorithmList.at(selectedIndexRow);
     selectedAlgorithm.parameters.swap(algorithmInfo.parameters);
-
-    if(algorithmInfo.parameters.size() == 0 ||
-            ((algorithmInfo.parameters.size() == 1) && (algorithmInfo.parameters.at(0).name == "uuid")))
-    {
-        parametersValues->setText("Aucun paramètre à entrer pour cet algorithme");
+    algorithmParameters->setAlgorithm(algorithmInfo,selectedAlgorithm);
     }
-    else
-    {
-        for(int i=0; i<algorithmInfo.parameters.size();i++)
-        {
-            if(selectedAlgorithm.parameters.at(i).name != "uuid")
-            {
-                QString parameterName = QString::fromStdString(selectedAlgorithm.parameters.at(i).name);
-                QString parameterValue = QString::fromStdString(selectedAlgorithm.parameters.at(i).value);
-
-                QString previousParameters = parametersValues->text();
-                parametersValues->setText(previousParameters + parameterName + ": " + parameterValue+ "\n" );
-            }
-        }
-    }
-    selectedAlgorithmValues->setText(QString::fromStdString(selectedAlgorithm.name));
-}
 
 
 void AlgorithmTab::openResultTab()

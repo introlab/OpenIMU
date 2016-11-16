@@ -5,6 +5,7 @@
 #include "QLabel"
 #include "QStandardItemModel"
 #include "QTableWidget"
+#include "algorithmdetailedview.h"
 #include "QMessageBox"
 #include "../algorithm/AlgorithmList.h"
 #include "../algorithm/AlgorithmOutput.h"
@@ -14,7 +15,7 @@
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 #include <QPushButton>
-#include <QGroupBox>
+#include <QTextEdit>
 
 
 class AlgorithmTab : public QWidget
@@ -49,15 +50,8 @@ private:
     QGroupBox * spacerGroupBox;
 
     // -- Parameter Section
-    QGroupBox * parametersGroupBox;
-    QVBoxLayout * parametersLayout;
-    QLabel * currentSelectionLabel;
-    QLabel * selectedDataLabel;
-    QLabel * selectedDataValues;
-    QLabel * selectedAlgorithmLabel;
-    QLabel * selectedAlgorithmValues;
-    QLabel * parametersLabel;
-    QLabel * parametersValues;
+    AlgorithmDetailedView * algorithmParameters;
+
 
     // -- Result Section
     QPushButton * applyAlgorithm;
@@ -71,7 +65,6 @@ private:
     RecordInfo m_selectedRecord;
 
     void removeChildren(QLayout* layout);
-    void resetSelectionSection();
 };
 
 #endif // ALGORITHMTAB_H
