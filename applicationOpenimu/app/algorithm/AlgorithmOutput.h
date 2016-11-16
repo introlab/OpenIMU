@@ -9,6 +9,11 @@
 struct OutputInfo
 {
     int value;
+    float execute_time;
+    std::string date;
+    std::string startTime;
+    std::string endTime;
+    std::string measureUnit;
 };
 
 class AlgorithmOutput : public IJsonSerializable

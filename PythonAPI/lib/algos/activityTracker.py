@@ -56,4 +56,5 @@ class activityTracker(Algorithm):
         self.output.maximum = max(diff)
         self.output.minimum = min(diff)
         self.output.size = len(diff)
+        self.output.execute_time = self.timer
         return self.output
