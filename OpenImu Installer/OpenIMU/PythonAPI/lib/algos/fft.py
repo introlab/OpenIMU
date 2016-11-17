@@ -9,10 +9,11 @@ class fft(Algorithm):
     """
     def __init__(self):
         super(fft,self).__init__()
-        self.description = "Fast Fourrier Transform Algorithm"
+        self.description = "Fast Fourier Transform Algorithm"
         self.author = "OpenIMU Team"
-
+        self.details = "<B>NOT WORKING</B>"
         self.params.uuid = 0
+        self.infos.uuid = "Unique Id of the data"
 
 
     def run(self):

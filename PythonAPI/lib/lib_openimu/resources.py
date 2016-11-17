@@ -199,6 +199,7 @@ class AlgoList(Resource):
                 algo['params'] = params
                 algo['author'] = instance.author
                 algo['description'] = instance.description
+                algo['details'] = instance.details
 
                 content.append(algo.copy())
                 
