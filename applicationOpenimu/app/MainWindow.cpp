@@ -33,7 +33,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     menu = new ApplicationMenuBar(this);
     statusBar = new QStatusBar();
     mainWidget = new MainWidget(this);
-    listWidget = new MyListWidget(this);
+    listWidget = new myTreeWidget(this);
+
+    //Set QTreeWidget Column Header
+    QTreeWidgetItem* headerItem = new QTreeWidgetItem();
+    headerItem->setText(0,QString("Enregistrements"));
+    listWidget->setHeaderItem(headerItem);
+
     tabWidget = new QTabWidget;
     spinnerStatusBar = new QLabel;
     movieSpinnerBar = new QMovie("../applicationOpenimu/app/icons/loaderStatusBar.gif");
@@ -72,8 +78,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     statusBar->addPermanentWidget(spinnerStatusBar);
 
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
-    connect(listWidget, SIGNAL(itemClicked(QListWidgetItem*)),this, SLOT(onListItemClicked(QListWidgetItem*)));
-    connect(listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)),this, SLOT(onListItemDoubleClicked(QListWidgetItem*)));
     connect(addRecord, SIGNAL(clicked()), this, SLOT(openRecordDialog()));
     connect(deleteRecord, SIGNAL(clicked()), this, SLOT(deleteRecordFromList()));
 
@@ -85,11 +89,11 @@ MainWindow::~MainWindow(){
     delete menu ;
 }
 
-void MainWindow::onListItemClicked(QListWidgetItem* item)
+void MainWindow::onListItemClicked(QTreeWidgetItem* item, int column)
 {
     for(int i=0; i<record.m_WimuRecordList.size();i++)
     {
-        if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text().toStdString()) == 0)
+        if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text(column).toStdString()) == 0)
         {
             selectedRecord = record.m_WimuRecordList.at(i);
             statusBar->showMessage(tr("Prêt"));
@@ -97,11 +101,11 @@ void MainWindow::onListItemClicked(QListWidgetItem* item)
     }
 }
 
-void MainWindow::onListItemDoubleClicked(QListWidgetItem* item)
+void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
 {
     for(int i=0; i<record.m_WimuRecordList.size();i++)
     {
-        if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text().toStdString()) == 0)
+        if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text(column).toStdString()) == 0)
         {
             statusBar->showMessage(tr("Chargement de l'enregistrement..."));
             selectedRecord = record.m_WimuRecordList.at(i);
@@ -235,7 +239,10 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
        listWidget->clear();
        for(int i=0; i<record.m_WimuRecordList.size();i++)
        {
-           listWidget->addItem(QString::fromStdString(record.m_WimuRecordList.at(i).m_recordName));
+           QTreeWidgetItem* item = new QTreeWidgetItem();
+           item->setText(0,QString::fromStdString(record.m_WimuRecordList.at(i).m_recordName));
+           listWidget->addTopLevelItem(item);
+//           listWidget->addItem(QString::fromStdString(record.m_WimuRecordList.at(i).m_recordName));
        }
    }
    else

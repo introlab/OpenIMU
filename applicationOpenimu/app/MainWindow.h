@@ -14,7 +14,7 @@
 #include "widgets/ApplicationMenubar.h"
 #include "string.h"
 #include "widgets/MainWidget.h"
-#include "widgets/MyListWidget.h"
+#include "widgets/MyTreeWidget.h"
 #include "dialogs/AboutDialog.h"
 #include "dialogs/HelpDialog.h"
 #include "core/components/blockType/DbBlock.h"
@@ -48,8 +48,8 @@ class MainWindow : public QMainWindow
         void setApplicationInEnglish();
         void setApplicationInFrench();
 
-        void onListItemClicked(QListWidgetItem* item);
-        void onListItemDoubleClicked(QListWidgetItem* item);
+        void onListItemClicked(QTreeWidgetItem* item,int column);
+        void onListItemDoubleClicked(QTreeWidgetItem* item,int column);
         void closeWindow();
 
         //Getting records from DB
@@ -85,7 +85,7 @@ class MainWindow : public QMainWindow
         RecordInfo selectedRecord;
         MainWidget * mainWidget;
         ApplicationMenuBar* menu;
-        MyListWidget  * listWidget;
+        myTreeWidget  * listWidget;
         AboutDialog *aboutDialog;
         HelpDialog *helpDialog;
         DbBlock * databaseAccess = new DbBlock;

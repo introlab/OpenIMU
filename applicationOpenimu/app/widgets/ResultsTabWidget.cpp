@@ -115,7 +115,7 @@ void ResultsTabWidget::exportToPdfSlot()
         QPainter painter(&writer);
 
         painter.setPen(Qt::black);
-        painter.drawText(5000,0,"Report:");
+        painter.drawText(4000,0,"Rapport d'algorithme: ");
 
         painter.setPen(Qt::black);
         painter.drawText(250,500,algoLabel->text());
