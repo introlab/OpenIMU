@@ -10,7 +10,6 @@ QT_CHARTS_USE_NAMESPACE
 
 AccDataDisplay::AccDataDisplay()
 {
-
 }
 
 void AccDataDisplay::showSimplfiedDataDisplay()
@@ -31,6 +30,11 @@ void AccDataDisplay::showSimplfiedDataDisplay()
     }
 }
 
+void AccDataDisplay::setInfo(RecordInfo recInfo)
+{
+    m_recordInfo = recInfo;
+}
+
 AccDataDisplay::AccDataDisplay(const WimuAcquisition& accData){
 
     this->grabGesture(Qt::PanGesture);
@@ -38,6 +42,7 @@ AccDataDisplay::AccDataDisplay(const WimuAcquisition& accData){
     this->setStyleSheet("background-color:white;");
     availableData = accData.getData();
     sliceData = availableData;
+
 
     if(availableData.size()> 0)
     {
@@ -131,11 +136,28 @@ AccDataDisplay::AccDataDisplay(const WimuAcquisition& accData){
         layout->addWidget(groupBoxSlider);
 
         groupBoxSave = new QGroupBox(tr("Modifier l'enregistrement"));
+
+        recordNaming = new QLabel(tr("Nom de l'enregistrement*:"));
+        recordName = new QLineEdit;
+        recordName->setMinimumHeight(20);
+        recordName->setPlaceholderText(QWidget::tr("Wimu_2016_10_18_PatientX"));
+
+        recordDetails = new QLabel(tr("Détails de l'enregistrement: "));
+        userDetails = new QTextEdit();
+        userDetails->setMinimumHeight(20);
+        userDetails->setMaximumHeight(100);
+
         QVBoxLayout *vboxSave = new QVBoxLayout;
         vboxSave->addWidget(new QLabel("Utilisez la sélection horaire pour modifier l'heure de début et de fin puis sauvegardez vos changements"));
+
         saveDataSet = new QPushButton();
         saveDataSet->setMaximumSize(60,60);
         saveDataSet->setText("Enregistrer");
+
+        vboxSave->addWidget(recordNaming);
+        vboxSave->addWidget(recordName);
+        vboxSave->addWidget(recordDetails);
+        vboxSave->addWidget(userDetails);
         vboxSave->addWidget(saveDataSet);
         groupBoxSave->setLayout(vboxSave);
         layout->addWidget(groupBoxSave);
@@ -177,6 +199,18 @@ void AccDataDisplay::slotSaveNewSetRange()
     fillChartSeries();
     chartView->setChart(chart);
 
+    WimuAcquisition* wimuData = new WimuAcquisition();
+
+    wimuData->setData(sliceData);
+
+    m_recordInfo.m_recordDetails =  "Cet enregistrement est un sous-ensemble de :" + m_recordInfo.m_recordName + ". " + userDetails->toPlainText().toStdString();
+    m_recordInfo.m_recordName = m_recordInfo.m_recordName + ":" + recordName->text().toStdString();
+
+    std::string output;
+    CJsonSerializer::Serialize(wimuData,m_recordInfo,"", output);
+    databaseAccess = new DbBlock;
+    QString temp = QString::fromStdString(output);//TODO remove
+    databaseAccess->addRecordInDB(temp);
 }
 
 void AccDataDisplay::handleResetZoomBtn()

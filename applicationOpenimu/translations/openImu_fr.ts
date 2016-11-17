@@ -41,53 +41,63 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AccDataDisplay</name>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="54"/>
+        <location filename="../app/AccDataDisplay.cpp" line="59"/>
         <source>Données accéléromètre (en ms)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="88"/>
-        <location filename="../app/AccDataDisplay.cpp" line="302"/>
+        <location filename="../app/AccDataDisplay.cpp" line="93"/>
+        <location filename="../app/AccDataDisplay.cpp" line="340"/>
         <source>Axe X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="89"/>
-        <location filename="../app/AccDataDisplay.cpp" line="309"/>
+        <location filename="../app/AccDataDisplay.cpp" line="94"/>
+        <location filename="../app/AccDataDisplay.cpp" line="347"/>
         <source>Axe Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="90"/>
-        <location filename="../app/AccDataDisplay.cpp" line="315"/>
+        <location filename="../app/AccDataDisplay.cpp" line="95"/>
+        <location filename="../app/AccDataDisplay.cpp" line="353"/>
         <source>Axe Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="91"/>
-        <location filename="../app/AccDataDisplay.cpp" line="319"/>
+        <location filename="../app/AccDataDisplay.cpp" line="96"/>
+        <location filename="../app/AccDataDisplay.cpp" line="357"/>
         <source>Norme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="92"/>
-        <location filename="../app/AccDataDisplay.cpp" line="328"/>
+        <location filename="../app/AccDataDisplay.cpp" line="97"/>
+        <location filename="../app/AccDataDisplay.cpp" line="366"/>
         <source>Moyenne mobile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="100"/>
+        <location filename="../app/AccDataDisplay.cpp" line="105"/>
         <source>Affichage des axes:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="126"/>
+        <location filename="../app/AccDataDisplay.cpp" line="131"/>
         <source>Sélection Horaire</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="133"/>
+        <location filename="../app/AccDataDisplay.cpp" line="138"/>
         <source>Modifier l&apos;enregistrement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AccDataDisplay.cpp" line="140"/>
+        <source>Nom de l&apos;enregistrement*:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AccDataDisplay.cpp" line="145"/>
+        <source>Détails de l&apos;enregistrement: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -143,12 +153,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="206"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="251"/>
         <source>Application de l&apos;agorithme complété</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="212"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="257"/>
         <source>Application de l&apos;agorithme non réussi</source>
         <translation type="unfinished"></translation>
     </message>
@@ -578,6 +588,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../app/AccDataDisplay.cpp" line="143"/>
         <location filename="../app/dialogs/RecordsDialog.cpp" line="48"/>
         <source>Wimu_2016_10_18_PatientX</source>
         <translation type="unfinished"></translation>

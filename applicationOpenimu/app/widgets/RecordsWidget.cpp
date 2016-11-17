@@ -59,7 +59,7 @@ RecordsWidget::RecordsWidget(QWidget *parent,const WimuAcquisition& data, Record
     connect(seeFullGraphBtn, SIGNAL(clicked()), this, SLOT(openFullGraphSlot()));
     connect(goToNextStep, SIGNAL(clicked()), parent, SLOT(openAlgorithmTab()));
     connect(deleteBtn, SIGNAL(clicked()), parent, SLOT(deleteRecord()));
-    fDialog = new FullGraphDialog(acceleroData);
+    fDialog = new FullGraphDialog(acceleroData,record);
 }
 
 RecordsWidget::~RecordsWidget()

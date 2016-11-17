@@ -10,6 +10,8 @@
 #include <QtCharts/QValueAxis>
 #include <QSlider>
 #include <QCheckBox>
+#include <QTextEdit>
+#include <QLineEdit>
 #include <QPushButton>
 #include <QNetworkReply>
 #include <QNetworkRequest>
@@ -22,6 +24,7 @@
 #include "graph/ChartView.h"
 #include"../../acquisition/CJsonSerializer.h"
 #include"../../acquisition/WimuRecord.h"
+#include "core/components/blockType/DbBlock.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -36,6 +39,7 @@ public:
     void leftSliderValueChanged(double value);
     void rightSliderValueChanged(double value);
     void showSimplfiedDataDisplay();
+    void setInfo(RecordInfo recInfo);
 
 public slots:
 
@@ -70,12 +74,18 @@ private:
     QCheckBox *checkboxMovingAverage;
     QLabel* dateRecorded;
     QPushButton*pbtn;
+    QLabel* recordNaming;
+    QLineEdit *recordName;
+    QLabel* recordDetails;
+    QTextEdit* userDetails;
     QPushButton* saveDataSet;
     RangeSlider *rSlider;
     QVBoxLayout* layout;
 
     std::vector<frame> availableData;
     std::vector<frame> sliceData;
+    DbBlock * databaseAccess;
+    RecordInfo m_recordInfo;
 
     double rSliderValue;
     double lSliderValue;

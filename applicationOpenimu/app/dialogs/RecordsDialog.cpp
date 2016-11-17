@@ -179,15 +179,15 @@ void RecordsDialog::addRecordSlot()
     else
     {
 
-        WimuAcquisition* acceleroData = new WimuAcquisition(filePathAcc,filePathGyr,filePathMag,50);
-        acceleroData->initialize();
+        WimuAcquisition* wimuData = new WimuAcquisition(filePathAcc,filePathGyr,filePathMag,50);
+        wimuData->initialize();
 
         RecordInfo info;
         info.m_recordName = recordName->text().toStdString();
         info.m_imuType = imuSelectComboBox->currentText().toStdString();
         info.m_imuPosition = imuPositionComboBox->currentText().toStdString();
         info.m_recordDetails = userDetails->toPlainText().toStdString();
-        CJsonSerializer::Serialize(acceleroData,info,"", output);
+        CJsonSerializer::Serialize(wimuData,info,"", output);
         databaseAccess = new DbBlock;
         QString temp = QString::fromStdString(output);//TODO remove
         databaseAccess->addRecordInDB(temp);

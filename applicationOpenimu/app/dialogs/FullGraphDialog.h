@@ -13,7 +13,7 @@ class FullGraphDialog : public QDialog
 
 public:
     FullGraphDialog();
-    FullGraphDialog(WimuAcquisition acceleroData);
+    FullGraphDialog(WimuAcquisition acceleroData, RecordInfo recordInfo);
     ~FullGraphDialog();
 
 private:
