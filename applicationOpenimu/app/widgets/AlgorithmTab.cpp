@@ -24,7 +24,7 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
         algorithmListGroupBox->setFlat(true);
         algorithmListLayout = new QVBoxLayout();
 
-        algorithmTabLayout = new QHBoxLayout();
+        algorithmTabLayout = new QVBoxLayout();
 
 
         // -- Algorithm List Section
@@ -73,12 +73,12 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
         // -- Setting the layout
         algorithmListLayout->addWidget(algorithmLabel);
         algorithmListLayout->addWidget(algorithmTableWidget);
-        algorithmListLayout->addWidget(applyAlgorithm);
         algorithmListGroupBox->setLayout(algorithmListLayout);
 
         algorithmTabLayout->addWidget(algorithmListGroupBox);
-        algorithmTabLayout->addSpacing(50);
         algorithmTabLayout->addWidget(algorithmParameters);
+        algorithmTabLayout->addSpacing(50);
+        algorithmTabLayout->addWidget(applyAlgorithm);
 
         this->setLayout(algorithmTabLayout);
         this->setStyleSheet( "QPushButton{"
@@ -145,6 +145,7 @@ void AlgorithmTab::openParametersWindow(const QModelIndex &index)
         }
         else
         {
+            setAlgorithm(clickedAlgorithm);
             AlgorithmParametersDialog * algorithmParametersWindow = new AlgorithmParametersDialog(this, clickedAlgorithm);
             algorithmParametersWindow->exec();
             delete algorithmParametersWindow;

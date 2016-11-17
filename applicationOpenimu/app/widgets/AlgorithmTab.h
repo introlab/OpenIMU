@@ -37,7 +37,7 @@ public slots:
 
 private:
 
-    QHBoxLayout * algorithmTabLayout;
+    QVBoxLayout * algorithmTabLayout;
 
     // -- Algorithm List Section
     QLabel * algorithmLabel;

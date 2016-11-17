@@ -26,6 +26,9 @@ private:
     QScrollArea* scrollarea;
     QGroupBox * parametersGroupBox;
     QVBoxLayout * parametersLayout;
+    QVBoxLayout * detailsLayout;
+    QVBoxLayout * mainLayout;
+    QHBoxLayout * subMainLayout;
     QLabel * currentSelectionLabel;
     QLabel * selectedDataLabel;
     QLabel * selectedDataValues;

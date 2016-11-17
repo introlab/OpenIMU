@@ -21,7 +21,7 @@ AlgorithmDetailedView::AlgorithmDetailedView(QWidget *parent) : QWidget(parent)
     algorithmDetailsLabel = new QLabel(tr("Description détaillée"));
     algorithmDetailsValues = new QTextEdit("");
     algorithmDetailsValues->setReadOnly(true);
-    algorithmDetailsValues->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::QSizePolicy::MinimumExpanding);
+    algorithmDetailsValues->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Ignored);
     richTextEdit = new MRichTextEdit();
 
     // -- Setting the layout
@@ -32,17 +32,23 @@ AlgorithmDetailedView::AlgorithmDetailedView(QWidget *parent) : QWidget(parent)
     parametersLayout->addWidget(selectedAlgorithmValues);
     parametersLayout->addWidget(parametersLabel);
     parametersLayout->addWidget(parametersValues);
-    parametersLayout->addWidget(algorithmDetailsLabel);
-    parametersLayout->addWidget(algorithmDetailsValues);
-    //parametersLayout->addWidget(richTextEdit);
-    parametersLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
 
-    parametersGroupBox->setLayout(parametersLayout);
-    scrollarea->setWidget(parametersGroupBox);
+    detailsLayout = new QVBoxLayout();
+    detailsLayout->addWidget(algorithmDetailsLabel,0);
+    detailsLayout->addWidget(algorithmDetailsValues,1);
+    //detailsLayout->addWidget(richTextEdit);
 
-    QHBoxLayout* mainLayout = new QHBoxLayout();
+    subMainLayout = new QHBoxLayout();
+    subMainLayout->addLayout(parametersLayout,1);
+    subMainLayout->addLayout(detailsLayout,1);
+
+    //parametersGroupBox->setLayout(subMainLayout);
+    //scrollarea->setWidget(parametersGroupBox);
+
+    mainLayout = new QVBoxLayout();
     mainLayout->addWidget(scrollarea);
-    this->setLayout(mainLayout);
+
+    this->setLayout(subMainLayout);
 }
 
 void AlgorithmDetailedView::Clear()
