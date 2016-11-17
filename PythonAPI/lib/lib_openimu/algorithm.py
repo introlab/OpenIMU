@@ -43,7 +43,7 @@ class Algorithm(object):
 
     _information = ""
     _author = ""
-
+    _details = ""
 
 # Property Getter and Setter
     @property
@@ -62,6 +62,11 @@ class Algorithm(object):
     def author(self):        return self._author
     @author.setter
     def author(self, value):        self._author = value
+
+    @property
+    def details(self):        return self._details
+    @details.setter
+    def details(self, value):        self._details = value
 
     @property
     def database(self):        return self._database

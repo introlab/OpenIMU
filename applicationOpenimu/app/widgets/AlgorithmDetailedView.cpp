@@ -19,11 +19,9 @@ AlgorithmDetailedView::AlgorithmDetailedView(QWidget *parent) : QWidget(parent)
     parametersValues = new QLabel(tr(""));
     parametersValues->setWordWrap(true);
     algorithmDetailsLabel = new QLabel(tr("Description détaillée"));
-    algorithmDetailsValues = new QTextEdit("<b>Nom:</b> <br/> Nom de l'algorithme <br/>"
-                                           "<b>Version:</b> <br/> <i>6.0.1.26.34657.322346575467345</i><br/>"
-                                           "<b>Pseudocode:</b> <br/> <i>y</i>=<i>x</i><br/>"
-                                           "<b>Fonctionnement:</b> <br/> Returns Something. Takes an input for fun.");
+    algorithmDetailsValues = new QTextEdit("");
     algorithmDetailsValues->setReadOnly(true);
+    algorithmDetailsValues->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::QSizePolicy::MinimumExpanding);
     richTextEdit = new MRichTextEdit();
 
     // -- Setting the layout
@@ -36,7 +34,7 @@ AlgorithmDetailedView::AlgorithmDetailedView(QWidget *parent) : QWidget(parent)
     parametersLayout->addWidget(parametersValues);
     parametersLayout->addWidget(algorithmDetailsLabel);
     parametersLayout->addWidget(algorithmDetailsValues);
-    parametersLayout->addWidget(richTextEdit);
+    //parametersLayout->addWidget(richTextEdit);
     parametersLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
 
     parametersGroupBox->setLayout(parametersLayout);
@@ -52,6 +50,7 @@ void AlgorithmDetailedView::Clear()
     selectedDataValues->setText("");
     selectedAlgorithmValues->setText("");
     parametersValues->setText("");
+    algorithmDetailsValues->setText("");
 }
 
 void AlgorithmDetailedView::setAlgorithm(AlgorithmInfo algorithmInfo, AlgorithmInfo selectedAlgorithm)
@@ -76,5 +75,6 @@ void AlgorithmDetailedView::setAlgorithm(AlgorithmInfo algorithmInfo, AlgorithmI
         }
     }
     selectedAlgorithmValues->setText(QString::fromStdString(selectedAlgorithm.name));
+    algorithmDetailsValues->setText(QString::fromStdString(selectedAlgorithm.details));
 
 }

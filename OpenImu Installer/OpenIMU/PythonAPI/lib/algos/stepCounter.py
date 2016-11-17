@@ -12,8 +12,9 @@ class stepCounter(Algorithm):
         super(stepCounter, self).__init__()
         self.description = "Algo Test Algorithm"
         self.author = "OpenIMU Team"
-
+        self.details = "No details yet."
         self.params.uuid = 0
+        self.infos.uuid = "Unique ID"
 
     def run(self):
         """

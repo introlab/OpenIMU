@@ -24,7 +24,7 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
         algorithmListGroupBox->setFlat(true);
         algorithmListLayout = new QVBoxLayout();
 
-        algorithmTabLayout = new QVBoxLayout();
+        algorithmTabLayout = new QHBoxLayout();
 
 
         // -- Algorithm List Section
@@ -33,6 +33,7 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
 
         algorithmTableWidget->setRowCount(10);
         algorithmTableWidget->setColumnCount(3);
+        //algorithmTableWidget->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
 
         algorithmTableHeaders<<"Nom"<<"Description"<<"Auteur";
 
@@ -72,12 +73,12 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
         // -- Setting the layout
         algorithmListLayout->addWidget(algorithmLabel);
         algorithmListLayout->addWidget(algorithmTableWidget);
+        algorithmListLayout->addWidget(applyAlgorithm);
         algorithmListGroupBox->setLayout(algorithmListLayout);
 
         algorithmTabLayout->addWidget(algorithmListGroupBox);
         algorithmTabLayout->addSpacing(50);
         algorithmTabLayout->addWidget(algorithmParameters);
-        algorithmTabLayout->addWidget(applyAlgorithm);
 
         this->setLayout(algorithmTabLayout);
         this->setStyleSheet( "QPushButton{"

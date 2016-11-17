@@ -47,31 +47,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../app/AccDataDisplay.cpp" line="88"/>
-        <location filename="../app/AccDataDisplay.cpp" line="267"/>
+        <location filename="../app/AccDataDisplay.cpp" line="302"/>
         <source>Axe X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AccDataDisplay.cpp" line="89"/>
-        <location filename="../app/AccDataDisplay.cpp" line="274"/>
+        <location filename="../app/AccDataDisplay.cpp" line="309"/>
         <source>Axe Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AccDataDisplay.cpp" line="90"/>
-        <location filename="../app/AccDataDisplay.cpp" line="280"/>
+        <location filename="../app/AccDataDisplay.cpp" line="315"/>
         <source>Axe Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AccDataDisplay.cpp" line="91"/>
-        <location filename="../app/AccDataDisplay.cpp" line="284"/>
+        <location filename="../app/AccDataDisplay.cpp" line="319"/>
         <source>Norme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AccDataDisplay.cpp" line="92"/>
-        <location filename="../app/AccDataDisplay.cpp" line="293"/>
+        <location filename="../app/AccDataDisplay.cpp" line="328"/>
         <source>Moyenne mobile</source>
         <translation type="unfinished"></translation>
     </message>
@@ -92,55 +92,63 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>AlgorithmTab</name>
+    <name>AlgorithmDetailedView</name>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="36"/>
-        <source>Tableau des algorithmes disponibles</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="72"/>
+        <location filename="../app/widgets/AlgorithmDetailedView.cpp" line="13"/>
         <source>Sélection courante</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="73"/>
+        <location filename="../app/widgets/AlgorithmDetailedView.cpp" line="14"/>
         <source>Données sélectionnées: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="74"/>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="76"/>
+        <location filename="../app/widgets/AlgorithmDetailedView.cpp" line="15"/>
+        <location filename="../app/widgets/AlgorithmDetailedView.cpp" line="17"/>
         <source> </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="75"/>
+        <location filename="../app/widgets/AlgorithmDetailedView.cpp" line="16"/>
         <source>Algorithme sélectionné: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="77"/>
+        <location filename="../app/widgets/AlgorithmDetailedView.cpp" line="18"/>
         <source>Paramètre(s):</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="81"/>
+        <location filename="../app/widgets/AlgorithmDetailedView.cpp" line="21"/>
+        <source>Description détaillée</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AlgorithmTab</name>
+    <message>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="31"/>
+        <source>Tableau des algorithmes disponibles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="70"/>
         <source>Appliquer algorithme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="168"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="123"/>
         <source>Avertissement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="250"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="206"/>
         <source>Application de l&apos;agorithme complété</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="256"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="212"/>
         <source>Application de l&apos;agorithme non réussi</source>
         <translation type="unfinished"></translation>
     </message>
@@ -226,32 +234,263 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>MRichTextEdit</name>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="56"/>
+        <source>Paragraph formatting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="79"/>
+        <source>Undo (CTRL+Z)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="82"/>
+        <source>Undo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="106"/>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="109"/>
+        <source>Redo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="130"/>
+        <source>Cut (CTRL+X)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="133"/>
+        <source>Cut</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="154"/>
+        <source>Copy (CTRL+C)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="157"/>
+        <source>Copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="178"/>
+        <source>Paste (CTRL+V)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="181"/>
+        <source>Paste</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="209"/>
+        <source>Link (CTRL+L)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="212"/>
+        <source>Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="246"/>
+        <source>Bold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="270"/>
+        <source>Italic (CTRL+I)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="273"/>
+        <source>Italic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="297"/>
+        <source>Underline (CTRL+U)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="300"/>
+        <source>Underline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="321"/>
+        <source>Strike Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="341"/>
+        <source>Bullet list (CTRL+-)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="344"/>
+        <source>Bullet list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="363"/>
+        <source>Ordered list (CTRL+=)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="366"/>
+        <source>Ordered list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="385"/>
+        <source>Decrease indentation (CTRL+,)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="388"/>
+        <source>Decrease indentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="409"/>
+        <source>Increase indentation (CTRL+.)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="412"/>
+        <source>Increase indentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="452"/>
+        <source>Text foreground color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="455"/>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="486"/>
+        <source>.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="483"/>
+        <source>Text background color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="502"/>
+        <source>Font size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.ui" line="539"/>
+        <source>...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.cpp" line="62"/>
+        <source>Standard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.cpp" line="63"/>
+        <source>Heading 1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.cpp" line="64"/>
+        <source>Heading 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.cpp" line="65"/>
+        <source>Heading 3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.cpp" line="66"/>
+        <source>Heading 4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.cpp" line="67"/>
+        <source>Monospace</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.cpp" line="126"/>
+        <source>Remove character formatting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.cpp" line="131"/>
+        <source>Remove all formatting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.cpp" line="135"/>
+        <source>Edit document source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.cpp" line="200"/>
+        <source>Document source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.cpp" line="293"/>
+        <source>Create a link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.cpp" line="294"/>
+        <source>Link URL:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.cpp" line="583"/>
+        <source>Select an image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/MRichTextEditor/mrichtextedit.cpp" line="585"/>
+        <source>JPEG (*.jpg);; GIF (*.gif);; PNG (*.png);; BMP (*.bmp);; All (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
-        <location filename="../app/MainWindow.cpp" line="53"/>
-        <location filename="../app/MainWindow.cpp" line="290"/>
+        <location filename="../app/MainWindow.cpp" line="62"/>
+        <location filename="../app/MainWindow.cpp" line="317"/>
         <source>Accueil</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="61"/>
-        <location filename="../app/MainWindow.cpp" line="93"/>
-        <location filename="../app/MainWindow.cpp" line="313"/>
+        <location filename="../app/MainWindow.cpp" line="70"/>
+        <location filename="../app/MainWindow.cpp" line="95"/>
+        <location filename="../app/MainWindow.cpp" line="115"/>
+        <location filename="../app/MainWindow.cpp" line="340"/>
         <source>Prêt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="84"/>
+        <location filename="../app/MainWindow.cpp" line="106"/>
         <source>Chargement de l&apos;enregistrement...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="251"/>
+        <location filename="../app/MainWindow.cpp" line="278"/>
         <source>Enregistrement effacé avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="255"/>
+        <location filename="../app/MainWindow.cpp" line="282"/>
         <source>Echec de suppression de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
@@ -425,15 +664,28 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="193"/>
         <location filename="../app/dialogs/RecordsDialog.cpp" line="194"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="195"/>
         <source>L&apos;enregistrement </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="193"/>
         <location filename="../app/dialogs/RecordsDialog.cpp" line="194"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="195"/>
         <source> à été ajouté avec succès</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ResultsTabWidget</name>
+    <message>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="111"/>
+        <source>Save Document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="111"/>
+        <source>PDF (*.pdf)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
