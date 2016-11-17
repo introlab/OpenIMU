@@ -167,8 +167,9 @@ class Algo(Resource):
         instance = my_class()
         instance.database = mongo
         instance.load(request.args)
+        instance.before_run()
         instance.run()
-        instance.output.runtime = instance.timer
+        instance.after_run()
         return dict(instance.output)
 
 class AlgoList(Resource):

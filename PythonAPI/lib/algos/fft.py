@@ -21,7 +21,9 @@ class fft(Algorithm):
         ref = self.database.db.accelerometres.find({'ref': ObjectId(self.params.uuid)})
         self.data, errors = schema.dump(ref)
 
-        x = np.array(self.data)
-        y = np.fft(x)
-        return y
+        x = [snap.get('x') for snap in self.data]
+        xArray = np.array(x)
+        fftx = np.fft.fft(xArray)
+        array = np.array.tostring
+        return self.output
 
