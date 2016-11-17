@@ -241,8 +241,9 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
        {
            QTreeWidgetItem* item = new QTreeWidgetItem();
            item->setText(0,QString::fromStdString(record.m_WimuRecordList.at(i).m_recordName));
+           item->setIcon(0,*(new QIcon(":/icons/file.png")));
            listWidget->addTopLevelItem(item);
-//           listWidget->addItem(QString::fromStdString(record.m_WimuRecordList.at(i).m_recordName));
+
        }
    }
    else
