@@ -24,6 +24,8 @@
 #include "widgets/RecordsWidget.h"
 #include "widgets/AlgorithmTab.h"
 #include "widgets/HomeWidget.h"
+#include "../acquisition/ObjectInfo.h"
+#include "../acquisition/RecordInfo.h"
 
 class MainWindow : public QMainWindow
     {
@@ -90,8 +92,8 @@ class MainWindow : public QMainWindow
         HelpDialog *helpDialog;
         DbBlock * databaseAccess = new DbBlock;
         RecordsDialog * rDialog;
-        WimuRecord record;
-        WimuAcquisition acceleroData;
+        WimuRecord* record;
+        WimuAcquisition* acceleroData;
         RecordsWidget* recordsTab;
         AlgorithmTab* algorithmTab;
         QLabel* spinnerStatusBar;

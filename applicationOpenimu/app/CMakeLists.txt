@@ -12,6 +12,7 @@ add_subdirectory(core)
 add_subdirectory(dialogs)
 add_subdirectory(logger)
 add_subdirectory(graph)
+add_subdirectory(utils)
 add_subdirectory(widgets)
 
 SET(srcs

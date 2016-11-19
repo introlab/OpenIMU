@@ -1,6 +1,6 @@
 #include "RecordsWidget.h"
 
-RecordsWidget::RecordsWidget(QWidget *parent,const WimuAcquisition& data, RecordInfo rcd):QWidget(parent)
+RecordsWidget::RecordsWidget(QWidget *parent, WimuAcquisition *data, RecordInfo rcd):QWidget(parent)
 {
     QVBoxLayout * mainLayout = new QVBoxLayout();
     layout = new QGridLayout;
@@ -15,9 +15,9 @@ RecordsWidget::RecordsWidget(QWidget *parent,const WimuAcquisition& data, Record
     recordTitle = new QLabel("Nom de l'enregistrement: "+ QString::fromStdString(record.m_recordName));
     recordTitle->setFont(QFont( "Arial", 12, QFont::Bold));
 
-    if(acceleroData.getDates().size()>0)
+    if(acceleroData->getDates().size()>0)
     {
-        recordDate = new QLabel(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(acceleroData.getDates().back().date));
+        recordDate = new QLabel(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(acceleroData->getDates().back().date));
     }
     else
     {

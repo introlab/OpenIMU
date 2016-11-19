@@ -4,6 +4,7 @@
 #include <string>
 #include<vector>
 #include "../acquisition/IJsonSerializable.h"
+#include "../acquisition/ObjectInfo.h"
 
 struct ParametersInfo
 {
@@ -28,7 +29,7 @@ public:
    AlgorithmList();
    virtual ~AlgorithmList(void);
 
-   virtual void Serialize( Json::Value& root, RecordInfo infos,  std::string date,std::string& output);
+   virtual void Serialize( Json::Value& root, ObjectInfo* infos, std::string& output);
    virtual void Deserialize( Json::Value& root);
 
    std::vector<AlgorithmInfo> m_algorithmList;

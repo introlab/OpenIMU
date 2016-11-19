@@ -35,12 +35,11 @@ void AccDataDisplay::setInfo(RecordInfo recInfo)
     m_recordInfo = recInfo;
 }
 
-AccDataDisplay::AccDataDisplay(const WimuAcquisition& accData){
-
+AccDataDisplay::AccDataDisplay(WimuAcquisition* accData){
     this->grabGesture(Qt::PanGesture);
     this->grabGesture(Qt::PinchGesture);
     this->setStyleSheet("background-color:white;");
-    availableData = accData.getData();
+    availableData = accData->getData();
     sliceData = availableData;
 
 
@@ -83,7 +82,7 @@ AccDataDisplay::AccDataDisplay(const WimuAcquisition& accData){
                              );
 
         dateRecorded = new QLabel();
-        dateRecorded->setText(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(accData.getDates().back().date));
+        dateRecorded->setText(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(accData->getDates().back().date));
         hboxDate->addStretch();
         hboxDate->addWidget(dateRecorded);
         hboxDate->addStretch();

@@ -10,7 +10,7 @@ FullGraphDialog::~ FullGraphDialog()
 
 }
 
-FullGraphDialog::FullGraphDialog(WimuAcquisition accData, RecordInfo recInfo)
+FullGraphDialog::FullGraphDialog(WimuAcquisition* accData, RecordInfo recInfo)
 {
     this->setMinimumSize(800,710);
 

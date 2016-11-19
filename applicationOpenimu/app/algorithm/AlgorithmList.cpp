@@ -10,7 +10,7 @@ AlgorithmList::~AlgorithmList()
 {
 
 }
-void AlgorithmList::Serialize( Json::Value& root,RecordInfo infos,  std::string date,std::string& output )
+void AlgorithmList::Serialize( Json::Value& root, ObjectInfo* infos, std::string& output )
 {
     // serialize primitives
     //  root["_id"] = m_recordId;

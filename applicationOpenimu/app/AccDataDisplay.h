@@ -34,7 +34,7 @@ class AccDataDisplay : public QWidget
 
 public:
     AccDataDisplay();
-    AccDataDisplay( const WimuAcquisition& accData);
+    AccDataDisplay(WimuAcquisition* accData);
     void fillChartSeries();
     void leftSliderValueChanged(double value);
     void rightSliderValueChanged(double value);

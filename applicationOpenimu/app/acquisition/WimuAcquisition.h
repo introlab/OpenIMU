@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iostream>
+#include "RecordInfo.h"
 #include"IJsonSerializable.h"
 #include"../core/json/json/json.h"
 
@@ -20,7 +21,7 @@ struct string_timestamp{
 	std::string date;
 };
 
-class WimuAcquisition: public IJsonSerializable
+class WimuAcquisition : public IJsonSerializable
 {
 private:
     std::vector<frame> data;
@@ -30,7 +31,7 @@ private:
 public:
     WimuAcquisition();
     ~WimuAcquisition();
-    virtual void Serialize( Json::Value& root, RecordInfo record,  std::string date,std::string& output );
+    virtual void Serialize( Json::Value& root, ObjectInfo* info, std::string& output);
     virtual void Deserialize( Json::Value& root);
 
     void initialize();

@@ -5,7 +5,8 @@
 #include <QGridLayout>
 #include <string>
 #include <QLabel>
-
+#include "../acquisition/ObjectInfo.h"
+#include "../acquisition/RecordInfo.h"
 #include "acquisition/WimuAcquisition.h"
 #include "acquisition/WimuRecord.h"
 #include "AccDataDisplay.h"
@@ -17,7 +18,7 @@ class RecordsWidget: public QWidget
 
     public:
     RecordsWidget();
-    RecordsWidget(QWidget *parent,const WimuAcquisition& data, RecordInfo record);
+    RecordsWidget(QWidget *parent,WimuAcquisition *data, RecordInfo record);
 
     ~RecordsWidget();
 
@@ -26,7 +27,7 @@ class RecordsWidget: public QWidget
 
     private:
     QGridLayout* layout;
-    WimuAcquisition acceleroData;
+    WimuAcquisition* acceleroData;
     RecordInfo record;
     QLabel* recordTitle;
     QLabel* recordDate;

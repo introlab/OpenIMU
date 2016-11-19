@@ -1,30 +1,22 @@
 #ifndef ALGORITHMOUTPUT_H
 #define ALGORITHMOUTPUT_H
 
+#include "../acquisition/CJsonSerializer.h"
 #include <string>
 #include<vector>
-#include "../acquisition/IJsonSerializable.h"
+#include <QDebug>
 
-
-struct OutputInfo
-{
-    int value;
-    float execute_time;
-    std::string date;
-    std::string startTime;
-    std::string endTime;
-    std::string measureUnit;
-};
+#include "AlgorithmOutputInfo.h"
 
 class AlgorithmOutput : public IJsonSerializable
 {
 public:
-   AlgorithmOutput();
+   AlgorithmOutput(void);
    virtual ~AlgorithmOutput(void);
 
-   virtual void Serialize( Json::Value& root, RecordInfo infos,  std::string date,std::string& output);
+   virtual void Serialize( Json::Value& root, ObjectInfo* algoOutputInfo, std::string& output);
    virtual void Deserialize( Json::Value& root);
 
-   OutputInfo m_algorithmOutput;
+   AlgorithmOutputInfo m_algorithmOutput;
 };
 #endif

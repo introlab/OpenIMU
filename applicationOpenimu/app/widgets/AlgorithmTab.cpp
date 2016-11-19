@@ -2,6 +2,7 @@
 #include "../dialogs/AlgorithmParametersDialog.h"
 #include "../../MainWindow.h"
 #include "ResultsTabWidget.h"
+#include "../utils/Utils.h"
 #include "QHeaderView"
 #include <QEventLoop>
 #include <QDebug>
@@ -21,7 +22,7 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
         // -- Layout
         algorithmListGroupBox = new QGroupBox();
         algorithmListGroupBox->setFixedHeight(300);
-        algorithmListGroupBox->setFlat(true);
+        //algorithmListGroupBox->setFlat(true);
         algorithmListLayout = new QVBoxLayout();
 
         algorithmTabLayout = new QVBoxLayout();
@@ -48,19 +49,42 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
         algorithmTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
         algorithmTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
         algorithmTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+        //algorithmTableWidget->setShowGrid(false);
 
-        for(int i =0; i<algoList.m_algorithmList.size();i++)
+        QString headerStyle = "QHeaderView::section { border: none; }";
+        QString gridStyle = "QTableView::item { border: none; }";
+
+        algorithmTableWidget->setStyleSheet(headerStyle + gridStyle);
+
+        for(int i =0; i<algoList->m_algorithmList.size();i++)
         {
-            QString name = QString::fromStdString(algoList.m_algorithmList.at(i).name);
+            QString name = Utils::capitalizeFirstCharacter(algoList->m_algorithmList.at(i).name);
             algorithmTableWidget->setItem(i, 0, new QTableWidgetItem(name));
 
-            QString description = QString::fromStdString(algoList.m_algorithmList.at(i).description);
+            QString description = Utils::capitalizeFirstCharacter(algoList->m_algorithmList.at(i).description);
             algorithmTableWidget->setItem(i, 1, new QTableWidgetItem(description));
 
-            QString author = QString::fromStdString(algoList.m_algorithmList.at(i).author);
+            QString author = Utils::capitalizeFirstCharacter(algoList->m_algorithmList.at(i).author);
             algorithmTableWidget->setItem(i, 2, new QTableWidgetItem(author));
         }
-        algorithmTableWidget->setRowCount(algoList.m_algorithmList.size());
+
+        algorithmTableWidget->setRowCount(algoList->m_algorithmList.size());
+
+/*      //TO DELETE: (Just to see the scroll behavior)
+        for(int i =0; i<10;i++)
+        {
+            QString name = QString::fromStdString("NAME: " + i);
+            algorithmTableWidget->setItem(i, 0, new QTableWidgetItem(name));
+
+            QString description = QString::fromStdString("DESCRIPTION: " + i);
+            algorithmTableWidget->setItem(i, 1, new QTableWidgetItem(description));
+
+            QString author = QString::fromStdString("AUTHOR: " + i);
+            algorithmTableWidget->setItem(i, 2, new QTableWidgetItem(author));
+        }
+
+        algorithmTableWidget->setRowCount(algoList.m_algorithmList.size() + 10);
+*/
 
         connect(algorithmTableWidget, SIGNAL(clicked(const QModelIndex& )), this, SLOT(openParametersWindow(const QModelIndex &)));
 
@@ -99,7 +123,9 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
 void AlgorithmTab::setAlgorithm(AlgorithmInfo algorithmInfo)
 {
     algorithmParameters->Clear();
-    selectedAlgorithm = algoList.m_algorithmList.at(selectedIndexRow);
+
+    selectedDataValues->setText(Utils::capitalizeFirstCharacter(QString::fromStdString(m_selectedRecord.m_recordName)));
+    selectedAlgorithm = algoList->m_algorithmList.at(selectedIndexRow);
     selectedAlgorithm.parameters.swap(algorithmInfo.parameters);
     algorithmParameters->setAlgorithm(algorithmInfo,selectedAlgorithm);
     }
@@ -132,10 +158,10 @@ void AlgorithmTab::openResultTab()
 
 void AlgorithmTab::openParametersWindow(const QModelIndex &index)
 {
-    if (index.isValid() && algoList.m_algorithmList.size() != 0)
+    if (index.isValid() && algoList->m_algorithmList.size() != 0)
     {
         //Retrieve the selected Algorithm and it's parameters
-        AlgorithmInfo clickedAlgorithm = algoList.m_algorithmList.at(index.row());
+        AlgorithmInfo clickedAlgorithm = algoList->m_algorithmList.at(index.row());
         selectedIndexRow = index.row();
 
         if((clickedAlgorithm.parameters.size() <= 0)||
@@ -206,7 +232,7 @@ void AlgorithmTab::reponseRecue(QNetworkReply* reply)
    {
        mainWindow->setStatusBarText(tr("Application de l'agorithme complété"));
        std::string testReponse = reply->readAll().toStdString();
-       CJsonSerializer::Deserialize(&algoList, testReponse);
+       CJsonSerializer::Deserialize(algoList, testReponse);
    }
    else
    {
@@ -220,13 +246,13 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
     if (reply->error() == QNetworkReply::NoError)
    {
        std::string reponse = reply->readAll().toStdString();
-       AlgorithmOutput output;
+       AlgorithmOutput algorithmOutput;
        if(reponse != "")
        {
-           CJsonSerializer::Deserialize(&output, reponse);
+           CJsonSerializer::Deserialize(&algorithmOutput, reponse);
            MainWindow * test = (MainWindow*)m_parent;
-           AlgorithmInfo &algoInfo = algoList.m_algorithmList.at(selectedIndexRow);
-           ResultsTabWidget* res = new ResultsTabWidget(this, m_selectedRecord, algoInfo, output);
+           AlgorithmInfo &algoInfo = algoList->m_algorithmList.at(selectedIndexRow);
+           ResultsTabWidget* res = new ResultsTabWidget(this, m_selectedRecord, algoInfo, algorithmOutput);
            test->replaceTab(res,algoInfo.name + ": " + m_selectedRecord.m_recordName);
        }
    }

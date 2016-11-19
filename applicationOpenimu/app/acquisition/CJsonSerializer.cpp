@@ -2,13 +2,13 @@
 #include"../core/json/json/json.h"
 #include<QDebug>
 
-bool CJsonSerializer::Serialize( IJsonSerializable* pObj,  RecordInfo record,  std::string date,  std::string& output )
+bool CJsonSerializer::Serialize( IJsonSerializable* pObj,  ObjectInfo objectInfo, std::string& output )
 {
    if (pObj == NULL)
       return false;
 
    Json::Value serializeRoot;
-   pObj->Serialize(serializeRoot, record, date, output);
+   pObj->Serialize(serializeRoot,&objectInfo, output);
 
    return true;
 }

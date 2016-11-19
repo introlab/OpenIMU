@@ -187,12 +187,14 @@ void RecordsDialog::addRecordSlot()
         info.m_imuType = imuSelectComboBox->currentText().toStdString();
         info.m_imuPosition = imuPositionComboBox->currentText().toStdString();
         info.m_recordDetails = userDetails->toPlainText().toStdString();
-        CJsonSerializer::Serialize(wimuData,info,"", output);
+        //CJsonSerializer::Serialize(wimuData,info,"", output);
+        CJsonSerializer::Serialize(acceleroData,info,output);
         databaseAccess = new DbBlock;
         QString temp = QString::fromStdString(output);//TODO remove
         databaseAccess->addRecordInDB(temp);
         successLabel->setText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"));
         mainWindow->setStatusBarText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"));
+
     }
     movie->stop();
     spinner->hide();

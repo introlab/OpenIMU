@@ -2,11 +2,12 @@
 #define CJSONSERIALIZER_H
 
 #include "IJsonSerializable.h"
+#include "ObjectInfo.h"
 
 class CJsonSerializer
 {
 public:
-   static bool Serialize( IJsonSerializable* pObj, RecordInfo info, std::string date, std::string& output );
+   static bool Serialize( IJsonSerializable* pObj, ObjectInfo objectInfo, std::string& output );
    static bool Deserialize( IJsonSerializable* pObj, std::string& input );
 
 private:

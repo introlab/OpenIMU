@@ -91,11 +91,11 @@ MainWindow::~MainWindow(){
 
 void MainWindow::onListItemClicked(QTreeWidgetItem* item, int column)
 {
-    for(int i=0; i<record.m_WimuRecordList.size();i++)
+    for(int i=0; i<record->m_WimuRecordList.size();i++)
     {
-        if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text(column).toStdString()) == 0)
+        if(record->m_WimuRecordList.at(i).m_recordName.compare(item->text(column).toStdString()) == 0)
         {
-            selectedRecord = record.m_WimuRecordList.at(i);
+            selectedRecord = record->m_WimuRecordList.at(i);
             statusBar->showMessage(tr("Prêt"));
         }
     }
@@ -103,12 +103,12 @@ void MainWindow::onListItemClicked(QTreeWidgetItem* item, int column)
 
 void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
 {
-    for(int i=0; i<record.m_WimuRecordList.size();i++)
+    for(int i=0; i<record->m_WimuRecordList.size();i++)
     {
-        if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text(column).toStdString()) == 0)
+        if(record->m_WimuRecordList.at(i).m_recordName.compare(item->text(column).toStdString()) == 0)
         {
             statusBar->showMessage(tr("Chargement de l'enregistrement..."));
-            selectedRecord = record.m_WimuRecordList.at(i);
+            selectedRecord = record->m_WimuRecordList.at(i);
             spinnerStatusBar->show();
             movieSpinnerBar->start();
             getDataFromUUIDFromDB(selectedRecord.m_recordId);
@@ -158,7 +158,7 @@ void MainWindow::deleteRecord()
       case QMessageBox::Ok:
         deleteRecordFromUUID(selectedRecord.m_recordId);
         getRecordsFromDB();
-        acceleroData.clearData();
+        acceleroData->clearData();
         selectedRecord.m_recordId = "";
         tabWidget->removeTab(tabWidget->currentIndex());
         openHomeTab();
@@ -212,9 +212,9 @@ void MainWindow::reponseRecueAcc(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError)
    {
-       acceleroData.clearData();
+       acceleroData->clearData();
        std::string testReponse(reply->readAll());
-       CJsonSerializer::Deserialize(&acceleroData, testReponse);
+       CJsonSerializer::Deserialize(acceleroData, testReponse);
 
    }
    else
@@ -233,14 +233,14 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
     if (reply->error() == QNetworkReply::NoError)
    {
        std::string testReponse(reply->readAll());
-       record.m_WimuRecordList.clear();
-       CJsonSerializer::Deserialize(&record, testReponse);
+       record->m_WimuRecordList.clear();
+       CJsonSerializer::Deserialize(record, testReponse);
 
        listWidget->clear();
-       for(int i=0; i<record.m_WimuRecordList.size();i++)
+       for(int i=0; i<record->m_WimuRecordList.size();i++)
        {
            QTreeWidgetItem* item = new QTreeWidgetItem();
-           item->setText(0,QString::fromStdString(record.m_WimuRecordList.at(i).m_recordName));
+           item->setText(0,QString::fromStdString(record->m_WimuRecordList.at(i).m_recordName));
            item->setIcon(0,*(new QIcon(":/icons/file.png")));
            listWidget->addTopLevelItem(item);
 

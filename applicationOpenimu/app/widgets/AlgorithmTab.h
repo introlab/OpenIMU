@@ -7,16 +7,18 @@
 #include "QTableWidget"
 #include "algorithmdetailedview.h"
 #include "QMessageBox"
+#include "../acquisition/ObjectInfo.h"
+#include "../acquisition/RecordInfo.h"
 #include "../algorithm/AlgorithmList.h"
 #include "../algorithm/AlgorithmOutput.h"
 #include "../acquisition/CJsonSerializer.h"
-
 #include <QWidget>
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 #include <QPushButton>
 #include <QTextEdit>
 
+#include "../acquisition/RecordInfo.h"
 
 class AlgorithmTab : public QWidget
 {
@@ -59,7 +61,7 @@ private:
 
     std::string m_uuid;
     int selectedIndexRow;
-    AlgorithmList algoList;
+    AlgorithmList* algoList;
     AlgorithmInfo selectedAlgorithm;
 
     RecordInfo m_selectedRecord;

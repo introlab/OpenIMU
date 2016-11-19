@@ -10,6 +10,7 @@
 #include <QtCharts/QPieSlice>
 #include "../algorithm/AlgorithmOutput.h"
 #include "../algorithm/AlgorithmList.h"
+#include "../acquisition/RecordInfo.h"
 #include <QPushButton>
 
 QT_CHARTS_USE_NAMESPACE

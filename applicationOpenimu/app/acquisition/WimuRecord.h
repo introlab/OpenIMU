@@ -3,6 +3,8 @@
 
 #include <string>
 #include "IJsonSerializable.h"
+#include "ObjectInfo.h"
+#include "RecordInfo.h"
 #include<vector>
 
 
@@ -12,7 +14,7 @@ public:
    WimuRecord();
    virtual ~WimuRecord(void);
 
-   virtual void Serialize( Json::Value& root, RecordInfo infos,  std::string date,std::string& output);
+   virtual void Serialize( Json::Value& root, ObjectInfo* infos, std::string& output);
    virtual void Deserialize( Json::Value& root);
 
    std::vector<RecordInfo> m_WimuRecordList;

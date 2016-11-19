@@ -22,12 +22,12 @@ void ResultsTabWidget::init(AlgorithmInfo &algoInfo, AlgorithmOutput &output)
     algoLabel->setFont(QFont( "Arial", 12, QFont::Bold));
 
     recordLabel = new QLabel("Enregistrement utilisé: "+ recordName);
-    dateLabel = new QLabel("Date de l'enregistrement: " + QString::fromStdString(output.m_algorithmOutput.date));
-    startHourLabel = new QLabel("Heure de début séléctionné: " + QString::fromStdString(output.m_algorithmOutput.startTime));
-    endHourLabel = new QLabel("Heure de fin séléctionné: " + QString::fromStdString(output.m_algorithmOutput.endTime));
+    dateLabel = new QLabel("Date de l'enregistrement: " + QString::fromStdString(output.m_algorithmOutput.m_date));
+    startHourLabel = new QLabel("Heure de début séléctionné: " + QString::fromStdString(output.m_algorithmOutput.m_startTime));
+    endHourLabel = new QLabel("Heure de fin séléctionné: " + QString::fromStdString(output.m_algorithmOutput.m_endTime));
     positionLabel = new QLabel("Position du Wimu: " + QString::fromStdString(m_recordInfo.m_imuPosition));
-    measureUnitLabel = new QLabel("Unité de mesure: " + QString::fromStdString(output.m_algorithmOutput.measureUnit)) ;
-    computeTimeLabel = new QLabel("Temps de calculs: " +QString::fromStdString(std::to_string(output.m_algorithmOutput.execute_time) + "ms"));
+    measureUnitLabel = new QLabel("Unité de mesure: " + QString::fromStdString(output.m_algorithmOutput.m_measureUnit)) ;
+    computeTimeLabel = new QLabel("Temps de calculs: " +QString::fromStdString(std::to_string(output.m_algorithmOutput.m_executionTime) + "ms"));
 
     layout->addWidget(algoLabel,0,0);
     layout->addWidget(recordLabel,1,0);
@@ -46,10 +46,10 @@ void ResultsTabWidget::init(AlgorithmInfo &algoInfo, AlgorithmOutput &output)
 
         QPieSeries *series = new QPieSeries();
         series->setHoleSize(0.35);
-        QPieSlice *slice = series->append("Temps actif: " + QString::fromStdString(std::to_string(output.m_algorithmOutput.value)) + " %" , output.m_algorithmOutput.value);
+        QPieSlice *slice = series->append("Temps actif: " + QString::fromStdString(std::to_string(output.m_algorithmOutput.m_value)) + " %" , output.m_algorithmOutput.m_value);
         slice->setExploded();
         slice->setLabelVisible();
-        series->append("Temps passif: " +  QString::fromStdString(std::to_string(100-output.m_algorithmOutput.value)) + " %", output.m_algorithmOutput.value-100);
+        series->append("Temps passif: " +  QString::fromStdString(std::to_string(100-output.m_algorithmOutput.m_value)) + " %", output.m_algorithmOutput.m_value-100);
         chartView->setRenderHint(QPainter::Antialiasing);
         chartView->chart()->setTitle("Temps d'activité");
         chartView->chart()->setTitleFont(QFont("Arial", 14));
@@ -68,7 +68,7 @@ void ResultsTabWidget::init(AlgorithmInfo &algoInfo, AlgorithmOutput &output)
     }
     else
     {
-       QLabel* labelResult = new QLabel("Résultat de l'algorithme : " + QString::fromStdString(std::to_string(output.m_algorithmOutput.value)) +" pas" );
+       QLabel* labelResult = new QLabel("Résultat de l'algorithme : " + QString::fromStdString(std::to_string(output.m_algorithmOutput.m_value)) +" pas" );
 
        algoLabel->setFont(QFont( "Arial", 12, QFont::Light));
        layout->addWidget(labelResult,9,0,Qt::AlignCenter);
@@ -103,7 +103,14 @@ ResultsTabWidget::~ResultsTabWidget()
 }
 void ResultsTabWidget::exportToDBSlot()
 {
-
+    algoLabel->text();
+    recordLabel->text();
+    dateLabel->text();
+    startHourLabel->text();
+    endHourLabel->text();
+    positionLabel->text();
+    measureUnitLabel->text();
+    computeTimeLabel->text();
 }
 
 void ResultsTabWidget::exportToPdfSlot()
