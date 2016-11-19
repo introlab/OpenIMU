@@ -6,6 +6,7 @@ class Record(Schema):
     format = fields.Str()
     position = fields.Str()
     comment = fields.Str()
+    parent_id = fields.Str()
     _id = fields.UUID()
 
 class Sensor(Schema):

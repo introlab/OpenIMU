@@ -7,18 +7,21 @@ from bson.objectid import ObjectId
 import os,json
 
 class InsertRecord(Resource):
-    def post(self):
+    def post(self,uuid=None):
         schema = schemas.RecordRequest()
         data, errors = schema.load(request.json)
         if errors:
             abort(401, message=str(errors))
 #---------------------------------------------------------------
-        schema = schemas.Record()
-        record,errors = schema.dump(data['record'])
-        if errors:
-            abort(401, message=str(errors))
-
-        uuid = mongo.db.record.insert(record)
+        if uuid is None:
+            schema = schemas.Record()
+            record,errors = schema.dump(data['record'])
+            if errors:
+                abort(401, message=str(errors))
+            if 'parent_id' in record:
+                if mongo.db.record.find_one({'_id': ObjectId(record['parent_id'])}) is None:
+                    abort(401, message="parent_id is invalid")
+            uuid = mongo.db.record.insert(record)
 #---------------------------------------------------------------
         schema = schemas.Sensor(many=True)
         accelerometres,errors = schema.dump(data['accelerometres'])
@@ -48,43 +51,6 @@ class InsertRecord(Resource):
         mongo.db.magnetometres.insert(magnetometres)
 #---------------------------------------------------------------
         return str(uuid)
-
-class InsertRecord(Resource):
-    def post(self,uuid):
-        schema = schemas.RecordRequest()
-        data, errors = schema.load(request.json)
-        if errors:
-            abort(401, message=str(errors))
-#---------------------------------------------------------------
-        schema = schemas.Sensor(many=True)
-        accelerometres,errors = schema.dump(data['accelerometres'])
-        if errors:
-            abort(401, message=str(errors))
-        for datum in accelerometres:
-            datum['ref'] = uuid
-
-        mongo.db.accelerometres.insert(accelerometres)
-#---------------------------------------------------------------
-        schema = schemas.Sensor(many=True)
-        gyrometres,errors = schema.dump(data['gyrometres'])
-        if errors:
-            abort(401, message=str(errors))
-        for datum in gyrometres:
-            datum['ref'] = uuid
-
-        mongo.db.gyrometres.insert(gyrometres)
-#---------------------------------------------------------------
-        schema = schemas.Sensor(many=True)
-        magnetometres,errors = schema.dump(data['magnetometres'])
-        if errors:
-            abort(401, message=str(errors))
-        for datum in magnetometres:
-            datum['ref'] = uuid
-
-        mongo.db.magnetometres.insert(magnetometres)
-#---------------------------------------------------------------
-        return str(uuid)
-
 
 class getRecords(Resource):
     def get(self):
