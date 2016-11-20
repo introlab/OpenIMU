@@ -65,6 +65,10 @@ class MainWindow : public QMainWindow
         bool deleteRecordFromList();
         void reponseRecueDelete(QNetworkReply* reply);
 
+        //Rename specific record
+        bool renameRecordFromUUID(std::string uuid, std::string newname);
+        void reponseRecueRename(QNetworkReply* reply);
+
         void deleteRecord();
         void openAlgorithmTab();
         void openHomeTab();

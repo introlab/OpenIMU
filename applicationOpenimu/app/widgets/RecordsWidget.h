@@ -23,11 +23,13 @@ class RecordsWidget: public QWidget
 
     public slots:
     void openFullGraphSlot();
+    void renameRecord();
 
     private:
     QGridLayout* layout;
     WimuAcquisition acceleroData;
     RecordInfo record;
+    QLineEdit* recordNameEdit;
     QLabel* recordTitle;
     QLabel* recordDate;
     QLabel* imuType;
@@ -37,7 +39,9 @@ class RecordsWidget: public QWidget
     QPushButton* seeFullGraphBtn;
     QPushButton* goToNextStep;
     FullGraphDialog *fDialog;
-
+    bool renameRecordClicked;
+    QWidget* m_parent;
+    QPushButton * editRecord;
 };
 
 #endif

@@ -10,6 +10,7 @@
 #include "mainwindow.h"
 #include "iostream"
 #include <QtConcurrent/QtConcurrentRun>
+#include <QByteArray>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -31,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     this->setMinimumSize(900,700);
 
     menu = new ApplicationMenuBar(this);
-    statusBar = new QStatusBar();
+    statusBar = new QStatusBar(this);
     mainWidget = new MainWidget(this);
     listWidget = new myTreeWidget(this);
 
@@ -273,6 +274,32 @@ bool MainWindow::deleteRecordFromUUID(std::string uuid)
     reponseRecueDelete(reply);
     return true;
 }
+
+//Rename specific record
+bool MainWindow::renameRecordFromUUID(std::string uuid, std::string newname)
+{
+    std::string url = "http://127.0.0.1:5000/renamerecord/"+uuid+"?name="+newname;
+
+    qDebug() << QString::fromStdString(url);
+    QNetworkRequest request(QUrl(QString::fromStdString(url)));
+    QByteArray dataByteArray (newname.c_str(),newname.length());
+    QByteArray postDataSize = QByteArray::number(dataByteArray.size());
+
+    request.setRawHeader("User-Agent", "ApplicationNameV01");
+    request.setRawHeader("Content-Type", "application/json");
+    request.setRawHeader("Content-Length", postDataSize);
+
+
+    QNetworkAccessManager *manager = new QNetworkAccessManager();
+    QNetworkReply *reply = manager->post(request, dataByteArray);
+
+    QEventLoop loop;
+    bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,SLOT(quit()));
+    loop.exec();
+    reponseRecueRename(reply);
+    return true;
+}
+
 bool MainWindow::deleteRecordFromList()
 {
     deleteRecordFromUUID(selectedRecord.m_recordId);
@@ -289,6 +316,11 @@ void MainWindow::reponseRecueDelete(QNetworkReply* reply)
    {
         statusBar->showMessage(tr("Echec de suppression de l'enregistrement"));
    }
+}
+
+void MainWindow::reponseRecueRename(QNetworkReply* reply)
+{
+      //   qDebug() << reply->error();
 }
 
 void MainWindow::setApplicationInEnglish()

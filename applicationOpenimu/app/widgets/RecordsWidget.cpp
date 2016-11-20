@@ -1,7 +1,23 @@
 #include "RecordsWidget.h"
+#include <QInputDialog>
+#include<QDir>
+#include"../MainWindow.h"
 
 RecordsWidget::RecordsWidget(QWidget *parent,const WimuAcquisition& data, RecordInfo rcd):QWidget(parent)
 {
+    renameRecordClicked = false;
+    this->setStyleSheet( "QPushButton{"
+                         "background-color: rgba(119, 160, 175, 0.7);"
+                         "border-style: inset;"
+                         "border-width: 2px;"
+                         "border-radius: 10px;"
+                         "border-color: white;"
+                         "font: 12px;"
+                         "min-width: 10em;"
+                         "padding: 6px; }"
+                         "QPushButton:pressed { background-color: rgba(70, 95, 104, 0.7);}"
+     );
+
     QVBoxLayout * mainLayout = new QVBoxLayout();
     layout = new QGridLayout;
     mainLayout->addSpacing(20);
@@ -12,7 +28,7 @@ RecordsWidget::RecordsWidget(QWidget *parent,const WimuAcquisition& data, Record
     acceleroData = data;
     record = rcd;
 
-    recordTitle = new QLabel("Nom de l'enregistrement: "+ QString::fromStdString(record.m_recordName));
+    recordTitle = new QLabel(QString::fromStdString(record.m_recordName));
     recordTitle->setFont(QFont( "Arial", 12, QFont::Bold));
 
     if(acceleroData.getDates().size()>0)
@@ -33,7 +49,20 @@ RecordsWidget::RecordsWidget(QWidget *parent,const WimuAcquisition& data, Record
     AccDataDisplay *dataDisplay = new AccDataDisplay(acceleroData);
     dataDisplay->showSimplfiedDataDisplay();
 
-    layout->addWidget(recordTitle,0,0);
+    editRecord = new QPushButton("Renommer");
+    editRecord->setMaximumWidth(20);
+    editRecord->setIcon(QIcon(":/../icons/edit.png"));
+    editRecord->setStyleSheet("background-image:url(:C:/Users/stef/Documents/OpenIMU/applicationOpenimu/app/icons/edit.png);");
+    QHBoxLayout * recordTitleLayout = new QHBoxLayout();
+    recordNameEdit = new QLineEdit();
+    recordNameEdit->setText(recordTitle->text());
+    recordNameEdit->setStyleSheet("QLineEdit { qproperty-frame: false }");
+    recordNameEdit->setReadOnly(true);
+    recordTitleLayout->addWidget( new QLabel("Nom de l'enregistrement: "));
+    recordTitleLayout->addWidget(recordNameEdit);
+    recordTitleLayout->addWidget(editRecord);
+    //layout->addWidget(recordTitle,0,0);
+    layout->addLayout(recordTitleLayout,0,0);
     layout->addWidget(deleteBtn,0,3);
     layout->addWidget(recordDate,1,0);
     layout->addWidget(imuType,2,0);
@@ -43,22 +72,13 @@ RecordsWidget::RecordsWidget(QWidget *parent,const WimuAcquisition& data, Record
     layout->addWidget(seeFullGraphBtn,6,0);
     layout->addWidget(goToNextStep,6,3);
     layout->setHorizontalSpacing(100);
-    this->setStyleSheet( "QPushButton{"
-                         "background-color: rgba(119, 160, 175, 0.7);"
-                         "border-style: inset;"
-                         "border-width: 2px;"
-                         "border-radius: 10px;"
-                         "border-color: white;"
-                         "font: 12px;"
-                         "min-width: 10em;"
-                         "padding: 6px; }"
-                         "QPushButton:pressed { background-color: rgba(70, 95, 104, 0.7);}"
-     );
 
     deleteBtn->setStyleSheet("background-color: rgba(209, 31, 58, 0.6);");
     connect(seeFullGraphBtn, SIGNAL(clicked()), this, SLOT(openFullGraphSlot()));
+    connect(seeFullGraphBtn, SIGNAL(clicked()), this, SLOT(openFullGraphSlot()));
     connect(goToNextStep, SIGNAL(clicked()), parent, SLOT(openAlgorithmTab()));
     connect(deleteBtn, SIGNAL(clicked()), parent, SLOT(deleteRecord()));
+    connect(editRecord, SIGNAL(clicked()), this, SLOT(renameRecord()));
     fDialog = new FullGraphDialog(acceleroData,record);
 }
 
@@ -72,4 +92,26 @@ void RecordsWidget::openFullGraphSlot(){
     {
         fDialog->show();
     }
+}
+
+void RecordsWidget::renameRecord()
+{
+    if(!renameRecordClicked)
+    {
+        recordNameEdit->setReadOnly(false);
+        recordNameEdit->setStyleSheet("QLineEdit {qproperty-frame: true }");
+        renameRecordClicked = true;
+        editRecord->setText("Valider");
+
+    }
+    else
+    {
+        MainWindow * mainWindow = (MainWindow*)m_parent;
+        mainWindow->renameRecordFromUUID(record.m_recordId,recordNameEdit->text().toStdString());
+        qDebug() << "here";
+        recordNameEdit->setReadOnly(true);
+        recordNameEdit->setStyleSheet("QLineEdit {qproperty-frame: false }");
+        renameRecordClicked = false;
+    }
+
 }
