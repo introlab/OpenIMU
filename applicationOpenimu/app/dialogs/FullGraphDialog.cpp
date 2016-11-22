@@ -1,5 +1,5 @@
 #include "FullGraphDialog.h"
-#include "ui_fullGraphDialog.h"
+#include "ui_FullGraphDialog.h"
 
 FullGraphDialog::FullGraphDialog(QWidget *parent) :
     QDialog(parent),
