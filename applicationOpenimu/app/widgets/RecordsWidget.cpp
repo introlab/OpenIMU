@@ -3,20 +3,10 @@
 #include<QDir>
 #include"../MainWindow.h"
 
+
 RecordsWidget::RecordsWidget(QWidget *parent,const WimuAcquisition& data, RecordInfo rcd):QWidget(parent)
 {
     renameRecordClicked = false;
-    this->setStyleSheet( "QPushButton{"
-                         "background-color: rgba(119, 160, 175, 0.7);"
-                         "border-style: inset;"
-                         "border-width: 2px;"
-                         "border-radius: 10px;"
-                         "border-color: white;"
-                         "font: 12px;"
-                         "min-width: 10em;"
-                         "padding: 6px; }"
-                         "QPushButton:pressed { background-color: rgba(70, 95, 104, 0.7);}"
-     );
 
     QVBoxLayout * mainLayout = new QVBoxLayout();
     layout = new QGridLayout;
@@ -43,16 +33,22 @@ RecordsWidget::RecordsWidget(QWidget *parent,const WimuAcquisition& data, Record
     imuType = new QLabel("Centralle inertielle: "+ QString::fromStdString(record.m_imuType));
     positionImu = new QLabel("Position IMU: "+ QString::fromStdString(record.m_imuPosition));
     detailsRecord = new QLabel("Détails enregistrement: "+ QString::fromStdString(record.m_recordDetails));
-    seeFullGraphBtn = new QPushButton("Graphique détaillé");
-    goToNextStep = new QPushButton("Choisir Algorithme");
-    deleteBtn = new QPushButton("Supprimer enregistrement");
+    seeFullGraphBtn = new OpenImuButton();
+    seeFullGraphBtn->setText("Graphique détaillé");
+    goToNextStep = new OpenImuButton();
+    goToNextStep->setText("Choisir Algorithme");
+    deleteBtn = new OpenImuButton();
+    deleteBtn->setText("Supprimer enregistrement");
     AccDataDisplay *dataDisplay = new AccDataDisplay(acceleroData);
     dataDisplay->showSimplfiedDataDisplay();
 
-    editRecord = new QPushButton("Renommer");
-    editRecord->setMaximumWidth(20);
-    editRecord->setIcon(QIcon(":/../icons/edit.png"));
-    editRecord->setStyleSheet("background-image:url(:C:/Users/stef/Documents/OpenIMU/applicationOpenimu/app/icons/edit.png);");
+    editRecord = new QPushButton("");
+    //editRecord->setMaximumWidth(25);
+    //editRecord->setMaximumWidth(25);
+    QIcon img(":/icons/edit2.png");
+    editRecord->setIcon(img);
+    editRecord->setIconSize(QSize(15, 15));
+
     QHBoxLayout * recordTitleLayout = new QHBoxLayout();
     recordNameEdit = new QLineEdit();
     recordNameEdit->setText(recordTitle->text());
@@ -102,17 +98,21 @@ void RecordsWidget::renameRecord()
         recordNameEdit->setReadOnly(false);
         recordNameEdit->setStyleSheet("QLineEdit {qproperty-frame: true }");
         renameRecordClicked = true;
-        editRecord->setText("Valider");
+        QIcon img(":/icons/check.png");
+        editRecord->setIcon(img);
+        editRecord->setIconSize(QSize(15, 15));
 
     }
     else
     {
         MainWindow * mainWindow = (MainWindow*)m_parent;
         mainWindow->renameRecordFromUUID(record.m_recordId,recordNameEdit->text().toStdString());
-        qDebug() << "here";
         recordNameEdit->setReadOnly(true);
         recordNameEdit->setStyleSheet("QLineEdit {qproperty-frame: false }");
         renameRecordClicked = false;
+        QIcon img(":/icons/edit2.png");
+        editRecord->setIcon(img);
+        editRecord->setIconSize(QSize(15, 15));
     }
 
 }

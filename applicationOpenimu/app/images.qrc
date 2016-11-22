@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>icons/folder.png</file>
         <file>icons/file.png</file>
+        <file>icons/edit2.png</file>
+        <file>icons/check.png</file>
     </qresource>
 </RCC>
