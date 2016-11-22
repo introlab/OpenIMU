@@ -79,15 +79,16 @@ RecordsWidget::RecordsWidget(QWidget *parent,const WimuAcquisition& data, Record
     connect(goToNextStep, SIGNAL(clicked()), parent, SLOT(openAlgorithmTab()));
     connect(deleteBtn, SIGNAL(clicked()), parent, SLOT(deleteRecord()));
     connect(editRecord, SIGNAL(clicked()), this, SLOT(renameRecord()));
-    fDialog = new FullGraphDialog(acceleroData,record);
+    fDialog = new FullGraphDialog();
+    fDialog->prepareDisplay(acceleroData,record);
 }
 
 RecordsWidget::~RecordsWidget()
 {
 
 }
-void RecordsWidget::openFullGraphSlot(){
-
+void RecordsWidget::openFullGraphSlot()
+{
     if(!fDialog->isVisible())
     {
         fDialog->show();

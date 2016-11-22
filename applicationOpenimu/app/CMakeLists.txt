@@ -31,6 +31,7 @@ SET(uis
     widget.ui
     help.ui
     about.ui
+	fullGraphDialog.ui
 )
 
 SET(qrc
