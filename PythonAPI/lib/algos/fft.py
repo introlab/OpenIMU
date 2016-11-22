@@ -13,9 +13,11 @@ class fft(Algorithm):
         super(fft,self).__init__()
         self.description = "Fast Fourier Transform Algorithm"
         self.author = "OpenIMU Team"
-        self.details = "<B>NOT WORKING</B>"
+        self.details = "FFT on each dimensions though time."
         self.params.uuid = 0
         self.infos.uuid = "Unique Id of the data"
+        self.params.bins = 1024
+        self.infos.bins = "Number of bins per dimensions. Default is 1024"
 
 
     def run(self):
@@ -27,13 +29,10 @@ class fft(Algorithm):
         y = [snap.get('y') for snap in self.data]
         z = [snap.get('z') for snap in self.data]
 
-        xArray = np.array(x)
-        fftx = np.fft.fft(xArray,10)
-
-        nbFreq = 5
-        x = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(x,nbFreq)]
-        y = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(y,nbFreq)]
-        z = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(z,nbFreq)]
+        nbBins = self.params.bins
+        x = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(x,nbBins)]
+        y = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(y,nbBins)]
+        z = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(z,nbBins)]
 
         self.output.result = {'x':x,'y':y,"z":z}
         return self.output
