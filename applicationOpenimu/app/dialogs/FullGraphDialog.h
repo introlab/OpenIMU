@@ -2,22 +2,25 @@
 #define FULLGRAPHDIALOH_H
 
 #include <QDialog>
-#include <QVBoxLayout>
-
 #include "../acquisition/WimuAcquisition.h"
 #include "../AccDataDisplay.h"
+
+namespace Ui {
+class FullGraphDialog;
+}
 
 class FullGraphDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    FullGraphDialog();
-    FullGraphDialog(WimuAcquisition acceleroData, RecordInfo recordInfo);
+    explicit FullGraphDialog(QWidget *parent = 0);
     ~FullGraphDialog();
-
+    AccDataDisplay* getAccDataDisplay();
+    void prepareDisplay(WimuAcquisition acceleroData, RecordInfo recordInfo);
 private:
-    QVBoxLayout *mainLayout;
+    Ui::FullGraphDialog *ui;
+    AccDataDisplay* m_dataDisplay;
 };
 
-#endif
+#endif // FULLGRAPHDIALOH_H
