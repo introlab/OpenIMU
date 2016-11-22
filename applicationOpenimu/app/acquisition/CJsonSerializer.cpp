@@ -21,8 +21,6 @@ bool CJsonSerializer::Deserialize( IJsonSerializable* pObj, std::string& input )
    Json::Value deserializeRoot;
    Json::Reader reader;
 
-   //qDebug() << "here deserialize cjson";
-
    if ( !reader.parse(input, deserializeRoot) )
       return false;
 

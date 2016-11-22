@@ -93,7 +93,7 @@ class MainWindow : public QMainWindow
         DbBlock * databaseAccess = new DbBlock;
         RecordsDialog * rDialog;
         WimuRecord* record;
-        WimuAcquisition* acceleroData;
+        WimuAcquisition* wimuAcquisition;
         RecordsWidget* recordsTab;
         AlgorithmTab* algorithmTab;
         QLabel* spinnerStatusBar;

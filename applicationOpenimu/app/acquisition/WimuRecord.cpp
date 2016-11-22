@@ -4,7 +4,6 @@
 
 WimuRecord::WimuRecord()
 {
-
 }
 WimuRecord::~WimuRecord()
 {

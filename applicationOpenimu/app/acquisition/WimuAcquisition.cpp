@@ -12,12 +12,12 @@
 
 std::vector<frame> WimuAcquisition::getData() const
 {
-    return data;
+    return dataAccelero;
 }
 
 void WimuAcquisition::setData(std::vector<frame> value)
 {
-    data = value;
+    dataAccelero = value;
 }
 
 WimuAcquisition::WimuAcquisition()
@@ -42,13 +42,13 @@ void WimuAcquisition::Serialize( Json::Value& root, ObjectInfo* objectInfo, std:
 
    //Acc
    Json::Value temp(Json::arrayValue);
-   for (size_t j = 0; j != data.size(); j++)
+   for (size_t j = 0; j != dataAccelero.size(); j++)
    {
        Json::Value obj(Json::objectValue);
-       obj["x"] = data.at(j).x;
-       obj["y"] = data.at(j).y;
-       obj["z"] = data.at(j).z;
-       obj["t"] = data.at(j).timestamp;
+       obj["x"] = dataAccelero.at(j).x;
+       obj["y"] = dataAccelero.at(j).y;
+       obj["z"] = dataAccelero.at(j).z;
+       obj["t"] = dataAccelero.at(j).timestamp;
        temp.append(obj);
    }
 
@@ -97,7 +97,7 @@ void WimuAcquisition::Deserialize( Json::Value& root )
         temp.y = accData[i].get("y", "").asInt();
         temp.z = accData[i].get("z", "").asInt();
 
-        data.push_back(temp);
+        dataAccelero.push_back(temp);
     }
 
     Json::Value gyrData = root.get("gyrometres", "");
@@ -123,7 +123,6 @@ void WimuAcquisition::Deserialize( Json::Value& root )
 
         dataMagneto.push_back(temp);
     }
-    //qDebug() << data.size();
 
 }
 
@@ -145,7 +144,7 @@ void WimuAcquisition::initialize()
 
 void WimuAcquisition::clearData()
 {
-    data.clear();
+    dataAccelero.clear();
     dataMagneto.clear();
     dataGyro.clear();
     fileAcc = "";
@@ -180,7 +179,7 @@ void WimuAcquisition::extractAcceleroData()
     for(int i=0; i< numberOfSecondsInFile ; i++)
     {
         std::vector<frame> b=readSensorDataSecond(fileBuf,i*304,freq);
-        data.insert(data.end(), b.begin(), b.end());
+        dataAccelero.insert(dataAccelero.end(), b.begin(), b.end());
     }
 }
 
@@ -285,9 +284,9 @@ std::vector<string_timestamp> WimuAcquisition::getDates() const
 {
 	std::vector<string_timestamp> result;
     long long lastTimestamp = -1;
-	for (int i=0;i<data.size();i++)
+    for (int i=0;i<dataAccelero.size();i++)
     {
-		long long t = data.at(i).timestamp/1000;
+        long long t = dataAccelero.at(i).timestamp/1000;
 		int day =t/86400;
 		int lastday=lastTimestamp/86400;
 		if(lastTimestamp==-1 || day!=lastday)
@@ -296,7 +295,7 @@ std::vector<string_timestamp> WimuAcquisition::getDates() const
                         std::time_t _time =(time_t) t;
 			char buffer[32];
 			// Format: Mo, 15.06.2009 20:20:00
-			tmp.timestamp = data.at(i).timestamp;
+            tmp.timestamp = dataAccelero.at(i).timestamp;
 			std::strftime(buffer, 32, "%d %B %Y", gmtime (&_time));
 			tmp.date = buffer;
 			result.push_back(tmp);
@@ -307,12 +306,12 @@ std::vector<string_timestamp> WimuAcquisition::getDates() const
 }
 int WimuAcquisition::getDataSize()
 {
-	return data.size();
+    return dataAccelero.size();
 }
  std::vector<frame> WimuAcquisition::getData(long long start,long long end) const
 {
 	std::vector<frame> result;
-	for (frame _frame : data)
+    for (frame _frame : dataAccelero)
 	{
 		if(_frame.timestamp<=end && _frame.timestamp>=start)
 			result.push_back(_frame);

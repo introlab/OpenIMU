@@ -61,8 +61,8 @@ private:
 
     std::string m_uuid;
     int selectedIndexRow;
-    AlgorithmList* algoList;
-    AlgorithmInfo selectedAlgorithm;
+    AlgorithmSerializer* m_algorithmSerializer;
+    AlgorithmInfo m_selectedAlgorithm;
 
     RecordInfo m_selectedRecord;
 

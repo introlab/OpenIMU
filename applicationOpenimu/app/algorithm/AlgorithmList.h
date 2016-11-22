@@ -23,11 +23,11 @@ struct AlgorithmInfo
     std::vector<ParametersInfo> parameters;
 };
 
-class AlgorithmList : public IJsonSerializable
+class AlgorithmSerializer : public IJsonSerializable
 {
 public:
-   AlgorithmList();
-   virtual ~AlgorithmList(void);
+   AlgorithmSerializer();
+   virtual ~AlgorithmSerializer(void);
 
    virtual void Serialize( Json::Value& root, ObjectInfo* infos, std::string& output);
    virtual void Deserialize( Json::Value& root);

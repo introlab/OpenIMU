@@ -206,7 +206,7 @@ void AccDataDisplay::slotSaveNewSetRange()
     m_recordInfo.m_recordName = m_recordInfo.m_recordName + ":" + recordName->text().toStdString();
 
     std::string output;
-    CJsonSerializer::Serialize(wimuData,m_recordInfo,"", output);
+    CJsonSerializer::Serialize(wimuData,m_recordInfo, output);
     databaseAccess = new DbBlock;
     QString temp = QString::fromStdString(output);//TODO remove
     databaseAccess->addRecordInDB(temp);

@@ -5,6 +5,7 @@
 struct AlgorithmOutputInfo : ObjectInfo
 {
     AlgorithmOutputInfo(void);
+    ~AlgorithmOutputInfo() { }
     AlgorithmOutputInfo(int value, float executionTime, std::string date, std::string startTime, std::string endTime, std::string measureUnit);
     int m_value;
     float m_executionTime;

@@ -18,7 +18,6 @@ const QString englishText = "English";
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-
     //Execute launchApi in a thread
     QtConcurrent::run(MainWindow::launchApi);
 
@@ -34,6 +33,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     statusBar = new QStatusBar();
     mainWidget = new MainWidget(this);
     listWidget = new myTreeWidget(this);
+    record = new WimuRecord();
+    wimuAcquisition = new WimuAcquisition();
 
     //Set QTreeWidget Column Header
     QTreeWidgetItem* headerItem = new QTreeWidgetItem();
@@ -82,7 +83,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     connect(deleteRecord, SIGNAL(clicked()), this, SLOT(deleteRecordFromList()));
 
     getRecordsFromDB();
-
 }
 
 MainWindow::~MainWindow(){
@@ -112,7 +112,7 @@ void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
             spinnerStatusBar->show();
             movieSpinnerBar->start();
             getDataFromUUIDFromDB(selectedRecord.m_recordId);
-            recordsTab = new RecordsWidget(this,acceleroData,selectedRecord);
+            recordsTab = new RecordsWidget(this,wimuAcquisition,selectedRecord);
             replaceTab(recordsTab,"Informations enregistrement");
             movieSpinnerBar->stop();
             spinnerStatusBar->hide();
@@ -158,7 +158,7 @@ void MainWindow::deleteRecord()
       case QMessageBox::Ok:
         deleteRecordFromUUID(selectedRecord.m_recordId);
         getRecordsFromDB();
-        acceleroData->clearData();
+        wimuAcquisition->clearData();
         selectedRecord.m_recordId = "";
         tabWidget->removeTab(tabWidget->currentIndex());
         openHomeTab();
@@ -187,8 +187,8 @@ bool MainWindow::getRecordsFromDB()
 
     QNetworkAccessManager *manager = new QNetworkAccessManager();
     QNetworkReply *reply = manager->get(request);
-    bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), this ,SLOT(reponseRecue(QNetworkReply*)));
 
+    bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), this ,SLOT(reponseRecue(QNetworkReply*)));
     return true;
 }
 
@@ -212,9 +212,9 @@ void MainWindow::reponseRecueAcc(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError)
    {
-       acceleroData->clearData();
+       wimuAcquisition->clearData();
        std::string testReponse(reply->readAll());
-       CJsonSerializer::Deserialize(acceleroData, testReponse);
+       CJsonSerializer::Deserialize(wimuAcquisition, testReponse);
 
    }
    else
@@ -234,6 +234,7 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
    {
        std::string testReponse(reply->readAll());
        record->m_WimuRecordList.clear();
+
        CJsonSerializer::Deserialize(record, testReponse);
 
        listWidget->clear();

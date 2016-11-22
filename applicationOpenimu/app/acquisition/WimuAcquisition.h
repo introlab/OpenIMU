@@ -24,7 +24,7 @@ struct string_timestamp{
 class WimuAcquisition : public IJsonSerializable
 {
 private:
-    std::vector<frame> data;
+    std::vector<frame> dataAccelero;
     std::vector<frame> dataGyro;
     std::vector<frame> dataMagneto;
 

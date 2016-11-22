@@ -7,6 +7,8 @@ struct RecordInfo : ObjectInfo
 {
   RecordInfo(void);
   RecordInfo(std::string  recordId, std::string  recordName, std::string  imuType, std::string imuPosition, std::string  recordDetails);
+  ~RecordInfo() { }
+
   std::string   m_recordId;
   std::string   m_recordName;
   std::string   m_imuType;

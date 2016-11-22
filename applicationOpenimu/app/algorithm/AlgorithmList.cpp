@@ -2,22 +2,22 @@
 #include <QDebug>
 
 
-AlgorithmList::AlgorithmList()
+AlgorithmSerializer::AlgorithmSerializer()
 {
 
 }
-AlgorithmList::~AlgorithmList()
+AlgorithmSerializer::~AlgorithmSerializer()
 {
 
 }
-void AlgorithmList::Serialize( Json::Value& root, ObjectInfo* infos, std::string& output )
+void AlgorithmSerializer::Serialize( Json::Value& root, ObjectInfo* infos, std::string& output )
 {
     // serialize primitives
     //  root["_id"] = m_recordId;
     //  root["name"] = m_recordName;
 }
 
-void AlgorithmList::Deserialize(Json::Value& root)
+void AlgorithmSerializer::Deserialize(Json::Value& root)
 {
     //qDebug() << "here res";
 

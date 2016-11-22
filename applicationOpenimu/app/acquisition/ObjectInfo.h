@@ -4,7 +4,7 @@
 
 struct ObjectInfo
 {
-    ObjectInfo();
+
 };
 
 #endif // OBJECTINFO_H
