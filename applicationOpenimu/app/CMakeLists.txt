@@ -13,6 +13,7 @@ add_subdirectory(dialogs)
 add_subdirectory(logger)
 add_subdirectory(graph)
 add_subdirectory(widgets)
+add_subdirectory(utils)
 
 SET(srcs
     ${srcs}

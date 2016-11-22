@@ -10,6 +10,7 @@
 #include "acquisition/WimuRecord.h"
 #include "AccDataDisplay.h"
 #include "dialogs/FullGraphDialog.h"
+#include"../utils/OpenImuButton.h"
 
 class RecordsWidget: public QWidget
 {
@@ -35,9 +36,9 @@ class RecordsWidget: public QWidget
     QLabel* imuType;
     QLabel* positionImu;
     QLabel* detailsRecord;
-    QPushButton* deleteBtn;
-    QPushButton* seeFullGraphBtn;
-    QPushButton* goToNextStep;
+    OpenImuButton* deleteBtn;
+    OpenImuButton* seeFullGraphBtn;
+    OpenImuButton* goToNextStep;
     FullGraphDialog *fDialog;
     bool renameRecordClicked;
     QWidget* m_parent;
