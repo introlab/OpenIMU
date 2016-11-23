@@ -25,32 +25,35 @@ class InsertRecord(Resource):
                     abort(401, message="parent_id is invalid")
             uuid = mongo.db.record.insert(record)
 #---------------------------------------------------------------
-        schema = schemas.Sensor(many=True)
-        accelerometres,errors = schema.dump(data['accelerometres'])
-        if errors:
-            abort(401, message=str(errors))
-        for datum in accelerometres:
-            datum['ref'] = uuid
+        if 'accelerometres' in data:
+            schema = schemas.Sensor(many=True)
+            accelerometres,errors = schema.dump(data['accelerometres'])
+            if errors:
+                abort(401, message=str(errors))
+            for datum in accelerometres:
+                datum['ref'] = uuid
 
-        mongo.db.accelerometres.insert(accelerometres)
+            mongo.db.accelerometres.insert(accelerometres)
 #---------------------------------------------------------------
-        schema = schemas.Sensor(many=True)
-        gyrometres,errors = schema.dump(data['gyrometres'])
-        if errors:
-            abort(401, message=str(errors))
-        for datum in gyrometres:
-            datum['ref'] = uuid
+        if 'gyrometres' in data:
+            schema = schemas.Sensor(many=True)
+            gyrometres,errors = schema.dump(data['gyrometres'])
+            if errors:
+                abort(401, message=str(errors))
+            for datum in gyrometres:
+                datum['ref'] = uuid
 
-        mongo.db.gyrometres.insert(gyrometres)
+            mongo.db.gyrometres.insert(gyrometres)
 #---------------------------------------------------------------
-        schema = schemas.Sensor(many=True)
-        magnetometres,errors = schema.dump(data['magnetometres'])
-        if errors:
-            abort(401, message=str(errors))
-        for datum in magnetometres:
-            datum['ref'] = uuid
+        if 'magnetometres' in data:
+            schema = schemas.Sensor(many=True)
+            magnetometres,errors = schema.dump(data['magnetometres'])
+            if errors:
+                abort(401, message=str(errors))
+            for datum in magnetometres:
+                datum['ref'] = uuid
 
-        mongo.db.magnetometres.insert(magnetometres)
+            mongo.db.magnetometres.insert(magnetometres)
 #---------------------------------------------------------------
         return str(uuid)
 
