@@ -19,7 +19,9 @@ class InsertRecord(Resource):
             if errors:
                 abort(401, message=str(errors))
             if 'parent_id' in record:
-                if mongo.db.record.find_one({'_id': ObjectId(record['parent_id'])}) is None:
+                if(record['parent_id'] == "None"):
+                    del record['parent_id']
+                elif mongo.db.record.find_one({'_id': ObjectId(record['parent_id'])}) is None:
                     abort(401, message="parent_id is invalid")
             uuid = mongo.db.record.insert(record)
 #---------------------------------------------------------------
