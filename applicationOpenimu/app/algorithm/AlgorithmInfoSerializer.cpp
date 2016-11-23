@@ -1,23 +1,23 @@
-#include"AlgorithmList.h"
+#include"AlgorithmInfoSerializer.h"
 #include <QDebug>
 
 
-AlgorithmSerializer::AlgorithmSerializer()
+AlgorithmInfoSerializer::AlgorithmInfoSerializer()
 {
 
 }
-AlgorithmSerializer::~AlgorithmSerializer()
+AlgorithmInfoSerializer::~AlgorithmInfoSerializer()
 {
 
 }
-void AlgorithmSerializer::Serialize( Json::Value& root, ObjectInfo* infos, std::string& output )
+void AlgorithmInfoSerializer::Serialize( Json::Value& root, ObjectInfo* infos, std::string& output )
 {
     // serialize primitives
     //  root["_id"] = m_recordId;
     //  root["name"] = m_recordName;
 }
 
-void AlgorithmSerializer::Deserialize(Json::Value& root)
+void AlgorithmInfoSerializer::Deserialize(Json::Value& root)
 {
     //qDebug() << "here res";
 

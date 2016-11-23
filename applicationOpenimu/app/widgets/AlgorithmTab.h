@@ -9,8 +9,8 @@
 #include "QMessageBox"
 #include "../acquisition/ObjectInfo.h"
 #include "../acquisition/RecordInfo.h"
-#include "../algorithm/AlgorithmList.h"
-#include "../algorithm/AlgorithmOutput.h"
+#include "../algorithm/AlgorithmInfoSerializer.h"
+#include "../algorithm/AlgorithmOutputInfoSerializer.h"
 #include "../acquisition/CJsonSerializer.h"
 #include <QWidget>
 #include <QNetworkReply>
@@ -61,7 +61,8 @@ private:
 
     std::string m_uuid;
     int selectedIndexRow;
-    AlgorithmSerializer* m_algorithmSerializer;
+    AlgorithmInfoSerializer* m_algorithmSerializer;
+    AlgorithmOutputInfoSerializer* m_algorithmOutputSerializer;
     AlgorithmInfo m_selectedAlgorithm;
 
     RecordInfo m_selectedRecord;

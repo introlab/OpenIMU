@@ -11,7 +11,8 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
 {
         m_parent = parent;
         m_selectedRecord = selectedRecord;
-        m_algorithmSerializer = new AlgorithmSerializer();
+        m_algorithmSerializer = new AlgorithmInfoSerializer();
+        m_algorithmOutputSerializer = new AlgorithmOutputInfoSerializer();
 
         MainWindow * mainWindow = (MainWindow*)m_parent;
 
@@ -246,13 +247,13 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
     if (reply->error() == QNetworkReply::NoError)
    {
        std::string reponse = reply->readAll().toStdString();
-       AlgorithmOutput algorithmOutput;
+       AlgorithmOutputInfoSerializer algorithmOutputInfoSerializer;
        if(reponse != "")
        {
-           CJsonSerializer::Deserialize(&algorithmOutput, reponse);
+           CJsonSerializer::Deserialize(&algorithmOutputInfoSerializer, reponse);
            MainWindow * test = (MainWindow*)m_parent;
            AlgorithmInfo &algoInfo = m_algorithmSerializer->m_algorithmList.at(selectedIndexRow);
-           ResultsTabWidget* res = new ResultsTabWidget(this, m_selectedRecord, algoInfo, algorithmOutput);
+           ResultsTabWidget* res = new ResultsTabWidget(this, m_selectedRecord, algoInfo, algorithmOutputInfoSerializer.m_algorithmOutput);
            test->replaceTab(res,algoInfo.name + ": " + m_selectedRecord.m_recordName);
        }
    }

@@ -10,8 +10,9 @@ AlgorithmOutputInfo::AlgorithmOutputInfo()
     m_measureUnit = "";
 }
 
-AlgorithmOutputInfo::AlgorithmOutputInfo(int value, float executionTime, std::string date, std::string startTime, std::string endTime, std::string measureUnit)
+AlgorithmOutputInfo::AlgorithmOutputInfo(AlgorithmInfo algorithmInfo, int value, float executionTime, std::string date, std::string startTime, std::string endTime, std::string measureUnit)
 {
+    m_algorithmInfo = algorithmInfo;
     m_value = value;
     m_executionTime = executionTime;
     m_date = date;

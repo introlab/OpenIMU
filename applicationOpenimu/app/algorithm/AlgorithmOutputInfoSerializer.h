@@ -8,11 +8,11 @@
 
 #include "AlgorithmOutputInfo.h"
 
-class AlgorithmOutput : public IJsonSerializable
+class AlgorithmOutputInfoSerializer : public IJsonSerializable
 {
 public:
-   AlgorithmOutput(void);
-   virtual ~AlgorithmOutput(void);
+   AlgorithmOutputInfoSerializer(void);
+   virtual ~AlgorithmOutputInfoSerializer(void);
 
    virtual void Serialize( Json::Value& root, ObjectInfo* algoOutputInfo, std::string& output);
    virtual void Deserialize( Json::Value& root);

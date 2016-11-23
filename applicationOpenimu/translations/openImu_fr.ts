@@ -138,27 +138,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AlgorithmTab</name>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="33"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="34"/>
         <source>Tableau des algorithmes disponibles</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="95"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="96"/>
         <source>Appliquer algorithme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="150"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="151"/>
         <source>Avertissement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="233"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="234"/>
         <source>Application de l&apos;agorithme complété</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="239"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="240"/>
         <source>Application de l&apos;agorithme non réussi</source>
         <translation type="unfinished"></translation>
     </message>
@@ -690,12 +690,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ResultsTabWidget</name>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="118"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="143"/>
         <source>Save Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="118"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="143"/>
         <source>PDF (*.pdf)</source>
         <translation type="unfinished"></translation>
     </message>

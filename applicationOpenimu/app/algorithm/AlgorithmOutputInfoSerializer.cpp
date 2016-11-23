@@ -1,15 +1,16 @@
-#include"AlgorithmOutput.h"
+#include"AlgorithmOutputInfoSerializer.h"
 
-AlgorithmOutput::AlgorithmOutput()
+AlgorithmOutputInfoSerializer::AlgorithmOutputInfoSerializer()
 {
 
 }
 
-AlgorithmOutput::~AlgorithmOutput()
+AlgorithmOutputInfoSerializer::~AlgorithmOutputInfoSerializer()
 {
 
 }
-void AlgorithmOutput::Serialize( Json::Value& root, ObjectInfo* info, std::string& output )
+
+void AlgorithmOutputInfoSerializer::Serialize( Json::Value& root, ObjectInfo* info, std::string& output )
 {
     // serialize primitives
     //Cast Info to AlgorithmOutputInfo
@@ -22,7 +23,7 @@ void AlgorithmOutput::Serialize( Json::Value& root, ObjectInfo* info, std::strin
      root["measureUnit"] = algorithmOutputInfo->m_measureUnit;
 }
 
-void AlgorithmOutput::Deserialize(Json::Value& root)
+void AlgorithmOutputInfoSerializer::Deserialize(Json::Value& root)
 {
     std::string missingInfos = "Not available in Database";
     // deserialize primitives

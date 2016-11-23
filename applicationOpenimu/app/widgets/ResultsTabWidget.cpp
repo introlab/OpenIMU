@@ -3,31 +3,34 @@
 #include <QPdfWriter>
 #include <QPainter>
 
-ResultsTabWidget::ResultsTabWidget(QWidget *parent,RecordInfo& recordInfo, AlgorithmInfo &algoInfo, AlgorithmOutput &output):QWidget(parent)
+ResultsTabWidget::ResultsTabWidget(QWidget *parent,RecordInfo& recordInfo, AlgorithmInfo algoInfo, AlgorithmOutputInfo output):QWidget(parent)
 {
     m_recordInfo= recordInfo;
     init(algoInfo, output);
 }
 
 
-void ResultsTabWidget::init(AlgorithmInfo &algoInfo, AlgorithmOutput &output)
+void ResultsTabWidget::init(AlgorithmInfo algoInfo, AlgorithmOutputInfo output)
 {
+    m_algorithmOutputInfo = output;
+    m_algorithmOutputInfo.m_algorithmInfo = algoInfo;
+
     layout = new QGridLayout;
     this->setLayout(layout);
 
-    QString algoName = "Algorithme appliqué: " + QString::fromStdString(algoInfo.name);
+    QString algoName = "Algorithme appliqué: " + QString::fromStdString(m_algorithmOutputInfo.m_algorithmInfo.name);
     QString recordName = QString::fromStdString(m_recordInfo.m_recordName);
 
     algoLabel = new QLabel(algoName);
     algoLabel->setFont(QFont( "Arial", 12, QFont::Bold));
 
     recordLabel = new QLabel("Enregistrement utilisé: "+ recordName);
-    dateLabel = new QLabel("Date de l'enregistrement: " + QString::fromStdString(output.m_algorithmOutput.m_date));
-    startHourLabel = new QLabel("Heure de début séléctionné: " + QString::fromStdString(output.m_algorithmOutput.m_startTime));
-    endHourLabel = new QLabel("Heure de fin séléctionné: " + QString::fromStdString(output.m_algorithmOutput.m_endTime));
+    dateLabel = new QLabel("Date de l'enregistrement: " + QString::fromStdString(m_algorithmOutputInfo.m_date));
+    startHourLabel = new QLabel("Heure de début séléctionné: " + QString::fromStdString(m_algorithmOutputInfo.m_startTime));
+    endHourLabel = new QLabel("Heure de fin séléctionné: " + QString::fromStdString(m_algorithmOutputInfo.m_endTime));
     positionLabel = new QLabel("Position du Wimu: " + QString::fromStdString(m_recordInfo.m_imuPosition));
-    measureUnitLabel = new QLabel("Unité de mesure: " + QString::fromStdString(output.m_algorithmOutput.m_measureUnit)) ;
-    computeTimeLabel = new QLabel("Temps de calculs: " +QString::fromStdString(std::to_string(output.m_algorithmOutput.m_executionTime) + "ms"));
+    measureUnitLabel = new QLabel("Unité de mesure: " + QString::fromStdString(m_algorithmOutputInfo.m_measureUnit)) ;
+    computeTimeLabel = new QLabel("Temps de calculs: " +QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_executionTime) + "ms"));
 
     layout->addWidget(algoLabel,0,0);
     layout->addWidget(recordLabel,1,0);
@@ -46,10 +49,10 @@ void ResultsTabWidget::init(AlgorithmInfo &algoInfo, AlgorithmOutput &output)
 
         QPieSeries *series = new QPieSeries();
         series->setHoleSize(0.35);
-        QPieSlice *slice = series->append("Temps actif: " + QString::fromStdString(std::to_string(output.m_algorithmOutput.m_value)) + " %" , output.m_algorithmOutput.m_value);
+        QPieSlice *slice = series->append("Temps actif: " + QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_value)) + " %" , m_algorithmOutputInfo.m_value);
         slice->setExploded();
         slice->setLabelVisible();
-        series->append("Temps passif: " +  QString::fromStdString(std::to_string(100-output.m_algorithmOutput.m_value)) + " %", output.m_algorithmOutput.m_value-100);
+        series->append("Temps passif: " +  QString::fromStdString(std::to_string(100-m_algorithmOutputInfo.m_value)) + " %", m_algorithmOutputInfo.m_value-100);
         chartView->setRenderHint(QPainter::Antialiasing);
         chartView->chart()->setTitle("Temps d'activité");
         chartView->chart()->setTitleFont(QFont("Arial", 14));
@@ -68,7 +71,7 @@ void ResultsTabWidget::init(AlgorithmInfo &algoInfo, AlgorithmOutput &output)
     }
     else
     {
-       QLabel* labelResult = new QLabel("Résultat de l'algorithme : " + QString::fromStdString(std::to_string(output.m_algorithmOutput.m_value)) +" pas" );
+       QLabel* labelResult = new QLabel("Résultat de l'algorithme : " + QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_value)) +" pas" );
 
        algoLabel->setFont(QFont( "Arial", 12, QFont::Light));
        layout->addWidget(labelResult,9,0,Qt::AlignCenter);
@@ -103,6 +106,28 @@ ResultsTabWidget::~ResultsTabWidget()
 }
 void ResultsTabWidget::exportToDBSlot()
 {
+    /*
+    qDebug() << "calling exportToDB()";
+    qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : name: " << QString::fromStdString(m_algorithmOutputInfo.m_algorithmInfo.name);
+    qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : author: " << QString::fromStdString(m_algorithmOutputInfo.m_algorithmInfo.author);
+    qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : description: " << QString::fromStdString(m_algorithmOutputInfo.m_algorithmInfo.description);
+    qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : details: " << QString::fromStdString(m_algorithmOutputInfo.m_algorithmInfo.details);
+
+    for(int i = 0; i < m_algorithmOutputInfo.m_algorithmInfo.parameters.size(); i++)
+    {
+        ParametersInfo p = m_algorithmOutputInfo.m_algorithmInfo.parameters.at(i);
+        qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : parameter(s) " << i  << " " + QString::fromStdString(p.name);
+        qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : parameter(s) " << i << " " + QString::fromStdString(p.description);
+        qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : parameter(s) " << i << " " + QString::fromStdString(p.value);
+    }
+
+    qDebug() << "calling exportToDB(): AlgorithmOutput : Date: " << QString::fromStdString(m_algorithmOutputInfo.m_date);
+    qDebug() << "calling exportToDB(): AlgorithmOutput : Start time: " << QString::fromStdString(m_algorithmOutputInfo.m_startTime);
+    qDebug() << "calling exportToDB(): AlgorithmOutput : End time: " << QString::fromStdString(m_algorithmOutputInfo.m_endTime);
+    qDebug() << "calling exportToDB(): AlgorithmOutput : Execution time: " << m_algorithmOutputInfo.m_executionTime;
+    qDebug() << "calling exportToDB(): AlgorithmOutput : Measurement unit: " << QString::fromStdString(m_algorithmOutputInfo.m_measureUnit);
+    qDebug() << "calling exportToDB(): AlgorithmOutput : Value " << m_algorithmOutputInfo.m_value;
+    */
     algoLabel->text();
     recordLabel->text();
     dateLabel->text();
