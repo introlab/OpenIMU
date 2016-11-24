@@ -19,7 +19,6 @@ const QString englishText = "English";
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-
     //Execute launchApi in a thread
     QtConcurrent::run(MainWindow::launchApi);
 
@@ -54,8 +53,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     listWidget->setAlternatingRowColors(true);
     listWidget->setStyleSheet("alternate-background-color:#ecf0f1;background-color:white;");
 
-    QPushButton* addRecord = new QPushButton("+");
-    QPushButton* deleteRecord = new QPushButton("-");
+    QPushButton* addRecord = new QPushButton("");
+    QIcon img(":/icons/addrecord.png");
+    addRecord->setIcon(img);
+    addRecord->setIconSize(QSize(20,20));
+
+    QPushButton* deleteRecord = new QPushButton("");
+    QIcon imgd(":/icons/trash.png");
+    deleteRecord->setIcon(imgd);
+    deleteRecord->setIconSize(QSize(20,20));
     QVBoxLayout* vlayout = new QVBoxLayout();
     vlayout->addWidget(addRecord);
     vlayout->addWidget(listWidget);
@@ -220,14 +226,15 @@ void MainWindow::reponseRecueAcc(QNetworkReply* reply)
    }
    else
    {
-       //qDebug() << "error connect";
-       //qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
-       //qDebug() << "Request failed, " << reply->errorString();
-      // qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
-       //qDebug() << reply->readAll();
+       qDebug() << "error connect";
+       qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
+       qDebug() << "Request failed, " << reply->errorString();
+       qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
+       qDebug() << reply->readAll();
    }
    delete reply;
 }
+
 
 void MainWindow::reponseRecue(QNetworkReply* reply)
 {
@@ -240,20 +247,29 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
        listWidget->clear();
        for(int i=0; i<record.m_WimuRecordList.size();i++)
        {
-           QTreeWidgetItem* item = new QTreeWidgetItem();
-           item->setText(0,QString::fromStdString(record.m_WimuRecordList.at(i).m_recordName));
-           item->setIcon(0,*(new QIcon(":/icons/file.png")));
-           listWidget->addTopLevelItem(item);
+           QTreeWidgetItem* top_item = new QTreeWidgetItem();
+           top_item->setText(0,QString::fromStdString(record.m_WimuRecordList.at(i).m_recordName));
+           top_item->setIcon(0,*(new QIcon(":/icons/file.png")));
 
+           qDebug() << QString::fromStdString(record.m_WimuRecordList.at(i).m_parentid);
+           if(record.m_WimuRecordList.at(i).m_parentid.compare("") == 0 )
+           {
+               for(int j=0; j<record.m_WimuRecordList.size();j++)
+               {
+                   if(record.m_WimuRecordList.at(j).m_parentid.compare(record.m_WimuRecordList.at(i).m_recordId ) == 0)
+                   {
+                       QTreeWidgetItem* child_item = new QTreeWidgetItem;
+                       child_item->setText(0,QString::fromStdString(record.m_WimuRecordList.at(j).m_recordName));
+                       top_item->addChild(child_item);
+                   }
+               }
+               listWidget->addTopLevelItem(top_item);
+           }
        }
    }
    else
    {
-       //qDebug() << "error connect";
-       //qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
-       //qDebug() << "Request failed, " << reply->errorString();
-       //qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
-       //qDebug() << reply->readAll();
+       qDebug() << "error connect";
    }
    delete reply;
 }
@@ -379,6 +395,7 @@ void MainWindow::replaceTab(QWidget * replacement, std::string label)
     }
     setStatusBarText(tr("Prêt"));
 }
+
 void MainWindow::closeTab(int index){
 
     if (index == -1) {

@@ -4,5 +4,8 @@
         <file>icons/file.png</file>
         <file>icons/edit2.png</file>
         <file>icons/check.png</file>
+        <file>icons/loader.gif</file>
+        <file>icons/trash.png</file>
+        <file>icons/addrecord.png</file>
     </qresource>
 </RCC>

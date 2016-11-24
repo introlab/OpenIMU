@@ -55,7 +55,6 @@ RecordsWidget::RecordsWidget(QWidget *parent,const WimuAcquisition& data, Record
     recordTitleLayout->addWidget( new QLabel("Nom de l'enregistrement: "));
     recordTitleLayout->addWidget(recordNameEdit);
     recordTitleLayout->addWidget(editRecord);
-    //layout->addWidget(recordTitle,0,0);
     layout->addLayout(recordTitleLayout,0,0);
     layout->addWidget(deleteBtn,0,3);
     layout->addWidget(recordDate,1,0);
