@@ -1,6 +1,7 @@
 SET(srcs
     ${srcs}    
-    ${CMAKE_CURRENT_SOURCE_DIR}/AlgorithmDetailedView.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/AccDataDisplay2.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/AlgorithmDetailedView.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ApplicationMenuBar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MyTreeWidget.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RangeSlider.cpp
@@ -18,6 +19,7 @@ SET(srcs
 
 SET(headers
     ${headers}
+	${CMAKE_CURRENT_SOURCE_DIR}/AccDataDisplay2.h
     ${CMAKE_CURRENT_SOURCE_DIR}/AlgorithmDetailedView.h
     ${CMAKE_CURRENT_SOURCE_DIR}/ApplicationMenuBar.h
     ${CMAKE_CURRENT_SOURCE_DIR}/MyTreeWidget.h
@@ -36,5 +38,6 @@ SET(headers
 SET(uis
     ${uis}
     ${CMAKE_CURRENT_SOURCE_DIR}/MRichTextEditor/mrichtextedit.ui
+	${CMAKE_CURRENT_SOURCE_DIR}/AccDataDisplay2.ui
     PARENT_SCOPE
 )

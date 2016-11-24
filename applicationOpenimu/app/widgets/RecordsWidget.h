@@ -5,10 +5,11 @@
 #include <QGridLayout>
 #include <string>
 #include <QLabel>
+#include <QLineEdit>
 
 #include "acquisition/WimuAcquisition.h"
 #include "acquisition/WimuRecord.h"
-#include "AccDataDisplay.h"
+#include "AccDataDisplay2.h"
 #include "dialogs/FullGraphDialog.h"
 #include"../utils/OpenImuButton.h"
 

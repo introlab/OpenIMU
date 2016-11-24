@@ -39,7 +39,7 @@ RecordsWidget::RecordsWidget(QWidget *parent,const WimuAcquisition& data, Record
     goToNextStep->setText("Choisir Algorithme");
     deleteBtn = new OpenImuButton();
     deleteBtn->setText("Supprimer enregistrement");
-    AccDataDisplay *dataDisplay = new AccDataDisplay(acceleroData);
+    AccDataDisplay2 *dataDisplay = new AccDataDisplay2(acceleroData);
     dataDisplay->showSimplfiedDataDisplay();
 
     editRecord = new QPushButton("");
@@ -67,7 +67,6 @@ RecordsWidget::RecordsWidget(QWidget *parent,const WimuAcquisition& data, Record
     layout->setHorizontalSpacing(100);
 
     deleteBtn->setStyleSheet("background-color: rgba(209, 31, 58, 0.6);");
-    connect(seeFullGraphBtn, SIGNAL(clicked()), this, SLOT(openFullGraphSlot()));
     connect(seeFullGraphBtn, SIGNAL(clicked()), this, SLOT(openFullGraphSlot()));
     connect(goToNextStep, SIGNAL(clicked()), parent, SLOT(openAlgorithmTab()));
     connect(deleteBtn, SIGNAL(clicked()), parent, SLOT(deleteRecord()));
