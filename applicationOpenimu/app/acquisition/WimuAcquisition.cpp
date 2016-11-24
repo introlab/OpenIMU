@@ -29,16 +29,15 @@ WimuAcquisition::~WimuAcquisition()
 
 }
 
-void WimuAcquisition::Serialize( Json::Value& root, ObjectInfo* objectInfo, std::string& output)
+void WimuAcquisition::Serialize( Json::Value& root, RecordInfo recordInfo, std::string& output)
 {
    // serialize
    Json::Value mainRoot;
-   RecordInfo* infos = (RecordInfo*)objectInfo;
    Json::Value init(Json::objectValue);
-   init["name"] = infos->m_recordName;
-   init["format"] = infos->m_imuType;
-   init["position"] = infos->m_imuPosition;
-   init["comment"] = infos->m_recordDetails;
+   init["name"] = recordInfo.m_recordName;
+   init["format"] = recordInfo.m_imuType;
+   init["position"] = recordInfo.m_imuPosition;
+   init["comment"] = recordInfo.m_recordDetails;
 
    //Acc
    Json::Value temp(Json::arrayValue);

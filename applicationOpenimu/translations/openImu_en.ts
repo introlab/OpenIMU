@@ -138,27 +138,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AlgorithmTab</name>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="34"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="32"/>
         <source>Tableau des algorithmes disponibles</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="96"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="94"/>
         <source>Appliquer algorithme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="151"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="152"/>
         <source>Avertissement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="234"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="241"/>
         <source>Application de l&apos;agorithme complété</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="240"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="247"/>
         <source>Application de l&apos;agorithme non réussi</source>
         <translation type="unfinished"></translation>
     </message>
@@ -477,15 +477,15 @@ p, li { white-space: pre-wrap; }
     <name>MainWindow</name>
     <message>
         <location filename="../app/MainWindow.cpp" line="69"/>
-        <location filename="../app/MainWindow.cpp" line="326"/>
+        <location filename="../app/MainWindow.cpp" line="327"/>
         <source>Accueil</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/MainWindow.cpp" line="77"/>
         <location filename="../app/MainWindow.cpp" line="99"/>
-        <location filename="../app/MainWindow.cpp" line="119"/>
-        <location filename="../app/MainWindow.cpp" line="349"/>
+        <location filename="../app/MainWindow.cpp" line="120"/>
+        <location filename="../app/MainWindow.cpp" line="350"/>
         <source>Prêt</source>
         <translation type="unfinished"></translation>
     </message>
@@ -495,12 +495,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="287"/>
+        <location filename="../app/MainWindow.cpp" line="288"/>
         <source>Enregistrement effacé avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="291"/>
+        <location filename="../app/MainWindow.cpp" line="292"/>
         <source>Echec de suppression de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
@@ -690,12 +690,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ResultsTabWidget</name>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="143"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="177"/>
         <source>Save Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="143"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="177"/>
         <source>PDF (*.pdf)</source>
         <translation type="unfinished"></translation>
     </message>

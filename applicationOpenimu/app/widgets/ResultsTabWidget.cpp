@@ -12,11 +12,37 @@ ResultsTabWidget::ResultsTabWidget(QWidget *parent,RecordInfo& recordInfo, Algor
 
 void ResultsTabWidget::init(AlgorithmInfo algoInfo, AlgorithmOutputInfo output)
 {
+    qDebug() << "ResultsTabWidget::init()";
+
+    qDebug() << "calling ResultsTabWidget(): init() : AlgorithmOutput : AlgorithmInfo : name: " << QString::fromStdString(output.m_algorithmInfo.name);
+    qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : AlgorithmInfo : author: " << QString::fromStdString(output.m_algorithmInfo.author);
+    qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : AlgorithmInfo : description: " << QString::fromStdString(output.m_algorithmInfo.description);
+    qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : AlgorithmInfo : details: " << QString::fromStdString(output.m_algorithmInfo.details);
+
+    for(int i = 0; i < output.m_algorithmInfo.parameters.size(); i++)
+    {
+        ParametersInfo p = output.m_algorithmInfo.parameters.at(i);
+        qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : AlgorithmInfo : parameter(s) " << i  << " " + QString::fromStdString(p.name);
+        qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : AlgorithmInfo : parameter(s) " << i << " " + QString::fromStdString(p.description);
+        qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : AlgorithmInfo : parameter(s) " << i << " " + QString::fromStdString(p.value);
+    }
+
+    qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : Date: " << QString::fromStdString(output.m_date);
+    qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : Start time: " << QString::fromStdString(output.m_startTime);
+    qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : End time: " << QString::fromStdString(output.m_endTime);
+    qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : Execution time: " << output.m_executionTime;
+    qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : Measurement unit: " << QString::fromStdString(output.m_measureUnit);
+    qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : Value " << output.m_value;
+
+    m_databaseAccess = new DbBlock();
+
     m_algorithmOutputInfo = output;
     m_algorithmOutputInfo.m_algorithmInfo = algoInfo;
 
     layout = new QGridLayout;
     this->setLayout(layout);
+
+    qDebug() << "ResultsTabWidget::init(): UI Stuff";
 
     QString algoName = "Algorithme appliqué: " + QString::fromStdString(m_algorithmOutputInfo.m_algorithmInfo.name);
     QString recordName = QString::fromStdString(m_recordInfo.m_recordName);
@@ -46,7 +72,7 @@ void ResultsTabWidget::init(AlgorithmInfo algoInfo, AlgorithmOutputInfo output)
 
     if(algoInfo.name == "activityTracker")
     {
-
+        qDebug() << "ResultsTabWidget::init(): if(activityTracker)";
         QPieSeries *series = new QPieSeries();
         series->setHoleSize(0.35);
         QPieSlice *slice = series->append("Temps actif: " + QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_value)) + " %" , m_algorithmOutputInfo.m_value);
@@ -62,20 +88,25 @@ void ResultsTabWidget::init(AlgorithmInfo algoInfo, AlgorithmOutputInfo output)
         chartView->chart()->setAnimationOptions(QChart::SeriesAnimations);
         chartView->chart()->legend()->setFont(QFont("Arial", 12));
 
+         exportToPdf = new QPushButton("Exporter en PDF");
+
+         connect(exportToPdf, SIGNAL(clicked()), this, SLOT(exportToPdfSlot()));
         layout->addWidget(chartView,8,0);
-
-        exportToPdf = new QPushButton("Exporter en PDF");
-        connect(exportToPdf, SIGNAL(clicked()), this, SLOT(exportToPdfSlot()));
-
         layout->addWidget(exportToPdf,9,0);
+
     }
     else
     {
+        qDebug() << "ResultsTabWidget::init(): Not activity tracker";
        QLabel* labelResult = new QLabel("Résultat de l'algorithme : " + QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_value)) +" pas" );
 
        algoLabel->setFont(QFont( "Arial", 12, QFont::Light));
        layout->addWidget(labelResult,9,0,Qt::AlignCenter);
     }
+
+    qDebug() << "ResultsTabWidget::init(): Buttons...";
+
+    connect(exportToPdf, SIGNAL(clicked()), this, SLOT(exportToPdfSlot()));
 
     saveResultsToDB = new QPushButton("Sauvegarder en base de données");
     connect(saveResultsToDB, SIGNAL(clicked()), this, SLOT(exportToDBSlot()));
@@ -106,8 +137,9 @@ ResultsTabWidget::~ResultsTabWidget()
 }
 void ResultsTabWidget::exportToDBSlot()
 {
-    /*
     qDebug() << "calling exportToDB()";
+
+
     qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : name: " << QString::fromStdString(m_algorithmOutputInfo.m_algorithmInfo.name);
     qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : author: " << QString::fromStdString(m_algorithmOutputInfo.m_algorithmInfo.author);
     qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : description: " << QString::fromStdString(m_algorithmOutputInfo.m_algorithmInfo.description);
@@ -127,15 +159,17 @@ void ResultsTabWidget::exportToDBSlot()
     qDebug() << "calling exportToDB(): AlgorithmOutput : Execution time: " << m_algorithmOutputInfo.m_executionTime;
     qDebug() << "calling exportToDB(): AlgorithmOutput : Measurement unit: " << QString::fromStdString(m_algorithmOutputInfo.m_measureUnit);
     qDebug() << "calling exportToDB(): AlgorithmOutput : Value " << m_algorithmOutputInfo.m_value;
-    */
-    algoLabel->text();
-    recordLabel->text();
-    dateLabel->text();
-    startHourLabel->text();
-    endHourLabel->text();
-    positionLabel->text();
-    measureUnitLabel->text();
-    computeTimeLabel->text();
+
+
+    std::string serializedData;
+    AlgorithmOutputInfoSerializer serializer;
+    qDebug() << "calling exportToDB() : Serialiazer created";
+
+    serializer.Serialize(m_algorithmOutputInfo, serializedData);
+
+    m_databaseAccess->addResultsInDB(QString::fromStdString(serializedData));
+
+    qDebug() << "calling exportToDB() : addResultsInDB()";
 }
 
 void ResultsTabWidget::exportToPdfSlot()

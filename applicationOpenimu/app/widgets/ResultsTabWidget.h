@@ -11,6 +11,7 @@
 #include "../algorithm/AlgorithmOutputInfoSerializer.h"
 #include "../algorithm/AlgorithmInfoSerializer.h"
 #include "../acquisition/RecordInfo.h"
+#include "../core/components/blockType/DbBlock.h"
 #include <QPushButton>
 
 QT_CHARTS_USE_NAMESPACE
@@ -45,6 +46,8 @@ class ResultsTabWidget: public QWidget
     QLabel* positionLabel;
     QLabel* measureUnitLabel;
     QLabel* computeTimeLabel;
+
+    DbBlock * m_databaseAccess;
 
     AlgorithmOutputInfo m_algorithmOutputInfo;
 

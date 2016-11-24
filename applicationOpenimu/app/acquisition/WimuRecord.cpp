@@ -9,7 +9,7 @@ WimuRecord::~WimuRecord()
 {
 
 }
-void WimuRecord::Serialize( Json::Value& root, ObjectInfo* infos, std::string& output )
+void WimuRecord::Serialize( Json::Value& root, RecordInfo recordInfo, std::string& output )
 {
     // serialize primitives
     //  root["_id"] = m_recordId;

@@ -109,6 +109,7 @@ void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
         {
             statusBar->showMessage(tr("Chargement de l'enregistrement..."));
             selectedRecord = record->m_WimuRecordList.at(i);
+
             spinnerStatusBar->show();
             movieSpinnerBar->start();
             getDataFromUUIDFromDB(selectedRecord.m_recordId);

@@ -7,7 +7,7 @@
 class CJsonSerializer
 {
 public:
-   static bool Serialize( IJsonSerializable* pObj, ObjectInfo objectInfo, std::string& output );
+   static bool Serialize( IJsonSerializable* pObj, RecordInfo recordInfo, std::string& output );
    static bool Deserialize( IJsonSerializable* pObj, std::string& input );
 
 private:
