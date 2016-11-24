@@ -60,11 +60,11 @@ std::vector<QString> DbBlock::getDaysInDB()
     }
     else
     {
-        //qDebug() << "error connect";
-        //qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
-        //qDebug() << "Request failed, " << reply->errorString();
-        //qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
-        //qDebug() << reply->readAll();
+        qDebug() << "error connect";
+        qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
+        qDebug() << "Request failed, " << reply->errorString();
+        qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
+        qDebug() << reply->readAll();
     }
     delete reply;
  }

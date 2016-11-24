@@ -40,7 +40,7 @@ AccDataDisplay::AccDataDisplay(const WimuAcquisition& accData){
     this->grabGesture(Qt::PanGesture);
     this->grabGesture(Qt::PinchGesture);
     this->setStyleSheet("background-color:white;");
-    availableData = accData.getData();
+    availableData = accData.getDataAccelerometer();
     sliceData = availableData;
 
 
@@ -113,12 +113,11 @@ AccDataDisplay::AccDataDisplay(const WimuAcquisition& accData){
         hbox->addStretch();
         groupBoxAxes->setLayout(hbox);
 
-        long long min = WimuAcquisition::minTime(availableData).timestamp;
+        long long min = WimuAcquisition::minTime(availableData).timestamp/1000;
 
         rSlider = new RangeSlider(this);
         int tmpmin = int(sliceData.size()*lSliderValue/50);
         tmpmin = min + tmpmin;
-
         int tmpmax = int(sliceData.size()*rSliderValue/50);
         tmpmax = min + tmpmax;
 
@@ -184,16 +183,24 @@ void AccDataDisplay::slotSaveNewSetRange()
         temp.x = sliceData.at(k).x;
         temp.y = sliceData.at(k).y;
         temp.z = sliceData.at(k).z;
-        temp.timestamp = k*20;
+        temp.timestamp = sliceData.at(k).timestamp;
         availableData.push_back(temp);
     }
-
     sliceData.clear();
     sliceData = availableData;
     rSliderValue = 1;
     lSliderValue = 0;
-    rSlider->setStartHour(sliceData.at(0).timestamp);
-    rSlider->setEndHour(sliceData.at(sliceData.size()-1).timestamp);
+
+    long long min = WimuAcquisition::minTime(availableData).timestamp/1000;
+    rSlider = new RangeSlider(this);
+    tmpmin = int(sliceData.size()*lSliderValue/50);
+    tmpmin = min + tmpmin;
+
+    tmpmax = int(sliceData.size()*rSliderValue/50);
+    tmpmax = min + tmpmax;
+
+    rSlider->setStartHour(tmpmin);
+    rSlider->setEndHour(tmpmax);
 
     chart->removeAllSeries();
     fillChartSeries();
@@ -201,11 +208,10 @@ void AccDataDisplay::slotSaveNewSetRange()
 
     WimuAcquisition* wimuData = new WimuAcquisition();
 
-    wimuData->setData(sliceData);
-
+    wimuData->setDataAccelerometer(sliceData);
     m_recordInfo.m_recordDetails =  "Cet enregistrement est un sous-ensemble de :" + m_recordInfo.m_recordName + ". " + userDetails->toPlainText().toStdString();
     m_recordInfo.m_recordName = m_recordInfo.m_recordName + ":" + recordName->text().toStdString();
-
+    m_recordInfo.m_parentid = m_recordInfo.m_recordId;
     std::string output;
     CJsonSerializer::Serialize(wimuData,m_recordInfo,"", output);
     databaseAccess = new DbBlock;
@@ -240,7 +246,7 @@ void AccDataDisplay::leftSliderValueChanged(double value)
 {
     lSliderValue = value;
     int tmpmin = int(sliceData.size()*lSliderValue/50);
-    tmpmin = WimuAcquisition::minTime(availableData).timestamp + tmpmin;
+    tmpmin = WimuAcquisition::minTime(availableData).timestamp/1000 + tmpmin;
     rSlider->setStartHour(tmpmin);
     chart->removeAllSeries();
     fillChartSeries();
@@ -251,7 +257,7 @@ void AccDataDisplay::rightSliderValueChanged(double value)
 {
     rSliderValue = value;
     int tmpmax = int(sliceData.size()*rSliderValue/50);
-    tmpmax = WimuAcquisition::minTime(availableData).timestamp + tmpmax;
+    tmpmax = WimuAcquisition::minTime(availableData).timestamp/1000 + tmpmax;
     rSlider->setEndHour(tmpmax);
     chart->removeAllSeries();
     fillChartSeries();

@@ -43,8 +43,6 @@ RecordsWidget::RecordsWidget(QWidget *parent,const WimuAcquisition& data, Record
     dataDisplay->showSimplfiedDataDisplay();
 
     editRecord = new QPushButton("");
-    //editRecord->setMaximumWidth(25);
-    //editRecord->setMaximumWidth(25);
     QIcon img(":/icons/edit2.png");
     editRecord->setIcon(img);
     editRecord->setIconSize(QSize(15, 15));
