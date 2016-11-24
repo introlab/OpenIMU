@@ -257,7 +257,7 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
                        top_item->addChild(child_item);
                    }
                }
-                listWidget->addTopLevelItem(top_item);
+               listWidget->addTopLevelItem(top_item);
            }
        }
    }

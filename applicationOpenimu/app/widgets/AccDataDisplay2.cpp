@@ -15,7 +15,7 @@ AccDataDisplay2::AccDataDisplay2(const WimuAcquisition& accData, QWidget *parent
     this->grabGesture(Qt::PanGesture);
     this->grabGesture(Qt::PinchGesture);
     this->setStyleSheet("background-color:white;");
-    availableData = accData.getData();
+    availableData = accData.getDataAccelerometer();
     sliceData = availableData;
 
     if(availableData.size()> 0)
@@ -140,7 +140,7 @@ void AccDataDisplay2::slotSaveNewSetRange()
 
     WimuAcquisition* wimuData = new WimuAcquisition();
 
-    wimuData->setData(sliceData);
+    wimuData->setDataAccelerometer(sliceData);
 
     m_recordInfo.m_recordDetails =  "Cet enregistrement est un sous-ensemble de :" + m_recordInfo.m_recordName + ". " + ui->recordDetailsLineEdit->text().toStdString();
     m_recordInfo.m_recordName = m_recordInfo.m_recordName + ":" + ui->recordNameLineEdit->text().toStdString();
