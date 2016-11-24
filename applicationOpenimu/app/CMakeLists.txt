@@ -33,6 +33,7 @@ SET(uis
     help.ui
     about.ui
     FullGraphDialog.ui
+    AccDataDisplay.ui
 )
 
 SET(qrc

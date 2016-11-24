@@ -9,7 +9,7 @@
 
 #include "acquisition/WimuAcquisition.h"
 #include "acquisition/WimuRecord.h"
-#include "AccDataDisplay2.h"
+#include "AccDataDisplay.h"
 #include "dialogs/FullGraphDialog.h"
 #include"../utils/OpenImuButton.h"
 

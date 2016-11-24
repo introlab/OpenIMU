@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AccDataDisplay2</class>
- <widget class="QWidget" name="AccDataDisplay2">
+ <class>AccDataDisplay</class>
+ <widget class="QWidget" name="AccDataDisplay">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1137</width>
-    <height>839</height>
+    <width>855</width>
+    <height>763</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,7 @@
      <item>
       <layout class="QHBoxLayout" name="dateRecordedLayout">
        <property name="sizeConstraint">
-        <enum>QLayout::SetMinAndMaxSize</enum>
+        <enum>QLayout::SetNoConstraint</enum>
        </property>
        <item>
         <widget class="QLabel" name="dateRecorded">
@@ -35,13 +35,13 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>68</height>
+           <height>35</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>68</height>
+           <height>35</height>
           </size>
          </property>
          <property name="text">
@@ -60,13 +60,13 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>68</height>
+           <height>35</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>68</height>
+           <height>35</height>
           </size>
          </property>
          <property name="text">
@@ -78,14 +78,14 @@
         <widget class="QPushButton" name="pbtn">
          <property name="minimumSize">
           <size>
-           <width>0</width>
-           <height>60</height>
+           <width>100</width>
+           <height>30</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>100</width>
-           <height>60</height>
+           <height>30</height>
           </size>
          </property>
          <property name="locale">
@@ -277,29 +277,46 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="saveDataSet">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>60</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>100</width>
-         <height>60</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>Enregistrer</string>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::MinimumExpanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="saveDataSet">
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="locale">
+          <locale language="French" country="Canada"/>
+         </property>
+         <property name="text">
+          <string>Enregistrer</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
