@@ -229,6 +229,7 @@ void MainWindow::reponseRecueAcc(QNetworkReply* reply)
    delete reply;
 }
 
+
 void MainWindow::reponseRecue(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError)
@@ -240,20 +241,29 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
        listWidget->clear();
        for(int i=0; i<record.m_WimuRecordList.size();i++)
        {
-           QTreeWidgetItem* item = new QTreeWidgetItem();
-           item->setText(0,QString::fromStdString(record.m_WimuRecordList.at(i).m_recordName));
-           item->setIcon(0,*(new QIcon(":/icons/file.png")));
-           listWidget->addTopLevelItem(item);
+           QTreeWidgetItem* top_item = new QTreeWidgetItem();
+           top_item->setText(0,QString::fromStdString(record.m_WimuRecordList.at(i).m_recordName));
+           top_item->setIcon(0,*(new QIcon(":/icons/file.png")));
 
+           qDebug() << QString::fromStdString(record.m_WimuRecordList.at(i).m_parentid);
+           if(record.m_WimuRecordList.at(i).m_parentid.compare("") == 0 )
+           {
+               for(int j=0; j<record.m_WimuRecordList.size();j++)
+               {
+                   if(record.m_WimuRecordList.at(j).m_parentid.compare(record.m_WimuRecordList.at(i).m_recordId ) == 0)
+                   {
+                       QTreeWidgetItem* child_item = new QTreeWidgetItem;
+                       child_item->setText(0,QString::fromStdString(record.m_WimuRecordList.at(j).m_recordName));
+                       top_item->addChild(child_item);
+                   }
+               }
+                listWidget->addTopLevelItem(top_item);
+           }
        }
    }
    else
    {
-       //qDebug() << "error connect";
-       //qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
-       //qDebug() << "Request failed, " << reply->errorString();
-       //qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
-       //qDebug() << reply->readAll();
+       qDebug() << "error connect";
    }
    delete reply;
 }
