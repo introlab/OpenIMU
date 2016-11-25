@@ -84,7 +84,22 @@ class frequencyfilter(Algorithm):
         filter = None
         if self.params.type == "lowpass":
             print "Hello"
-            filter = self.LowPass()
+            print type(float(self.params.cutoff))
+            print type(0.01)
+            filter = self.LowPass(float(self.params.cutoff),float(self.params.transition))
+        elif self.params.type == "highpass":
+            filter = self.HighPass(float(self.params.cutoff),float(self.params.transition))
+
+        x = [snap.get('x') for snap in self.data]
+        y = [snap.get('y') for snap in self.data]
+        z = [snap.get('z') for snap in self.data]
+
+        x = [snap for snap in filter.apply(x)]
+        y = [snap for snap in filter.apply(y)]
+        z = [snap for snap in filter.apply(z)]
+
+        self.output.result = {'x': x, 'y': y, "z": z}
+
 
 
         #self.output is were you return the result.
