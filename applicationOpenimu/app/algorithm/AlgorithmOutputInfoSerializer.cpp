@@ -14,80 +14,25 @@ void AlgorithmOutputInfoSerializer::Serialize(AlgorithmOutputInfo algorithmOutpu
 {
     qDebug() << "calling AlgorithmOutputInfoSerializer::Serialize()";
 
-     // ------------------------------
-     qDebug() << "calling AlgorithmOutputInfoSerializer::Serialize() : Date: " << QString::fromStdString(algorithmOutputInfo.m_date);
-     qDebug() << "calling AlgorithmOutputInfoSerializer::Serialize() : Start time: " << QString::fromStdString(algorithmOutputInfo.m_startTime);
-     qDebug() << "calling AlgorithmOutputInfoSerializer::Serialize() : End time: " << QString::fromStdString(algorithmOutputInfo.m_endTime);
-     qDebug() << "calling AlgorithmOutputInfoSerializer::Serialize() : Execution time: " << algorithmOutputInfo.m_executionTime;
-     qDebug() << "calling AlgorithmOutputInfoSerializer::Serialize() : Measurement unit: " << QString::fromStdString(algorithmOutputInfo.m_measureUnit);
-     qDebug() << "calling AlgorithmOutputInfoSerializer::Serialize() : Value " << algorithmOutputInfo.m_value;
-
-     qDebug() << "calling AlgorithmOutputInfoSerializer::Serialize() : AlgorithmInfo : name: " << QString::fromStdString(algorithmOutputInfo.m_algorithmInfo.name);
-     qDebug() << "calling AlgorithmOutputInfoSerializer::Serialize() : AlgorithmInfo : author: " << QString::fromStdString(algorithmOutputInfo.m_algorithmInfo.author);
-     qDebug() << "calling AlgorithmOutputInfoSerializer::Serialize() : AlgorithmInfo : description: " << QString::fromStdString(algorithmOutputInfo.m_algorithmInfo.description);
-     qDebug() << "calling AlgorithmOutputInfoSerializer::Serialize() : AlgorithmInfo : details: " << QString::fromStdString(algorithmOutputInfo.m_algorithmInfo.details);
-
-
-     for(int i = 0; i < algorithmOutputInfo.m_algorithmInfo.parameters.size(); i++)
-     {
-         ParameterInfo p = algorithmOutputInfo.m_algorithmInfo.parameters.at(i);
-         qDebug() << "calling AlgorithmOutputInfoSerializer::Serialize() : AlgorithmInfo : parameter(s) " << i  << " " + QString::fromStdString(p.name);
-         qDebug() << "calling AlgorithmOutputInfoSerializer::Serialize() : AlgorithmInfo : parameter(s) " << i << " " + QString::fromStdString(p.description);
-         qDebug() << "calling AlgorithmOutputInfoSerializer::Serialize() : AlgorithmInfo : parameter(s) " << i << " " + QString::fromStdString(p.value);
-     }
-
-     // ------------------------------
-
      Json::Value jsonAlgorithmOutput(Json::objectValue);
 
-     qDebug() << "calling AlgorithmOutputInfoSerializer::Serialize(): AlgorithmOutputInfo";
-
-     qDebug() << "01";
      jsonAlgorithmOutput["date"] = algorithmOutputInfo.m_date;
-     qDebug() << "02";
      jsonAlgorithmOutput["startTime"] = algorithmOutputInfo.m_startTime;
-     qDebug() << "03";
      jsonAlgorithmOutput["endTime"] = algorithmOutputInfo.m_endTime;
-     qDebug() << "04";
      jsonAlgorithmOutput["executionTime"] = algorithmOutputInfo.m_executionTime;
-     qDebug() << "05";
      jsonAlgorithmOutput["measureUnit"] = algorithmOutputInfo.m_measureUnit;
-     qDebug() << "06";
      jsonAlgorithmOutput["value"] = algorithmOutputInfo.m_value;
-     qDebug() << "07";
 
-     // -----------------------------------------------------------------------
+     jsonAlgorithmOutput["algorithmId"] = algorithmOutputInfo.m_algorithmId;
+     jsonAlgorithmOutput["algorithmName"] = algorithmOutputInfo.m_algorithmName;
 
-     qDebug() << "calling AlgorithmOutputInfoSerializer::Serialize(): AlgorithmOutputInfo : AlgorithmInfo";
-
-     //std::string serializedAlgorithmInfo;
-     //AlgorithmInfoSerializer algorithmInfoSerializer;
-
-     //algorithmInfoSerializer.Serialize(algorithmOutputInfo.m_algorithmInfo, serializedAlgorithmInfo);
-
-     qDebug() << "calling AlgorithmOutputInfoSerializer::Serialize() : Writing the JSON";
-
-     //qDebug() << " Serialized AlgorithmInfo: Original: ";
-     //qDebug() << QString::fromStdString(serializedAlgorithmInfo);
-
-     // -----------------
-     Json::Value jsonAlgorithmInfo(Json::objectValue);
      Json::Value jsonAlgorithmParametersInfo(Json::arrayValue);
 
-     jsonAlgorithmInfo["author"] = algorithmOutputInfo.m_algorithmInfo.author;
-     jsonAlgorithmInfo["description"] = algorithmOutputInfo.m_algorithmInfo.description;
-     jsonAlgorithmInfo["details"] = algorithmOutputInfo.m_algorithmInfo.details;
-     jsonAlgorithmInfo["id"] = algorithmOutputInfo.m_algorithmInfo.id;
-     jsonAlgorithmInfo["name"] = algorithmOutputInfo.m_algorithmInfo.name;
-
-     for(int i = 0; i < algorithmOutputInfo.m_algorithmInfo.parameters.size(); i++)
+     for(int i = 0; i < algorithmOutputInfo.m_algorithmParameters.size(); i++)
      {
-        //qDebug() << "iterating... " ;
-
-        ParameterInfo p = algorithmOutputInfo.m_algorithmInfo.parameters.at(i);
+        ParameterInfo p = algorithmOutputInfo.m_algorithmParameters.at(i);
         Json::Value jsonParameter(Json::objectValue);
 
-        //qDebug() << " Parameter name " << QString::fromStdString(p.name);
         jsonParameter["description"] = p.description;
         jsonParameter["name"] = p.name;
         jsonParameter["value"] = p.value;
@@ -95,12 +40,7 @@ void AlgorithmOutputInfoSerializer::Serialize(AlgorithmOutputInfo algorithmOutpu
         jsonAlgorithmParametersInfo.append(jsonParameter);
      }
 
-     jsonAlgorithmInfo["parametersInfo"] = jsonAlgorithmParametersInfo;
-
-     jsonAlgorithmOutput["algorithmInfo"] = jsonAlgorithmInfo;
-
-     //qDebug() << " Serialized AlgorithmInfo: Updated";
-     //qDebug() << QString::fromStdString(serializedAlgorithmInfo);
+     jsonAlgorithmOutput["algorithmParameters"] = jsonAlgorithmParametersInfo;
 
      Json::StyledWriter writer;
      serializedAlgorithmOutputInfo = writer.write(jsonAlgorithmOutput);
@@ -122,39 +62,35 @@ void AlgorithmOutputInfoSerializer::Deserialize(std::string& dataToDeserialize)
        return;
    }
     /*
-    m_algorithmOutput.m_date = root.get("date", "").asString();
-    m_algorithmOutput.m_startTime = root.get("startTime", "").asString();
-    m_algorithmOutput.m_endTime = root.get("endTime", "").asString();
-    m_algorithmOutput.m_executionTime = root.get("executionTime", "").asFloat();
-    m_algorithmOutput.m_measureUnit = root.get("measureUnit", "").asString();
-    m_algorithmOutput.m_value = root.get("value", "").asInt();
+    m_algorithmOutput.m_date = root.deserializeRoot("date", "").asString();
+    m_algorithmOutput.m_startTime = deserializeRoot.get("startTime", "").asString();
+    m_algorithmOutput.m_endTime = deserializeRoot.get("endTime", "").asString();
+    m_algorithmOutput.m_executionTime = deserializeRoot.get("executionTime", "").asFloat();
+    m_algorithmOutput.m_measureUnit = deserializeRoot.get("measureUnit", "").asString();
+    m_algorithmOutput.m_value = deserializeRoot.get("value", "").asInt();
     */
 
     std::string missingInfos = "Not available in Database";
-    m_algorithmOutput.m_value = 0;//root.get("result", "").asInt();
-    m_algorithmOutput.m_executionTime = 0;//root.get("runtime", "").asFloat();
-    m_algorithmOutput.m_date = missingInfos;
-    m_algorithmOutput.m_startTime = missingInfos;
-    m_algorithmOutput.m_endTime = missingInfos;
-    m_algorithmOutput.m_measureUnit = missingInfos;
+    m_algorithmOutput.m_value = 0;//deserializeRoot.get("value", "").asInt();
+    m_algorithmOutput.m_executionTime = 0;//deserializeRoot.get("executionTime", "").asFloat();
+    m_algorithmOutput.m_date = missingInfos;//deserializeRoot.get("date", "").asFloat();
+    m_algorithmOutput.m_startTime = missingInfos;//deserializeRoot.get("startTime", "").asFloat();
+    m_algorithmOutput.m_endTime = missingInfos;//deserializeRoot.get("endTime", "").asFloat();
+    m_algorithmOutput.m_measureUnit = missingInfos;//deserializeRoot.get("measureUnit", "").asFloat();
 
-    qDebug() << "AlgorithmInfoSerializer::Deserialize()";
+    qDebug() << "AlgorithmOutputInfoSerializer::Deserialize(): About to Deserialize algorithm Id, Name";
+    m_algorithmOutput.m_algorithmId = deserializeRoot.get("algorithmId", "").asString();
+    m_algorithmOutput.m_algorithmName = deserializeRoot.get("algorithmName", "").asString();
 
-    AlgorithmInfoSerializer algorithmInfoSerializer;
-    algorithmInfoSerializer.Deserialize(deserializeRoot.get("algorithms", "").asString());
-
-    qDebug() << "AlgorithmInfoSerializer::Deserialize(): finished deserializing AlgorithmInfo";
-
-    //TODO: Mado: Regarder avec Remi pour retourner plus dans les results?
-    if(algorithmInfoSerializer.m_algorithmList.size() > 0)
+    qDebug() << "AlgorithmOutputInfoSerializer::Deserialize(): About to Deserialize algorithm Parameters";
+    Json::Value serializedParameters = deserializeRoot.get("algorithmParameters", "");
+    for(int i =0; i<serializedParameters.size(); i++)
     {
-        std::vector<AlgorithmInfo> a = algorithmInfoSerializer.m_algorithmList;
-        AlgorithmInfo ai = a.at(0);
-        qDebug() << "Author: "<< QString::fromStdString(ai.author);
+        ParameterInfo p;
+        p.name = serializedParameters[i].get("name", "").asString();
+        p.value = serializedParameters[i].get("value", "").asString();
+        p.description = serializedParameters[i].get("description", "").asString();
+
+        m_algorithmOutput.m_algorithmParameters.push_back(p);
     }
-
-    AlgorithmInfo temp;
-
-    qDebug() << "AlgorithmOutputInfoSerializer::Deserialize(): setting the algorithm";
-    m_algorithmOutput.m_algorithmInfo = temp;//algorithmInfoSerializer->m_algorithmList.at(0);
 }

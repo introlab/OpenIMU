@@ -3,25 +3,23 @@
 #include <QPdfWriter>
 #include <QPainter>
 
-ResultsTabWidget::ResultsTabWidget(QWidget *parent,RecordInfo& recordInfo, AlgorithmInfo algoInfo, AlgorithmOutputInfo output):QWidget(parent)
+ResultsTabWidget::ResultsTabWidget(QWidget *parent,RecordInfo& recordInfo, AlgorithmOutputInfo output):QWidget(parent)
 {
     m_recordInfo= recordInfo;
-    init(algoInfo, output);
+    init(output);
 }
 
 
-void ResultsTabWidget::init(AlgorithmInfo algoInfo, AlgorithmOutputInfo output)
+void ResultsTabWidget::init(AlgorithmOutputInfo output)
 {
     qDebug() << "ResultsTabWidget::init()";
 
-    qDebug() << "calling ResultsTabWidget(): init() : AlgorithmOutput : AlgorithmInfo : name: " << QString::fromStdString(output.m_algorithmInfo.name);
-    qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : AlgorithmInfo : author: " << QString::fromStdString(output.m_algorithmInfo.author);
-    qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : AlgorithmInfo : description: " << QString::fromStdString(output.m_algorithmInfo.description);
-    qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : AlgorithmInfo : details: " << QString::fromStdString(output.m_algorithmInfo.details);
+    qDebug() << "calling ResultsTabWidget(): init() : AlgorithmOutput : AlgorithmInfo : name: " << QString::fromStdString(output.m_algorithmName);
+    qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : AlgorithmInfo : author: " << QString::fromStdString(output.m_algorithmId);
 
-    for(int i = 0; i < output.m_algorithmInfo.parameters.size(); i++)
+    for(int i = 0; i < output.m_algorithmParameters.size(); i++)
     {
-        ParameterInfo p = output.m_algorithmInfo.parameters.at(i);
+        ParameterInfo p = output.m_algorithmParameters.at(i);
         qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : AlgorithmInfo : parameter(s) " << i  << " " + QString::fromStdString(p.name);
         qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : AlgorithmInfo : parameter(s) " << i << " " + QString::fromStdString(p.description);
         qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : AlgorithmInfo : parameter(s) " << i << " " + QString::fromStdString(p.value);
@@ -37,14 +35,13 @@ void ResultsTabWidget::init(AlgorithmInfo algoInfo, AlgorithmOutputInfo output)
     m_databaseAccess = new DbBlock();
 
     m_algorithmOutputInfo = output;
-    m_algorithmOutputInfo.m_algorithmInfo = algoInfo;
 
     layout = new QGridLayout;
     this->setLayout(layout);
 
     qDebug() << "ResultsTabWidget::init(): UI Stuff";
 
-    QString algoName = "Algorithme appliqué: " + QString::fromStdString(m_algorithmOutputInfo.m_algorithmInfo.name);
+    QString algoName = "Algorithme appliqué: " + QString::fromStdString(m_algorithmOutputInfo.m_algorithmName);
     QString recordName = QString::fromStdString(m_recordInfo.m_recordName);
 
     algoLabel = new QLabel(algoName);
@@ -70,7 +67,7 @@ void ResultsTabWidget::init(AlgorithmInfo algoInfo, AlgorithmOutputInfo output)
     layout->setMargin(10);
     chartView = new QChartView();
 
-    if(algoInfo.name == "activityTracker")
+    if(m_algorithmOutputInfo.m_algorithmName == "activityTracker")
     {
         qDebug() << "ResultsTabWidget::init(): if(activityTracker)";
         QPieSeries *series = new QPieSeries();
@@ -140,14 +137,12 @@ void ResultsTabWidget::exportToDBSlot()
     qDebug() << "calling exportToDB()";
 
 
-    qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : name: " << QString::fromStdString(m_algorithmOutputInfo.m_algorithmInfo.name);
-    qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : author: " << QString::fromStdString(m_algorithmOutputInfo.m_algorithmInfo.author);
-    qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : description: " << QString::fromStdString(m_algorithmOutputInfo.m_algorithmInfo.description);
-    qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : details: " << QString::fromStdString(m_algorithmOutputInfo.m_algorithmInfo.details);
+    qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : name: " << QString::fromStdString(m_algorithmOutputInfo.m_algorithmName);
+    qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : id: " << QString::fromStdString(m_algorithmOutputInfo.m_algorithmId);
 
-    for(int i = 0; i < m_algorithmOutputInfo.m_algorithmInfo.parameters.size(); i++)
+    for(int i = 0; i < m_algorithmOutputInfo.m_algorithmParameters.size(); i++)
     {
-        ParameterInfo p = m_algorithmOutputInfo.m_algorithmInfo.parameters.at(i);
+        ParameterInfo p = m_algorithmOutputInfo.m_algorithmParameters.at(i);
         qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : parameter(s) " << i  << " " + QString::fromStdString(p.name);
         qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : parameter(s) " << i << " " + QString::fromStdString(p.description);
         qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : parameter(s) " << i << " " + QString::fromStdString(p.value);

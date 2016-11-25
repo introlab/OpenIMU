@@ -7,11 +7,19 @@
 struct AlgorithmOutputInfo : ObjectInfo
 {
     AlgorithmOutputInfo(void);
-    AlgorithmOutputInfo(AlgorithmInfo algorithmInfo, int value, float executionTime, std::string date, std::string startTime, std::string endTime, std::string measureUnit);
+    AlgorithmOutputInfo(int value,
+                        float executionTime,
+                        std::string date,
+                        std::string startTime,
+                        std::string endTime,
+                        std::string measureUnit,
+                        std::string algorithmId,
+                        std::string algorithmName,
+                        std::vector<ParameterInfo> algorithmParameters);
+
     ~AlgorithmOutputInfo() { }
 
-    AlgorithmInfo m_algorithmInfo;
-
+    // Proper AlgorithmOutputInfo information
     int m_value;
     float m_executionTime;
 
@@ -19,6 +27,11 @@ struct AlgorithmOutputInfo : ObjectInfo
     std::string m_startTime;
     std::string m_endTime;
     std::string m_measureUnit;
+
+    // Information that comes from AlgorithmInfo
+    std::string m_algorithmId;
+    std::string m_algorithmName;
+    std::vector<ParameterInfo> m_algorithmParameters;
 };
 
 #endif // ALGORITHMOUTPUTINFO_H

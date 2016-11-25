@@ -266,9 +266,11 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
            MainWindow * test = (MainWindow*)m_parent;
            AlgorithmInfo &algoInfo = m_algorithmSerializer.m_algorithmList.at(selectedIndexRow);
 
-           algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmInfo = algoInfo;
+           algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmId = algoInfo.id;
+           algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmName = algoInfo.name;
+           algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmParameters = algoInfo.parameters;
 
-           ResultsTabWidget* res = new ResultsTabWidget(this, m_selectedRecord, algoInfo, algorithmOutputInfoSerializer.m_algorithmOutput);
+           ResultsTabWidget* res = new ResultsTabWidget(this, m_selectedRecord, algorithmOutputInfoSerializer.m_algorithmOutput);
            test->replaceTab(res,algoInfo.name + ": " + m_selectedRecord.m_recordName);
        }
        else

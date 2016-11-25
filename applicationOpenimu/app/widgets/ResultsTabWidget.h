@@ -22,7 +22,7 @@ class ResultsTabWidget: public QWidget
 
     public:
     ResultsTabWidget();
-    ResultsTabWidget(QWidget *parent, RecordInfo &recordInfo, AlgorithmInfo algoInfo, AlgorithmOutputInfo output);
+    ResultsTabWidget(QWidget *parent, RecordInfo &recordInfo, AlgorithmOutputInfo output);
      ~ResultsTabWidget();
 
     public slots:
@@ -51,7 +51,7 @@ class ResultsTabWidget: public QWidget
 
     AlgorithmOutputInfo m_algorithmOutputInfo;
 
-    void init(AlgorithmInfo algoInfo, AlgorithmOutputInfo output);
+    void init(AlgorithmOutputInfo output);
 };
 
 #endif

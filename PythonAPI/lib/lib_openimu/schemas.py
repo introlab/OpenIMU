@@ -29,7 +29,9 @@ class AlgorithmResults(Schema):
     startTime = fields.Str();
     endTime = fields.Str();
     measureUnit = fields.Str();
-    algorithmInfo = fields.Nested(AlgorithmInfo);
+    algorithmId = fields.Str();
+    algorithmName = fields.Str();
+    algorithmParameters = fields.Nested(ParameterInfo, many=True);
 
 class Sensor(Schema):
     x = fields.Float(as_string = False)
