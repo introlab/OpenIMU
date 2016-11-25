@@ -19,7 +19,6 @@ class fft(Algorithm):
         self.params.bins = 1024
         self.infos.bins = "Number of bins per dimensions. Default is 1024"
 
-
     def run(self):
         schema = schemas.Sensor(many=True)
         ref = self.database.db.accelerometres.find({'ref': ObjectId(self.params.uuid)})
@@ -28,12 +27,19 @@ class fft(Algorithm):
         x = [snap.get('x') for snap in self.data]
         y = [snap.get('y') for snap in self.data]
         z = [snap.get('z') for snap in self.data]
+        t = [snap.get('t') for snap in self.data]
 
         nbBins = self.params.bins
         x = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(x,nbBins)]
         y = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(y,nbBins)]
         z = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(z,nbBins)]
 
-        self.output.result = {'x':x,'y':y,"z":z}
+        temp = {"accelerometres": []}
+        for i in range(1, min(len(x), len(y), len(z))):
+            value = {"x": x[i], "y": y[i], "z": z[i]}
+            temp["accelerometres"].append(value)
+
+        self.output.result = {"accelerometres": temp["accelerometres"]}
+
         return self.output
 

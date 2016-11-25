@@ -83,9 +83,25 @@ class frequencyfilter(Algorithm):
 
         filter = None
         if self.params.type == "lowpass":
-            print "Hello"
-            filter = self.LowPass()
+            filter = self.LowPass(float(self.params.cutoff),float(self.params.transition))
+        elif self.params.type == "highpass":
+            filter = self.HighPass(float(self.params.cutoff),float(self.params.transition))
 
+        x = [snap.get('x') for snap in self.data]
+        y = [snap.get('y') for snap in self.data]
+        z = [snap.get('z') for snap in self.data]
+        t = [snap.get('t') for snap in self.data]
+
+        x = [snap for snap in filter.apply(x)]
+        y = [snap for snap in filter.apply(y)]
+        z = [snap for snap in filter.apply(z)]
+
+        temp = {"accelerometres":[]}
+        for i in range(1,min(len(x), len(y), len(z), len(t))):
+            value = {"x":x[i],"y":y[i],"z":z[i],"t":t[i]}
+            temp["accelerometres"].append(value)
+
+        self.output.result = {"accelerometres":temp["accelerometres"]}
 
         #self.output is were you return the result.
         #You can add as much subresult as you want, as long as the result is shown in JSON and that they have different name
