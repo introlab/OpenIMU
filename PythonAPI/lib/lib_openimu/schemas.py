@@ -9,6 +9,28 @@ class Record(Schema):
     parent_id = fields.Str()
     _id = fields.UUID()
 
+class ParameterInfo(Schema):
+    name = fields.Str();
+    description = fields.Str();
+    value = fields.Str();
+
+class AlgorithmInfo(Schema):
+    name = fields.Str();
+    author = fields.Str();
+    description = fields.Str();
+    details = fields.Str();
+    id = fields.Str();
+    parameters = fields.Nested(ParameterInfo, many=True);
+
+class AlgorithmResults(Schema):
+    value = fields.Int(as_string = False);
+    executionTime = fields.Float(as_string = False);
+    date = fields.Str();
+    startTime = fields.Str();
+    endTime = fields.Str();
+    measureUnit = fields.Str();
+    algorithmInfo = fields.Nested(AlgorithmInfo);
+
 class Sensor(Schema):
     x = fields.Float(as_string = False)
     y = fields.Float(as_string = False)

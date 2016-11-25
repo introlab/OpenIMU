@@ -30,7 +30,7 @@ void AlgorithmInfoSerializer::Serialize(AlgorithmInfo algorithmInfo, std::string
     {
         qDebug() << "iterating... " ;
 
-       ParametersInfo p = algorithmInfo.parameters.at(i);
+       ParameterInfo p = algorithmInfo.parameters.at(i);
        Json::Value jsonParameter(Json::objectValue);
 
        qDebug() << " Parameter name " << QString::fromStdString(p.name);
@@ -78,7 +78,7 @@ void AlgorithmInfoSerializer::Deserialize(std::string& dataToDeserialize)
         Json::Value params = algo[index].get("params", "");
         for ( int indexp = 0; indexp < params.size(); ++indexp )
         {
-            ParametersInfo pInfo;
+            ParameterInfo pInfo;
             pInfo.name = params[indexp].get("name", "").asString();
             pInfo.description = params[indexp].get("info", "").asString();
             temp.parameters.push_back(pInfo);

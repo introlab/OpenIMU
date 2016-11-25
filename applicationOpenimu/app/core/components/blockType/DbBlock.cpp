@@ -53,7 +53,7 @@ std::vector<QString> DbBlock::getDaysInDB()
      QNetworkAccessManager *manager = new QNetworkAccessManager();
      QByteArray dataByteArray (json.toStdString().c_str(),json.toStdString().length());                                                                                                                  //Your webservice URL
 
-     QNetworkRequest request(QUrl("http://127.0.0.1:5000/insertresults"));
+     QNetworkRequest request(QUrl("http://127.0.0.1:5000/insertalgorithmresults"));
      QByteArray postDataSize = QByteArray::number(dataByteArray.size());
 
      request.setRawHeader("User-Agent", "ApplicationNameV01");

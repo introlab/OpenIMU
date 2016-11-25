@@ -52,6 +52,19 @@ class InsertRecord(Resource):
 #---------------------------------------------------------------
         return str(uuid)
 
+class InsertAlgorithmResults(Resource):
+    def post(self):
+        print request.json
+        schema = schemas.AlgorithmResults()
+        data, errors = schema.load(request.json)
+        if errors:
+            print("There was an error.")
+            print(str(errors))
+            abort(401, message=str(errors))
+        else:
+            print("Json loaded, about to insert into Mongo.")
+            mongo.db.algorithmResults.insert(data)
+
 class getRecords(Resource):
     def get(self):
         schema = schemas.Record(many=True)

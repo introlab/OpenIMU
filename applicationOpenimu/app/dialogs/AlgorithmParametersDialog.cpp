@@ -12,7 +12,7 @@ AlgorithmParametersDialog::AlgorithmParametersDialog(QWidget * parent, Algorithm
     parametersLayout->addWidget(titleLabel);
 
     // Adds every parameter to the Dialog Window.
-    foreach(ParametersInfo p, m_algorithmInfo.parameters)
+    foreach(ParameterInfo p, m_algorithmInfo.parameters)
     {
         if(p.name != "uuid")
         {

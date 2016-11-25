@@ -21,7 +21,7 @@ void ResultsTabWidget::init(AlgorithmInfo algoInfo, AlgorithmOutputInfo output)
 
     for(int i = 0; i < output.m_algorithmInfo.parameters.size(); i++)
     {
-        ParametersInfo p = output.m_algorithmInfo.parameters.at(i);
+        ParameterInfo p = output.m_algorithmInfo.parameters.at(i);
         qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : AlgorithmInfo : parameter(s) " << i  << " " + QString::fromStdString(p.name);
         qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : AlgorithmInfo : parameter(s) " << i << " " + QString::fromStdString(p.description);
         qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : AlgorithmInfo : parameter(s) " << i << " " + QString::fromStdString(p.value);
@@ -147,7 +147,7 @@ void ResultsTabWidget::exportToDBSlot()
 
     for(int i = 0; i < m_algorithmOutputInfo.m_algorithmInfo.parameters.size(); i++)
     {
-        ParametersInfo p = m_algorithmOutputInfo.m_algorithmInfo.parameters.at(i);
+        ParameterInfo p = m_algorithmOutputInfo.m_algorithmInfo.parameters.at(i);
         qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : parameter(s) " << i  << " " + QString::fromStdString(p.name);
         qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : parameter(s) " << i << " " + QString::fromStdString(p.description);
         qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : parameter(s) " << i << " " + QString::fromStdString(p.value);

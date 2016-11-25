@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-struct ParametersInfo
+struct ParameterInfo
 {
     std::string name;
     std::string description;
@@ -13,12 +13,12 @@ struct ParametersInfo
 
 struct AlgorithmInfo
 {
+    std::string id;
     std::string name;
     std::string author;
     std::string description;
     std::string details;
-    std::string id;
-    std::vector<ParametersInfo> parameters;
+    std::vector<ParameterInfo> parameters;
 };
 
 #endif // ALGORITHMINFO_H
