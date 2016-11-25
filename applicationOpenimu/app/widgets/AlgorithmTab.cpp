@@ -58,13 +58,13 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
 
         for(int i =0; i<m_algorithmSerializer.m_algorithmList.size();i++)
         {
-            QString name = Utils::capitalizeFirstCharacter(m_algorithmSerializer.m_algorithmList.at(i).name);
+            QString name = Utils::capitalizeFirstCharacter(m_algorithmSerializer.m_algorithmList.at(i).m_name);
             algorithmTableWidget->setItem(i, 0, new QTableWidgetItem(name));
 
-            QString description = Utils::capitalizeFirstCharacter(m_algorithmSerializer.m_algorithmList.at(i).description);
+            QString description = Utils::capitalizeFirstCharacter(m_algorithmSerializer.m_algorithmList.at(i).m_description);
             algorithmTableWidget->setItem(i, 1, new QTableWidgetItem(description));
 
-            QString author = Utils::capitalizeFirstCharacter(m_algorithmSerializer.m_algorithmList.at(i).author);
+            QString author = Utils::capitalizeFirstCharacter(m_algorithmSerializer.m_algorithmList.at(i).m_author);
             algorithmTableWidget->setItem(i, 2, new QTableWidgetItem(author));
         }
 
@@ -121,13 +121,13 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
 void AlgorithmTab::setAlgorithm(AlgorithmInfo algorithmInfo)
 {
     qDebug() << "calling setAlgorithm()" ;
-    qDebug() << "calling setAlgorithm() : Algorithm: " + QString::fromStdString(algorithmInfo.name) ;
+    qDebug() << "calling setAlgorithm() : Algorithm: " + QString::fromStdString(algorithmInfo.m_name) ;
 
     algorithmParameters->Clear();
 
     //TODO:MADO selectedDataValues->setText(Utils::capitalizeFirstCharacter(QString::fromStdString(m_selectedRecord.m_recordName)));
     m_selectedAlgorithm = m_algorithmSerializer.m_algorithmList.at(selectedIndexRow);
-    m_selectedAlgorithm.parameters.swap(algorithmInfo.parameters);
+    m_selectedAlgorithm.m_parameters.swap(algorithmInfo.m_parameters);
     algorithmParameters->setAlgorithm(algorithmInfo,m_selectedAlgorithm);
 }
 
@@ -136,11 +136,11 @@ void AlgorithmTab::openResultTab()
 {
     qDebug() << "calling AlgorithmTab::openResultTab()";
     bool showMessage = false;
-    if(m_selectedAlgorithm.parameters.size() != 0)
+    if(m_selectedAlgorithm.m_parameters.size() != 0)
     {
-        for(int i=0; i< m_selectedAlgorithm.parameters.size();i++)
+        for(int i=0; i< m_selectedAlgorithm.m_parameters.size();i++)
         {
-            if(m_selectedAlgorithm.parameters.at(i).name != "uuid" && m_selectedAlgorithm.parameters.at(i).value.empty())
+            if(m_selectedAlgorithm.m_parameters.at(i).m_name != "uuid" && m_selectedAlgorithm.m_parameters.at(i).m_value.empty())
             {
                 showMessage = true;
             }
@@ -170,8 +170,8 @@ void AlgorithmTab::openParametersWindow(const QModelIndex &index)
         AlgorithmInfo clickedAlgorithm = m_algorithmSerializer.m_algorithmList.at(index.row());
         selectedIndexRow = index.row();
 
-        if((clickedAlgorithm.parameters.size() <= 0)||
-                ((clickedAlgorithm.parameters.size() == 1) && (clickedAlgorithm.parameters.at(0).name == "uuid")))
+        if((clickedAlgorithm.m_parameters.size() <= 0)||
+                ((clickedAlgorithm.m_parameters.size() == 1) && (clickedAlgorithm.m_parameters.at(0).m_name == "uuid")))
         {
             setAlgorithm(clickedAlgorithm);
         }
@@ -188,14 +188,14 @@ void AlgorithmTab::openParametersWindow(const QModelIndex &index)
 bool AlgorithmTab::createAlgoRequest()
 {
     qDebug() << "calling AlgorithmTab::openResultTab(): createAlgoRequest()";
-    std::string url = "http://127.0.0.1:5000/algo?filename=" + m_selectedAlgorithm.name +
+    std::string url = "http://127.0.0.1:5000/algo?filename=" + m_selectedAlgorithm.m_name +
             "&uuid=" + m_selectedRecord.m_recordId;
 
-    for(int i=0; i< m_selectedAlgorithm.parameters.size();i++)
+    for(int i=0; i< m_selectedAlgorithm.m_parameters.size();i++)
     {
-        if(m_selectedAlgorithm.parameters.at(i).name != "uuid")
+        if(m_selectedAlgorithm.m_parameters.at(i).m_name != "uuid")
         {
-            url = url + "&"+m_selectedAlgorithm.parameters.at(i).name +"="+m_selectedAlgorithm.parameters.at(i).value;
+            url = url + "&"+m_selectedAlgorithm.m_parameters.at(i).m_name +"="+m_selectedAlgorithm.m_parameters.at(i).m_value;
         }
     }
 
@@ -266,12 +266,12 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
            MainWindow * test = (MainWindow*)m_parent;
            AlgorithmInfo &algoInfo = m_algorithmSerializer.m_algorithmList.at(selectedIndexRow);
 
-           algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmId = algoInfo.id;
-           algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmName = algoInfo.name;
-           algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmParameters = algoInfo.parameters;
+           algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmId = algoInfo.m_id;
+           algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmName = algoInfo.m_name;
+           algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmParameters = algoInfo.m_parameters;
 
            ResultsTabWidget* res = new ResultsTabWidget(this, m_selectedRecord, algorithmOutputInfoSerializer.m_algorithmOutput);
-           test->replaceTab(res,algoInfo.name + ": " + m_selectedRecord.m_recordName);
+           test->replaceTab(res,algoInfo.m_name + ": " + m_selectedRecord.m_recordName);
        }
        else
        {

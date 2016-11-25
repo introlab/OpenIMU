@@ -1,24 +1,13 @@
 #ifndef ALGORITHMOUTPUTINFO_H
 #define ALGORITHMOUTPUTINFO_H
 
-#include "../acquisition/ObjectInfo.h"
 #include "AlgorithmInfo.h"
+#include <string>
+#include <vector>
 
-struct AlgorithmOutputInfo : ObjectInfo
+
+struct AlgorithmOutputInfo
 {
-    AlgorithmOutputInfo(void);
-    AlgorithmOutputInfo(int value,
-                        float executionTime,
-                        std::string date,
-                        std::string startTime,
-                        std::string endTime,
-                        std::string measureUnit,
-                        std::string algorithmId,
-                        std::string algorithmName,
-                        std::vector<ParameterInfo> algorithmParameters);
-
-    ~AlgorithmOutputInfo() { }
-
     // Proper AlgorithmOutputInfo information
     int m_value;
     float m_executionTime;

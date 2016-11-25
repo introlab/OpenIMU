@@ -6,19 +6,19 @@
 
 struct ParameterInfo
 {
-    std::string name;
-    std::string description;
-    std::string value;
+    std::string m_name;
+    std::string m_description;
+    std::string m_value;
 };
 
 struct AlgorithmInfo
 {
-    std::string id;
-    std::string name;
-    std::string author;
-    std::string description;
-    std::string details;
-    std::vector<ParameterInfo> parameters;
+    std::string m_id;
+    std::string m_name;
+    std::string m_author;
+    std::string m_description;
+    std::string m_details;
+    std::vector<ParameterInfo> m_parameters;
 };
 
 #endif // ALGORITHMINFO_H

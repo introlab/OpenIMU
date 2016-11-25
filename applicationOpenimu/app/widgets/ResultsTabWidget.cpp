@@ -14,24 +14,6 @@ void ResultsTabWidget::init(AlgorithmOutputInfo output)
 {
     qDebug() << "ResultsTabWidget::init()";
 
-    qDebug() << "calling ResultsTabWidget(): init() : AlgorithmOutput : AlgorithmInfo : name: " << QString::fromStdString(output.m_algorithmName);
-    qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : AlgorithmInfo : author: " << QString::fromStdString(output.m_algorithmId);
-
-    for(int i = 0; i < output.m_algorithmParameters.size(); i++)
-    {
-        ParameterInfo p = output.m_algorithmParameters.at(i);
-        qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : AlgorithmInfo : parameter(s) " << i  << " " + QString::fromStdString(p.name);
-        qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : AlgorithmInfo : parameter(s) " << i << " " + QString::fromStdString(p.description);
-        qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : AlgorithmInfo : parameter(s) " << i << " " + QString::fromStdString(p.value);
-    }
-
-    qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : Date: " << QString::fromStdString(output.m_date);
-    qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : Start time: " << QString::fromStdString(output.m_startTime);
-    qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : End time: " << QString::fromStdString(output.m_endTime);
-    qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : Execution time: " << output.m_executionTime;
-    qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : Measurement unit: " << QString::fromStdString(output.m_measureUnit);
-    qDebug() << "calling ResultsTabWidget(): init() AlgorithmOutput : Value " << output.m_value;
-
     m_databaseAccess = new DbBlock();
 
     m_algorithmOutputInfo = output;
@@ -136,35 +118,11 @@ void ResultsTabWidget::exportToDBSlot()
 {
     qDebug() << "calling exportToDB()";
 
-
-    qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : name: " << QString::fromStdString(m_algorithmOutputInfo.m_algorithmName);
-    qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : id: " << QString::fromStdString(m_algorithmOutputInfo.m_algorithmId);
-
-    for(int i = 0; i < m_algorithmOutputInfo.m_algorithmParameters.size(); i++)
-    {
-        ParameterInfo p = m_algorithmOutputInfo.m_algorithmParameters.at(i);
-        qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : parameter(s) " << i  << " " + QString::fromStdString(p.name);
-        qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : parameter(s) " << i << " " + QString::fromStdString(p.description);
-        qDebug() << "calling exportToDB(): AlgorithmOutput : AlgorithmInfo : parameter(s) " << i << " " + QString::fromStdString(p.value);
-    }
-
-    qDebug() << "calling exportToDB(): AlgorithmOutput : Date: " << QString::fromStdString(m_algorithmOutputInfo.m_date);
-    qDebug() << "calling exportToDB(): AlgorithmOutput : Start time: " << QString::fromStdString(m_algorithmOutputInfo.m_startTime);
-    qDebug() << "calling exportToDB(): AlgorithmOutput : End time: " << QString::fromStdString(m_algorithmOutputInfo.m_endTime);
-    qDebug() << "calling exportToDB(): AlgorithmOutput : Execution time: " << m_algorithmOutputInfo.m_executionTime;
-    qDebug() << "calling exportToDB(): AlgorithmOutput : Measurement unit: " << QString::fromStdString(m_algorithmOutputInfo.m_measureUnit);
-    qDebug() << "calling exportToDB(): AlgorithmOutput : Value " << m_algorithmOutputInfo.m_value;
-
-
     std::string serializedData;
     AlgorithmOutputInfoSerializer serializer;
-    qDebug() << "calling exportToDB() : Serialiazer created";
-
     serializer.Serialize(m_algorithmOutputInfo, serializedData);
 
     m_databaseAccess->addResultsInDB(QString::fromStdString(serializedData));
-
-    qDebug() << "calling exportToDB() : addResultsInDB()";
 }
 
 void ResultsTabWidget::exportToPdfSlot()

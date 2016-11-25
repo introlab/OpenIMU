@@ -61,26 +61,26 @@ void AlgorithmDetailedView::Clear()
 
 void AlgorithmDetailedView::setAlgorithm(AlgorithmInfo algorithmInfo, AlgorithmInfo selectedAlgorithm)
 {
-    if(algorithmInfo.parameters.size() == 0 ||
-            ((algorithmInfo.parameters.size() == 1) && (algorithmInfo.parameters.at(0).name == "uuid")))
+    if(algorithmInfo.m_parameters.size() == 0 ||
+            ((algorithmInfo.m_parameters.size() == 1) && (algorithmInfo.m_parameters.at(0).m_name == "uuid")))
     {
         parametersValues->setText("Aucun paramètre à entrer pour cet algorithme");
     }
     else
     {
-        for(int i=0; i<algorithmInfo.parameters.size();i++)
+        for(int i=0; i<algorithmInfo.m_parameters.size();i++)
         {
-            if(selectedAlgorithm.parameters.at(i).name != "uuid")
+            if(selectedAlgorithm.m_parameters.at(i).m_name != "uuid")
             {
-                QString parameterName = QString::fromStdString(selectedAlgorithm.parameters.at(i).name);
-                QString parameterValue = QString::fromStdString(selectedAlgorithm.parameters.at(i).value);
+                QString parameterName = QString::fromStdString(selectedAlgorithm.m_parameters.at(i).m_name);
+                QString parameterValue = QString::fromStdString(selectedAlgorithm.m_parameters.at(i).m_value);
 
                 QString previousParameters = parametersValues->text();
                 parametersValues->setText(previousParameters + parameterName + ": " + parameterValue+ "\n" );
             }
         }
     }
-    selectedAlgorithmValues->setText(QString::fromStdString(selectedAlgorithm.name));
-    algorithmDetailsValues->setText(QString::fromStdString(selectedAlgorithm.details));
+    selectedAlgorithmValues->setText(QString::fromStdString(selectedAlgorithm.m_name));
+    algorithmDetailsValues->setText(QString::fromStdString(selectedAlgorithm.m_details));
 
 }

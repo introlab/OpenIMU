@@ -12,79 +12,71 @@ AlgorithmInfoSerializer::~AlgorithmInfoSerializer()
 }
 void AlgorithmInfoSerializer::Serialize(AlgorithmInfo algorithmInfo, std::string& output)
 {
-    qDebug() << "calling AlgorithmInfoSerializer::Serialize(): Serializing AlgorithmInfo";
+    qDebug() << "calling AlgorithmInfoSerializer::Serialize()";
+
     Json::Value jsonAlgorithmInfo(Json::objectValue);
     Json::Value jsonAlgorithmParametersInfo(Json::arrayValue);
 
-    qDebug() << "Author " << QString::fromStdString(algorithmInfo.author);
+    // Serializing the member variables ...
+    jsonAlgorithmInfo["author"] = algorithmInfo.m_author;
+    jsonAlgorithmInfo["description"] = algorithmInfo.m_description;
+    jsonAlgorithmInfo["details"] = algorithmInfo.m_details;
+    jsonAlgorithmInfo["id"] = algorithmInfo.m_id;
+    jsonAlgorithmInfo["name"] = algorithmInfo.m_name;
 
-    jsonAlgorithmInfo["author"] = algorithmInfo.author;
-    jsonAlgorithmInfo["description"] = algorithmInfo.description;
-    jsonAlgorithmInfo["details"] = algorithmInfo.details;
-    jsonAlgorithmInfo["id"] = algorithmInfo.id;
-    jsonAlgorithmInfo["name"] = algorithmInfo.name;
-
-    qDebug() << "calling AlgorithmInfoSerializer::Serialize(): Serializing AlgorithmInfo: Parameters Info";
-    qDebug() << " Number of parameters: " << algorithmInfo.parameters.size();
-    for(int i = 0; i < algorithmInfo.parameters.size(); i++)
+    // ... and the Algorithm Parameters
+    for(int i = 0; i < algorithmInfo.m_parameters.size(); i++)
     {
-        qDebug() << "iterating... " ;
-
-       ParameterInfo p = algorithmInfo.parameters.at(i);
+       ParameterInfo p = algorithmInfo.m_parameters.at(i);
        Json::Value jsonParameter(Json::objectValue);
 
-       qDebug() << " Parameter name " << QString::fromStdString(p.name);
-       jsonParameter["description"] = p.description;
-       jsonParameter["name"] = p.name;
-       jsonParameter["value"] = p.value;
+       jsonParameter["description"] = p.m_description;
+       jsonParameter["name"] = p.m_name;
+       jsonParameter["value"] = p.m_value;
 
        jsonAlgorithmParametersInfo.append(jsonParameter);
     }
 
     jsonAlgorithmInfo["parametersInfo"] = jsonAlgorithmParametersInfo;
 
-    qDebug() << "calling AlgorithmInfoSerializer::Serialize(): Writing the JSON ";
+    // Write the Serialized data in an Output String
     Json::StyledWriter writer;
     output = writer.write(jsonAlgorithmInfo);
 }
 
 void AlgorithmInfoSerializer::Deserialize(std::string& dataToDeserialize)
 {
+    qDebug() << "calling AlgorithmInfoSerializer::Deserialize()";
+
     Json::Value deserializeRoot;
     Json::Reader reader;
 
-    qDebug() << "calling AlgorithmInfoSerializer::Deserialize()";
-    qDebug() << "calling AlgorithmInfoSerializer::Deserialize(): dataToDeserialize: " << QString::fromStdString(dataToDeserialize);
     if ( !reader.parse(dataToDeserialize, deserializeRoot) )
     {
-        qDebug() << "calling AlgorithmInfoSerializer::Serialize(): CANT parse data";
         dataToDeserialize = "";
         return;
     }
 
-    qDebug() << "calling AlgorithmInfoSerializer::Serialize(): Data parsed";
-
-    // deserialize primitives
-    Json::Value algo = deserializeRoot.get("algorithms", "");
-    for ( int index = 0; index < algo.size(); ++index )
+    Json::Value algorithmListInJson = deserializeRoot.get("algorithms", "");
+    for ( int index = 0; index < algorithmListInJson.size(); ++index )
     {
-        AlgorithmInfo temp;
-        temp.name = algo[index].get("name", "").asString();
-        temp.id = algo[index].get("id", "").asString();
-        temp.author = algo[index].get("author", "").asString();
-        temp.description = algo[index].get("description", "").asString();
-        temp.details = algo[index].get("details", "").asString();
+        AlgorithmInfo algorithmInfo;
 
-        Json::Value params = algo[index].get("params", "");
-        for ( int indexp = 0; indexp < params.size(); ++indexp )
+        algorithmInfo.m_name = algorithmListInJson[index].get("name", "").asString();
+        algorithmInfo.m_id = algorithmListInJson[index].get("id", "").asString();
+        algorithmInfo.m_author = algorithmListInJson[index].get("author", "").asString();
+        algorithmInfo.m_description = algorithmListInJson[index].get("description", "").asString();
+        algorithmInfo.m_details = algorithmListInJson[index].get("details", "").asString();
+
+        Json::Value parameterListInJson = algorithmListInJson[index].get("params", "");
+        for ( int indexp = 0; indexp < parameterListInJson.size(); ++indexp )
         {
-            ParameterInfo pInfo;
-            pInfo.name = params[indexp].get("name", "").asString();
-            pInfo.description = params[indexp].get("info", "").asString();
-            temp.parameters.push_back(pInfo);
+            ParameterInfo p;
+            p.m_name = parameterListInJson[indexp].get("name", "").asString();
+            p.m_description = parameterListInJson[indexp].get("info", "").asString();
+            algorithmInfo.m_parameters.push_back(p);
         }
 
-        m_algorithmList.push_back(temp);
+        m_algorithmList.push_back(algorithmInfo);
     }
-    qDebug() << "calling AlgorithmInfoSerializer::Serialize(): Done";
 }

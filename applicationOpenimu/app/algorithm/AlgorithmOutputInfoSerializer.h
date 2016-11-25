@@ -1,10 +1,10 @@
 #ifndef ALGORITHMOUTPUT_H
 #define ALGORITHMOUTPUT_H
 
-#include "../acquisition/CJsonSerializer.h"
+#include "json/json.h"
 #include "../algorithm/AlgorithmInfoSerializer.h"
 #include <string>
-#include<vector>
+#include <vector>
 #include <QDebug>
 
 #include "AlgorithmOutputInfo.h"

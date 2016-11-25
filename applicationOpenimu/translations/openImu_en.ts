@@ -690,12 +690,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ResultsTabWidget</name>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="172"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="130"/>
         <source>Save Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="172"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="130"/>
         <source>PDF (*.pdf)</source>
         <translation type="unfinished"></translation>
     </message>

@@ -101,18 +101,18 @@ std::vector<QString> DbBlock::getDaysInDB()
  {
      if (reply->error() == QNetworkReply::NoError)
     {
-        qDebug() << "DbBlock::resultInsertionResponse(): connection...";
-        std::string testReponse(reply->readAll());
-        AlgorithmOutputInfoSerializer algorithmOutputSerializer;
-        algorithmOutputSerializer.Deserialize(testReponse);
+        qDebug() << "DbBlock::resultInsertionResponse(): No Error";
+        std::string response(reply->readAll());
+        //AlgorithmOutputInfoSerializer algorithmOutputSerializer;
+        //algorithmOutputSerializer.Deserialize(response);
     }
     else
     {
         qDebug() << "DbBlock::resultInsertionResponse(): error connect";
-        //qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
-        //qDebug() << "Request failed, " << reply->errorString();
-        //qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
-        //qDebug() << reply->readAll();
+        qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
+        qDebug() << "Request failed, " << reply->errorString();
+        qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
+        qDebug() << reply->readAll();
     }
     delete reply;
  }

@@ -12,11 +12,11 @@ AlgorithmParametersDialog::AlgorithmParametersDialog(QWidget * parent, Algorithm
     parametersLayout->addWidget(titleLabel);
 
     // Adds every parameter to the Dialog Window.
-    foreach(ParameterInfo p, m_algorithmInfo.parameters)
+    foreach(ParameterInfo p, m_algorithmInfo.m_parameters)
     {
-        if(p.name != "uuid")
+        if(p.m_name != "uuid")
         {
-            QString parameterText = p.name.c_str() + QString::fromStdString(": ") + p.description.c_str();
+            QString parameterText = p.m_name.c_str() + QString::fromStdString(": ") + p.m_description.c_str();
             QLabel * itemLabel = new QLabel(Utils::capitalizeFirstCharacter(parameterText));
 
             QLineEdit * itemLineEdit = new QLineEdit();
@@ -42,7 +42,7 @@ void AlgorithmParametersDialog::parametersSetSlot()
 
     foreach(QLineEdit* le, findChildren<QLineEdit*>())
     {
-        m_algorithmInfo.parameters.at(index).value = le->text().toStdString();
+        m_algorithmInfo.m_parameters.at(index).m_value = le->text().toStdString();
         index++;
     }
 
