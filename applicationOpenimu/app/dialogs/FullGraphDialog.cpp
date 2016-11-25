@@ -15,12 +15,12 @@ FullGraphDialog::~FullGraphDialog()
 
 void FullGraphDialog::prepareDisplay(WimuAcquisition acceleroData, RecordInfo recordInfo)
 {
-    m_dataDisplay = new AccDataDisplay2(acceleroData);
+    m_dataDisplay = new AccDataDisplay(acceleroData);
     m_dataDisplay->setInfo(recordInfo);
     ui->mainLayout->addWidget(m_dataDisplay);
 }
 
-AccDataDisplay2 *FullGraphDialog::getAccDataDisplay()
+AccDataDisplay *FullGraphDialog::getAccDataDisplay()
 {
     return m_dataDisplay;
 }

@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include "../acquisition/WimuAcquisition.h"
-#include "../widgets/AccDataDisplay2.h"
+#include "../AccDataDisplay.h"
 
 namespace Ui {
 class FullGraphDialog;
@@ -16,11 +16,11 @@ class FullGraphDialog : public QDialog
 public:
     explicit FullGraphDialog(QWidget *parent = 0);
     ~FullGraphDialog();
-    AccDataDisplay2* getAccDataDisplay();
+    AccDataDisplay* getAccDataDisplay();
     void prepareDisplay(WimuAcquisition acceleroData, RecordInfo recordInfo);
 private:
     Ui::FullGraphDialog *ui;
-    AccDataDisplay2* m_dataDisplay;
+    AccDataDisplay* m_dataDisplay;
 };
 
 #endif // FULLGRAPHDIALOH_H

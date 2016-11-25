@@ -22,6 +22,12 @@
   <property name="windowTitle">
    <string>Graphique Détaillé</string>
   </property>
+  <property name="whatsThis">
+   <string/>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>false</bool>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QVBoxLayout" name="mainLayout">

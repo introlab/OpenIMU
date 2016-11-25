@@ -1,41 +1,16 @@
 #include "AccDataDisplay.h"
+#include "ui_AccDataDisplay.h"
 
 #include <math.h>
 #include <QPropertyAnimation>
-#include <QQuickView>
 #include <time.h>
 #include <ctime>
 
-QT_CHARTS_USE_NAMESPACE
-
-AccDataDisplay::AccDataDisplay()
+AccDataDisplay::AccDataDisplay(const WimuAcquisition& accData, QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::AccDataDisplay)
 {
-}
-
-void AccDataDisplay::showSimplfiedDataDisplay()
-{
-    if(availableData.size()> 0)
-    {
-        checkboxX->hide();
-        checkboxY->hide();
-        checkboxZ->hide();
-        checkboxAccNorm->hide();
-        checkboxMovingAverage->hide();
-        rSlider->hide();
-        pbtn->hide();
-        dateRecorded->hide();
-        groupBoxAxes->hide();
-        groupBoxSlider->hide();
-        groupBoxSave->hide();
-    }
-}
-
-void AccDataDisplay::setInfo(RecordInfo recInfo)
-{
-    m_recordInfo = recInfo;
-}
-
-AccDataDisplay::AccDataDisplay(const WimuAcquisition& accData){
+    ui->setupUi(this);
 
     this->grabGesture(Qt::PanGesture);
     this->grabGesture(Qt::PinchGesture);
@@ -43,10 +18,8 @@ AccDataDisplay::AccDataDisplay(const WimuAcquisition& accData){
     availableData = accData.getDataAccelerometer();
     sliceData = availableData;
 
-
     if(availableData.size()> 0)
     {
-
         chart = new DataChart();
         chart->legend()->show();
         chart->legend()->setAlignment(Qt::AlignBottom);
@@ -62,13 +35,7 @@ AccDataDisplay::AccDataDisplay(const WimuAcquisition& accData){
         chartView = new ChartView(chart);
         chartView->setRenderHint(QPainter::Antialiasing);
 
-        layout = new QVBoxLayout(this);
-
-        //Initialize Recording Date
-        QHBoxLayout *hboxDate = new QHBoxLayout();
-
-        pbtn = new QPushButton("Reset Zoom");
-        connect(pbtn, SIGNAL (released()), this, SLOT (handleResetZoomBtn()));
+        connect(ui->pbtn, SIGNAL (released()), this, SLOT (handleResetZoomBtn()));
 
         this->setStyleSheet( "QPushButton{"
                              "background-color: rgba(119, 160, 175,0.7);"
@@ -81,96 +48,69 @@ AccDataDisplay::AccDataDisplay(const WimuAcquisition& accData){
                              "padding: 6px; }"
                              "QPushButton:pressed { background-color: rgba(70, 95, 104, 0.7);}"
                              );
+        ui->dateRecordedDate->setText(QString::fromStdString(accData.getDates().back().date));
 
-        dateRecorded = new QLabel();
-        dateRecorded->setText(QString::fromStdString("Journée d'enregistrement: ")+ QString::fromStdString(accData.getDates().back().date));
-        hboxDate->addStretch();
-        hboxDate->addWidget(dateRecorded);
-        hboxDate->addStretch();
-        hboxDate->addWidget(pbtn);
+        ui->checkboxX->setChecked(true);
+        ui->checkboxY->setChecked(true);
+        ui->checkboxZ->setChecked(true);
+        ui->checkboxAccNorm->setChecked(false);
+        ui->checkboxMovingAverage->setChecked(false);
 
-        //Initialize Checkbox and Label
-        checkboxX = new QCheckBox(tr("Axe X"));
-        checkboxY = new QCheckBox(tr("Axe Y"));
-        checkboxZ = new QCheckBox(tr("Axe Z"));
-        checkboxAccNorm = new QCheckBox(tr("Norme"));
-        checkboxMovingAverage = new QCheckBox(tr("Moyenne mobile"));
-
-        checkboxX->setChecked(true);
-        checkboxY->setChecked(true);
-        checkboxZ->setChecked(true);
-        checkboxAccNorm->setChecked(false);
-        checkboxMovingAverage->setChecked(false);
-
-        groupBoxAxes = new QGroupBox(tr("Affichage des axes:"));
-        QHBoxLayout *hbox = new QHBoxLayout();
-        hbox->addStretch();
-        hbox->addWidget(checkboxX);
-        hbox->addWidget(checkboxY);
-        hbox->addWidget(checkboxZ);
-        hbox->addWidget(checkboxAccNorm);
-        hbox->addWidget(checkboxMovingAverage);
-        hbox->addStretch();
-        groupBoxAxes->setLayout(hbox);
-
-        long long min = WimuAcquisition::minTime(availableData).timestamp/1000;
+        long long min = WimuAcquisition::minTime(availableData).timestamp;
 
         rSlider = new RangeSlider(this);
         int tmpmin = int(sliceData.size()*lSliderValue/50);
         tmpmin = min + tmpmin;
+
         int tmpmax = int(sliceData.size()*rSliderValue/50);
         tmpmax = min + tmpmax;
 
         rSlider->setStartHour(tmpmin);
         rSlider->setEndHour(tmpmax);
 
-        layout->addLayout(hboxDate);
-        layout->addWidget(chartView);
-        layout->addWidget(groupBoxAxes);
-        groupBoxSlider = new QGroupBox(tr("Sélection Horaire"));
-
-        QVBoxLayout *vbox = new QVBoxLayout;
-        vbox->addWidget(rSlider);
-        groupBoxSlider->setLayout(vbox);
-        layout->addWidget(groupBoxSlider);
-
-        groupBoxSave = new QGroupBox(tr("Modifier l'enregistrement"));
-
-        recordNaming = new QLabel(tr("Nom de l'enregistrement*:"));
-        recordName = new QLineEdit;
-        recordName->setMinimumHeight(20);
-        recordName->setPlaceholderText(QWidget::tr("Wimu_2016_10_18_PatientX"));
-
-        recordDetails = new QLabel(tr("Détails de l'enregistrement: "));
-        userDetails = new QTextEdit();
-        userDetails->setMinimumHeight(20);
-        userDetails->setMaximumHeight(100);
-
-        QVBoxLayout *vboxSave = new QVBoxLayout;
-        vboxSave->addWidget(new QLabel("Utilisez la sélection horaire pour modifier l'heure de début et de fin puis sauvegardez vos changements"));
-
-        saveDataSet = new QPushButton();
-        saveDataSet->setMaximumSize(60,60);
-        saveDataSet->setText("Enregistrer");
-
-        vboxSave->addWidget(recordNaming);
-        vboxSave->addWidget(recordName);
-        vboxSave->addWidget(recordDetails);
-        vboxSave->addWidget(userDetails);
-        vboxSave->addWidget(saveDataSet);
-        groupBoxSave->setLayout(vboxSave);
-        layout->addWidget(groupBoxSave);
-
-        connect(checkboxX, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayXAxis(int)));
-        connect(checkboxY, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayYAxis(int)));
-        connect(checkboxZ, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayZAxis(int)));
-        connect(checkboxAccNorm, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayNorme(int)));
-        connect(checkboxMovingAverage, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayMovingAverage(int)));
-        connect(saveDataSet, SIGNAL(clicked(bool)), this, SLOT(slotSaveNewSetRange()));
+        ui->graphLayout->addWidget(chartView);
+        ui->sliderLayout->addWidget(rSlider);
+        connect(ui->checkboxX, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayXAxis(int)));
+        connect(ui->checkboxY, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayYAxis(int)));
+        connect(ui->checkboxZ, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayZAxis(int)));
+        connect(ui->checkboxAccNorm, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayNorme(int)));
+        connect(ui->checkboxMovingAverage, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayMovingAverage(int)));
+        connect(ui->saveDataSet, SIGNAL(clicked(bool)), this, SLOT(slotSaveNewSetRange()));
 
         fillChartSeries();
     }
 }
+
+AccDataDisplay::~AccDataDisplay()
+{
+    delete ui;
+}
+
+void AccDataDisplay::showSimplfiedDataDisplay()
+{
+    if(availableData.size()> 0)
+    {
+        ui->checkboxX->hide();
+        ui->checkboxY->hide();
+        ui->checkboxZ->hide();
+        ui->checkboxAccNorm->hide();
+        ui->checkboxMovingAverage->hide();
+        rSlider->hide();
+        ui->pbtn->hide();
+        ui->dateRecorded->hide();
+        ui->groupBoxAxes->hide();
+        ui->groupBoxSlider->hide();
+        ui->groupBoxSave->hide();
+        ui->saveDataSet->hide();
+    }
+}
+
+
+void AccDataDisplay::setInfo(RecordInfo recInfo)
+{
+    m_recordInfo = recInfo;
+}
+
 void AccDataDisplay::slotSaveNewSetRange()
 {
 
@@ -183,24 +123,17 @@ void AccDataDisplay::slotSaveNewSetRange()
         temp.x = sliceData.at(k).x;
         temp.y = sliceData.at(k).y;
         temp.z = sliceData.at(k).z;
-        temp.timestamp = sliceData.at(k).timestamp;
+        temp.timestamp = k*20;
         availableData.push_back(temp);
     }
+
     sliceData.clear();
     sliceData = availableData;
     rSliderValue = 1;
     lSliderValue = 0;
 
-    long long min = WimuAcquisition::minTime(availableData).timestamp/1000;
-    rSlider = new RangeSlider(this);
-    tmpmin = int(sliceData.size()*lSliderValue/50);
-    tmpmin = min + tmpmin;
-
-    tmpmax = int(sliceData.size()*rSliderValue/50);
-    tmpmax = min + tmpmax;
-
-    rSlider->setStartHour(tmpmin);
-    rSlider->setEndHour(tmpmax);
+    rSlider->setStartHour(sliceData.at(0).timestamp);
+    rSlider->setEndHour(sliceData.at(sliceData.size()-1).timestamp);
 
     chart->removeAllSeries();
     fillChartSeries();
@@ -209,15 +142,17 @@ void AccDataDisplay::slotSaveNewSetRange()
     WimuAcquisition* wimuData = new WimuAcquisition();
 
     wimuData->setDataAccelerometer(sliceData);
-    m_recordInfo.m_recordDetails =  "Cet enregistrement est un sous-ensemble de :" + m_recordInfo.m_recordName + ". " + userDetails->toPlainText().toStdString();
-    m_recordInfo.m_recordName = m_recordInfo.m_recordName + ":" + recordName->text().toStdString();
-    m_recordInfo.m_parentid = m_recordInfo.m_recordId;
+
+    m_recordInfo.m_recordDetails =  "Cet enregistrement est un sous-ensemble de :" + m_recordInfo.m_recordName + ". " + ui->recordDetailsLineEdit->text().toStdString();
+    m_recordInfo.m_recordName = m_recordInfo.m_recordName + ":" + ui->recordNameLineEdit->text().toStdString();
+
     std::string output;
     CJsonSerializer::Serialize(wimuData,m_recordInfo,"", output);
     databaseAccess = new DbBlock;
     QString temp = QString::fromStdString(output);//TODO remove
     databaseAccess->addRecordInDB(temp);
 }
+
 
 void AccDataDisplay::handleResetZoomBtn()
 {
@@ -242,11 +177,13 @@ void AccDataDisplay::slotDisplayMovingAverage(int value){
     }
 
 }
+
+
 void AccDataDisplay::leftSliderValueChanged(double value)
 {
     lSliderValue = value;
     int tmpmin = int(sliceData.size()*lSliderValue/50);
-    tmpmin = WimuAcquisition::minTime(availableData).timestamp/1000 + tmpmin;
+    tmpmin = WimuAcquisition::minTime(availableData).timestamp + tmpmin;
     rSlider->setStartHour(tmpmin);
     chart->removeAllSeries();
     fillChartSeries();
@@ -257,13 +194,14 @@ void AccDataDisplay::rightSliderValueChanged(double value)
 {
     rSliderValue = value;
     int tmpmax = int(sliceData.size()*rSliderValue/50);
-    tmpmax = WimuAcquisition::minTime(availableData).timestamp/1000 + tmpmax;
+    tmpmax = WimuAcquisition::minTime(availableData).timestamp + tmpmax;
     rSlider->setEndHour(tmpmax);
     chart->removeAllSeries();
     fillChartSeries();
     chartView->setChart(chart);
 
 }
+
 void AccDataDisplay::slotDisplayXAxis(int value){
     if(value){
         chart->addSeries(lineseriesX);
@@ -291,6 +229,7 @@ void AccDataDisplay::slotDisplayZAxis(int value){
         chartView->setChart(chart);
     }
 }
+
 std::vector<signed short> AccDataDisplay::movingAverage(int windowSize)
 {
     int tmpmin = int(sliceData.size()*lSliderValue);
@@ -314,6 +253,7 @@ std::vector<signed short> AccDataDisplay::movingAverage(int windowSize)
     }
     return filteredData;
 }
+
 void AccDataDisplay::fillChartSeries(){
 
     std::vector<signed short> x;
@@ -335,13 +275,11 @@ void AccDataDisplay::fillChartSeries(){
         t.push_back(k*20); // TO DO Replace w/ real value
     }
 
-
     lineseriesX = new QtCharts::QLineSeries();
     QPen penX(QRgb(0xCF000F));
     lineseriesX->setPen(penX);
     lineseriesX->setName(tr("Axe X"));
     lineseriesX->setUseOpenGL(true);
-
 
     lineseriesY = new QtCharts::QLineSeries();
     QPen penY(QRgb(0x00b16A));
@@ -379,28 +317,28 @@ void AccDataDisplay::fillChartSeries(){
     {
         lineseriesMovingAverage->append(t.at(i),filtered_data.at(i));
     }
-    if(checkboxX->isChecked())
+    if(ui->checkboxX->isChecked())
         chart->addSeries(lineseriesX);
 
-    if(checkboxY->isChecked())
+    if(ui->checkboxY->isChecked())
         chart->addSeries(lineseriesY);
 
-    if(checkboxZ->isChecked())
+    if(ui->checkboxZ->isChecked())
         chart->addSeries(lineseriesZ);
 
-    if(checkboxAccNorm->isChecked())
+    if(ui->checkboxAccNorm->isChecked())
         chart->addSeries(lineseriesAccNorm);
 
-    if(checkboxMovingAverage->isChecked())
+    if(ui->checkboxMovingAverage->isChecked())
         chart->addSeries(lineseriesMovingAverage);
 
     chart->createDefaultAxes();
 }
 
 void AccDataDisplay:: firstUpdated(const QVariant &v) {
-    leftSliderValueChanged(v.toDouble());
+      leftSliderValueChanged(v.toDouble());
 }
 
 void AccDataDisplay:: secondUpdated(const QVariant &v) {
-    rightSliderValueChanged(v.toDouble());
+      rightSliderValueChanged(v.toDouble());
 }
