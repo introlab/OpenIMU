@@ -19,7 +19,6 @@ const QString englishText = "English";
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-
     //Execute launchApi in a thread
     QtConcurrent::run(MainWindow::launchApi);
 
@@ -54,8 +53,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     listWidget->setAlternatingRowColors(true);
     listWidget->setStyleSheet("alternate-background-color:#ecf0f1;background-color:white;");
 
-    QPushButton* addRecord = new QPushButton("+");
-    QPushButton* deleteRecord = new QPushButton("-");
+    QPushButton* addRecord = new QPushButton("");
+    QIcon img(":/icons/addrecord.png");
+    addRecord->setIcon(img);
+    addRecord->setIconSize(QSize(20,20));
+
+    QPushButton* deleteRecord = new QPushButton("");
+    QIcon imgd(":/icons/trash.png");
+    deleteRecord->setIcon(imgd);
+    deleteRecord->setIconSize(QSize(20,20));
     QVBoxLayout* vlayout = new QVBoxLayout();
     vlayout->addWidget(addRecord);
     vlayout->addWidget(listWidget);
@@ -220,11 +226,11 @@ void MainWindow::reponseRecueAcc(QNetworkReply* reply)
    }
    else
    {
-       //qDebug() << "error connect";
-       //qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
-       //qDebug() << "Request failed, " << reply->errorString();
-      // qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
-       //qDebug() << reply->readAll();
+       qDebug() << "error connect";
+       qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
+       qDebug() << "Request failed, " << reply->errorString();
+       qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
+       qDebug() << reply->readAll();
    }
    delete reply;
 }
@@ -389,6 +395,7 @@ void MainWindow::replaceTab(QWidget * replacement, std::string label)
     }
     setStatusBarText(tr("Prêt"));
 }
+
 void MainWindow::closeTab(int index){
 
     if (index == -1) {
