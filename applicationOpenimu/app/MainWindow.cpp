@@ -62,6 +62,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QIcon imgd(":/icons/trash.png");
     deleteRecord->setIcon(imgd);
     deleteRecord->setIconSize(QSize(20,20));
+
     QVBoxLayout* vlayout = new QVBoxLayout();
     vlayout->addWidget(addRecord);
     vlayout->addWidget(listWidget);
@@ -318,13 +319,32 @@ bool MainWindow::renameRecordFromUUID(std::string uuid, std::string newname)
 
 bool MainWindow::deleteRecordFromList()
 {
-    deleteRecordFromUUID(selectedRecord.m_recordId);
-    getRecordsFromDB();
+    QMessageBox msgBox;
+    msgBox.setText("Suppression de l'enregistrement");
+    msgBox.setInformativeText("Êtes vous sûr de vouloir supprimer cet enregistrement?");
+
+
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Cancel);
+    int ret = msgBox.exec();
+
+    switch (ret) {
+      case QMessageBox::Ok:
+        deleteRecordFromUUID(selectedRecord.m_recordId);
+        getRecordsFromDB();
+        break;
+    case QMessageBox::Cancel:
+        // Cancel was clicked
+        break;
+    default:
+        // should never be reached
+        break;
+  }
     return true;
 }
 void MainWindow::reponseRecueDelete(QNetworkReply* reply)
 {
-    if (reply->error() == QNetworkReply::NoError)
+   if (reply->error() == QNetworkReply::NoError)
    {
         statusBar->showMessage(tr("Enregistrement effacé avec succès"));
    }
