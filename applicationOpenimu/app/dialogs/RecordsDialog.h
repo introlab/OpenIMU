@@ -21,7 +21,6 @@ public:
 
     RecordsDialog(QWidget *parent);
     ~RecordsDialog();
-    void reject();
     bool addRecordInDB(QString& json, bool isSingleRecord);
     bool addRecordFileListToBD(QStringList & fileList, std::string folderPath);
 

@@ -180,7 +180,6 @@ bool RecordsDialog::addRecordFileListToBD(QStringList & fileList, std::string fo
     }
     return true;
 }
-
 void RecordsDialog::addRecordSlot()
 {
     MainWindow * mainWindow = (MainWindow*)m_parent;
@@ -197,7 +196,7 @@ void RecordsDialog::addRecordSlot()
     {
         if (finfo.isDir()) {
 
-            QString temp = "Recherche de fichier de données dans " + finfo.absoluteFilePath();
+            QString temp = "Extraction des données de " + finfo.absoluteFilePath();
             mainWindow->setStatusBarText(temp);
             QDir* subDir = new QDir(finfo.absoluteFilePath());
             QStringList fileList = subDir->entryList();
@@ -213,7 +212,7 @@ void RecordsDialog::addRecordSlot()
         else
         {
              QStringList fileList = dir->entryList();
-             QString temp = "Recherche de fichier de données dans " + finfo.absoluteFilePath();
+             QString temp = "Extraction des données de " + finfo.absoluteFilePath();
              mainWindow->setStatusBarText(temp);
              if(!addRecordFileListToBD(fileList,folderToAdd.toStdString()))
              {
@@ -234,19 +233,11 @@ void RecordsDialog::addRecordSlot()
         successLabel->setText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"));
         mainWindow->setStatusBarText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"));
 
+        QMainWindow* currWin = (QMainWindow*)m_parent;
+        MainWindow* win = (MainWindow*)currWin;
+        win->getRecordsFromDB();
     }
 }
-
-//*************************** ON DIALOG CLOSED *************************
-
-void RecordsDialog::reject()
-{
-    QMainWindow* currWin = (QMainWindow*)m_parent;
-    MainWindow* win = (MainWindow*)currWin;
-    win->getRecordsFromDB();
-    QDialog::reject();
-}
-
 
 //*************************** DATA BASE ACCESS *************************
 
