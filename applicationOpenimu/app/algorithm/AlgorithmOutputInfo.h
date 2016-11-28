@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-
 struct AlgorithmOutputInfo
 {
     // Proper AlgorithmOutputInfo information
@@ -17,7 +16,10 @@ struct AlgorithmOutputInfo
     std::string m_endTime;
     std::string m_measureUnit;
 
-    // Information that comes from AlgorithmInfo
+    // Information about the Record used (Data)
+    std::string m_recordId;
+
+    // Information about the AlgorithmInfo
     std::string m_algorithmId;
     std::string m_algorithmName;
     std::vector<ParameterInfo> m_algorithmParameters;

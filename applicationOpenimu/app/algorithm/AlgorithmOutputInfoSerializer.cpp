@@ -24,6 +24,8 @@ void AlgorithmOutputInfoSerializer::Serialize(AlgorithmOutputInfo algorithmOutpu
      jsonAlgorithmOutput["measureUnit"] = algorithmOutputInfo.m_measureUnit;
      jsonAlgorithmOutput["value"] = algorithmOutputInfo.m_value;
 
+     jsonAlgorithmOutput["data_used"] = algorithmOutputInfo.m_recordId;
+
      jsonAlgorithmOutput["algorithmId"] = algorithmOutputInfo.m_algorithmId;
      jsonAlgorithmOutput["algorithmName"] = algorithmOutputInfo.m_algorithmName;
 
@@ -65,10 +67,12 @@ void AlgorithmOutputInfoSerializer::Deserialize(std::string& dataToDeserialize)
     std::string missingInfos = "Not available in Database";
     m_algorithmOutput.m_value = deserializeRoot.get("result", "").asInt();
     m_algorithmOutput.m_executionTime = deserializeRoot.get("execute_time", "").asFloat();
-    m_algorithmOutput.m_date = missingInfos;//deserializeRoot.get("date", "").asFloat();
-    m_algorithmOutput.m_startTime = missingInfos;//deserializeRoot.get("startTime", "").asFloat();
-    m_algorithmOutput.m_endTime = missingInfos;//deserializeRoot.get("endTime", "").asFloat();
-    m_algorithmOutput.m_measureUnit = missingInfos;//deserializeRoot.get("measureUnit", "").asFloat();
+    m_algorithmOutput.m_date = deserializeRoot.get("date", "").asFloat();
+    m_algorithmOutput.m_startTime = deserializeRoot.get("startTime", "").asFloat();
+    m_algorithmOutput.m_endTime = deserializeRoot.get("endTime", "").asFloat();
+    m_algorithmOutput.m_measureUnit = deserializeRoot.get("measureUnit", "").asFloat();
+
+    m_algorithmOutput.m_recordId = deserializeRoot.get("data_used", "").asString();
 
     m_algorithmOutput.m_algorithmId = deserializeRoot.get("algorithmId", "").asString();
     m_algorithmOutput.m_algorithmName = deserializeRoot.get("algorithmName", "").asString();
