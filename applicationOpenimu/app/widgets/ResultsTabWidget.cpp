@@ -120,6 +120,7 @@ void ResultsTabWidget::exportToDBSlot()
 
     std::string serializedData;
     AlgorithmOutputInfoSerializer serializer;
+
     serializer.Serialize(m_algorithmOutputInfo, serializedData);
 
     m_databaseAccess->addResultsInDB(QString::fromStdString(serializedData));

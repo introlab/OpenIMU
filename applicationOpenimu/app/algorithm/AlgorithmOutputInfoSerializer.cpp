@@ -40,6 +40,7 @@ void AlgorithmOutputInfoSerializer::Serialize(AlgorithmOutputInfo algorithmOutpu
         jsonParameter["description"] = p.m_description;
         jsonParameter["name"] = p.m_name;
         jsonParameter["value"] = p.m_value;
+        //qDebug() << "Parameter Value: " << QString::fromStdString(p.m_value);
 
         jsonAlgorithmParametersInfo.append(jsonParameter);
      }
@@ -67,10 +68,10 @@ void AlgorithmOutputInfoSerializer::Deserialize(std::string& dataToDeserialize)
     std::string missingInfos = "Not available in Database";
     m_algorithmOutput.m_value = deserializeRoot.get("result", "").asInt();
     m_algorithmOutput.m_executionTime = deserializeRoot.get("execute_time", "").asFloat();
-    m_algorithmOutput.m_date = deserializeRoot.get("date", "").asFloat();
-    m_algorithmOutput.m_startTime = deserializeRoot.get("startTime", "").asFloat();
-    m_algorithmOutput.m_endTime = deserializeRoot.get("endTime", "").asFloat();
-    m_algorithmOutput.m_measureUnit = deserializeRoot.get("measureUnit", "").asFloat();
+    m_algorithmOutput.m_date = missingInfos;//deserializeRoot.get("date", "").asFloat();
+    m_algorithmOutput.m_startTime = missingInfos;//deserializeRoot.get("startTime", "").asFloat();
+    m_algorithmOutput.m_endTime = missingInfos;//deserializeRoot.get("endTime", "").asFloat();
+    m_algorithmOutput.m_measureUnit = missingInfos;//deserializeRoot.get("measureUnit", "").asFloat();
 
     m_algorithmOutput.m_recordId = deserializeRoot.get("data_used", "").asString();
 
