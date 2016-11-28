@@ -27,7 +27,6 @@ class fft(Algorithm):
         x = [snap.get('x') for snap in self.data]
         y = [snap.get('y') for snap in self.data]
         z = [snap.get('z') for snap in self.data]
-        t = [snap.get('t') for snap in self.data]
 
         nbBins = self.params.bins
         x = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(x,nbBins)]
