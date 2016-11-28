@@ -252,7 +252,6 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
            top_item->setText(0,QString::fromStdString(record.m_WimuRecordList.at(i).m_recordName));
            top_item->setIcon(0,*(new QIcon(":/icons/file.png")));
 
-           qDebug() << QString::fromStdString(record.m_WimuRecordList.at(i).m_parentid);
            if(record.m_WimuRecordList.at(i).m_parentid.compare("") == 0 )
            {
                for(int j=0; j<record.m_WimuRecordList.size();j++)
