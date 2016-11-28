@@ -77,6 +77,11 @@ class getRecords(Resource):
         schema = schemas.Record(many=True)
         return schema.dump(mongo.db.record.find())
 
+class getAlgorithmResults(Resource):
+    def get(self):
+        schema = schemas.AlgorithmResults(many=True)
+        return schema.dump(mongo.db.algorithmResults.find())
+
 class renameRecord(Resource):
     def post(self,uuid):
         name = request.args.get('name')
