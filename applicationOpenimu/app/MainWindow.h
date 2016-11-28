@@ -34,7 +34,6 @@ class MainWindow : public QMainWindow
        std::string getFileName(std::string s);
        void retranslateUi();
        void setStatusBarText(QString txt);
-
     signals:
 
     public slots:
@@ -42,7 +41,7 @@ class MainWindow : public QMainWindow
         void openFile();
         void openRecordDialog();
         void closeTab(int);
-        void replaceTab(QWidget * replacement, std::string label);
+        void addTab(QWidget * tab, std::string label);
         void openAbout();
         void openHelp();
         void setApplicationInEnglish();

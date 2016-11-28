@@ -130,13 +130,14 @@ void RecordsDialog::addRecordSlot()
 
     QDir* dir = new QDir(folderToAdd);
     dir->setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
-    //qDebug() << "Scanning: " << dir->path();
+
     QStringList fileList = dir->entryList();
     std::string output;
     std::string filePathAcc = "";
     std::string filePathGyr = "";
     std::string filePathMag = "";
     bool validFolder = false;
+
     for (int i=0; i<fileList.count(); i++)
     {
         if(fileList[i].contains("ACC"))
@@ -166,10 +167,13 @@ void RecordsDialog::addRecordSlot()
             msgErreur = tr("Veuillez sélectionner un dossier");
         }
         else if(recordName->text().isEmpty())
+        {
             msgErreur = tr("Ajoutez un nom d'enregistrement");
+        }
         else if(!validFolder)
+        {
             msgErreur = tr("Le dossier choisi est invalide");
-
+        }
 
         QMessageBox messageBox;
 
