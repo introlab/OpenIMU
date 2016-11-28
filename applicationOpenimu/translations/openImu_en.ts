@@ -523,7 +523,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../app/MainWindow.cpp" line="84"/>
         <location filename="../app/MainWindow.cpp" line="106"/>
         <location filename="../app/MainWindow.cpp" line="127"/>
-        <location filename="../app/MainWindow.cpp" line="417"/>
+        <location filename="../app/MainWindow.cpp" line="409"/>
         <source>Prêt</source>
         <translation type="unfinished"></translation>
     </message>
@@ -677,25 +677,25 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="187"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="186"/>
         <source>Insertion de l&apos;enregistrement dans la base de données en cours...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="207"/>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="221"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="206"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="220"/>
         <source>Avertissement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="233"/>
         <location filename="../app/dialogs/RecordsDialog.cpp" line="234"/>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="235"/>
         <source>L&apos;enregistrement </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="233"/>
         <location filename="../app/dialogs/RecordsDialog.cpp" line="234"/>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="235"/>
         <source> à été ajouté avec succès</source>
         <translation type="unfinished"></translation>
     </message>
