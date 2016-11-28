@@ -7,7 +7,7 @@
 #include <QDebug>
 #include <QLineEdit>
 #include <QPushButton>
-#include "../algorithm/AlgorithmList.h"
+#include "../algorithm/AlgorithmInfoSerializer.h"
 
 class AlgorithmParametersDialog : public QDialog
 {

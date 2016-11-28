@@ -4,7 +4,7 @@
 #include"../MainWindow.h"
 
 
-RecordsWidget::RecordsWidget(QWidget *parent,const WimuAcquisition& data, RecordInfo rcd):QWidget(parent)
+RecordsWidget::RecordsWidget(QWidget *parent, const WimuAcquisition& data, RecordInfo rcd):QWidget(parent)
 {
     renameRecordClicked = false;
 

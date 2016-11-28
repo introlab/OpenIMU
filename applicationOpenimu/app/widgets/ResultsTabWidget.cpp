@@ -3,31 +3,39 @@
 #include <QPdfWriter>
 #include <QPainter>
 
-ResultsTabWidget::ResultsTabWidget(QWidget *parent,RecordInfo& recordInfo, AlgorithmInfo &algoInfo, AlgorithmOutput &output):QWidget(parent)
+ResultsTabWidget::ResultsTabWidget(QWidget *parent,RecordInfo& recordInfo, AlgorithmOutputInfo output):QWidget(parent)
 {
     m_recordInfo= recordInfo;
-    init(algoInfo, output);
+    init(output);
 }
 
 
-void ResultsTabWidget::init(AlgorithmInfo &algoInfo, AlgorithmOutput &output)
+void ResultsTabWidget::init(AlgorithmOutputInfo output)
 {
+    qDebug() << "ResultsTabWidget::init()";
+
+    m_databaseAccess = new DbBlock();
+
+    m_algorithmOutputInfo = output;
+
     layout = new QGridLayout;
     this->setLayout(layout);
 
-    QString algoName = "Algorithme appliqué: " + QString::fromStdString(algoInfo.name);
+    qDebug() << "ResultsTabWidget::init(): UI Stuff";
+
+    QString algoName = "Algorithme appliqué: " + QString::fromStdString(m_algorithmOutputInfo.m_algorithmName);
     QString recordName = QString::fromStdString(m_recordInfo.m_recordName);
 
     algoLabel = new QLabel(algoName);
     algoLabel->setFont(QFont( "Arial", 12, QFont::Bold));
 
     recordLabel = new QLabel("Enregistrement utilisé: "+ recordName);
-    dateLabel = new QLabel("Date de l'enregistrement: " + QString::fromStdString(output.m_algorithmOutput.date));
-    startHourLabel = new QLabel("Heure de début séléctionné: " + QString::fromStdString(output.m_algorithmOutput.startTime));
-    endHourLabel = new QLabel("Heure de fin séléctionné: " + QString::fromStdString(output.m_algorithmOutput.endTime));
+    dateLabel = new QLabel("Date de l'enregistrement: " + QString::fromStdString(m_algorithmOutputInfo.m_date));
+    startHourLabel = new QLabel("Heure de début séléctionné: " + QString::fromStdString(m_algorithmOutputInfo.m_startTime));
+    endHourLabel = new QLabel("Heure de fin séléctionné: " + QString::fromStdString(m_algorithmOutputInfo.m_endTime));
     positionLabel = new QLabel("Position du Wimu: " + QString::fromStdString(m_recordInfo.m_imuPosition));
-    measureUnitLabel = new QLabel("Unité de mesure: " + QString::fromStdString(output.m_algorithmOutput.measureUnit)) ;
-    computeTimeLabel = new QLabel("Temps de calculs: " +QString::fromStdString(std::to_string(output.m_algorithmOutput.execute_time) + "ms"));
+    measureUnitLabel = new QLabel("Unité de mesure: " + QString::fromStdString(m_algorithmOutputInfo.m_measureUnit)) ;
+    computeTimeLabel = new QLabel("Temps de calculs: " +QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_executionTime) + "ms"));
 
     layout->addWidget(algoLabel,0,0);
     layout->addWidget(recordLabel,1,0);
@@ -41,15 +49,15 @@ void ResultsTabWidget::init(AlgorithmInfo &algoInfo, AlgorithmOutput &output)
     layout->setMargin(10);
     chartView = new QChartView();
 
-    if(algoInfo.name == "activityTracker")
+    if(m_algorithmOutputInfo.m_algorithmName == "activityTracker")
     {
-
+        qDebug() << "ResultsTabWidget::init(): if(activityTracker)";
         QPieSeries *series = new QPieSeries();
         series->setHoleSize(0.35);
-        QPieSlice *slice = series->append("Temps actif: " + QString::fromStdString(std::to_string(output.m_algorithmOutput.value)) + " %" , output.m_algorithmOutput.value);
+        QPieSlice *slice = series->append("Temps actif: " + QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_value)) + " %" , m_algorithmOutputInfo.m_value);
         slice->setExploded();
         slice->setLabelVisible();
-        series->append("Temps passif: " +  QString::fromStdString(std::to_string(100-output.m_algorithmOutput.value)) + " %", output.m_algorithmOutput.value-100);
+        series->append("Temps passif: " +  QString::fromStdString(std::to_string(100-m_algorithmOutputInfo.m_value)) + " %", m_algorithmOutputInfo.m_value-100);
         chartView->setRenderHint(QPainter::Antialiasing);
         chartView->chart()->setTitle("Temps d'activité");
         chartView->chart()->setTitleFont(QFont("Arial", 14));
@@ -59,20 +67,25 @@ void ResultsTabWidget::init(AlgorithmInfo &algoInfo, AlgorithmOutput &output)
         chartView->chart()->setAnimationOptions(QChart::SeriesAnimations);
         chartView->chart()->legend()->setFont(QFont("Arial", 12));
 
+         exportToPdf = new QPushButton("Exporter en PDF");
+
+         connect(exportToPdf, SIGNAL(clicked()), this, SLOT(exportToPdfSlot()));
         layout->addWidget(chartView,8,0);
-
-        exportToPdf = new QPushButton("Exporter en PDF");
-        connect(exportToPdf, SIGNAL(clicked()), this, SLOT(exportToPdfSlot()));
-
         layout->addWidget(exportToPdf,9,0);
+
     }
     else
     {
-       QLabel* labelResult = new QLabel("Résultat de l'algorithme : " + QString::fromStdString(std::to_string(output.m_algorithmOutput.value)) +" pas" );
+        qDebug() << "ResultsTabWidget::init(): Not activity tracker";
+       QLabel* labelResult = new QLabel("Résultat de l'algorithme : " + QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_value)) +" pas" );
 
        algoLabel->setFont(QFont( "Arial", 12, QFont::Light));
        layout->addWidget(labelResult,9,0,Qt::AlignCenter);
     }
+
+    qDebug() << "ResultsTabWidget::init(): Buttons...";
+
+    connect(exportToPdf, SIGNAL(clicked()), this, SLOT(exportToPdfSlot()));
 
     saveResultsToDB = new QPushButton("Sauvegarder en base de données");
     connect(saveResultsToDB, SIGNAL(clicked()), this, SLOT(exportToDBSlot()));
@@ -103,7 +116,13 @@ ResultsTabWidget::~ResultsTabWidget()
 }
 void ResultsTabWidget::exportToDBSlot()
 {
+    qDebug() << "calling exportToDB()";
 
+    std::string serializedData;
+    AlgorithmOutputInfoSerializer serializer;
+    serializer.Serialize(m_algorithmOutputInfo, serializedData);
+
+    m_databaseAccess->addResultsInDB(QString::fromStdString(serializedData));
 }
 
 void ResultsTabWidget::exportToPdfSlot()

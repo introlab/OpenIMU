@@ -18,6 +18,7 @@ api = Api(app)
 
 # Auth Routes
 api.add_resource(resources.InsertRecord, '/insertrecord','/insertrecord/concat/<string:uuid>')
+api.add_resource(resources.InsertAlgorithmResults, '/insertalgorithmresults')
 api.add_resource(resources.getRecords, '/records')
 api.add_resource(resources.renameRecord, '/renamerecord/<string:uuid>')
 api.add_resource(resources.GetData, '/data')

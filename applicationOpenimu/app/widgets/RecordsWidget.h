@@ -6,12 +6,12 @@
 #include <string>
 #include <QLabel>
 #include <QLineEdit>
-
+#include "../acquisition/RecordInfo.h"
 #include "acquisition/WimuAcquisition.h"
 #include "acquisition/WimuRecord.h"
 #include "AccDataDisplay.h"
 #include "dialogs/FullGraphDialog.h"
-#include"../utils/OpenImuButton.h"
+#include"../utilities/OpenImuButton.h"
 
 class RecordsWidget: public QWidget
 {
@@ -19,7 +19,7 @@ class RecordsWidget: public QWidget
 
     public:
     RecordsWidget();
-    RecordsWidget(QWidget *parent,const WimuAcquisition& data, RecordInfo record);
+    RecordsWidget(QWidget *parent, const WimuAcquisition& data, RecordInfo record);
 
     ~RecordsWidget();
 

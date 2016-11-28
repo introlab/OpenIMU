@@ -4,13 +4,12 @@
 
 WimuRecord::WimuRecord()
 {
-
 }
 WimuRecord::~WimuRecord()
 {
 
 }
-void WimuRecord::Serialize( Json::Value& root,RecordInfo infos,  std::string date,std::string& output )
+void WimuRecord::Serialize( Json::Value& root, RecordInfo recordInfo, std::string& output )
 {
     // serialize primitives
     //  root["_id"] = m_recordId;
@@ -29,7 +28,7 @@ void WimuRecord::Deserialize(Json::Value& root)
             temp.m_imuType = root[index].get("format", "").asString();
             temp.m_imuPosition = root[index].get("position", "").asString();
             temp.m_recordDetails = root[index].get("comment", "").asString();
-            temp.m_parentid = root[index].get("parent_id", "").asString();
+            temp.m_parentId = root[index].get("parent_id", "").asString();
             m_WimuRecordList.push_back(temp);
         }
 }
