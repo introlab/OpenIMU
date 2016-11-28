@@ -67,7 +67,9 @@ void AlgorithmOutputInfoSerializer::Deserialize(std::string& dataToDeserialize)
 
     std::string missingInfos = "Not available in Database";
     m_algorithmOutput.m_value = deserializeRoot.get("result", "").asInt();
-    m_algorithmOutput.m_executionTime = deserializeRoot.get("execute_time", "").asFloat();
+
+    m_algorithmOutput.m_executionTime = deserializeRoot.get("runtime", "").asFloat();
+
     m_algorithmOutput.m_date = missingInfos;//deserializeRoot.get("date", "").asFloat();
     m_algorithmOutput.m_startTime = missingInfos;//deserializeRoot.get("startTime", "").asFloat();
     m_algorithmOutput.m_endTime = missingInfos;//deserializeRoot.get("endTime", "").asFloat();

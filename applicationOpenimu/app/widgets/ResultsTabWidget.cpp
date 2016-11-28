@@ -78,7 +78,7 @@ void ResultsTabWidget::init(AlgorithmOutputInfo output)
     {
         qDebug() << "ResultsTabWidget::init(): Not activity tracker";
        QLabel* labelResult = new QLabel("Résultat de l'algorithme : " + QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_value)) +" pas" );
-
+       exportToPdf = new QPushButton("Exporter en PDF");
        algoLabel->setFont(QFont( "Arial", 12, QFont::Light));
        layout->addWidget(labelResult,9,0,Qt::AlignCenter);
     }
