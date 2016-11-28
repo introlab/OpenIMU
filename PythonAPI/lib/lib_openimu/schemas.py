@@ -62,3 +62,6 @@ class DataRequestWithOptions(Schema):
 
 class Position(Schema):
     _id = fields.Str(required=True, error_messages={'required': 'name is required.'})
+
+class Uuid(Schema):
+    valeuruuid = fields.UUID()

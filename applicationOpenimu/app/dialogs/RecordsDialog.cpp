@@ -3,19 +3,22 @@
 #include <QString>
 #include<QFile>
 #include<QMessageBox>
-#include "../MainWindow.h"
-#include"acquisition/WimuAcquisition.h"
-#include "acquisition/CJsonSerializer.h"
 #include<QtDebug>
 #include <fstream>
 #include <string>
 #include <iostream>
+
+#include "../MainWindow.h"
+#include"acquisition/WimuAcquisition.h"
+#include "acquisition/CJsonSerializer.h"
+
 
 
 RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
 {
 
     m_parent = parent;
+    current_uuid = "";
 
     this->setMinimumSize(300,400);
     this->setMaximumSize(300,400);
@@ -118,11 +121,68 @@ void RecordsDialog::selectRecordSlot()
      }
 }
 
+//*************************** ADD RECORD SLOT *************************
+bool RecordsDialog::addRecordFileListToBD(QStringList & fileList, std::string folderPath)
+{
+    std::string output;
+    bool validFolder = false;
+
+    for (int i=0; i<fileList.count(); i++)
+    {
+        std::string filePathAcc = "";
+        std::string filePathGyr = "";
+        std::string filePathMag = "";
+        validFolder = false;
+
+        if(fileList[i].contains("ACC"))
+        {
+            filePathAcc =  folderPath +"/"+fileList[i].toStdString();
+            validFolder = true;
+
+        }
+        else if(fileList[i].contains("GYR"))
+        {
+            filePathGyr =  folderPath +"/"+fileList[i].toStdString();
+            validFolder = true;
+        }
+        else if(fileList[i].contains("MAG"))
+        {
+            filePathMag =  folderPath +"/"+fileList[i].toStdString();
+            validFolder = true;
+        }
+
+        if(validFolder && !recordName->text().isEmpty() && isFolderSelected  )
+        {
+            WimuAcquisition* wimuData = new WimuAcquisition(filePathAcc,filePathGyr,filePathMag,50);
+            wimuData->initialize();
+            RecordInfo info;
+            info.m_recordName = recordName->text().toStdString();
+            info.m_imuType = imuSelectComboBox->currentText().toStdString();
+            info.m_imuPosition = imuPositionComboBox->currentText().toStdString();
+            info.m_recordDetails = userDetails->toPlainText().toStdString();
+            info.m_recordId = "None";
+            CJsonSerializer::Serialize(wimuData,info, output);
+            QString temp = QString::fromStdString(output);
+
+            if(current_uuid.isEmpty())
+            {
+                addRecordInDB(temp,true);
+            }
+            else
+            {
+                addRecordInDB(temp,false);
+            }
+        }
+        else if(recordName->text().isEmpty() && !isFolderSelected)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 void RecordsDialog::addRecordSlot()
 {
-    spinner->show();
-    movie->start();
-    QString msgErreur="";
     MainWindow * mainWindow = (MainWindow*)m_parent;
     mainWindow->setStatusBarText(tr("Insertion de l'enregistrement dans la base de données en cours..."));
 
@@ -130,75 +190,54 @@ void RecordsDialog::addRecordSlot()
 
     QDir* dir = new QDir(folderToAdd);
     dir->setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
-    //qDebug() << "Scanning: " << dir->path();
-    QStringList fileList = dir->entryList();
-    std::string output;
-    std::string filePathAcc = "";
-    std::string filePathGyr = "";
-    std::string filePathMag = "";
-    bool validFolder = false;
-    for (int i=0; i<fileList.count(); i++)
+
+    QFileInfoList list = dir->entryInfoList(QDir::Files | QDir::NoDotAndDotDot | QDir::Dirs);
+    bool success = true;
+    foreach(QFileInfo finfo, list)
     {
-        if(fileList[i].contains("ACC"))
-        {
-        filePathAcc = folderToAdd.toStdString()+"/"+fileList[i].toStdString();
-        validFolder = true;
+        if (finfo.isDir()) {
+
+            QString temp = "Recherche de fichier de données dans " + finfo.absoluteFilePath();
+            mainWindow->setStatusBarText(temp);
+            QDir* subDir = new QDir(finfo.absoluteFilePath());
+            QStringList fileList = subDir->entryList();
+            if(!addRecordFileListToBD(fileList,finfo.absoluteFilePath().toStdString()))
+            {
+                QMessageBox messageBox;
+                messageBox.warning(0,tr("Avertissement"), "Vérifier le nom de l'enregistrement et qu'un dossier a été séléctionné");
+                messageBox.setFixedSize(500,200);
+                success = false;
+                break;
+            }
         }
-        else if(fileList[i].contains("GYR"))
+        else
         {
-        filePathGyr = folderToAdd.toStdString()+"/"+fileList[i].toStdString();
-        validFolder = true;
-        }
-        else if(fileList[i].contains("MAG"))
-        {
-        filePathMag = folderToAdd.toStdString()+"/"+fileList[i].toStdString();
-        validFolder = true;
+             QStringList fileList = dir->entryList();
+             QString temp = "Recherche de fichier de données dans " + finfo.absoluteFilePath();
+             mainWindow->setStatusBarText(temp);
+             if(!addRecordFileListToBD(fileList,folderToAdd.toStdString()))
+             {
+                 QMessageBox messageBox;
+                 messageBox.warning(0,tr("Avertissement"), "Vérifier le nom de l'enregistrement et qu'un dossier a été séléctionné");
+                 messageBox.setFixedSize(500,200);
+                 success = false;
+                 break;
+             }
+             break;
         }
     }
 
-    if(recordName->text().isEmpty() || !isFolderSelected || !validFolder)
+    if(success)
     {
-        if(recordName->text().isEmpty() && !isFolderSelected)
-            msgErreur = tr("Veuillez sélectionner un dossier et ajoutez un nom d'enregistrement");
-
-        else if(!isFolderSelected)
-        {
-            msgErreur = tr("Veuillez sélectionner un dossier");
-        }
-        else if(recordName->text().isEmpty())
-            msgErreur = tr("Ajoutez un nom d'enregistrement");
-        else if(!validFolder)
-            msgErreur = tr("Le dossier choisi est invalide");
-
-
-        QMessageBox messageBox;
-
-        messageBox.warning(0,tr("Avertissement"),msgErreur);
-        messageBox.setFixedSize(500,200);
-        }
-    else
-    {
-
-        WimuAcquisition* wimuData = new WimuAcquisition(filePathAcc,filePathGyr,filePathMag,50);
-        wimuData->initialize();
-
-        RecordInfo info;
-        info.m_recordName = recordName->text().toStdString();
-        info.m_imuType = imuSelectComboBox->currentText().toStdString();
-        info.m_imuPosition = imuPositionComboBox->currentText().toStdString();
-        info.m_recordDetails = userDetails->toPlainText().toStdString();
-        info.m_parentId = "None";
-        CJsonSerializer::Serialize(wimuData,info,output);
-        databaseAccess = new DbBlock;
-        QString temp = QString::fromStdString(output);//TODO remove
-        databaseAccess->addRecordInDB(temp);
+        //info.m_parentId = "None";
+        //CJsonSerializer::Serialize(wimuData,info,output);
         successLabel->setText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"));
         mainWindow->setStatusBarText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"));
 
     }
-    movie->stop();
-    spinner->hide();
 }
+
+//*************************** ON DIALOG CLOSED *************************
 
 void RecordsDialog::reject()
 {
@@ -206,4 +245,69 @@ void RecordsDialog::reject()
     MainWindow* win = (MainWindow*)currWin;
     win->getRecordsFromDB();
     QDialog::reject();
+}
+
+
+//*************************** DATA BASE ACCESS *************************
+
+// Insert single records
+
+bool RecordsDialog::addRecordInDB(QString& json, bool isSingleRecord)
+{
+
+    QNetworkAccessManager *manager = new QNetworkAccessManager();
+    QByteArray dataByteArray (json.toStdString().c_str(),json.toStdString().length());                                                                                                                  //Your webservice URL
+    QNetworkRequest request;
+    if(isSingleRecord)
+    {
+       request.setUrl(QUrl("http://127.0.0.1:5000/insertrecord"));
+    }
+    else
+    {
+        request.setUrl(QUrl("http://127.0.0.1:5000/insertrecord/concat/"+ current_uuid));
+    }
+
+    QByteArray postDataSize = QByteArray::number(dataByteArray.size());
+    request.setRawHeader("User-Agent", "ApplicationNameV01");
+    request.setRawHeader("Content-Type", "application/json");
+    request.setRawHeader("Content-Length", postDataSize);
+
+    if (manager) {
+    bool result;
+
+    QNetworkReply *reply = manager->post(request, dataByteArray);
+
+    QEventLoop loop;
+    result = connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,SLOT(quit()));
+    loop.exec();
+    reponseRecue(reply);
+
+   }
+    return true;
+}
+
+void RecordsDialog::reponseRecue(QNetworkReply* reply)
+{
+    if (reply->error() == QNetworkReply::NoError)
+   {
+       std::string strJson = reply->readAll();
+       Json::Value root;
+          Json::Reader reader;
+          bool parsingSuccessful = reader.parse( strJson.c_str(), root );     //parse process
+          if ( !parsingSuccessful )
+          {
+              std::cout  << "Failed to parse"
+                     << reader.getFormattedErrorMessages();
+          }
+          current_uuid = QString::fromStdString(root.get("valeuruuid", "A Default Value if not exists" ).asString());
+   }
+   else
+   {
+       qDebug() << "error connect";
+       qWarning() << "ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
+       qDebug() << "Request failed, " << reply->errorString();
+       qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
+       qDebug() << reply->readAll();
+   }
+   delete reply;
 }
