@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     this->grabGesture(Qt::PinchGesture);
 
     this->setWindowTitle(QString::fromUtf8("Open-IMU"));
-    this->setMinimumSize(900,700);
+    this->setMinimumSize(1000,700);
 
     menu = new ApplicationMenuBar(this);
     statusBar = new QStatusBar(this);
@@ -121,7 +121,7 @@ void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
             movieSpinnerBar->start();
             getDataFromUUIDFromDB(selectedRecord.m_recordId);
             recordsTab = new RecordsWidget(this,acceleroData,selectedRecord);
-            replaceTab(recordsTab,"Informations enregistrement");
+            addTab(recordsTab,selectedRecord.m_recordName);
             movieSpinnerBar->stop();
             spinnerStatusBar->hide();
             statusBar->showMessage(tr("Prêt"));
@@ -143,7 +143,7 @@ void MainWindow::openRecordDialog()
 void MainWindow::openAlgorithmTab()
 {
     algorithmTab = new AlgorithmTab(this,selectedRecord);
-    replaceTab(algorithmTab,"Algorithmes");
+    addTab(algorithmTab,"Algo.: " + selectedRecord.m_recordName);
 }
 
 void MainWindow::setStatusBarText(QString txt)
@@ -184,7 +184,7 @@ void MainWindow::deleteRecord()
 void MainWindow::openHomeTab()
 {
     homeWidget = new HomeWidget(this);
-    replaceTab(homeWidget,"Accueil");
+    addTab(homeWidget,"Accueil");
 }
 
 bool MainWindow::getRecordsFromDB()
@@ -381,7 +381,7 @@ void MainWindow::openHelp(){
     helpDialog->exec();
 }
 
-void MainWindow::replaceTab(QWidget * replacement, std::string label)
+void MainWindow::addTab(QWidget * tab, std::string label)
 {
     int index = 0;
     bool found  = false;
@@ -400,18 +400,10 @@ void MainWindow::replaceTab(QWidget * replacement, std::string label)
             found = true;
         }
     }
-    if(found){
-        tabWidget->removeTab(index);
-        if (replacement){
-            tabWidget->insertTab(index, replacement, QString::fromStdString(label));
-            tabWidget->setCurrentWidget(tabWidget->widget(index));
-        }
-    }
-    else
-    {
-        tabWidget->addTab(replacement,QString::fromStdString(label));
-        tabWidget->setCurrentWidget(tabWidget->widget(tabWidget->count()-1));
-    }
+
+    tabWidget->addTab(tab,QString::fromStdString(label));
+    tabWidget->setCurrentWidget(tabWidget->widget(tabWidget->count()-1));
+
     setStatusBarText(tr("Prêt"));
 }
 

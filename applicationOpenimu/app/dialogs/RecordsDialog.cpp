@@ -181,7 +181,10 @@ bool RecordsDialog::addRecordFileListToBD(QStringList & fileList, std::string fo
     }
     return true;
 }
-
+        {
+        }
+        {
+        }
 void RecordsDialog::addRecordSlot()
 {
     MainWindow * mainWindow = (MainWindow*)m_parent;
