@@ -9,7 +9,8 @@
 #include<QComboBox>
 #include<QTextEdit>
 #include<QMovie>
-#include "core/components/blockType/DbBlock.h"
+#include<QNetworkReply>
+#include<QNetworkAccessManager>
 
 class RecordsDialog : public QDialog
 {
@@ -20,8 +21,11 @@ public:
     RecordsDialog(QWidget *parent);
     ~RecordsDialog();
     void reject();
-private slots:
+    bool addRecordInDB(QString& json, bool isSingleRecord);
+    bool addRecordFileListToBD(QStringList & fileList, std::string folderPath);
 
+public slots:
+    void reponseRecue(QNetworkReply* reply);
     void selectRecordSlot();
     void addRecordSlot();
 
@@ -30,13 +34,11 @@ private slots:
     QPushButton *selectRecord;
     QString folderToAdd;
     QLabel* folderSelected;
-    bool isFolderSelected=false;
     QPushButton *addRecord;
     QGridLayout *mainLayout;
     QLabel* recordNaming;
     QLineEdit *recordName;
     QComboBox* imuSelectComboBox;
-    DbBlock * databaseAccess;
     QLabel* selectedImu;
     QLabel* selectedImuLabel;
     QLabel* successLabel;
@@ -47,5 +49,8 @@ private slots:
     QLabel* spinner;
     QMovie* movie;
     QWidget* m_parent;
+
+    QString current_uuid;
+    bool isFolderSelected=false;
 };
 #endif // RECORDSDIALOG_H

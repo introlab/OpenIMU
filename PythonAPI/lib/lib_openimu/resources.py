@@ -55,7 +55,9 @@ class InsertRecord(Resource):
 
             mongo.db.magnetometres.insert(magnetometres)
 #---------------------------------------------------------------
-        return str(uuid)
+        jsonresult = dict(valeuruuid=uuid)
+        schema = schemas.Uuid()
+        return schema.dump(jsonresult)
 
 class getRecords(Resource):
     def get(self):
