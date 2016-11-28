@@ -1,6 +1,6 @@
 #include "AlgorithmParametersDialog.h"
 #include "../widgets/AlgorithmTab.h"
-#include "../utils/Utils.h"
+#include "../utilities/utilities.h"
 #include <QDebug>
 
 AlgorithmParametersDialog::AlgorithmParametersDialog(QWidget * parent, AlgorithmInfo algorithm)
@@ -17,7 +17,7 @@ AlgorithmParametersDialog::AlgorithmParametersDialog(QWidget * parent, Algorithm
         if(p.m_name != "uuid")
         {
             QString parameterText = p.m_name.c_str() + QString::fromStdString(": ") + p.m_description.c_str();
-            QLabel * itemLabel = new QLabel(Utils::capitalizeFirstCharacter(parameterText));
+            QLabel * itemLabel = new QLabel(Utilities::capitalizeFirstCharacter(parameterText));
 
             QLineEdit * itemLineEdit = new QLineEdit();
 

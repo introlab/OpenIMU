@@ -41,63 +41,93 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AccDataDisplay</name>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="58"/>
-        <source>Données accéléromètre (en ms)</source>
+        <location filename="../app/AccDataDisplay.ui" line="14"/>
+        <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="92"/>
-        <location filename="../app/AccDataDisplay.cpp" line="335"/>
-        <source>Axe X</source>
+        <location filename="../app/AccDataDisplay.ui" line="48"/>
+        <source>Journée d&apos;enregistrement : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="93"/>
-        <location filename="../app/AccDataDisplay.cpp" line="342"/>
+        <location filename="../app/AccDataDisplay.ui" line="73"/>
+        <source>DummyText</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AccDataDisplay.ui" line="95"/>
+        <source>Reset Zoom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AccDataDisplay.ui" line="125"/>
+        <source>Affichage des axes :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AccDataDisplay.ui" line="142"/>
+        <location filename="../app/AccDataDisplay.cpp" line="287"/>
         <source>Axe Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="94"/>
-        <location filename="../app/AccDataDisplay.cpp" line="348"/>
-        <source>Axe Z</source>
+        <location filename="../app/AccDataDisplay.ui" line="155"/>
+        <location filename="../app/AccDataDisplay.cpp" line="281"/>
+        <source>Axe X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="95"/>
-        <location filename="../app/AccDataDisplay.cpp" line="352"/>
-        <source>Norme</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../app/AccDataDisplay.cpp" line="96"/>
-        <location filename="../app/AccDataDisplay.cpp" line="361"/>
+        <location filename="../app/AccDataDisplay.ui" line="168"/>
+        <location filename="../app/AccDataDisplay.cpp" line="306"/>
         <source>Moyenne mobile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="104"/>
-        <source>Affichage des axes:</source>
+        <location filename="../app/AccDataDisplay.ui" line="181"/>
+        <location filename="../app/AccDataDisplay.cpp" line="297"/>
+        <source>Norme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="130"/>
-        <source>Sélection Horaire</source>
+        <location filename="../app/AccDataDisplay.ui" line="194"/>
+        <location filename="../app/AccDataDisplay.cpp" line="293"/>
+        <source>Axe Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="137"/>
-        <source>Modifier l&apos;enregistrement</source>
+        <location filename="../app/AccDataDisplay.ui" line="218"/>
+        <source>Sélection Horaire :</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="139"/>
-        <source>Nom de l&apos;enregistrement*:</source>
+        <location filename="../app/AccDataDisplay.ui" line="242"/>
+        <source>Modifier l&apos;enregistrement :</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="144"/>
-        <source>Détails de l&apos;enregistrement: </source>
+        <location filename="../app/AccDataDisplay.ui" line="248"/>
+        <source>Utilisez la sélection horaire pour modifier l&apos;heure de début et de fin puis sauvegardez vos changements</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AccDataDisplay.ui" line="257"/>
+        <source>Nom de l&apos;enregistrement* :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AccDataDisplay.ui" line="267"/>
+        <source>Détails de l&apos;enregistrement : </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AccDataDisplay.ui" line="315"/>
+        <source>Enregistrer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AccDataDisplay.cpp" line="32"/>
+        <source>Données accéléromètre (en ms)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -218,6 +248,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../app/widgets/ApplicationMenuBar.cpp" line="44"/>
         <source>&amp;Langue</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FullGraphDialog</name>
+    <message>
+        <location filename="../app/FullGraphDialog.ui" line="23"/>
+        <source>Graphique Détaillé</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -476,42 +514,37 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../app/MainWindow.cpp" line="69"/>
-        <location filename="../app/MainWindow.cpp" line="327"/>
+        <location filename="../app/MainWindow.cpp" line="76"/>
+        <location filename="../app/MainWindow.cpp" line="394"/>
         <source>Accueil</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="77"/>
-        <location filename="../app/MainWindow.cpp" line="99"/>
-        <location filename="../app/MainWindow.cpp" line="120"/>
-        <location filename="../app/MainWindow.cpp" line="350"/>
+        <location filename="../app/MainWindow.cpp" line="84"/>
+        <location filename="../app/MainWindow.cpp" line="106"/>
+        <location filename="../app/MainWindow.cpp" line="127"/>
+        <location filename="../app/MainWindow.cpp" line="417"/>
         <source>Prêt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="110"/>
+        <location filename="../app/MainWindow.cpp" line="117"/>
         <source>Chargement de l&apos;enregistrement...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="288"/>
+        <location filename="../app/MainWindow.cpp" line="350"/>
         <source>Enregistrement effacé avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="292"/>
+        <location filename="../app/MainWindow.cpp" line="354"/>
         <source>Echec de suppression de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>QWidget</name>
-    <message>
-        <location filename="../app/dialogs/FullGraphDialog.cpp" line="17"/>
-        <source>Données brutes</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <location filename="../app/dialogs/RecordsDialog.cpp" line="22"/>
         <source>Enregistrements</source>
@@ -588,7 +621,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="142"/>
         <location filename="../app/dialogs/RecordsDialog.cpp" line="48"/>
         <source>Wimu_2016_10_18_PatientX</source>
         <translation type="unfinished"></translation>
@@ -675,14 +707,14 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="194"/>
         <location filename="../app/dialogs/RecordsDialog.cpp" line="195"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="196"/>
         <source>L&apos;enregistrement </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="194"/>
         <location filename="../app/dialogs/RecordsDialog.cpp" line="195"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="196"/>
         <source> à été ajouté avec succès</source>
         <translation type="unfinished"></translation>
     </message>

@@ -1,3 +1,3 @@
 cd ..\PythonAPI\src\
-start /B "" "C:\Python27\python.exe" "api.py"
+tasklist /nh /fi "imagename eq python.exe" | find /i "python.exe" > nul || (start /B "" "C:\Python27\python.exe" "api.py")
 exit

@@ -187,6 +187,7 @@ void RecordsDialog::addRecordSlot()
         info.m_imuType = imuSelectComboBox->currentText().toStdString();
         info.m_imuPosition = imuPositionComboBox->currentText().toStdString();
         info.m_recordDetails = userDetails->toPlainText().toStdString();
+        info.m_parentId = "None";
         CJsonSerializer::Serialize(wimuData,info,output);
         databaseAccess = new DbBlock;
         QString temp = QString::fromStdString(output);//TODO remove

@@ -28,6 +28,7 @@ void WimuRecord::Deserialize(Json::Value& root)
             temp.m_imuType = root[index].get("format", "").asString();
             temp.m_imuPosition = root[index].get("position", "").asString();
             temp.m_recordDetails = root[index].get("comment", "").asString();
+            temp.m_parentId = root[index].get("parent_id", "").asString();
             m_WimuRecordList.push_back(temp);
         }
 }

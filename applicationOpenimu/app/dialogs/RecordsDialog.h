@@ -10,7 +10,6 @@
 #include<QTextEdit>
 #include<QMovie>
 #include "core/components/blockType/DbBlock.h"
-#include "../acquisition/ObjectInfo.h"
 #include "../acquisition/RecordInfo.h"
 
 class RecordsDialog : public QDialog

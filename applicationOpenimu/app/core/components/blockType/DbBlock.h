@@ -24,6 +24,7 @@ public slots:
         void resultInsertionResponse(QNetworkReply* reply);
      private:
         QNetworkAccessManager* manager;
+        QTime* addRecordTime;
 };
 
 #endif // DBWRITEBLOCK_H

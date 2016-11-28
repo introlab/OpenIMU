@@ -2,7 +2,7 @@
 #include "../dialogs/AlgorithmParametersDialog.h"
 #include "../../MainWindow.h"
 #include "ResultsTabWidget.h"
-#include "../utils/Utils.h"
+#include "../utilities/Utilities.h"
 #include "QHeaderView"
 #include <QEventLoop>
 #include <QDebug>
@@ -58,13 +58,13 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
 
         for(int i =0; i<m_algorithmSerializer.m_algorithmList.size();i++)
         {
-            QString name = Utils::capitalizeFirstCharacter(m_algorithmSerializer.m_algorithmList.at(i).m_name);
+            QString name = Utilities::capitalizeFirstCharacter(m_algorithmSerializer.m_algorithmList.at(i).m_name);
             algorithmTableWidget->setItem(i, 0, new QTableWidgetItem(name));
 
-            QString description = Utils::capitalizeFirstCharacter(m_algorithmSerializer.m_algorithmList.at(i).m_description);
+            QString description = Utilities::capitalizeFirstCharacter(m_algorithmSerializer.m_algorithmList.at(i).m_description);
             algorithmTableWidget->setItem(i, 1, new QTableWidgetItem(description));
 
-            QString author = Utils::capitalizeFirstCharacter(m_algorithmSerializer.m_algorithmList.at(i).m_author);
+            QString author = Utilities::capitalizeFirstCharacter(m_algorithmSerializer.m_algorithmList.at(i).m_author);
             algorithmTableWidget->setItem(i, 2, new QTableWidgetItem(author));
         }
 

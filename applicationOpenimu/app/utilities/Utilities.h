@@ -1,5 +1,5 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef UTILITIES_H
+#define UTILITIES_H
 
 #include <string>
 #include <qstring>
@@ -8,13 +8,13 @@
 
 using namespace std;
 
-class Utils
+class Utilities
 {
    public:
     static QString capitalizeFirstCharacter(QString myString);
     static QString capitalizeFirstCharacter(string myString);
 };
 
-#endif // UTILS_H
+#endif // UTILITIES_H
 
 

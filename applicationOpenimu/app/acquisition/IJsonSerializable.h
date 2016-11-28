@@ -1,8 +1,8 @@
 #ifndef IJSONSERIALIZABLE_H
 #define IJSONSERIALIZABLE_H
 
-#include "RecordInfo.h"
 #include "json/json.h"
+#include "RecordInfo.h"
 
 class IJsonSerializable
 {

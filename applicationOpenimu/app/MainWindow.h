@@ -24,7 +24,6 @@
 #include "widgets/RecordsWidget.h"
 #include "widgets/AlgorithmTab.h"
 #include "widgets/HomeWidget.h"
-#include "../acquisition/ObjectInfo.h"
 #include "../acquisition/RecordInfo.h"
 
 class MainWindow : public QMainWindow
@@ -67,6 +66,10 @@ class MainWindow : public QMainWindow
         bool deleteRecordFromList();
         void reponseRecueDelete(QNetworkReply* reply);
 
+        //Rename specific record
+        bool renameRecordFromUUID(std::string uuid, std::string newname);
+        void reponseRecueRename(QNetworkReply* reply);
+
         void deleteRecord();
         void openAlgorithmTab();
         void openHomeTab();
@@ -92,8 +95,8 @@ class MainWindow : public QMainWindow
         HelpDialog *helpDialog;
         DbBlock * databaseAccess = new DbBlock;
         RecordsDialog * rDialog;
-        WimuRecord* record;
-        WimuAcquisition* wimuAcquisition;
+        WimuRecord record;
+        WimuAcquisition wimuAcquisition;
         RecordsWidget* recordsTab;
         AlgorithmTab* algorithmTab;
         QLabel* spinnerStatusBar;

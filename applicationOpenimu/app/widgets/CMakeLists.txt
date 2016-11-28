@@ -1,6 +1,6 @@
 SET(srcs
     ${srcs}    
-    ${CMAKE_CURRENT_SOURCE_DIR}/AlgorithmDetailedView.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/AlgorithmDetailedView.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ApplicationMenuBar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MyTreeWidget.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RangeSlider.cpp

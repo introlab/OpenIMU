@@ -7,7 +7,6 @@
 #include "QTableWidget"
 #include "algorithmdetailedview.h"
 #include "QMessageBox"
-#include "../acquisition/ObjectInfo.h"
 #include "../acquisition/RecordInfo.h"
 #include "../algorithm/AlgorithmInfoSerializer.h"
 #include "../algorithm/AlgorithmOutputInfoSerializer.h"

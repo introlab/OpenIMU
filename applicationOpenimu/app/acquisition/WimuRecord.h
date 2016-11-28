@@ -3,9 +3,8 @@
 
 #include <string>
 #include "IJsonSerializable.h"
+#include <vector>
 #include "RecordInfo.h"
-#include<vector>
-
 
 class WimuRecord : public IJsonSerializable
 {

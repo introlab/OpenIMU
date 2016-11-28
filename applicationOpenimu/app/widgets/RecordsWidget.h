@@ -5,12 +5,13 @@
 #include <QGridLayout>
 #include <string>
 #include <QLabel>
-#include "../acquisition/ObjectInfo.h"
+#include <QLineEdit>
 #include "../acquisition/RecordInfo.h"
 #include "acquisition/WimuAcquisition.h"
 #include "acquisition/WimuRecord.h"
 #include "AccDataDisplay.h"
 #include "dialogs/FullGraphDialog.h"
+#include"../utilities/OpenImuButton.h"
 
 class RecordsWidget: public QWidget
 {
@@ -18,27 +19,31 @@ class RecordsWidget: public QWidget
 
     public:
     RecordsWidget();
-    RecordsWidget(QWidget *parent,WimuAcquisition *data, RecordInfo record);
+    RecordsWidget(QWidget *parent, const WimuAcquisition& data, RecordInfo record);
 
     ~RecordsWidget();
 
     public slots:
     void openFullGraphSlot();
+    void renameRecord();
 
     private:
     QGridLayout* layout;
-    WimuAcquisition* acceleroData;
+    WimuAcquisition acceleroData;
     RecordInfo record;
+    QLineEdit* recordNameEdit;
     QLabel* recordTitle;
     QLabel* recordDate;
     QLabel* imuType;
     QLabel* positionImu;
     QLabel* detailsRecord;
-    QPushButton* deleteBtn;
-    QPushButton* seeFullGraphBtn;
-    QPushButton* goToNextStep;
+    OpenImuButton* deleteBtn;
+    OpenImuButton* seeFullGraphBtn;
+    OpenImuButton* goToNextStep;
     FullGraphDialog *fDialog;
-
+    bool renameRecordClicked;
+    QWidget* m_parent;
+    QPushButton * editRecord;
 };
 
 #endif

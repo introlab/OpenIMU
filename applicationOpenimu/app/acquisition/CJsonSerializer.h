@@ -2,7 +2,6 @@
 #define CJSONSERIALIZER_H
 
 #include "IJsonSerializable.h"
-#include "ObjectInfo.h"
 
 class CJsonSerializer
 {

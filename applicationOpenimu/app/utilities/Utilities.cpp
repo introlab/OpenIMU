@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "Utilities.h"
 
 #include <string>
 #include <qstring>
@@ -7,12 +7,12 @@
 
 using namespace std;
 
-QString Utils::capitalizeFirstCharacter(QString myString)
+QString Utilities::capitalizeFirstCharacter(QString myString)
 {
     return myString.at(0).toUpper() + myString.mid(1);
 }
 
-QString Utils::capitalizeFirstCharacter(string myString)
+QString Utilities::capitalizeFirstCharacter(string myString)
 {
     QString myQString = QString::fromStdString(myString);
     return myQString.at(0).toUpper() + myQString.mid(1);
