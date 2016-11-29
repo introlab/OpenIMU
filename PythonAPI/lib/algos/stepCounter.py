@@ -16,8 +16,10 @@ class stepCounter(Algorithm):
         self.name = "Compteur de pas"
         self.filename = "stepCounter"
         self.details = "Aucun détail pour l'instant."
+
         self.params.uuid = 0
         self.infos.uuid = "Identifiant unique d'un enregistrement"
+        self.possible.uuid = "Un identifiant ObjectId"
 
     def run(self):
         """

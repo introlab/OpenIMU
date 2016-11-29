@@ -40,10 +40,10 @@ class Algorithm(object):
 #Property List
     _params = {}
     _infos = {}
+    _possible = {}
     _output = {}
     _request = {}
     _database = None
-
 
     _information = ""
     _author = ""
@@ -83,6 +83,13 @@ class Algorithm(object):
     def infos(self, value):        self._infos = value
 
     @property
+    def possible(self):
+        return self._possible
+    @possible.setter
+    def possible(self, value):
+        self._possible = value
+
+    @property
     def params(self):        return self._params
     @params.setter
     def params(self, value):        self._params = value
@@ -110,6 +117,7 @@ class Algorithm(object):
                 """
         self._time = timer()
         self._infos = Dictionnary()
+        self._possible = Dictionnary()
         self._params = Dictionnary()
         self._output = Dictionnary()
         self._request = Dictionnary()
