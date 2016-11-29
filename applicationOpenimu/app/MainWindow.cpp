@@ -285,6 +285,7 @@ void MainWindow::savedResultsReponse(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError)
     {
+        savedResults.m_algorithmOutputList.clear();
         std::string reponse = reply->readAll().toStdString();
 
         if(reponse != "")
