@@ -231,8 +231,12 @@ class AlgoList(Resource):
                 param = {}
                 for keys in instance.params.keys():
                     param['name'] =  keys
-                    param['info'] = instance.infos[keys]
-                    param['value'] = instance.params[keys]
+                    try :
+                        param['info'] = instance.infos[keys]
+                        param['possible'] = instance.possible[keys]
+                    except:
+                        pass
+
                     param['default'] = instance.params[keys]
                     params.append(param.copy())
 

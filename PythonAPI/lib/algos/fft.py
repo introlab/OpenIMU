@@ -16,10 +16,14 @@ class fft(Algorithm):
         self.author = "L'équipe d'OpenIMU"
         self.name = "FFT"
         self.details = "Fait la FFT sur chaque dimension, à travers le temps."
+
         self.params.uuid = 0
         self.infos.uuid = "Identifiant unique d'un enregistrement"
+        self.possible.uuid = "Un identifiant ObjectID"
+
         self.params.bins = 1024
-        self.infos.bins = "Nombre de bins par dimensions."
+        self.infos.bins = "Nombre de columnes par dimensions."
+        self.possible.bins = "Un chiffre de 1 à 2*N"
 
     def run(self):
         schema = schemas.Sensor(many=True)

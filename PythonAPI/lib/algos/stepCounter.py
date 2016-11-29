@@ -15,8 +15,10 @@ class stepCounter(Algorithm):
         self.author = "L'équipe d'OpenIMU"
         self.name = "Compteur de pas"
         self.details = "Aucun détail pour l'instant."
+
         self.params.uuid = 0
         self.infos.uuid = "Identifiant unique d'un enregistrement"
+        self.possible.uuid = "Un identifiant ObjectId"
 
     def run(self):
         """
