@@ -43,7 +43,7 @@ class Sensor(Schema):
     y = fields.Float(as_string = False)
     z = fields.Float(as_string = False)
     t = fields.Int(as_string = False)
-    ref = fields.UUID()
+    ref = fields.Str()
 
 class RecordRequest(Schema):
     record = fields.Nested(Record)
