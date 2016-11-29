@@ -13,6 +13,7 @@ class ParameterInfo(Schema):
     name = fields.Str();
     description = fields.Str();
     value = fields.Str();
+    defaultValue = fields.Str();
 
 class AlgorithmInfo(Schema):
     name = fields.Str();
@@ -25,6 +26,7 @@ class AlgorithmInfo(Schema):
 class AlgorithmResults(Schema):
     value = fields.Int(as_string = False);
     executionTime = fields.Float(as_string = False);
+    resultName = fields.Str();
     date = fields.Str();
     startTime = fields.Str();
     endTime = fields.Str();
@@ -32,14 +34,16 @@ class AlgorithmResults(Schema):
     algorithmId = fields.Str();
     algorithmName = fields.Str();
     algorithmParameters = fields.Nested(ParameterInfo, many=True);
-    data_used = fields.Str();
+    recordId = fields.Str();
+    recordImuPosition = fields.Str();
+    recordName = fields.Str();
 
 class Sensor(Schema):
     x = fields.Float(as_string = False)
     y = fields.Float(as_string = False)
     z = fields.Float(as_string = False)
     t = fields.Int(as_string = False)
-    ref = fields.UUID()
+    ref = fields.Str()
 
 class RecordRequest(Schema):
     record = fields.Nested(Record)

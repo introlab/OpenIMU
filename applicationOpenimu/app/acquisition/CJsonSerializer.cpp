@@ -15,8 +15,6 @@ bool CJsonSerializer::Serialize( IJsonSerializable* pObj,  RecordInfo recordInfo
 
 bool CJsonSerializer::Deserialize( IJsonSerializable* pObj, std::string& input )
 {
-
-    qDebug() << "CJsonSerializer::Deserialize()";
    if (pObj == NULL)
       return false;
 
@@ -26,7 +24,6 @@ bool CJsonSerializer::Deserialize( IJsonSerializable* pObj, std::string& input )
    if ( !reader.parse(input, deserializeRoot) )
       return false;
 
-   qDebug() << "CJsonSerializer::Deserialize(): about to call the other deserialize";
    pObj->Deserialize(deserializeRoot);
 
    return true;

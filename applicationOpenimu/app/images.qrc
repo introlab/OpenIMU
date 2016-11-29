@@ -6,5 +6,8 @@
         <file>icons/check.png</file>
         <file>icons/trash.png</file>
         <file>icons/addrecord.png</file>
+        <file>icons/sliced.png</file>
+        <file>icons/file2.png</file>
+        <file>icons/results.png</file>
     </qresource>
 </RCC>

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from lib_openimu.algorithm import Algorithm
 from lib_openimu import schemas
 from bson.objectid import ObjectId
@@ -10,19 +11,20 @@ class stepCounter(Algorithm):
 
     def __init__(self):
         super(stepCounter, self).__init__()
-        self.description = "Algo Test Algorithm"
-        self.author = "OpenIMU Team"
-        self.details = "No details yet."
+        self.description = "Compteur de pas"
+        self.author = "L'équipe d'OpenIMU"
+        self.name = "Compteur de pas"
+        self.details = "Aucun détail pour l'instant."
         self.params.uuid = 0
-        self.infos.uuid = "Unique ID"
+        self.infos.uuid = "Identifiant unique d'un enregistrement"
 
     def run(self):
         """
-        Algorithm for StepCounter
-        Step 1 : Import the  data from the database
-        Step 2 : Calculate the moving average of the data
-        Step 3 : Find the Peaks within a certain spacing and limit
-        :return: Nothing by default, but self.ouput is still useful to return
+        Algorithme pour  un compteur de pas
+        Étape 1 : Importer les données de l'enregistrement provenant de la base de données
+        Étape 2 : Calculater la moyenne mobile sur les données
+        Étape 3 : Identifier les sommets séparer par un certain intervale et une limite
+        :return: Rien par défaut, mais self.ouput et quand même utile à retourner
         """
         schema = schemas.Sensor(many=True)
         ref = self.database.db.accelerometres.find({'ref': ObjectId(self.params.uuid)})
@@ -48,11 +50,11 @@ class stepCounter(Algorithm):
         return  np.convolve(magnetude, np.ones((N,))/ N,mode='valid')[(N-1):]
 
     def find_peaks(self,data,spacing = 1, limit = None):
-        """Finds peaks in `data` which are of `spacing` width and >=`limit`.
-        :param data: values
-        :param spacing: minimum spacing to the next peak (should be 1 or more)
-        :param limit: peaks should have value greater or equal
-        :return: A list of position of the peaks
+        """Identifier les sommets dans les données qui sont séparé par un espacement et supérieur à une limite.
+        :param data: valeur
+        :param spacing: espacement minimum avant le prochain sommets (devrais être 1 ou plus)
+        :param limit: sommets devrais avoir un sommets supérieurs ou égal
+        :return: Liste des position des sommets
         """
         len = data.size
         x = np.zeros(len + 2 * spacing)

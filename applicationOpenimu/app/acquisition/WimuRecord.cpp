@@ -19,7 +19,7 @@ void WimuRecord::Serialize( Json::Value& root, RecordInfo recordInfo, std::strin
 void WimuRecord::Deserialize(Json::Value& root)
 {
     // deserialize primitives
-        //qDebug() << "here deserialize";
+
         for ( int index = 0; index < root.size(); ++index )
         {
             RecordInfo temp;

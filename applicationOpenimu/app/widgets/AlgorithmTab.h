@@ -27,6 +27,7 @@ public:
     bool getAlgorithmsFromDB();
     void setAlgorithm(AlgorithmInfo algorithmInfo);
     bool createAlgoRequest();
+    QWidget* getMainWindow();
 
 signals:
 

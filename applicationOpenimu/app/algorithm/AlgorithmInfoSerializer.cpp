@@ -12,8 +12,6 @@ AlgorithmInfoSerializer::~AlgorithmInfoSerializer()
 }
 void AlgorithmInfoSerializer::Serialize(AlgorithmInfo algorithmInfo, std::string& output)
 {
-    qDebug() << "calling AlgorithmInfoSerializer::Serialize()";
-
     Json::Value jsonAlgorithmInfo(Json::objectValue);
     Json::Value jsonAlgorithmParametersInfo(Json::arrayValue);
 
@@ -23,6 +21,7 @@ void AlgorithmInfoSerializer::Serialize(AlgorithmInfo algorithmInfo, std::string
     jsonAlgorithmInfo["details"] = algorithmInfo.m_details;
     jsonAlgorithmInfo["id"] = algorithmInfo.m_id;
     jsonAlgorithmInfo["name"] = algorithmInfo.m_name;
+    jsonAlgorithmInfo["filename"] = algorithmInfo.m_filename;
 
     // ... and the Algorithm Parameters
     for(int i = 0; i < algorithmInfo.m_parameters.size(); i++)
@@ -33,6 +32,7 @@ void AlgorithmInfoSerializer::Serialize(AlgorithmInfo algorithmInfo, std::string
        jsonParameter["description"] = p.m_description;
        jsonParameter["name"] = p.m_name;
        jsonParameter["value"] = p.m_value;
+       jsonParameter["defaultvalue"] = p.m_defaultValue;
 
        jsonAlgorithmParametersInfo.append(jsonParameter);
     }
@@ -46,8 +46,6 @@ void AlgorithmInfoSerializer::Serialize(AlgorithmInfo algorithmInfo, std::string
 
 void AlgorithmInfoSerializer::Deserialize(std::string& dataToDeserialize)
 {
-    qDebug() << "calling AlgorithmInfoSerializer::Deserialize()";
-
     Json::Value deserializeRoot;
     Json::Reader reader;
 
@@ -63,6 +61,7 @@ void AlgorithmInfoSerializer::Deserialize(std::string& dataToDeserialize)
         AlgorithmInfo algorithmInfo;
 
         algorithmInfo.m_name = algorithmListInJson[index].get("name", "").asString();
+        algorithmInfo.m_filename = algorithmListInJson[index].get("filename", "").asString();
         algorithmInfo.m_id = algorithmListInJson[index].get("id", "").asString();
         algorithmInfo.m_author = algorithmListInJson[index].get("author", "").asString();
         algorithmInfo.m_description = algorithmListInJson[index].get("description", "").asString();
@@ -74,6 +73,8 @@ void AlgorithmInfoSerializer::Deserialize(std::string& dataToDeserialize)
             ParameterInfo p;
             p.m_name = parameterListInJson[indexp].get("name", "").asString();
             p.m_description = parameterListInJson[indexp].get("info", "").asString();
+            p.m_value = parameterListInJson[indexp].get("value", "").asString();
+            p.m_defaultValue = parameterListInJson[indexp].get("default", "").asString();
             algorithmInfo.m_parameters.push_back(p);
         }
 

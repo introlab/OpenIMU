@@ -17,7 +17,9 @@ public:
 
    virtual void Serialize(AlgorithmOutputInfo algorithmOutputInfo, std::string& serializedAlgorithmOutputInfo);
    virtual void Deserialize(std::string& dataToDeserialize);
+   void DeserializeList(std::string& dataToDeserialize);
 
    AlgorithmOutputInfo m_algorithmOutput;
+   std::vector<AlgorithmOutputInfo> m_algorithmOutputList;
 };
 #endif
