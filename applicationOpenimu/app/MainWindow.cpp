@@ -117,17 +117,26 @@ void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
             statusBar->showMessage(tr("Chargement de l'enregistrement..."));
             selectedRecord = record.m_WimuRecordList.at(i);
 
-            spinnerStatusBar->show();
-            movieSpinnerBar->start();
+            startSpinner();
             getDataFromUUIDFromDB(selectedRecord.m_recordId);
             recordsTab = new RecordsWidget(this,wimuAcquisition,selectedRecord);
             addTab(recordsTab,selectedRecord.m_recordName);
-            movieSpinnerBar->stop();
-            spinnerStatusBar->hide();
+            stopSpinner();
             statusBar->showMessage(tr("Prêt"));
-
         }
     }
+}
+
+void MainWindow::startSpinner()
+{
+    spinnerStatusBar->show();
+    movieSpinnerBar->start();
+}
+
+void MainWindow::stopSpinner()
+{
+    movieSpinnerBar->stop();
+    spinnerStatusBar->hide();
 }
 
 void MainWindow:: openFile(){

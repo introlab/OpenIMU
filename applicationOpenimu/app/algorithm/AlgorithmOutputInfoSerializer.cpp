@@ -12,11 +12,10 @@ AlgorithmOutputInfoSerializer::~AlgorithmOutputInfoSerializer()
 
 void AlgorithmOutputInfoSerializer::Serialize(AlgorithmOutputInfo algorithmOutputInfo, std::string& serializedAlgorithmOutputInfo )
 {
-    qDebug() << "calling AlgorithmOutputInfoSerializer::Serialize()";
-
      Json::Value jsonAlgorithmOutput(Json::objectValue);
 
      // Serializing the member variables ...
+     jsonAlgorithmOutput["resultName"] = algorithmOutputInfo.m_resultName;
      jsonAlgorithmOutput["date"] = algorithmOutputInfo.m_date;
      jsonAlgorithmOutput["startTime"] = algorithmOutputInfo.m_startTime;
      jsonAlgorithmOutput["endTime"] = algorithmOutputInfo.m_endTime;
@@ -40,7 +39,6 @@ void AlgorithmOutputInfoSerializer::Serialize(AlgorithmOutputInfo algorithmOutpu
         jsonParameter["description"] = p.m_description;
         jsonParameter["name"] = p.m_name;
         jsonParameter["value"] = p.m_value;
-        //qDebug() << "Parameter Value: " << QString::fromStdString(p.m_value);
 
         jsonAlgorithmParametersInfo.append(jsonParameter);
      }
@@ -54,8 +52,6 @@ void AlgorithmOutputInfoSerializer::Serialize(AlgorithmOutputInfo algorithmOutpu
 
 void AlgorithmOutputInfoSerializer::Deserialize(std::string& dataToDeserialize)
 {
-    qDebug() << "calling AlgorithmOutputInfoSerializer::Deserialize()";
-
    Json::Value deserializeRoot;
    Json::Reader reader;
 
@@ -66,6 +62,7 @@ void AlgorithmOutputInfoSerializer::Deserialize(std::string& dataToDeserialize)
    }
 
     std::string missingInfos = "Not available in Database";
+    m_algorithmOutput.m_resultName = deserializeRoot.get("resultName", "").asString();
     m_algorithmOutput.m_value = deserializeRoot.get("result", "").asInt();
     m_algorithmOutput.m_executionTime = deserializeRoot.get("execute_time", "").asFloat();
     m_algorithmOutput.m_date = missingInfos;//deserializeRoot.get("date", "").asFloat();

@@ -82,7 +82,6 @@ std::vector<QString> DbBlock::getDaysInDB()
 
  void DbBlock::reponseRecue(QNetworkReply* reply)
  {
-     qDebug() << addRecordTime->elapsed();
      if (reply->error() == QNetworkReply::NoError)
     {
         //qDebug() << "connection";
@@ -92,7 +91,7 @@ std::vector<QString> DbBlock::getDaysInDB()
     }
     else
     {
-        qDebug() << "error connect";
+        qDebug() << "Une erreur s'est produite.";
         qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
         qDebug() << "Request failed, " << reply->errorString();
         qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
@@ -105,14 +104,11 @@ std::vector<QString> DbBlock::getDaysInDB()
  {
      if (reply->error() == QNetworkReply::NoError)
     {
-        qDebug() << "DbBlock::resultInsertionResponse(): No Error";
         std::string response(reply->readAll());
-        //AlgorithmOutputInfoSerializer algorithmOutputSerializer;
-        //algorithmOutputSerializer.Deserialize(response);
     }
     else
     {
-        qDebug() << "DbBlock::resultInsertionResponse(): error connect";
+        qDebug() << "DbBlock::resultInsertionResponse(): Une erreur s'est produite.";
         qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
         qDebug() << "Request failed, " << reply->errorString();
         qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();

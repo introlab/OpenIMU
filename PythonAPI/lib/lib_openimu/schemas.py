@@ -25,6 +25,7 @@ class AlgorithmInfo(Schema):
 class AlgorithmResults(Schema):
     value = fields.Int(as_string = False);
     executionTime = fields.Float(as_string = False);
+    resultName = fields.Str();
     date = fields.Str();
     startTime = fields.Str();
     endTime = fields.Str();

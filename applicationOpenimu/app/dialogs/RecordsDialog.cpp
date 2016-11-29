@@ -245,7 +245,6 @@ void RecordsDialog::addRecordSlot()
 
 bool RecordsDialog::addRecordInDB(QString& json, bool isSingleRecord)
 {
-
     QNetworkAccessManager *manager = new QNetworkAccessManager();
     QByteArray dataByteArray (json.toStdString().c_str(),json.toStdString().length());                                                                                                                  //Your webservice URL
     QNetworkRequest request;

@@ -12,7 +12,9 @@
 #include "../algorithm/AlgorithmInfoSerializer.h"
 #include "../acquisition/RecordInfo.h"
 #include "../core/components/blockType/DbBlock.h"
+#include "../MainWindow.h"
 #include <QPushButton>
+#include <QInputDialog>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -30,6 +32,7 @@ class ResultsTabWidget: public QWidget
     void exportToDBSlot();
 
     private:
+    QWidget* m_parent;
     QGridLayout* layout;
     QWidget* container;
     QLabel* imuType;

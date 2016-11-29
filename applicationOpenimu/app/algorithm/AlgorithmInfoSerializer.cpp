@@ -12,8 +12,6 @@ AlgorithmInfoSerializer::~AlgorithmInfoSerializer()
 }
 void AlgorithmInfoSerializer::Serialize(AlgorithmInfo algorithmInfo, std::string& output)
 {
-    qDebug() << "calling AlgorithmInfoSerializer::Serialize()";
-
     Json::Value jsonAlgorithmInfo(Json::objectValue);
     Json::Value jsonAlgorithmParametersInfo(Json::arrayValue);
 
@@ -46,8 +44,6 @@ void AlgorithmInfoSerializer::Serialize(AlgorithmInfo algorithmInfo, std::string
 
 void AlgorithmInfoSerializer::Deserialize(std::string& dataToDeserialize)
 {
-    qDebug() << "calling AlgorithmInfoSerializer::Deserialize()";
-
     Json::Value deserializeRoot;
     Json::Reader reader;
 

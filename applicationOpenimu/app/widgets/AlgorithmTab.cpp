@@ -118,11 +118,13 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
                              );
 }
 
+QWidget* AlgorithmTab::getMainWindow()
+{
+    return m_parent;
+}
+
 void AlgorithmTab::setAlgorithm(AlgorithmInfo algorithmInfo)
 {
-    qDebug() << "calling setAlgorithm()" ;
-    qDebug() << "calling setAlgorithm() : Algorithm: " + QString::fromStdString(algorithmInfo.m_name) ;
-
     algorithmParameters->Clear();
 
     //TODO:MADO selectedDataValues->setText(Utils::capitalizeFirstCharacter(QString::fromStdString(m_selectedRecord.m_recordName)));
@@ -134,7 +136,6 @@ void AlgorithmTab::setAlgorithm(AlgorithmInfo algorithmInfo)
 
 void AlgorithmTab::openResultTab()
 {
-    qDebug() << "calling AlgorithmTab::openResultTab()";
     bool showMessage = false;
     if(m_selectedAlgorithm.m_parameters.size() != 0)
     {
@@ -145,7 +146,7 @@ void AlgorithmTab::openResultTab()
                 showMessage = true;
             }
         }
-        qDebug() << "calling AlgorithmTab::openResultTab(): checked parameters";
+
         if(showMessage)
         {
             QMessageBox messageBox;
@@ -154,12 +155,9 @@ void AlgorithmTab::openResultTab()
         }
         else
         {
-            qDebug() << "calling AlgorithmTab::openResultTab(): createAlgoRequest()";
             createAlgoRequest();
         }
     }
-    else
-        qDebug() << "calling AlgorithmTab::openResultTab(): param size is zero";
 }
 
 void AlgorithmTab::openParametersWindow(const QModelIndex &index)
@@ -187,7 +185,6 @@ void AlgorithmTab::openParametersWindow(const QModelIndex &index)
 
 bool AlgorithmTab::createAlgoRequest()
 {
-    qDebug() << "calling AlgorithmTab::openResultTab(): createAlgoRequest()";
     std::string url = "http://127.0.0.1:5000/algo?filename=" + m_selectedAlgorithm.m_name +
             "&uuid=" + m_selectedRecord.m_recordId;
 
@@ -208,7 +205,6 @@ bool AlgorithmTab::createAlgoRequest()
 
     QEventLoop loop;
 
-    qDebug() << "calling AlgorithmTab::createAlgoRequest(): about to connect..";
     bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,SLOT(quit()));
     loop.exec();
     reponseAlgoRecue(reply);
@@ -251,20 +247,17 @@ void AlgorithmTab::reponseRecue(QNetworkReply* reply)
 
 void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
 {
-    qDebug() << "calling AlgorithmTab::reponseAlgoRecue()";
     if (reply->error() == QNetworkReply::NoError)
    {
        std::string reponse = reply->readAll().toStdString();
        AlgorithmOutputInfoSerializer algorithmOutputInfoSerializer;
-       qDebug() << "calling AlgorithmTab::reponseAlgoRecue() Response : " + QString::fromStdString(reponse);
+
        if(reponse != "")
        {
-           qDebug() << "calling AlgorithmTab::reponseAlgoRecue(): About to Deserialize response";
            algorithmOutputInfoSerializer.Deserialize(reponse);
 
-           qDebug() << "calling AlgorithmTab::reponseAlgoRecue(): About to create ResultsTab";
            MainWindow * test = (MainWindow*)m_parent;
-           AlgorithmInfo &algoInfo = m_algorithmSerializer.m_algorithmList.at(selectedIndexRow);
+           AlgorithmInfo &algoInfo = m_selectedAlgorithm;
 
            algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmId = algoInfo.m_id;
            algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmName = algoInfo.m_name;
@@ -273,14 +266,10 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
            ResultsTabWidget* res = new ResultsTabWidget(this, m_selectedRecord, algorithmOutputInfoSerializer.m_algorithmOutput);
            test->addTab(res,algoInfo.m_name + ": " + m_selectedRecord.m_recordName);
        }
-       else
-       {
-           qDebug() << "calling AlgorithmTab::reponseAlgoRecue() Reponse = empty string";
-       }
    }
    else
    {
-       qDebug() << "calling AlgorithmTab::reponseAlgoRecue() Error connect";
+       //qDebug() << "calling AlgorithmTab::reponseAlgoRecue() Error connect";
        //qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
        //qDebug() << "Request failed, " << reply->errorString();
        //qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
