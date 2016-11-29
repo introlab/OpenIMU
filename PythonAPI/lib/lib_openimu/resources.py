@@ -23,7 +23,7 @@ class InsertRecord(Resource):
                     del record['parent_id']
                 elif mongo.db.record.find_one({'_id': ObjectId(record['parent_id'])}) is None:
                     abort(401, message="parent_id is invalid")
-            uuid = mongo.db.record.insert(record)
+            uuid = str(mongo.db.record.insert(record))
 #---------------------------------------------------------------
         if 'accelerometres' in data:
             schema = schemas.Sensor(many=True)
@@ -165,17 +165,17 @@ class GetData(Resource):
         #    abort(401, message=str(errors))
 #--------------------------------------------------------------
         schema = schemas.Sensor(many=True)
-        accelerometres,errors = schema.dump(mongo.db.accelerometres.find({'ref': ObjectId(uuid)}))
+        accelerometres,errors = schema.dump(mongo.db.accelerometres.find({'ref': uuid}))
         if errors:
             abort(401, message=str(errors))
 #--------------------------------------------------------------
         schema = schemas.Sensor(many=True)
-        magnetometres,errors = schema.dump(mongo.db.magnetometres.find({'ref': ObjectId(uuid)}))
+        magnetometres,errors = schema.dump(mongo.db.magnetometres.find({'ref': uuid}))
         if errors:
             abort(401, message=str(errors))
 #--------------------------------------------------------------
         schema = schemas.Sensor(many=True)
-        gyrometres,errors = schema.dump(mongo.db.gyrometres.find({'ref': ObjectId(uuid)}))
+        gyrometres,errors = schema.dump(mongo.db.gyrometres.find({'ref': uuid}))
         if errors:
             abort(401, message=str(errors))
 #--------------------------------------------------------------
@@ -190,9 +190,9 @@ class DeleteData(Resource):
         uuid = request.args.get('uuid')
         if uuid is None:
             abort(401,message='enter valid uuid')
-        res1 = mongo.db.accelerometres.delete_many({'ref':ObjectId(uuid)})
-        res2 = mongo.db.gyrometres.delete_many({'ref':ObjectId(uuid)})
-        res3 = mongo.db.magnetometres.delete_many({'ref':ObjectId(uuid)})
+        res1 = mongo.db.accelerometres.delete_many({'ref':uuid})
+        res2 = mongo.db.gyrometres.delete_many({'ref':uuid})
+        res3 = mongo.db.magnetometres.delete_many({'ref':uuid})
         res4 = mongo.db.record.delete_many({'_id':ObjectId(uuid)})
         result = res1.deleted_count+res2.deleted_count+res3.deleted_count+res4.deleted_count
         return 'Affected ' + str(result)     + ' entries.'
