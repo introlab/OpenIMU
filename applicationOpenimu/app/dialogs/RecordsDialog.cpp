@@ -160,7 +160,7 @@ bool RecordsDialog::addRecordFileListToBD(QStringList & fileList, std::string fo
             info.m_imuType = imuSelectComboBox->currentText().toStdString();
             info.m_imuPosition = imuPositionComboBox->currentText().toStdString();
             info.m_recordDetails = userDetails->toPlainText().toStdString();
-            info.m_recordId = "None";
+            info.m_parentId = "None";
             CJsonSerializer::Serialize(wimuData,info, output);
             QString temp = QString::fromStdString(output);
 
@@ -228,8 +228,6 @@ void RecordsDialog::addRecordSlot()
 
     if(success)
     {
-        //info.m_parentId = "None";
-        //CJsonSerializer::Serialize(wimuData,info,output);
         successLabel->setText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"));
         mainWindow->setStatusBarText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"));
 

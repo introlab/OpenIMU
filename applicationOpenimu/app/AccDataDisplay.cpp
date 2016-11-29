@@ -144,6 +144,7 @@ void AccDataDisplay::slotSaveNewSetRange()
     wimuData->setDataAccelerometer(sliceData);
 
     m_recordInfo.m_recordDetails =  "Cet enregistrement est un sous-ensemble de :" + m_recordInfo.m_recordName + ". " + ui->recordDetailsLineEdit->text().toStdString();
+    m_recordInfo.m_parentId = m_recordInfo.m_recordId;
     m_recordInfo.m_recordName = m_recordInfo.m_recordName + ":" + ui->recordNameLineEdit->text().toStdString();
 
     std::string output;
