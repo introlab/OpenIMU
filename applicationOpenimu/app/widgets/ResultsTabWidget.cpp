@@ -122,12 +122,11 @@ void ResultsTabWidget::exportToDBSlot()
     resultsNameInputDialog->setWindowIcon(QIcon(QString::fromUtf8("../icons/logo.ico")));
 
     // Also sets the text for the InputDialog
-    QString suggestedName = QDir::home().dirName() + "_";
     QString message = "Veuillez entrer un nom permettant d'identifier ces résultats.";
     bool dialogResponse;
     QString dialogText =  resultsNameInputDialog->getText(NULL ,"Identification des résultats",
                                                           message, QLineEdit::Normal,
-                                                          suggestedName, &dialogResponse);
+                                                          "", &dialogResponse);
     if (dialogResponse && !dialogText.isEmpty())
     {
         std::string serializedData;

@@ -708,17 +708,17 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="165"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="164"/>
         <source>Enregistrement des résultats sous forme de fichier PDF en cours...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="170"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="169"/>
         <source>Save Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="170"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="169"/>
         <source>PDF (*.pdf)</source>
         <translation type="unfinished"></translation>
     </message>
