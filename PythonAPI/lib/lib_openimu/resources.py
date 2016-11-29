@@ -28,7 +28,6 @@ class InsertRecord(Resource):
                 uuid = mongo.db.record.insert(record)
             except pyErr.DuplicateKeyError:
                 abort(401, message="DuplicateKeyError")
-            uuid = str(mongo.db.record.insert(record))
 #---------------------------------------------------------------
         if 'accelerometres' in data:
             schema = schemas.Sensor(many=True)
