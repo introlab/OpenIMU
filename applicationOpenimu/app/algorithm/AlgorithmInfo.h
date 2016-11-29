@@ -9,6 +9,7 @@ struct ParameterInfo
     std::string m_name;
     std::string m_description;
     std::string m_value;
+    std::string m_defaultValue;
 };
 
 struct AlgorithmInfo

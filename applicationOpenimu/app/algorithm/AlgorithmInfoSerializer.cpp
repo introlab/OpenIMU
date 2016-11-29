@@ -33,6 +33,7 @@ void AlgorithmInfoSerializer::Serialize(AlgorithmInfo algorithmInfo, std::string
        jsonParameter["description"] = p.m_description;
        jsonParameter["name"] = p.m_name;
        jsonParameter["value"] = p.m_value;
+       jsonParameter["defaultvalue"] = p.m_defaultValue;
 
        jsonAlgorithmParametersInfo.append(jsonParameter);
     }
@@ -74,6 +75,8 @@ void AlgorithmInfoSerializer::Deserialize(std::string& dataToDeserialize)
             ParameterInfo p;
             p.m_name = parameterListInJson[indexp].get("name", "").asString();
             p.m_description = parameterListInJson[indexp].get("info", "").asString();
+            p.m_value = parameterListInJson[indexp].get("value", "").asString();
+            p.m_defaultValue = parameterListInJson[indexp].get("default", "").asString();
             algorithmInfo.m_parameters.push_back(p);
         }
 

@@ -40,6 +40,7 @@ void AlgorithmOutputInfoSerializer::Serialize(AlgorithmOutputInfo algorithmOutpu
         jsonParameter["description"] = p.m_description;
         jsonParameter["name"] = p.m_name;
         jsonParameter["value"] = p.m_value;
+        jsonParameter["defaultValue"] = p.m_defaultValue;
         //qDebug() << "Parameter Value: " << QString::fromStdString(p.m_value);
 
         jsonAlgorithmParametersInfo.append(jsonParameter);
@@ -86,6 +87,7 @@ void AlgorithmOutputInfoSerializer::Deserialize(std::string& dataToDeserialize)
         ParameterInfo p;
         p.m_name = serializedParameters[i].get("name", "").asString();
         p.m_value = serializedParameters[i].get("value", "").asString();
+        p.m_defaultValue = serializedParameters[i].get("defaultValue", "").asString();
         p.m_description = serializedParameters[i].get("description", "").asString();
 
         m_algorithmOutput.m_algorithmParameters.push_back(p);

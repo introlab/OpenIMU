@@ -17,7 +17,7 @@ class fft(Algorithm):
         self.params.uuid = 0
         self.infos.uuid = "Unique Id of the data"
         self.params.bins = 1024
-        self.infos.bins = "Number of bins per dimensions. Default is 1024"
+        self.infos.bins = "Number of bins per dimensions."
 
     def run(self):
         schema = schemas.Sensor(many=True)
