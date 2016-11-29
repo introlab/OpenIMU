@@ -13,6 +13,7 @@ class ParameterInfo(Schema):
     name = fields.Str();
     description = fields.Str();
     value = fields.Str();
+    defaultValue = fields.Str();
 
 class AlgorithmInfo(Schema):
     name = fields.Str();

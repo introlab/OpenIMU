@@ -20,9 +20,9 @@ AlgorithmParametersDialog::AlgorithmParametersDialog(QWidget * parent, Algorithm
             QLabel * itemLabel = new QLabel(Utilities::capitalizeFirstCharacter(parameterText));
 
             QLineEdit * itemLineEdit = new QLineEdit();
-
             parametersLayout->addWidget(itemLabel);
             parametersLayout->addWidget(itemLineEdit);
+            itemLineEdit->setPlaceholderText(p.m_defaultValue.c_str());
         }
     }
 

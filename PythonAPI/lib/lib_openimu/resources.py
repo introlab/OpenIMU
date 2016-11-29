@@ -232,6 +232,7 @@ class AlgoList(Resource):
                 for keys in instance.params.keys():
                     param['name'] =  keys
                     param['info'] = instance.infos[keys]
+                    param['value'] = instance.params[keys]
                     param['default'] = instance.params[keys]
                     params.append(param.copy())
 
