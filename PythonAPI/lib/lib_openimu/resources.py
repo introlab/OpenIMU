@@ -25,7 +25,7 @@ class InsertRecord(Resource):
                 elif mongo.db.record.find_one({'_id': ObjectId(record['parent_id'])}) is None:
                     abort(401, message="parent_id is invalid")
             try:
-                uuid = mongo.db.record.insert(record)
+                uuid = str(mongo.db.record.insert(record))
             except pyErr.DuplicateKeyError:
                 abort(401, message="DuplicateKeyError")
 #---------------------------------------------------------------
