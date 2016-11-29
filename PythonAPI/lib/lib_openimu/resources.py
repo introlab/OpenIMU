@@ -1,6 +1,7 @@
 from flask import jsonify, request, make_response
 from flask_restful import Resource, Api, abort,reqparse
 from shared import mongo
+from pymongo import errors as pyErr
 from pymongo import ReturnDocument
 import schemas
 from bson.objectid import ObjectId
@@ -23,7 +24,11 @@ class InsertRecord(Resource):
                     del record['parent_id']
                 elif mongo.db.record.find_one({'_id': ObjectId(record['parent_id'])}) is None:
                     abort(401, message="parent_id is invalid")
-            uuid = mongo.db.record.insert(record)
+            try:
+                uuid = mongo.db.record.insert(record)
+            except pyErr.DuplicateKeyError:
+                abort(401, message="DuplicateKeyError")
+
 #---------------------------------------------------------------
         if 'accelerometres' in data:
             schema = schemas.Sensor(many=True)

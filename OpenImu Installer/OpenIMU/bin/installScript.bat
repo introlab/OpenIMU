@@ -3,6 +3,7 @@ if not exist "C:\data\db" mkdir C:\data\db
 CD C:/Program Files/MongoDB/Server/3.2/bin
 mongod --logpath=C:/data/db/log.txt --install
 net start MongoDB
+mongo.exe --eval "db.record.createIndex({"name":1},{unique:true})"
 CD C:/Python27/Scripts
 pip install numpy
 pip install flask
