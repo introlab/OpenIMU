@@ -1,15 +1,17 @@
 #include "algorithmtab.h"
-#include "../../MainWindow.h"
 #include "../dialogs/AlgorithmParametersDialog.h"
+#include "../../MainWindow.h"
 #include "ResultsTabWidget.h"
 #include "QHeaderView"
 #include <QEventLoop>
 #include <QDebug>
 
-AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
+AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget(parent)
 {
         m_parent = parent;
-        m_uuid = uuid;
+        m_selectedRecord = selectedRecord;
+
+        MainWindow * mainWindow = (MainWindow*)m_parent;
 
         //By default
         selectedIndexRow = 0;
@@ -22,11 +24,6 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
         algorithmListGroupBox->setFlat(true);
         algorithmListLayout = new QVBoxLayout();
 
-        parametersGroupBox = new QGroupBox();
-        parametersGroupBox->setFixedHeight(250);
-        parametersGroupBox->setFlat(true);
-        parametersLayout = new QVBoxLayout();
-
         algorithmTabLayout = new QVBoxLayout();
 
 
@@ -36,6 +33,7 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
 
         algorithmTableWidget->setRowCount(10);
         algorithmTableWidget->setColumnCount(3);
+        //algorithmTableWidget->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
 
         algorithmTableHeaders<<"Nom"<<"Description"<<"Auteur";
 
@@ -64,17 +62,10 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
         }
         algorithmTableWidget->setRowCount(algoList.m_algorithmList.size());
 
-        connect(algorithmTableWidget, SIGNAL(doubleClicked(const QModelIndex& )), this, SLOT(openParametersWindow(const QModelIndex &)));
+        connect(algorithmTableWidget, SIGNAL(clicked(const QModelIndex& )), this, SLOT(openParametersWindow(const QModelIndex &)));
 
         // -- Parameter Section
-        currentSelectionLabel = new QLabel(tr("Sélection courante"));
-        selectedDataLabel = new QLabel(tr("Données sélectionnées: "));
-        selectedDataValues = new QLabel(tr(" "));
-        selectedAlgorithmLabel = new QLabel(tr("Algorithme sélectionné: "));
-        selectedAlgorithmValues = new QLabel(tr(" "));
-        parametersLabel = new QLabel(tr("Paramètre(s):"));
-        parametersValues = new QLabel(tr(""));
-        parametersValues->setWordWrap(true);
+        algorithmParameters = new AlgorithmDetailedView();
 
         applyAlgorithm = new QPushButton(tr("Appliquer algorithme"));
         connect(applyAlgorithm, SIGNAL(clicked()),this, SLOT(openResultTab()));
@@ -84,18 +75,9 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
         algorithmListLayout->addWidget(algorithmTableWidget);
         algorithmListGroupBox->setLayout(algorithmListLayout);
 
-        parametersLayout->addWidget(currentSelectionLabel);
-        parametersLayout->addWidget(selectedDataLabel);
-        parametersLayout->addWidget(selectedDataValues);
-        parametersLayout->addWidget(selectedAlgorithmLabel);
-        parametersLayout->addWidget(selectedAlgorithmValues);
-        parametersLayout->addWidget(parametersLabel);
-        parametersLayout->addWidget(parametersValues);
-        parametersGroupBox->setLayout(parametersLayout);
-
         algorithmTabLayout->addWidget(algorithmListGroupBox);
+        algorithmTabLayout->addWidget(algorithmParameters);
         algorithmTabLayout->addSpacing(50);
-        algorithmTabLayout->addWidget(parametersGroupBox);
         algorithmTabLayout->addWidget(applyAlgorithm);
 
         this->setLayout(algorithmTabLayout);
@@ -110,47 +92,42 @@ AlgorithmTab::AlgorithmTab(QWidget * parent, std::string uuid) : QWidget(parent)
                              "padding: 6px; }"
                              "QPushButton:pressed { background-color: rgba(70, 95, 104, 0.7);}"
                              );
-}
 
-void AlgorithmTab::resetSelectionSection()
-{
-    selectedDataValues->setText("");
-    selectedAlgorithmValues->setText("");
-    parametersValues->setText("");
+
 }
 
 void AlgorithmTab::setAlgorithm(AlgorithmInfo algorithmInfo)
 {
-    resetSelectionSection();
+    algorithmParameters->Clear();
     selectedAlgorithm = algoList.m_algorithmList.at(selectedIndexRow);
     selectedAlgorithm.parameters.swap(algorithmInfo.parameters);
-
-    if(algorithmInfo.parameters.size() == 0 ||
-            ((algorithmInfo.parameters.size() == 1) && (algorithmInfo.parameters.at(0).name == "uuid")))
-    {
-        parametersValues->setText("Aucun paramètre pour cet algorithme");
+    algorithmParameters->setAlgorithm(algorithmInfo,selectedAlgorithm);
     }
-    else
-    {
-        for(int i=0; i<algorithmInfo.parameters.size();i++)
-        {
-            if(selectedAlgorithm.parameters.at(i).name != "uuid")
-            {
-                QString parameterName = QString::fromStdString(selectedAlgorithm.parameters.at(i).name);
-                QString parameterValue = QString::fromStdString(selectedAlgorithm.parameters.at(i).value);
-
-                QString previousParameters = parametersValues->text();
-                parametersValues->setText(previousParameters + parameterName + ": " + parameterValue+ "\n" );
-            }
-        }
-    }
-    selectedAlgorithmValues->setText(QString::fromStdString(selectedAlgorithm.name));
-}
 
 
 void AlgorithmTab::openResultTab()
 {
-    createAlgoRequest();
+    bool showMessage = false;
+    if(selectedAlgorithm.parameters.size() != 0)
+    {
+        for(int i=0; i< selectedAlgorithm.parameters.size();i++)
+        {
+            if(selectedAlgorithm.parameters.at(i).name != "uuid" && selectedAlgorithm.parameters.at(i).value.empty())
+            {
+                showMessage = true;
+            }
+        }
+        if(showMessage)
+        {
+            QMessageBox messageBox;
+            messageBox.warning(0,tr("Avertissement"),"Veuillez entrer des valeur pour le(s) paramètre(s)");
+            messageBox.setFixedSize(500,200);
+        }
+        else
+        {
+            createAlgoRequest();
+        }
+    }
 }
 
 void AlgorithmTab::openParametersWindow(const QModelIndex &index)
@@ -168,6 +145,7 @@ void AlgorithmTab::openParametersWindow(const QModelIndex &index)
         }
         else
         {
+            setAlgorithm(clickedAlgorithm);
             AlgorithmParametersDialog * algorithmParametersWindow = new AlgorithmParametersDialog(this, clickedAlgorithm);
             algorithmParametersWindow->exec();
             delete algorithmParametersWindow;
@@ -178,8 +156,9 @@ void AlgorithmTab::openParametersWindow(const QModelIndex &index)
 bool AlgorithmTab::createAlgoRequest()
 {
     std::string algoName = selectedAlgorithm.name;
-    std::string url = "http://127.0.0.1:5000/algo?filename="+algoName+"&uuid="+m_uuid;
+    std::string url = "http://127.0.0.1:5000/algo?filename="+algoName+"&uuid="+m_selectedRecord.m_recordId;
 
+    qDebug()<< QString::fromStdString(url);
     for(int i=0; i< selectedAlgorithm.parameters.size();i++)
     {
         if(selectedAlgorithm.parameters.at(i).name != "uuid")
@@ -222,18 +201,16 @@ bool AlgorithmTab::getAlgorithmsFromDB()
 
 void AlgorithmTab::reponseRecue(QNetworkReply* reply)
 {
+    MainWindow * mainWindow = (MainWindow*)m_parent;
     if (reply->error() == QNetworkReply::NoError)
    {
-       std::string testReponse = reply->readAll();
+       mainWindow->setStatusBarText(tr("Application de l'agorithme complété"));
+       std::string testReponse = reply->readAll().toStdString();
        CJsonSerializer::Deserialize(&algoList, testReponse);
    }
    else
    {
-       //qDebug() << "error connect";
-       //qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
-       //qDebug() << "Request failed, " << reply->errorString();
-       //qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
-       //qDebug() << reply->readAll();
+       mainWindow->setStatusBarText(tr("Application de l'agorithme non réussi"));
    }
    delete reply;
 }
@@ -242,14 +219,16 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError)
    {
-       std::string reponse = reply->readAll();
-       //qDebug() << QString::fromStdString(reponse);
-
+       std::string reponse = reply->readAll().toStdString();
        AlgorithmOutput output;
-       CJsonSerializer::Deserialize(&output, reponse);
-       MainWindow * test = (MainWindow*)m_parent;
-       ResultsTabWidget* res = new ResultsTabWidget(this, algoList.m_algorithmList.at(selectedIndexRow), output);
-       test->replaceTab(res,"Résultats");
+       if(reponse != "")
+       {
+           CJsonSerializer::Deserialize(&output, reponse);
+           MainWindow * test = (MainWindow*)m_parent;
+           AlgorithmInfo &algoInfo = algoList.m_algorithmList.at(selectedIndexRow);
+           ResultsTabWidget* res = new ResultsTabWidget(this, m_selectedRecord, algoInfo, output);
+           test->replaceTab(res,algoInfo.name + ": " + m_selectedRecord.m_recordName);
+       }
    }
    else
    {

@@ -5,6 +5,8 @@
 #include "QLabel"
 #include "QStandardItemModel"
 #include "QTableWidget"
+#include "algorithmdetailedview.h"
+#include "QMessageBox"
 #include "../algorithm/AlgorithmList.h"
 #include "../algorithm/AlgorithmOutput.h"
 #include "../acquisition/CJsonSerializer.h"
@@ -13,13 +15,14 @@
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 #include <QPushButton>
-#include <QGroupBox>
+#include <QTextEdit>
+
 
 class AlgorithmTab : public QWidget
 {
     Q_OBJECT
 public:
-    explicit AlgorithmTab(QWidget *parent, std::string uuid);
+    explicit AlgorithmTab(QWidget *parent, RecordInfo selectedRecord);
     bool getAlgorithmsFromDB();
     void setAlgorithm(AlgorithmInfo algorithmInfo);
     bool createAlgoRequest();
@@ -33,6 +36,7 @@ public slots:
     void openResultTab();
 
 private:
+
     QVBoxLayout * algorithmTabLayout;
 
     // -- Algorithm List Section
@@ -46,15 +50,8 @@ private:
     QGroupBox * spacerGroupBox;
 
     // -- Parameter Section
-    QGroupBox * parametersGroupBox;
-    QVBoxLayout * parametersLayout;
-    QLabel * currentSelectionLabel;
-    QLabel * selectedDataLabel;
-    QLabel * selectedDataValues;
-    QLabel * selectedAlgorithmLabel;
-    QLabel * selectedAlgorithmValues;
-    QLabel * parametersLabel;
-    QLabel * parametersValues;
+    AlgorithmDetailedView * algorithmParameters;
+
 
     // -- Result Section
     QPushButton * applyAlgorithm;
@@ -65,8 +62,9 @@ private:
     AlgorithmList algoList;
     AlgorithmInfo selectedAlgorithm;
 
+    RecordInfo m_selectedRecord;
+
     void removeChildren(QLayout* layout);
-    void resetSelectionSection();
 };
 
 #endif // ALGORITHMTAB_H

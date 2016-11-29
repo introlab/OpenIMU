@@ -1,40 +1,35 @@
 #ifndef ACCDATADISPLAY_H
 #define ACCDATADISPLAY_H
 
-#include <iostream>
-#include <QtCharts/QChartView>
-#include <QVBoxLayout>
-#include <QtCharts/QChartView>
+#include <QWidget>
 #include <QtCharts/QLineSeries>
-#include <QtCharts/QLegend>
-#include <QtCharts/QValueAxis>
-#include <QSlider>
-#include <QCheckBox>
-#include <QPushButton>
-#include <QNetworkReply>
-#include <QNetworkRequest>
-#include <QNetworkAccessManager>
+#include <QtCharts/QChartView>
 
-#include "acquisition/WimuAcquisition.h"
+
+#include "../acquisition/WimuAcquisition.h"
 #include "widgets/RangeSlider.h"
-#include "graph/DataChart.h"
-#include "graph/ChartView.h"
-#include"../../acquisition/CJsonSerializer.h"
-#include"../../acquisition/WimuRecord.h"
+#include "../graph/DataChart.h"
+#include "../graph/ChartView.h"
+#include"../acquisition/CJsonSerializer.h"
+#include"../acquisition/WimuRecord.h"
+#include "../core/components/blockType/DbBlock.h"
 
-QT_CHARTS_USE_NAMESPACE
+namespace Ui {
+class AccDataDisplay;
+}
 
 class AccDataDisplay : public QWidget
 {
     Q_OBJECT
 
 public:
-    AccDataDisplay();
-    AccDataDisplay( WimuAcquisition accData);
+    explicit AccDataDisplay(const WimuAcquisition& accData, QWidget *parent = 0);
     void fillChartSeries();
     void leftSliderValueChanged(double value);
     void rightSliderValueChanged(double value);
     void showSimplfiedDataDisplay();
+    void setInfo(RecordInfo recInfo);
+    ~AccDataDisplay();
 
 public slots:
 
@@ -47,8 +42,10 @@ public slots:
     void handleResetZoomBtn();
     void firstUpdated(const QVariant &v);
     void secondUpdated(const QVariant &v);
+    void slotSaveNewSetRange();
 
 private:
+    Ui::AccDataDisplay *ui;
     DataChart * chart;
     ChartView *chartView;
     QLineSeries *lineseriesX;
@@ -57,20 +54,12 @@ private:
     QLineSeries *lineseriesAccNorm;
     QLineSeries *lineseriesMovingAverage;
 
-    QCheckBox *checkboxX;
-    QCheckBox *checkboxY;
-    QCheckBox *checkboxZ;
-    QCheckBox *checkboxAccNorm;
-    QCheckBox *checkboxMovingAverage;
-    QLabel* dateRecorded;
-    QPushButton*pbtn;
-
     RangeSlider *rSlider;
-    QVBoxLayout* layout;
 
-    WimuAcquisition acceleroData;
     std::vector<frame> availableData;
     std::vector<frame> sliceData;
+    DbBlock * databaseAccess;
+    RecordInfo m_recordInfo;
 
     double rSliderValue;
     double lSliderValue;

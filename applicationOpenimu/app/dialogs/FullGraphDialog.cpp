@@ -1,22 +1,26 @@
 #include "FullGraphDialog.h"
+#include "ui_FullGraphDialog.h"
 
-FullGraphDialog::FullGraphDialog()
+FullGraphDialog::FullGraphDialog(QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::FullGraphDialog)
 {
-
+    ui->setupUi(this);
 }
 
-FullGraphDialog::~ FullGraphDialog()
+FullGraphDialog::~FullGraphDialog()
 {
-
+    delete ui;
 }
 
-FullGraphDialog::FullGraphDialog(WimuAcquisition accData)
+void FullGraphDialog::prepareDisplay(WimuAcquisition acceleroData, RecordInfo recordInfo)
 {
-    this->setMinimumSize(800,710);
+    m_dataDisplay = new AccDataDisplay(acceleroData);
+    m_dataDisplay->setInfo(recordInfo);
+    ui->mainLayout->addWidget(m_dataDisplay);
+}
 
-    this->setWindowTitle(QWidget::tr("Données brutes"));
-
-     mainLayout = new QVBoxLayout(this);
-     AccDataDisplay *dataDisplay = new AccDataDisplay(accData);
-     mainLayout->addWidget(dataDisplay);
+AccDataDisplay *FullGraphDialog::getAccDataDisplay()
+{
+    return m_dataDisplay;
 }

@@ -20,9 +20,21 @@ class activityTracker(Algorithm):
 
         self.description = "Activity Time Tracker Algorithm"
         self.author = "OpenIMU Team"
+        self.details = (
+                        "<b>Nom de l'algorithme:</b> <br/> Activity Time Tracker <br/>"
+                        "<b>Version:</b> <br/> <i>1.0</i><br/>"
+                        "<b>Pseudocode:</b> <br/> <i>y</i>=<i>x</i><br/>"
+                        "<b>Fonctionnement:</b> <br/>"
+                        "Step 1 : Import the data from the database <br/>"
+                        "Step 2 : Calculate the magnetude of the data <br/>"
+                        "Step 3 : Calculate the difference of the new magnetude list <br/>"
+                        "Step 4 : Calculate the % of diff(magnetude) that is higher than a threshold"
+                        )
 
         self.params.threshold = 0
+        self.infos.threshold = "Magnitude of accelerometers that define activity"
         self.params.uuid = 0
+        self.infos.uuid = "Unique Id of the data"
 
 
     def run(self):
@@ -54,4 +66,6 @@ class activityTracker(Algorithm):
         self.output.maximum = max(diff)
         self.output.minimum = min(diff)
         self.output.size = len(diff)
+        self.output.execute_time = self.timer
         return self.output
+

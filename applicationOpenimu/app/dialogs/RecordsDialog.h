@@ -1,3 +1,6 @@
+#ifndef RECORDSDIALOG_H
+#define RECORDSDIALOG_H
+
 #include<QDialog>
 #include<QPushButton>
 #include<QLabel>
@@ -14,9 +17,9 @@ class RecordsDialog : public QDialog
 
 public:
 
-    RecordsDialog(QWidget *parent=0);
+    RecordsDialog(QWidget *parent);
     ~RecordsDialog();
-
+    void reject();
 private slots:
 
     void selectRecordSlot();
@@ -43,4 +46,6 @@ private slots:
     QTextEdit* userDetails;
     QLabel* spinner;
     QMovie* movie;
+    QWidget* m_parent;
 };
+#endif // RECORDSDIALOG_H

@@ -167,7 +167,9 @@ class Algo(Resource):
         instance = my_class()
         instance.database = mongo
         instance.load(request.args)
+        instance.before_run()
         instance.run()
+        instance.after_run()
         return dict(instance.output)
 
 class AlgoList(Resource):
@@ -189,6 +191,7 @@ class AlgoList(Resource):
                 param = {}
                 for keys in instance.params.keys():
                     param['name'] =  keys
+                    param['info'] = instance.infos[keys]
                     params.append(param.copy())
 
                 algo['id'] = id
@@ -196,6 +199,7 @@ class AlgoList(Resource):
                 algo['params'] = params
                 algo['author'] = instance.author
                 algo['description'] = instance.description
+                algo['details'] = instance.details
 
                 content.append(algo.copy())
                 

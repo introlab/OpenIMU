@@ -5,6 +5,7 @@ DbBlock::DbBlock()
     :manager(new QNetworkAccessManager(this))
 {
     connect(manager, SIGNAL(finished(QNetworkReply *)), this, SLOT(reponseRecue(QNetworkReply*)));
+    addRecordTime = new QTime();
 }
 
 DbBlock::~DbBlock()
@@ -46,11 +47,14 @@ std::vector<QString> DbBlock::getDaysInDB()
         //qDebug() <<"Reply from server is"<< reply;
      }
     }
+     addRecordTime->setHMS(0,0,0,0);
+     addRecordTime->start();
      return true;
  }
 
  void DbBlock::reponseRecue(QNetworkReply* reply)
  {
+     qDebug() << addRecordTime->elapsed();
      if (reply->error() == QNetworkReply::NoError)
     {
         //qDebug() << "connection";
@@ -60,11 +64,11 @@ std::vector<QString> DbBlock::getDaysInDB()
     }
     else
     {
-        //qDebug() << "error connect";
-        //qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
-        //qDebug() << "Request failed, " << reply->errorString();
-        //qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
-        //qDebug() << reply->readAll();
+        qDebug() << "error connect";
+        qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
+        qDebug() << "Request failed, " << reply->errorString();
+        qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
+        qDebug() << reply->readAll();
     }
     delete reply;
  }

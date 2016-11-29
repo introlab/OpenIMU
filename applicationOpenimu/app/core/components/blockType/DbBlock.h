@@ -22,6 +22,7 @@ public slots:
 
      private:
         QNetworkAccessManager* manager;
+        QTime* addRecordTime;
 };
 
 #endif // DBWRITEBLOCK_H

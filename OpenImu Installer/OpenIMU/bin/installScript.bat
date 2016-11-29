@@ -11,3 +11,4 @@ pip install flask_marshmallow
 pip install flask_pymongo
 pip install simplejson
 pip install marshmallow==2.10.0
+pip install tornado

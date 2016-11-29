@@ -30,12 +30,14 @@ void AlgorithmList::Deserialize(Json::Value& root)
         temp.id = algo[index].get("id", "").asString();
         temp.author = algo[index].get("author", "").asString();
         temp.description = algo[index].get("description", "").asString();
+        temp.details = algo[index].get("details", "").asString();
 
         Json::Value params = algo[index].get("params", "");
         for ( int indexp = 0; indexp < params.size(); ++indexp )
         {
             ParametersInfo pInfo;
             pInfo.name = params[indexp].get("name", "").asString();
+            pInfo.description = params[indexp].get("info", "").asString();
             temp.parameters.push_back(pInfo);
 
         }
