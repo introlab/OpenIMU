@@ -24,7 +24,7 @@ class ResultsTabWidget: public QWidget
 
     public:
     ResultsTabWidget();
-    ResultsTabWidget(QWidget *parent, RecordInfo &recordInfo, AlgorithmOutputInfo output);
+    ResultsTabWidget(QWidget *parent, AlgorithmOutputInfo output);
      ~ResultsTabWidget();
 
     public slots:
@@ -38,7 +38,6 @@ class ResultsTabWidget: public QWidget
     QLabel* imuType;
     QPushButton* exportToPdf;
     QPushButton* saveResultsToDB;
-    RecordInfo m_recordInfo;
     QChartView *chartView;
 
     QLabel* algoLabel;

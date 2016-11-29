@@ -125,7 +125,7 @@ class Algorithm(object):
         for key in self.request:
             self.output.request[key] = self.request[key]
         self.output.runtime = self.timer
-        self.output.data_used = self.params.uuid
+        self.output.recordId = self.params.uuid
         warnings.warn('default Implementation of after_run')
 
     def load(self,args = {}):

@@ -23,7 +23,9 @@ void AlgorithmOutputInfoSerializer::Serialize(AlgorithmOutputInfo algorithmOutpu
      jsonAlgorithmOutput["measureUnit"] = algorithmOutputInfo.m_measureUnit;
      jsonAlgorithmOutput["value"] = algorithmOutputInfo.m_value;
 
-     jsonAlgorithmOutput["data_used"] = algorithmOutputInfo.m_recordId;
+     jsonAlgorithmOutput["recordId"] = algorithmOutputInfo.m_recordId;
+     jsonAlgorithmOutput["recordName"] = algorithmOutputInfo.m_recordName;
+     jsonAlgorithmOutput["recordImuPosition"] = algorithmOutputInfo.m_recordImuPosition;
 
      jsonAlgorithmOutput["algorithmId"] = algorithmOutputInfo.m_algorithmId;
      jsonAlgorithmOutput["algorithmName"] = algorithmOutputInfo.m_algorithmName;
@@ -72,7 +74,9 @@ void AlgorithmOutputInfoSerializer::Deserialize(std::string& dataToDeserialize)
     m_algorithmOutput.m_endTime = missingInfos;//deserializeRoot.get("endTime", "").asFloat();
     m_algorithmOutput.m_measureUnit = missingInfos;//deserializeRoot.get("measureUnit", "").asFloat();
 
-    m_algorithmOutput.m_recordId = deserializeRoot.get("data_used", "").asString();
+    m_algorithmOutput.m_recordId = deserializeRoot.get("recordId", "").asString();
+    m_algorithmOutput.m_recordName = deserializeRoot.get("recordName", "").asString();
+    m_algorithmOutput.m_recordImuPosition = deserializeRoot.get("recordImuPosition", "").asString();
 
     m_algorithmOutput.m_algorithmId = deserializeRoot.get("algorithmId", "").asString();
     m_algorithmOutput.m_algorithmName = deserializeRoot.get("algorithmName", "").asString();

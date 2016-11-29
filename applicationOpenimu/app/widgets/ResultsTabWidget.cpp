@@ -3,10 +3,9 @@
 #include <QPdfWriter>
 #include <QPainter>
 
-ResultsTabWidget::ResultsTabWidget(QWidget *parent,RecordInfo& recordInfo, AlgorithmOutputInfo output):QWidget(parent)
+ResultsTabWidget::ResultsTabWidget(QWidget *parent, AlgorithmOutputInfo output):QWidget(parent)
 {
     m_parent = parent;
-    m_recordInfo= recordInfo;
     init(output);
 }
 
@@ -21,7 +20,7 @@ void ResultsTabWidget::init(AlgorithmOutputInfo output)
     this->setLayout(layout);
 
     QString algoName = "Algorithme appliqué: " + QString::fromStdString(m_algorithmOutputInfo.m_algorithmName);
-    QString recordName = QString::fromStdString(m_recordInfo.m_recordName);
+    QString recordName = QString::fromStdString(m_algorithmOutputInfo.m_recordName);
 
     algoLabel = new QLabel(algoName);
     algoLabel->setFont(QFont( "Arial", 12, QFont::Bold));
@@ -30,7 +29,7 @@ void ResultsTabWidget::init(AlgorithmOutputInfo output)
     dateLabel = new QLabel("Date de l'enregistrement: " + QString::fromStdString(m_algorithmOutputInfo.m_date));
     startHourLabel = new QLabel("Heure de début séléctionné: " + QString::fromStdString(m_algorithmOutputInfo.m_startTime));
     endHourLabel = new QLabel("Heure de fin séléctionné: " + QString::fromStdString(m_algorithmOutputInfo.m_endTime));
-    positionLabel = new QLabel("Position du Wimu: " + QString::fromStdString(m_recordInfo.m_imuPosition));
+    positionLabel = new QLabel("Position du Wimu: " + QString::fromStdString(m_algorithmOutputInfo.m_recordImuPosition));
     measureUnitLabel = new QLabel("Unité de mesure: " + QString::fromStdString(m_algorithmOutputInfo.m_measureUnit)) ;
     computeTimeLabel = new QLabel("Temps de calculs: " +QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_executionTime) + "ms"));
 

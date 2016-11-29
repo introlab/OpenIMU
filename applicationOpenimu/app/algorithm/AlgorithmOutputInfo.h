@@ -19,6 +19,8 @@ struct AlgorithmOutputInfo
 
     // Information about the Record used (Data)
     std::string m_recordId;     // The ID of the data used
+    std::string m_recordName;   // The name of the data used
+    std::string m_recordImuPosition;   // The position of the data used
 
     // Information about the AlgorithmInfo
     std::string m_algorithmId;  // The ID of the algorithm used
