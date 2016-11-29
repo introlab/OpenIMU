@@ -52,9 +52,18 @@ class MainWindow : public QMainWindow
         void onListItemDoubleClicked(QTreeWidgetItem* item,int column);
         void closeWindow();
 
+        //Visual feedback
+        void startSpinner();
+        void stopSpinner();
+
         //Getting records from DB
         bool getRecordsFromDB();
         void reponseRecue(QNetworkReply* reply);
+
+        //Getting results from DB
+        bool getSavedResultsFromDB();
+        void savedResultsReponse(QNetworkReply* reply);
+
 
         //Getting data from specific record
         bool getDataFromUUIDFromDB(std::string uuid);
@@ -95,6 +104,7 @@ class MainWindow : public QMainWindow
         DbBlock * databaseAccess = new DbBlock;
         RecordsDialog * rDialog;
         WimuRecord record;
+        AlgorithmOutputInfoSerializer savedResults;
         WimuAcquisition wimuAcquisition;
         RecordsWidget* recordsTab;
         AlgorithmTab* algorithmTab;

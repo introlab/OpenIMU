@@ -89,6 +89,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     connect(addRecord, SIGNAL(clicked()), this, SLOT(openRecordDialog()));
     connect(deleteRecord, SIGNAL(clicked()), this, SLOT(deleteRecordFromList()));
 
+    getSavedResultsFromDB();
     getRecordsFromDB();
 }
 
@@ -110,6 +111,7 @@ void MainWindow::onListItemClicked(QTreeWidgetItem* item, int column)
 
 void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
 {
+    bool isRecord = false;
     for(int i=0; i<record.m_WimuRecordList.size();i++)
     {
         if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text(column).toStdString()) == 0)
@@ -117,20 +119,45 @@ void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
             statusBar->showMessage(tr("Chargement de l'enregistrement..."));
             selectedRecord = record.m_WimuRecordList.at(i);
 
-            spinnerStatusBar->show();
-            movieSpinnerBar->start();
+            startSpinner();
             getDataFromUUIDFromDB(selectedRecord.m_recordId);
             recordsTab = new RecordsWidget(this,wimuAcquisition,selectedRecord);
             addTab(recordsTab,selectedRecord.m_recordName);
-            movieSpinnerBar->stop();
-            spinnerStatusBar->hide();
+            stopSpinner();
             statusBar->showMessage(tr("Prêt"));
-
+            isRecord = true;
+        }        
+    }
+    if(!isRecord)
+    {
+        for(int i=0; i<savedResults.m_algorithmOutputList.size();i++)
+        {
+            if(savedResults.m_algorithmOutputList.at(i).m_resultName.compare(item->text(column).toStdString()) == 0)
+            {
+                statusBar->showMessage(tr("Chargement du resultat..."));
+                ResultsTabWidget* resultTab = new ResultsTabWidget(this,savedResults.m_algorithmOutputList.at(i));
+                addTab(resultTab,savedResults.m_algorithmOutputList.at(i).m_resultName);
+                statusBar->showMessage(tr("Prêt"));
+            }
         }
     }
+
+}
+
+void MainWindow::startSpinner()
+{
+    spinnerStatusBar->show();
+    movieSpinnerBar->start();
+}
+
+void MainWindow::stopSpinner()
+{
+    movieSpinnerBar->stop();
+    spinnerStatusBar->hide();
 }
 
 void MainWindow:: openFile(){
+    getSavedResultsFromDB();
     getRecordsFromDB();
 }
 
@@ -200,6 +227,24 @@ bool MainWindow::getRecordsFromDB()
     return true;
 }
 
+//Getting results from DB
+bool MainWindow::getSavedResultsFromDB()
+{
+    QNetworkRequest request(QUrl("http://127.0.0.1:5000/algoResults"));
+    request.setRawHeader("User-Agent", "ApplicationNameV01");
+    request.setRawHeader("Content-Type", "application/json");
+
+    QNetworkAccessManager *manager = new QNetworkAccessManager();
+    QNetworkReply *reply = manager->get(request);
+
+    bool result;
+    QEventLoop loop;
+    result = connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,SLOT(quit()));
+    loop.exec();
+    savedResultsReponse(reply);
+    return true;
+}
+
 bool MainWindow::getDataFromUUIDFromDB(std::string uuid)
 {
     std::string url = "http://127.0.0.1:5000/data?uuid="+uuid;
@@ -236,10 +281,24 @@ void MainWindow::reponseRecueAcc(QNetworkReply* reply)
    delete reply;
 }
 
+void MainWindow::savedResultsReponse(QNetworkReply* reply)
+{
+    if (reply->error() == QNetworkReply::NoError)
+    {
+        savedResults.m_algorithmOutputList.clear();
+        std::string reponse = reply->readAll().toStdString();
+
+        if(reponse != "")
+        {
+            savedResults.DeserializeList(reponse);
+        }
+    }
+}
+
 
 void MainWindow::reponseRecue(QNetworkReply* reply)
 {
-    if (reply->error() == QNetworkReply::NoError)
+   if (reply->error() == QNetworkReply::NoError)
    {
        std::string testReponse(reply->readAll());
        record.m_WimuRecordList.clear();
@@ -251,9 +310,8 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
        {
            QTreeWidgetItem* top_item = new QTreeWidgetItem();
            top_item->setText(0,QString::fromStdString(record.m_WimuRecordList.at(i).m_recordName));
-           top_item->setIcon(0,*(new QIcon(":/icons/file.png")));
+           top_item->setIcon(0,*(new QIcon(":/icons/file2.png")));
 
-           qDebug() << QString::fromStdString(record.m_WimuRecordList.at(i).m_parentId);
            if(record.m_WimuRecordList.at(i).m_parentId.compare("") == 0 )
            {
                for(int j=0; j<record.m_WimuRecordList.size();j++)
@@ -262,6 +320,17 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
                    {
                        QTreeWidgetItem* child_item = new QTreeWidgetItem;
                        child_item->setText(0,QString::fromStdString(record.m_WimuRecordList.at(j).m_recordName));
+                       child_item->setIcon(0,*(new QIcon(":/icons/sliced.png")));
+                       top_item->addChild(child_item);
+                   }
+               }
+               for(int w = 0; w<savedResults.m_algorithmOutputList.size();w++)
+               {
+                   if(savedResults.m_algorithmOutputList.at(w).m_recordId.compare(record.m_WimuRecordList.at(i).m_recordId) == 0)
+                   {
+                       QTreeWidgetItem* child_item = new QTreeWidgetItem;
+                       child_item->setText(0,QString::fromStdString(savedResults.m_algorithmOutputList.at(w).m_resultName));
+                       child_item->setIcon(0,*(new QIcon(":/icons/results.png")));
                        top_item->addChild(child_item);
                    }
                }

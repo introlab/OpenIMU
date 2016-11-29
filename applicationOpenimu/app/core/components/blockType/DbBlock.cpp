@@ -82,17 +82,13 @@ std::vector<QString> DbBlock::getDaysInDB()
 
  void DbBlock::reponseRecue(QNetworkReply* reply)
  {
-     qDebug() << addRecordTime->elapsed();
      if (reply->error() == QNetworkReply::NoError)
     {
-        //qDebug() << "connection";
-        std::string testReponse(reply->readAll());// "[{ \"_id\" : \"foo\", \"name\" : \"test\"},{ \"_id\" : \"foo2\", \"name\" : \"test2\"}]\n";
-        WimuRecord record;
-        CJsonSerializer::Deserialize(&record, testReponse);
+       // qDebug() << reply->readAll();
     }
     else
     {
-        qDebug() << "error connect";
+        qDebug() << "Une erreur s'est produite.";
         qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
         qDebug() << "Request failed, " << reply->errorString();
         qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
@@ -105,14 +101,11 @@ std::vector<QString> DbBlock::getDaysInDB()
  {
      if (reply->error() == QNetworkReply::NoError)
     {
-        qDebug() << "DbBlock::resultInsertionResponse(): No Error";
         std::string response(reply->readAll());
-        //AlgorithmOutputInfoSerializer algorithmOutputSerializer;
-        //algorithmOutputSerializer.Deserialize(response);
     }
     else
     {
-        qDebug() << "DbBlock::resultInsertionResponse(): error connect";
+        qDebug() << "DbBlock::resultInsertionResponse(): Une erreur s'est produite.";
         qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
         qDebug() << "Request failed, " << reply->errorString();
         qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
