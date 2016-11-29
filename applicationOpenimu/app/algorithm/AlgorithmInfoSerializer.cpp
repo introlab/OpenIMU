@@ -21,6 +21,7 @@ void AlgorithmInfoSerializer::Serialize(AlgorithmInfo algorithmInfo, std::string
     jsonAlgorithmInfo["details"] = algorithmInfo.m_details;
     jsonAlgorithmInfo["id"] = algorithmInfo.m_id;
     jsonAlgorithmInfo["name"] = algorithmInfo.m_name;
+    jsonAlgorithmInfo["filename"] = algorithmInfo.m_filename;
 
     // ... and the Algorithm Parameters
     for(int i = 0; i < algorithmInfo.m_parameters.size(); i++)
@@ -60,6 +61,7 @@ void AlgorithmInfoSerializer::Deserialize(std::string& dataToDeserialize)
         AlgorithmInfo algorithmInfo;
 
         algorithmInfo.m_name = algorithmListInJson[index].get("name", "").asString();
+        algorithmInfo.m_filename = algorithmListInJson[index].get("filename", "").asString();
         algorithmInfo.m_id = algorithmListInJson[index].get("id", "").asString();
         algorithmInfo.m_author = algorithmListInJson[index].get("author", "").asString();
         algorithmInfo.m_description = algorithmListInJson[index].get("description", "").asString();

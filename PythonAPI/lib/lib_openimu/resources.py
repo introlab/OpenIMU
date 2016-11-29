@@ -230,7 +230,7 @@ class AlgoList(Resource):
                 params = []
                 param = {}
                 for keys in instance.params.keys():
-                    param['name'] =  keys
+                    param['name'] = keys
                     param['info'] = instance.infos[keys]
                     param['value'] = instance.params[keys]
                     param['default'] = instance.params[keys]
@@ -238,6 +238,7 @@ class AlgoList(Resource):
 
                 algo['id'] = id
                 algo['name'] = instance.name
+                algo['filename'] = filename
                 algo['params'] = params
                 algo['author'] = instance.author
                 algo['description'] = instance.description

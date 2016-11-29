@@ -469,9 +469,13 @@ void MainWindow::addTab(QWidget * tab, std::string label)
         if(currentTabText == QString::fromStdString(label)){
             index = i;
             found = true;
+            tabWidget->setCurrentWidget(tabWidget->widget(i));
         }
     }
-
+    if(found)
+    {
+        tabWidget->setCurrentWidget(tabWidget->widget(tabWidget->count()-1));
+    }
     tabWidget->addTab(tab,QString::fromStdString(label));
     tabWidget->setCurrentWidget(tabWidget->widget(tabWidget->count()-1));
 
