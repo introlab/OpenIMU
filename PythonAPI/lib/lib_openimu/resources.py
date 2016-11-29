@@ -193,7 +193,7 @@ class DeleteData(Resource):
         res1 = mongo.db.accelerometres.delete_many({'ref':uuid})
         res2 = mongo.db.gyrometres.delete_many({'ref':uuid})
         res3 = mongo.db.magnetometres.delete_many({'ref':uuid})
-        res4 = mongo.db.record.delete_many({'_id':uuid})
+        res4 = mongo.db.record.delete_many({'_id':ObjectId(uuid)})
         result = res1.deleted_count+res2.deleted_count+res3.deleted_count+res4.deleted_count
         return 'Affected ' + str(result)     + ' entries.'
 
@@ -242,6 +242,7 @@ class AlgoList(Resource):
 
                 algo['id'] = id
                 algo['name'] = instance.name
+                algo['filename'] = filename
                 algo['params'] = params
                 algo['author'] = instance.author
                 algo['description'] = instance.description

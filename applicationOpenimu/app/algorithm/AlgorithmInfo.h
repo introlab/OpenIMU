@@ -16,6 +16,7 @@ struct AlgorithmInfo
 {
     std::string m_id;
     std::string m_name;
+    std::string m_filename;
     std::string m_author;
     std::string m_description;
     std::string m_details;
