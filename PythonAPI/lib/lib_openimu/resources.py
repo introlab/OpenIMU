@@ -237,7 +237,7 @@ class AlgoList(Resource):
                     params.append(param.copy())
 
                 algo['id'] = id
-                algo['name'] = filename
+                algo['name'] = instance.name
                 algo['params'] = params
                 algo['author'] = instance.author
                 algo['description'] = instance.description
