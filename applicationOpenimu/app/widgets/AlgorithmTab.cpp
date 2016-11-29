@@ -187,7 +187,7 @@ bool AlgorithmTab::createAlgoRequest()
 {
     std::string url = "http://127.0.0.1:5000/algo?filename=" + m_selectedAlgorithm.m_filename +
             "&uuid=" + m_selectedRecord.m_recordId;
-
+    qDebug()<< QString::fromStdString(url);
     for(int i=0; i< m_selectedAlgorithm.m_parameters.size();i++)
     {
         if(m_selectedAlgorithm.m_parameters.at(i).m_name != "uuid")
@@ -265,6 +265,8 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
            algorithmOutputInfoSerializer.m_algorithmOutput.m_recordId = m_selectedRecord.m_recordId;
            algorithmOutputInfoSerializer.m_algorithmOutput.m_recordName = m_selectedRecord.m_recordName;
            algorithmOutputInfoSerializer.m_algorithmOutput.m_recordImuPosition = m_selectedRecord.m_imuPosition;
+
+           qDebug()<< QString::fromStdString("ON EST ICI" +  algoInfo.m_filename);
 
            ResultsTabWidget* res = new ResultsTabWidget(this, algorithmOutputInfoSerializer.m_algorithmOutput);
            test->addTab(res,algoInfo.m_name + ": " + m_selectedRecord.m_recordName);

@@ -17,6 +17,7 @@ class ParameterInfo(Schema):
 
 class AlgorithmInfo(Schema):
     name = fields.Str();
+    filename = fields.Str();
     author = fields.Str();
     description = fields.Str();
     details = fields.Str();

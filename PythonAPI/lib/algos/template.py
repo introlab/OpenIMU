@@ -15,6 +15,7 @@ class template(Algorithm):
         self.description = "Coquille vide d'un algorithme"
         self.author = "L'éuipe d'OpenIMU"
         self.name = "Example"
+        self.filename = "template"
         self.details = "Se fichier est la base de la structure d'un algorithme."
 
         #Params initialization

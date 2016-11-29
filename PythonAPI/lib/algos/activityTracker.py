@@ -22,6 +22,7 @@ class activityTracker(Algorithm):
         self.description = "Algorithme du temps d'activité "
         self.author = "L'équipe d'OpenIMU"
         self.name = "Temps d'activité"
+        self.filename = "activityTracker"
         self.details = (
                         "<b>Nom de l'algorithme:</b> <br/> Temps d'activité <br/>"
                         "<b>Version:</b> <br/> <i>1.0</i><br/>"

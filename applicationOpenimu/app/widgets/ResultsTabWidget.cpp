@@ -45,7 +45,7 @@ void ResultsTabWidget::init(AlgorithmOutputInfo output)
     layout->setMargin(10);
     chartView = new QChartView();
 
-    if(m_algorithmOutputInfo.m_algorithmName == "activityTracker")
+    if(m_algorithmOutputInfo.m_algorithmName == "Temps d'activité")
     {
         QPieSeries *series = new QPieSeries();
         series->setHoleSize(0.35);

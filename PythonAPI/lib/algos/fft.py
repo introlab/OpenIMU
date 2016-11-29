@@ -15,6 +15,7 @@ class fft(Algorithm):
         self.description = "Transformé de Fourrier rapide"
         self.author = "L'équipe d'OpenIMU"
         self.name = "FFT"
+        self.filename = "fft"
         self.details = "Fait la FFT sur chaque dimension, à travers le temps."
         self.params.uuid = 0
         self.infos.uuid = "Identifiant unique d'un enregistrement"

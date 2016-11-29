@@ -14,6 +14,7 @@ class stepCounter(Algorithm):
         self.description = "Compteur de pas"
         self.author = "L'équipe d'OpenIMU"
         self.name = "Compteur de pas"
+        self.filename = "stepCounter"
         self.details = "Aucun détail pour l'instant."
         self.params.uuid = 0
         self.infos.uuid = "Identifiant unique d'un enregistrement"

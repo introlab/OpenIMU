@@ -51,6 +51,7 @@ class frequencyfilter(Algorithm):
         self.description = "Filtre de fréquence"
         self.author = "L'équipe d'OpenIMU"
         self.name = "Filtre de fréquence"
+        self.filename = "frequencyfilter"
         self.details = "Peux être utilisé pour un filtre: passe-bas, passe-haut, passe-bande, rejet-bande"
 
         #Params initialization
