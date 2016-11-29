@@ -84,10 +84,7 @@ std::vector<QString> DbBlock::getDaysInDB()
  {
      if (reply->error() == QNetworkReply::NoError)
     {
-        //qDebug() << "connection";
-        std::string testReponse(reply->readAll());// "[{ \"_id\" : \"foo\", \"name\" : \"test\"},{ \"_id\" : \"foo2\", \"name\" : \"test2\"}]\n";
-        WimuRecord record;
-        CJsonSerializer::Deserialize(&record, testReponse);
+       // qDebug() << reply->readAll();
     }
     else
     {
