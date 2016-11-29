@@ -474,10 +474,13 @@ void MainWindow::addTab(QWidget * tab, std::string label)
     }
     if(found)
     {
+        tabWidget->setCurrentWidget(tabWidget->widget(index));
+    }
+    else
+    {
+        tabWidget->addTab(tab,QString::fromStdString(label));
         tabWidget->setCurrentWidget(tabWidget->widget(tabWidget->count()-1));
     }
-    tabWidget->addTab(tab,QString::fromStdString(label));
-    tabWidget->setCurrentWidget(tabWidget->widget(tabWidget->count()-1));
 
     setStatusBarText(tr("Prêt"));
 }
