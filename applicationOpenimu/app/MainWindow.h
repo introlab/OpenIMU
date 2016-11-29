@@ -60,6 +60,11 @@ class MainWindow : public QMainWindow
         bool getRecordsFromDB();
         void reponseRecue(QNetworkReply* reply);
 
+        //Getting results from DB
+        bool getSavedResultsFromDB();
+        void savedResultsReponse(QNetworkReply* reply);
+
+
         //Getting data from specific record
         bool getDataFromUUIDFromDB(std::string uuid);
         void reponseRecueAcc(QNetworkReply* reply);
@@ -99,6 +104,7 @@ class MainWindow : public QMainWindow
         DbBlock * databaseAccess = new DbBlock;
         RecordsDialog * rDialog;
         WimuRecord record;
+        AlgorithmOutputInfoSerializer savedResults;
         WimuAcquisition wimuAcquisition;
         RecordsWidget* recordsTab;
         AlgorithmTab* algorithmTab;
