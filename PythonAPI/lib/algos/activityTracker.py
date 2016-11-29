@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from math import sqrt
 from bson.objectid import ObjectId
 import numpy
@@ -18,32 +19,33 @@ class activityTracker(Algorithm):
     def __init__(self):
         super(activityTracker,self).__init__()
 
-        self.description = "Activity Time Tracker Algorithm"
-        self.author = "OpenIMU Team"
+        self.description = "Algorithme du temps d'activité "
+        self.author = "L'équipe d'OpenIMU"
+        self.name = "Temps d'activité"
         self.details = (
-                        "<b>Nom de l'algorithme:</b> <br/> Activity Time Tracker <br/>"
+                        "<b>Nom de l'algorithme:</b> <br/> Temps d'activité <br/>"
                         "<b>Version:</b> <br/> <i>1.0</i><br/>"
                         "<b>Pseudocode:</b> <br/> <i>y</i>=<i>x</i><br/>"
                         "<b>Fonctionnement:</b> <br/>"
-                        "Step 1 : Import the data from the database <br/>"
-                        "Step 2 : Calculate the magnetude of the data <br/>"
-                        "Step 3 : Calculate the difference of the new magnetude list <br/>"
-                        "Step 4 : Calculate the % of diff(magnetude) that is higher than a threshold"
+                        "Étape 1 : Importer les données provenant de la base de données <br/>"
+                        "Étape 2 : Calculer la magnitude des données <br/>"
+                        "Étape 3 : Calculer la différence de la magnitude des données <br/>"
+                        "Étape 4 : Calcule le pourcentage de la différence de la magnitude qui dépasse le seuil donné en paramètre "
                         )
 
         self.params.threshold = 0
-        self.infos.threshold = "Magnitude of accelerometers that define activity"
+        self.infos.threshold = "Magnitude de l'accélération qui défini l'activité "
         self.params.uuid = 0
-        self.infos.uuid = "Unique Id of the data"
+        self.infos.uuid = "Identifiant unique d'un enregistrement"
 
 
     def run(self):
         """
-        Activity Tracker Algorithm
-        Step 1 : Import the data from the database
-        Step 2 : Calculate the magnetude of the data
-        Step 3 : Calculate the difference of the new magnetude list
-        Step 4 : Calculate the % of diff(magnetude) that is higher than a threshold
+        Algorithm du temps d'activité
+        Étape 1 : Importer les données provenant de la base de données
+        Étape 2 : Calculer la magnitude des données
+        Étape 3 : Calculer la différence de la magnitude des données
+        Étape 4 : Calcule le pourcentage de la différence de la magnitude qui dépasse le seuil donné en paramètre
         :return: self.output
         """
 

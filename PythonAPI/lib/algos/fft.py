@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import numpy as np
 from lib_openimu.algorithm import Algorithm
 from lib_openimu import schemas
@@ -11,13 +12,14 @@ class fft(Algorithm):
     """
     def __init__(self):
         super(fft,self).__init__()
-        self.description = "Fast Fourier Transform Algorithm"
-        self.author = "OpenIMU Team"
-        self.details = "FFT on each dimensions though time."
+        self.description = "Transformé de Fourrier rapide"
+        self.author = "L'équipe d'OpenIMU"
+        self.name = "FFT"
+        self.details = "Fait la FFT sur chaque dimension, à travers le temps."
         self.params.uuid = 0
-        self.infos.uuid = "Unique Id of the data"
+        self.infos.uuid = "Identifiant unique d'un enregistrement"
         self.params.bins = 1024
-        self.infos.bins = "Number of bins per dimensions."
+        self.infos.bins = "Nombre de bins par dimensions."
 
     def run(self):
         schema = schemas.Sensor(many=True)
