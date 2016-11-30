@@ -1,11 +1,15 @@
-#include "algorithmtab.h"
-#include "../dialogs/AlgorithmParametersDialog.h"
-#include "../../MainWindow.h"
-#include "ResultsTabWidget.h"
-#include "../utilities/Utilities.h"
 #include "QHeaderView"
 #include <QEventLoop>
 #include <QDebug>
+
+#include "algorithmtab.h"
+#include "ResultsTabWidget.h"
+
+#include "../dialogs/AlgorithmParametersDialog.h"
+#include "../../MainWindow.h"
+#include "../utilities/Utilities.h"
+#include "../algorithm/FilteredData.h"
+#include "acquisition/CJsonSerializer.h"
 
 AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget(parent)
 {
@@ -70,23 +74,7 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
 
         algorithmTableWidget->setRowCount(m_algorithmSerializer.m_algorithmList.size());
 
-/*      //TO DELETE: (Just to see the scroll behavior)
-        for(int i =0; i<10;i++)
-        {
-            QString name = QString::fromStdString("NAME: " + i);
-            algorithmTableWidget->setItem(i, 0, new QTableWidgetItem(name));
-
-            QString description = QString::fromStdString("DESCRIPTION: " + i);
-            algorithmTableWidget->setItem(i, 1, new QTableWidgetItem(description));
-
-            QString author = QString::fromStdString("AUTHOR: " + i);
-            algorithmTableWidget->setItem(i, 2, new QTableWidgetItem(author));
-        }
-
-        algorithmTableWidget->setRowCount(algoList.m_algorithmList.size() + 10);
-*/
-
-        connect(algorithmTableWidget, SIGNAL(pressed(const QModelIndex& )), this, SLOT(openParametersWindow(const QModelIndex &)));
+        connect(algorithmTableWidget, SIGNAL(clicked(const QModelIndex& )), this, SLOT(openParametersWindow(const QModelIndex &)));
 
         // -- Parameter Section
         algorithmParameters = new AlgorithmDetailedView();
@@ -251,12 +239,13 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
    {
        std::string reponse = reply->readAll().toStdString();
        AlgorithmOutputInfoSerializer algorithmOutputInfoSerializer;
+       MainWindow * window = (MainWindow*)m_parent;
 
-       if(reponse != "")
+       if(reponse != "" && m_selectedAlgorithm.m_id.compare("3") != 0)
        {
            algorithmOutputInfoSerializer.Deserialize(reponse);
 
-           MainWindow * test = (MainWindow*)m_parent;
+
            AlgorithmInfo &algoInfo = m_selectedAlgorithm;
 
            algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmId = algoInfo.m_id;
@@ -267,16 +256,22 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
            algorithmOutputInfoSerializer.m_algorithmOutput.m_recordImuPosition = m_selectedRecord.m_imuPosition;
 
            ResultsTabWidget* res = new ResultsTabWidget(this, algorithmOutputInfoSerializer.m_algorithmOutput);
-           test->addTab(res,algoInfo.m_name + ": " + m_selectedRecord.m_recordName);
+           window->addTab(res,algoInfo.m_name + ": " + m_selectedRecord.m_recordName);
+       }
+       else
+       {
+            FilteredData fData;
+            CJsonSerializer::Deserialize(&fData, reponse);
+            WimuAcquisition wimuData;
+            wimuData.setDataAccelerometer(fData.m_dataAccelerometer);
+            AccDataDisplay* accData = new AccDataDisplay(wimuData);
+            ResultsTabWidget* res = new ResultsTabWidget(this,accData);
+            window->addTab(res,"Filtre: " + m_selectedRecord.m_recordName);
        }
    }
    else
    {
-       //qDebug() << "calling AlgorithmTab::reponseAlgoRecue() Error connect";
-       //qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
-       //qDebug() << "Request failed, " << reply->errorString();
-       //qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
-       //qDebug() << reply->readAll();
+       qDebug() << reply->readAll();
    }
    delete reply;
 }
