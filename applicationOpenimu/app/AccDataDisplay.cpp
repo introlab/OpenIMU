@@ -102,6 +102,7 @@ void AccDataDisplay::showSimplfiedDataDisplay()
         ui->groupBoxSlider->hide();
         ui->groupBoxSave->hide();
         ui->saveDataSet->hide();
+        ui->dateRecordedDate->hide();
     }
 }
 
