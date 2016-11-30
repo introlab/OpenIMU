@@ -111,37 +111,62 @@ void MainWindow::onListItemClicked(QTreeWidgetItem* item, int column)
 
 void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
 {
+    statusBar->showMessage(tr("Chargement de l'enregistrement..."));
+    startSpinner();
     bool isRecord = false;
     for(int i=0; i<record.m_WimuRecordList.size();i++)
     {
+
         if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text(column).toStdString()) == 0)
         {
-            statusBar->showMessage(tr("Chargement de l'enregistrement..."));
+
             selectedRecord = record.m_WimuRecordList.at(i);
 
-            startSpinner();
             getDataFromUUIDFromDB(selectedRecord.m_recordId);
-            recordsTab = new RecordsWidget(this,wimuAcquisition,selectedRecord);
-            addTab(recordsTab,selectedRecord.m_recordName);
-            stopSpinner();
-            statusBar->showMessage(tr("Prêt"));
+
+
+            if(wimuAcquisition.getDataSize()<=0)
+            {
+                QMessageBox msgBox(
+                            QMessageBox::Question,
+                            trUtf8("Avertissement"),
+                            "L'enregistrement sélectionné est corrompu. Voulez-vous le supprimer?",
+                            QMessageBox::Yes | QMessageBox::No);
+
+                msgBox.setButtonText(QMessageBox::Yes, "Oui");
+                msgBox.setButtonText(QMessageBox::No, "Non");
+
+
+                if (msgBox.exec() == QMessageBox::Yes) {
+                  deleteRecordFromUUID(selectedRecord.m_recordId);
+                  openFile();
+                }
+            }
+            else
+            {
+                qDebug() << "data in this file valid";
+                recordsTab = new RecordsWidget(this,wimuAcquisition,selectedRecord);
+                addTab(recordsTab,selectedRecord.m_recordName);
+            }
+
             isRecord = true;
         }        
     }
     if(!isRecord)
     {
+        statusBar->showMessage(tr("Chargement du résultat..."));
         for(int i=0; i<savedResults.m_algorithmOutputList.size();i++)
         {
             if(savedResults.m_algorithmOutputList.at(i).m_resultName.compare(item->text(column).toStdString()) == 0)
             {
-                statusBar->showMessage(tr("Chargement du resultat..."));
                 ResultsTabWidget* resultTab = new ResultsTabWidget(this,savedResults.m_algorithmOutputList.at(i));
                 addTab(resultTab,savedResults.m_algorithmOutputList.at(i).m_resultName);
-                statusBar->showMessage(tr("Prêt"));
+
             }
         }
     }
-
+    stopSpinner();
+    statusBar->showMessage(tr("Prêt"));
 }
 
 void MainWindow::startSpinner()
