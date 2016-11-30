@@ -192,6 +192,7 @@ void RecordsDialog::addRecordSlot()
 
     QFileInfoList list = dir->entryInfoList(QDir::Files | QDir::NoDotAndDotDot | QDir::Dirs);
     bool success = true;
+
     foreach(QFileInfo finfo, list)
     {
         if (finfo.isDir()) {
@@ -224,12 +225,23 @@ void RecordsDialog::addRecordSlot()
              }
              break;
         }
-    }
+        }
 
-    if(success)
+
+    if(success && !isDuplicateName)
     {
+
         successLabel->setText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"));
         mainWindow->setStatusBarText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"));
+        current_uuid = "";
+        QMainWindow* currWin = (QMainWindow*)m_parent;
+        MainWindow* win = (MainWindow*)currWin;
+        win->getRecordsFromDB();
+    }
+    else if (isDuplicateName)
+    {
+        successLabel->setText(error_msg);
+        mainWindow->setStatusBarText(error_msg);
 
         QMainWindow* currWin = (QMainWindow*)m_parent;
         MainWindow* win = (MainWindow*)currWin;
@@ -288,14 +300,24 @@ void RecordsDialog::reponseRecue(QNetworkReply* reply)
                      << reader.getFormattedErrorMessages();
           }
           current_uuid = QString::fromStdString(root.get("valeuruuid", "A Default Value if not exists" ).asString());
+          isDuplicateName = false;
    }
    else
    {
-       qDebug() << "error connect";
-       qWarning() << "ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
-       qDebug() << "Request failed, " << reply->errorString();
-       qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
-       qDebug() << reply->readAll();
+         std::string strJson = reply->readAll();
+           Json::Value root;
+              Json::Reader reader;
+              bool parsingSuccessful = reader.parse( strJson.c_str(), root );     //parse process
+              if ( !parsingSuccessful )
+              {
+                  std::cout  << "Failed to parse"
+                         << reader.getFormattedErrorMessages();
+              }
+              error_msg = QString::fromStdString(root.get("message", "A Default Value if not exists" ).asString()).compare("DuplicateKeyError") == 0 ? "Erreur: Le nom d'enregistrement existe déjà" : "Connection error";
+              if(error_msg.compare("Connection error") !=0)
+              {
+                   isDuplicateName = true;
+              }
    }
    delete reply;
 }

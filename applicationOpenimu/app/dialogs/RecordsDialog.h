@@ -51,6 +51,8 @@ public slots:
     QWidget* m_parent;
 
     QString current_uuid;
+    QString error_msg;
     bool isFolderSelected=false;
+    bool isDuplicateName = false;
 };
 #endif // RECORDSDIALOG_H
