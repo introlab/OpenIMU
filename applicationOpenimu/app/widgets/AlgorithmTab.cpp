@@ -20,12 +20,12 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
         getAlgorithmsFromDB();
 
         // -- Layout
-        algorithmListGroupBox = new QGroupBox();
+        algorithmListGroupBox = new QGroupBox(this);
         algorithmListGroupBox->setFixedHeight(300);
         //algorithmListGroupBox->setFlat(true);
-        algorithmListLayout = new QVBoxLayout();
+        algorithmListLayout = new QVBoxLayout(this);
 
-        algorithmTabLayout = new QVBoxLayout();
+        algorithmTabLayout = new QVBoxLayout(this);
 
 
         // -- Algorithm List Section
@@ -48,7 +48,7 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
 
         algorithmTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
         algorithmTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-        algorithmTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+        algorithmTableWidget->setSelectionMode(QAbstractItemView::NoSelection);
         //algorithmTableWidget->setShowGrid(false);
 
         QString headerStyle = "QHeaderView::section { border: none; }";
@@ -58,13 +58,13 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
 
         for(int i =0; i<m_algorithmSerializer.m_algorithmList.size();i++)
         {
-            QString name = Utilities::capitalizeFirstCharacter(m_algorithmSerializer.m_algorithmList.at(i).m_name);
+            QString name = QString::fromStdString(m_algorithmSerializer.m_algorithmList.at(i).m_name);
             algorithmTableWidget->setItem(i, 0, new QTableWidgetItem(name));
 
-            QString description = Utilities::capitalizeFirstCharacter(m_algorithmSerializer.m_algorithmList.at(i).m_description);
+            QString description =QString::fromStdString(m_algorithmSerializer.m_algorithmList.at(i).m_description);
             algorithmTableWidget->setItem(i, 1, new QTableWidgetItem(description));
 
-            QString author = Utilities::capitalizeFirstCharacter(m_algorithmSerializer.m_algorithmList.at(i).m_author);
+            QString author = QString::fromStdString(m_algorithmSerializer.m_algorithmList.at(i).m_author);
             algorithmTableWidget->setItem(i, 2, new QTableWidgetItem(author));
         }
 
@@ -86,7 +86,7 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
         algorithmTableWidget->setRowCount(algoList.m_algorithmList.size() + 10);
 */
 
-        connect(algorithmTableWidget, SIGNAL(clicked(const QModelIndex& )), this, SLOT(openParametersWindow(const QModelIndex &)));
+        connect(algorithmTableWidget, SIGNAL(pressed(const QModelIndex& )), this, SLOT(openParametersWindow(const QModelIndex &)));
 
         // -- Parameter Section
         algorithmParameters = new AlgorithmDetailedView();
