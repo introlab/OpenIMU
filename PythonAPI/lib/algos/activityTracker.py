@@ -51,7 +51,7 @@ class activityTracker(Algorithm):
         """
 
         schema = schemas.Sensor(many=True)
-        ref = self.database.db.accelerometres.find({'ref': ObjectId(self.params.uuid)})
+        ref = self.database.db.accelerometres.find({'ref': self.params.uuid})
         acc, errors = schema.dump(ref)
         self.data = acc
 

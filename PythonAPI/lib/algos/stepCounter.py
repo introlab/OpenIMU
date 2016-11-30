@@ -30,7 +30,7 @@ class stepCounter(Algorithm):
         :return: Rien par défaut, mais self.ouput et quand même utile à retourner
         """
         schema = schemas.Sensor(many=True)
-        ref = self.database.db.accelerometres.find({'ref': ObjectId(self.params.uuid)})
+        ref = self.database.db.accelerometres.find({'ref': self.params.uuid})
         data, errors = schema.dump(ref)
 
         filtereddata = self.moving_average(data)
