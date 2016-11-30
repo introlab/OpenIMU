@@ -24,7 +24,6 @@ std::vector<QString> DbBlock::getDaysInDB()
 
  bool DbBlock::addRecordInDB(QString& json)
  {
-
      QNetworkAccessManager *manager = new QNetworkAccessManager();
      QByteArray dataByteArray (json.toStdString().c_str(),json.toStdString().length());                                                                                                                  //Your webservice URL
 
@@ -52,19 +51,61 @@ std::vector<QString> DbBlock::getDaysInDB()
      return true;
  }
 
+ bool DbBlock::addResultsInDB(QString& json)
+ {
+     QNetworkAccessManager *manager = new QNetworkAccessManager();
+     QByteArray dataByteArray (json.toStdString().c_str(),json.toStdString().length());                                                                                                                  //Your webservice URL
+
+     QNetworkRequest request(QUrl("http://127.0.0.1:5000/insertalgorithmresults"));
+     QByteArray postDataSize = QByteArray::number(dataByteArray.size());
+
+     request.setRawHeader("User-Agent", "ApplicationNameV01");
+     request.setRawHeader("Content-Type", "application/json");
+     request.setRawHeader("Content-Length", postDataSize);
+
+     if (manager)
+     {
+         bool result;
+
+         QNetworkReply *reply = manager->post(request, dataByteArray);
+
+         result = connect(manager, SIGNAL(finished(QNetworkReply*)), this,SLOT(resultInsertionResponse(QNetworkReply*)));
+
+         qDebug() <<"Connection is success : ? :" << result;
+         if (reply)
+         {
+            qDebug() <<"Reply from server is"<< reply;
+         }
+    }
+     return true;
+ }
+
  void DbBlock::reponseRecue(QNetworkReply* reply)
  {
-     qDebug() << addRecordTime->elapsed();
      if (reply->error() == QNetworkReply::NoError)
     {
-        //qDebug() << "connection";
-        std::string testReponse(reply->readAll());// "[{ \"_id\" : \"foo\", \"name\" : \"test\"},{ \"_id\" : \"foo2\", \"name\" : \"test2\"}]\n";
-        WimuRecord record;
-        CJsonSerializer::Deserialize(&record, testReponse);
+       // qDebug() << reply->readAll();
     }
     else
     {
-        qDebug() << "error connect";
+        qDebug() << "Une erreur s'est produite.";
+        qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
+        qDebug() << "Request failed, " << reply->errorString();
+        qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
+        qDebug() << reply->readAll();
+    }
+    delete reply;
+ }
+
+ void DbBlock::resultInsertionResponse(QNetworkReply* reply)
+ {
+     if (reply->error() == QNetworkReply::NoError)
+    {
+        std::string response(reply->readAll());
+    }
+    else
+    {
+        qDebug() << "DbBlock::resultInsertionResponse(): Une erreur s'est produite.";
         qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
         qDebug() << "Request failed, " << reply->errorString();
         qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();

@@ -24,6 +24,7 @@
 #include "widgets/RecordsWidget.h"
 #include "widgets/AlgorithmTab.h"
 #include "widgets/HomeWidget.h"
+#include "../acquisition/RecordInfo.h"
 
 class MainWindow : public QMainWindow
     {
@@ -34,7 +35,6 @@ class MainWindow : public QMainWindow
        std::string getFileName(std::string s);
        void retranslateUi();
        void setStatusBarText(QString txt);
-
     signals:
 
     public slots:
@@ -42,7 +42,7 @@ class MainWindow : public QMainWindow
         void openFile();
         void openRecordDialog();
         void closeTab(int);
-        void replaceTab(QWidget * replacement, std::string label);
+        void addTab(QWidget * tab, std::string label);
         void openAbout();
         void openHelp();
         void setApplicationInEnglish();
@@ -52,9 +52,18 @@ class MainWindow : public QMainWindow
         void onListItemDoubleClicked(QTreeWidgetItem* item,int column);
         void closeWindow();
 
+        //Visual feedback
+        void startSpinner();
+        void stopSpinner();
+
         //Getting records from DB
         bool getRecordsFromDB();
         void reponseRecue(QNetworkReply* reply);
+
+        //Getting results from DB
+        bool getSavedResultsFromDB();
+        void savedResultsReponse(QNetworkReply* reply);
+
 
         //Getting data from specific record
         bool getDataFromUUIDFromDB(std::string uuid);
@@ -95,7 +104,8 @@ class MainWindow : public QMainWindow
         DbBlock * databaseAccess = new DbBlock;
         RecordsDialog * rDialog;
         WimuRecord record;
-        WimuAcquisition acceleroData;
+        AlgorithmOutputInfoSerializer savedResults;
+        WimuAcquisition wimuAcquisition;
         RecordsWidget* recordsTab;
         AlgorithmTab* algorithmTab;
         QLabel* spinnerStatusBar;

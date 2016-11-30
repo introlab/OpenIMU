@@ -1,6 +1,7 @@
 from flask import jsonify, request, make_response
 from flask_restful import Resource, Api, abort,reqparse
 from shared import mongo
+from pymongo import errors as pyErr
 from pymongo import ReturnDocument
 import schemas
 from bson.objectid import ObjectId
@@ -23,7 +24,10 @@ class InsertRecord(Resource):
                     del record['parent_id']
                 elif mongo.db.record.find_one({'_id': ObjectId(record['parent_id'])}) is None:
                     abort(401, message="parent_id is invalid")
-            uuid = mongo.db.record.insert(record)
+            try:
+                uuid = str(mongo.db.record.insert(record))
+            except pyErr.DuplicateKeyError:
+                abort(401, message="DuplicateKeyError")
 #---------------------------------------------------------------
         if 'accelerometres' in data:
             schema = schemas.Sensor(many=True)
@@ -55,12 +59,32 @@ class InsertRecord(Resource):
 
             mongo.db.magnetometres.insert(magnetometres)
 #---------------------------------------------------------------
-        return str(uuid)
+        jsonresult = dict(valeuruuid=uuid)
+        schema = schemas.Uuid()
+        return schema.dump(jsonresult)
+
+class InsertAlgorithmResults(Resource):
+    def post(self):
+        print request.json
+        schema = schemas.AlgorithmResults()
+        data, errors = schema.load(request.json)
+        if errors:
+            print("There was an error.")
+            print(str(errors))
+            abort(401, message=str(errors))
+        else:
+            print("Json loaded, about to insert into Mongo.")
+            mongo.db.algorithmResults.insert(data)
 
 class getRecords(Resource):
     def get(self):
         schema = schemas.Record(many=True)
         return schema.dump(mongo.db.record.find())
+
+class getAlgorithmResults(Resource):
+    def get(self):
+        schema = schemas.AlgorithmResults(many=True)
+        return schema.dump(mongo.db.algorithmResults.find())
 
 class renameRecord(Resource):
     def post(self,uuid):
@@ -151,17 +175,17 @@ class GetData(Resource):
         #    abort(401, message=str(errors))
 #--------------------------------------------------------------
         schema = schemas.Sensor(many=True)
-        accelerometres,errors = schema.dump(mongo.db.accelerometres.find({'ref': ObjectId(uuid)}))
+        accelerometres,errors = schema.dump(mongo.db.accelerometres.find({'ref': uuid}))
         if errors:
             abort(401, message=str(errors))
 #--------------------------------------------------------------
         schema = schemas.Sensor(many=True)
-        magnetometres,errors = schema.dump(mongo.db.magnetometres.find({'ref': ObjectId(uuid)}))
+        magnetometres,errors = schema.dump(mongo.db.magnetometres.find({'ref': uuid}))
         if errors:
             abort(401, message=str(errors))
 #--------------------------------------------------------------
         schema = schemas.Sensor(many=True)
-        gyrometres,errors = schema.dump(mongo.db.gyrometres.find({'ref': ObjectId(uuid)}))
+        gyrometres,errors = schema.dump(mongo.db.gyrometres.find({'ref': uuid}))
         if errors:
             abort(401, message=str(errors))
 #--------------------------------------------------------------
@@ -176,9 +200,9 @@ class DeleteData(Resource):
         uuid = request.args.get('uuid')
         if uuid is None:
             abort(401,message='enter valid uuid')
-        res1 = mongo.db.accelerometres.delete_many({'ref':ObjectId(uuid)})
-        res2 = mongo.db.gyrometres.delete_many({'ref':ObjectId(uuid)})
-        res3 = mongo.db.magnetometres.delete_many({'ref':ObjectId(uuid)})
+        res1 = mongo.db.accelerometres.delete_many({'ref':uuid})
+        res2 = mongo.db.gyrometres.delete_many({'ref':uuid})
+        res3 = mongo.db.magnetometres.delete_many({'ref':uuid})
         res4 = mongo.db.record.delete_many({'_id':ObjectId(uuid)})
         result = res1.deleted_count+res2.deleted_count+res3.deleted_count+res4.deleted_count
         return 'Affected ' + str(result)     + ' entries.'
@@ -205,7 +229,7 @@ class AlgoList(Resource):
         algo = {}
         id = 0
         for file in os.listdir("../lib/algos"):
-            if (file.endswith(".py") and not file.startswith('__')):
+            if (file.endswith(".py") and not file.startswith('__') and not file.startswith("template")):
                 filename = os.path.splitext(file)[0]
                 id = id + 1
                 modulename = 'algos.' + filename
@@ -217,11 +241,18 @@ class AlgoList(Resource):
                 param = {}
                 for keys in instance.params.keys():
                     param['name'] =  keys
-                    param['info'] = instance.infos[keys]
+                    try :
+                        param['info'] = instance.infos[keys]
+                        param['possible'] = instance.possible[keys]
+                    except:
+                        pass
+
+                    param['default'] = instance.params[keys]
                     params.append(param.copy())
 
                 algo['id'] = id
-                algo['name'] = filename
+                algo['filename'] = filename
+                algo['name'] = instance.name
                 algo['params'] = params
                 algo['author'] = instance.author
                 algo['description'] = instance.description

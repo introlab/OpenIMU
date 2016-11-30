@@ -19,7 +19,6 @@ const QString englishText = "English";
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-
     //Execute launchApi in a thread
     QtConcurrent::run(MainWindow::launchApi);
 
@@ -29,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     this->grabGesture(Qt::PinchGesture);
 
     this->setWindowTitle(QString::fromUtf8("Open-IMU"));
-    this->setMinimumSize(900,700);
+    this->setMinimumSize(1000,700);
 
     menu = new ApplicationMenuBar(this);
     statusBar = new QStatusBar(this);
@@ -54,8 +53,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     listWidget->setAlternatingRowColors(true);
     listWidget->setStyleSheet("alternate-background-color:#ecf0f1;background-color:white;");
 
-    QPushButton* addRecord = new QPushButton("+");
-    QPushButton* deleteRecord = new QPushButton("-");
+    QPushButton* addRecord = new QPushButton("");
+    QIcon img(":/icons/addrecord.png");
+    addRecord->setIcon(img);
+    addRecord->setIconSize(QSize(20,20));
+
+    QPushButton* deleteRecord = new QPushButton("");
+    QIcon imgd(":/icons/trash.png");
+    deleteRecord->setIcon(imgd);
+    deleteRecord->setIconSize(QSize(20,20));
+
     QVBoxLayout* vlayout = new QVBoxLayout();
     vlayout->addWidget(addRecord);
     vlayout->addWidget(listWidget);
@@ -82,8 +89,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     connect(addRecord, SIGNAL(clicked()), this, SLOT(openRecordDialog()));
     connect(deleteRecord, SIGNAL(clicked()), this, SLOT(deleteRecordFromList()));
 
+    getSavedResultsFromDB();
     getRecordsFromDB();
-
 }
 
 MainWindow::~MainWindow(){
@@ -104,26 +111,53 @@ void MainWindow::onListItemClicked(QTreeWidgetItem* item, int column)
 
 void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
 {
+    bool isRecord = false;
     for(int i=0; i<record.m_WimuRecordList.size();i++)
     {
         if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text(column).toStdString()) == 0)
         {
             statusBar->showMessage(tr("Chargement de l'enregistrement..."));
             selectedRecord = record.m_WimuRecordList.at(i);
-            spinnerStatusBar->show();
-            movieSpinnerBar->start();
-            getDataFromUUIDFromDB(selectedRecord.m_recordId);
-            recordsTab = new RecordsWidget(this,acceleroData,selectedRecord);
-            replaceTab(recordsTab,"Informations enregistrement");
-            movieSpinnerBar->stop();
-            spinnerStatusBar->hide();
-            statusBar->showMessage(tr("Prêt"));
 
+            startSpinner();
+            getDataFromUUIDFromDB(selectedRecord.m_recordId);
+            recordsTab = new RecordsWidget(this,wimuAcquisition,selectedRecord);
+            addTab(recordsTab,selectedRecord.m_recordName);
+            stopSpinner();
+            statusBar->showMessage(tr("Prêt"));
+            isRecord = true;
+        }        
+    }
+    if(!isRecord)
+    {
+        for(int i=0; i<savedResults.m_algorithmOutputList.size();i++)
+        {
+            if(savedResults.m_algorithmOutputList.at(i).m_resultName.compare(item->text(column).toStdString()) == 0)
+            {
+                statusBar->showMessage(tr("Chargement du resultat..."));
+                ResultsTabWidget* resultTab = new ResultsTabWidget(this,savedResults.m_algorithmOutputList.at(i));
+                addTab(resultTab,savedResults.m_algorithmOutputList.at(i).m_resultName);
+                statusBar->showMessage(tr("Prêt"));
+            }
         }
     }
+
+}
+
+void MainWindow::startSpinner()
+{
+    spinnerStatusBar->show();
+    movieSpinnerBar->start();
+}
+
+void MainWindow::stopSpinner()
+{
+    movieSpinnerBar->stop();
+    spinnerStatusBar->hide();
 }
 
 void MainWindow:: openFile(){
+    getSavedResultsFromDB();
     getRecordsFromDB();
 }
 
@@ -136,7 +170,7 @@ void MainWindow::openRecordDialog()
 void MainWindow::openAlgorithmTab()
 {
     algorithmTab = new AlgorithmTab(this,selectedRecord);
-    replaceTab(algorithmTab,"Algorithmes");
+    addTab(algorithmTab,"Algo.: " + selectedRecord.m_recordName);
 }
 
 void MainWindow::setStatusBarText(QString txt)
@@ -159,7 +193,7 @@ void MainWindow::deleteRecord()
       case QMessageBox::Ok:
         deleteRecordFromUUID(selectedRecord.m_recordId);
         getRecordsFromDB();
-        acceleroData.clearData();
+        wimuAcquisition.clearData();
         selectedRecord.m_recordId = "";
         tabWidget->removeTab(tabWidget->currentIndex());
         openHomeTab();
@@ -177,7 +211,7 @@ void MainWindow::deleteRecord()
 void MainWindow::openHomeTab()
 {
     homeWidget = new HomeWidget(this);
-    replaceTab(homeWidget,"Accueil");
+    addTab(homeWidget,"Accueil");
 }
 
 bool MainWindow::getRecordsFromDB()
@@ -188,8 +222,26 @@ bool MainWindow::getRecordsFromDB()
 
     QNetworkAccessManager *manager = new QNetworkAccessManager();
     QNetworkReply *reply = manager->get(request);
-    bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), this ,SLOT(reponseRecue(QNetworkReply*)));
 
+    bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), this ,SLOT(reponseRecue(QNetworkReply*)));
+    return true;
+}
+
+//Getting results from DB
+bool MainWindow::getSavedResultsFromDB()
+{
+    QNetworkRequest request(QUrl("http://127.0.0.1:5000/algoResults"));
+    request.setRawHeader("User-Agent", "ApplicationNameV01");
+    request.setRawHeader("Content-Type", "application/json");
+
+    QNetworkAccessManager *manager = new QNetworkAccessManager();
+    QNetworkReply *reply = manager->get(request);
+
+    bool result;
+    QEventLoop loop;
+    result = connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,SLOT(quit()));
+    loop.exec();
+    savedResultsReponse(reply);
     return true;
 }
 
@@ -215,29 +267,44 @@ void MainWindow::reponseRecueAcc(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError)
    {
-       acceleroData.clearData();
+       wimuAcquisition.clearData();
        std::string testReponse(reply->readAll());
-       CJsonSerializer::Deserialize(&acceleroData, testReponse);
+       CJsonSerializer::Deserialize(&wimuAcquisition, testReponse);
 
    }
    else
    {
-       //qDebug() << "error connect";
-       //qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
-       //qDebug() << "Request failed, " << reply->errorString();
-      // qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
-       //qDebug() << reply->readAll();
+       qDebug() << "error connect";
+       qWarning() <<"ErrorNo: "<< reply->error() << "for url: " << reply->url().toString();
+       qDebug() << "Request failed, " << reply->errorString();
+       qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
+       qDebug() << reply->readAll();
    }
    delete reply;
+}
+
+void MainWindow::savedResultsReponse(QNetworkReply* reply)
+{
+    if (reply->error() == QNetworkReply::NoError)
+    {
+        savedResults.m_algorithmOutputList.clear();
+        std::string reponse = reply->readAll().toStdString();
+
+        if(reponse != "")
+        {
+            savedResults.DeserializeList(reponse);
+        }
+    }
 }
 
 
 void MainWindow::reponseRecue(QNetworkReply* reply)
 {
-    if (reply->error() == QNetworkReply::NoError)
+   if (reply->error() == QNetworkReply::NoError)
    {
        std::string testReponse(reply->readAll());
        record.m_WimuRecordList.clear();
+
        CJsonSerializer::Deserialize(&record, testReponse);
 
        listWidget->clear();
@@ -245,17 +312,27 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
        {
            QTreeWidgetItem* top_item = new QTreeWidgetItem();
            top_item->setText(0,QString::fromStdString(record.m_WimuRecordList.at(i).m_recordName));
-           top_item->setIcon(0,*(new QIcon(":/icons/file.png")));
+           top_item->setIcon(0,*(new QIcon(":/icons/file2.png")));
 
-           qDebug() << QString::fromStdString(record.m_WimuRecordList.at(i).m_parentid);
-           if(record.m_WimuRecordList.at(i).m_parentid.compare("") == 0 )
+           if(record.m_WimuRecordList.at(i).m_parentId.compare("") == 0 )
            {
                for(int j=0; j<record.m_WimuRecordList.size();j++)
                {
-                   if(record.m_WimuRecordList.at(j).m_parentid.compare(record.m_WimuRecordList.at(i).m_recordId ) == 0)
+                   if(record.m_WimuRecordList.at(j).m_parentId.compare(record.m_WimuRecordList.at(i).m_recordId ) == 0)
                    {
                        QTreeWidgetItem* child_item = new QTreeWidgetItem;
                        child_item->setText(0,QString::fromStdString(record.m_WimuRecordList.at(j).m_recordName));
+                       child_item->setIcon(0,*(new QIcon(":/icons/sliced.png")));
+                       top_item->addChild(child_item);
+                   }
+               }
+               for(int w = 0; w<savedResults.m_algorithmOutputList.size();w++)
+               {
+                   if(savedResults.m_algorithmOutputList.at(w).m_recordId.compare(record.m_WimuRecordList.at(i).m_recordId) == 0)
+                   {
+                       QTreeWidgetItem* child_item = new QTreeWidgetItem;
+                       child_item->setText(0,QString::fromStdString(savedResults.m_algorithmOutputList.at(w).m_resultName));
+                       child_item->setIcon(0,*(new QIcon(":/icons/results.png")));
                        top_item->addChild(child_item);
                    }
                }
@@ -314,13 +391,32 @@ bool MainWindow::renameRecordFromUUID(std::string uuid, std::string newname)
 
 bool MainWindow::deleteRecordFromList()
 {
-    deleteRecordFromUUID(selectedRecord.m_recordId);
-    getRecordsFromDB();
+    QMessageBox msgBox;
+    msgBox.setText("Suppression de l'enregistrement");
+    msgBox.setInformativeText("Êtes vous sûr de vouloir supprimer cet enregistrement?");
+
+
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Cancel);
+    int ret = msgBox.exec();
+
+    switch (ret) {
+      case QMessageBox::Ok:
+        deleteRecordFromUUID(selectedRecord.m_recordId);
+        getRecordsFromDB();
+        break;
+    case QMessageBox::Cancel:
+        // Cancel was clicked
+        break;
+    default:
+        // should never be reached
+        break;
+  }
     return true;
 }
 void MainWindow::reponseRecueDelete(QNetworkReply* reply)
 {
-    if (reply->error() == QNetworkReply::NoError)
+   if (reply->error() == QNetworkReply::NoError)
    {
         statusBar->showMessage(tr("Enregistrement effacé avec succès"));
    }
@@ -358,7 +454,7 @@ void MainWindow::openHelp(){
     helpDialog->exec();
 }
 
-void MainWindow::replaceTab(QWidget * replacement, std::string label)
+void MainWindow::addTab(QWidget * tab, std::string label)
 {
     int index = 0;
     bool found  = false;
@@ -375,22 +471,22 @@ void MainWindow::replaceTab(QWidget * replacement, std::string label)
         if(currentTabText == QString::fromStdString(label)){
             index = i;
             found = true;
+            tabWidget->setCurrentWidget(tabWidget->widget(i));
         }
     }
-    if(found){
-        tabWidget->removeTab(index);
-        if (replacement){
-            tabWidget->insertTab(index, replacement, QString::fromStdString(label));
-            tabWidget->setCurrentWidget(tabWidget->widget(index));
-        }
+    if(found)
+    {
+        tabWidget->setCurrentWidget(tabWidget->widget(index));
     }
     else
     {
-        tabWidget->addTab(replacement,QString::fromStdString(label));
+        tabWidget->addTab(tab,QString::fromStdString(label));
         tabWidget->setCurrentWidget(tabWidget->widget(tabWidget->count()-1));
     }
+
     setStatusBarText(tr("Prêt"));
 }
+
 void MainWindow::closeTab(int index){
 
     if (index == -1) {

@@ -8,9 +8,13 @@
 #include <QtCharts/QChartView>
 #include <QtCharts/QPieSeries>
 #include <QtCharts/QPieSlice>
-#include "../algorithm/AlgorithmOutput.h"
-#include "../algorithm/AlgorithmList.h"
+#include "../algorithm/AlgorithmOutputInfoSerializer.h"
+#include "../algorithm/AlgorithmInfoSerializer.h"
+#include "../acquisition/RecordInfo.h"
+#include "../core/components/blockType/DbBlock.h"
+#include "../MainWindow.h"
 #include <QPushButton>
+#include <QInputDialog>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -20,7 +24,7 @@ class ResultsTabWidget: public QWidget
 
     public:
     ResultsTabWidget();
-    ResultsTabWidget(QWidget *parent, RecordInfo &recordInfo, AlgorithmInfo &algoInfo, AlgorithmOutput &output);
+    ResultsTabWidget(QWidget *parent, AlgorithmOutputInfo output);
      ~ResultsTabWidget();
 
     public slots:
@@ -28,12 +32,12 @@ class ResultsTabWidget: public QWidget
     void exportToDBSlot();
 
     private:
+    QWidget* m_parent;
     QGridLayout* layout;
     QWidget* container;
     QLabel* imuType;
     QPushButton* exportToPdf;
     QPushButton* saveResultsToDB;
-    RecordInfo m_recordInfo;
     QChartView *chartView;
 
     QLabel* algoLabel;
@@ -45,7 +49,11 @@ class ResultsTabWidget: public QWidget
     QLabel* measureUnitLabel;
     QLabel* computeTimeLabel;
 
-    void init(AlgorithmInfo &algoInfo, AlgorithmOutput &output);
+    DbBlock * m_databaseAccess;
+
+    AlgorithmOutputInfo m_algorithmOutputInfo;
+
+    void init(AlgorithmOutputInfo output);
 };
 
 #endif

@@ -13,7 +13,7 @@ add_subdirectory(dialogs)
 add_subdirectory(logger)
 add_subdirectory(graph)
 add_subdirectory(widgets)
-add_subdirectory(utils)
+add_subdirectory(utilities)
 
 SET(srcs
     ${srcs}
@@ -33,6 +33,7 @@ SET(uis
     help.ui
     about.ui
     FullGraphDialog.ui
+    AccDataDisplay.ui
 )
 
 SET(qrc

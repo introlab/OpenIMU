@@ -12,6 +12,7 @@ SET(headers
     ${CMAKE_CURRENT_SOURCE_DIR}/WimuAcquisition.h
     ${CMAKE_CURRENT_SOURCE_DIR}/WimuRecord.h
     ${CMAKE_CURRENT_SOURCE_DIR}/CJsonSerializer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/RecordInfo.h
     ${CMAKE_CURRENT_SOURCE_DIR}/IJsonSerializable.h
     PARENT_SCOPE
 )

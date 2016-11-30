@@ -43,15 +43,20 @@ public:
         release->setFont(QFont( "Arial", 10, QFont::Bold));
         QTextEdit* releasete = new QTextEdit();
         releasete->setMinimumHeight(200);
-        QString* notes = new QString("Version 2.0 - 24/10/2016 \n\n- Sauvegarde en base de données \n- Application d'algorithmes en python sur les données \n"
-                                     "- Implémentation de l'algorithme: temps d'activité \n- Améliorations de l'interface utilisateur \n"
-                                     "- Centrale inertielle supportée dans cette version: Wimu\n\n"
-                                     "Version 2.1 - 06/11/2016 \n\n- Suppression des enregistrements \n- Tabulation pour chaque résultat \n- Crash sur importation résolue"
-                                     "\n- Diminution du temps de lancement de l'application");
+        QString* notes = new QString(
+                    "Version 2.2 - 25/11/2016 \n\n- Renommer les enregistrements \n- Découper les enregistrements par tranche horaire \n- Arborescence des enregistrements sous forme d'arbre"
+                    "\n- Algorithme FFT en python \n- Exportation PDF des résultats \n- Affichage du temps de calcul pour les algorithmes\n\n"
+                    "** Versions antérieures: ** \n\n"
+                    "Version 2.1 - 06/11/2016 \n\n- Suppression des enregistrements \n- Tabulation pour chaque résultat \n- Crash sur importation résolue"
+                    "\n- Diminution du temps de lancement de l'application\n\n"
+                    "Version 2.0 - 24/10/2016 \n\n- Sauvegarde en base de données \n- Application d'algorithmes en python sur les données \n"
+                    "- Implémentation de l'algorithme: temps d'activité \n- Améliorations de l'interface utilisateur \n"
+                    "- Centrale inertielle supportée dans cette version: Wimu\n\n");
+
         releasete->setPlainText(*notes);
         releasete->setReadOnly(true);
 
-        QLabel *version = new QLabel("Version: Release 2.1");
+        QLabel *version = new QLabel("Version: Release 2.2");
 
         mainLayout->addWidget(fonctions,Qt::AlignCenter);
         mainLayout->addWidget(fonction1);

@@ -4,7 +4,7 @@
 #include"../MainWindow.h"
 
 
-RecordsWidget::RecordsWidget(QWidget *parent,const WimuAcquisition& data, RecordInfo rcd):QWidget(parent)
+RecordsWidget::RecordsWidget(QWidget *parent, const WimuAcquisition& data, RecordInfo rcd):QWidget(parent)
 {
     renameRecordClicked = false;
 
@@ -39,7 +39,7 @@ RecordsWidget::RecordsWidget(QWidget *parent,const WimuAcquisition& data, Record
     goToNextStep->setText("Choisir Algorithme");
     deleteBtn = new OpenImuButton();
     deleteBtn->setText("Supprimer enregistrement");
-    AccDataDisplay2 *dataDisplay = new AccDataDisplay2(acceleroData);
+    AccDataDisplay *dataDisplay = new AccDataDisplay(acceleroData);
     dataDisplay->showSimplfiedDataDisplay();
 
     editRecord = new QPushButton("");
@@ -72,6 +72,7 @@ RecordsWidget::RecordsWidget(QWidget *parent,const WimuAcquisition& data, Record
     connect(deleteBtn, SIGNAL(clicked()), parent, SLOT(deleteRecord()));
     connect(editRecord, SIGNAL(clicked()), this, SLOT(renameRecord()));
     fDialog = new FullGraphDialog();
+    fDialog->setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
     fDialog->prepareDisplay(acceleroData,record);
 }
 

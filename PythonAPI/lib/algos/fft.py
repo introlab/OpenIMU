@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import numpy as np
 from lib_openimu.algorithm import Algorithm
 from lib_openimu import schemas
@@ -11,14 +12,19 @@ class fft(Algorithm):
     """
     def __init__(self):
         super(fft,self).__init__()
-        self.description = "Fast Fourier Transform Algorithm"
-        self.author = "OpenIMU Team"
-        self.details = "FFT on each dimensions though time."
-        self.params.uuid = 0
-        self.infos.uuid = "Unique Id of the data"
-        self.params.bins = 1024
-        self.infos.bins = "Number of bins per dimensions. Default is 1024"
+        self.description = "Transformé de Fourrier rapide"
+        self.author = "L'équipe d'OpenIMU"
+        self.name = "FFT"
+        self.filename = "fft"
+        self.details = "Fait la FFT sur chaque dimension, à travers le temps."
 
+        self.params.uuid = 0
+        self.infos.uuid = "Identifiant unique d'un enregistrement"
+        self.possible.uuid = "Un identifiant ObjectID"
+
+        self.params.bins = 1024
+        self.infos.bins = "Nombre de columnes par dimensions."
+        self.possible.bins = "Un chiffre de 1 à 2*N"
 
     def run(self):
         schema = schemas.Sensor(many=True)
@@ -34,6 +40,12 @@ class fft(Algorithm):
         y = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(y,nbBins)]
         z = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(z,nbBins)]
 
-        self.output.result = {'x':x,'y':y,"z":z}
+        temp = {"accelerometres": []}
+        for i in range(1, min(len(x), len(y), len(z))):
+            value = {"x": x[i], "y": y[i], "z": z[i]}
+            temp["accelerometres"].append(value)
+
+        self.output.result = {"accelerometres": temp["accelerometres"]}
+
         return self.output
 
