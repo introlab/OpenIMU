@@ -237,7 +237,7 @@ class AlgoList(Resource):
                     param['name'] =  keys
                     try :
                         param['info'] = instance.infos[keys]
-                        param['possible'] = instance.possible[keys]
+                        param['possible_values'] = instance.possible[keys]
                     except:
                         pass
 

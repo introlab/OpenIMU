@@ -20,11 +20,11 @@ class fft(Algorithm):
 
         self.params.uuid = 0
         self.infos.uuid = "Identifiant unique d'un enregistrement"
-        self.possible.uuid = "Un identifiant ObjectID"
+        self.possible.uuid = {"type":"ObjectID"}
 
         self.params.bins = 1024
         self.infos.bins = "Nombre de columnes par dimensions."
-        self.possible.bins = "Un chiffre de 1 à 2*N"
+        self.possible.bins = {"range":[0,None]}
 
     def run(self):
         schema = schemas.Sensor(many=True)

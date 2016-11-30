@@ -36,8 +36,11 @@ class activityTracker(Algorithm):
 
         self.params.threshold = 0
         self.infos.threshold = "Magnitude de l'accélération qui défini l'activité "
+        self.possible.threshold = {"range":[0,None]}
+
         self.params.uuid = 0
         self.infos.uuid = "Identifiant unique d'un enregistrement"
+        self.possible.uuid = {"type":"ObjectID"}
 
 
     def run(self):
