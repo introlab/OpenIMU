@@ -34,6 +34,7 @@ class DataSort(Schema):
 class DataRequestWithOptions(Schema):
     timeFilter = fields.Nested(TimeFilter)
     sort = fields.Nested(DataSort)
+    samples = fields.Int(as_string = False)
     recordId = fields.UUID()
 
 class Position(Schema):
