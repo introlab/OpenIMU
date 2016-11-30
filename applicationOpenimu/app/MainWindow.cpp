@@ -86,6 +86,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     statusBar->addPermanentWidget(spinnerStatusBar);
 
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
+    connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(onTabChanged(int)));
     connect(addRecord, SIGNAL(clicked()), this, SLOT(openRecordDialog()));
     connect(deleteRecord, SIGNAL(clicked()), this, SLOT(deleteRecordFromList()));
 
@@ -483,6 +484,20 @@ void MainWindow::addTab(QWidget * tab, std::string label)
     }
 
     setStatusBarText(tr("Prêt"));
+}
+void MainWindow::onTabChanged(int index)
+{
+    if (index == -1) {
+        return;
+    }
+
+    for(int i=0; i<record.m_WimuRecordList.size();i++)
+    {
+        if(record.m_WimuRecordList.at(i).m_recordName.compare(tabWidget->tabText(index).toStdString()) == 0)
+        {
+            selectedRecord = record.m_WimuRecordList.at(i);
+        }
+    }
 }
 
 void MainWindow::closeTab(int index){

@@ -42,6 +42,7 @@ class MainWindow : public QMainWindow
         void openFile();
         void openRecordDialog();
         void closeTab(int);
+        void onTabChanged(int);
         void addTab(QWidget * tab, std::string label);
         void openAbout();
         void openHelp();
