@@ -30,7 +30,7 @@ class stepCounter(Algorithm):
         :return: Rien par défaut, mais self.ouput et quand même utile à retourner
         """
         schema = schemas.Sensor(many=True)
-        ref = self.database.db.accelerometres.find({'ref': self.params.uuid})
+        ref = self.database.db.accelerometres.find({'ref': ObjectId(self.params.uuid)})
         data, errors = schema.dump(ref)
 
         filtereddata = self.moving_average(data)
@@ -50,7 +50,8 @@ class stepCounter(Algorithm):
         magnetude = [sqrt(i.get('x')**2 + i.get('y')**2 + i.get('z')**2)
                          for i in data]
         N = self.spacing
-        return  np.convolve(magnetude, np.ones((N,))/ N,mode='valid')[(N-1):]
+        V = np.ones((N,))/N
+        return  np.convolve(magnetude, V, mode='valid')[(N-1):]
 
     def find_peaks(self,data,spacing = 1, limit = None):
         """Identifier les sommets dans les données qui sont séparé par un espacement et supérieur à une limite.

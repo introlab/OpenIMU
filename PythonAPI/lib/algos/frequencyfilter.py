@@ -56,20 +56,21 @@ class frequencyfilter(Algorithm):
 
         #Params initialization
         self.params.uuid = 0
-        self.infos.uuid = "Identifiant unique d'un enregistrement"
-        self.possible.uuid = "Un identifiant ObjectId"
+        self.infos.uuid = "Identifiant unique d'un enregistrement format ObjectID"
+        self.possible.uuid = {"type":"ObjectID"}
 
         self.params.type = None
         self.infos.type = "Type de filtre : passe-bas ou passe-haut"
-        self.possible.type = "lowpass,highpass"
+        self.possible.type = {"values":["passe-bas","passe-haut"]}
 
         self.params.cutoff = 0.1
         self.infos.cutoff =  "Fréquence de coupure: Est une fraction du taux d'échantillonage(entre 0 et 0.5)"
-        self.possible.cutoff = "Float entre 0 et 0.5"
+        self.possible.cutoff = {"range":[0,0.5]}
+
 
         self.params.transition = 0.1
         self.infos.transition = "Bande de transition: Est une fraction du taux d'échantillonage(entre 0 et 0.5)"
-        self.possible.transition = "Float entre 0 et 0.5"
+        self.possible.transition = {"range":[0,0.5]}
 
         #After __init__, the params are passed throught a URL parser by algorithm.load()
 
