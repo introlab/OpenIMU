@@ -184,6 +184,7 @@ void RecordsDialog::addRecordSlot()
 {
     MainWindow * mainWindow = (MainWindow*)m_parent;
     mainWindow->setStatusBarText(tr("Insertion de l'enregistrement dans la base de données en cours..."));
+    mainWindow->startSpinner();
 
     successLabel->setText("");
 
@@ -233,10 +234,12 @@ void RecordsDialog::addRecordSlot()
 
         successLabel->setText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"));
         mainWindow->setStatusBarText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"));
+
         current_uuid = "";
         QMainWindow* currWin = (QMainWindow*)m_parent;
         MainWindow* win = (MainWindow*)currWin;
         win->getRecordsFromDB();
+        this->close();
     }
     else if (isDuplicateName)
     {
@@ -247,6 +250,8 @@ void RecordsDialog::addRecordSlot()
         MainWindow* win = (MainWindow*)currWin;
         win->getRecordsFromDB();
     }
+
+    mainWindow->stopSpinner();
 }
 
 //*************************** DATA BASE ACCESS *************************
