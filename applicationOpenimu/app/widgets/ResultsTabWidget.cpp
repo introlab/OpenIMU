@@ -14,9 +14,14 @@ ResultsTabWidget::ResultsTabWidget(QWidget *parent, AlgorithmOutputInfo output):
     init(output);
 }
 
-ResultsTabWidget::ResultsTabWidget(QWidget *parent, AccDataDisplay* accDataDisplay):QWidget(parent)
+ResultsTabWidget::ResultsTabWidget(QWidget *parent, WimuAcquisition& accData, RecordInfo& rInfo):QWidget(parent)
 {
     m_parent = parent;
+    m_accData = new WimuAcquisition();
+    m_accData->setDataAccelerometer(accData.getDataAccelerometer());
+    m_recordInfo = rInfo;
+
+    AccDataDisplay* accDataDisplay = new AccDataDisplay(accData);
     initFilterView(accDataDisplay);
 }
 
@@ -112,7 +117,12 @@ void ResultsTabWidget::initFilterView(AccDataDisplay* accDataDisplay)
     layout = new QGridLayout;
     this->setLayout(layout);
     accDataDisplay->showSimplfiedDataDisplay();
+    saveResultsToDB = new OpenImuButton("Sauvegarder en base de données");
+    connect(saveResultsToDB, SIGNAL(clicked()), this, SLOT(exportDataToDBSlot()));
+
+
     layout->addWidget(accDataDisplay);
+    layout->addWidget(saveResultsToDB,1,0);
 }
 
 void ResultsTabWidget::exportToDBSlot()
@@ -163,6 +173,22 @@ void ResultsTabWidget::exportToDBSlot()
     delete resultsNameInputDialog;
     mainWindow->stopSpinner();
     mainWindow->setStatusBarText(status);
+}
+
+void ResultsTabWidget::exportDataToDBSlot()
+{
+    RecordInfo newInfo;
+    newInfo.m_imuPosition = m_recordInfo.m_imuPosition;
+    newInfo.m_imuType = m_recordInfo.m_imuType;
+    newInfo.m_parentId = m_recordInfo.m_recordId;
+    newInfo.m_recordName = "filtered" + m_recordInfo.m_recordName;
+    newInfo.m_recordDetails = m_recordInfo.m_recordDetails;
+
+    std::string output;
+    CJsonSerializer::Serialize(m_accData, newInfo, output);
+    m_databaseAccess = new DbBlock();
+    QString temp = QString::fromStdString(output);//TODO remove
+    m_databaseAccess->addRecordInDB(temp);
 }
 
 void ResultsTabWidget::exportToPdfSlot()

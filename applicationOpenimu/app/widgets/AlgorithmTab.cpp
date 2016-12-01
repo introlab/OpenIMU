@@ -74,7 +74,7 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
 
         algorithmTableWidget->setRowCount(m_algorithmSerializer.m_algorithmList.size());
 
-        connect(algorithmTableWidget, SIGNAL(clicked(const QModelIndex& )), this, SLOT(openParametersWindow(const QModelIndex &)));
+        connect(algorithmTableWidget, SIGNAL(clicked(const QModelIndex& )), this, SLOT(onClickOpenParametersWindow(const QModelIndex &)));
 
         // -- Parameter Section
         algorithmParameters = new AlgorithmDetailedView();
@@ -121,7 +121,6 @@ void AlgorithmTab::setAlgorithm(AlgorithmInfo algorithmInfo)
     algorithmParameters->setAlgorithm(algorithmInfo,m_selectedAlgorithm);
 }
 
-
 void AlgorithmTab::openResultTab()
 {
     bool showMessage = false;
@@ -148,7 +147,7 @@ void AlgorithmTab::openResultTab()
     }
 }
 
-void AlgorithmTab::openParametersWindow(const QModelIndex &index)
+void AlgorithmTab::onClickOpenParametersWindow(const QModelIndex &index)
 {
     if (index.isValid() && m_algorithmSerializer.m_algorithmList.size() != 0)
     {
@@ -212,12 +211,12 @@ bool AlgorithmTab::getAlgorithmsFromDB()
     QEventLoop loop;
     bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,SLOT(quit()));
     loop.exec();
-    reponseRecue(reply);
+    algoListResponse(reply);
 
     return true;
 }
 
-void AlgorithmTab::reponseRecue(QNetworkReply* reply)
+void AlgorithmTab::algoListResponse(QNetworkReply* reply)
 {
     MainWindow * mainWindow = (MainWindow*)m_parent;
     if (reply->error() == QNetworkReply::NoError)
@@ -264,8 +263,7 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
             CJsonSerializer::Deserialize(&fData, reponse);
             WimuAcquisition wimuData;
             wimuData.setDataAccelerometer(fData.m_dataAccelerometer);
-            AccDataDisplay* accData = new AccDataDisplay(wimuData);
-            ResultsTabWidget* res = new ResultsTabWidget(this,accData);
+            ResultsTabWidget* res = new ResultsTabWidget(this,wimuData, m_selectedRecord);
             window->addTab(res,"Filtre: " + m_selectedRecord.m_recordName);
        }
    }

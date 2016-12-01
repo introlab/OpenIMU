@@ -196,7 +196,7 @@ void MainWindow::openRecordDialog()
 void MainWindow::openAlgorithmTab()
 {
     algorithmTab = new AlgorithmTab(this,selectedRecord);
-    addTab(algorithmTab,"Algo.: " + selectedRecord.m_recordName);
+    addTab(algorithmTab,"Algorithme");
 }
 
 void MainWindow::setStatusBarText(QString txt)
