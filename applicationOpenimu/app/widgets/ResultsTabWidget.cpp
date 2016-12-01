@@ -3,12 +3,27 @@
 #include <QPdfWriter>
 #include <QPainter>
 
+ResultsTabWidget::ResultsTabWidget()
+{
+
+}
+
 ResultsTabWidget::ResultsTabWidget(QWidget *parent, AlgorithmOutputInfo output):QWidget(parent)
 {
     m_parent = parent;
     init(output);
 }
 
+ResultsTabWidget::ResultsTabWidget(QWidget *parent, AccDataDisplay* accDataDisplay):QWidget(parent)
+{
+    m_parent = parent;
+    initFilterView(accDataDisplay);
+}
+
+ResultsTabWidget::~ResultsTabWidget()
+{
+
+}
 
 void ResultsTabWidget::init(AlgorithmOutputInfo output)
 {
@@ -27,19 +42,13 @@ void ResultsTabWidget::init(AlgorithmOutputInfo output)
 
     recordLabel = new QLabel("Enregistrement utilisé: "+ recordName);
     dateLabel = new QLabel("Date de l'enregistrement: " + QString::fromStdString(m_algorithmOutputInfo.m_date));
-    startHourLabel = new QLabel("Heure de début séléctionné: " + QString::fromStdString(m_algorithmOutputInfo.m_startTime));
-    endHourLabel = new QLabel("Heure de fin séléctionné: " + QString::fromStdString(m_algorithmOutputInfo.m_endTime));
     positionLabel = new QLabel("Position du Wimu: " + QString::fromStdString(m_algorithmOutputInfo.m_recordImuPosition));
-    measureUnitLabel = new QLabel("Unité de mesure: " + QString::fromStdString(m_algorithmOutputInfo.m_measureUnit)) ;
     computeTimeLabel = new QLabel("Temps de calculs: " +QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_executionTime) + "ms"));
 
     layout->addWidget(algoLabel,0,0);
     layout->addWidget(recordLabel,1,0);
     layout->addWidget(dateLabel,2,0);
-    layout->addWidget(startHourLabel,3,0);
-    layout->addWidget(endHourLabel,4,0);
     layout->addWidget(positionLabel,5,0);
-    layout->addWidget(measureUnitLabel,6,0);
     layout->addWidget(computeTimeLabel,7,0);
 
     layout->setMargin(10);
@@ -62,7 +71,7 @@ void ResultsTabWidget::init(AlgorithmOutputInfo output)
         chartView->chart()->setAnimationOptions(QChart::SeriesAnimations);
         chartView->chart()->legend()->setFont(QFont("Arial", 12));
 
-         exportToPdf = new QPushButton("Exporter en PDF");
+         exportToPdf = new OpenImuButton("Exporter en PDF");
 
         connect(exportToPdf, SIGNAL(clicked()), this, SLOT(exportToPdfSlot()));
         layout->addWidget(chartView,8,0);
@@ -72,14 +81,14 @@ void ResultsTabWidget::init(AlgorithmOutputInfo output)
     else
     {
        QLabel* labelResult = new QLabel("Résultat de l'algorithme : " + QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_value)) +" pas" );
-       exportToPdf = new QPushButton("Exporter en PDF");
+       exportToPdf = new OpenImuButton("Exporter en PDF");
        algoLabel->setFont(QFont( "Arial", 12, QFont::Light));
        layout->addWidget(labelResult,9,0,Qt::AlignCenter);
     }
 
     connect(exportToPdf, SIGNAL(clicked()), this, SLOT(exportToPdfSlot()));
 
-    saveResultsToDB = new QPushButton("Sauvegarder en base de données");
+    saveResultsToDB = new OpenImuButton("Sauvegarder en base de données");
     connect(saveResultsToDB, SIGNAL(clicked()), this, SLOT(exportToDBSlot()));
 
     layout->addWidget(saveResultsToDB,9,1);
@@ -97,15 +106,15 @@ void ResultsTabWidget::init(AlgorithmOutputInfo output)
                    );
 }
 
-ResultsTabWidget::ResultsTabWidget()
-{
 
+void ResultsTabWidget::initFilterView(AccDataDisplay* accDataDisplay)
+{
+    layout = new QGridLayout;
+    this->setLayout(layout);
+    accDataDisplay->showSimplfiedDataDisplay();
+    layout->addWidget(accDataDisplay);
 }
 
-ResultsTabWidget::~ResultsTabWidget()
-{
-
-}
 void ResultsTabWidget::exportToDBSlot()
 {
     // MainWindow -> AlgorithmTab -> ResultsTab
@@ -185,16 +194,7 @@ void ResultsTabWidget::exportToPdfSlot()
         painter.drawText(250,1000,dateLabel->text());
 
         painter.setPen(Qt::black);
-        painter.drawText(250,1500,startHourLabel->text());
-
-        painter.setPen(Qt::black);
-        painter.drawText(250,1750,endHourLabel->text());
-
-        painter.setPen(Qt::black);
         painter.drawText(250,2000,positionLabel->text());
-
-        painter.setPen(Qt::black);
-        painter.drawText(250,2250,measureUnitLabel->text());
 
         painter.setPen(Qt::black);
         painter.drawText(250,2500,computeTimeLabel->text());

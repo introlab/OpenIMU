@@ -8,13 +8,16 @@
 #include <QtCharts/QChartView>
 #include <QtCharts/QPieSeries>
 #include <QtCharts/QPieSlice>
+#include <QPushButton>
+#include <QInputDialog>
+
+#include "../utilities/OpenImuButton.h"
 #include "../algorithm/AlgorithmOutputInfoSerializer.h"
 #include "../algorithm/AlgorithmInfoSerializer.h"
 #include "../acquisition/RecordInfo.h"
 #include "../core/components/blockType/DbBlock.h"
 #include "../MainWindow.h"
-#include <QPushButton>
-#include <QInputDialog>
+#include "../AccDataDisplay.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -22,38 +25,37 @@ class ResultsTabWidget: public QWidget
 {
     Q_OBJECT
 
-    public:
+public:
     ResultsTabWidget();
     ResultsTabWidget(QWidget *parent, AlgorithmOutputInfo output);
+    ResultsTabWidget(QWidget *parent, AccDataDisplay* AccDataDisplay);
      ~ResultsTabWidget();
 
-    public slots:
+    void init(AlgorithmOutputInfo output);
+    void initFilterView(AccDataDisplay* accDataDisplay);
+
+public slots:
     void exportToPdfSlot();
     void exportToDBSlot();
 
-    private:
+private:
     QWidget* m_parent;
     QGridLayout* layout;
     QWidget* container;
     QLabel* imuType;
-    QPushButton* exportToPdf;
-    QPushButton* saveResultsToDB;
+    OpenImuButton* exportToPdf;
+    OpenImuButton* saveResultsToDB;
     QChartView *chartView;
 
     QLabel* algoLabel;
     QLabel* recordLabel;
     QLabel* dateLabel;
-    QLabel* startHourLabel;
-    QLabel* endHourLabel;
     QLabel* positionLabel;
-    QLabel* measureUnitLabel;
     QLabel* computeTimeLabel;
 
     DbBlock * m_databaseAccess;
 
     AlgorithmOutputInfo m_algorithmOutputInfo;
-
-    void init(AlgorithmOutputInfo output);
 };
 
 #endif
