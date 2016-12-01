@@ -4,10 +4,11 @@ from lib_openimu import schemas
 from bson.objectid import ObjectId
 from math import sqrt
 import numpy as np
+import matplotlib.pyplot as plt
 
 class stepCounter(Algorithm):
     #This is the base threshold for the stepcounter
-    spacing = 75
+    spacing = 50
 
     def __init__(self):
         super(stepCounter, self).__init__()
@@ -30,11 +31,13 @@ class stepCounter(Algorithm):
         :return: Rien par défaut, mais self.ouput et quand même utile à retourner
         """
         schema = schemas.Sensor(many=True)
-        ref = self.database.db.accelerometres.find({'ref': ObjectId(self.params.uuid)})
+        ref = self.database.db.accelerometres.find({'ref': str(self.params.uuid)})
         data, errors = schema.dump(ref)
 
+        if len(data)/2 < self.spacing : self.spacing = len(data)/2 - 1
+
         filtereddata = self.moving_average(data)
-        peaks = self.find_peaks(filtereddata,spacing = self.spacing,limit = 4000)
+        peaks = self.find_peaks(filtereddata,spacing = self.spacing,limit = 3500)
 
         # If you have imported matplotlib, you can decomment the following section. It block the cpu.
         #t = np.linspace(0, 1, len(filtereddata))
@@ -49,9 +52,12 @@ class stepCounter(Algorithm):
     def moving_average(self,data):
         magnetude = [sqrt(i.get('x')**2 + i.get('y')**2 + i.get('z')**2)
                          for i in data]
+
         N = self.spacing
         V = np.ones((N,))/N
-        return  np.convolve(magnetude, V, mode='valid')[(N-1):]
+
+        result = np.convolve(magnetude, V, mode='valid')[(N-1):]
+        return  result
 
     def find_peaks(self,data,spacing = 1, limit = None):
         """Identifier les sommets dans les données qui sont séparé par un espacement et supérieur à une limite.
@@ -75,7 +81,6 @@ class stepCounter(Algorithm):
             start = spacing + s + 1
             h_a = x[start: start + len]  # after
             peak_candidate = np.logical_and(peak_candidate, np.logical_and(h_c > h_b, h_c > h_a))
-
         ind = np.argwhere(peak_candidate)
         ind = ind.reshape(ind.size)
         if limit is not None:

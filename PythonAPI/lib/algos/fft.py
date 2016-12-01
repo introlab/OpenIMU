@@ -28,7 +28,7 @@ class fft(Algorithm):
 
     def run(self):
         schema = schemas.Sensor(many=True)
-        ref = self.database.db.accelerometres.find({'ref': ObjectId(self.params.uuid)})
+        ref = self.database.db.accelerometres.find({'ref': str(self.params.uuid)})
         self.data, errors = schema.dump(ref)
 
         x = [snap.get('x') for snap in self.data]
