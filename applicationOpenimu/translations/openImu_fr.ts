@@ -67,31 +67,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../app/AccDataDisplay.ui" line="142"/>
-        <location filename="../app/AccDataDisplay.cpp" line="288"/>
+        <location filename="../app/AccDataDisplay.cpp" line="289"/>
         <source>Axe Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AccDataDisplay.ui" line="155"/>
-        <location filename="../app/AccDataDisplay.cpp" line="282"/>
+        <location filename="../app/AccDataDisplay.cpp" line="283"/>
         <source>Axe X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AccDataDisplay.ui" line="168"/>
-        <location filename="../app/AccDataDisplay.cpp" line="307"/>
+        <location filename="../app/AccDataDisplay.cpp" line="308"/>
         <source>Moyenne mobile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AccDataDisplay.ui" line="181"/>
-        <location filename="../app/AccDataDisplay.cpp" line="298"/>
+        <location filename="../app/AccDataDisplay.cpp" line="299"/>
         <source>Norme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AccDataDisplay.ui" line="194"/>
-        <location filename="../app/AccDataDisplay.cpp" line="294"/>
+        <location filename="../app/AccDataDisplay.cpp" line="295"/>
         <source>Axe Z</source>
         <translation type="unfinished"></translation>
     </message>
@@ -168,28 +168,28 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AlgorithmTab</name>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="32"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="36"/>
         <source>Tableau des algorithmes disponibles</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="94"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="82"/>
         <source>Appliquer algorithme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="153"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="140"/>
         <source>Avertissement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="237"/>
-        <source>Application de l&apos;agorithme complété</source>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="224"/>
+        <source>L&apos;algorithme a été appliqué avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="243"/>
-        <source>Application de l&apos;agorithme non réussi</source>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="230"/>
+        <source>Échec de l&apos;application de l&apos;algorithme</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -515,31 +515,51 @@ p, li { white-space: pre-wrap; }
     <name>MainWindow</name>
     <message>
         <location filename="../app/MainWindow.cpp" line="76"/>
-        <location filename="../app/MainWindow.cpp" line="402"/>
+        <location filename="../app/MainWindow.cpp" line="507"/>
         <source>Accueil</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/MainWindow.cpp" line="84"/>
-        <location filename="../app/MainWindow.cpp" line="106"/>
-        <location filename="../app/MainWindow.cpp" line="125"/>
-        <location filename="../app/MainWindow.cpp" line="417"/>
+        <location filename="../app/MainWindow.cpp" line="108"/>
+        <location filename="../app/MainWindow.cpp" line="170"/>
+        <location filename="../app/MainWindow.cpp" line="529"/>
         <source>Prêt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="117"/>
+        <location filename="../app/MainWindow.cpp" line="115"/>
         <source>Chargement de l&apos;enregistrement...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="358"/>
+        <location filename="../app/MainWindow.cpp" line="133"/>
+        <source>Avertissement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="158"/>
+        <source>Chargement du résultat...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="456"/>
         <source>Enregistrement effacé avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="362"/>
-        <source>Echec de suppression de l&apos;enregistrement</source>
+        <location filename="../app/MainWindow.cpp" line="460"/>
+        <source>Échec de la suppression de l&apos;enregistrement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="468"/>
+        <source>Enregistrement renommé avec succès</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="472"/>
+        <source>Échec du changement de nom de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -682,20 +702,20 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="206"/>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="220"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="208"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="222"/>
         <source>Avertissement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="231"/>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="232"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="235"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="236"/>
         <source>L&apos;enregistrement </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="231"/>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="232"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="235"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="236"/>
         <source> à été ajouté avec succès</source>
         <translation type="unfinished"></translation>
     </message>
@@ -703,22 +723,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ResultsTabWidget</name>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="116"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="137"/>
         <source>Insertion des résultats dans la base de données en cours...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="164"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="204"/>
         <source>Enregistrement des résultats sous forme de fichier PDF en cours...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="169"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="210"/>
         <source>Save Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="169"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="210"/>
         <source>PDF (*.pdf)</source>
         <translation type="unfinished"></translation>
     </message>
