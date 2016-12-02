@@ -11,6 +11,7 @@
 #include "iostream"
 #include <QtConcurrent/QtConcurrentRun>
 #include <QByteArray>
+#include "widgets/RecordViewWidget.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -72,7 +73,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     listWidget->setMaximumWidth(150);
     tabWidget->setTabsClosable(true);
     homeWidget = new HomeWidget(this);
-
     tabWidget->addTab(homeWidget,tr("Accueil"));
     tabWidget->setStyleSheet("background: rgb(247, 250, 255,0.6)");
     tabWidget->setCurrentWidget(tabWidget->widget(0));
@@ -145,9 +145,8 @@ void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
             }
             else
             {
-                qDebug() << "data in this file valid";
-                recordsTab = new RecordsWidget(this,wimuAcquisition,selectedRecord);
-                addTab(recordsTab,selectedRecord.m_recordName);
+               RecordViewWidget* recordTab = new RecordViewWidget(this,wimuAcquisition,selectedRecord);
+               addTab(recordTab,selectedRecord.m_recordName);
             }
 
             isRecord = true;
