@@ -28,7 +28,7 @@ class ResultsTabWidget: public QWidget
 public:
     ResultsTabWidget();
     ResultsTabWidget(QWidget *parent, AlgorithmOutputInfo output);
-    ResultsTabWidget(QWidget *parent, AccDataDisplay* AccDataDisplay);
+    ResultsTabWidget(QWidget *parent, WimuAcquisition& accData, RecordInfo& rInfo);
      ~ResultsTabWidget();
 
     void init(AlgorithmOutputInfo output);
@@ -37,6 +37,7 @@ public:
 public slots:
     void exportToPdfSlot();
     void exportToDBSlot();
+    void exportDataToDBSlot();
 
 private:
     QWidget* m_parent;
@@ -54,8 +55,9 @@ private:
     QLabel* computeTimeLabel;
 
     DbBlock * m_databaseAccess;
-
+    WimuAcquisition* m_accData;
     AlgorithmOutputInfo m_algorithmOutputInfo;
+    RecordInfo m_recordInfo;
 };
 
 #endif
