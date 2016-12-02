@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <QSoundEffect>
+#include <QDebug>
 
 using namespace std;
 
@@ -18,12 +19,12 @@ class Utilities
     static QString capitalizeFirstCharacter(string myString);
     void playAudio(void);
 
-    static std::string getColourFromEnum(MessageStatus status);
+    static QString getColourFromEnum(MessageStatus status);
 
-    static const std::string successColour;
-    static const std::string errorColour;
-    static const std::string warningColour;
-    static const std::string defaultColour;
+    static const QString successColour;
+    static const QString errorColour;
+    static const QString warningColour;
+    static const QString defaultColour;
 };
 
 #endif // UTILITIES_H

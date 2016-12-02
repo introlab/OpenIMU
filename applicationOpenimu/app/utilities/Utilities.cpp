@@ -2,10 +2,10 @@
 
 using namespace std;
 
-const std::string Utilities::successColour = "#25FF3C";
-const std::string Utilities::errorColour = "#FE0D0D";
-const std::string Utilities::warningColour = "#FEFE08";
-const std::string Utilities::defaultColour = "#000000";
+const QString Utilities::successColour = "#25FF3C";
+const QString Utilities::errorColour = "#FE0D0D";
+const QString Utilities::warningColour = "#FEFE08";
+const QString Utilities::defaultColour = "#000000";
 
 QString Utilities::capitalizeFirstCharacter(QString myString)
 {
@@ -26,7 +26,7 @@ void Utilities::playAudio(void)
     notificationAudio.play();
 }
 
-std::string Utilities::getColourFromEnum(MessageStatus status)
+QString Utilities::getColourFromEnum(MessageStatus status)
 {
     switch(status)
     {

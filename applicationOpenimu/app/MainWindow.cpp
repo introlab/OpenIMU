@@ -209,8 +209,9 @@ void MainWindow::setStatusBarText(QString txt, MessageStatus status)
 {
     statusBar->showMessage(tr(txt.toStdString().c_str()));
 
-    QString styleSheet = " QStatusBar { {color: %1; font: 18px;} }";
-    statusBar->setStyleSheet(styleSheet.replace("%1", QString::fromStdString(Utilities::getColourFromEnum(status))));
+
+    QString styleSheet = "color: " + Utilities::getColourFromEnum(status) +"; font: 16px;";
+    statusBar->setStyleSheet(styleSheet);
 }
 
 void MainWindow::deleteRecord()
