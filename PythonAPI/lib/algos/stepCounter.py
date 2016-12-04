@@ -4,7 +4,7 @@ from lib_openimu import schemas
 from bson.objectid import ObjectId
 from math import sqrt
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 class stepCounter(Algorithm):
     #This is the base threshold for the stepcounter

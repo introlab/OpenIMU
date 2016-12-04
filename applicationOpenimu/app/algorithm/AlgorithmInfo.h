@@ -4,12 +4,19 @@
 #include <string>
 #include <vector>
 
+struct PossibleValues
+{
+    std::string m_type;
+    std::string m_values;
+};
+
 struct ParameterInfo
 {
     std::string m_name;
     std::string m_description;
     std::string m_value;
     std::string m_defaultValue;
+    std::vector<PossibleValues> m_possibleValue;
 };
 
 struct AlgorithmInfo

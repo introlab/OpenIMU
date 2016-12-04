@@ -145,7 +145,6 @@ void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
             }
             else
             {
-                qDebug() << "data in this file valid";
                 recordsTab = new RecordsWidget(this,wimuAcquisition,selectedRecord);
                 addTab(recordsTab,selectedRecord.m_recordName);
             }

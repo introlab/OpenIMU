@@ -12,8 +12,10 @@ AlgorithmInfoSerializer::~AlgorithmInfoSerializer()
 }
 void AlgorithmInfoSerializer::Serialize(AlgorithmInfo algorithmInfo, std::string& output)
 {
+    //to do : verify that possible values are correctly serialize. I think right now it isn't
     Json::Value jsonAlgorithmInfo(Json::objectValue);
     Json::Value jsonAlgorithmParametersInfo(Json::arrayValue);
+    Json::Value jsonAlgorithmParametersPossibleValues(Json::arrayValue);
 
     // Serializing the member variables ...
     jsonAlgorithmInfo["author"] = algorithmInfo.m_author;
@@ -33,6 +35,16 @@ void AlgorithmInfoSerializer::Serialize(AlgorithmInfo algorithmInfo, std::string
        jsonParameter["name"] = p.m_name;
        jsonParameter["value"] = p.m_value;
        jsonParameter["defaultvalue"] = p.m_defaultValue;
+
+       for(int i = 0; i < p.m_possibleValue.size(); i++)
+       {
+           PossibleValues pv = p.m_possibleValue.at(i);
+           Json::Value jsonPossibleValues(Json::objectValue);
+
+           jsonPossibleValues["possible_values"] = pv.m_values;
+
+           jsonAlgorithmParametersPossibleValues.append(jsonPossibleValues);
+       }
 
        jsonAlgorithmParametersInfo.append(jsonParameter);
     }
@@ -75,6 +87,18 @@ void AlgorithmInfoSerializer::Deserialize(std::string& dataToDeserialize)
             p.m_description = parameterListInJson[indexp].get("info", "").asString();
             p.m_value = parameterListInJson[indexp].get("value", "").asString();
             p.m_defaultValue = parameterListInJson[indexp].get("default", "").asString();
+
+            Json::Value possibleValuesOfParameter = algorithmListInJson[index].get("possible_values", "");
+            for ( int indexpv = 0; indexpv < parameterListInJson.size(); ++indexpv )
+            {
+                PossibleValues possibleValues;
+                std::string tmp = possibleValuesOfParameter[indexpv].getMemberNames().at(0);
+                qDebug() << "DESERIALIZING" + QString::fromStdString(tmp);
+                possibleValues.m_values = parameterListInJson[indexp].get(tmp, "").asString();
+
+                p.m_possibleValue.push_back(possibleValues);
+            }
+            //p.m_possibleValue = parameterListInJson[indexp].get("possible_values", "").asString();
             algorithmInfo.m_parameters.push_back(p);
         }
 
