@@ -181,7 +181,7 @@ void ResultsTabWidget::exportToDBSlot()
 }
 
 void ResultsTabWidget::exportDataToDBSlot()
-{
+{  
     RecordInfo newInfo;
     newInfo.m_imuPosition = m_recordInfo.m_imuPosition;
     newInfo.m_imuType = m_recordInfo.m_imuType;

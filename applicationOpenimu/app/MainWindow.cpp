@@ -105,9 +105,9 @@ void MainWindow::onListItemClicked(QTreeWidgetItem* item, int column)
         if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text(column).toStdString()) == 0)
         {
             selectedRecord = record.m_WimuRecordList.at(i);
-           setStatusBarText(tr("Prêt"));
         }
     }
+    setStatusBarText(tr("Prêt"));
 }
 
 void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
@@ -252,6 +252,9 @@ void MainWindow::openHomeTab()
 
 bool MainWindow::getRecordsFromDB()
 {
+    startSpinner();
+    setStatusBarText("Chargement des enregistrements...");
+
     QNetworkRequest request(QUrl("http://127.0.0.1:5000/records"));
     request.setRawHeader("User-Agent", "ApplicationNameV01");
     request.setRawHeader("Content-Type", "application/json");
@@ -260,12 +263,17 @@ bool MainWindow::getRecordsFromDB()
     QNetworkReply *reply = manager->get(request);
 
     bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), this ,SLOT(reponseRecue(QNetworkReply*)));
-    return true;
+
+    stopSpinner();
+    return result;
 }
 
 //Getting results from DB
 bool MainWindow::getSavedResultsFromDB()
 {
+    startSpinner();
+    setStatusBarText("Chargement des résultats sauvegardés...");
+
     QNetworkRequest request(QUrl("http://127.0.0.1:5000/algoResults"));
     request.setRawHeader("User-Agent", "ApplicationNameV01");
     request.setRawHeader("Content-Type", "application/json");
@@ -278,6 +286,8 @@ bool MainWindow::getSavedResultsFromDB()
     result = connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,SLOT(quit()));
     loop.exec();
     savedResultsReponse(reply);
+
+    stopSpinner();
     return true;
 }
 
@@ -328,6 +338,12 @@ void MainWindow::savedResultsReponse(QNetworkReply* reply)
         {
             savedResults.DeserializeList(reponse);
         }
+
+        setStatusBarText("Prêt");
+    }
+    else
+    {
+        setStatusBarText("Erreur lors de la récupération des résultats", error);
     }
 }
 
@@ -373,9 +389,12 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
                listWidget->addTopLevelItem(top_item);
            }
        }
+
+       setStatusBarText("Prêt");
    }
    else
    {
+       setStatusBarText("Erreur de connexion lors de la récupération des enregistrements", error);
        qDebug() << "error connect";
    }
    delete reply;
