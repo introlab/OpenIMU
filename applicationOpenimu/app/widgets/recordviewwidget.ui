@@ -24,12 +24,12 @@
        <property name="maximumSize">
         <size>
          <width>16777215</width>
-         <height>50</height>
+         <height>60</height>
         </size>
        </property>
        <property name="font">
         <font>
-         <family>Open Sans Light</family>
+         <family>Segoe UI Light</family>
          <pointsize>18</pointsize>
          <weight>50</weight>
          <bold>false</bold>
@@ -70,8 +70,9 @@
               <font>
                <family>Open Sans Light</family>
                <pointsize>10</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
+               <weight>50</weight>
+               <bold>false</bold>
+               <underline>true</underline>
               </font>
              </property>
              <property name="text">
@@ -104,7 +105,7 @@
           <widget class="QPushButton" name="fullGraphButton">
            <property name="minimumSize">
             <size>
-             <width>100</width>
+             <width>156</width>
              <height>0</height>
             </size>
            </property>
@@ -147,8 +148,9 @@
               <font>
                <family>Open Sans Light</family>
                <pointsize>10</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
+               <weight>50</weight>
+               <bold>false</bold>
+               <underline>true</underline>
               </font>
              </property>
              <property name="text">
@@ -185,8 +187,9 @@
               <font>
                <family>Open Sans Light</family>
                <pointsize>10</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
+               <weight>50</weight>
+               <bold>false</bold>
+               <underline>true</underline>
               </font>
              </property>
              <property name="text">
@@ -223,8 +226,9 @@
               <font>
                <family>Open Sans Light</family>
                <pointsize>10</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
+               <weight>50</weight>
+               <bold>false</bold>
+               <underline>true</underline>
               </font>
              </property>
              <property name="text">
@@ -316,8 +320,9 @@
               <font>
                <family>Open Sans Light</family>
                <pointsize>10</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
+               <weight>50</weight>
+               <bold>false</bold>
+               <underline>true</underline>
               </font>
              </property>
              <property name="text">
