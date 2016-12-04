@@ -5,9 +5,6 @@
 #include <QtWidgets>
 #include <string>
 #include <QLabel>
-#include <QtCharts/QChartView>
-#include <QtCharts/QPieSeries>
-#include <QtCharts/QPieSlice>
 #include <QPushButton>
 #include <QInputDialog>
 
@@ -44,15 +41,8 @@ private:
     QGridLayout* layout;
     QWidget* container;
     QLabel* imuType;
-    OpenImuButton* exportToPdf;
     OpenImuButton* saveResultsToDB;
-    QChartView *chartView;
 
-    QLabel* algoLabel;
-    QLabel* recordLabel;
-    QLabel* dateLabel;
-    QLabel* positionLabel;
-    QLabel* computeTimeLabel;
 
     DbBlock * m_databaseAccess;
     WimuAcquisition* m_accData;

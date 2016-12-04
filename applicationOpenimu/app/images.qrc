@@ -9,5 +9,6 @@
         <file>icons/sliced.png</file>
         <file>icons/file2.png</file>
         <file>icons/results.png</file>
+        <file>icons/steps.png</file>
     </qresource>
 </RCC>
