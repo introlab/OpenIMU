@@ -221,13 +221,13 @@ void AlgorithmTab::algoListResponse(QNetworkReply* reply)
     MainWindow * mainWindow = (MainWindow*)m_parent;
     if (reply->error() == QNetworkReply::NoError)
    {
-       mainWindow->setStatusBarText(tr("Application de l'agorithme complété"));
+       mainWindow->setStatusBarText(tr("L'algorithme a été appliqué avec succès"), MessageStatus::success);
        std::string testReponse = reply->readAll().toStdString();
        m_algorithmSerializer.Deserialize(testReponse);
    }
    else
    {
-       mainWindow->setStatusBarText(tr("Application de l'agorithme non réussi"));
+       mainWindow->setStatusBarText(tr("Échec de l'application de l'algorithme"), MessageStatus::error);
    }
    delete reply;
 }

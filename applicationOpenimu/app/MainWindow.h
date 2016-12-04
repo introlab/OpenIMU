@@ -21,10 +21,11 @@
 #include "dialogs/RecordsDialog.h"
 #include "../../acquisition/CJsonSerializer.h"
 #include "../../acquisition/WimuRecord.h"
-#include "widgets/RecordsWidget.h"
 #include "widgets/AlgorithmTab.h"
 #include "widgets/HomeWidget.h"
 #include "../acquisition/RecordInfo.h"
+#include "../acquisition/WimuAcquisition.h"
+#include "utilities/Utilities.h"
 
 class MainWindow : public QMainWindow
     {
@@ -34,7 +35,7 @@ class MainWindow : public QMainWindow
        ~MainWindow();
        std::string getFileName(std::string s);
        void retranslateUi();
-       void setStatusBarText(QString txt);
+       void setStatusBarText(QString txt, MessageStatus status = none);
     signals:
 
     public slots:
@@ -55,7 +56,7 @@ class MainWindow : public QMainWindow
 
         //Visual feedback
         void startSpinner();
-        void stopSpinner();
+        void stopSpinner(bool playAudio = false);
 
         //Getting records from DB
         bool getRecordsFromDB();
@@ -107,7 +108,6 @@ class MainWindow : public QMainWindow
         WimuRecord record;
         AlgorithmOutputInfoSerializer savedResults;
         WimuAcquisition wimuAcquisition;
-        RecordsWidget* recordsTab;
         AlgorithmTab* algorithmTab;
         QLabel* spinnerStatusBar;
         QMovie* movieSpinnerBar;

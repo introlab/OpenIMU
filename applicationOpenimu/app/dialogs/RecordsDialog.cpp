@@ -192,7 +192,7 @@ void RecordsDialog::addRecordSlot()
     dir->setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
 
     QFileInfoList list = dir->entryInfoList(QDir::Files | QDir::NoDotAndDotDot | QDir::Dirs);
-    bool success = true;
+    bool addingRecordSuccess = true;
 
     foreach(QFileInfo finfo, list)
     {
@@ -207,7 +207,7 @@ void RecordsDialog::addRecordSlot()
                 QMessageBox messageBox;
                 messageBox.warning(0,tr("Avertissement"), "Vérifier le nom de l'enregistrement et qu'un dossier a été séléctionné");
                 messageBox.setFixedSize(500,200);
-                success = false;
+                addingRecordSuccess = false;
                 break;
             }
         }
@@ -221,7 +221,7 @@ void RecordsDialog::addRecordSlot()
                  QMessageBox messageBox;
                  messageBox.warning(0,tr("Avertissement"), "Vérifier le nom de l'enregistrement et qu'un dossier a été séléctionné");
                  messageBox.setFixedSize(500,200);
-                 success = false;
+                 addingRecordSuccess = false;
                  break;
              }
              break;
@@ -229,11 +229,11 @@ void RecordsDialog::addRecordSlot()
         }
 
 
-    if(success && !isDuplicateName)
+    if(addingRecordSuccess && !isDuplicateName)
     {
 
         successLabel->setText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"));
-        mainWindow->setStatusBarText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"));
+        mainWindow->setStatusBarText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"), MessageStatus::success);
 
         current_uuid = "";
         QMainWindow* currWin = (QMainWindow*)m_parent;
@@ -244,14 +244,14 @@ void RecordsDialog::addRecordSlot()
     else if (isDuplicateName)
     {
         successLabel->setText(error_msg);
-        mainWindow->setStatusBarText(error_msg);
+        mainWindow->setStatusBarText(error_msg, MessageStatus::error);
 
         QMainWindow* currWin = (QMainWindow*)m_parent;
         MainWindow* win = (MainWindow*)currWin;
         win->getRecordsFromDB();
     }
 
-    mainWindow->stopSpinner();
+    mainWindow->stopSpinner(true);
 }
 
 //*************************** DATA BASE ACCESS *************************

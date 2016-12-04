@@ -11,6 +11,7 @@
 #include "iostream"
 #include <QtConcurrent/QtConcurrentRun>
 #include <QByteArray>
+#include "widgets/RecordViewWidget.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -72,7 +73,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     listWidget->setMaximumWidth(150);
     tabWidget->setTabsClosable(true);
     homeWidget = new HomeWidget(this);
-
     tabWidget->addTab(homeWidget,tr("Accueil"));
     tabWidget->setStyleSheet("background: rgb(247, 250, 255,0.6)");
     tabWidget->setCurrentWidget(tabWidget->widget(0));
@@ -81,7 +81,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     mainWidget->mainLayout->addWidget(tabWidget);
 
     setCentralWidget(mainWidget);
-    statusBar->showMessage(tr("Prêt"));
+    setStatusBarText(tr("Prêt"));
     statusBar->setMinimumHeight(20);
     statusBar->addPermanentWidget(spinnerStatusBar);
 
@@ -105,14 +105,14 @@ void MainWindow::onListItemClicked(QTreeWidgetItem* item, int column)
         if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text(column).toStdString()) == 0)
         {
             selectedRecord = record.m_WimuRecordList.at(i);
-            statusBar->showMessage(tr("Prêt"));
+           setStatusBarText(tr("Prêt"));
         }
     }
 }
 
 void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
 {
-    statusBar->showMessage(tr("Chargement de l'enregistrement..."));
+    setStatusBarText(tr("Chargement de l'enregistrement..."));
     startSpinner();
     bool isRecord = false;
     for(int i=0; i<record.m_WimuRecordList.size();i++)
@@ -145,8 +145,8 @@ void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
             }
             else
             {
-                recordsTab = new RecordsWidget(this,wimuAcquisition,selectedRecord);
-                addTab(recordsTab,selectedRecord.m_recordName);
+               RecordViewWidget* recordTab = new RecordViewWidget(this,wimuAcquisition,selectedRecord);
+               addTab(recordTab,selectedRecord.m_recordName);
             }
 
             isRecord = true;
@@ -154,7 +154,7 @@ void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
     }
     if(!isRecord)
     {
-        statusBar->showMessage(tr("Chargement du résultat..."));
+        setStatusBarText(tr("Chargement du résultat..."));
         for(int i=0; i<savedResults.m_algorithmOutputList.size();i++)
         {
             if(savedResults.m_algorithmOutputList.at(i).m_resultName.compare(item->text(column).toStdString()) == 0)
@@ -166,7 +166,7 @@ void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
         }
     }
     stopSpinner();
-    statusBar->showMessage(tr("Prêt"));
+    setStatusBarText(tr("Prêt"));
 }
 
 void MainWindow::startSpinner()
@@ -175,10 +175,16 @@ void MainWindow::startSpinner()
     movieSpinnerBar->start();
 }
 
-void MainWindow::stopSpinner()
+void MainWindow::stopSpinner(bool playAudio)
 {
     movieSpinnerBar->stop();
     spinnerStatusBar->hide();
+
+    if(playAudio)
+    {
+        Utilities utilities;
+        utilities.playAudio();
+    }
 }
 
 void MainWindow:: openFile(){
@@ -198,17 +204,21 @@ void MainWindow::openAlgorithmTab()
     addTab(algorithmTab,"Algorithme");
 }
 
-void MainWindow::setStatusBarText(QString txt)
+void MainWindow::setStatusBarText(QString txt, MessageStatus status)
 {
     statusBar->showMessage(tr(txt.toStdString().c_str()));
+
+
+    QString styleSheet = "color: " + Utilities::getColourFromEnum(status) +"; font: 16px;";
+    statusBar->setStyleSheet(styleSheet);
 }
 
 void MainWindow::deleteRecord()
 {
+    startSpinner();
     QMessageBox msgBox;
     msgBox.setText("Suppression de l'enregistrement");
     msgBox.setInformativeText("Êtes vous sûr de vouloir supprimer cet enregistrement?");
-
 
     msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
     msgBox.setDefaultButton(QMessageBox::Cancel);
@@ -231,6 +241,7 @@ void MainWindow::deleteRecord()
           break;
     }
 
+    stopSpinner(true);
 }
 
 void MainWindow::openHomeTab()
@@ -441,17 +452,24 @@ void MainWindow::reponseRecueDelete(QNetworkReply* reply)
 {
    if (reply->error() == QNetworkReply::NoError)
    {
-        statusBar->showMessage(tr("Enregistrement effacé avec succès"));
+       setStatusBarText(tr("Enregistrement effacé avec succès"), MessageStatus::success);
    }
    else
    {
-        statusBar->showMessage(tr("Echec de suppression de l'enregistrement"));
+        setStatusBarText(tr("Échec de la suppression de l'enregistrement"), MessageStatus::error);
    }
 }
 
 void MainWindow::reponseRecueRename(QNetworkReply* reply)
 {
-      //   qDebug() << reply->error();
+    if (reply->error() == QNetworkReply::NoError)
+    {
+        setStatusBarText(tr("Enregistrement renommé avec succès"), MessageStatus::success);
+    }
+    else
+    {
+         setStatusBarText(tr("Échec du changement de nom de l'enregistrement"), MessageStatus::error);
+    }
 }
 
 void MainWindow::setApplicationInEnglish()

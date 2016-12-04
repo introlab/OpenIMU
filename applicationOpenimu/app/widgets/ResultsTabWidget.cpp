@@ -131,7 +131,9 @@ void ResultsTabWidget::exportToDBSlot()
     AlgorithmTab * algorithmTab = (AlgorithmTab*)m_parent;
     MainWindow * mainWindow = (MainWindow*)algorithmTab->getMainWindow();
 
-    QString status = "Prêt";
+    QString statusMessage = "Prêt";
+    MessageStatus status = MessageStatus::none;
+
     mainWindow->setStatusBarText(tr("Insertion des résultats dans la base de données en cours..."));
     mainWindow->startSpinner();
 
@@ -158,21 +160,24 @@ void ResultsTabWidget::exportToDBSlot()
 
         if(resultsAddedSuccessfully)
         {
-            status = "Enregistrement en base de données réussi";
+            statusMessage = "Enregistrement en base de données réussi";
+            status = MessageStatus::success;
         }
         else
         {
-            status = "Échec de l'enregistrement en base de données";
+            statusMessage = "Échec de l'enregistrement en base de données";
+            status = MessageStatus::error;
         }
     }
     else
     {
-        status = "Enregistrement en base de données annulé";
+        statusMessage = "Enregistrement en base de données annulé";
+        status = MessageStatus::error;
     }
 
     delete resultsNameInputDialog;
-    mainWindow->stopSpinner();
-    mainWindow->setStatusBarText(status);
+    mainWindow->stopSpinner(true);
+    mainWindow->setStatusBarText(statusMessage, status);
 }
 
 void ResultsTabWidget::exportDataToDBSlot()
@@ -199,7 +204,8 @@ void ResultsTabWidget::exportToPdfSlot()
     mainWindow->setStatusBarText(tr("Enregistrement des résultats sous forme de fichier PDF en cours..."));
     mainWindow->startSpinner();
 
-    QString status = "Prêt";
+    QString statusMessage = "Prêt";
+    MessageStatus status = MessageStatus::none;
 
     QString filename = QFileDialog::getSaveFileName(this,tr("Save Document"), QDir::currentPath(),tr("PDF (*.pdf)"));
     if( !filename.isNull() )
@@ -234,13 +240,15 @@ void ResultsTabWidget::exportToPdfSlot()
 
         painter.end();
 
-        status = "Enregistrement du PDF réussi";
+        statusMessage = "Enregistrement du PDF réussi";
+        status = MessageStatus::success;
     }
     else
     {
-        status = "Échec de l'enregistrement du PDF";
+        statusMessage = "Échec de l'enregistrement du PDF";
+        status = MessageStatus::error;
     }
 
-    mainWindow->stopSpinner();
-    mainWindow->setStatusBarText(status);
+    mainWindow->stopSpinner(true);
+    mainWindow->setStatusBarText(statusMessage, status);
 }
