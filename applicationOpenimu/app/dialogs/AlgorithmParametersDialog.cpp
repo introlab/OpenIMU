@@ -11,6 +11,8 @@ AlgorithmParametersDialog::AlgorithmParametersDialog(QWidget * parent, Algorithm
     parametersLayout = new QVBoxLayout(this);
     parametersLayout->addWidget(titleLabel);
 
+    this->setWindowIcon(QIcon(":/icons/logo.ico"));
+
     // Adds every parameter to the Dialog Window.
     foreach(ParameterInfo p, m_algorithmInfo.m_parameters)
     {
