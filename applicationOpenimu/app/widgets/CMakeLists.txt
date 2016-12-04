@@ -37,5 +37,6 @@ SET(uis
     ${uis}
     ${CMAKE_CURRENT_SOURCE_DIR}/MRichTextEditor/mrichtextedit.ui
     ${CMAKE_CURRENT_SOURCE_DIR}/recordviewwidget.ui
+    ${CMAKE_CURRENT_SOURCE_DIR}/homewidget.ui
     PARENT_SCOPE
 )
