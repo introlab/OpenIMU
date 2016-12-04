@@ -34,7 +34,7 @@ class stepCounter(Algorithm):
         ref = self.database.db.accelerometres.find({'ref': str(self.params.uuid)})
         data, errors = schema.dump(ref)
 
-        if len(data)/2 < self.spacing : self.spacing = len(data)/2 - 1
+        if len(data)/2 < self.spacing : self.spacing = round(len(data)/2 - 1)
 
         filtereddata = self.moving_average(data)
         peaks = self.find_peaks(filtereddata,spacing = self.spacing,limit = 3500)
