@@ -201,13 +201,12 @@ void MainWindow::openRecordDialog()
 void MainWindow::openAlgorithmTab()
 {
     algorithmTab = new AlgorithmTab(this,selectedRecord);
-    addTab(algorithmTab,"Algorithme");
+    addTab(algorithmTab,"Algorithmes");
 }
 
 void MainWindow::setStatusBarText(QString txt, MessageStatus status)
 {
     statusBar->showMessage(tr(txt.toStdString().c_str()));
-
 
     QString styleSheet = "color: " + Utilities::getColourFromEnum(status) +"; font: 16px;";
     statusBar->setStyleSheet(styleSheet);
@@ -343,7 +342,7 @@ void MainWindow::savedResultsReponse(QNetworkReply* reply)
     }
     else
     {
-        setStatusBarText("Erreur lors de la récupération des résultats", error);
+        setStatusBarText("Erreur lors de la récupération des résultats", MessageStatus::error);
     }
 }
 
@@ -394,7 +393,7 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
    }
    else
    {
-       setStatusBarText("Erreur de connexion lors de la récupération des enregistrements", error);
+       setStatusBarText("Erreur de connexion lors de la récupération des enregistrements", MessageStatus::error);
        qDebug() << "error connect";
    }
    delete reply;
