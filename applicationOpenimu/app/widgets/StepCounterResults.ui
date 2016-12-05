@@ -85,7 +85,7 @@
         <widget class="QLabel" name="label_2">
          <property name="maximumSize">
           <size>
-           <width>300</width>
+           <width>250</width>
            <height>30</height>
           </size>
          </property>
@@ -123,7 +123,7 @@
       <widget class="QLabel" name="label_4">
        <property name="maximumSize">
         <size>
-         <width>300</width>
+         <width>250</width>
          <height>30</height>
         </size>
        </property>
@@ -159,7 +159,7 @@
       <widget class="QLabel" name="label_5">
        <property name="maximumSize">
         <size>
-         <width>300</width>
+         <width>250</width>
          <height>30</height>
         </size>
        </property>
@@ -226,7 +226,7 @@
       <widget class="QLabel" name="label_10">
        <property name="maximumSize">
         <size>
-         <width>300</width>
+         <width>250</width>
          <height>16777215</height>
         </size>
        </property>
@@ -256,7 +256,7 @@
       <widget class="QLabel" name="label_7">
        <property name="maximumSize">
         <size>
-         <width>300</width>
+         <width>250</width>
          <height>30</height>
         </size>
        </property>
@@ -292,7 +292,7 @@
       <widget class="QLabel" name="label_3">
        <property name="maximumSize">
         <size>
-         <width>300</width>
+         <width>250</width>
          <height>30</height>
         </size>
        </property>
@@ -425,6 +425,9 @@
       <layout class="QHBoxLayout" name="horizontalLayout_6">
        <item>
         <widget class="QPushButton" name="exportToPdf">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
          <property name="styleSheet">
           <string notr="true"> QPushButton{background-color: rgba(119, 160, 175, 0.7);
                      border-style: inset;
@@ -443,6 +446,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="saveToBd">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
          <property name="styleSheet">
           <string notr="true"> QPushButton{background-color: rgba(119, 160, 175, 0.7);
                      border-style: inset;
