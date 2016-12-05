@@ -26,19 +26,14 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
         // -- Layout
         algorithmListGroupBox = new QGroupBox(this);
         algorithmListGroupBox->setFixedHeight(300);
-        //algorithmListGroupBox->setFlat(true);
         algorithmListLayout = new QVBoxLayout(this);
-
         algorithmTabLayout = new QVBoxLayout(this);
-
 
         // -- Algorithm List Section
         algorithmLabel = new QLabel(tr("Tableau des algorithmes disponibles"));
         algorithmTableWidget = new QTableWidget(this);
-
         algorithmTableWidget->setRowCount(10);
         algorithmTableWidget->setColumnCount(3);
-        //algorithmTableWidget->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
 
         algorithmTableHeaders<<"Nom"<<"Description"<<"Auteur";
 
@@ -47,18 +42,22 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
         QHeaderView * headerHoriz = algorithmTableWidget->horizontalHeader();
         QHeaderView * headerVerti = algorithmTableWidget->verticalHeader();
 
+        headerHoriz->setHighlightSections(false);
+        headerVerti->setHighlightSections(false);
+
         headerHoriz->setSectionResizeMode(QHeaderView::Stretch);
         headerVerti->setSectionResizeMode(QHeaderView::Stretch);
 
         algorithmTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        algorithmTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
         algorithmTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-        algorithmTableWidget->setSelectionMode(QAbstractItemView::NoSelection);
-        //algorithmTableWidget->setShowGrid(false);
 
-        QString headerStyle = "QHeaderView::section { border: none; }";
-        QString gridStyle = "QTableView::item { border: none; }";
+        algorithmTableWidget->setShowGrid(false);
+        algorithmTableWidget->setGeometry(QApplication::desktop()->screenGeometry());
 
-        algorithmTableWidget->setStyleSheet(headerStyle + gridStyle);
+        QString selectionStyle = "QTableWidget::item:selected{background-color: palette(highlight); color: palette(highlightedText);};";
+
+        algorithmTableWidget->setStyleSheet(selectionStyle);
 
         for(int i =0; i<m_algorithmSerializer.m_algorithmList.size();i++)
         {
@@ -115,7 +114,6 @@ void AlgorithmTab::setAlgorithm(AlgorithmInfo algorithmInfo)
 {
     algorithmParameters->Clear();
 
-    //TODO:MADO selectedDataValues->setText(Utils::capitalizeFirstCharacter(QString::fromStdString(m_selectedRecord.m_recordName)));
     m_selectedAlgorithm = m_algorithmSerializer.m_algorithmList.at(selectedIndexRow);
     m_selectedAlgorithm.m_parameters.swap(algorithmInfo.m_parameters);
     algorithmParameters->setAlgorithm(algorithmInfo,m_selectedAlgorithm);
