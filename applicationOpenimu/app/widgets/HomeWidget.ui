@@ -77,6 +77,11 @@
          <height>20</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>OpenIMU, logiciel de visualisation et d'analyse pour centrale inertielle</string>
        </property>
@@ -96,9 +101,10 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>10</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
+         <pointsize>11</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+         <underline>true</underline>
         </font>
        </property>
        <property name="text">
@@ -198,9 +204,10 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>10</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
+         <pointsize>11</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+         <underline>true</underline>
         </font>
        </property>
        <property name="text">

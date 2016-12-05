@@ -11,6 +11,8 @@
 #include "../algorithm/FilteredData.h"
 #include "acquisition/CJsonSerializer.h"
 
+const string ID_FREQUENCY_FILTER = "2";
+
 AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget(parent)
 {
         m_parent = parent;
@@ -80,6 +82,7 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
         algorithmParameters = new AlgorithmDetailedView();
 
         applyAlgorithm = new QPushButton(tr("Appliquer algorithme"));
+        applyAlgorithm->setCursor(Qt::PointingHandCursor);
         connect(applyAlgorithm, SIGNAL(clicked()),this, SLOT(openResultTab()));
 
         // -- Setting the layout
@@ -240,7 +243,7 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
        AlgorithmOutputInfoSerializer algorithmOutputInfoSerializer;
        MainWindow * window = (MainWindow*)m_parent;
 
-       if(reponse != "" && m_selectedAlgorithm.m_id.compare("3") != 0)
+       if(reponse != "" && m_selectedAlgorithm.m_id.compare(ID_FREQUENCY_FILTER) != 0)
        {
            algorithmOutputInfoSerializer.Deserialize(reponse);
 
