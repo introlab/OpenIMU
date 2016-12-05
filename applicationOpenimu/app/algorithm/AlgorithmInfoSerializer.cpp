@@ -88,15 +88,20 @@ void AlgorithmInfoSerializer::Deserialize(std::string& dataToDeserialize)
             p.m_value = parameterListInJson[indexp].get("value", "").asString();
             p.m_defaultValue = parameterListInJson[indexp].get("default", "").asString();
 
-            Json::Value possibleValuesOfParameter = algorithmListInJson[index].get("possible_values", "");
-            for ( int indexpv = 0; indexpv < parameterListInJson.size(); ++indexpv )
+            qDebug() << "Before possibleValuesOfParameter";
+            Json::Value possibleValuesOfParameter = parameterListInJson[index].get("possible_values", "");
+            qDebug() << "cannot get possible_values";
+            for ( int indexpv = 0; indexpv < possibleValuesOfParameter.size(); ++indexpv )
             {
+                qDebug() << "DEBUG 1";
                 PossibleValues possibleValues;
-                std::string tmp = possibleValuesOfParameter[indexpv].getMemberNames().at(0);
-                qDebug() << "DESERIALIZING" + QString::fromStdString(tmp);
-                possibleValues.m_values = parameterListInJson[indexp].get(tmp, "").asString();
-
+                qDebug() << "DEBUG 2";
+                std::vector<std::string> tmp = possibleValuesOfParameter[indexpv].getMemberNames();
+                qDebug() << "DEBUG 3";
+                possibleValues.m_values = parameterListInJson[indexpv].get(tmp.at(0), "").asString();
+                qDebug() << "DEBUG 4";
                 p.m_possibleValue.push_back(possibleValues);
+                qDebug() << "DEBUG 5";
             }
             //p.m_possibleValue = parameterListInJson[indexp].get("possible_values", "").asString();
             algorithmInfo.m_parameters.push_back(p);
