@@ -34,7 +34,7 @@ class activityTracker(Algorithm):
                         "Étape 4 : Calcule le pourcentage de la différence de la magnitude qui dépasse le seuil donné en paramètre "
                         )
 
-        self.params.threshold = 0
+        self.params.threshold = 1000
         self.infos.threshold = "Magnitude de l'accélération qui défini l'activité "
         self.possible.threshold = {"range":[0,None]}
 
