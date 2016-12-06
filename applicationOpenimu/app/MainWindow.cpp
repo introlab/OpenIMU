@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QtConcurrent::run(MainWindow::launchApi);
 
     this->setWindowIcon(QIcon("../applicationOpenimu/app/icons/logo.ico"));
-
+    this->setStyleSheet("background-color:rgba(255, 255, 255,1);");
     this->grabGesture(Qt::PanGesture);
     this->grabGesture(Qt::PinchGesture);
 
@@ -490,18 +490,6 @@ void MainWindow::reponseRecueRename(QNetworkReply* reply)
     {
          setStatusBarText(tr("Échec du changement de nom de l'enregistrement"), MessageStatus::error);
     }
-}
-
-void MainWindow::setApplicationInEnglish()
-{
-    menu->setUncheck(frenchText);
-    //TODO: Olivier, insert change language logic here
-}
-
-void MainWindow::setApplicationInFrench()
-{
-    menu->setUncheck(englishText);
-    //TODO: Olivier, insert change language logic here
 }
 
 void MainWindow::openAbout(){
