@@ -69,31 +69,6 @@
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="11" column="0">
-          <widget class="QTextEdit" name="recordDetails">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>50</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Segoe UI Light</family>
-             <pointsize>9</pointsize>
-            </font>
-           </property>
-           <property name="lineWidth">
-            <number>1</number>
-           </property>
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-           <property name="placeholderText">
-            <string>Aucun détail sur cet enregistrement</string>
-           </property>
-          </widget>
-         </item>
          <item row="8" column="0">
           <layout class="QHBoxLayout" name="horizontalLayout_6">
            <item>
@@ -178,17 +153,7 @@
            </item>
           </layout>
          </item>
-         <item row="17" column="0" colspan="2">
-          <layout class="QHBoxLayout" name="graphHorizontalLayout">
-           <property name="leftMargin">
-            <number>2</number>
-           </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-          </layout>
-         </item>
-         <item row="18" column="0">
+         <item row="19" column="0">
           <widget class="QPushButton" name="fullGraphButton">
            <property name="minimumSize">
             <size>
@@ -260,11 +225,11 @@
            </item>
           </layout>
          </item>
-         <item row="18" column="1">
+         <item row="19" column="1">
           <widget class="QPushButton" name="algoBtn">
            <property name="minimumSize">
             <size>
-             <width>180</width>
+             <width>156</width>
              <height>0</height>
             </size>
            </property>
@@ -287,53 +252,11 @@
            </property>
           </widget>
          </item>
-         <item row="10" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <item>
-            <widget class="QLabel" name="label_4">
-             <property name="maximumSize">
-              <size>
-               <width>180</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <family>Open Sans Light</family>
-               <pointsize>10</pointsize>
-               <weight>50</weight>
-               <bold>false</bold>
-               <underline>true</underline>
-              </font>
-             </property>
-             <property name="text">
-              <string>Détails sur l'enregistrement:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
          <item row="0" column="1">
           <widget class="QPushButton" name="deleteRecordButton">
            <property name="minimumSize">
             <size>
-             <width>180</width>
+             <width>156</width>
              <height>0</height>
             </size>
            </property>
@@ -420,23 +343,7 @@
            </item>
           </layout>
          </item>
-         <item row="9" column="0">
-          <spacer name="verticalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Maximum</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="13" column="0">
+         <item row="11" column="0">
           <widget class="QLabel" name="label">
            <property name="maximumSize">
             <size>
@@ -457,7 +364,68 @@
           </widget>
          </item>
          <item row="12" column="0">
-          <spacer name="verticalSpacer_3">
+          <layout class="QHBoxLayout" name="graphHorizontalLayout">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="sizeConstraint">
+            <enum>QLayout::SetDefaultConstraint</enum>
+           </property>
+           <property name="leftMargin">
+            <number>2</number>
+           </property>
+           <property name="rightMargin">
+            <number>2</number>
+           </property>
+          </layout>
+         </item>
+         <item row="13" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Segoe UI Light</family>
+             <pointsize>10</pointsize>
+             <underline>true</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>Détails de l'enregistrement:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="17" column="0" colspan="2">
+          <widget class="QTextEdit" name="recordDetails">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>80</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Segoe UI Light</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="lineWidth">
+            <number>1</number>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+           <property name="placeholderText">
+            <string>Aucun détail sur cet enregistrement</string>
+           </property>
+          </widget>
+         </item>
+         <item row="18" column="0">
+          <spacer name="verticalSpacer_2">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
@@ -467,7 +435,7 @@
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>10</height>
+             <height>15</height>
             </size>
            </property>
           </spacer>

@@ -21,6 +21,9 @@ public:
     Ui::HomeWidget *ui;
     QWidget* m_parent;
 
+public slots:
+    void openGitLink();
+
 };
 
 #endif

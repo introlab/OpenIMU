@@ -63,9 +63,8 @@ void ResultsTabWidget::initFilterView(AccDataDisplay* accDataDisplay)
     layout = new QGridLayout;
     this->setLayout(layout);
     accDataDisplay->showSimplfiedDataDisplay();
-    saveResultsToDB = new OpenImuButton("Sauvegarder en base de données");
+    saveResultsToDB = new OpenImuButton("Sauvegarder comme enregistrement en base de données");
     connect(saveResultsToDB, SIGNAL(clicked()), this, SLOT(exportDataToDBSlot()));
-
 
     layout->addWidget(accDataDisplay);
     layout->addWidget(saveResultsToDB,1,0);
@@ -157,25 +156,31 @@ void ResultsTabWidget::exportToPdfSlot()
     if( !filename.isNull() )
     {
         QPdfWriter writer(filename);
+        writer.setPageSizeMM(QSize(216,280));
+
         QPainter painter(&writer);
+        int dpi = writer.resolution();
+        int maxWidth = 8.5*dpi;
+        int maxHeight = 11*dpi;
 
         painter.setPen(Qt::black);
-        painter.drawText(4000,0,"Rapport d'algorithme: ");
 
-        painter.setPen(Qt::black);
-        painter.drawText(250,500,QString::fromStdString(m_algorithmOutputInfo.m_algorithmName));
+        painter.drawLine(QPoint(-100,200), QPoint(maxWidth,200));
 
-        painter.setPen(Qt::black);
-        painter.drawText(250,750,QString::fromStdString(m_algorithmOutputInfo.m_recordName));
+        painter.drawText(4000,500,"Rapport d'algorithme: ");
+        painter.drawLine(QPoint(-100,700), QPoint(maxWidth,700));
+        painter.drawText(250,1000,"Informations sur l'enregistrement:");
 
-        painter.setPen(Qt::black);
-        painter.drawText(250,1000,QString::fromStdString(m_algorithmOutputInfo.m_date));
+        painter.drawText(250,1400,"Nom de l'enregistrement: " +QString::fromStdString(m_algorithmOutputInfo.m_recordName));
+        painter.drawText(250,1600, "Date de l'enregistrement:" + QString::fromStdString(m_algorithmOutputInfo.m_date));
+        painter.drawText(250,1800, "Type de IMU:" + QString::fromStdString(m_algorithmOutputInfo.m_recordImuPosition));
+        painter.drawText(250,2000, "Position de la centralle inertielle:" + QString::fromStdString(m_algorithmOutputInfo.m_recordType));
 
-        painter.setPen(Qt::black);
-        painter.drawText(250,2000,QString::fromStdString(m_algorithmOutputInfo.m_recordImuPosition));
 
-        painter.setPen(Qt::black);
-        painter.drawText(250,2500,QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_value)));
+        painter.drawText(250,2400,"Algorithmes:");
+        painter.drawText(250,2800,"Algorithme appliqué: " + QString::fromStdString(m_algorithmOutputInfo.m_algorithmName));
+        painter.drawText(250,3000, "Valeur obtenue:" +QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_value)));
+        painter.drawText(250,3200, "Temps de calculs:" +QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_executionTime)));
 
        /* QPixmap pix = chartView->grab();
         int h = painter.window().height()*0.4;

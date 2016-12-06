@@ -425,6 +425,9 @@
       <layout class="QHBoxLayout" name="horizontalLayout_6">
        <item>
         <widget class="QPushButton" name="exportToPdf">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
          <property name="styleSheet">
           <string notr="true"> QPushButton{background-color: rgba(119, 160, 175, 0.7);
                      border-style: inset;
@@ -443,6 +446,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="saveToBd">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
          <property name="styleSheet">
           <string notr="true"> QPushButton{background-color: rgba(119, 160, 175, 0.7);
                      border-style: inset;

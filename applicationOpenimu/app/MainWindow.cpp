@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QtConcurrent::run(MainWindow::launchApi);
 
     this->setWindowIcon(QIcon("../applicationOpenimu/app/icons/logo.ico"));
-
+    this->setStyleSheet("background-color:rgba(255, 255, 255,1);");
     this->grabGesture(Qt::PanGesture);
     this->grabGesture(Qt::PinchGesture);
 
@@ -58,11 +58,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QIcon img(":/icons/addrecord.png");
     addRecord->setIcon(img);
     addRecord->setIconSize(QSize(20,20));
+    addRecord->setCursor(Qt::PointingHandCursor);
 
     QPushButton* deleteRecord = new QPushButton("");
     QIcon imgd(":/icons/trash.png");
     deleteRecord->setIcon(imgd);
     deleteRecord->setIconSize(QSize(20,20));
+    deleteRecord->setCursor(Qt::PointingHandCursor);
 
     QVBoxLayout* vlayout = new QVBoxLayout();
     vlayout->addWidget(addRecord);
@@ -201,7 +203,7 @@ void MainWindow::openRecordDialog()
 void MainWindow::openAlgorithmTab()
 {
     algorithmTab = new AlgorithmTab(this,selectedRecord);
-    addTab(algorithmTab,"Algorithmes");
+    addTab(algorithmTab,"Algorithmes: "+selectedRecord.m_recordName);
 }
 
 void MainWindow::setStatusBarText(QString txt, MessageStatus status)
@@ -488,18 +490,6 @@ void MainWindow::reponseRecueRename(QNetworkReply* reply)
     {
          setStatusBarText(tr("Échec du changement de nom de l'enregistrement"), MessageStatus::error);
     }
-}
-
-void MainWindow::setApplicationInEnglish()
-{
-    menu->setUncheck(frenchText);
-    //TODO: Olivier, insert change language logic here
-}
-
-void MainWindow::setApplicationInFrench()
-{
-    menu->setUncheck(englishText);
-    //TODO: Olivier, insert change language logic here
 }
 
 void MainWindow::openAbout(){
