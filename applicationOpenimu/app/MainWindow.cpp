@@ -41,6 +41,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     fontitem.setKerning(false);
     fontitem.setPointSize(11);
 
+    QFont fontTabWidget;
+    fontTabWidget.setFamily("Open Sans Light");
+    fontTabWidget.setKerning(false);
+    fontTabWidget.setPointSize(12);
 
     menu = new ApplicationMenuBar(this);
     statusBar = new QStatusBar(this);
@@ -51,10 +55,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QTreeWidgetItem* headerItem = new QTreeWidgetItem();
     headerItem->setText(0,QString("Explorateur"));
     headerItem->setTextColor(0,QColor("grey"));
-    headerItem->setFont(0, font);
     listWidget->setHeaderItem(headerItem);
 
     tabWidget = new QTabWidget;
+
     spinnerStatusBar = new QLabel;
     movieSpinnerBar = new QMovie("../applicationOpenimu/app/icons/loaderStatusBar.gif");
 
@@ -64,6 +68,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     this->setStatusBar(statusBar);
 
     statusBar->setStyleSheet("background-color:rgba(230, 233, 239,0.2);");
+    statusBar->setMinimumHeight(100);
     listWidget->setFont(fontitem);
     listWidget->setCursor(Qt::PointingHandCursor);
     listWidget->setStyleSheet("border:none;"
@@ -78,7 +83,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QPushButton* deleteRecord = new QPushButton("-   Supprimer");
     deleteRecord->setFlat(true);
     deleteRecord->setFont(font);
-    deleteRecord->setStyleSheet("color:#95a5a6;");
+    deleteRecord->setStyleSheet("color:#e74c3c;");
     deleteRecord->setCursor(Qt::PointingHandCursor);
 
     QFrame* topLine = new QFrame();
@@ -108,6 +113,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     tabWidget->addTab(homeWidget,tr("Accueil"));
     tabWidget->setStyleSheet("background: rgb(247, 250, 255,0.6)");
     tabWidget->setCurrentWidget(tabWidget->widget(0));
+    tabWidget->setFont(fontTabWidget);
     tabWidget->grabGesture(Qt::PanGesture);
     tabWidget->grabGesture(Qt::PinchGesture);
     mainWidget->mainLayout->addWidget(tabWidget);
