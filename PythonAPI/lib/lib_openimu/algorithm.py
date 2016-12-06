@@ -1,6 +1,5 @@
 from timeit import default_timer as timer
 import datetime
-import warnings
 
 class Algorithm(object):
     """
@@ -125,7 +124,6 @@ class Algorithm(object):
 
     def before_run(self):
         self.output.runtime_start = str(datetime.datetime.now())
-        warnings.warn('default Implementation of before_run')
 
     # This function need to be overloaded by the algorithm.
     def after_run(self):
@@ -134,7 +132,6 @@ class Algorithm(object):
             self.output.request[key] = self.request[key]
         self.output.runtime = self.timer
         self.output.recordId = self.params.uuid
-        warnings.warn('default Implementation of after_run')
 
     def load(self,args = {}):
         """
