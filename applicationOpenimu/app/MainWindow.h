@@ -47,8 +47,6 @@ class MainWindow : public QMainWindow
         void addTab(QWidget * tab, std::string label);
         void openAbout();
         void openHelp();
-        void setApplicationInEnglish();
-        void setApplicationInFrench();
 
         void onListItemClicked(QTreeWidgetItem* item,int column);
         void onListItemDoubleClicked(QTreeWidgetItem* item,int column);

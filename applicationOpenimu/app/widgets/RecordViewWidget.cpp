@@ -7,7 +7,7 @@ RecordViewWidget::RecordViewWidget(QWidget *parent) :
     ui(new Ui::RecordViewWidget)
 {
     ui->setupUi(this);
-
+    m_parent = parent;
 }
 
 RecordViewWidget::RecordViewWidget(QWidget *parent,  const WimuAcquisition& data, RecordInfo rcd) :
@@ -15,7 +15,7 @@ RecordViewWidget::RecordViewWidget(QWidget *parent,  const WimuAcquisition& data
     ui(new Ui::RecordViewWidget)
 {
     ui->setupUi(this);
-
+    m_parent = parent;
     renameRecordClicked = false;
     acceleroData = data;
     record = rcd;
@@ -88,6 +88,7 @@ void RecordViewWidget::renameRecord()
         QIcon img(":/icons/edit2.png");
         ui->editButton->setIcon(img);
         ui->editButton->setIconSize(QSize(15, 15));
+
     }
 
 }

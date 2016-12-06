@@ -11,6 +11,8 @@
 #include "../algorithm/FilteredData.h"
 #include "acquisition/CJsonSerializer.h"
 
+const string ID_FREQUENCY_FILTER = "2";
+
 AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget(parent)
 {
         m_parent = parent;
@@ -26,19 +28,14 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
         // -- Layout
         algorithmListGroupBox = new QGroupBox(this);
         algorithmListGroupBox->setFixedHeight(300);
-        //algorithmListGroupBox->setFlat(true);
         algorithmListLayout = new QVBoxLayout(this);
-
         algorithmTabLayout = new QVBoxLayout(this);
-
 
         // -- Algorithm List Section
         algorithmLabel = new QLabel(tr("Tableau des algorithmes disponibles"));
         algorithmTableWidget = new QTableWidget(this);
-
         algorithmTableWidget->setRowCount(10);
         algorithmTableWidget->setColumnCount(3);
-        //algorithmTableWidget->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
 
         algorithmTableHeaders<<"Nom"<<"Description"<<"Auteur";
 
@@ -47,18 +44,22 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
         QHeaderView * headerHoriz = algorithmTableWidget->horizontalHeader();
         QHeaderView * headerVerti = algorithmTableWidget->verticalHeader();
 
+        headerHoriz->setHighlightSections(false);
+        headerVerti->setHighlightSections(false);
+
         headerHoriz->setSectionResizeMode(QHeaderView::Stretch);
         headerVerti->setSectionResizeMode(QHeaderView::Stretch);
 
         algorithmTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        algorithmTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
         algorithmTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-        algorithmTableWidget->setSelectionMode(QAbstractItemView::NoSelection);
-        //algorithmTableWidget->setShowGrid(false);
 
-        QString headerStyle = "QHeaderView::section { border: none; }";
-        QString gridStyle = "QTableView::item { border: none; }";
+        algorithmTableWidget->setShowGrid(false);
+        algorithmTableWidget->setGeometry(QApplication::desktop()->screenGeometry());
 
-        algorithmTableWidget->setStyleSheet(headerStyle + gridStyle);
+        QString selectionStyle = "QTableWidget::item:selected{background-color: palette(highlight); color: palette(highlightedText);};";
+
+        algorithmTableWidget->setStyleSheet(selectionStyle);
 
         for(int i =0; i<m_algorithmSerializer.m_algorithmList.size();i++)
         {
@@ -80,6 +81,7 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
         algorithmParameters = new AlgorithmDetailedView();
 
         applyAlgorithm = new QPushButton(tr("Appliquer algorithme"));
+        applyAlgorithm->setCursor(Qt::PointingHandCursor);
         connect(applyAlgorithm, SIGNAL(clicked()),this, SLOT(openResultTab()));
 
         // -- Setting the layout
@@ -115,7 +117,6 @@ void AlgorithmTab::setAlgorithm(AlgorithmInfo algorithmInfo)
 {
     algorithmParameters->Clear();
 
-    //TODO:MADO selectedDataValues->setText(Utils::capitalizeFirstCharacter(QString::fromStdString(m_selectedRecord.m_recordName)));
     m_selectedAlgorithm = m_algorithmSerializer.m_algorithmList.at(selectedIndexRow);
     m_selectedAlgorithm.m_parameters.swap(algorithmInfo.m_parameters);
     algorithmParameters->setAlgorithm(algorithmInfo,m_selectedAlgorithm);
@@ -174,7 +175,6 @@ bool AlgorithmTab::createAlgoRequest()
 {
     std::string url = "http://127.0.0.1:5000/algo?filename=" + m_selectedAlgorithm.m_filename +
             "&uuid=" + m_selectedRecord.m_recordId;
-    qDebug()<< QString::fromStdString(url);
     for(int i=0; i< m_selectedAlgorithm.m_parameters.size();i++)
     {
         if(m_selectedAlgorithm.m_parameters.at(i).m_name != "uuid")
@@ -240,7 +240,7 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
        AlgorithmOutputInfoSerializer algorithmOutputInfoSerializer;
        MainWindow * window = (MainWindow*)m_parent;
 
-       if(reponse != "" && m_selectedAlgorithm.m_id.compare("3") != 0)
+       if(reponse != "" && m_selectedAlgorithm.m_id.compare(ID_FREQUENCY_FILTER) != 0)
        {
            algorithmOutputInfoSerializer.Deserialize(reponse);
 
@@ -250,6 +250,7 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
            algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmId = algoInfo.m_id;
            algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmName = algoInfo.m_name;
            algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmParameters = algoInfo.m_parameters;
+           algorithmOutputInfoSerializer.m_algorithmOutput.m_recordType = m_selectedRecord.m_imuType;
            algorithmOutputInfoSerializer.m_algorithmOutput.m_recordId = m_selectedRecord.m_recordId;
            algorithmOutputInfoSerializer.m_algorithmOutput.m_recordName = m_selectedRecord.m_recordName;
            algorithmOutputInfoSerializer.m_algorithmOutput.m_recordImuPosition = m_selectedRecord.m_imuPosition;

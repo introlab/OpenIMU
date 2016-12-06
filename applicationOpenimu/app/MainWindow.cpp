@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QtConcurrent::run(MainWindow::launchApi);
 
     this->setWindowIcon(QIcon("../applicationOpenimu/app/icons/logo.ico"));
-
+    this->setStyleSheet("background-color:rgba(255, 255, 255,1);");
     this->grabGesture(Qt::PanGesture);
     this->grabGesture(Qt::PinchGesture);
 
@@ -58,11 +58,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QIcon img(":/icons/addrecord.png");
     addRecord->setIcon(img);
     addRecord->setIconSize(QSize(20,20));
+    addRecord->setCursor(Qt::PointingHandCursor);
 
     QPushButton* deleteRecord = new QPushButton("");
     QIcon imgd(":/icons/trash.png");
     deleteRecord->setIcon(imgd);
     deleteRecord->setIconSize(QSize(20,20));
+    deleteRecord->setCursor(Qt::PointingHandCursor);
 
     QVBoxLayout* vlayout = new QVBoxLayout();
     vlayout->addWidget(addRecord);
@@ -105,9 +107,9 @@ void MainWindow::onListItemClicked(QTreeWidgetItem* item, int column)
         if(record.m_WimuRecordList.at(i).m_recordName.compare(item->text(column).toStdString()) == 0)
         {
             selectedRecord = record.m_WimuRecordList.at(i);
-           setStatusBarText(tr("Prêt"));
         }
     }
+    setStatusBarText(tr("Prêt"));
 }
 
 void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
@@ -201,13 +203,12 @@ void MainWindow::openRecordDialog()
 void MainWindow::openAlgorithmTab()
 {
     algorithmTab = new AlgorithmTab(this,selectedRecord);
-    addTab(algorithmTab,"Algorithme");
+    addTab(algorithmTab,"Algorithmes: "+selectedRecord.m_recordName);
 }
 
 void MainWindow::setStatusBarText(QString txt, MessageStatus status)
 {
     statusBar->showMessage(tr(txt.toStdString().c_str()));
-
 
     QString styleSheet = "color: " + Utilities::getColourFromEnum(status) +"; font: 16px;";
     statusBar->setStyleSheet(styleSheet);
@@ -252,6 +253,9 @@ void MainWindow::openHomeTab()
 
 bool MainWindow::getRecordsFromDB()
 {
+    startSpinner();
+    setStatusBarText("Chargement des enregistrements...");
+
     QNetworkRequest request(QUrl("http://127.0.0.1:5000/records"));
     request.setRawHeader("User-Agent", "ApplicationNameV01");
     request.setRawHeader("Content-Type", "application/json");
@@ -260,12 +264,17 @@ bool MainWindow::getRecordsFromDB()
     QNetworkReply *reply = manager->get(request);
 
     bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), this ,SLOT(reponseRecue(QNetworkReply*)));
-    return true;
+
+    stopSpinner();
+    return result;
 }
 
 //Getting results from DB
 bool MainWindow::getSavedResultsFromDB()
 {
+    startSpinner();
+    setStatusBarText("Chargement des résultats sauvegardés...");
+
     QNetworkRequest request(QUrl("http://127.0.0.1:5000/algoResults"));
     request.setRawHeader("User-Agent", "ApplicationNameV01");
     request.setRawHeader("Content-Type", "application/json");
@@ -278,6 +287,8 @@ bool MainWindow::getSavedResultsFromDB()
     result = connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,SLOT(quit()));
     loop.exec();
     savedResultsReponse(reply);
+
+    stopSpinner();
     return true;
 }
 
@@ -328,6 +339,12 @@ void MainWindow::savedResultsReponse(QNetworkReply* reply)
         {
             savedResults.DeserializeList(reponse);
         }
+
+        setStatusBarText("Prêt");
+    }
+    else
+    {
+        setStatusBarText("Erreur lors de la récupération des résultats", MessageStatus::error);
     }
 }
 
@@ -373,9 +390,12 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
                listWidget->addTopLevelItem(top_item);
            }
        }
+
+       setStatusBarText("Prêt");
    }
    else
    {
+       setStatusBarText("Erreur de connexion lors de la récupération des enregistrements", MessageStatus::error);
        qDebug() << "error connect";
    }
    delete reply;
@@ -470,18 +490,6 @@ void MainWindow::reponseRecueRename(QNetworkReply* reply)
     {
          setStatusBarText(tr("Échec du changement de nom de l'enregistrement"), MessageStatus::error);
     }
-}
-
-void MainWindow::setApplicationInEnglish()
-{
-    menu->setUncheck(frenchText);
-    //TODO: Olivier, insert change language logic here
-}
-
-void MainWindow::setApplicationInFrench()
-{
-    menu->setUncheck(englishText);
-    //TODO: Olivier, insert change language logic here
 }
 
 void MainWindow::openAbout(){
