@@ -174,7 +174,6 @@ bool AlgorithmTab::createAlgoRequest()
 {
     std::string url = "http://127.0.0.1:5000/algo?filename=" + m_selectedAlgorithm.m_filename +
             "&uuid=" + m_selectedRecord.m_recordId;
-    qDebug()<< QString::fromStdString(url);
     for(int i=0; i< m_selectedAlgorithm.m_parameters.size();i++)
     {
         if(m_selectedAlgorithm.m_parameters.at(i).m_name != "uuid")

@@ -7,8 +7,8 @@ import numpy as np
 #import matplotlib.pyplot as plt
 
 class stepCounter(Algorithm):
-    #This is the base threshold for the stepcounter
-    spacing = 50
+    #This is the base threshold between each peak on the x axis
+    spacing = 14
 
     def __init__(self):
         super(stepCounter, self).__init__()
@@ -37,7 +37,7 @@ class stepCounter(Algorithm):
         if len(data)/2 < self.spacing : self.spacing = round(len(data)/2 - 1)
 
         filtereddata = self.moving_average(data)
-        peaks = self.find_peaks(filtereddata,spacing = self.spacing,limit = 3500)
+        peaks = self.find_peaks(filtereddata,spacing = self.spacing,limit = 8250)
 
         # If you have imported matplotlib, you can decomment the following section. It block the cpu.
         #t = np.linspace(0, 1, len(filtereddata))

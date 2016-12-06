@@ -34,13 +34,9 @@ class activityTracker(Algorithm):
                         "Étape 4 : Calcule le pourcentage de la différence de la magnitude qui dépasse le seuil donné en paramètre "
                         )
 
-        self.params.threshold = 0
-        self.infos.threshold = "Magnitude de l'accélération qui défini l'activité "
-        self.possible.threshold = {"range":[0,None]}
-
         self.params.uuid = 0
         self.infos.uuid = "Identifiant unique d'un enregistrement"
-        self.possible.uuid = {"type":"ObjectID"}
+        self.possible.uuid = "Un identifiant ObjectId"
 
 
     def run(self):
@@ -52,7 +48,7 @@ class activityTracker(Algorithm):
         Étape 4 : Calcule le pourcentage de la différence de la magnitude qui dépasse le seuil donné en paramètre
         :return: self.output
         """
-
+        threshold = 100
         schema = schemas.Sensor(many=True)
         ref = self.database.db.accelerometres.find({'ref': self.params.uuid})
         acc, errors = schema.dump(ref)
@@ -64,14 +60,14 @@ class activityTracker(Algorithm):
 
         total = 0
         for n in diff:
-            if abs(n) > self.params.threshold:
+            if abs(n) > threshold:
                 total = total + 1
 
         self.output.result = 100*total/len(diff)
-        self.output.threshold = self.params.threshold
+        self.output.threshold = threshold
         self.output.maximum = max(diff)
         self.output.minimum = min(diff)
         self.output.size = len(diff)
         self.output.execute_time = self.timer
-        return self.output
+        return self.output.result
 
