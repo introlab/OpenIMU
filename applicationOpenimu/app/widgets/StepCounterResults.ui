@@ -12,8 +12,9 @@
   </property>
   <property name="font">
    <font>
-    <family>Segoe UI Light</family>
+    <family>Open Sans Light</family>
     <pointsize>12</pointsize>
+    <kerning>true</kerning>
    </font>
   </property>
   <property name="windowTitle">

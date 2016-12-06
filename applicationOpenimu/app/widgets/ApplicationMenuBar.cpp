@@ -3,18 +3,23 @@
 
 ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
 {
-    this->setStyleSheet("background-color:rgba(255, 255, 255,1);");
+    this->setPalette(QPalette(Qt::white));
 
     this->setMinimumWidth(parent->width());
-
     QGraphicsDropShadowEffect* effect = new QGraphicsDropShadowEffect();
     effect->setBlurRadius(50);
     effect->setYOffset(qreal(-10));
     effect->setXOffset(qreal(-10));
     this->setGraphicsEffect(effect);
 
-    fichier = new QMenu(tr("&Fichier"));
+    QFont font;
+    font.setFamily("Open Sans Light");
+    font.setKerning(false);
+    font.setPointSize(14);
+    this->setFont(font);
 
+    fichier = new QMenu(tr("&Fichier"));
+    fichier->setPalette(QPalette(Qt::white));
     QAction* actionAjouterEnregistrement = new QAction(tr("&Ajouter Enregistrement"), fichier);
     actionAjouterEnregistrement->setShortcut(QKeySequence("Ctrl+R"));
 
@@ -30,16 +35,19 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     fichier->addAction(actionQuitter);
 
     algorithme = new QMenu("&Algorithme");
+    algorithme->setPalette(QPalette(Qt::white));
     QAction* actionAddAlgo = new QAction(tr("&Ajouter algorithme"),algorithme);
     actionAddAlgo->setShortcut(QKeySequence("Ctrl+D"));
     actionAddAlgo->setEnabled(false);
     algorithme->addAction(actionAddAlgo);
 
     apropos = new QMenu(tr("&À propos"));
+    apropos->setPalette(QPalette(Qt::white));
     QAction* actionAPropos = new QAction(tr("&OpenIMU"),apropos);
     apropos->addAction(actionAPropos);
 
     aide = new QMenu("&Aide");
+    aide->setPalette(QPalette(Qt::white));
     QAction* actionAide = new QAction(tr("&Utilisation"),aide);
     aide->addAction(actionAide);
 
