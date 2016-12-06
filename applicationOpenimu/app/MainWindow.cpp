@@ -24,12 +24,23 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QtConcurrent::run(MainWindow::launchApi);
 
     this->setWindowIcon(QIcon("../applicationOpenimu/app/icons/logo.ico"));
-    this->setStyleSheet("background-color:rgba(255, 255, 255,1);");
-    this->grabGesture(Qt::PanGesture);
-    this->grabGesture(Qt::PinchGesture);
+    this->setStyleSheet("background-color:white;");
 
     this->setWindowTitle(QString::fromUtf8("Open-IMU"));
     this->setMinimumSize(1000,700);
+
+    previousItemSelected = NULL;
+
+    QFont font;
+    font.setFamily("Open Sans Regular");
+    font.setKerning(false);
+    font.setPointSize(14);
+
+    QFont fontitem;
+    fontitem.setFamily("Open Sans Regular");
+    fontitem.setKerning(false);
+    fontitem.setPointSize(11);
+
 
     menu = new ApplicationMenuBar(this);
     statusBar = new QStatusBar(this);
@@ -38,7 +49,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     //Set QTreeWidget Column Header
     QTreeWidgetItem* headerItem = new QTreeWidgetItem();
-    headerItem->setText(0,QString("Enregistrements"));
+    headerItem->setText(0,QString("Explorateur"));
+    headerItem->setTextColor(0,QColor("grey"));
+    headerItem->setFont(0, font);
     listWidget->setHeaderItem(headerItem);
 
     tabWidget = new QTabWidget;
@@ -51,25 +64,42 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     this->setStatusBar(statusBar);
 
     statusBar->setStyleSheet("background-color:rgba(230, 233, 239,0.2);");
-    listWidget->setAlternatingRowColors(true);
-    listWidget->setStyleSheet("alternate-background-color:#ecf0f1;background-color:white;");
+    listWidget->setFont(fontitem);
+    listWidget->setCursor(Qt::PointingHandCursor);
+    listWidget->setStyleSheet("border:none;"
+                              "background-color:white;}");
 
-    QPushButton* addRecord = new QPushButton("");
-    QIcon img(":/icons/addrecord.png");
-    addRecord->setIcon(img);
-    addRecord->setIconSize(QSize(20,20));
+    QPushButton* addRecord = new QPushButton("+   Nouveau");
     addRecord->setCursor(Qt::PointingHandCursor);
+    addRecord->setFlat(true);
+    addRecord->setFont(font);
+    addRecord->setStyleSheet("color:#3498db;");
 
-    QPushButton* deleteRecord = new QPushButton("");
-    QIcon imgd(":/icons/trash.png");
-    deleteRecord->setIcon(imgd);
-    deleteRecord->setIconSize(QSize(20,20));
+    QPushButton* deleteRecord = new QPushButton("-   Supprimer");
+    deleteRecord->setFlat(true);
+    deleteRecord->setFont(font);
+    deleteRecord->setStyleSheet("color:#95a5a6;");
     deleteRecord->setCursor(Qt::PointingHandCursor);
 
+    QFrame* topLine = new QFrame();
+    topLine->setFrameShape(QFrame::HLine);
+    topLine->setStyleSheet("color:#7f8c8d");
+
+    QFrame* backLine = new QFrame();
+    backLine->setFrameShape(QFrame::HLine);
+    backLine->setStyleSheet("color:#7f8c8d");
+
+    QFrame* backLineDelete = new QFrame();
+    backLineDelete->setFrameShape(QFrame::HLine);
+    backLineDelete->setStyleSheet("color:#7f8c8d");
+
     QVBoxLayout* vlayout = new QVBoxLayout();
-    vlayout->addWidget(addRecord);
     vlayout->addWidget(listWidget);
+    vlayout->addWidget(topLine);
+    vlayout->addWidget(addRecord);
+    vlayout->addWidget(backLine);
     vlayout->addWidget(deleteRecord);
+    vlayout->addWidget(backLineDelete);
     mainWidget->mainLayout->addLayout(vlayout);
 
     listWidget->setMaximumWidth(150);
@@ -114,6 +144,12 @@ void MainWindow::onListItemClicked(QTreeWidgetItem* item, int column)
 
 void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
 {
+    if(previousItemSelected != NULL)
+    {
+        previousItemSelected->setTextColor(0,QColor(117,117,117));
+    }
+    item->setTextColor(0,QColor("#24AAE1"));
+    previousItemSelected = item;
     setStatusBarText(tr("Chargement de l'enregistrement..."));
     startSpinner();
     bool isRecord = false;
@@ -351,6 +387,11 @@ void MainWindow::savedResultsReponse(QNetworkReply* reply)
 
 void MainWindow::reponseRecue(QNetworkReply* reply)
 {
+    QFont fontitem;
+    fontitem.setFamily("Open Sans Regular");
+    fontitem.setKerning(false);
+    fontitem.setPointSize(10);
+
    if (reply->error() == QNetworkReply::NoError)
    {
        std::string testReponse(reply->readAll());
@@ -363,7 +404,7 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
        {
            QTreeWidgetItem* top_item = new QTreeWidgetItem();
            top_item->setText(0,QString::fromStdString(record.m_WimuRecordList.at(i).m_recordName));
-           top_item->setIcon(0,*(new QIcon(":/icons/file2.png")));
+           top_item->setTextColor(0,QColor(117,117,117));
 
            if(record.m_WimuRecordList.at(i).m_parentId.compare("") == 0 )
            {
@@ -374,6 +415,7 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
                        QTreeWidgetItem* child_item = new QTreeWidgetItem;
                        child_item->setText(0,QString::fromStdString(record.m_WimuRecordList.at(j).m_recordName));
                        child_item->setIcon(0,*(new QIcon(":/icons/sliced.png")));
+                       child_item->setTextColor(0,QColor(117,117,117));
                        top_item->addChild(child_item);
                    }
                }
@@ -384,6 +426,7 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
                        QTreeWidgetItem* child_item = new QTreeWidgetItem;
                        child_item->setText(0,QString::fromStdString(savedResults.m_algorithmOutputList.at(w).m_resultName));
                        child_item->setIcon(0,*(new QIcon(":/icons/results.png")));
+                       child_item->setTextColor(0,QColor(117,117,117));
                        top_item->addChild(child_item);
                    }
                }
