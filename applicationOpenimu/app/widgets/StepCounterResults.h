@@ -16,6 +16,7 @@ public:
     explicit StepCounterResults(QWidget *parent = 0);
     StepCounterResults(QWidget *parent, AlgorithmOutputInfo algoOutput);
     ~StepCounterResults();
+    void hideButtons();
 
 private:
     Ui::StepCounterResults *ui;

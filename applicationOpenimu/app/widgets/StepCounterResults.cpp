@@ -49,3 +49,8 @@ StepCounterResults::StepCounterResults(QWidget *parent, AlgorithmOutputInfo algo
      connect(ui->saveToBd, SIGNAL(clicked()), parent, SLOT(exportToDBSlot()));
 
 }
+void StepCounterResults::hideButtons()
+{
+    ui->exportToPdf->hide();
+    ui->saveToBd->hide();
+}

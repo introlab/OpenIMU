@@ -13,5 +13,7 @@
         <file>icons/steps.png</file>
         <file>icons/logo.png</file>
         <file>icons/github.png</file>
+        <file>icons/nouveau.png</file>
+        <file>icons/supprimer.png</file>
     </qresource>
 </RCC>

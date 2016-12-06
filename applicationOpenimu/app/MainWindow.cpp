@@ -29,8 +29,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     this->setWindowTitle(QString::fromUtf8("Open-IMU"));
     this->setMinimumSize(1000,700);
 
-    previousItemSelected = NULL;
-
     QFont font;
     font.setFamily("Open Sans Regular");
     font.setKerning(false);
@@ -51,11 +49,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     mainWidget = new MainWidget(this);
     listWidget = new myTreeWidget(this);
 
-    //Set QTreeWidget Column Header
-    QTreeWidgetItem* headerItem = new QTreeWidgetItem();
-    headerItem->setText(0,QString("Explorateur"));
-    headerItem->setTextColor(0,QColor("grey"));
-    listWidget->setHeaderItem(headerItem);
+    listWidget->setHeaderHidden(true);
 
     tabWidget = new QTabWidget;
 
@@ -72,15 +66,27 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     listWidget->setFont(fontitem);
     listWidget->setCursor(Qt::PointingHandCursor);
     listWidget->setStyleSheet("border:none;"
-                              "background-color:white;}");
+                              "background-color:white;}"
+                              "opacity:0;");
 
-    QPushButton* addRecord = new QPushButton("+   Nouveau");
+    QLabel* explorateurLabel = new QLabel("Explorateur");
+    explorateurLabel->setFont(font);
+    explorateurLabel->setStyleSheet("color:grey;"
+                                    "background-color:rgba(255,255,255,0);");
+
+    QPushButton* addRecord = new QPushButton("");
     addRecord->setCursor(Qt::PointingHandCursor);
     addRecord->setFlat(true);
     addRecord->setFont(font);
     addRecord->setStyleSheet("color:#3498db;");
+    QIcon img(":/icons/nouveau.png");
+    addRecord->setIcon(img);
+    addRecord->setIconSize(QSize(100,45));
 
-    QPushButton* deleteRecord = new QPushButton("-   Supprimer");
+    QPushButton* deleteRecord = new QPushButton("");
+    QIcon imgDelete(":/icons/supprimer.png");
+    deleteRecord->setIcon(imgDelete);
+    deleteRecord->setIconSize(QSize(100,40));
     deleteRecord->setFlat(true);
     deleteRecord->setFont(font);
     deleteRecord->setStyleSheet("color:#e74c3c;");
@@ -99,6 +105,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     backLineDelete->setStyleSheet("color:#7f8c8d");
 
     QVBoxLayout* vlayout = new QVBoxLayout();
+    vlayout->addWidget(explorateurLabel);
     vlayout->addWidget(listWidget);
     vlayout->addWidget(topLine);
     vlayout->addWidget(addRecord);
@@ -150,12 +157,6 @@ void MainWindow::onListItemClicked(QTreeWidgetItem* item, int column)
 
 void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
 {
-    if(previousItemSelected != NULL)
-    {
-        previousItemSelected->setTextColor(0,QColor(117,117,117));
-    }
-    item->setTextColor(0,QColor("#24AAE1"));
-    previousItemSelected = item;
     setStatusBarText(tr("Chargement de l'enregistrement..."));
     startSpinner();
     bool isRecord = false;
@@ -203,7 +204,7 @@ void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
         {
             if(savedResults.m_algorithmOutputList.at(i).m_resultName.compare(item->text(column).toStdString()) == 0)
             {
-                ResultsTabWidget* resultTab = new ResultsTabWidget(this,savedResults.m_algorithmOutputList.at(i));
+                ResultsTabWidget* resultTab = new ResultsTabWidget(this,savedResults.m_algorithmOutputList.at(i),true);
                 addTab(resultTab,savedResults.m_algorithmOutputList.at(i).m_resultName);
 
             }

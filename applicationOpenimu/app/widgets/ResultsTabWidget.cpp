@@ -10,10 +10,10 @@ ResultsTabWidget::ResultsTabWidget()
 
 }
 
-ResultsTabWidget::ResultsTabWidget(QWidget *parent, AlgorithmOutputInfo output):QWidget(parent)
+ResultsTabWidget::ResultsTabWidget(QWidget *parent, AlgorithmOutputInfo output, bool isSaved):QWidget(parent)
 {
     m_parent = parent;
-    init(output);
+    init(output, isSaved);
 }
 
 ResultsTabWidget::ResultsTabWidget(QWidget *parent, WimuAcquisition& accData, RecordInfo& rInfo):QWidget(parent)
@@ -32,7 +32,7 @@ ResultsTabWidget::~ResultsTabWidget()
 
 }
 
-void ResultsTabWidget::init(AlgorithmOutputInfo output)
+void ResultsTabWidget::init(AlgorithmOutputInfo output, bool isSaved)
 {
     m_databaseAccess = new DbBlock();
 
@@ -41,6 +41,10 @@ void ResultsTabWidget::init(AlgorithmOutputInfo output)
     if(m_algorithmOutputInfo.m_algorithmName == "Temps d'activité")
     {
         ActivityTrackerResults * res = new ActivityTrackerResults(this, m_algorithmOutputInfo);
+        if(isSaved)
+        {
+            res->hideButtons();
+        }
         QVBoxLayout* layoutV = new QVBoxLayout();
         layoutV->addWidget(res);
         this->setLayout(layoutV);
@@ -50,6 +54,10 @@ void ResultsTabWidget::init(AlgorithmOutputInfo output)
     else
     {
        StepCounterResults * res = new StepCounterResults(this, m_algorithmOutputInfo);
+       if(isSaved)
+       {
+           res->hideButtons();
+       }
        QVBoxLayout* layoutV = new QVBoxLayout();
        layoutV->addWidget(res);
        this->setLayout(layoutV);

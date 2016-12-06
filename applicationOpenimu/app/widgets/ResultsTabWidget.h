@@ -24,11 +24,11 @@ class ResultsTabWidget: public QWidget
 
 public:
     ResultsTabWidget();
-    ResultsTabWidget(QWidget *parent, AlgorithmOutputInfo output);
+    ResultsTabWidget(QWidget *parent, AlgorithmOutputInfo output, bool isSaved=false);
     ResultsTabWidget(QWidget *parent, WimuAcquisition& accData, RecordInfo& rInfo);
      ~ResultsTabWidget();
 
-    void init(AlgorithmOutputInfo output);
+    void init(AlgorithmOutputInfo output, bool isSaved);
     void initFilterView(AccDataDisplay* accDataDisplay);
 
 public slots:

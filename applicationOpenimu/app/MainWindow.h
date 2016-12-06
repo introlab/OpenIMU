@@ -99,7 +99,6 @@ class MainWindow : public QMainWindow
         MainWidget * mainWidget;
         ApplicationMenuBar* menu;
         myTreeWidget  * listWidget;
-        QTreeWidgetItem * previousItemSelected;
         AboutDialog *aboutDialog;
         HelpDialog *helpDialog;
         DbBlock * databaseAccess = new DbBlock;

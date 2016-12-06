@@ -18,6 +18,7 @@ public:
     explicit ActivityTrackerResults(QWidget *parent = 0);
     ActivityTrackerResults(QWidget *parent, AlgorithmOutputInfo algoOutput);
     ~ActivityTrackerResults();
+    void hideButtons();
 
 private:
     Ui::ActivityTrackerResults *ui;
