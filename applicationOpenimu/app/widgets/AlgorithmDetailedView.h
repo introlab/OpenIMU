@@ -7,6 +7,7 @@
 #include <QTextEdit>
 #include <QWidget>
 
+#include "../utilities/Utilities.h"
 #include "../algorithm/AlgorithmInfoSerializer.h"
 #include "MRichTextEditor/mrichtextedit.h"
 

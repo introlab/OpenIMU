@@ -9,5 +9,11 @@
         <file>icons/sliced.png</file>
         <file>icons/file2.png</file>
         <file>icons/results.png</file>
+        <file>icons/logo.ico</file>
+        <file>icons/steps.png</file>
+        <file>icons/logo.png</file>
+        <file>icons/github.png</file>
+        <file>icons/nouveau.png</file>
+        <file>icons/supprimer.png</file>
     </qresource>
 </RCC>

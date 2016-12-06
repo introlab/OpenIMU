@@ -72,7 +72,7 @@ void AlgorithmDetailedView::setAlgorithm(AlgorithmInfo algorithmInfo, AlgorithmI
         {
             if(selectedAlgorithm.m_parameters.at(i).m_name != "uuid")
             {
-                QString parameterName = QString::fromStdString(selectedAlgorithm.m_parameters.at(i).m_name);
+                QString parameterName = Utilities::capitalizeFirstCharacter(QString::fromStdString(selectedAlgorithm.m_parameters.at(i).m_name));
                 QString parameterValue = QString::fromStdString(selectedAlgorithm.m_parameters.at(i).m_value);
 
                 QString previousParameters = parametersValues->text();

@@ -6,6 +6,7 @@ FullGraphDialog::FullGraphDialog(QWidget *parent) :
     ui(new Ui::FullGraphDialog)
 {
     ui->setupUi(this);
+    this->setWindowIcon(QIcon(":/icons/logo.ico"));
 }
 
 FullGraphDialog::~FullGraphDialog()

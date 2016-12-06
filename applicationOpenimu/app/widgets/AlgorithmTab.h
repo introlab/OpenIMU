@@ -32,9 +32,9 @@ public:
 signals:
 
 public slots:
-    void openParametersWindow(const QModelIndex &index);
+    void onClickOpenParametersWindow(const QModelIndex &index);
     void reponseAlgoRecue(QNetworkReply* reply);
-    void reponseRecue(QNetworkReply* reply);
+    void algoListResponse(QNetworkReply* reply);
     void openResultTab();
 
 private:

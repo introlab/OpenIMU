@@ -305,7 +305,7 @@ std::vector<string_timestamp> WimuAcquisition::getDates() const
 			char buffer[32];
 			// Format: Mo, 15.06.2009 20:20:00
             tmp.timestamp = dataAccelerometer.at(i).timestamp;
-			std::strftime(buffer, 32, "%d %B %Y", gmtime (&_time));
+            std::strftime(buffer, 32, "%F %T", gmtime (&_time));
 			tmp.date = buffer;
 			result.push_back(tmp);
         }

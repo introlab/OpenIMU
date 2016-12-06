@@ -37,6 +37,7 @@ class AlgorithmResults(Schema):
     algorithmParameters = fields.Nested(ParameterInfo, many=True);
     recordId = fields.Str();
     recordImuPosition = fields.Str();
+    recordImuType = fields.Str();
     recordName = fields.Str();
 
 class Sensor(Schema):

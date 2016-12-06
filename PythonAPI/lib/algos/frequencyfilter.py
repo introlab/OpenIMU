@@ -86,7 +86,7 @@ class frequencyfilter(Algorithm):
                 :return: self.output
         """
         schema = schemas.Sensor(many=True)
-        ref = self.database.db.accelerometres.find({'ref': ObjectId(self.params.uuid)})
+        ref = self.database.db.accelerometres.find({'ref': str(self.params.uuid)})
         self.data, errors = schema.dump(ref)
 
         filter = None
