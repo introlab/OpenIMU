@@ -40,7 +40,7 @@ class MainWindow : public QMainWindow
 
     public slots:
 
-        void openFile();
+        void refreshRecordListWidget();
         void openRecordDialog();
         void closeTab(int);
         void onTabChanged(int);

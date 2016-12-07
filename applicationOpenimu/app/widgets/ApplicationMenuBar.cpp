@@ -57,7 +57,7 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     this->addMenu(aide);
 
 
-    connect(actionOuvrir, SIGNAL(triggered()), parent, SLOT(openFile()));
+    connect(actionOuvrir, SIGNAL(triggered()), parent, SLOT(refreshRecordListWidget()));
     connect(actionAjouterEnregistrement, SIGNAL(triggered()), parent, SLOT(openRecordDialog()));
     connect(actionQuitter,SIGNAL(triggered()),parent,SLOT(closeWindow()));
     connect(actionAPropos,SIGNAL(triggered()),parent,SLOT(openAbout()));
