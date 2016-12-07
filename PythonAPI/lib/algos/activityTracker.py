@@ -24,14 +24,7 @@ class activityTracker(Algorithm):
         self.name = "Temps d'activité"
         self.filename = "activityTracker"
         self.details = (
-                        "<b>Nom de l'algorithme:</b> <br/> Temps d'activité <br/>"
-                        "<b>Version:</b> <br/> <i>1.0</i><br/>"
-                        "<b>Pseudocode:</b> <br/> <i>y</i>=<i>x</i><br/>"
-                        "<b>Fonctionnement:</b> <br/>"
-                        "Étape 1 : Importer les données provenant de la base de données <br/>"
-                        "Étape 2 : Calculer la magnitude des données <br/>"
-                        "Étape 3 : Calculer la différence de la magnitude des données <br/>"
-                        "Étape 4 : Calcule le pourcentage de la différence de la magnitude qui dépasse le seuil donné en paramètre "
+                        "À partir des données de l'enregitrement on calcule la magnitude sur les données brutes. On resort le pourcentage des données qui dépasse un seuil"
                         )
 
         self.params.uuid = 0

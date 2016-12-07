@@ -248,7 +248,7 @@
             <widget class="QLabel" name="label_6">
              <property name="maximumSize">
               <size>
-               <width>175</width>
+               <width>180</width>
                <height>30</height>
               </size>
              </property>
