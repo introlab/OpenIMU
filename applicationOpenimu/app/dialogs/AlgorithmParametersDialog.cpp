@@ -22,6 +22,7 @@ AlgorithmParametersDialog::AlgorithmParametersDialog(QWidget * parent, Algorithm
         {
             QString parameterText = p.m_name.c_str() + QString::fromStdString(": ") + p.m_description.c_str();
             QLabel * itemLabel = new QLabel(Utilities::capitalizeFirstCharacter(parameterText));
+            parametersLayout->addWidget(itemLabel);
             if(p.m_name == "type")
             {
                 QComboBox * itemLine = new QComboBox();
@@ -40,7 +41,6 @@ AlgorithmParametersDialog::AlgorithmParametersDialog(QWidget * parent, Algorithm
                 itemLine->setValidator(validator);
                 parametersLayout->addWidget(itemLine);
             }
-            parametersLayout->addWidget(itemLabel);
         }
     }
 
@@ -61,12 +61,8 @@ void AlgorithmParametersDialog::parametersSetSlot()
     foreach(QLineEdit* le, findChildren<QLineEdit*>())
     {      
         bool isEmpty = le->text().toStdString().empty();
-        qDebug() << "le text courant "<< QString::fromStdString(le->text().toStdString());
-        qDebug() << "le text coupé  "<< QString::fromStdString(le->text().toStdString().substr(0,2));
         bool isValid = le->text().toStdString().substr(0,2).compare("0,");
 
-        qDebug() << "isEmpty  =="<< le->text().toStdString().empty();
-        qDebug() << "isValid =="<< le->text().toStdString().substr(0,2).compare("0,");
         if( isEmpty || isValid != 0)
         {
             m_algorithmInfo.m_parameters.at(index).m_value =  m_algorithmInfo.m_parameters.at(index).m_defaultValue;
