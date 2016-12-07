@@ -42,7 +42,7 @@ private:
     QWidget* container;
     QLabel* imuType;
     OpenImuButton* saveResultsToDB;
-
+    void drawText(QPainter & painter, qreal x, qreal y, Qt::Alignment flags, const QString & text, QRectF * boundingRect = 0);
 
     DbBlock * m_databaseAccess;
     WimuAcquisition* m_accData;
