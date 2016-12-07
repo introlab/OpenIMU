@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <QSoundEffect>
+#include <QSound>
 #include <QDebug>
 
 using namespace std;
