@@ -165,6 +165,10 @@ void AlgorithmTab::onClickOpenParametersWindow(const QModelIndex &index)
 
 bool AlgorithmTab::createAlgoRequest()
 {
+    MainWindow* mainWindow = (MainWindow*)m_parent;
+    mainWindow->startSpinner();
+    mainWindow->setStatusBarText("Application de l'algorithme...");
+
     std::string url = "http://127.0.0.1:5000/algo?filename=" + m_selectedAlgorithm.m_filename +
             "&uuid=" + m_selectedRecord.m_recordId;
     for(int i=0; i< m_selectedAlgorithm.m_parameters.size();i++)
@@ -185,14 +189,26 @@ bool AlgorithmTab::createAlgoRequest()
     QEventLoop loop;
 
     bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,SLOT(quit()));
+
+    if(!result)
+    {
+       mainWindow->setStatusBarText("Erreur de connexion lors de l'application de l'algorithme", MessageStatus::error);
+    }
+
     loop.exec();
     reponseAlgoRecue(reply);
 
-    return true;
+    mainWindow->stopSpinner();
+
+    return result;
 }
 
 bool AlgorithmTab::getAlgorithmsFromDB()
 {
+    MainWindow* mainWindow = (MainWindow*)m_parent;
+    mainWindow->startSpinner();
+    mainWindow->setStatusBarText("Récupération des algorithmes...");
+
     QNetworkRequest request(QUrl("http://127.0.0.1:5000/algolist"));
     request.setRawHeader("User-Agent", "ApplicationNameV01");
     request.setRawHeader("Content-Type", "application/json");
@@ -202,10 +218,18 @@ bool AlgorithmTab::getAlgorithmsFromDB()
 
     QEventLoop loop;
     bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,SLOT(quit()));
+
+    if(!result)
+    {
+        mainWindow->setStatusBarText("Erreur de connexion lors de la récupération des algorithmes", MessageStatus::error);
+    }
+
     loop.exec();
     algoListResponse(reply);
 
-    return true;
+    mainWindow->stopSpinner();
+
+    return result;
 }
 
 void AlgorithmTab::algoListResponse(QNetworkReply* reply)
@@ -226,43 +250,52 @@ void AlgorithmTab::algoListResponse(QNetworkReply* reply)
 
 void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
 {
+    MainWindow* mainWindow = (MainWindow*)m_parent;
+    AlgorithmOutputInfoSerializer algorithmOutputInfoSerializer;
+
     if (reply->error() == QNetworkReply::NoError)
    {
        std::string reponse = reply->readAll().toStdString();
-       AlgorithmOutputInfoSerializer algorithmOutputInfoSerializer;
-       MainWindow * window = (MainWindow*)m_parent;
 
-       if(reponse != "" && m_selectedAlgorithm.m_id.compare(ID_FREQUENCY_FILTER) != 0)
+       if(reponse != "")
        {
-           algorithmOutputInfoSerializer.Deserialize(reponse);
+           if(m_selectedAlgorithm.m_id.compare(ID_FREQUENCY_FILTER) != 0)
+           {
+               algorithmOutputInfoSerializer.Deserialize(reponse);
 
+               AlgorithmInfo &algoInfo = m_selectedAlgorithm;
 
-           AlgorithmInfo &algoInfo = m_selectedAlgorithm;
+               algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmId = algoInfo.m_id;
+               algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmName = algoInfo.m_name;
+               algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmParameters = algoInfo.m_parameters;
+               algorithmOutputInfoSerializer.m_algorithmOutput.m_recordType = m_selectedRecord.m_imuType;
+               algorithmOutputInfoSerializer.m_algorithmOutput.m_recordId = m_selectedRecord.m_recordId;
+               algorithmOutputInfoSerializer.m_algorithmOutput.m_recordName = m_selectedRecord.m_recordName;
+               algorithmOutputInfoSerializer.m_algorithmOutput.m_recordImuPosition = m_selectedRecord.m_imuPosition;
 
-           algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmId = algoInfo.m_id;
-           algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmName = algoInfo.m_name;
-           algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmParameters = algoInfo.m_parameters;
-           algorithmOutputInfoSerializer.m_algorithmOutput.m_recordType = m_selectedRecord.m_imuType;
-           algorithmOutputInfoSerializer.m_algorithmOutput.m_recordId = m_selectedRecord.m_recordId;
-           algorithmOutputInfoSerializer.m_algorithmOutput.m_recordName = m_selectedRecord.m_recordName;
-           algorithmOutputInfoSerializer.m_algorithmOutput.m_recordImuPosition = m_selectedRecord.m_imuPosition;
+               ResultsTabWidget* res = new ResultsTabWidget(this, algorithmOutputInfoSerializer.m_algorithmOutput);
+               mainWindow->addTab(res,algoInfo.m_name + ": " + m_selectedRecord.m_recordName);
+           }
+           else
+           {
+                FilteredData fData;
+                CJsonSerializer::Deserialize(&fData, reponse);
+                WimuAcquisition wimuData;
+                wimuData.setDataAccelerometer(fData.m_dataAccelerometer);
+                ResultsTabWidget* res = new ResultsTabWidget(this,wimuData, m_selectedRecord);
+                mainWindow->addTab(res,"Filtre: " + m_selectedRecord.m_recordName);
+           }
 
-           ResultsTabWidget* res = new ResultsTabWidget(this, algorithmOutputInfoSerializer.m_algorithmOutput);
-           window->addTab(res,algoInfo.m_name + ": " + m_selectedRecord.m_recordName);
+            mainWindow->setStatusBarText("Algorithme appliqué avec succès", MessageStatus::success);
        }
        else
        {
-            FilteredData fData;
-            CJsonSerializer::Deserialize(&fData, reponse);
-            WimuAcquisition wimuData;
-            wimuData.setDataAccelerometer(fData.m_dataAccelerometer);
-            ResultsTabWidget* res = new ResultsTabWidget(this,wimuData, m_selectedRecord);
-            window->addTab(res,"Filtre: " + m_selectedRecord.m_recordName);
+           mainWindow->setStatusBarText("La requête reçue n'a pas retournée des résultats", MessageStatus::warning);
        }
    }
    else
    {
-       qDebug() << reply->readAll();
+       mainWindow->setStatusBarText("Erreur lors de l'application de l'algorithme", MessageStatus::error);
    }
    delete reply;
 }

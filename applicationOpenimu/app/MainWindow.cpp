@@ -349,7 +349,7 @@ bool MainWindow::getSavedResultsFromDB()
 bool MainWindow::getDataFromUUIDFromDB(std::string uuid)
 {
     startSpinner();
-    setStatusBarText("Chargement de l'enregistrement numéro " + QString::fromStdString(uuid));
+    setStatusBarText("Chargement de l'enregistrement...");
 
     std::string url = "http://127.0.0.1:5000/data?uuid="+uuid;
     QNetworkRequest request(QUrl(QString::fromStdString(url)));
@@ -492,7 +492,7 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
 bool MainWindow::deleteRecordFromUUID(std::string uuid)
 {
     startSpinner();
-    setStatusBarText("Suppression de l'enregistrement numéro " + QString::fromStdString(uuid) + "...");
+    setStatusBarText("Suppression de l'enregistrement numéro...");
 
     std::string url = "http://127.0.0.1:5000/delete?uuid="+uuid;
     QNetworkRequest request(QUrl(QString::fromStdString(url)));

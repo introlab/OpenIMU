@@ -37,6 +37,7 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
 
     selectedImuLabel = new QLabel(QWidget::tr("Centrale inertielle:"));
     imuSelectComboBox = new QComboBox;
+    imuSelectComboBox->setMinimumHeight(20);
     imuSelectComboBox->addItem(QWidget::tr("WimU"));
     imuSelectComboBox->addItem(QWidget::tr("Deslys trigno"));
     imuSelectComboBox->addItem(QWidget::tr("XSens"));
@@ -44,6 +45,7 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
 
     imuPosition = new QLabel(tr("Position: "));
     imuPositionComboBox = new QComboBox;
+    imuPositionComboBox ->setMinimumHeight(20);
     imuPositionComboBox->addItem(QWidget::tr("Poignet"));
     imuPositionComboBox->addItem(QWidget::tr("Hanche"));
     imuPositionComboBox->addItem(QWidget::tr("Cheville"));
