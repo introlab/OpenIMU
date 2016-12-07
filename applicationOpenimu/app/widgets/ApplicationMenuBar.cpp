@@ -6,6 +6,8 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     this->setPalette(QPalette(Qt::white));
 
     this->setMinimumWidth(parent->width());
+    this->setStyleSheet("color:#2c3e50");
+
     QGraphicsDropShadowEffect* effect = new QGraphicsDropShadowEffect();
     effect->setBlurRadius(50);
     effect->setYOffset(qreal(-10));

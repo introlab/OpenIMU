@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QFont font;
     font.setFamily("Open Sans Regular");
     font.setKerning(false);
-    font.setPointSize(14);
+    font.setPointSize(12);
 
     QFont fontitem;
     fontitem.setFamily("Open Sans Regular");

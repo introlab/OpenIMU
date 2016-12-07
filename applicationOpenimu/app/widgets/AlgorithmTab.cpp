@@ -80,7 +80,10 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
         // -- Parameter Section
         algorithmParameters = new AlgorithmDetailedView();
 
-        applyAlgorithm = new QPushButton(tr("Appliquer algorithme"));
+        applyAlgorithm = new QPushButton(tr(""));
+        QIcon img(":/icons/applyAlgo.png");
+        applyAlgorithm->setIcon(img);
+        applyAlgorithm->setIconSize(QSize(175,35));
         applyAlgorithm->setCursor(Qt::PointingHandCursor);
         connect(applyAlgorithm, SIGNAL(clicked()),this, SLOT(openResultTab()));
 
@@ -95,17 +98,6 @@ AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget
         algorithmTabLayout->addWidget(applyAlgorithm);
 
         this->setLayout(algorithmTabLayout);
-        this->setStyleSheet( "QPushButton{"
-                             "background-color: rgba(119, 160, 175,0.7);"
-                             "border-style: inset;"
-                             "border-width: 0px;"
-                             "border-radius: 10px;"
-                             "border-color: white;"
-                             "font: 12px;"
-                             "min-width: 10em;"
-                             "padding: 6px; }"
-                             "QPushButton:pressed { background-color: rgba(70, 95, 104, 0.7);}"
-                             );
 }
 
 QWidget* AlgorithmTab::getMainWindow()

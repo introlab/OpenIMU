@@ -115,7 +115,7 @@ void AlgorithmOutputInfoSerializer::DeserializeList(std::string& dataToDeseriali
         temp.m_resultName = deserializeRoot[index].get("resultName", "").asString();
         temp.m_value = deserializeRoot[index].get("value", "").asInt();
         temp.m_executionTime = deserializeRoot[index].get("executionTime", "").asFloat();
-        temp.m_date = deserializeRoot[index].get("runtime_start", "").asString();
+        temp.m_date = deserializeRoot[index].get("date", "").asString();
         temp.m_startTime = missingInfos; //deserializeRoot.get("startTime", "").asFloat();
         temp.m_endTime = missingInfos; //deserializeRoot.get("endTime", "").asFloat();
         temp.m_measureUnit = missingInfos; //deserializeRoot.get("measureUnit", "").asFloat();
