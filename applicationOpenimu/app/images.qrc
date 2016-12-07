@@ -22,5 +22,6 @@
         <file>icons/parcourir.png</file>
         <file>icons/exportpdf.png</file>
         <file>icons/sauver dans la bd.png</file>
+        <file>icons/save as record.png</file>
     </qresource>
 </RCC>
