@@ -36,16 +36,6 @@ void AlgorithmInfoSerializer::Serialize(AlgorithmInfo algorithmInfo, std::string
        jsonParameter["value"] = p.m_value;
        jsonParameter["defaultvalue"] = p.m_defaultValue;
 
-       for(int i = 0; i < p.m_possibleValue.size(); i++)
-       {
-           PossibleValues pv = p.m_possibleValue.at(i);
-           Json::Value jsonPossibleValues(Json::objectValue);
-
-           jsonPossibleValues["possible_values"] = pv.m_values;
-
-           jsonAlgorithmParametersPossibleValues.append(jsonPossibleValues);
-       }
-
        jsonAlgorithmParametersInfo.append(jsonParameter);
     }
 
@@ -87,23 +77,7 @@ void AlgorithmInfoSerializer::Deserialize(std::string& dataToDeserialize)
             p.m_description = parameterListInJson[indexp].get("info", "").asString();
             p.m_value = parameterListInJson[indexp].get("value", "").asString();
             p.m_defaultValue = parameterListInJson[indexp].get("default", "").asString();
-
-            qDebug() << "Before possibleValuesOfParameter";
-            Json::Value possibleValuesOfParameter = parameterListInJson[index].get("possible_values", "");
-            qDebug() << "cannot get possible_values";
-            for ( int indexpv = 0; indexpv < possibleValuesOfParameter.size(); ++indexpv )
-            {
-                qDebug() << "DEBUG 1";
-                PossibleValues possibleValues;
-                qDebug() << "DEBUG 2";
-                std::vector<std::string> tmp = possibleValuesOfParameter[indexpv].getMemberNames();
-                qDebug() << "DEBUG 3";
-                possibleValues.m_values = parameterListInJson[indexpv].get(tmp.at(0), "").asString();
-                qDebug() << "DEBUG 4";
-                p.m_possibleValue.push_back(possibleValues);
-                qDebug() << "DEBUG 5";
-            }
-            //p.m_possibleValue = parameterListInJson[indexp].get("possible_values", "").asString();
+            p.m_defaultValue = p.m_defaultValue.substr(0, 4);
             algorithmInfo.m_parameters.push_back(p);
         }
 

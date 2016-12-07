@@ -16,7 +16,7 @@ struct ParameterInfo
     std::string m_description;
     std::string m_value;
     std::string m_defaultValue;
-    std::vector<PossibleValues> m_possibleValue;
+    std::vector<PossibleValues> m_possibleValues;
 };
 
 struct AlgorithmInfo
