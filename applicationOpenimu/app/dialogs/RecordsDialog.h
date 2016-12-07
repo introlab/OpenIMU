@@ -22,7 +22,7 @@ public:
     RecordsDialog(QWidget *parent);
     ~RecordsDialog();
     bool addRecordInDB(QString& json, bool isSingleRecord);
-    std::string addRecordFileListToBD(QStringList & fileList, std::string folderPath);
+    bool addRecordFileListToBD(QStringList & fileList, std::string folderPath);
 
 public slots:
     void reponseRecue(QNetworkReply* reply);

@@ -70,11 +70,18 @@ void ResultsTabWidget::initFilterView(AccDataDisplay* accDataDisplay)
     layout = new QGridLayout;
     this->setLayout(layout);
     accDataDisplay->showSimplfiedDataDisplay();
-    saveResultsToDB = new OpenImuButton("Sauvegarder comme enregistrement en base de données");
+    saveResultsToDB = new QPushButton("");
+    QIcon img(":/icons/save as record.png");
+    saveResultsToDB->setIcon(img);
+    saveResultsToDB->setIconSize(QSize(375,35));
+    saveResultsToDB->setFlat(true);
+    saveResultsToDB->setCursor(Qt::PointingHandCursor);
+    saveResultsToDB->setMaximumWidth(375);
+    saveResultsToDB->setStyleSheet("border:none");
     connect(saveResultsToDB, SIGNAL(clicked()), this, SLOT(exportDataToDBSlot()));
 
     layout->addWidget(accDataDisplay);
-    layout->addWidget(saveResultsToDB,1,0);
+    layout->addWidget(saveResultsToDB,1,0, Qt::AlignCenter);
 }
 
 void ResultsTabWidget::exportToDBSlot()

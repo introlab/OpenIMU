@@ -47,7 +47,19 @@ RecordViewWidget::RecordViewWidget(QWidget *parent,  const WimuAcquisition& data
     connect(ui->fullGraphButton, SIGNAL(clicked()), this, SLOT(openFullGraphSlot()));
     connect(ui->algoBtn, SIGNAL(clicked()), parent, SLOT(openAlgorithmTab()));
     connect(ui->deleteRecordButton, SIGNAL(clicked()), parent, SLOT(deleteRecord()));
+
+    //** Style
+    QIcon imgGraph(":/icons/graphdet.png");
+    ui->fullGraphButton->setIcon(imgGraph);
+    ui->fullGraphButton->setIconSize(QSize(157,35));
+
+    QIcon imgAlgo(":/icons/algochoisir.png");
+    ui->algoBtn->setIcon(imgAlgo);
+    ui->algoBtn->setIconSize(QSize(157,35));
+
+    //**
     connect(ui->editButton, SIGNAL(clicked()), this, SLOT(renameRecord()));
+
     fDialog = new FullGraphDialog();
     fDialog->setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
     fDialog->prepareDisplay(acceleroData,record);

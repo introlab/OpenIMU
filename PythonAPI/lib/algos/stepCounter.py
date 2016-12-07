@@ -16,7 +16,7 @@ class stepCounter(Algorithm):
         self.author = "L'équipe d'OpenIMU"
         self.name = "Compteur de pas"
         self.filename = "stepCounter"
-        self.details = "Aucun détail pour l'instant."
+        self.details = "Le compteur de pas permet de détecter le nombre de pas effectué sur un enregistrement, l'algorithme se base la magnitude des accélérations en X,Y et Z."
 
         self.params.uuid = 0
         self.infos.uuid = "Identifiant unique d'un enregistrement"

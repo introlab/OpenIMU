@@ -6,6 +6,8 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     this->setPalette(QPalette(Qt::white));
 
     this->setMinimumWidth(parent->width());
+    this->setStyleSheet("color:#2c3e50");
+
     QGraphicsDropShadowEffect* effect = new QGraphicsDropShadowEffect();
     effect->setBlurRadius(50);
     effect->setYOffset(qreal(-10));
@@ -57,7 +59,7 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     this->addMenu(aide);
 
 
-    connect(actionOuvrir, SIGNAL(triggered()), parent, SLOT(openFile()));
+    connect(actionOuvrir, SIGNAL(triggered()), parent, SLOT(refreshRecordListWidget()));
     connect(actionAjouterEnregistrement, SIGNAL(triggered()), parent, SLOT(openRecordDialog()));
     connect(actionQuitter,SIGNAL(triggered()),parent,SLOT(closeWindow()));
     connect(actionAPropos,SIGNAL(triggered()),parent,SLOT(openAbout()));

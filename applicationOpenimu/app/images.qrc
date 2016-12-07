@@ -15,5 +15,13 @@
         <file>icons/github.png</file>
         <file>icons/nouveau.png</file>
         <file>icons/supprimer.png</file>
+        <file>icons/graphdet.png</file>
+        <file>icons/algochoisir.png</file>
+        <file>icons/applyAlgo.png</file>
+        <file>icons/charger.png</file>
+        <file>icons/parcourir.png</file>
+        <file>icons/exportpdf.png</file>
+        <file>icons/sauver dans la bd.png</file>
+        <file>icons/save as record.png</file>
     </qresource>
 </RCC>
