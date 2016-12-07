@@ -25,7 +25,14 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
     this->setWindowTitle(QWidget::tr("Enregistrements"));
 
     mainLayout = new QGridLayout(this);
-    selectRecord = new QPushButton(QWidget::tr("Sélectionner un enregistrement"));
+    selectRecord = new QPushButton("");
+    QIcon img(":/icons/parcourir.png");
+    selectRecord->setIcon(img);
+    selectRecord->setIconSize(QSize(105,35));
+    selectRecord->setFlat(true);
+    selectRecord->setCursor(Qt::PointingHandCursor);
+    selectRecord->setMaximumWidth(105);
+    selectRecord->setStyleSheet("border:none");
     folderSelected = new QLabel(QWidget::tr("Dossier séléctionné:"));
 
     selectedImuLabel = new QLabel(QWidget::tr("Centrale inertielle:"));
@@ -54,15 +61,21 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
     userDetails = new QTextEdit();
     userDetails->setMinimumHeight(20);
     userDetails->setMaximumHeight(100);
-    addRecord = new QPushButton(QWidget::tr("Ajouter l'enregistrement"));
-
+    addRecord = new QPushButton("");
+    addRecord->setCursor(Qt::PointingHandCursor);
+    QIcon imgadd(":/icons/charger.png");
+    addRecord->setIcon(imgadd);
+    addRecord->setIconSize(QSize(105,35));
+    addRecord->setFlat(true);
+    addRecord->setMaximumWidth(105);
+    addRecord->setStyleSheet("border:none");
     spinner = new QLabel();
     movie = new QMovie("../applicationOpenimu/app/icons/upload_loader.gif");
     spinner->setMovie(movie);
 
     successLabel = new QLabel();
 
-    mainLayout->addWidget(selectRecord,0,0);
+    mainLayout->addWidget(selectRecord,0,0,Qt::AlignCenter);
 
     mainLayout->addWidget(folderSelected,1,0);
 
@@ -77,7 +90,7 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
     mainLayout->addWidget(recordDetails,8,0);
     mainLayout->addWidget(userDetails,9,0);
 
-    mainLayout->addWidget(addRecord,10,0);
+    mainLayout->addWidget(addRecord,10,0,Qt::AlignCenter);
 
     mainLayout->addWidget(spinner,11,0,Qt::AlignCenter);
 
@@ -88,17 +101,6 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
     connect(selectRecord, SIGNAL(clicked()), this, SLOT(selectRecordSlot()));
     connect(imuSelectComboBox, SIGNAL(currentIndexChanged(QString)), selectedImu, SLOT(setText(QString)));
 
-    this->setStyleSheet( "QPushButton{"
-                         "background-color: rgba(119, 160, 175,0.7);"
-                         "border-style: inset;"
-                         "border-width: 0.2px;"
-                         "border-radius: 10px;"
-                         "border-color: white;"
-                         "font: 12px;"
-                         "min-width: 10em;"
-                         "padding: 6px; }"
-                         "QPushButton:pressed { background-color: rgba(70, 95, 104, 0.7);}"
-                         );
 }
 
 RecordsDialog::~RecordsDialog()

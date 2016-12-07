@@ -72,3 +72,8 @@ ActivityTrackerResults::ActivityTrackerResults(QWidget *parent, AlgorithmOutputI
      connect(ui->saveToBd, SIGNAL(clicked()), parent, SLOT(exportToDBSlot()));
 
 }
+
+void ActivityTrackerResults::hideButtons(){
+        ui->exportToPdf->hide();
+        ui->saveToBd->hide();
+}
