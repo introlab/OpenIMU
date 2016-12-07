@@ -495,10 +495,24 @@ bool MainWindow::renameRecordFromUUID(std::string uuid, std::string newname)
 
 bool MainWindow::deleteRecordFromList()
 {
+    if(selectedRecord.m_recordId == "")
+    {
+        QMessageBox noRecordSelectedMessageBox;
+        noRecordSelectedMessageBox.setText("Suppression de l'enregistrement");
+        noRecordSelectedMessageBox.setInformativeText("Vous devez sélectionner un enregistrement afin de pouvoir le supprimer.");
+
+        noRecordSelectedMessageBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+        noRecordSelectedMessageBox.setDefaultButton(QMessageBox::Cancel);
+        noRecordSelectedMessageBox.setWindowIcon(QIcon(":/icons/logo.ico"));
+        noRecordSelectedMessageBox.exec();
+
+        return true;
+    }
+
     QMessageBox msgBox;
     msgBox.setText("Suppression de l'enregistrement");
     msgBox.setInformativeText("Êtes vous sûr de vouloir supprimer cet enregistrement?");
-
+    msgBox.setWindowIcon(QIcon(":/icons/logo.ico"));
 
     msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
     msgBox.setDefaultButton(QMessageBox::Cancel);
