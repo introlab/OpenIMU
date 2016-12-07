@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     menu = new ApplicationMenuBar(this);
     statusBar = new QStatusBar(this);
+    statusBar->setFont(fontitem);
     mainWidget = new MainWidget(this);
     listWidget = new myTreeWidget(this);
 
@@ -248,7 +249,7 @@ void MainWindow::openAlgorithmTab()
 
 void MainWindow::setStatusBarText(QString txt, MessageStatus status)
 {
-    QString styleSheet = "color: " + Utilities::getColourFromEnum(status) +"; font: 16px;";
+    QString styleSheet = "color: " + Utilities::getColourFromEnum(status) +";";
     statusBar->setStyleSheet(styleSheet);
 
     statusBar->showMessage(tr(txt.toStdString().c_str()));
