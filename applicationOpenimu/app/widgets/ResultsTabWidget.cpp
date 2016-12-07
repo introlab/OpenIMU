@@ -142,6 +142,16 @@ void ResultsTabWidget::exportToDBSlot()
 
 void ResultsTabWidget::exportDataToDBSlot()
 {  
+    // MainWindow -> AlgorithmTab -> ResultsTab
+    AlgorithmTab * algorithmTab = (AlgorithmTab*)m_parent;
+    MainWindow * mainWindow = (MainWindow*)algorithmTab->getMainWindow();
+
+    QString statusMessage = "Prêt";
+    MessageStatus status = MessageStatus::none;
+
+    mainWindow->setStatusBarText(tr("Insertion des résultats dans la base de données en cours..."));
+    mainWindow->startSpinner();
+
     RecordInfo newInfo;
     newInfo.m_imuPosition = m_recordInfo.m_imuPosition;
     newInfo.m_imuType = m_recordInfo.m_imuType;
@@ -153,7 +163,21 @@ void ResultsTabWidget::exportDataToDBSlot()
     CJsonSerializer::Serialize(m_accData, newInfo, output);
     m_databaseAccess = new DbBlock();
     QString temp = QString::fromStdString(output);//TODO remove
-    m_databaseAccess->addRecordInDB(temp);
+    bool result = m_databaseAccess->addRecordInDB(temp);
+
+    if(!result)
+    {
+        statusMessage = "Échec de l'insertion des résultats en base de données";
+        status = MessageStatus::error;
+    }
+    else
+    {
+        statusMessage = "Enregistrement en base de données réussi";
+        status = MessageStatus::success;
+    }
+
+    mainWindow->stopSpinner(true);
+    mainWindow->setStatusBarText(statusMessage, status);
 }
 
 void ResultsTabWidget::exportToPdfSlot()
