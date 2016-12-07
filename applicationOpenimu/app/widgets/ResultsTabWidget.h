@@ -41,7 +41,7 @@ private:
     QGridLayout* layout;
     QWidget* container;
     QLabel* imuType;
-    OpenImuButton* saveResultsToDB;
+    QPushButton* saveResultsToDB;
 
 
     DbBlock * m_databaseAccess;
