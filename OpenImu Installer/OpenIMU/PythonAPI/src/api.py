@@ -17,8 +17,11 @@ api = Api(app)
 
 
 # Auth Routes
-api.add_resource(resources.InsertRecord, '/insertrecord')
+api.add_resource(resources.InsertRecord, '/insertrecord','/insertrecord/concat/<string:uuid>')
+api.add_resource(resources.InsertAlgorithmResults, '/insertalgorithmresults')
 api.add_resource(resources.getRecords, '/records')
+api.add_resource(resources.getAlgorithmResults, '/algoResults')
+api.add_resource(resources.renameRecord, '/renamerecord/<string:uuid>')
 api.add_resource(resources.GetData, '/data')
 api.add_resource(resources.DeleteData, '/delete')
 api.add_resource(resources.Algo,'/algo')
@@ -26,4 +29,4 @@ api.add_resource(resources.AlgoList,'/algolist')
 api.add_resource(resources.Position,'/position')
 api.add_resource(resources.TestInsert,'/testinsert')
 if __name__ == '__main__':
-    app.run(debug=True, host='127.0.0.1')
+    app.run(debug=False, host='127.0.0.1')

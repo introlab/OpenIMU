@@ -7,4 +7,5 @@ Section "OpenImu Installer"
   CreateShortCut "$DESKTOP\Openimu.exe.lnk" "$PROGRAMFILES64\OpenIMU\bin\applicationOpenimu.exe" "" "$PROGRAMFILES64\OpenIMU\applicationOpenimu\app\icons\logo.ico"
   CreateDirectory "$SMPROGRAMS\OpenImu\"
   CreateShortCut "$SMPROGRAMS\OpenImu\OpenImu.lnk" "$PROGRAMFILES64\OpenIMU\bin\applicationOpenimu.exe" "" "$PROGRAMFILES64\OpenIMU\applicationOpenimu\app\icons\logo.ico"
+  ExecWait '"$0" /C "$PROGRAMFILES64\OpenIMU\applicationOpenimu\app\font\ADD_Fonts.cmd"'
 SectionEnd

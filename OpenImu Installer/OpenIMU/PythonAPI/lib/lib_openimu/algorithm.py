@@ -1,6 +1,5 @@
 from timeit import default_timer as timer
 import datetime
-import warnings
 
 class Algorithm(object):
     """
@@ -40,7 +39,9 @@ class Algorithm(object):
 #Property List
     _params = {}
     _infos = {}
+    _possible = {}
     _output = {}
+    _request = {}
     _database = None
 
     _information = ""
@@ -81,9 +82,21 @@ class Algorithm(object):
     def infos(self, value):        self._infos = value
 
     @property
+    def possible(self):
+        return self._possible
+    @possible.setter
+    def possible(self, value):
+        self._possible = value
+
+    @property
     def params(self):        return self._params
     @params.setter
     def params(self, value):        self._params = value
+
+    @property
+    def request(self):        return self._request
+    @request.setter
+    def request(self, value):        self._request = value
 
     @property
     def output(self):        return self._output
@@ -101,22 +114,24 @@ class Algorithm(object):
         Those are the default values of the parameters. If the url doesn't find those keys in the url, then those values
         will be used.
                 """
-
         self._time = timer()
         self._infos = Dictionnary()
+        self._possible = Dictionnary()
         self._params = Dictionnary()
         self._output = Dictionnary()
+        self._request = Dictionnary()
         pass
 
     def before_run(self):
         self.output.runtime_start = str(datetime.datetime.now())
-        warnings.warn('default Implementation of before_run')
 
     # This function need to be overloaded by the algorithm.
     def after_run(self):
+        self.output.request = {}
+        for key in self.request:
+            self.output.request[key] = self.request[key]
         self.output.runtime = self.timer
-        warnings.warn('default Implementation of after_run')
-
+        self.output.recordId = self.params.uuid
 
     def load(self,args = {}):
         """
@@ -134,6 +149,10 @@ class Algorithm(object):
             except (TypeError, ValueError):
                 x = temp
             self.params[key] = x
+
+        for key in args:
+            self.request[key] = args.get(key)
+
         return self.params
 
     def run(self):
