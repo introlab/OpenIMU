@@ -24,6 +24,9 @@ void Utilities::playAudio(void)
     notificationAudio.setSource(QUrl::fromLocalFile(":/audio/NotificationSound-2.wav"));
     notificationAudio.setVolume(0.75f);
     notificationAudio.play();
+
+    /*QSound notificationSound(":/audio/NotificationSound-2.wav");
+    notificationSound.play();*/
 }
 
 QString Utilities::getColourFromEnum(MessageStatus status)

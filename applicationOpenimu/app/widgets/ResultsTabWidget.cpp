@@ -87,6 +87,8 @@ void ResultsTabWidget::initFilterView(AccDataDisplay* accDataDisplay)
 
 void ResultsTabWidget::exportToDBSlot()
 {
+    bool playAudio = false;
+
     // MainWindow -> AlgorithmTab -> ResultsTab
     AlgorithmTab * algorithmTab = (AlgorithmTab*)m_parent;
     MainWindow * mainWindow = (MainWindow*)algorithmTab->getMainWindow();
@@ -100,7 +102,7 @@ void ResultsTabWidget::exportToDBSlot()
     QInputDialog* resultsNameInputDialog = new QInputDialog();
     resultsNameInputDialog->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
     resultsNameInputDialog->setOptions(QInputDialog::NoButtons);
-    resultsNameInputDialog->setWindowIcon(QIcon(QString::fromUtf8("../icons/logo.ico")));
+    resultsNameInputDialog->setWindowIcon(QIcon(":/icons/logo.ico"));
 
     // Also sets the text for the InputDialog
     QString message = "Veuillez entrer un nom permettant d'identifier ces résultats.";
@@ -110,6 +112,8 @@ void ResultsTabWidget::exportToDBSlot()
                                                           "", &dialogResponse);
     if (dialogResponse && !dialogText.isEmpty())
     {
+        playAudio = true;
+
         std::string serializedData;
         AlgorithmOutputInfoSerializer serializer;
 
@@ -136,12 +140,14 @@ void ResultsTabWidget::exportToDBSlot()
     }
 
     delete resultsNameInputDialog;
-    mainWindow->stopSpinner(true);
+    mainWindow->stopSpinner(playAudio);
     mainWindow->setStatusBarText(statusMessage, status);
+    //mainWindow->refreshRecordListWidget();
 }
 
 void ResultsTabWidget::exportDataToDBSlot()
 {  
+    bool playAudio = false;
     // MainWindow -> AlgorithmTab -> ResultsTab
     AlgorithmTab * algorithmTab = (AlgorithmTab*)m_parent;
     MainWindow * mainWindow = (MainWindow*)algorithmTab->getMainWindow();
@@ -152,32 +158,49 @@ void ResultsTabWidget::exportDataToDBSlot()
     mainWindow->setStatusBarText(tr("Insertion des résultats dans la base de données en cours..."));
     mainWindow->startSpinner();
 
-    RecordInfo newInfo;
-    newInfo.m_imuPosition = m_recordInfo.m_imuPosition;
-    newInfo.m_imuType = m_recordInfo.m_imuType;
-    newInfo.m_parentId = m_recordInfo.m_recordId;
-    newInfo.m_recordName = "filtered" + m_recordInfo.m_recordName;
-    newInfo.m_recordDetails = m_recordInfo.m_recordDetails;
+    QInputDialog* resultsNameInputDialog = new QInputDialog();
+    resultsNameInputDialog->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    resultsNameInputDialog->setOptions(QInputDialog::NoButtons);
+    resultsNameInputDialog->setWindowIcon(QIcon(":/icons/logo.ico"));
 
-    std::string output;
-    CJsonSerializer::Serialize(m_accData, newInfo, output);
-    m_databaseAccess = new DbBlock();
-    QString temp = QString::fromStdString(output);//TODO remove
-    bool result = m_databaseAccess->addRecordInDB(temp);
-
-    if(!result)
+    // Also sets the text for the InputDialog
+    QString message = "Veuillez entrer un nom permettant d'identifier ces résultats.";
+    bool dialogResponse;
+    QString dialogText =  resultsNameInputDialog->getText(NULL ,"Identification des résultats",
+                                                          message, QLineEdit::Normal,
+                                                          "", &dialogResponse);
+    if (dialogResponse && !dialogText.isEmpty())
     {
-        statusMessage = "Échec de l'insertion des résultats en base de données";
-        status = MessageStatus::error;
-    }
-    else
-    {
-        statusMessage = "Enregistrement en base de données réussi";
-        status = MessageStatus::success;
+        playAudio = true;
+
+        RecordInfo newInfo;
+        newInfo.m_imuPosition = m_recordInfo.m_imuPosition;
+        newInfo.m_imuType = m_recordInfo.m_imuType;
+        newInfo.m_parentId = m_recordInfo.m_recordId;
+        newInfo.m_recordName = dialogText.toStdString();
+        newInfo.m_recordDetails = m_recordInfo.m_recordDetails;
+
+        std::string output;
+        CJsonSerializer::Serialize(m_accData, newInfo, output);
+        m_databaseAccess = new DbBlock();
+        QString temp = QString::fromStdString(output);//TODO remove
+        bool result = m_databaseAccess->addRecordInDB(temp);
+
+        if(!result)
+        {
+            statusMessage = "Échec de l'insertion des résultats en base de données";
+            status = MessageStatus::error;
+        }
+        else
+        {
+            statusMessage = "Enregistrement en base de données réussi";
+            status = MessageStatus::success;
+        }
     }
 
-    mainWindow->stopSpinner(true);
+    mainWindow->stopSpinner(playAudio);
     mainWindow->setStatusBarText(statusMessage, status);
+    mainWindow->refreshRecordListWidget();
 }
 
 void ResultsTabWidget::exportToPdfSlot()
