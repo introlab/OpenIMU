@@ -153,6 +153,8 @@ void AccDataDisplay::slotSaveNewSetRange()
     databaseAccess = new DbBlock;
     QString temp = QString::fromStdString(output);//TODO remove
     databaseAccess->addRecordInDB(temp);
+
+    //TODO: FEEDBACK and Close the Dialog
 }
 
 

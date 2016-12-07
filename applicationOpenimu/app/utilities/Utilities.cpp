@@ -2,10 +2,10 @@
 
 using namespace std;
 
-const QString Utilities::successColour = "#25FF3C";
-const QString Utilities::errorColour = "#FE0D0D";
-const QString Utilities::warningColour = "#FEFE08";
-const QString Utilities::defaultColour = "#000000";
+const QString Utilities::successColour = "#2ECC71 ";
+const QString Utilities::errorColour = "#E84C3C ";
+const QString Utilities::warningColour = "#F1C40F";
+const QString Utilities::defaultColour = "#2C3E50";
 
 QString Utilities::capitalizeFirstCharacter(QString myString)
 {
