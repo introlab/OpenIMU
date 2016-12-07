@@ -12,8 +12,10 @@ AlgorithmInfoSerializer::~AlgorithmInfoSerializer()
 }
 void AlgorithmInfoSerializer::Serialize(AlgorithmInfo algorithmInfo, std::string& output)
 {
+    //to do : verify that possible values are correctly serialize. I think right now it isn't
     Json::Value jsonAlgorithmInfo(Json::objectValue);
     Json::Value jsonAlgorithmParametersInfo(Json::arrayValue);
+    Json::Value jsonAlgorithmParametersPossibleValues(Json::arrayValue);
 
     // Serializing the member variables ...
     jsonAlgorithmInfo["author"] = algorithmInfo.m_author;
@@ -75,6 +77,7 @@ void AlgorithmInfoSerializer::Deserialize(std::string& dataToDeserialize)
             p.m_description = parameterListInJson[indexp].get("info", "").asString();
             p.m_value = parameterListInJson[indexp].get("value", "").asString();
             p.m_defaultValue = parameterListInJson[indexp].get("default", "").asString();
+            p.m_defaultValue = p.m_defaultValue.substr(0, 4);
             algorithmInfo.m_parameters.push_back(p);
         }
 
