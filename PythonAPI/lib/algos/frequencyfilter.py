@@ -52,7 +52,7 @@ class frequencyfilter(Algorithm):
         self.author = "L'équipe d'OpenIMU"
         self.name = "Filtre de fréquence"
         self.filename = "frequencyfilter"
-        self.details = "Peux être utilisé pour un filtre: passe-bas, passe-haut, passe-bande, rejet-bande"
+        self.details = "Applique un filtre passe-bas ou passe-haut sur les données de l'enregistrement"
 
         #Params initialization
         self.params.uuid = 0
@@ -60,16 +60,16 @@ class frequencyfilter(Algorithm):
         self.possible.uuid = {"type":"ObjectID"}
 
         self.params.type = None
-        self.infos.type = "Type de filtre : passe-bas ou passe-haut"
+        self.infos.type = "Les types de filtre sont passe-bas ou passe-haut"
         self.possible.type = {"values":["passe-bas","passe-haut"]}
 
         self.params.cutoff = 0.1
-        self.infos.cutoff =  "Fréquence de coupure: Est une fraction du taux d'échantillonage(entre 0 et 0.5)"
+        self.infos.cutoff =  "La fréquence de coupure est une fraction du taux d'échantillonage(entre 0 et 0.5)"
         self.possible.cutoff = {"range":[0,0.5]}
 
 
         self.params.transition = 0.1
-        self.infos.transition = "Bande de transition: Est une fraction du taux d'échantillonage(entre 0 et 0.5)"
+        self.infos.transition = "La bande de transition  est une fraction du taux d'échantillonage(entre 0 et 0.5)"
         self.possible.transition = {"range":[0,0.5]}
 
         #After __init__, the params are passed throught a URL parser by algorithm.load()

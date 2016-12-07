@@ -41,8 +41,10 @@ private:
     QGridLayout* layout;
     QWidget* container;
     QLabel* imuType;
-    QPushButton* saveResultsToDB;
 
+    void drawText(QPainter & painter, qreal x, qreal y, Qt::Alignment flags, const QString & text, QRectF * boundingRect = 0);
+
+    QPushButton* saveResultsToDB;
 
     DbBlock * m_databaseAccess;
     WimuAcquisition* m_accData;

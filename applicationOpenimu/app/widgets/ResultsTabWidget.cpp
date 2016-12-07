@@ -1,9 +1,8 @@
 #include "ResultsTabWidget.h"
 #include <QtWidgets>
-#include <QPdfWriter>
-#include <QPainter>
 #include "StepCounterResults.h"
 #include "ActivityTrackerResults.h"
+#include "utilities/PdfGenerator.h"
 
 ResultsTabWidget::ResultsTabWidget()
 {
@@ -217,32 +216,22 @@ void ResultsTabWidget::exportToPdfSlot()
     QString filename = QFileDialog::getSaveFileName(this,tr("Save Document"), QDir::currentPath(),tr("PDF (*.pdf)"));
     if( !filename.isNull() )
     {
-        QPdfWriter writer(filename);
-        writer.setPageSizeMM(QSize(216,280));
 
-        QPainter painter(&writer);
-        int dpi = writer.resolution();
-        int maxWidth = 8.5*dpi;
-        int maxHeight = 11*dpi;
+        PDFGenerator pdfGen(filename);
+        int offset = 800;
+        int lineHeight = 400;
+        pdfGen.DrawHeader("Résultat des algorithmes");
+        pdfGen.drawText(0,5*lineHeight + offset,Qt::AlignVCenter,"Description détaillée",20);
+        pdfGen.drawText(200,6.2*lineHeight + offset,Qt::AlignVCenter,"Nom de l'enregistrement: " +QString::fromStdString(m_algorithmOutputInfo.m_recordName));
+        pdfGen.drawText(200,7.2*lineHeight + offset,Qt::AlignVCenter,"Date de l'enregistrement: " + QString::fromStdString(m_algorithmOutputInfo.m_date));
+        pdfGen.drawText(200,8.2*lineHeight + offset,Qt::AlignVCenter,"Date de l'enregistrement: " + QString::fromStdString(m_algorithmOutputInfo.m_date));
+        pdfGen.drawText(200,9.2*lineHeight + offset,Qt::AlignVCenter,"Type de IMU: " + QString::fromStdString(m_algorithmOutputInfo.m_recordImuPosition));
+        pdfGen.drawText(200,10.2*lineHeight + offset,Qt::AlignVCenter,"Position de la centralle inertielle:" + QString::fromStdString(m_algorithmOutputInfo.m_recordType));
 
-        painter.setPen(Qt::black);
-
-        painter.drawLine(QPoint(-100,200), QPoint(maxWidth,200));
-
-        painter.drawText(4000,500,"Rapport d'algorithme: ");
-        painter.drawLine(QPoint(-100,700), QPoint(maxWidth,700));
-        painter.drawText(250,1000,"Informations sur l'enregistrement:");
-
-        painter.drawText(250,1400,"Nom de l'enregistrement: " +QString::fromStdString(m_algorithmOutputInfo.m_recordName));
-        painter.drawText(250,1600, "Date de l'enregistrement:" + QString::fromStdString(m_algorithmOutputInfo.m_date));
-        painter.drawText(250,1800, "Type de IMU:" + QString::fromStdString(m_algorithmOutputInfo.m_recordImuPosition));
-        painter.drawText(250,2000, "Position de la centralle inertielle:" + QString::fromStdString(m_algorithmOutputInfo.m_recordType));
-
-
-        painter.drawText(250,2400,"Algorithmes:");
-        painter.drawText(250,2800,"Algorithme appliqué: " + QString::fromStdString(m_algorithmOutputInfo.m_algorithmName));
-        painter.drawText(250,3000, "Valeur obtenue:" +QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_value)));
-        painter.drawText(250,3200, "Temps de calculs:" +QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_executionTime)));
+        pdfGen.drawText(0,12.2*lineHeight + offset,Qt::AlignVCenter,"Algorithmes",20);
+        pdfGen.drawText(200,13.4*lineHeight + offset,Qt::AlignVCenter,"Algorithme appliqué: " + QString::fromStdString(m_algorithmOutputInfo.m_algorithmName));
+        pdfGen.drawText(200,14.4*lineHeight + offset,Qt::AlignVCenter,"Valeur obtenue: " +QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_value)));
+        pdfGen.drawText(200,15.4*lineHeight + offset,Qt::AlignVCenter,"Temps de calculs: " +QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_executionTime)));
 
        /* QPixmap pix = chartView->grab();
         int h = painter.window().height()*0.4;

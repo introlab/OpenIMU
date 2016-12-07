@@ -116,6 +116,7 @@ class getDataWithOptions(Resource):
         if sortErrors:
             abort(401, message=str(sortErrors))
 
+
         # Retrieve UUID
         uuidData, uuidErrors = schemaDataRequestWithOptions.load(dataRequestWithOptions['recordId'])
         if uuidErrors:
@@ -123,6 +124,11 @@ class getDataWithOptions(Resource):
             return
 
         recordSchema = schemas.Record()
+
+        # Retrieve Samples for preview
+        nbSamples = schemas.samples()
+        if(nbSamples > 0):
+            return recordSchema.dump(mongo.db.record.find({}, {'name': 1, '_id': uuidData}))
 
         # Build request
         #  No filter, no sort. Just return all the record matching the UUID

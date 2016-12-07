@@ -360,7 +360,9 @@ bool MainWindow::getDataFromUUIDFromDB(std::string uuid)
     QNetworkReply *reply = manager->get(request);
     QEventLoop loop;
     bool result = connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,SLOT(quit()));
+
     loop.exec();
+    qDebug() << "Reply size: " << reply->header(QNetworkRequest::ContentLengthHeader).toLongLong();
     reponseRecueAcc(reply);
 
     if(!result)
