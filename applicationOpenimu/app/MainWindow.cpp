@@ -385,7 +385,7 @@ void MainWindow::reponseRecueAcc(QNetworkReply* reply)
        }
        else
        {
-          setStatusBarText("La requête reçue n'a pas retournée de résultats");
+          setStatusBarText("La requête reçue n'a pas retournée de résultats", MessageStatus::warning);
        }
    }
    else
@@ -409,7 +409,7 @@ void MainWindow::savedResultsReponse(QNetworkReply* reply)
         }
         else
         {
-           setStatusBarText("La requête reçue n'a pas retournée de résultats");
+           setStatusBarText("La requête reçue n'a pas retournée de résultats", MessageStatus::warning);
         }
 
         setStatusBarText("Prêt");
@@ -477,7 +477,7 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
         }
         else
         {
-            setStatusBarText("La requête reçue n'a pas retournée de résultats");
+            setStatusBarText("La requête reçue n'a pas retournée de résultats", MessageStatus::warning);
         }
    }
    else
