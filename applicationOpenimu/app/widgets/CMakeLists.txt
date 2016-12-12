@@ -7,9 +7,11 @@ SET(srcs
     ${CMAKE_CURRENT_SOURCE_DIR}/MyListWidget.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MainWidget.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/AlgorithmTab.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/RecordsWidget.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/RecordViewWidget.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ResultsTabWidget.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/HomeWidget.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/StepCounterResults.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ActivityTrackerResults.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MRichTextEditor/mrichtextedit.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MRichTextEditor/mtextedit.cpp
 
@@ -25,9 +27,11 @@ SET(headers
     ${CMAKE_CURRENT_SOURCE_DIR}/MyListWidget.h
     ${CMAKE_CURRENT_SOURCE_DIR}/MainWidget.h
     ${CMAKE_CURRENT_SOURCE_DIR}/AlgorithmTab.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/RecordsWidget.h
     ${CMAKE_CURRENT_SOURCE_DIR}/ResultsTabWidget.h
     ${CMAKE_CURRENT_SOURCE_DIR}/HomeWidget.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/RecordViewWidget.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/StepCounterResults.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/ActivityTrackerResults.h
     ${CMAKE_CURRENT_SOURCE_DIR}/MRichTextEditor/mrichtextedit.h
     ${CMAKE_CURRENT_SOURCE_DIR}/MRichTextEditor/mtextedit.h
     PARENT_SCOPE
@@ -36,5 +40,9 @@ SET(headers
 SET(uis
     ${uis}
     ${CMAKE_CURRENT_SOURCE_DIR}/MRichTextEditor/mrichtextedit.ui
+    ${CMAKE_CURRENT_SOURCE_DIR}/recordviewwidget.ui
+    ${CMAKE_CURRENT_SOURCE_DIR}/stepcounterresults.ui
+    ${CMAKE_CURRENT_SOURCE_DIR}/homewidget.ui
+    ${CMAKE_CURRENT_SOURCE_DIR}/activitytrackerresults.ui
     PARENT_SCOPE
 )

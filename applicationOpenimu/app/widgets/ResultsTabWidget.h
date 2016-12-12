@@ -5,12 +5,16 @@
 #include <QtWidgets>
 #include <string>
 #include <QLabel>
-#include <QtCharts/QChartView>
-#include <QtCharts/QPieSeries>
-#include <QtCharts/QPieSlice>
-#include "../algorithm/AlgorithmOutput.h"
-#include "../algorithm/AlgorithmList.h"
 #include <QPushButton>
+#include <QInputDialog>
+
+#include "../utilities/OpenImuButton.h"
+#include "../algorithm/AlgorithmOutputInfoSerializer.h"
+#include "../algorithm/AlgorithmInfoSerializer.h"
+#include "../acquisition/RecordInfo.h"
+#include "../core/components/blockType/DbBlock.h"
+#include "../MainWindow.h"
+#include "../AccDataDisplay.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -18,34 +22,34 @@ class ResultsTabWidget: public QWidget
 {
     Q_OBJECT
 
-    public:
+public:
     ResultsTabWidget();
-    ResultsTabWidget(QWidget *parent, RecordInfo &recordInfo, AlgorithmInfo &algoInfo, AlgorithmOutput &output);
+    ResultsTabWidget(QWidget *parent, AlgorithmOutputInfo output, bool isSaved=false);
+    ResultsTabWidget(QWidget *parent, WimuAcquisition& accData, RecordInfo& rInfo);
      ~ResultsTabWidget();
 
-    public slots:
+    void init(AlgorithmOutputInfo output, bool isSaved);
+    void initFilterView(AccDataDisplay* accDataDisplay);
+
+public slots:
     void exportToPdfSlot();
     void exportToDBSlot();
+    void exportDataToDBSlot();
 
-    private:
+private:
+    QWidget* m_parent;
     QGridLayout* layout;
     QWidget* container;
     QLabel* imuType;
-    QPushButton* exportToPdf;
+
+    void drawText(QPainter & painter, qreal x, qreal y, Qt::Alignment flags, const QString & text, QRectF * boundingRect = 0);
+
     QPushButton* saveResultsToDB;
+
+    DbBlock * m_databaseAccess;
+    WimuAcquisition* m_accData;
+    AlgorithmOutputInfo m_algorithmOutputInfo;
     RecordInfo m_recordInfo;
-    QChartView *chartView;
-
-    QLabel* algoLabel;
-    QLabel* recordLabel;
-    QLabel* dateLabel;
-    QLabel* startHourLabel;
-    QLabel* endHourLabel;
-    QLabel* positionLabel;
-    QLabel* measureUnitLabel;
-    QLabel* computeTimeLabel;
-
-    void init(AlgorithmInfo &algoInfo, AlgorithmOutput &output);
 };
 
 #endif

@@ -1,12 +1,27 @@
 #include "ApplicationMenubar.h"
+#include<QGraphicsDropShadowEffect>
 
 ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
 {
-    this->setStyleSheet("background-color:rgba(230, 233, 239,0.6);");
-    this->setMinimumWidth(parent->width());
-    parent = parent;
-    fichier = new QMenu(tr("&Fichier"));
+    this->setPalette(QPalette(Qt::white));
 
+    this->setMinimumWidth(parent->width());
+    this->setStyleSheet("color:#2c3e50");
+
+    QGraphicsDropShadowEffect* effect = new QGraphicsDropShadowEffect();
+    effect->setBlurRadius(50);
+    effect->setYOffset(qreal(-10));
+    effect->setXOffset(qreal(-10));
+    this->setGraphicsEffect(effect);
+
+    QFont font;
+    font.setFamily("Open Sans Light");
+    font.setKerning(false);
+    font.setPointSize(14);
+    this->setFont(font);
+
+    fichier = new QMenu(tr("&Fichier"));
+    fichier->setPalette(QPalette(Qt::white));
     QAction* actionAjouterEnregistrement = new QAction(tr("&Ajouter Enregistrement"), fichier);
     actionAjouterEnregistrement->setShortcut(QKeySequence("Ctrl+R"));
 
@@ -21,53 +36,32 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     fichier->addSeparator();
     fichier->addAction(actionQuitter);
 
-    vue = new QMenu("&Vue");
-    QAction* actionDonneeBrutes = new QAction(tr("&Données brutes"),vue);
-    actionDonneeBrutes->setShortcut(QKeySequence("Ctrl+D"));
-    vue->addAction(actionDonneeBrutes);
+    algorithme = new QMenu("&Algorithme");
+    algorithme->setPalette(QPalette(Qt::white));
+    QAction* actionAddAlgo = new QAction(tr("&Ajouter algorithme"),algorithme);
+    actionAddAlgo->setShortcut(QKeySequence("Ctrl+D"));
+    actionAddAlgo->setEnabled(false);
+    algorithme->addAction(actionAddAlgo);
+
+    apropos = new QMenu(tr("&À propos"));
+    apropos->setPalette(QPalette(Qt::white));
+    QAction* actionAPropos = new QAction(tr("&OpenIMU"),apropos);
+    apropos->addAction(actionAPropos);
 
     aide = new QMenu("&Aide");
-    QAction* actionAPropos = new QAction(tr("À &propos"),aide);
-    actionAPropos->setShortcut(QKeySequence("Ctrl+A"));
-    QAction* actionAide = new QAction(tr("&Aide"),aide);
-    actionAide->setShortcut(QKeySequence("Ctrl+H"));
-    aide->addAction(actionAPropos);
+    aide->setPalette(QPalette(Qt::white));
+    QAction* actionAide = new QAction(tr("&Utilisation"),aide);
     aide->addAction(actionAide);
 
-    actionEnglish = new QAction(tr("&English"),aide);
-    actionFrench = new QAction(tr("&French"),aide);
-
-    actionEnglish->setCheckable(true);
-    actionFrench->setCheckable(true);
-
-    preference = new QMenu(tr("&Preferences"));
-    preferenceLangue = preference->addMenu(tr("&Langue"));
-    preferenceLangue->addAction(actionEnglish);
-    preferenceLangue->addAction(actionFrench);
-
     this->addMenu(fichier);
-    this->addMenu(vue);
-    this->addMenu(preference);
+    this->addMenu(algorithme);
+    this->addMenu(apropos);
     this->addMenu(aide);
 
-    //connect(actionDonneeBrutes, SIGNAL(triggered()), parent, SLOT(displayRawAccData()));
-    connect(actionOuvrir, SIGNAL(triggered()), parent, SLOT(openFile()));
+
+    connect(actionOuvrir, SIGNAL(triggered()), parent, SLOT(refreshRecordListWidget()));
     connect(actionAjouterEnregistrement, SIGNAL(triggered()), parent, SLOT(openRecordDialog()));
     connect(actionQuitter,SIGNAL(triggered()),parent,SLOT(closeWindow()));
     connect(actionAPropos,SIGNAL(triggered()),parent,SLOT(openAbout()));
     connect(actionAide,SIGNAL(triggered()),parent,SLOT(openHelp()));
-    connect(actionEnglish,SIGNAL(triggered()),parent,SLOT(setApplicationInEnglish()));
-    connect(actionFrench,SIGNAL(triggered()),parent,SLOT(setApplicationInFrench()));
-}
-
-void ApplicationMenuBar::setUncheck(const QString uncheck)
-{
-    if(uncheck == "French")
-    {
-        actionFrench->setChecked(false);
-    }
-    if(uncheck == "English")
-    {
-         actionEnglish->setChecked(false);
-    }
 }

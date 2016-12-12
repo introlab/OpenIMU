@@ -7,7 +7,8 @@
 #include <QTextEdit>
 #include <QWidget>
 
-#include "../algorithm/AlgorithmList.h"
+#include "../utilities/Utilities.h"
+#include "../algorithm/AlgorithmInfoSerializer.h"
 #include "MRichTextEditor/mrichtextedit.h"
 
 class AlgorithmDetailedView : public QWidget

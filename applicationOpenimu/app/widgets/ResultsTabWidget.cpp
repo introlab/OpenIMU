@@ -1,153 +1,256 @@
 #include "ResultsTabWidget.h"
 #include <QtWidgets>
-#include <QPdfWriter>
-#include <QPainter>
-
-ResultsTabWidget::ResultsTabWidget(QWidget *parent,RecordInfo& recordInfo, AlgorithmInfo &algoInfo, AlgorithmOutput &output):QWidget(parent)
-{
-    m_recordInfo= recordInfo;
-    init(algoInfo, output);
-}
-
-
-void ResultsTabWidget::init(AlgorithmInfo &algoInfo, AlgorithmOutput &output)
-{
-    layout = new QGridLayout;
-    this->setLayout(layout);
-
-    QString algoName = "Algorithme appliqué: " + QString::fromStdString(algoInfo.name);
-    QString recordName = QString::fromStdString(m_recordInfo.m_recordName);
-
-    algoLabel = new QLabel(algoName);
-    algoLabel->setFont(QFont( "Arial", 12, QFont::Bold));
-
-    recordLabel = new QLabel("Enregistrement utilisé: "+ recordName);
-    dateLabel = new QLabel("Date de l'enregistrement: " + QString::fromStdString(output.m_algorithmOutput.date));
-    startHourLabel = new QLabel("Heure de début séléctionné: " + QString::fromStdString(output.m_algorithmOutput.startTime));
-    endHourLabel = new QLabel("Heure de fin séléctionné: " + QString::fromStdString(output.m_algorithmOutput.endTime));
-    positionLabel = new QLabel("Position du Wimu: " + QString::fromStdString(m_recordInfo.m_imuPosition));
-    measureUnitLabel = new QLabel("Unité de mesure: " + QString::fromStdString(output.m_algorithmOutput.measureUnit)) ;
-    computeTimeLabel = new QLabel("Temps de calculs: " +QString::fromStdString(std::to_string(output.m_algorithmOutput.execute_time) + "ms"));
-
-    layout->addWidget(algoLabel,0,0);
-    layout->addWidget(recordLabel,1,0);
-    layout->addWidget(dateLabel,2,0);
-    layout->addWidget(startHourLabel,3,0);
-    layout->addWidget(endHourLabel,4,0);
-    layout->addWidget(positionLabel,5,0);
-    layout->addWidget(measureUnitLabel,6,0);
-    layout->addWidget(computeTimeLabel,7,0);
-
-    layout->setMargin(10);
-    chartView = new QChartView();
-
-    if(algoInfo.name == "activityTracker")
-    {
-
-        QPieSeries *series = new QPieSeries();
-        series->setHoleSize(0.35);
-        QPieSlice *slice = series->append("Temps actif: " + QString::fromStdString(std::to_string(output.m_algorithmOutput.value)) + " %" , output.m_algorithmOutput.value);
-        slice->setExploded();
-        slice->setLabelVisible();
-        series->append("Temps passif: " +  QString::fromStdString(std::to_string(100-output.m_algorithmOutput.value)) + " %", output.m_algorithmOutput.value-100);
-        chartView->setRenderHint(QPainter::Antialiasing);
-        chartView->chart()->setTitle("Temps d'activité");
-        chartView->chart()->setTitleFont(QFont("Arial", 14));
-        chartView->chart()->addSeries(series);
-        chartView->chart()->legend()->setAlignment(Qt::AlignBottom);
-        chartView->chart()->setTheme(QChart::ChartThemeLight);
-        chartView->chart()->setAnimationOptions(QChart::SeriesAnimations);
-        chartView->chart()->legend()->setFont(QFont("Arial", 12));
-
-        layout->addWidget(chartView,8,0);
-
-        exportToPdf = new QPushButton("Exporter en PDF");
-        connect(exportToPdf, SIGNAL(clicked()), this, SLOT(exportToPdfSlot()));
-
-        layout->addWidget(exportToPdf,9,0);
-    }
-    else
-    {
-       QLabel* labelResult = new QLabel("Résultat de l'algorithme : " + QString::fromStdString(std::to_string(output.m_algorithmOutput.value)) +" pas" );
-
-       algoLabel->setFont(QFont( "Arial", 12, QFont::Light));
-       layout->addWidget(labelResult,9,0,Qt::AlignCenter);
-    }
-
-    saveResultsToDB = new QPushButton("Sauvegarder en base de données");
-    connect(saveResultsToDB, SIGNAL(clicked()), this, SLOT(exportToDBSlot()));
-
-    layout->addWidget(saveResultsToDB,9,1);
-
-    this->setStyleSheet( "QPushButton{"
-                   "background-color: rgba(119, 160, 175,0.7);"
-                   "border-style: inset;"
-                   "border-width: 0.2px;"
-                   "border-radius: 10px;"
-                   "border-color: white;"
-                   "font: 12px;"
-                   "min-width: 10em;"
-                   "padding: 6px; }"
-                   "QPushButton:pressed { background-color: rgba(70, 95, 104, 0.7);}"
-                   );
-}
+#include "StepCounterResults.h"
+#include "ActivityTrackerResults.h"
+#include "utilities/PdfGenerator.h"
 
 ResultsTabWidget::ResultsTabWidget()
 {
 
 }
 
+ResultsTabWidget::ResultsTabWidget(QWidget *parent, AlgorithmOutputInfo output, bool isSaved):QWidget(parent)
+{
+    m_parent = parent;
+    init(output, isSaved);
+}
+
+ResultsTabWidget::ResultsTabWidget(QWidget *parent, WimuAcquisition& accData, RecordInfo& rInfo):QWidget(parent)
+{
+    m_parent = parent;
+    m_accData = new WimuAcquisition();
+    m_accData->setDataAccelerometer(accData.getDataAccelerometer());
+    m_recordInfo = rInfo;
+
+    AccDataDisplay* accDataDisplay = new AccDataDisplay(accData);
+    initFilterView(accDataDisplay);
+}
+
 ResultsTabWidget::~ResultsTabWidget()
 {
 
 }
+
+void ResultsTabWidget::init(AlgorithmOutputInfo output, bool isSaved)
+{
+    m_databaseAccess = new DbBlock();
+
+    m_algorithmOutputInfo = output;
+
+    if(m_algorithmOutputInfo.m_algorithmName == "Temps d'activité")
+    {
+        ActivityTrackerResults * res = new ActivityTrackerResults(this, m_algorithmOutputInfo);
+        if(isSaved)
+        {
+            res->hideButtons();
+        }
+        QVBoxLayout* layoutV = new QVBoxLayout();
+        layoutV->addWidget(res);
+        this->setLayout(layoutV);
+
+
+    }
+    else
+    {
+       StepCounterResults * res = new StepCounterResults(this, m_algorithmOutputInfo);
+       if(isSaved)
+       {
+           res->hideButtons();
+       }
+       QVBoxLayout* layoutV = new QVBoxLayout();
+       layoutV->addWidget(res);
+       this->setLayout(layoutV);
+
+    }
+}
+
+
+void ResultsTabWidget::initFilterView(AccDataDisplay* accDataDisplay)
+{
+    layout = new QGridLayout;
+    this->setLayout(layout);
+    accDataDisplay->showSimplfiedDataDisplay();
+    saveResultsToDB = new QPushButton("");
+    QIcon img(":/icons/save as record.png");
+    saveResultsToDB->setIcon(img);
+    saveResultsToDB->setIconSize(QSize(375,35));
+    saveResultsToDB->setFlat(true);
+    saveResultsToDB->setCursor(Qt::PointingHandCursor);
+    saveResultsToDB->setMaximumWidth(375);
+    saveResultsToDB->setStyleSheet("border:none");
+    connect(saveResultsToDB, SIGNAL(clicked()), this, SLOT(exportDataToDBSlot()));
+
+    layout->addWidget(accDataDisplay);
+    layout->addWidget(saveResultsToDB,1,0, Qt::AlignCenter);
+}
+
 void ResultsTabWidget::exportToDBSlot()
 {
+    bool playAudio = false;
 
+    // MainWindow -> AlgorithmTab -> ResultsTab
+    AlgorithmTab * algorithmTab = (AlgorithmTab*)m_parent;
+    MainWindow * mainWindow = (MainWindow*)algorithmTab->getMainWindow();
+
+    QString statusMessage = "Prêt";
+    MessageStatus status = MessageStatus::none;
+
+    mainWindow->setStatusBarText(tr("Insertion des résultats dans la base de données en cours..."));
+    mainWindow->startSpinner();
+
+    QInputDialog* resultsNameInputDialog = new QInputDialog();
+    resultsNameInputDialog->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    resultsNameInputDialog->setOptions(QInputDialog::NoButtons);
+    resultsNameInputDialog->setWindowIcon(QIcon(":/icons/logo.ico"));
+
+    // Also sets the text for the InputDialog
+    QString message = "Veuillez entrer un nom permettant d'identifier ces résultats.";
+    bool dialogResponse;
+    QString dialogText =  resultsNameInputDialog->getText(NULL ,"Identification des résultats",
+                                                          message, QLineEdit::Normal,
+                                                          "", &dialogResponse);
+    if (dialogResponse && !dialogText.isEmpty())
+    {
+        playAudio = true;
+
+        std::string serializedData;
+        AlgorithmOutputInfoSerializer serializer;
+
+        m_algorithmOutputInfo.m_resultName = dialogText.toStdString();
+        serializer.Serialize(m_algorithmOutputInfo, serializedData);
+
+        bool resultsAddedSuccessfully = m_databaseAccess->addResultsInDB(QString::fromStdString(serializedData));
+
+        if(resultsAddedSuccessfully)
+        {
+            statusMessage = "Enregistrement en base de données réussi";
+            status = MessageStatus::success;
+        }
+        else
+        {
+            statusMessage = "Échec de l'enregistrement en base de données";
+            status = MessageStatus::error;
+        }
+    }
+    else
+    {
+        statusMessage = "Enregistrement en base de données annulé";
+        status = MessageStatus::error;
+    }
+
+    delete resultsNameInputDialog;
+    mainWindow->stopSpinner(playAudio);
+    mainWindow->setStatusBarText(statusMessage, status);
+    //mainWindow->refreshRecordListWidget();
+}
+
+void ResultsTabWidget::exportDataToDBSlot()
+{  
+    bool playAudio = false;
+    // MainWindow -> AlgorithmTab -> ResultsTab
+    AlgorithmTab * algorithmTab = (AlgorithmTab*)m_parent;
+    MainWindow * mainWindow = (MainWindow*)algorithmTab->getMainWindow();
+
+    QString statusMessage = "Prêt";
+    MessageStatus status = MessageStatus::none;
+
+    mainWindow->setStatusBarText(tr("Insertion des résultats dans la base de données en cours..."));
+    mainWindow->startSpinner();
+
+    QInputDialog* resultsNameInputDialog = new QInputDialog();
+    resultsNameInputDialog->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    resultsNameInputDialog->setOptions(QInputDialog::NoButtons);
+    resultsNameInputDialog->setWindowIcon(QIcon(":/icons/logo.ico"));
+
+    // Also sets the text for the InputDialog
+    QString message = "Veuillez entrer un nom permettant d'identifier ces résultats.";
+    bool dialogResponse;
+    QString dialogText =  resultsNameInputDialog->getText(NULL ,"Identification des résultats",
+                                                          message, QLineEdit::Normal,
+                                                          "", &dialogResponse);
+    if (dialogResponse && !dialogText.isEmpty())
+    {
+        playAudio = true;
+
+        RecordInfo newInfo;
+        newInfo.m_imuPosition = m_recordInfo.m_imuPosition;
+        newInfo.m_imuType = m_recordInfo.m_imuType;
+        newInfo.m_parentId = m_recordInfo.m_recordId;
+        newInfo.m_recordName = dialogText.toStdString();
+        newInfo.m_recordDetails = m_recordInfo.m_recordDetails;
+
+        std::string output;
+        CJsonSerializer::Serialize(m_accData, newInfo, output);
+        m_databaseAccess = new DbBlock();
+        QString temp = QString::fromStdString(output);//TODO remove
+        bool result = m_databaseAccess->addRecordInDB(temp);
+
+        if(!result)
+        {
+            statusMessage = "Échec de l'insertion des résultats en base de données";
+            status = MessageStatus::error;
+        }
+        else
+        {
+            statusMessage = "Enregistrement en base de données réussi";
+            status = MessageStatus::success;
+        }
+    }
+
+    mainWindow->stopSpinner(playAudio);
+    mainWindow->setStatusBarText(statusMessage, status);
+    mainWindow->refreshRecordListWidget();
 }
 
 void ResultsTabWidget::exportToPdfSlot()
 {
+    // MainWindow -> AlgorithmTab -> ResultsTab
+    AlgorithmTab * algorithmTab = (AlgorithmTab*)m_parent;
+    MainWindow * mainWindow = (MainWindow*)algorithmTab->getMainWindow();
+    mainWindow->setStatusBarText(tr("Enregistrement des résultats sous forme de fichier PDF en cours..."));
+    mainWindow->startSpinner();
+
+    QString statusMessage = "Prêt";
+    MessageStatus status = MessageStatus::none;
+
     QString filename = QFileDialog::getSaveFileName(this,tr("Save Document"), QDir::currentPath(),tr("PDF (*.pdf)"));
     if( !filename.isNull() )
     {
-        QPdfWriter writer(filename);
-        QPainter painter(&writer);
 
-        painter.setPen(Qt::black);
-        painter.drawText(4000,0,"Rapport d'algorithme: ");
+        PDFGenerator pdfGen(filename);
+        int offset = 800;
+        int lineHeight = 400;
+        pdfGen.DrawHeader("Résultat des algorithmes");
+        pdfGen.drawText(0,5*lineHeight + offset,Qt::AlignVCenter,"Description détaillée",20);
+        pdfGen.drawText(200,6.2*lineHeight + offset,Qt::AlignVCenter,"Nom de l'enregistrement: " +QString::fromStdString(m_algorithmOutputInfo.m_recordName));
+        pdfGen.drawText(200,7.2*lineHeight + offset,Qt::AlignVCenter,"Date de l'enregistrement: " + QString::fromStdString(m_algorithmOutputInfo.m_date));
+        pdfGen.drawText(200,8.2*lineHeight + offset,Qt::AlignVCenter,"Date de l'enregistrement: " + QString::fromStdString(m_algorithmOutputInfo.m_date));
+        pdfGen.drawText(200,9.2*lineHeight + offset,Qt::AlignVCenter,"Type de IMU: " + QString::fromStdString(m_algorithmOutputInfo.m_recordImuPosition));
+        pdfGen.drawText(200,10.2*lineHeight + offset,Qt::AlignVCenter,"Position de la centralle inertielle:" + QString::fromStdString(m_algorithmOutputInfo.m_recordType));
 
-        painter.setPen(Qt::black);
-        painter.drawText(250,500,algoLabel->text());
+        pdfGen.drawText(0,12.2*lineHeight + offset,Qt::AlignVCenter,"Algorithmes",20);
+        pdfGen.drawText(200,13.4*lineHeight + offset,Qt::AlignVCenter,"Algorithme appliqué: " + QString::fromStdString(m_algorithmOutputInfo.m_algorithmName));
+        pdfGen.drawText(200,14.4*lineHeight + offset,Qt::AlignVCenter,"Valeur obtenue: " +QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_value)));
+        pdfGen.drawText(200,15.4*lineHeight + offset,Qt::AlignVCenter,"Temps de calculs: " +QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_executionTime)));
 
-        painter.setPen(Qt::black);
-        painter.drawText(250,750,recordLabel->text());
-
-        painter.setPen(Qt::black);
-        painter.drawText(250,1000,dateLabel->text());
-
-        painter.setPen(Qt::black);
-        painter.drawText(250,1500,startHourLabel->text());
-
-        painter.setPen(Qt::black);
-        painter.drawText(250,1750,endHourLabel->text());
-
-        painter.setPen(Qt::black);
-        painter.drawText(250,2000,positionLabel->text());
-
-        painter.setPen(Qt::black);
-        painter.drawText(250,2250,measureUnitLabel->text());
-
-        painter.setPen(Qt::black);
-        painter.drawText(250,2500,computeTimeLabel->text());
-
-        QPixmap pix = chartView->grab();
+       /* QPixmap pix = chartView->grab();
         int h = painter.window().height()*0.4;
         int w = h * 1.1;
         int x = (painter.window().width() / 2) - (w/2);
         int y = (painter.window().height() / 2) - (h/2);
         painter.drawPixmap(x, y, w, h, pix);
 
-        painter.end();
+        painter.end();*/
+
+        statusMessage = "Enregistrement du PDF réussi";
+        status = MessageStatus::success;
     }
+    else
+    {
+        statusMessage = "Échec de l'enregistrement du PDF";
+        status = MessageStatus::error;
+    }
+
+    mainWindow->stopSpinner(true);
+    mainWindow->setStatusBarText(statusMessage, status);
 }

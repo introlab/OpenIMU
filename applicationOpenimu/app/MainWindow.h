@@ -21,9 +21,11 @@
 #include "dialogs/RecordsDialog.h"
 #include "../../acquisition/CJsonSerializer.h"
 #include "../../acquisition/WimuRecord.h"
-#include "widgets/RecordsWidget.h"
 #include "widgets/AlgorithmTab.h"
 #include "widgets/HomeWidget.h"
+#include "../acquisition/RecordInfo.h"
+#include "../acquisition/WimuAcquisition.h"
+#include "utilities/Utilities.h"
 
 class MainWindow : public QMainWindow
     {
@@ -33,28 +35,35 @@ class MainWindow : public QMainWindow
        ~MainWindow();
        std::string getFileName(std::string s);
        void retranslateUi();
-       void setStatusBarText(QString txt);
-
+       void setStatusBarText(QString txt, MessageStatus status = none);
     signals:
 
     public slots:
 
-        void openFile();
+        void refreshRecordListWidget();
         void openRecordDialog();
         void closeTab(int);
-        void replaceTab(QWidget * replacement, std::string label);
+        void onTabChanged(int);
+        void addTab(QWidget * tab, std::string label);
         void openAbout();
         void openHelp();
-        void setApplicationInEnglish();
-        void setApplicationInFrench();
 
         void onListItemClicked(QTreeWidgetItem* item,int column);
         void onListItemDoubleClicked(QTreeWidgetItem* item,int column);
         void closeWindow();
 
+        //Visual feedback
+        void startSpinner();
+        void stopSpinner(bool playAudio = false);
+
         //Getting records from DB
         bool getRecordsFromDB();
         void reponseRecue(QNetworkReply* reply);
+
+        //Getting results from DB
+        bool getSavedResultsFromDB();
+        void savedResultsReponse(QNetworkReply* reply);
+
 
         //Getting data from specific record
         bool getDataFromUUIDFromDB(std::string uuid);
@@ -95,8 +104,8 @@ class MainWindow : public QMainWindow
         DbBlock * databaseAccess = new DbBlock;
         RecordsDialog * rDialog;
         WimuRecord record;
-        WimuAcquisition acceleroData;
-        RecordsWidget* recordsTab;
+        AlgorithmOutputInfoSerializer savedResults;
+        WimuAcquisition wimuAcquisition;
         AlgorithmTab* algorithmTab;
         QLabel* spinnerStatusBar;
         QMovie* movieSpinnerBar;

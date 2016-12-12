@@ -1,5 +1,6 @@
 #include "AlgorithmParametersDialog.h"
 #include "../widgets/AlgorithmTab.h"
+#include "../utilities/utilities.h"
 #include <QDebug>
 
 AlgorithmParametersDialog::AlgorithmParametersDialog(QWidget * parent, AlgorithmInfo algorithm)
@@ -10,18 +11,36 @@ AlgorithmParametersDialog::AlgorithmParametersDialog(QWidget * parent, Algorithm
     parametersLayout = new QVBoxLayout(this);
     parametersLayout->addWidget(titleLabel);
 
+    this->setWindowIcon(QIcon(":/icons/logo.ico"));
+
+    QDoubleValidator *validator = new QDoubleValidator(0.00, 0.50, 2, this);
+    validator->setNotation(QDoubleValidator::StandardNotation);
     // Adds every parameter to the Dialog Window.
-    foreach(ParametersInfo p, m_algorithmInfo.parameters)
+    foreach(ParameterInfo p, m_algorithmInfo.m_parameters)
     {
-        if(p.name != "uuid")
+        if(p.m_name != "uuid")
         {
-            QString parameterText = p.name.c_str() + QString::fromStdString(": ") + p.description.c_str();
-            QLabel * itemLabel = new QLabel( parameterText.at(0).toUpper() + parameterText.mid(1));
-
-            QLineEdit * itemLineEdit = new QLineEdit();
-
+            QString parameterText = p.m_name.c_str() + QString::fromStdString(": ") + p.m_description.c_str();
+            QLabel * itemLabel = new QLabel(Utilities::capitalizeFirstCharacter(parameterText));
             parametersLayout->addWidget(itemLabel);
-            parametersLayout->addWidget(itemLineEdit);
+            if(p.m_name == "type")
+            {
+                QComboBox * itemLine = new QComboBox();
+                itemLine->addItem("passe-bas");
+                itemLine->addItem("passe-haut");
+                itemLine->setValidator(validator);
+                parametersLayout->addWidget(itemLine);
+            }
+            else
+            {
+                QLineEdit * itemLine = new QLineEdit();
+                if(p.m_defaultValue.size() > 1)
+                    p.m_defaultValue = p.m_defaultValue.replace(1,1,",");
+
+                itemLine->setPlaceholderText(p.m_defaultValue.c_str());
+                itemLine->setValidator(validator);
+                parametersLayout->addWidget(itemLine);
+            }
         }
     }
 
@@ -40,10 +59,28 @@ void AlgorithmParametersDialog::parametersSetSlot()
     int index = 0;
 
     foreach(QLineEdit* le, findChildren<QLineEdit*>())
-    {
-        m_algorithmInfo.parameters.at(index).value = le->text().toStdString();
+    {      
+        bool isEmpty = le->text().toStdString().empty();
+        bool isValid = le->text().toStdString().substr(0,2).compare("0,");
+
+        if( isEmpty || isValid != 0)
+        {
+            m_algorithmInfo.m_parameters.at(index).m_value =  m_algorithmInfo.m_parameters.at(index).m_defaultValue;
+        }
+        else
+        {
+            m_algorithmInfo.m_parameters.at(index).m_value = le->text().toStdString().replace(1,1,".");
+        }
+
         index++;
     }
+
+    foreach(QComboBox* cb, findChildren<QComboBox*>())
+    {
+        m_algorithmInfo.m_parameters.at(index).m_value = cb->currentText().toStdString();
+        index++;
+    }
+
 
     AlgorithmTab * parentTab = (AlgorithmTab*)m_parent;
     parentTab->setAlgorithm(m_algorithmInfo);

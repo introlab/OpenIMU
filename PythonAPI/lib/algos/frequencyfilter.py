@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from lib_openimu.algorithm import Algorithm
 from lib_openimu import schemas
 from bson.objectid import ObjectId
@@ -41,28 +42,35 @@ class frequencyfilter(Algorithm):
     class LowPass(Filter):
         pass
 
-    valid_type = ["lowpass","highpass"]
+    valid_type = ["passe-bas","passe-haut"]
 
     def __init__(self):
         super(self.__class__, self).__init__()
 
         #Default information for the UI.
-        self.description = "Frequency filter for data"
-        self.author = "OpenIMU Team"
-        self.details = "Can be used for low-pass, high-pass, band-pass and band-reject filter"
+        self.description = "Filtre de fréquence"
+        self.author = "L'équipe d'OpenIMU"
+        self.name = "Filtre de fréquence"
+        self.filename = "frequencyfilter"
+        self.details = "Applique un filtre passe-bas ou passe-haut sur les données de l'enregistrement"
 
         #Params initialization
         self.params.uuid = 0
-        self.infos.uuid = "Unique ID for the database"
+        self.infos.uuid = "Identifiant unique d'un enregistrement format ObjectID"
+        self.possible.uuid = {"type":"ObjectID"}
 
         self.params.type = None
-        self.infos.type = "Type of filter : lowpass or highpass"
+        self.infos.type = "Les types de filtre sont passe-bas ou passe-haut"
+        self.possible.type = {"values":["passe-bas","passe-haut"]}
 
         self.params.cutoff = 0.1
-        self.infos.cutoff =  "Cutoff frequency as a fraction of the sampling rate (between 0 and 0.5)"
+        self.infos.cutoff =  "La fréquence de coupure est une fraction du taux d'échantillonage(entre 0 et 0.5)"
+        self.possible.cutoff = {"range":[0,0.5]}
+
 
         self.params.transition = 0.1
-        self.infos.transition = "Transition band, as a fraction of the sampling rate (Between 0 and 0.5)"
+        self.infos.transition = "La bande de transition  est une fraction du taux d'échantillonage(entre 0 et 0.5)"
+        self.possible.transition = {"range":[0,0.5]}
 
         #After __init__, the params are passed throught a URL parser by algorithm.load()
 
@@ -78,13 +86,13 @@ class frequencyfilter(Algorithm):
                 :return: self.output
         """
         schema = schemas.Sensor(many=True)
-        ref = self.database.db.accelerometres.find({'ref': ObjectId(self.params.uuid)})
+        ref = self.database.db.accelerometres.find({'ref': str(self.params.uuid)})
         self.data, errors = schema.dump(ref)
 
         filter = None
-        if self.params.type == "lowpass":
+        if self.params.type == "passe-bas":
             filter = self.LowPass(float(self.params.cutoff),float(self.params.transition))
-        elif self.params.type == "highpass":
+        elif self.params.type == "passe-haut":
             filter = self.HighPass(float(self.params.cutoff),float(self.params.transition))
 
         x = [snap.get('x') for snap in self.data]

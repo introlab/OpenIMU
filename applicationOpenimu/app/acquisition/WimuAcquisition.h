@@ -3,8 +3,9 @@
 
 #include <vector>
 #include <iostream>
-#include"IJsonSerializable.h"
-#include"../core/json/json/json.h"
+#include "IJsonSerializable.h"
+#include "../core/json/json/json.h"
+#include "RecordInfo.h"
 
 typedef unsigned char BYTE;
 
@@ -20,7 +21,7 @@ struct string_timestamp{
 	std::string date;
 };
 
-class WimuAcquisition: public IJsonSerializable
+class WimuAcquisition : public IJsonSerializable
 {
 private:
     std::vector<frame> dataAccelerometer;
@@ -31,7 +32,7 @@ public:
     WimuAcquisition();
     WimuAcquisition(std::string filenameAccelero, std::string filenameGyro,std::string filenameMagneto, int frequence);
     ~WimuAcquisition();
-    virtual void Serialize( Json::Value& root, RecordInfo record,  std::string date,std::string& output );
+    virtual void Serialize( Json::Value& root, RecordInfo recordInfo, std::string& output);
     virtual void Deserialize( Json::Value& root);
 
     void initialize();

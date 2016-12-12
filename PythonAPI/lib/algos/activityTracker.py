@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from math import sqrt
 from bson.objectid import ObjectId
 import numpy
@@ -18,37 +19,31 @@ class activityTracker(Algorithm):
     def __init__(self):
         super(activityTracker,self).__init__()
 
-        self.description = "Activity Time Tracker Algorithm"
-        self.author = "OpenIMU Team"
+        self.description = "Algorithme du temps d'activité "
+        self.author = "L'équipe d'OpenIMU"
+        self.name = "Temps d'activité"
+        self.filename = "activityTracker"
         self.details = (
-                        "<b>Nom de l'algorithme:</b> <br/> Activity Time Tracker <br/>"
-                        "<b>Version:</b> <br/> <i>1.0</i><br/>"
-                        "<b>Pseudocode:</b> <br/> <i>y</i>=<i>x</i><br/>"
-                        "<b>Fonctionnement:</b> <br/>"
-                        "Step 1 : Import the data from the database <br/>"
-                        "Step 2 : Calculate the magnetude of the data <br/>"
-                        "Step 3 : Calculate the difference of the new magnetude list <br/>"
-                        "Step 4 : Calculate the % of diff(magnetude) that is higher than a threshold"
+                        "À partir des données de l'enregitrement on calcule la magnitude sur les données brutes. On resort le pourcentage des données qui dépasse un seuil"
                         )
 
-        self.params.threshold = 0
-        self.infos.threshold = "Magnitude of accelerometers that define activity"
         self.params.uuid = 0
-        self.infos.uuid = "Unique Id of the data"
+        self.infos.uuid = "Identifiant unique d'un enregistrement"
+        self.possible.uuid = "Un identifiant ObjectId"
 
 
     def run(self):
         """
-        Activity Tracker Algorithm
-        Step 1 : Import the data from the database
-        Step 2 : Calculate the magnetude of the data
-        Step 3 : Calculate the difference of the new magnetude list
-        Step 4 : Calculate the % of diff(magnetude) that is higher than a threshold
+        Algorithm du temps d'activité
+        Étape 1 : Importer les données provenant de la base de données
+        Étape 2 : Calculer la magnitude des données
+        Étape 3 : Calculer la différence de la magnitude des données
+        Étape 4 : Calcule le pourcentage de la différence de la magnitude qui dépasse le seuil donné en paramètre
         :return: self.output
         """
-
+        threshold = 100
         schema = schemas.Sensor(many=True)
-        ref = self.database.db.accelerometres.find({'ref': ObjectId(self.params.uuid)})
+        ref = self.database.db.accelerometres.find({'ref': self.params.uuid})
         acc, errors = schema.dump(ref)
         self.data = acc
 
@@ -58,14 +53,14 @@ class activityTracker(Algorithm):
 
         total = 0
         for n in diff:
-            if abs(n) > self.params.threshold:
+            if abs(n) > threshold:
                 total = total + 1
 
         self.output.result = 100*total/len(diff)
-        self.output.threshold = self.params.threshold
+        self.output.threshold = threshold
         self.output.maximum = max(diff)
         self.output.minimum = min(diff)
         self.output.size = len(diff)
         self.output.execute_time = self.timer
-        return self.output
+        return self.output.result
 
