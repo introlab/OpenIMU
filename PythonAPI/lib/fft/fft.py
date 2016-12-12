@@ -10,6 +10,7 @@ class fft(Algorithm):
     """
     Please check the Algorithm File for information about how to code or use algorithm Object
     """
+    nbbins = 1024
     def __init__(self):
         super(fft,self).__init__()
         self.description = "Transformé de Fourrier rapide"
@@ -22,9 +23,7 @@ class fft(Algorithm):
         self.infos.uuid = "Identifiant unique d'un enregistrement"
         self.possible.uuid = {"type":"ObjectID"}
 
-        self.params.bins = 1024
-        self.infos.bins = "Nombre de columnes par dimensions."
-        self.possible.bins = {"range":[0,None]}
+
 
     def run(self):
         schema = schemas.Sensor(many=True)
@@ -35,7 +34,6 @@ class fft(Algorithm):
         y = [snap.get('y') for snap in self.data]
         z = [snap.get('z') for snap in self.data]
 
-        nbBins = self.params.bins
         x = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(x,nbBins)]
         y = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(y,nbBins)]
         z = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(z,nbBins)]
