@@ -10,7 +10,7 @@ class fft(Algorithm):
     """
     Please check the Algorithm File for information about how to code or use algorithm Object
     """
-    nbbins = 1024
+    nbBins = 1024
     def __init__(self):
         super(fft,self).__init__()
         self.description = "Transformé de Fourrier rapide"
@@ -18,7 +18,7 @@ class fft(Algorithm):
         self.name = "FFT"
         self.filename = "fft"
         self.details = "Fait la FFT sur chaque dimension, à travers le temps."
-
+        self.dispType = "2d_graph"
         self.params.uuid = 0
         self.infos.uuid = "Identifiant unique d'un enregistrement"
         self.possible.uuid = {"type":"ObjectID"}
@@ -34,9 +34,9 @@ class fft(Algorithm):
         y = [snap.get('y') for snap in self.data]
         z = [snap.get('z') for snap in self.data]
 
-        x = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(x,nbBins)]
-        y = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(y,nbBins)]
-        z = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(z,nbBins)]
+        x = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(x,self.nbBins)]
+        y = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(y,self.nbBins)]
+        z = [{'r':snap.real,'i':snap.imag} for snap in np.fft.fft(z,self.nbBins)]
 
         temp = {"accelerometres": []}
         for i in range(1, min(len(x), len(y), len(z))):

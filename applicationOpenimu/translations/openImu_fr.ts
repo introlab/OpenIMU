@@ -79,20 +79,20 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../app/AccDataDisplay.ui" line="174"/>
+        <location filename="../app/AccDataDisplay.cpp" line="297"/>
+        <source>Axe Z</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AccDataDisplay.ui" line="187"/>
         <location filename="../app/AccDataDisplay.cpp" line="310"/>
         <source>Moyenne mobile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.ui" line="187"/>
+        <location filename="../app/AccDataDisplay.ui" line="200"/>
         <location filename="../app/AccDataDisplay.cpp" line="301"/>
         <source>Norme</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../app/AccDataDisplay.ui" line="200"/>
-        <location filename="../app/AccDataDisplay.cpp" line="297"/>
-        <source>Axe Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -266,6 +266,79 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../app/FullGraphDialog.ui" line="23"/>
         <source>Graphique Détaillé</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GenericAlgoResults</name>
+    <message>
+        <location filename="../app/widgets/genericalgoresults.ui" line="20"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/genericalgoresults.ui" line="39"/>
+        <source>Résultat d&apos;algorithme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/genericalgoresults.ui" line="74"/>
+        <source>Données utilisées:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/genericalgoresults.ui" line="97"/>
+        <source>Type de centralle inertielle:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/genericalgoresults.ui" line="110"/>
+        <location filename="../app/widgets/genericalgoresults.ui" line="150"/>
+        <location filename="../app/widgets/genericalgoresults.ui" line="188"/>
+        <location filename="../app/widgets/genericalgoresults.ui" line="255"/>
+        <location filename="../app/widgets/genericalgoresults.ui" line="293"/>
+        <location filename="../app/widgets/genericalgoresults.ui" line="331"/>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/genericalgoresults.ui" line="137"/>
+        <source>Enregistrement utilisé:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/genericalgoresults.ui" line="175"/>
+        <source>Position du IMU:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/genericalgoresults.ui" line="222"/>
+        <source>Algorithme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/genericalgoresults.ui" line="248"/>
+        <source>Algorithme appliqué:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/genericalgoresults.ui" line="280"/>
+        <source>Temps de calculs:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/genericalgoresults.ui" line="318"/>
+        <source>Date d&apos;application de l&apos;algorithme:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/genericalgoresults.ui" line="365"/>
+        <source>Paramètres de l&apos;algorithme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/genericalgoresults.ui" line="400"/>
+        <source>Résultat:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -634,50 +707,50 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../app/MainWindow.cpp" line="118"/>
-        <location filename="../app/MainWindow.cpp" line="642"/>
+        <location filename="../app/MainWindow.cpp" line="119"/>
+        <location filename="../app/MainWindow.cpp" line="662"/>
         <source>Accueil</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="127"/>
-        <location filename="../app/MainWindow.cpp" line="211"/>
-        <location filename="../app/MainWindow.cpp" line="664"/>
+        <location filename="../app/MainWindow.cpp" line="128"/>
+        <location filename="../app/MainWindow.cpp" line="212"/>
+        <location filename="../app/MainWindow.cpp" line="684"/>
         <source>Prêt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="157"/>
+        <location filename="../app/MainWindow.cpp" line="158"/>
         <source>Chargement de l&apos;enregistrement...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="174"/>
+        <location filename="../app/MainWindow.cpp" line="175"/>
         <source>Avertissement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="199"/>
+        <location filename="../app/MainWindow.cpp" line="200"/>
         <source>Chargement du résultat...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="603"/>
+        <location filename="../app/MainWindow.cpp" line="623"/>
         <source>Enregistrement effacé avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="607"/>
+        <location filename="../app/MainWindow.cpp" line="627"/>
         <source>Échec de la suppression de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="615"/>
+        <location filename="../app/MainWindow.cpp" line="635"/>
         <source>Enregistrement renommé avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="619"/>
+        <location filename="../app/MainWindow.cpp" line="639"/>
         <source>Échec du changement de nom de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
@@ -804,7 +877,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../app/widgets/recordviewwidget.ui" line="185"/>
-        <source>Centralle inertielle:</source>
+        <source>Centrale inertielle:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -892,22 +965,23 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ResultsTabWidget</name>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="96"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="105"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="164"/>
         <source>Insertion des résultats dans la base de données en cours...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="163"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="217"/>
         <source>Enregistrement des résultats sous forme de fichier PDF en cours...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="169"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="223"/>
         <source>Save Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="169"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="223"/>
         <source>PDF (*.pdf)</source>
         <translation type="unfinished"></translation>
     </message>

@@ -40,7 +40,7 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     algorithme->setPalette(QPalette(Qt::white));
     QAction* actionAddAlgo = new QAction(tr("&Ajouter algorithme"),algorithme);
     actionAddAlgo->setShortcut(QKeySequence("Ctrl+D"));
-    actionAddAlgo->setEnabled(false);
+    //actionAddAlgo->setEnabled(false);
     algorithme->addAction(actionAddAlgo);
 
     apropos = new QMenu(tr("&À propos"));
@@ -64,4 +64,5 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     connect(actionQuitter,SIGNAL(triggered()),parent,SLOT(closeWindow()));
     connect(actionAPropos,SIGNAL(triggered()),parent,SLOT(openAbout()));
     connect(actionAide,SIGNAL(triggered()),parent,SLOT(openHelp()));
+    connect(actionAddAlgo,SIGNAL(triggered()),parent,SLOT(addAlgo()));
 }

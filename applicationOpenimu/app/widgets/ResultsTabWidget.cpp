@@ -37,6 +37,8 @@ void ResultsTabWidget::init(AlgorithmOutputInfo output, bool isSaved)
 
     m_algorithmOutputInfo = output;
 
+    qDebug() << m_algorithmOutputInfo.m_value;
+
     if(m_algorithmOutputInfo.m_algorithmName == "Temps d'activité")
     {
         ActivityTrackerResults * res = new ActivityTrackerResults(this, m_algorithmOutputInfo);
@@ -50,7 +52,7 @@ void ResultsTabWidget::init(AlgorithmOutputInfo output, bool isSaved)
 
 
     }
-    else
+    else if (m_algorithmOutputInfo.m_algorithmName == "Compteur de pas")
     {
        StepCounterResults * res = new StepCounterResults(this, m_algorithmOutputInfo);
        if(isSaved)
@@ -60,6 +62,11 @@ void ResultsTabWidget::init(AlgorithmOutputInfo output, bool isSaved)
        QVBoxLayout* layoutV = new QVBoxLayout();
        layoutV->addWidget(res);
        this->setLayout(layoutV);
+
+    }
+    else
+    {
+        //Generic display
 
     }
 }

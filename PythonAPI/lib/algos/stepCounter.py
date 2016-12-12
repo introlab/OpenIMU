@@ -17,7 +17,7 @@ class stepCounter(Algorithm):
         self.name = "Compteur de pas"
         self.filename = "stepCounter"
         self.details = "Le compteur de pas permet de détecter le nombre de pas effectué sur un enregistrement, l'algorithme se base la magnitude des accélérations en X,Y et Z."
-
+        self.dispType = "Numeric value"
         self.params.uuid = 0
         self.infos.uuid = "Identifiant unique d'un enregistrement"
         self.possible.uuid = "Un identifiant ObjectId"

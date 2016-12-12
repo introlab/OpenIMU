@@ -12,6 +12,7 @@
 #include <QtConcurrent/QtConcurrentRun>
 #include <QByteArray>
 #include "widgets/RecordViewWidget.h"
+#include <QFileDialog>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -294,6 +295,25 @@ void MainWindow::openHomeTab()
 {
     homeWidget = new HomeWidget(this);
     addTab(homeWidget,"Accueil");
+}
+
+void MainWindow::addAlgo()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,
+        "Sélectionner un script", QStandardPaths::displayName(QStandardPaths::DocumentsLocation), "Fichier de script (*.py)");
+
+    QString destFile = qgetenv("PROGRAMFILES") + "/OpenImu/PythonAPI/lib/algos/" + fileName.split("/").last();
+
+    bool copySucessful = QFile::copy(fileName, destFile);
+
+    if(copySucessful)
+    {
+        setStatusBarText("L'ajout s'est déroulé avec succès");
+    }
+    else
+    {
+        setStatusBarText("Une erreur s'est produite. (Le fichier existe déjà?)");
+    }
 }
 
 bool MainWindow::getRecordsFromDB()

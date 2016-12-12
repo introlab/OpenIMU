@@ -132,6 +132,7 @@ class Algorithm(object):
             self.output.request[key] = self.request[key]
         self.output.runtime = self.timer
         self.output.recordId = self.params.uuid
+        self.output.dispType = self.dispType
 
     def load(self,args = {}):
         """
