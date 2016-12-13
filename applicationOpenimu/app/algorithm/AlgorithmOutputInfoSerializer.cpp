@@ -66,34 +66,19 @@ void AlgorithmOutputInfoSerializer::Deserialize(std::string& dataToDeserialize)
    }
 
     std::string missingInfos = "Not available in Database";
-    m_algorithmOutput.m_resultName = deserializeRoot.get("resultName", "").asString();
-    m_algorithmOutput.m_value = deserializeRoot.get("result", "").asInt();
-
     m_algorithmOutput.m_executionTime = deserializeRoot.get("runtime", "").asFloat();
-
     m_algorithmOutput.m_date = deserializeRoot.get("runtime_start", "").asString();
-    m_algorithmOutput.m_startTime = missingInfos;//deserializeRoot.get("startTime", "").asFloat();
-    m_algorithmOutput.m_endTime = missingInfos;//deserializeRoot.get("endTime", "").asFloat();
-    m_algorithmOutput.m_measureUnit = missingInfos;//deserializeRoot.get("measureUnit", "").asFloat();
+
+    if(deserializeRoot.isMember("dispType"))
+    {
+        m_algorithmOutput.m_dispType= deserializeRoot.get("dispType", "").asString();
+    }
+    if(m_algorithmOutput.m_dispType.compare("piechart")==0 || m_algorithmOutput.m_dispType.compare("Numeric value")==0)
+    {
+        m_algorithmOutput.m_value = deserializeRoot.get("result", "").asInt();
+    }
 
     m_algorithmOutput.m_recordId = deserializeRoot.get("recordId", "").asString();
-    m_algorithmOutput.m_recordName = deserializeRoot.get("recordName", "").asString();
-    m_algorithmOutput.m_recordImuPosition = deserializeRoot.get("recordImuPosition", "").asString();
-    m_algorithmOutput.m_recordType = deserializeRoot.get("recordImuType", "").asString();
-    m_algorithmOutput.m_algorithmId = deserializeRoot.get("algorithmId", "").asString();
-    m_algorithmOutput.m_algorithmName = deserializeRoot.get("algorithmName", "").asString();
-
-    Json::Value serializedParameters = deserializeRoot.get("algorithmParameters", "");
-    for(int i =0; i<serializedParameters.size(); i++)
-    {
-        ParameterInfo p;
-        p.m_name = serializedParameters[i].get("name", "").asString();
-        p.m_value = serializedParameters[i].get("value", "").asString();
-        p.m_defaultValue = serializedParameters[i].get("defaultValue", "").asString();
-        p.m_description = serializedParameters[i].get("description", "").asString();
-
-        m_algorithmOutput.m_algorithmParameters.push_back(p);
-    }
 }
 
 void AlgorithmOutputInfoSerializer::DeserializeList(std::string& dataToDeserialize)

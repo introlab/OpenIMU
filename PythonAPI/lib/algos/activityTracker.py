@@ -30,7 +30,7 @@ class activityTracker(Algorithm):
         self.params.uuid = 0
         self.infos.uuid = "Identifiant unique d'un enregistrement"
         self.possible.uuid = "Un identifiant ObjectId"
-
+        self.dispType = "Numeric value"
 
     def run(self):
         """

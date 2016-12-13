@@ -37,8 +37,6 @@ void ResultsTabWidget::init(AlgorithmOutputInfo output, bool isSaved)
 
     m_algorithmOutputInfo = output;
 
-    qDebug() << m_algorithmOutputInfo.m_value;
-
     if(m_algorithmOutputInfo.m_algorithmName == "Temps d'activité")
     {
         ActivityTrackerResults * res = new ActivityTrackerResults(this, m_algorithmOutputInfo);

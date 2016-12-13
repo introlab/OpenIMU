@@ -10,8 +10,7 @@
 #include "../utilities/Utilities.h"
 #include "../algorithm/FilteredData.h"
 #include "acquisition/CJsonSerializer.h"
-
-const string ID_FREQUENCY_FILTER = "2";
+#include "GenericAlgoResults.h"
 
 AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget(parent)
 {
@@ -259,8 +258,6 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
 
        if(reponse != "")
        {
-           if(m_selectedAlgorithm.m_id.compare(ID_FREQUENCY_FILTER) != 0)
-           {
                algorithmOutputInfoSerializer.Deserialize(reponse);
 
                AlgorithmInfo &algoInfo = m_selectedAlgorithm;
@@ -273,18 +270,25 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
                algorithmOutputInfoSerializer.m_algorithmOutput.m_recordName = m_selectedRecord.m_recordName;
                algorithmOutputInfoSerializer.m_algorithmOutput.m_recordImuPosition = m_selectedRecord.m_imuPosition;
 
-               ResultsTabWidget* res = new ResultsTabWidget(this, algorithmOutputInfoSerializer.m_algorithmOutput);
-               mainWindow->addTab(res,algoInfo.m_name + ": " + m_selectedRecord.m_recordName);
-           }
-           else
-           {
-                FilteredData fData;
-                CJsonSerializer::Deserialize(&fData, reponse);
-                WimuAcquisition wimuData;
-                wimuData.setDataAccelerometer(fData.m_dataAccelerometer);
-                ResultsTabWidget* res = new ResultsTabWidget(this,wimuData, m_selectedRecord);
-                mainWindow->addTab(res,"Filtre: " + m_selectedRecord.m_recordName);
-           }
+               if(algorithmOutputInfoSerializer.m_algorithmOutput.m_dispType.compare("2d_graph")==0)
+               {
+                   FilteredData fData;
+                   CJsonSerializer::Deserialize(&fData, reponse);
+                   WimuAcquisition wimuData;
+                   wimuData.setDataAccelerometer(fData.m_dataAccelerometer);
+                   ResultsTabWidget* res = new ResultsTabWidget(this,wimuData, m_selectedRecord);
+                   mainWindow->addTab(res,"Filtre: " + m_selectedRecord.m_recordName);
+               }
+               else if (algorithmOutputInfoSerializer.m_algorithmOutput.m_dispType.compare("Numeric value")==0)
+               {
+                   ResultsTabWidget* res = new ResultsTabWidget(this, algorithmOutputInfoSerializer.m_algorithmOutput);
+                   mainWindow->addTab(res,algoInfo.m_name + ": " + m_selectedRecord.m_recordName);
+               }
+               else
+               {
+                    GenericAlgoResults* res = new GenericAlgoResults(this, algorithmOutputInfoSerializer.m_algorithmOutput, reponse);
+                    mainWindow->addTab(res,algoInfo.m_name + ": " + m_selectedRecord.m_recordName);
+               }
 
             mainWindow->setStatusBarText("Algorithme appliqué avec succès", MessageStatus::success);
        }

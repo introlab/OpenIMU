@@ -18,7 +18,7 @@ class fft(Algorithm):
         self.name = "FFT"
         self.filename = "fft"
         self.details = "Fait la FFT sur chaque dimension, à travers le temps."
-        self.dispType = "2d_graph"
+        self.dispType = "text"
         self.params.uuid = 0
         self.infos.uuid = "Identifiant unique d'un enregistrement"
         self.possible.uuid = {"type":"ObjectID"}

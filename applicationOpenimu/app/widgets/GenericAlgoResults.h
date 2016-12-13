@@ -16,9 +16,8 @@ class GenericAlgoResults : public QWidget
 
 public:
     explicit GenericAlgoResults(QWidget *parent = 0);
-    GenericAlgoResults(QWidget *parent, AlgorithmOutputInfo algoOutput);
+    GenericAlgoResults(QWidget *parent, AlgorithmOutputInfo algoOutput, std::string json);
     ~GenericAlgoResults();
-    void hideButtons();
 
 private:
     Ui::GenericAlgoResults *ui;
