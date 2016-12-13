@@ -302,7 +302,7 @@ void MainWindow::addAlgo()
     QString fileName = QFileDialog::getOpenFileName(this,
         "Sélectionner un script", QStandardPaths::displayName(QStandardPaths::DocumentsLocation), "Fichier de script (*.py)");
 
-    QString destFile = qgetenv("PROGRAMFILES") + "/OpenImu/PythonAPI/lib/algos/" + fileName.split("/").last();
+    QString destFile = "../PythonAPI/lib/algos/" + fileName.split("/").last();
 
     bool copySucessful = QFile::copy(fileName, destFile);
 
