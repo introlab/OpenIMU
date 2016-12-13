@@ -10,7 +10,7 @@ struct AlgorithmOutputInfo
     // Proper AlgorithmOutputInfo information
     int m_value;                // The value returned by the algorithm
     float m_executionTime;      // The time required to execute the algorithm
-
+    std::string m_dispType;
     std::string m_resultName;   // The name of the result (to display in the tree)
     std::string m_date;         // The date of the selected data
     std::string m_startTime;    // The starting time of the selected data

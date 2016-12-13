@@ -71,7 +71,7 @@ class frequencyfilter(Algorithm):
         self.params.transition = 0.1
         self.infos.transition = "La bande de transition  est une fraction du taux d'échantillonage(entre 0 et 0.5)"
         self.possible.transition = {"range":[0,0.5]}
-
+        self.dispType = "2d_graph"
         #After __init__, the params are passed throught a URL parser by algorithm.load()
 
     def before_run(self):

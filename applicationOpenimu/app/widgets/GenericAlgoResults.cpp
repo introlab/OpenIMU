@@ -4,6 +4,8 @@
 #include<QtCharts/QChartView>
 #include<QtCharts/QPieSeries>
 #include<QtCharts/QPieSlice>
+#include <QTextEdit>
+#include <QJsonDocument>
 
 GenericAlgoResults::GenericAlgoResults(QWidget *parent) :
     QWidget(parent),
@@ -17,7 +19,7 @@ GenericAlgoResults::~GenericAlgoResults()
     delete ui;
 }
 
-GenericAlgoResults::GenericAlgoResults(QWidget *parent, AlgorithmOutputInfo algoOutput):
+GenericAlgoResults::GenericAlgoResults(QWidget *parent, AlgorithmOutputInfo algoOutput, std::string json):
     QWidget(parent),
     ui(new Ui::GenericAlgoResults)
 {
@@ -31,7 +33,6 @@ GenericAlgoResults::GenericAlgoResults(QWidget *parent, AlgorithmOutputInfo algo
      ui->algorithmName->setText(QString::fromStdString(algoOutput.m_algorithmName));
      ui->dateApplication->setText(QString::fromStdString(algoOutput.m_date));
      ui->computeTime->setText(QString::fromStdString(std::to_string(algoOutput.m_executionTime)) + "ms");
-     //ui->results->setText(QString::fromStdString(std::to_string(algoOutput.m_value)));
 
      //** Paramètres
 
@@ -48,18 +49,11 @@ GenericAlgoResults::GenericAlgoResults(QWidget *parent, AlgorithmOutputInfo algo
      }
 
      // Display formatted Json
-     /*
-         QJsonDocument doc = QJsonDocument::fromJson(jsonString.toUtf8());
+
+         QJsonDocument doc = QJsonDocument::fromJson(json.c_str());
          QString formattedJsonString = doc.toJson(QJsonDocument::Indented);
-    */
+         QTextEdit* rawResponse = new QTextEdit(formattedJsonString);
 
-     //SLOTS
-     connect(ui->exportToPdf, SIGNAL(clicked()), parent, SLOT(exportToPdfSlot()));
-     connect(ui->saveToBd, SIGNAL(clicked()), parent, SLOT(exportToDBSlot()));
+        ui->graphLayout->addWidget(rawResponse);
 
-}
-
-void GenericAlgoResults::hideButtons(){
-        ui->exportToPdf->hide();
-        ui->saveToBd->hide();
 }
