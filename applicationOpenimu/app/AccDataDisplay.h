@@ -5,7 +5,6 @@
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QChartView>
 
-
 #include "../acquisition/WimuAcquisition.h"
 #include "widgets/RangeSlider.h"
 #include "../graph/DataChart.h"
@@ -45,24 +44,24 @@ public slots:
     void slotSaveNewSetRange();
 
 private:
-    Ui::AccDataDisplay *ui;
-    DataChart * chart;
-    ChartView *chartView;
-    QLineSeries *lineseriesX;
-    QLineSeries *lineseriesY;
-    QLineSeries *lineseriesZ;
-    QLineSeries *lineseriesAccNorm;
-    QLineSeries *lineseriesMovingAverage;
+    Ui::AccDataDisplay *m_ui;
+    DataChart * m_chart;
+    ChartView *m_chartView;
+    QLineSeries *m_lineseriesX;
+    QLineSeries *m_lineseriesY;
+    QLineSeries *m_lineseriesZ;
+    QLineSeries *m_lineseriesAccNorm;
+    QLineSeries *m_lineseriesMovingAverage;
 
-    RangeSlider *rSlider;
+    RangeSlider *m_rSlider;
 
-    std::vector<frame> availableData;
-    std::vector<frame> sliceData;
-    DbBlock * databaseAccess;
+    std::vector<frame> m_availableData;
+    std::vector<frame> m_sliceData;
+    DbBlock * m_databaseAccess;
     RecordInfo m_recordInfo;
 
-    double rSliderValue;
-    double lSliderValue;
+    double m_rSliderValue;
+    double m_lSliderValue;
 };
 
 #endif // ACCDATADISPLAY_H

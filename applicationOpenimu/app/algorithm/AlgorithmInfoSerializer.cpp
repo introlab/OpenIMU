@@ -28,13 +28,13 @@ void AlgorithmInfoSerializer::Serialize(AlgorithmInfo algorithmInfo, std::string
     // ... and the Algorithm Parameters
     for(int i = 0; i < algorithmInfo.m_parameters.size(); i++)
     {
-       ParameterInfo p = algorithmInfo.m_parameters.at(i);
+       ParameterInfo parameterInfo = algorithmInfo.m_parameters.at(i);
        Json::Value jsonParameter(Json::objectValue);
 
-       jsonParameter["description"] = p.m_description;
-       jsonParameter["name"] = p.m_name;
-       jsonParameter["value"] = p.m_value;
-       jsonParameter["defaultvalue"] = p.m_defaultValue;
+       jsonParameter["description"] = parameterInfo.m_description;
+       jsonParameter["name"] = parameterInfo.m_name;
+       jsonParameter["value"] = parameterInfo.m_value;
+       jsonParameter["defaultvalue"] = parameterInfo.m_defaultValue;
 
        jsonAlgorithmParametersInfo.append(jsonParameter);
     }
@@ -72,13 +72,13 @@ void AlgorithmInfoSerializer::Deserialize(std::string& dataToDeserialize)
         Json::Value parameterListInJson = algorithmListInJson[index].get("params", "");
         for ( int indexp = 0; indexp < parameterListInJson.size(); ++indexp )
         {
-            ParameterInfo p;
-            p.m_name = parameterListInJson[indexp].get("name", "").asString();
-            p.m_description = parameterListInJson[indexp].get("info", "").asString();
-            p.m_value = parameterListInJson[indexp].get("value", "").asString();
-            p.m_defaultValue = parameterListInJson[indexp].get("default", "").asString();
-            p.m_defaultValue = p.m_defaultValue.substr(0, 4);
-            algorithmInfo.m_parameters.push_back(p);
+            ParameterInfo parameterInfo;
+            parameterInfo.m_name = parameterListInJson[indexp].get("name", "").asString();
+            parameterInfo.m_description = parameterListInJson[indexp].get("info", "").asString();
+            parameterInfo.m_value = parameterListInJson[indexp].get("value", "").asString();
+            parameterInfo.m_defaultValue = parameterListInJson[indexp].get("default", "").asString();
+            parameterInfo.m_defaultValue = parameterInfo.m_defaultValue.substr(0, 4);
+            algorithmInfo.m_parameters.push_back(parameterInfo);
         }
 
         m_algorithmList.push_back(algorithmInfo);

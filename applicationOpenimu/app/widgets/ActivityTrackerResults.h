@@ -21,7 +21,7 @@ public:
     void hideButtons();
 
 private:
-    Ui::ActivityTrackerResults *ui;
+    Ui::ActivityTrackerResults *m_ui;
 };
 
 #endif // ACTIVITYTRACKERRESULTS_H

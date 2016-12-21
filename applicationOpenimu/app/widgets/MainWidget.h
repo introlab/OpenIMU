@@ -12,11 +12,11 @@ public:
     QWidget(parent)
     {
       this->setStyleSheet("background-color:rgba(230, 233, 239,0.2);");
-      mainLayout = new QHBoxLayout;
-      this->setLayout(mainLayout);
+      m_mainLayout = new QHBoxLayout;
+      this->setLayout(m_mainLayout);
     }
     ~MainWidget();
-    QHBoxLayout* mainLayout;
+    QHBoxLayout* m_mainLayout;
 
 };
 

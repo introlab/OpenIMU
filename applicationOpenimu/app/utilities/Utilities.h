@@ -22,10 +22,10 @@ class Utilities
 
     static QString getColourFromEnum(MessageStatus status);
 
-    static const QString successColour;
-    static const QString errorColour;
-    static const QString warningColour;
-    static const QString defaultColour;
+    static const QString m_successColour;
+    static const QString m_errorColour;
+    static const QString m_warningColour;
+    static const QString m_defaultColour;
 };
 
 #endif // UTILITIES_H

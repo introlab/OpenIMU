@@ -18,90 +18,90 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
 {
 
     m_parent = parent;
-    current_uuid = "";
+    m_current_uuid = "";
 
     this->setMinimumSize(300,400);
     this->setMaximumSize(300,400);
     this->setWindowTitle(QWidget::tr("Enregistrements"));
 
-    mainLayout = new QGridLayout(this);
-    selectRecord = new QPushButton("");
+    m_mainLayout = new QGridLayout(this);
+    m_selectRecord = new QPushButton("");
     QIcon img(":/icons/parcourir.png");
-    selectRecord->setIcon(img);
-    selectRecord->setIconSize(QSize(105,35));
-    selectRecord->setFlat(true);
-    selectRecord->setCursor(Qt::PointingHandCursor);
-    selectRecord->setMaximumWidth(105);
-    selectRecord->setStyleSheet("border:none");
-    folderSelected = new QLabel(QWidget::tr("Dossier séléctionné:"));
+    m_selectRecord->setIcon(img);
+    m_selectRecord->setIconSize(QSize(105,35));
+    m_selectRecord->setFlat(true);
+    m_selectRecord->setCursor(Qt::PointingHandCursor);
+    m_selectRecord->setMaximumWidth(105);
+    m_selectRecord->setStyleSheet("border:none");
+    m_folderSelected = new QLabel(QWidget::tr("Dossier séléctionné:"));
 
-    selectedImuLabel = new QLabel(QWidget::tr("Centrale inertielle:"));
-    imuSelectComboBox = new QComboBox;
-    imuSelectComboBox->setMinimumHeight(20);
-    imuSelectComboBox->addItem(QWidget::tr("WimU"));
-    imuSelectComboBox->addItem(QWidget::tr("Deslys trigno"));
-    imuSelectComboBox->addItem(QWidget::tr("XSens"));
-    selectedImu = new QLabel(QWidget::tr("None"));
+    m_selectedImuLabel = new QLabel(QWidget::tr("Centrale inertielle:"));
+    m_imuSelectComboBox = new QComboBox;
+    m_imuSelectComboBox->setMinimumHeight(20);
+    m_imuSelectComboBox->addItem(QWidget::tr("WimU"));
+    m_imuSelectComboBox->addItem(QWidget::tr("Deslys trigno"));
+    m_imuSelectComboBox->addItem(QWidget::tr("XSens"));
+    m_selectedImu = new QLabel(QWidget::tr("None"));
 
-    imuPosition = new QLabel(tr("Position: "));
-    imuPositionComboBox = new QComboBox;
-    imuPositionComboBox ->setMinimumHeight(20);
-    imuPositionComboBox->addItem(QWidget::tr("Poignet"));
-    imuPositionComboBox->addItem(QWidget::tr("Hanche"));
-    imuPositionComboBox->addItem(QWidget::tr("Cheville"));
-    imuPositionComboBox->addItem(QWidget::tr("Genoux"));
-    imuPositionComboBox->addItem(QWidget::tr("Coude"));
-    imuPositionComboBox->addItem(QWidget::tr("Tête"));
-    imuPositionComboBox->addItem(QWidget::tr("Cou"));
+    m_imuPosition = new QLabel(tr("Position: "));
+    m_imuPositionComboBox = new QComboBox;
+    m_imuPositionComboBox ->setMinimumHeight(20);
+    m_imuPositionComboBox->addItem(QWidget::tr("Poignet"));
+    m_imuPositionComboBox->addItem(QWidget::tr("Hanche"));
+    m_imuPositionComboBox->addItem(QWidget::tr("Cheville"));
+    m_imuPositionComboBox->addItem(QWidget::tr("Genoux"));
+    m_imuPositionComboBox->addItem(QWidget::tr("Coude"));
+    m_imuPositionComboBox->addItem(QWidget::tr("Tête"));
+    m_imuPositionComboBox->addItem(QWidget::tr("Cou"));
 
-    recordNaming = new QLabel(tr("Nom de l'enregistrement*:"));
-    recordName = new QLineEdit;
-    recordName->setMinimumHeight(20);
-    recordName->setPlaceholderText(QWidget::tr("Wimu_2016_10_18_PatientX"));
+    m_recordNaming = new QLabel(tr("Nom de l'enregistrement*:"));
+    m_recordName = new QLineEdit;
+    m_recordName->setMinimumHeight(20);
+    m_recordName->setPlaceholderText(QWidget::tr("Wimu_2016_10_18_PatientX"));
 
-    recordDetails = new QLabel(tr("Détails de l'enregistrement: "));
-    userDetails = new QTextEdit();
-    userDetails->setMinimumHeight(20);
-    userDetails->setMaximumHeight(100);
-    addRecord = new QPushButton("");
-    addRecord->setCursor(Qt::PointingHandCursor);
+    m_recordDetails = new QLabel(tr("Détails de l'enregistrement: "));
+    m_userDetails = new QTextEdit();
+    m_userDetails->setMinimumHeight(20);
+    m_userDetails->setMaximumHeight(100);
+    m_addRecord = new QPushButton("");
+    m_addRecord->setCursor(Qt::PointingHandCursor);
     QIcon imgadd(":/icons/charger.png");
-    addRecord->setIcon(imgadd);
-    addRecord->setIconSize(QSize(105,35));
-    addRecord->setFlat(true);
-    addRecord->setMaximumWidth(105);
-    addRecord->setStyleSheet("border:none");
-    spinner = new QLabel();
-    movie = new QMovie("../applicationOpenimu/app/icons/upload_loader.gif");
-    spinner->setMovie(movie);
+    m_addRecord->setIcon(imgadd);
+    m_addRecord->setIconSize(QSize(105,35));
+    m_addRecord->setFlat(true);
+    m_addRecord->setMaximumWidth(105);
+    m_addRecord->setStyleSheet("border:none");
+    m_spinner = new QLabel();
+    m_movie = new QMovie("../applicationOpenimu/app/icons/upload_loader.gif");
+    m_spinner->setMovie(m_movie);
 
-    successLabel = new QLabel();
+    m_successLabel = new QLabel();
 
-    mainLayout->addWidget(selectRecord,0,0,Qt::AlignCenter);
+    m_mainLayout->addWidget(m_selectRecord,0,0,Qt::AlignCenter);
 
-    mainLayout->addWidget(folderSelected,1,0);
+    m_mainLayout->addWidget(m_folderSelected,1,0);
 
-    mainLayout->addWidget(selectedImuLabel,2,0);
-    mainLayout->addWidget(imuSelectComboBox,3,0);
-    mainLayout->addWidget(imuPosition,4,0);
-    mainLayout->addWidget(imuPositionComboBox,5,0);
+    m_mainLayout->addWidget(m_selectedImuLabel,2,0);
+    m_mainLayout->addWidget(m_imuSelectComboBox,3,0);
+    m_mainLayout->addWidget(m_imuPosition,4,0);
+    m_mainLayout->addWidget(m_imuPositionComboBox,5,0);
 
-    mainLayout->addWidget(recordNaming,6,0);
-    mainLayout->addWidget(recordName,7,0);
+    m_mainLayout->addWidget(m_recordNaming,6,0);
+    m_mainLayout->addWidget(m_recordName,7,0);
 
-    mainLayout->addWidget(recordDetails,8,0);
-    mainLayout->addWidget(userDetails,9,0);
+    m_mainLayout->addWidget(m_recordDetails,8,0);
+    m_mainLayout->addWidget(m_userDetails,9,0);
 
-    mainLayout->addWidget(addRecord,10,0,Qt::AlignCenter);
+    m_mainLayout->addWidget(m_addRecord,10,0,Qt::AlignCenter);
 
-    mainLayout->addWidget(spinner,11,0,Qt::AlignCenter);
+    m_mainLayout->addWidget(m_spinner,11,0,Qt::AlignCenter);
 
-    mainLayout->addWidget(successLabel,11,0,Qt::AlignCenter);
+    m_mainLayout->addWidget(m_successLabel,11,0,Qt::AlignCenter);
 
-    connect(addRecord, SIGNAL(clicked()), this, SLOT(addRecordSlot()));
+    connect(m_addRecord, SIGNAL(clicked()), this, SLOT(addRecordSlot()));
 
-    connect(selectRecord, SIGNAL(clicked()), this, SLOT(selectRecordSlot()));
-    connect(imuSelectComboBox, SIGNAL(currentIndexChanged(QString)), selectedImu, SLOT(setText(QString)));
+    connect(m_selectRecord, SIGNAL(clicked()), this, SLOT(selectRecordSlot()));
+    connect(m_imuSelectComboBox, SIGNAL(currentIndexChanged(QString)), m_selectedImu, SLOT(setText(QString)));
 
 }
 
@@ -114,15 +114,15 @@ RecordsDialog::~RecordsDialog()
 void RecordsDialog::selectRecordSlot()
 {
     QFile *file;
-    folderToAdd = QFileDialog::getExistingDirectory(this, tr("Sélectionner dossier"),"/path/to/file/");
-    file = new QFile(folderToAdd);
-    if(!folderToAdd.isEmpty()){
-         folderSelected->setText(tr("Dossier séléctionné: ")+ file->fileName().section("/",-1,-1));
-         isFolderSelected = true;
-     }else{
-          folderSelected->setText(tr(" Aucun dossier séléctionné ") + file->fileName());
-          isFolderSelected = false;
-     }
+    m_folderToAdd = QFileDialog::getExistingDirectory(this, tr("Sélectionner dossier"),"/path/to/file/");
+    file = new QFile(m_folderToAdd);
+    if(!m_folderToAdd.isEmpty()){
+        m_folderSelected->setText(tr("Dossier séléctionné: ")+ file->fileName().section("/",-1,-1));
+        m_isFolderSelected = true;
+    }else{
+        m_folderSelected->setText(tr(" Aucun dossier séléctionné ") + file->fileName());
+        m_isFolderSelected = false;
+    }
 }
 
 //*************************** ADD RECORD SLOT *************************
@@ -155,29 +155,29 @@ bool RecordsDialog::addRecordFileListToBD(QStringList & fileList, std::string fo
             validFolder = true;
         }
 
-        if(validFolder && !recordName->text().isEmpty() && isFolderSelected  )
+        if(validFolder && !m_recordName->text().isEmpty() && m_isFolderSelected  )
         {
             WimuAcquisition* wimuData = new WimuAcquisition(filePathAcc,filePathGyr,filePathMag,50);
             wimuData->initialize();
-            RecordInfo info;
-            info.m_recordName = recordName->text().toStdString();
-            info.m_imuType = imuSelectComboBox->currentText().toStdString();
-            info.m_imuPosition = imuPositionComboBox->currentText().toStdString();
-            info.m_recordDetails = userDetails->toPlainText().toStdString();
-            info.m_parentId = "None";
-            CJsonSerializer::Serialize(wimuData,info, output);
-            QString temp = QString::fromStdString(output);
+            RecordInfo recordInfo;
+            recordInfo.m_recordName = m_recordName->text().toStdString();
+            recordInfo.m_imuType = m_imuSelectComboBox->currentText().toStdString();
+            recordInfo.m_imuPosition = m_imuPositionComboBox->currentText().toStdString();
+            recordInfo.m_recordDetails = m_userDetails->toPlainText().toStdString();
+            recordInfo.m_parentId = "None";
+            CJsonSerializer::Serialize(wimuData,recordInfo, output);
+            QString outputString = QString::fromStdString(output);
 
-            if(current_uuid.isEmpty())
+            if(m_current_uuid.isEmpty())
             {
-                addRecordInDB(temp,true);
+                addRecordInDB(outputString,true);
             }
             else
             {
-                addRecordInDB(temp,false);
+                addRecordInDB(outputString,false);
             }
         }
-        else if(recordName->text().isEmpty() && !isFolderSelected)
+        else if(m_recordName->text().isEmpty() && !m_isFolderSelected)
         {
             return false;
         }
@@ -190,9 +190,9 @@ void RecordsDialog::addRecordSlot()
     mainWindow->setStatusBarText(tr("Insertion de l'enregistrement dans la base de données en cours..."));
     mainWindow->startSpinner();
 
-    successLabel->setText("");
+    m_successLabel->setText("");
 
-    QDir* dir = new QDir(folderToAdd);
+    QDir* dir = new QDir(m_folderToAdd);
     dir->setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
 
     QFileInfoList list = dir->entryInfoList(QDir::Files | QDir::NoDotAndDotDot | QDir::Dirs);
@@ -202,8 +202,8 @@ void RecordsDialog::addRecordSlot()
     {
         if (finfo.isDir()) {
 
-            QString temp = "Extraction des données de " + finfo.absoluteFilePath();
-            mainWindow->setStatusBarText(temp);
+            QString messageStatus = "Extraction des données de " + finfo.absoluteFilePath();
+            mainWindow->setStatusBarText(messageStatus);
             QDir* subDir = new QDir(finfo.absoluteFilePath());
             QStringList fileList = subDir->entryList();
             if(!addRecordFileListToBD(fileList,finfo.absoluteFilePath().toStdString()))
@@ -217,38 +217,38 @@ void RecordsDialog::addRecordSlot()
         }
         else
         {
-             QStringList fileList = dir->entryList();
-             QString temp = "Extraction des données de " + finfo.absoluteFilePath();
-             mainWindow->setStatusBarText(temp);
-             if(!addRecordFileListToBD(fileList,folderToAdd.toStdString()))
-             {
-                 QMessageBox messageBox;
-                 messageBox.warning(0,tr("Avertissement"), "Vérifier le nom de l'enregistrement et qu'un dossier a été séléctionné");
-                 messageBox.setFixedSize(500,200);
-                 addingRecordSuccess = false;
-                 break;
-             }
-             break;
+            QStringList fileList = dir->entryList();
+            QString messageStatus = "Extraction des données de " + finfo.absoluteFilePath();
+            mainWindow->setStatusBarText(messageStatus);
+            if(!addRecordFileListToBD(fileList,m_folderToAdd.toStdString()))
+            {
+                QMessageBox messageBox;
+                messageBox.warning(0,tr("Avertissement"), "Vérifier le nom de l'enregistrement et qu'un dossier a été séléctionné");
+                messageBox.setFixedSize(500,200);
+                addingRecordSuccess = false;
+                break;
+            }
+            break;
         }
-        }
+    }
 
 
-    if(addingRecordSuccess && !isDuplicateName)
+    if(addingRecordSuccess && !m_isDuplicateName)
     {
 
-        successLabel->setText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"));
-        mainWindow->setStatusBarText(tr("L'enregistrement ")+recordName->text()+tr(" à été ajouté avec succès"), MessageStatus::success);
+        m_successLabel->setText(tr("L'enregistrement ")+m_recordName->text()+tr(" à été ajouté avec succès"));
+        mainWindow->setStatusBarText(tr("L'enregistrement ")+m_recordName->text()+tr(" à été ajouté avec succès"), MessageStatus::success);
 
-        current_uuid = "";
+        m_current_uuid = "";
         QMainWindow* currWin = (QMainWindow*)m_parent;
         MainWindow* win = (MainWindow*)currWin;
         win->getRecordsFromDB();
         this->close();
     }
-    else if (isDuplicateName)
+    else if (m_isDuplicateName)
     {
-        successLabel->setText(error_msg);
-        mainWindow->setStatusBarText(error_msg, MessageStatus::error);
+        m_successLabel->setText(m_error_msg);
+        mainWindow->setStatusBarText(m_error_msg, MessageStatus::error);
 
         QMainWindow* currWin = (QMainWindow*)m_parent;
         MainWindow* win = (MainWindow*)currWin;
@@ -269,11 +269,11 @@ bool RecordsDialog::addRecordInDB(QString& json, bool isSingleRecord)
     QNetworkRequest request;
     if(isSingleRecord)
     {
-       request.setUrl(QUrl("http://127.0.0.1:5000/insertrecord"));
+        request.setUrl(QUrl("http://127.0.0.1:5000/insertrecord"));
     }
     else
     {
-        request.setUrl(QUrl("http://127.0.0.1:5000/insertrecord/concat/"+ current_uuid));
+        request.setUrl(QUrl("http://127.0.0.1:5000/insertrecord/concat/"+ m_current_uuid));
     }
 
     QByteArray postDataSize = QByteArray::number(dataByteArray.size());
@@ -282,51 +282,51 @@ bool RecordsDialog::addRecordInDB(QString& json, bool isSingleRecord)
     request.setRawHeader("Content-Length", postDataSize);
 
     if (manager) {
-    bool result;
+        bool result;
 
-    QNetworkReply *reply = manager->post(request, dataByteArray);
+        QNetworkReply *reply = manager->post(request, dataByteArray);
 
-    QEventLoop loop;
-    result = connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,SLOT(quit()));
-    loop.exec();
-    reponseRecue(reply);
+        QEventLoop loop;
+        result = connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,SLOT(quit()));
+        loop.exec();
+        reponseRecue(reply);
 
-   }
+    }
     return true;
 }
 
 void RecordsDialog::reponseRecue(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError)
-   {
-       std::string strJson = reply->readAll();
-       Json::Value root;
-          Json::Reader reader;
-          bool parsingSuccessful = reader.parse( strJson.c_str(), root );     //parse process
-          if ( !parsingSuccessful )
-          {
-              std::cout  << "Failed to parse"
-                     << reader.getFormattedErrorMessages();
-          }
-          current_uuid = QString::fromStdString(root.get("valeuruuid", "A Default Value if not exists" ).asString());
-          isDuplicateName = false;
-   }
-   else
-   {
-         std::string strJson = reply->readAll();
-           Json::Value root;
-              Json::Reader reader;
-              bool parsingSuccessful = reader.parse( strJson.c_str(), root );     //parse process
-              if ( !parsingSuccessful )
-              {
-                  std::cout  << "Failed to parse"
-                         << reader.getFormattedErrorMessages();
-              }
-              error_msg = QString::fromStdString(root.get("message", "A Default Value if not exists" ).asString()).compare("DuplicateKeyError") == 0 ? "Erreur: Le nom d'enregistrement existe déjà" : "Connection error";
-              if(error_msg.compare("Connection error") !=0)
-              {
-                   isDuplicateName = true;
-              }
-   }
-   delete reply;
+    {
+        std::string strJson = reply->readAll();
+        Json::Value root;
+        Json::Reader reader;
+        bool parsingSuccessful = reader.parse( strJson.c_str(), root );     //parse process
+        if ( !parsingSuccessful )
+        {
+            std::cout  << "Failed to parse"
+                       << reader.getFormattedErrorMessages();
+        }
+        m_current_uuid = QString::fromStdString(root.get("valeuruuid", "A Default Value if not exists" ).asString());
+        m_isDuplicateName = false;
+    }
+    else
+    {
+        std::string strJson = reply->readAll();
+        Json::Value root;
+        Json::Reader reader;
+        bool parsingSuccessful = reader.parse( strJson.c_str(), root );     //parse process
+        if ( !parsingSuccessful )
+        {
+            std::cout  << "Failed to parse"
+                       << reader.getFormattedErrorMessages();
+        }
+        m_error_msg = QString::fromStdString(root.get("message", "A Default Value if not exists" ).asString()).compare("DuplicateKeyError") == 0 ? "Erreur: Le nom d'enregistrement existe déjà" : "Connection error";
+        if(m_error_msg.compare("Connection error") !=0)
+        {
+            m_isDuplicateName = true;
+        }
+    }
+    delete reply;
 }

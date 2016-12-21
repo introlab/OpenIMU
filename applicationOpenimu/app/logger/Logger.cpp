@@ -16,7 +16,7 @@ Logger::Logger()
 
 Logger::~Logger()
 {
-    if(m_instance.active){
+    if(m_instance.m_active){
         m_instance.close();
     }
 }
@@ -35,9 +35,9 @@ Logger& Logger::Instance()
 */
 void Logger::start(string logFile){
     //Status variables modification
-    m_instance.active = true;
+    m_instance.m_active = true;
     //Open filestream
-    m_instance.fileStream.open(logFile.c_str(),fstream::app|fstream::out);
+    m_instance.m_fileStream.open(logFile.c_str(),fstream::app|fstream::out);
 }
 
 /* Write function of the Logger
@@ -50,11 +50,8 @@ void Logger::write(string Msg){
 
     // convert now to string form
     char* dt = ctime(&now);
-    if (m_instance.fileStream && m_instance.active){
-        m_instance.fileStream << dt << "    " << Msg.c_str() << endl;
-        }
-    else{
-        ;//cout << Msg;
+    if (m_instance.m_fileStream && m_instance.m_active){
+        m_instance.m_fileStream << dt << "    " << Msg.c_str() << endl;
     }
 }
 
@@ -63,9 +60,9 @@ void Logger::write(string Msg){
 */
 void Logger::close(){
     //Status variables modifications
-    m_instance.active = false;
+    m_instance.m_active = false;
     //Close filestream
-    m_instance.fileStream.close();
+    m_instance.m_fileStream.close();
 }
 
 

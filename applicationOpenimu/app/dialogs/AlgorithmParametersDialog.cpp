@@ -7,61 +7,61 @@ AlgorithmParametersDialog::AlgorithmParametersDialog(QWidget * parent, Algorithm
 {
     m_parent = parent;
     m_algorithmInfo = algorithm;
-    titleLabel = new QLabel("Paramètre(s)");
-    parametersLayout = new QVBoxLayout(this);
-    parametersLayout->addWidget(titleLabel);
+    m_titleLabel = new QLabel("Paramètre(s)");
+    m_parametersLayout = new QVBoxLayout(this);
+    m_parametersLayout->addWidget(m_titleLabel);
 
     this->setWindowIcon(QIcon(":/icons/logo.ico"));
 
     QDoubleValidator *validator = new QDoubleValidator(0.00, 0.50, 2, this);
     validator->setNotation(QDoubleValidator::StandardNotation);
     // Adds every parameter to the Dialog Window.
-    foreach(ParameterInfo p, m_algorithmInfo.m_parameters)
+    foreach(ParameterInfo parameterInfo, m_algorithmInfo.m_parameters)
     {
-        if(p.m_name != "uuid")
+        if(parameterInfo.m_name != "uuid")
         {
-            QString parameterText = p.m_name.c_str() + QString::fromStdString(": ") + p.m_description.c_str();
+            QString parameterText = parameterInfo.m_name.c_str() + QString::fromStdString(": ") + parameterInfo.m_description.c_str();
             QLabel * itemLabel = new QLabel(Utilities::capitalizeFirstCharacter(parameterText));
-            parametersLayout->addWidget(itemLabel);
-            if(p.m_name == "type")
+            m_parametersLayout->addWidget(itemLabel);
+            if(parameterInfo.m_name == "type")
             {
                 QComboBox * itemLine = new QComboBox();
                 itemLine->addItem("passe-bas");
                 itemLine->addItem("passe-haut");
                 itemLine->setValidator(validator);
-                parametersLayout->addWidget(itemLine);
+                m_parametersLayout->addWidget(itemLine);
             }
             else
             {
                 QLineEdit * itemLine = new QLineEdit();
-                if(p.m_defaultValue.size() > 1)
-                    p.m_defaultValue = p.m_defaultValue.replace(1,1,",");
+                if(parameterInfo.m_defaultValue.size() > 1)
+                    parameterInfo.m_defaultValue = parameterInfo.m_defaultValue.replace(1,1,",");
 
-                itemLine->setPlaceholderText(p.m_defaultValue.c_str());
+                itemLine->setPlaceholderText(parameterInfo.m_defaultValue.c_str());
                 itemLine->setValidator(validator);
-                parametersLayout->addWidget(itemLine);
+                m_parametersLayout->addWidget(itemLine);
             }
         }
     }
 
-    sendParametersButton = new QPushButton("Envoyer");
-    parametersLayout->addWidget(sendParametersButton);
-    cancelButton = new QPushButton("Annuler");
-    parametersLayout->addWidget(cancelButton);
+    m_sendParametersButton = new QPushButton("Envoyer");
+    m_parametersLayout->addWidget(m_sendParametersButton);
+    m_cancelButton = new QPushButton("Annuler");
+    m_parametersLayout->addWidget(m_cancelButton);
 
-    connect(sendParametersButton, SIGNAL(clicked()), this, SLOT(parametersSetSlot()));
-    connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
-    this->setLayout(parametersLayout);
+    connect(m_sendParametersButton, SIGNAL(clicked()), this, SLOT(parametersSetSlot()));
+    connect(m_cancelButton, SIGNAL(clicked()), this, SLOT(close()));
+    this->setLayout(m_parametersLayout);
 }
 
 void AlgorithmParametersDialog::parametersSetSlot()
 {
     int index = 0;
 
-    foreach(QLineEdit* le, findChildren<QLineEdit*>())
+    foreach(QLineEdit* lineEdit, findChildren<QLineEdit*>())
     {      
-        bool isEmpty = le->text().toStdString().empty();
-        bool isValid = le->text().toStdString().substr(0,2).compare("0,");
+        bool isEmpty = lineEdit->text().toStdString().empty();
+        bool isValid = lineEdit->text().toStdString().substr(0,2).compare("0,");
 
         if( isEmpty || isValid != 0)
         {
@@ -69,15 +69,15 @@ void AlgorithmParametersDialog::parametersSetSlot()
         }
         else
         {
-            m_algorithmInfo.m_parameters.at(index).m_value = le->text().toStdString().replace(1,1,".");
+            m_algorithmInfo.m_parameters.at(index).m_value = lineEdit->text().toStdString().replace(1,1,".");
         }
 
         index++;
     }
 
-    foreach(QComboBox* cb, findChildren<QComboBox*>())
+    foreach(QComboBox* comboBox, findChildren<QComboBox*>())
     {
-        m_algorithmInfo.m_parameters.at(index).m_value = cb->currentText().toStdString();
+        m_algorithmInfo.m_parameters.at(index).m_value = comboBox->currentText().toStdString();
         index++;
     }
 

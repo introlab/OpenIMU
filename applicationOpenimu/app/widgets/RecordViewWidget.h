@@ -19,7 +19,7 @@ class RecordViewWidget : public QWidget
 
 public:
     explicit RecordViewWidget(QWidget *parent = 0);
-    RecordViewWidget(QWidget *parent, const WimuAcquisition& data, RecordInfo record);
+    RecordViewWidget(QWidget *parent, const WimuAcquisition& data, RecordInfo m_record);
     ~RecordViewWidget();
 
 public slots:
@@ -27,13 +27,13 @@ public slots:
     void renameRecord();
 
 public:
-    Ui::RecordViewWidget *ui;
+    Ui::RecordViewWidget *m_ui;
 
-    WimuAcquisition acceleroData;
-    RecordInfo record;
-    bool renameRecordClicked;
+    WimuAcquisition m_acceleroData;
+    RecordInfo m_record;
+    bool m_renameRecordClicked;
     QWidget* m_parent;
-    FullGraphDialog *fDialog;
+    FullGraphDialog *m_fDialog;
 
 };
 

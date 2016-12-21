@@ -7,11 +7,11 @@
 
 RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent)
 {
-    rightLabel = new QLabel();
-    leftLabel = new QLabel();
+    m_rightLabel = new QLabel();
+    m_leftLabel = new QLabel();
 
-    mainLayout = new QHBoxLayout();
-    refParent = parent;
+    m_mainLayout = new QHBoxLayout();
+    m_refParent = parent;
 
     QQuickView *view = new QQuickView();
     QWidget *container = QWidget::createWindowContainer(view, this);
@@ -26,16 +26,16 @@ RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent)
     QObject::connect(object, SIGNAL(firstUpdated(QVariant)),parent, SLOT(firstUpdated(QVariant)));
     QObject::connect(object, SIGNAL(secondUpdated(QVariant)),parent, SLOT(secondUpdated(QVariant)));
 
-    mainLayout->addWidget(leftLabel);
-    mainLayout->addWidget(container);
-    mainLayout->addWidget(rightLabel);
-    mainLayout->setSpacing(0);
-    this->setLayout(mainLayout);
+    m_mainLayout->addWidget(m_leftLabel);
+    m_mainLayout->addWidget(container);
+    m_mainLayout->addWidget(m_rightLabel);
+    m_mainLayout->setSpacing(0);
+    this->setLayout(m_mainLayout);
 
     QSizePolicy spLeft(QSizePolicy::Preferred, QSizePolicy::Preferred);
     spLeft.setHorizontalStretch(1);
-    leftLabel->setSizePolicy(spLeft);
-    rightLabel->setSizePolicy(spLeft);
+    m_leftLabel->setSizePolicy(spLeft);
+    m_rightLabel->setSizePolicy(spLeft);
 
     QSizePolicy spRight(QSizePolicy::Preferred, QSizePolicy::Preferred);
     spRight.setHorizontalStretch(4);
@@ -49,7 +49,7 @@ void RangeSlider::setStartHour(long long min){
     QString text;
     text.append(tr("Début: "));
     text.append(buffer);
-    leftLabel->setText(text);
+    m_leftLabel->setText(text);
 }
 
 void RangeSlider::setEndHour(long long max){
@@ -59,5 +59,5 @@ void RangeSlider::setEndHour(long long max){
     QString text;
     text.append(tr("Fin: "));
     text.append(buffer);
-    rightLabel->setText(text);
+    m_rightLabel->setText(text);
 }

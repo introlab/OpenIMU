@@ -36,13 +36,13 @@ void AlgorithmOutputInfoSerializer::Serialize(AlgorithmOutputInfo algorithmOutpu
      // ... and the Algorithm Parameters
      for(int i = 0; i < algorithmOutputInfo.m_algorithmParameters.size(); i++)
      {
-        ParameterInfo p = algorithmOutputInfo.m_algorithmParameters.at(i);
+        ParameterInfo parameterInfo = algorithmOutputInfo.m_algorithmParameters.at(i);
         Json::Value jsonParameter(Json::objectValue);
 
-        jsonParameter["description"] = p.m_description;
-        jsonParameter["name"] = p.m_name;
-        jsonParameter["value"] = p.m_value;
-        jsonParameter["defaultValue"] = p.m_defaultValue;
+        jsonParameter["description"] = parameterInfo.m_description;
+        jsonParameter["name"] = parameterInfo.m_name;
+        jsonParameter["value"] = parameterInfo.m_value;
+        jsonParameter["defaultValue"] = parameterInfo.m_defaultValue;
 
         jsonAlgorithmParametersInfo.append(jsonParameter);
      }
@@ -96,38 +96,38 @@ void AlgorithmOutputInfoSerializer::DeserializeList(std::string& dataToDeseriali
 
     for ( int index = 0; index < deserializeRoot.size(); ++index )
     {
-        AlgorithmOutputInfo temp;
-        temp.m_resultName = deserializeRoot[index].get("resultName", "").asString();
-        temp.m_value = deserializeRoot[index].get("value", "").asInt();
-        temp.m_executionTime = deserializeRoot[index].get("executionTime", "").asFloat();
-        temp.m_date = deserializeRoot[index].get("date", "").asString();
-        temp.m_startTime = missingInfos; //deserializeRoot.get("startTime", "").asFloat();
-        temp.m_endTime = missingInfos; //deserializeRoot.get("endTime", "").asFloat();
-        temp.m_measureUnit = missingInfos; //deserializeRoot.get("measureUnit", "").asFloat();
+        AlgorithmOutputInfo algorithmOutputInfo;
+        algorithmOutputInfo.m_resultName = deserializeRoot[index].get("resultName", "").asString();
+        algorithmOutputInfo.m_value = deserializeRoot[index].get("value", "").asInt();
+        algorithmOutputInfo.m_executionTime = deserializeRoot[index].get("executionTime", "").asFloat();
+        algorithmOutputInfo.m_date = deserializeRoot[index].get("date", "").asString();
+        algorithmOutputInfo.m_startTime = missingInfos; //deserializeRoot.get("startTime", "").asFloat();
+        algorithmOutputInfo.m_endTime = missingInfos; //deserializeRoot.get("endTime", "").asFloat();
+        algorithmOutputInfo.m_measureUnit = missingInfos; //deserializeRoot.get("measureUnit", "").asFloat();
 
-        temp.m_recordId = deserializeRoot[index].get("recordId", "").asString();
-        temp.m_recordName = deserializeRoot[index].get("recordName", "").asString();
-        temp.m_recordImuPosition = deserializeRoot[index].get("recordImuPosition", "").asString();
+        algorithmOutputInfo.m_recordId = deserializeRoot[index].get("recordId", "").asString();
+        algorithmOutputInfo.m_recordName = deserializeRoot[index].get("recordName", "").asString();
+        algorithmOutputInfo.m_recordImuPosition = deserializeRoot[index].get("recordImuPosition", "").asString();
 
         if(deserializeRoot[index].isMember("recordImuType"))
         {
-             temp.m_recordType = deserializeRoot[index].get("recordImuType", "").asString();
+             algorithmOutputInfo.m_recordType = deserializeRoot[index].get("recordImuType", "").asString();
         }
-        temp.m_algorithmId = deserializeRoot[index].get("algorithmId", "").asString();
-        temp.m_algorithmName = deserializeRoot[index].get("algorithmName", "").asString();
+        algorithmOutputInfo.m_algorithmId = deserializeRoot[index].get("algorithmId", "").asString();
+        algorithmOutputInfo.m_algorithmName = deserializeRoot[index].get("algorithmName", "").asString();
 
         Json::Value serializedParameters = deserializeRoot[index].get("algorithmParameters", "");
 
         for(int i =0; i<serializedParameters.size(); i++)
         {
-            ParameterInfo p;
-            p.m_name = serializedParameters[i].get("name", "").asString();
-            p.m_value = serializedParameters[i].get("value", "").asString();
-            p.m_description = serializedParameters[i].get("description", "").asString();
+            ParameterInfo parameterInfo;
+            parameterInfo.m_name = serializedParameters[i].get("name", "").asString();
+            parameterInfo.m_value = serializedParameters[i].get("value", "").asString();
+            parameterInfo.m_description = serializedParameters[i].get("description", "").asString();
 
-            temp.m_algorithmParameters.push_back(p);
+            algorithmOutputInfo.m_algorithmParameters.push_back(parameterInfo);
         }
-        m_algorithmOutputList.push_back(temp);
+        m_algorithmOutputList.push_back(algorithmOutputInfo);
     }
 
 }

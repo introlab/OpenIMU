@@ -1,5 +1,3 @@
-add_subdirectory(podometer)
-
 SET(srcs
     ${srcs}
         ${CMAKE_CURRENT_SOURCE_DIR}/AlgorithmInfoSerializer.cpp

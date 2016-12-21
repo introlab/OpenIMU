@@ -20,7 +20,7 @@ public:
     ~GenericAlgoResults();
 
 private:
-    Ui::GenericAlgoResults *ui;
+    Ui::GenericAlgoResults *m_ui;
 };
 
 #endif // GENERICALGORESULTS_H

@@ -4,103 +4,102 @@
 
 RecordViewWidget::RecordViewWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::RecordViewWidget)
+    m_ui(new Ui::RecordViewWidget)
 {
-    ui->setupUi(this);
+    m_ui->setupUi(this);
     m_parent = parent;
 }
 
 RecordViewWidget::RecordViewWidget(QWidget *parent,  const WimuAcquisition& data, RecordInfo rcd) :
     QWidget(parent),
-    ui(new Ui::RecordViewWidget)
+    m_ui(new Ui::RecordViewWidget)
 {
-    ui->setupUi(this);
+    m_ui->setupUi(this);
     m_parent = parent;
-    renameRecordClicked = false;
-    acceleroData = data;
-    record = rcd;
+    m_renameRecordClicked = false;
+    m_acceleroData = data;
+    m_record = rcd;
 
-    ui->recordNameEdit->setText(QString::fromStdString(record.m_recordName));
-    ui->recordNameEdit->setStyleSheet("QLineEdit { qproperty-frame: false }");
-    ui->recordNameEdit->setReadOnly(true);
+    m_ui->recordNameEdit->setText(QString::fromStdString(m_record.m_recordName));
+    m_ui->recordNameEdit->setStyleSheet("QLineEdit { qproperty-frame: false }");
+    m_ui->recordNameEdit->setReadOnly(true);
 
-    if(acceleroData.getDates().size()>0)
+    if(m_acceleroData.getDates().size()>0)
     {
-        ui->recordDate->setText(QString::fromStdString(acceleroData.getDates().back().date));
+        m_ui->recordDate->setText(QString::fromStdString(m_acceleroData.getDates().back().date));
     }
     else
     {
-        ui->recordDate->setText("Enregistrement invalide");
+        m_ui->recordDate->setText("Enregistrement invalide");
     }
 
-    ui->imuType->setText(QString::fromStdString(record.m_imuType));
-    ui->imuPosition->setText(QString::fromStdString(record.m_imuPosition));
-    ui->recordDetails->setText(QString::fromStdString(record.m_recordDetails));
+    m_ui->imuType->setText(QString::fromStdString(m_record.m_imuType));
+    m_ui->imuPosition->setText(QString::fromStdString(m_record.m_imuPosition));
+    m_ui->recordDetails->setText(QString::fromStdString(m_record.m_recordDetails));
 
-    AccDataDisplay *dataDisplay = new AccDataDisplay(acceleroData);
+    AccDataDisplay *dataDisplay = new AccDataDisplay(m_acceleroData);
     dataDisplay->showSimplfiedDataDisplay();
 
     QIcon img(":/icons/edit2.png");
-    ui->editButton->setIcon(img);
-    ui->editButton->setIconSize(QSize(15, 15));
-    ui->graphHorizontalLayout->addWidget(dataDisplay);
-    connect(ui->fullGraphButton, SIGNAL(clicked()), this, SLOT(openFullGraphSlot()));
-    connect(ui->algoBtn, SIGNAL(clicked()), parent, SLOT(openAlgorithmTab()));
-    connect(ui->deleteRecordButton, SIGNAL(clicked()), parent, SLOT(deleteRecord()));
+    m_ui->editButton->setIcon(img);
+    m_ui->editButton->setIconSize(QSize(15, 15));
+    m_ui->graphHorizontalLayout->addWidget(dataDisplay);
+    connect(m_ui->fullGraphButton, SIGNAL(clicked()), this, SLOT(openFullGraphSlot()));
+    connect(m_ui->algoBtn, SIGNAL(clicked()), parent, SLOT(openAlgorithmTab()));
+    connect(m_ui->deleteRecordButton, SIGNAL(clicked()), parent, SLOT(deleteRecord()));
 
     //** Style
     QIcon imgGraph(":/icons/graphdet.png");
-    ui->fullGraphButton->setIcon(imgGraph);
-    ui->fullGraphButton->setIconSize(QSize(157,35));
+    m_ui->fullGraphButton->setIcon(imgGraph);
+    m_ui->fullGraphButton->setIconSize(QSize(157,35));
 
     QIcon imgAlgo(":/icons/algochoisir.png");
-    ui->algoBtn->setIcon(imgAlgo);
-    ui->algoBtn->setIconSize(QSize(157,35));
+    m_ui->algoBtn->setIcon(imgAlgo);
+    m_ui->algoBtn->setIconSize(QSize(157,35));
 
     //**
-    connect(ui->editButton, SIGNAL(clicked()), this, SLOT(renameRecord()));
+    connect(m_ui->editButton, SIGNAL(clicked()), this, SLOT(renameRecord()));
 
-    fDialog = new FullGraphDialog();
-    fDialog->setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
-    fDialog->prepareDisplay(acceleroData,record);
+    m_fDialog = new FullGraphDialog();
+    m_fDialog->setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
+    m_fDialog->prepareDisplay(m_acceleroData,m_record);
 }
 
 
 RecordViewWidget::~RecordViewWidget()
 {
-    delete ui;
+    delete m_ui;
 }
 void RecordViewWidget::openFullGraphSlot()
 {
-    if(!fDialog->isVisible())
+    if(!m_fDialog->isVisible())
     {
-        fDialog->show();
+        m_fDialog->show();
     }
 }
 
 void RecordViewWidget::renameRecord()
 {
-    if(!renameRecordClicked)
+    if(!m_renameRecordClicked)
     {
-        ui->recordNameEdit->setReadOnly(false);
-        ui->recordNameEdit->setStyleSheet("QLineEdit {qproperty-frame: true }");
-        renameRecordClicked = true;
+        m_ui->recordNameEdit->setReadOnly(false);
+        m_ui->recordNameEdit->setStyleSheet("QLineEdit {qproperty-frame: true }");
+        m_renameRecordClicked = true;
         QIcon img(":/icons/check.png");
-        ui->editButton->setIcon(img);
-        ui->editButton->setIconSize(QSize(15, 15));
+        m_ui->editButton->setIcon(img);
+        m_ui->editButton->setIconSize(QSize(15, 15));
 
     }
     else
     {
         MainWindow * mainWindow = (MainWindow*)m_parent;
-        mainWindow->renameRecordFromUUID(record.m_recordId,ui->recordNameEdit->text().toStdString());
-        ui->recordNameEdit->setReadOnly(true);
-        ui->recordNameEdit->setStyleSheet("QLineEdit {qproperty-frame: false }");
-        renameRecordClicked = false;
+        mainWindow->renameRecordFromUUID(m_record.m_recordId,m_ui->recordNameEdit->text().toStdString());
+        m_ui->recordNameEdit->setReadOnly(true);
+        m_ui->recordNameEdit->setStyleSheet("QLineEdit {qproperty-frame: false }");
+        m_renameRecordClicked = false;
         QIcon img(":/icons/edit2.png");
-        ui->editButton->setIcon(img);
-        ui->editButton->setIconSize(QSize(15, 15));
-
+        m_ui->editButton->setIcon(img);
+        m_ui->editButton->setIconSize(QSize(15, 15));
     }
 
 }

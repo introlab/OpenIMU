@@ -20,43 +20,43 @@ ApplicationMenuBar::ApplicationMenuBar(QWidget *parent) : QMenuBar(parent)
     font.setPointSize(14);
     this->setFont(font);
 
-    fichier = new QMenu(tr("&Fichier"));
-    fichier->setPalette(QPalette(Qt::white));
-    QAction* actionAjouterEnregistrement = new QAction(tr("&Ajouter Enregistrement"), fichier);
+    m_fichier = new QMenu(tr("&Fichier"));
+    m_fichier->setPalette(QPalette(Qt::white));
+    QAction* actionAjouterEnregistrement = new QAction(tr("&Ajouter Enregistrement"), m_fichier);
     actionAjouterEnregistrement->setShortcut(QKeySequence("Ctrl+R"));
 
-    QAction* actionOuvrir = new QAction(tr("&Charger Enregistrement"),fichier);
+    QAction* actionOuvrir = new QAction(tr("&Charger Enregistrement"),m_fichier);
     actionOuvrir->setShortcut(QKeySequence("Ctrl+O"));
 
-    QAction* actionQuitter = new QAction(tr("&Quitter"),fichier);
+    QAction* actionQuitter = new QAction(tr("&Quitter"),m_fichier);
     actionQuitter->setShortcut(QKeySequence("Ctrl+Q"));
 
-    fichier->addAction(actionAjouterEnregistrement);
-    fichier->addAction(actionOuvrir);
-    fichier->addSeparator();
-    fichier->addAction(actionQuitter);
+    m_fichier->addAction(actionAjouterEnregistrement);
+    m_fichier->addAction(actionOuvrir);
+    m_fichier->addSeparator();
+    m_fichier->addAction(actionQuitter);
 
-    algorithme = new QMenu("&Algorithme");
-    algorithme->setPalette(QPalette(Qt::white));
-    QAction* actionAddAlgo = new QAction(tr("&Ajouter algorithme"),algorithme);
+    m_algorithme = new QMenu("&Algorithme");
+    m_algorithme->setPalette(QPalette(Qt::white));
+    QAction* actionAddAlgo = new QAction(tr("&Ajouter algorithme"),m_algorithme);
     actionAddAlgo->setShortcut(QKeySequence("Ctrl+D"));
     //actionAddAlgo->setEnabled(false);
-    algorithme->addAction(actionAddAlgo);
+    m_algorithme->addAction(actionAddAlgo);
 
-    apropos = new QMenu(tr("&À propos"));
-    apropos->setPalette(QPalette(Qt::white));
-    QAction* actionAPropos = new QAction(tr("&OpenIMU"),apropos);
-    apropos->addAction(actionAPropos);
+    m_apropos = new QMenu(tr("&À propos"));
+    m_apropos->setPalette(QPalette(Qt::white));
+    QAction* actionAPropos = new QAction(tr("&OpenIMU"),m_apropos);
+    m_apropos->addAction(actionAPropos);
 
-    aide = new QMenu("&Aide");
-    aide->setPalette(QPalette(Qt::white));
-    QAction* actionAide = new QAction(tr("&Utilisation"),aide);
-    aide->addAction(actionAide);
+    m_aide = new QMenu("&Aide");
+    m_aide->setPalette(QPalette(Qt::white));
+    QAction* actionAide = new QAction(tr("&Utilisation"),m_aide);
+    m_aide->addAction(actionAide);
 
-    this->addMenu(fichier);
-    this->addMenu(algorithme);
-    this->addMenu(apropos);
-    this->addMenu(aide);
+    this->addMenu(m_fichier);
+    this->addMenu(m_algorithme);
+    this->addMenu(m_apropos);
+    this->addMenu(m_aide);
 
 
     connect(actionOuvrir, SIGNAL(triggered()), parent, SLOT(refreshRecordListWidget()));
