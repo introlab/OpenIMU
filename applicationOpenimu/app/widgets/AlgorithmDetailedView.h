@@ -24,22 +24,22 @@ public slots:
 
 private:
     // -- Parameter Section
-    QScrollArea* scrollarea;
-    QGroupBox * parametersGroupBox;
-    QVBoxLayout * parametersLayout;
-    QVBoxLayout * detailsLayout;
-    QVBoxLayout * mainLayout;
-    QHBoxLayout * subMainLayout;
-    QLabel * currentSelectionLabel;
-    QLabel * selectedDataLabel;
-    QLabel * selectedDataValues;
-    QLabel * selectedAlgorithmLabel;
-    QLabel * selectedAlgorithmValues;
-    QLabel * parametersLabel;
-    QLabel * parametersValues;
-    QLabel * algorithmDetailsLabel;
-    QTextEdit * algorithmDetailsValues;
-    MRichTextEdit * richTextEdit;
+    QScrollArea* m_scrollarea;
+    QGroupBox * m_parametersGroupBox;
+    QVBoxLayout * m_parametersLayout;
+    QVBoxLayout * m_detailsLayout;
+    QVBoxLayout * m_mainLayout;
+    QHBoxLayout * m_subMainLayout;
+    QLabel * m_currentSelectionLabel;
+    QLabel * m_selectedDataLabel;
+    QLabel * m_selectedDataValues;
+    QLabel * m_selectedAlgorithmLabel;
+    QLabel * m_selectedAlgorithmValues;
+    QLabel * m_parametersLabel;
+    QLabel * m_parametersValues;
+    QLabel * m_algorithmDetailsLabel;
+    QTextEdit * m_algorithmDetailsValues;
+    MRichTextEdit * m_richTextEdit;
 };
 
 #endif // ALGORITHMDETAILEDVIEW_H

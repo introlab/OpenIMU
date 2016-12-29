@@ -31,28 +31,28 @@ public slots:
 
   private:
 
-    QPushButton *selectRecord;
-    QString folderToAdd;
-    QLabel* folderSelected;
-    QPushButton *addRecord;
-    QGridLayout *mainLayout;
-    QLabel* recordNaming;
-    QLineEdit *recordName;
-    QComboBox* imuSelectComboBox;
-    QLabel* selectedImu;
-    QLabel* selectedImuLabel;
-    QLabel* successLabel;
-    QComboBox* imuPositionComboBox;
-    QLabel* imuPosition;
-    QLabel* recordDetails;
-    QTextEdit* userDetails;
-    QLabel* spinner;
-    QMovie* movie;
+    QPushButton *m_selectRecord;
+    QString m_folderToAdd;
+    QLabel* m_folderSelected;
+    QPushButton *m_addRecord;
+    QGridLayout *m_mainLayout;
+    QLabel* m_recordNaming;
+    QLineEdit *m_recordName;
+    QComboBox* m_imuSelectComboBox;
+    QLabel* m_selectedImu;
+    QLabel* m_selectedImuLabel;
+    QLabel* m_successLabel;
+    QComboBox* m_imuPositionComboBox;
+    QLabel* m_imuPosition;
+    QLabel* m_recordDetails;
+    QTextEdit* m_userDetails;
+    QLabel* m_spinner;
+    QMovie* m_movie;
     QWidget* m_parent;
 
-    QString current_uuid;
-    QString error_msg;
-    bool isFolderSelected=false;
-    bool isDuplicateName = false;
+    QString m_current_uuid;
+    QString m_error_msg;
+    bool m_isFolderSelected=false;
+    bool m_isDuplicateName = false;
 };
 #endif // RECORDSDIALOG_H

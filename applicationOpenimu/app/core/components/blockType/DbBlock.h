@@ -23,8 +23,8 @@ public slots:
         void reponseRecue(QNetworkReply* reply);
         void resultInsertionResponse(QNetworkReply* reply);
      private:
-        QNetworkAccessManager* manager;
-        QTime* addRecordTime;
+        QNetworkAccessManager* m_manager;
+        QTime* m_addRecordTime;
 };
 
 #endif // DBWRITEBLOCK_H

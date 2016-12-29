@@ -12,6 +12,7 @@ SET(srcs
     ${CMAKE_CURRENT_SOURCE_DIR}/HomeWidget.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/StepCounterResults.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ActivityTrackerResults.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GenericAlgoResults.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MRichTextEditor/mrichtextedit.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MRichTextEditor/mtextedit.cpp
 
@@ -32,6 +33,7 @@ SET(headers
     ${CMAKE_CURRENT_SOURCE_DIR}/RecordViewWidget.h
     ${CMAKE_CURRENT_SOURCE_DIR}/StepCounterResults.h
     ${CMAKE_CURRENT_SOURCE_DIR}/ActivityTrackerResults.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/GenericAlgoResults.h
     ${CMAKE_CURRENT_SOURCE_DIR}/MRichTextEditor/mrichtextedit.h
     ${CMAKE_CURRENT_SOURCE_DIR}/MRichTextEditor/mtextedit.h
     PARENT_SCOPE
@@ -44,5 +46,6 @@ SET(uis
     ${CMAKE_CURRENT_SOURCE_DIR}/stepcounterresults.ui
     ${CMAKE_CURRENT_SOURCE_DIR}/homewidget.ui
     ${CMAKE_CURRENT_SOURCE_DIR}/activitytrackerresults.ui
+    ${CMAKE_CURRENT_SOURCE_DIR}/genericalgoresults.ui
     PARENT_SCOPE
 )

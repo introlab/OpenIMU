@@ -3,22 +3,22 @@
 
 FullGraphDialog::FullGraphDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::FullGraphDialog)
+    m_ui(new Ui::FullGraphDialog)
 {
-    ui->setupUi(this);
+    m_ui->setupUi(this);
     this->setWindowIcon(QIcon(":/icons/logo.ico"));
 }
 
 FullGraphDialog::~FullGraphDialog()
 {
-    delete ui;
+    delete m_ui;
 }
 
 void FullGraphDialog::prepareDisplay(WimuAcquisition acceleroData, RecordInfo recordInfo)
 {
     m_dataDisplay = new AccDataDisplay(acceleroData);
     m_dataDisplay->setInfo(recordInfo);
-    ui->mainLayout->addWidget(m_dataDisplay);
+    m_ui->mainLayout->addWidget(m_dataDisplay);
 }
 
 AccDataDisplay *FullGraphDialog::getAccDataDisplay()

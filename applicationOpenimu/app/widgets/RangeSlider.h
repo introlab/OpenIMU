@@ -19,10 +19,10 @@ signals:
 public slots:
 
 private:
-    QLabel * rightLabel;
-    QLabel * leftLabel;
-    QHBoxLayout* mainLayout;
-    QWidget* refParent;
+    QLabel * m_rightLabel;
+    QLabel * m_leftLabel;
+    QHBoxLayout* m_mainLayout;
+    QWidget* m_refParent;
 
 };
 

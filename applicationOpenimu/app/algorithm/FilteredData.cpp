@@ -17,31 +17,23 @@ void FilteredData::Serialize( Json::Value& root, RecordInfo recordInfo, std::str
 }
 void FilteredData::Deserialize( Json::Value& root)
 {
-    // deserialize primitives
+    // Deserialize primitives
     m_recordId = root.get("recordId", "").asString();
     m_runtime = root.get("runtime", "").asString();
-
-    /*Json::Value request = root.get("request", "");
-
-    m_transition = request.get("transition", "").asInt();
-    m_uuid = request.get("uuid", "").asString();
-    m_filename = request.get("filename", "").asString();
-    m_cutoff = request.get("cutoff", "").asInt();*/
 
     Json::Value result = root.get("result", "");
 
     Json::Value accData = result.get("accelerometres", "");
 
-
     for(int i =0; i<accData.size(); i++)
     {
-         frame temp;
-         temp.timestamp = accData[i].get("t", "").asLargestInt();
-         temp.x = accData[i].get("x", "").asInt();
-         temp.y = accData[i].get("y", "").asInt();
-         temp.z = accData[i].get("z", "").asInt();
+         frame value;
+         value.timestamp = accData[i].get("t", "").asLargestInt();
+         value.x = accData[i].get("x", "").asInt();
+         value.y = accData[i].get("y", "").asInt();
+         value.z = accData[i].get("z", "").asInt();
 
-         m_dataAccelerometer.push_back(temp);
+         m_dataAccelerometer.push_back(value);
     }
 
 }

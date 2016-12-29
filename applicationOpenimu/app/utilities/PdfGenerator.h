@@ -12,13 +12,13 @@ public:
     void drawText(qreal x, qreal y, Qt::Alignment flags, const QString & text, int policeSize = 16);
 
 private:
-    QPdfWriter writer;
-    QPainter painter;
+    QPdfWriter m_writer;
+    QPainter m_painter;
 
-    int dpm;
-    int maxWidth;
-    int maxHeight;
-    int leftMargin;
+    int m_dpm;
+    int m_maxWidth;
+    int m_maxHeight;
+    int m_leftMargin;
 };
 
 #endif // PDFGENERATOR_H

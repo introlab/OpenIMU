@@ -19,7 +19,7 @@ public:
     void hideButtons();
 
 private:
-    Ui::StepCounterResults *ui;
+    Ui::StepCounterResults *m_ui;
 };
 
 #endif // STEPCOUNTERRESULTS_H

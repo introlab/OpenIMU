@@ -38,13 +38,13 @@ public slots:
 
 private:
     QWidget* m_parent;
-    QGridLayout* layout;
-    QWidget* container;
-    QLabel* imuType;
+    QGridLayout* m_layout;
+    QWidget* m_container;
+    QLabel* m_imuType;
 
     void drawText(QPainter & painter, qreal x, qreal y, Qt::Alignment flags, const QString & text, QRectF * boundingRect = 0);
 
-    QPushButton* saveResultsToDB;
+    QPushButton* m_saveResultsToDB;
 
     DbBlock * m_databaseAccess;
     WimuAcquisition* m_accData;

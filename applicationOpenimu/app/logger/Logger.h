@@ -22,10 +22,10 @@ private:
     // Instance
     static Logger m_instance;
     //File.txt
-    ofstream fileStream;
+    ofstream m_fileStream;
 
     //Status variables
-    bool active = false;
+    bool m_active = false;
 
 
     Logger();

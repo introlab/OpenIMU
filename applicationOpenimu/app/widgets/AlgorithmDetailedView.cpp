@@ -3,60 +3,57 @@
 AlgorithmDetailedView::AlgorithmDetailedView(QWidget *parent) : QWidget(parent)
 {
     // -- Parameter Section
-    scrollarea = new QScrollArea();
+    m_scrollarea = new QScrollArea();
 
-    parametersGroupBox = new QGroupBox();
-    parametersGroupBox->setFixedHeight(250);
-    parametersGroupBox->setFlat(true);
-    parametersLayout = new QVBoxLayout();
+    m_parametersGroupBox = new QGroupBox();
+    m_parametersGroupBox->setFixedHeight(250);
+    m_parametersGroupBox->setFlat(true);
+    m_parametersLayout = new QVBoxLayout();
 
-    currentSelectionLabel = new QLabel(tr("Sélection courante"));
-    selectedDataLabel = new QLabel(tr("Données sélectionnées: "));
-    selectedDataValues = new QLabel(tr(" "));
-    selectedAlgorithmLabel = new QLabel(tr("Algorithme sélectionné: "));
-    selectedAlgorithmValues = new QLabel(tr(" "));
-    parametersLabel = new QLabel(tr("Paramètre(s):"));
-    parametersValues = new QLabel(tr(""));
-    parametersValues->setWordWrap(true);
-    algorithmDetailsLabel = new QLabel(tr("Description détaillée"));
-    algorithmDetailsValues = new QTextEdit("");
-    algorithmDetailsValues->setReadOnly(true);
-    algorithmDetailsValues->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Ignored);
-    richTextEdit = new MRichTextEdit();
+    m_currentSelectionLabel = new QLabel(tr("Sélection courante"));
+    m_selectedDataLabel = new QLabel(tr("Données sélectionnées: "));
+    m_selectedDataValues = new QLabel(tr(" "));
+    m_selectedAlgorithmLabel = new QLabel(tr("Algorithme sélectionné: "));
+    m_selectedAlgorithmValues = new QLabel(tr(" "));
+    m_parametersLabel = new QLabel(tr("Paramètre(s):"));
+    m_parametersValues = new QLabel(tr(""));
+    m_parametersValues->setWordWrap(true);
+    m_algorithmDetailsLabel = new QLabel(tr("Description détaillée"));
+    m_algorithmDetailsValues = new QTextEdit("");
+    m_algorithmDetailsValues->setReadOnly(true);
+    m_algorithmDetailsValues->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Ignored);
+    m_richTextEdit = new MRichTextEdit();
 
     // -- Setting the layout
-    parametersLayout->addWidget(currentSelectionLabel);
-    parametersLayout->addWidget(selectedDataLabel);
-    parametersLayout->addWidget(selectedDataValues);
-    parametersLayout->addWidget(selectedAlgorithmLabel);
-    parametersLayout->addWidget(selectedAlgorithmValues);
-    parametersLayout->addWidget(parametersLabel);
-    parametersLayout->addWidget(parametersValues);
+    m_parametersLayout->addWidget(m_currentSelectionLabel);
+    m_parametersLayout->addWidget(m_selectedDataLabel);
+    m_parametersLayout->addWidget(m_selectedDataValues);
+    m_parametersLayout->addWidget(m_selectedAlgorithmLabel);
+    m_parametersLayout->addWidget(m_selectedAlgorithmValues);
+    m_parametersLayout->addWidget(m_parametersLabel);
+    m_parametersLayout->addWidget(m_parametersValues);
 
-    detailsLayout = new QVBoxLayout();
-    detailsLayout->addWidget(algorithmDetailsLabel,0);
-    detailsLayout->addWidget(algorithmDetailsValues,1);
+    m_detailsLayout = new QVBoxLayout();
+    m_detailsLayout->addWidget(m_algorithmDetailsLabel,0);
+    m_detailsLayout->addWidget(m_algorithmDetailsValues,1);
     //detailsLayout->addWidget(richTextEdit);
 
-    subMainLayout = new QHBoxLayout();
-    subMainLayout->addLayout(parametersLayout,1);
-    subMainLayout->addLayout(detailsLayout,1);
+    m_subMainLayout = new QHBoxLayout();
+    m_subMainLayout->addLayout(m_parametersLayout,1);
+    m_subMainLayout->addLayout(m_detailsLayout,1);
 
-    //parametersGroupBox->setLayout(subMainLayout);
-    //scrollarea->setWidget(parametersGroupBox);
+    m_mainLayout = new QVBoxLayout();
+    m_mainLayout->addWidget(m_scrollarea);
 
-    mainLayout = new QVBoxLayout();
-    mainLayout->addWidget(scrollarea);
-
-    this->setLayout(subMainLayout);
+    this->setLayout(m_subMainLayout);
 }
 
 void AlgorithmDetailedView::Clear()
 {
-    selectedDataValues->setText("");
-    selectedAlgorithmValues->setText("");
-    parametersValues->setText("");
-    algorithmDetailsValues->setText("");
+    m_selectedDataValues->setText("");
+    m_selectedAlgorithmValues->setText("");
+    m_parametersValues->setText("");
+    m_algorithmDetailsValues->setText("");
 }
 
 void AlgorithmDetailedView::setAlgorithm(AlgorithmInfo algorithmInfo, AlgorithmInfo selectedAlgorithm)
@@ -64,7 +61,7 @@ void AlgorithmDetailedView::setAlgorithm(AlgorithmInfo algorithmInfo, AlgorithmI
     if(algorithmInfo.m_parameters.size() == 0 ||
             ((algorithmInfo.m_parameters.size() == 1) && (algorithmInfo.m_parameters.at(0).m_name == "uuid")))
     {
-        parametersValues->setText("Aucun paramètre à entrer pour cet algorithme");
+        m_parametersValues->setText("Aucun paramètre à entrer pour cet algorithme");
     }
     else
     {
@@ -75,12 +72,12 @@ void AlgorithmDetailedView::setAlgorithm(AlgorithmInfo algorithmInfo, AlgorithmI
                 QString parameterName = Utilities::capitalizeFirstCharacter(QString::fromStdString(selectedAlgorithm.m_parameters.at(i).m_name));
                 QString parameterValue = QString::fromStdString(selectedAlgorithm.m_parameters.at(i).m_value);
 
-                QString previousParameters = parametersValues->text();
-                parametersValues->setText(previousParameters + parameterName + ": " + parameterValue+ "\n" );
+                QString previousParameters = m_parametersValues->text();
+                m_parametersValues->setText(previousParameters + parameterName + ": " + parameterValue+ "\n" );
             }
         }
     }
-    selectedAlgorithmValues->setText(QString::fromStdString(selectedAlgorithm.m_name));
-    algorithmDetailsValues->setText(QString::fromStdString(selectedAlgorithm.m_details));
+    m_selectedAlgorithmValues->setText(QString::fromStdString(selectedAlgorithm.m_name));
+    m_algorithmDetailsValues->setText(QString::fromStdString(selectedAlgorithm.m_details));
 
 }

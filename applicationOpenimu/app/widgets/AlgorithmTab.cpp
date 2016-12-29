@@ -10,94 +10,91 @@
 #include "../utilities/Utilities.h"
 #include "../algorithm/FilteredData.h"
 #include "acquisition/CJsonSerializer.h"
-
-const string ID_FREQUENCY_FILTER = "2";
+#include "GenericAlgoResults.h"
 
 AlgorithmTab::AlgorithmTab(QWidget *parent, RecordInfo selectedRecord) : QWidget(parent)
 {
-        m_parent = parent;
-        m_selectedRecord = selectedRecord;
+    m_parent = parent;
+    m_selectedRecord = selectedRecord;
 
-        MainWindow * mainWindow = (MainWindow*)m_parent;
+    //By default
+    m_selectedIndexRow = 0;
 
-        //By default
-        selectedIndexRow = 0;
+    getAlgorithmsFromDB();
 
-        getAlgorithmsFromDB();
+    // -- Layout
+    m_algorithmListGroupBox = new QGroupBox(this);
+    m_algorithmListGroupBox->setFixedHeight(300);
+    m_algorithmListLayout = new QVBoxLayout(this);
+    m_algorithmTabLayout = new QVBoxLayout(this);
 
-        // -- Layout
-        algorithmListGroupBox = new QGroupBox(this);
-        algorithmListGroupBox->setFixedHeight(300);
-        algorithmListLayout = new QVBoxLayout(this);
-        algorithmTabLayout = new QVBoxLayout(this);
+    // -- Algorithm List Section
+    m_algorithmLabel = new QLabel(tr("Tableau des algorithmes disponibles"));
+    m_algorithmTableWidget = new QTableWidget(this);
+    m_algorithmTableWidget->setRowCount(10);
+    m_algorithmTableWidget->setColumnCount(3);
 
-        // -- Algorithm List Section
-        algorithmLabel = new QLabel(tr("Tableau des algorithmes disponibles"));
-        algorithmTableWidget = new QTableWidget(this);
-        algorithmTableWidget->setRowCount(10);
-        algorithmTableWidget->setColumnCount(3);
+    m_algorithmTableHeaders<<"Nom"<<"Description"<<"Auteur";
 
-        algorithmTableHeaders<<"Nom"<<"Description"<<"Auteur";
+    m_algorithmTableWidget->setHorizontalHeaderLabels(m_algorithmTableHeaders);
 
-        algorithmTableWidget->setHorizontalHeaderLabels(algorithmTableHeaders);
+    QHeaderView * headerHoriz = m_algorithmTableWidget->horizontalHeader();
+    QHeaderView * headerVerti = m_algorithmTableWidget->verticalHeader();
 
-        QHeaderView * headerHoriz = algorithmTableWidget->horizontalHeader();
-        QHeaderView * headerVerti = algorithmTableWidget->verticalHeader();
+    headerHoriz->setHighlightSections(false);
+    headerVerti->setHighlightSections(false);
 
-        headerHoriz->setHighlightSections(false);
-        headerVerti->setHighlightSections(false);
+    headerHoriz->setSectionResizeMode(QHeaderView::Stretch);
+    headerVerti->setSectionResizeMode(QHeaderView::Stretch);
 
-        headerHoriz->setSectionResizeMode(QHeaderView::Stretch);
-        headerVerti->setSectionResizeMode(QHeaderView::Stretch);
+    m_algorithmTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_algorithmTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+    m_algorithmTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-        algorithmTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        algorithmTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-        algorithmTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_algorithmTableWidget->setShowGrid(false);
+    m_algorithmTableWidget->setGeometry(QApplication::desktop()->screenGeometry());
 
-        algorithmTableWidget->setShowGrid(false);
-        algorithmTableWidget->setGeometry(QApplication::desktop()->screenGeometry());
+    QString selectionStyle = "QTableWidget::item:selected{background-color: palette(highlight); color: palette(highlightedText);};";
 
-        QString selectionStyle = "QTableWidget::item:selected{background-color: palette(highlight); color: palette(highlightedText);};";
+    m_algorithmTableWidget->setStyleSheet(selectionStyle);
 
-        algorithmTableWidget->setStyleSheet(selectionStyle);
+    for(int i =0; i<m_algorithmSerializer.m_algorithmList.size();i++)
+    {
+        QString name = QString::fromStdString(m_algorithmSerializer.m_algorithmList.at(i).m_name);
+        m_algorithmTableWidget->setItem(i, 0, new QTableWidgetItem(name));
 
-        for(int i =0; i<m_algorithmSerializer.m_algorithmList.size();i++)
-        {
-            QString name = QString::fromStdString(m_algorithmSerializer.m_algorithmList.at(i).m_name);
-            algorithmTableWidget->setItem(i, 0, new QTableWidgetItem(name));
+        QString description =QString::fromStdString(m_algorithmSerializer.m_algorithmList.at(i).m_description);
+        m_algorithmTableWidget->setItem(i, 1, new QTableWidgetItem(description));
 
-            QString description =QString::fromStdString(m_algorithmSerializer.m_algorithmList.at(i).m_description);
-            algorithmTableWidget->setItem(i, 1, new QTableWidgetItem(description));
+        QString author = QString::fromStdString(m_algorithmSerializer.m_algorithmList.at(i).m_author);
+        m_algorithmTableWidget->setItem(i, 2, new QTableWidgetItem(author));
+    }
 
-            QString author = QString::fromStdString(m_algorithmSerializer.m_algorithmList.at(i).m_author);
-            algorithmTableWidget->setItem(i, 2, new QTableWidgetItem(author));
-        }
+    m_algorithmTableWidget->setRowCount(m_algorithmSerializer.m_algorithmList.size());
 
-        algorithmTableWidget->setRowCount(m_algorithmSerializer.m_algorithmList.size());
+    connect(m_algorithmTableWidget, SIGNAL(clicked(const QModelIndex& )), this, SLOT(onClickOpenParametersWindow(const QModelIndex &)));
 
-        connect(algorithmTableWidget, SIGNAL(clicked(const QModelIndex& )), this, SLOT(onClickOpenParametersWindow(const QModelIndex &)));
+    // -- Parameter Section
+    m_algorithmParameters = new AlgorithmDetailedView();
 
-        // -- Parameter Section
-        algorithmParameters = new AlgorithmDetailedView();
+    m_applyAlgorithm = new QPushButton(tr(""));
+    QIcon img(":/icons/applyAlgo.png");
+    m_applyAlgorithm->setIcon(img);
+    m_applyAlgorithm->setIconSize(QSize(175,35));
+    m_applyAlgorithm->setCursor(Qt::PointingHandCursor);
+    connect(m_applyAlgorithm, SIGNAL(clicked()),this, SLOT(openResultTab()));
 
-        applyAlgorithm = new QPushButton(tr(""));
-        QIcon img(":/icons/applyAlgo.png");
-        applyAlgorithm->setIcon(img);
-        applyAlgorithm->setIconSize(QSize(175,35));
-        applyAlgorithm->setCursor(Qt::PointingHandCursor);
-        connect(applyAlgorithm, SIGNAL(clicked()),this, SLOT(openResultTab()));
+    // -- Setting the layout
+    m_algorithmListLayout->addWidget(m_algorithmLabel);
+    m_algorithmListLayout->addWidget(m_algorithmTableWidget);
+    m_algorithmListGroupBox->setLayout(m_algorithmListLayout);
 
-        // -- Setting the layout
-        algorithmListLayout->addWidget(algorithmLabel);
-        algorithmListLayout->addWidget(algorithmTableWidget);
-        algorithmListGroupBox->setLayout(algorithmListLayout);
+    m_algorithmTabLayout->addWidget(m_algorithmListGroupBox);
+    m_algorithmTabLayout->addWidget(m_algorithmParameters);
+    m_algorithmTabLayout->addSpacing(50);
+    m_algorithmTabLayout->addWidget(m_applyAlgorithm);
 
-        algorithmTabLayout->addWidget(algorithmListGroupBox);
-        algorithmTabLayout->addWidget(algorithmParameters);
-        algorithmTabLayout->addSpacing(50);
-        algorithmTabLayout->addWidget(applyAlgorithm);
-
-        this->setLayout(algorithmTabLayout);
+    this->setLayout(m_algorithmTabLayout);
 }
 
 QWidget* AlgorithmTab::getMainWindow()
@@ -107,11 +104,11 @@ QWidget* AlgorithmTab::getMainWindow()
 
 void AlgorithmTab::setAlgorithm(AlgorithmInfo algorithmInfo)
 {
-    algorithmParameters->Clear();
+    m_algorithmParameters->Clear();
 
-    m_selectedAlgorithm = m_algorithmSerializer.m_algorithmList.at(selectedIndexRow);
+    m_selectedAlgorithm = m_algorithmSerializer.m_algorithmList.at(m_selectedIndexRow);
     m_selectedAlgorithm.m_parameters.swap(algorithmInfo.m_parameters);
-    algorithmParameters->setAlgorithm(algorithmInfo,m_selectedAlgorithm);
+    m_algorithmParameters->setAlgorithm(algorithmInfo,m_selectedAlgorithm);
 }
 
 void AlgorithmTab::openResultTab()
@@ -146,7 +143,7 @@ void AlgorithmTab::onClickOpenParametersWindow(const QModelIndex &index)
     {
         //Retrieve the selected Algorithm and it's parameters
         AlgorithmInfo clickedAlgorithm = m_algorithmSerializer.m_algorithmList.at(index.row());
-        selectedIndexRow = index.row();
+        m_selectedIndexRow = index.row();
 
         if((clickedAlgorithm.m_parameters.size() <= 0)||
                 ((clickedAlgorithm.m_parameters.size() == 1) && (clickedAlgorithm.m_parameters.at(0).m_name == "uuid")))
@@ -192,7 +189,7 @@ bool AlgorithmTab::createAlgoRequest()
 
     if(!result)
     {
-       mainWindow->setStatusBarText("Erreur de connexion lors de l'application de l'algorithme", MessageStatus::error);
+        mainWindow->setStatusBarText("Erreur de connexion lors de l'application de l'algorithme", MessageStatus::error);
     }
 
     loop.exec();
@@ -236,16 +233,16 @@ void AlgorithmTab::algoListResponse(QNetworkReply* reply)
 {
     MainWindow * mainWindow = (MainWindow*)m_parent;
     if (reply->error() == QNetworkReply::NoError)
-   {
-       mainWindow->setStatusBarText(tr("L'algorithme a été appliqué avec succès"), MessageStatus::success);
-       std::string testReponse = reply->readAll().toStdString();
-       m_algorithmSerializer.Deserialize(testReponse);
-   }
-   else
-   {
-       mainWindow->setStatusBarText(tr("Échec de l'application de l'algorithme"), MessageStatus::error);
-   }
-   delete reply;
+    {
+        mainWindow->setStatusBarText(tr("L'algorithme a été appliqué avec succès"), MessageStatus::success);
+        std::string testReponse = reply->readAll().toStdString();
+        m_algorithmSerializer.Deserialize(testReponse);
+    }
+    else
+    {
+        mainWindow->setStatusBarText(tr("Échec de l'application de l'algorithme"), MessageStatus::error);
+    }
+    delete reply;
 }
 
 void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
@@ -254,48 +251,53 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
     AlgorithmOutputInfoSerializer algorithmOutputInfoSerializer;
 
     if (reply->error() == QNetworkReply::NoError)
-   {
-       std::string reponse = reply->readAll().toStdString();
+    {
+        std::string reponse = reply->readAll().toStdString();
 
-       if(reponse != "")
-       {
-           if(m_selectedAlgorithm.m_id.compare(ID_FREQUENCY_FILTER) != 0)
-           {
-               algorithmOutputInfoSerializer.Deserialize(reponse);
+        if(reponse != "")
+        {
+            algorithmOutputInfoSerializer.Deserialize(reponse);
 
-               AlgorithmInfo &algoInfo = m_selectedAlgorithm;
+            AlgorithmInfo &algoInfo = m_selectedAlgorithm;
 
-               algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmId = algoInfo.m_id;
-               algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmName = algoInfo.m_name;
-               algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmParameters = algoInfo.m_parameters;
-               algorithmOutputInfoSerializer.m_algorithmOutput.m_recordType = m_selectedRecord.m_imuType;
-               algorithmOutputInfoSerializer.m_algorithmOutput.m_recordId = m_selectedRecord.m_recordId;
-               algorithmOutputInfoSerializer.m_algorithmOutput.m_recordName = m_selectedRecord.m_recordName;
-               algorithmOutputInfoSerializer.m_algorithmOutput.m_recordImuPosition = m_selectedRecord.m_imuPosition;
+            algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmId = algoInfo.m_id;
+            algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmName = algoInfo.m_name;
+            algorithmOutputInfoSerializer.m_algorithmOutput.m_algorithmParameters = algoInfo.m_parameters;
+            algorithmOutputInfoSerializer.m_algorithmOutput.m_recordType = m_selectedRecord.m_imuType;
+            algorithmOutputInfoSerializer.m_algorithmOutput.m_recordId = m_selectedRecord.m_recordId;
+            algorithmOutputInfoSerializer.m_algorithmOutput.m_recordName = m_selectedRecord.m_recordName;
+            algorithmOutputInfoSerializer.m_algorithmOutput.m_recordImuPosition = m_selectedRecord.m_imuPosition;
 
-               ResultsTabWidget* res = new ResultsTabWidget(this, algorithmOutputInfoSerializer.m_algorithmOutput);
-               mainWindow->addTab(res,algoInfo.m_name + ": " + m_selectedRecord.m_recordName);
-           }
-           else
-           {
+            if(algorithmOutputInfoSerializer.m_algorithmOutput.m_dispType.compare("2d_graph")==0)
+            {
                 FilteredData fData;
                 CJsonSerializer::Deserialize(&fData, reponse);
                 WimuAcquisition wimuData;
                 wimuData.setDataAccelerometer(fData.m_dataAccelerometer);
                 ResultsTabWidget* res = new ResultsTabWidget(this,wimuData, m_selectedRecord);
                 mainWindow->addTab(res,"Filtre: " + m_selectedRecord.m_recordName);
-           }
+            }
+            else if (algorithmOutputInfoSerializer.m_algorithmOutput.m_dispType.compare("Numeric value")==0)
+            {
+                ResultsTabWidget* res = new ResultsTabWidget(this, algorithmOutputInfoSerializer.m_algorithmOutput);
+                mainWindow->addTab(res,algoInfo.m_name + ": " + m_selectedRecord.m_recordName);
+            }
+            else
+            {
+                GenericAlgoResults* res = new GenericAlgoResults(this, algorithmOutputInfoSerializer.m_algorithmOutput, reponse);
+                mainWindow->addTab(res,algoInfo.m_name + ": " + m_selectedRecord.m_recordName);
+            }
 
             mainWindow->setStatusBarText("Algorithme appliqué avec succès", MessageStatus::success);
-       }
-       else
-       {
-           mainWindow->setStatusBarText("La requête reçue n'a pas retournée des résultats", MessageStatus::warning);
-       }
-   }
-   else
-   {
-       mainWindow->setStatusBarText("Erreur lors de l'application de l'algorithme", MessageStatus::error);
-   }
-   delete reply;
+        }
+        else
+        {
+            mainWindow->setStatusBarText("La requête reçue n'a pas retournée des résultats", MessageStatus::warning);
+        }
+    }
+    else
+    {
+        mainWindow->setStatusBarText("Erreur lors de l'application de l'algorithme", MessageStatus::error);
+    }
+    delete reply;
 }

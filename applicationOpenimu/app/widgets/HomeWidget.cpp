@@ -4,17 +4,17 @@
 
 HomeWidget::HomeWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::HomeWidget)
+    m_ui(new Ui::HomeWidget)
 {
-    ui->setupUi(this);
+    m_ui->setupUi(this);
     m_parent = parent;
-    connect(ui->gitbtn, SIGNAL(clicked()), this, SLOT(openGitLink()));
+    connect(m_ui->gitbtn, SIGNAL(clicked()), this, SLOT(openGitLink()));
 
 }
 
 HomeWidget::~HomeWidget()
 {
-    delete ui;
+    delete m_ui;
 }
 
 void HomeWidget::openGitLink()

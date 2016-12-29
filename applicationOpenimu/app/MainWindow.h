@@ -82,6 +82,9 @@ class MainWindow : public QMainWindow
         void openAlgorithmTab();
         void openHomeTab();
 
+        //Add algo
+        void addAlgo();
+
         //Launch the python api
         static void launchApi(){
             QProcess* p = new QProcess();

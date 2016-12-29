@@ -14,10 +14,10 @@ public:
 
 
 private:
-    QMenu* fichier;
-    QMenu* aide;
-    QMenu* algorithme;
-    QMenu* apropos;
+    QMenu* m_fichier;
+    QMenu* m_aide;
+    QMenu* m_algorithme;
+    QMenu* m_apropos;
 };
 
 #endif // APPLICATIONMENUBAR_H

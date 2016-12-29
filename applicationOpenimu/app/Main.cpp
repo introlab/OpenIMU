@@ -5,8 +5,6 @@
 
 int main(int argc, char *argv[])
 {
-
-
     QApplication a(argc, argv);
 
     QString locale = QLocale::system().name();
@@ -14,12 +12,7 @@ int main(int argc, char *argv[])
     QTranslator translator;
     if(translator.load(QString("../translations/openImu_") + locale))
     {
-           //qDebug() << QString("../translations/openImu_") + locale << " loaded";
             a.installTranslator(&translator);
-    }
-    else
-    {
-           //qDebug() <<QString("../translations/openImu_") + locale << "loading failed";
     }
 
     //specify a new font.

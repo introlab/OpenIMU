@@ -12,12 +12,12 @@
 
 std::vector<frame> WimuAcquisition::getDataAccelerometer() const
 {
-    return dataAccelerometer;
+    return m_dataAccelerometer;
 }
 
 void WimuAcquisition::setDataAccelerometer(std::vector<frame> value)
 {
-    dataAccelerometer = value;
+    m_dataAccelerometer = value;
 }
 
 WimuAcquisition::WimuAcquisition()
@@ -40,53 +40,53 @@ void WimuAcquisition::Serialize( Json::Value& root, RecordInfo recordInfo, std::
    init["comment"] = recordInfo.m_recordDetails;
    init["parent_id"] = recordInfo.m_parentId;
 
-   //Acc
-   Json::Value temp(Json::arrayValue);
-   for (size_t j = 0; j != dataAccelerometer.size(); j++)
+   //Accelerometer
+   Json::Value accJsonValues(Json::arrayValue);
+   for (size_t j = 0; j != m_dataAccelerometer.size(); j++)
    {
-       Json::Value obj(Json::objectValue);
-       obj["x"] = dataAccelerometer.at(j).x;
-       obj["y"] = dataAccelerometer.at(j).y;
-       obj["z"] = dataAccelerometer.at(j).z;
-       obj["t"] = dataAccelerometer.at(j).timestamp;
-       temp.append(obj);
+       Json::Value accObj(Json::objectValue);
+       accObj["x"] = m_dataAccelerometer.at(j).x;
+       accObj["y"] = m_dataAccelerometer.at(j).y;
+       accObj["z"] = m_dataAccelerometer.at(j).z;
+       accObj["t"] = m_dataAccelerometer.at(j).timestamp;
+       accJsonValues.append(accObj);
    }
 
-   //Gyr
-   Json::Value temp1(Json::arrayValue);
-   for (size_t j = 0; j != dataGyro.size(); j++)
+   //Gyrometer
+   Json::Value gyrJsonValues(Json::arrayValue);
+   for (size_t j = 0; j != m_dataGyro.size(); j++)
    {
-       Json::Value obj1(Json::objectValue);
-       obj1["x"] = dataGyro.at(j).x;
-       obj1["y"] = dataGyro.at(j).y;
-       obj1["z"] = dataGyro.at(j).z;
-       obj1["t"] = dataGyro.at(j).timestamp;
-       temp1.append(obj1);
+       Json::Value gyrObj(Json::objectValue);
+       gyrObj["x"] = m_dataGyro.at(j).x;
+       gyrObj["y"] = m_dataGyro.at(j).y;
+       gyrObj["z"] = m_dataGyro.at(j).z;
+       gyrObj["t"] = m_dataGyro.at(j).timestamp;
+       gyrJsonValues.append(gyrObj);
    }
 
-   //Mag
-   Json::Value temp2(Json::arrayValue);
-   for (size_t j = 0; j != dataMagneto.size(); j++)
+   //Magnetometer
+   Json::Value magJsonValues(Json::arrayValue);
+   for (size_t j = 0; j != m_dataMagneto.size(); j++)
    {
-       Json::Value obj2(Json::objectValue);
-       obj2["x"] = dataMagneto.at(j).x;
-       obj2["y"] = dataMagneto.at(j).y;
-       obj2["z"] = dataMagneto.at(j).z;
-       obj2["t"] = dataMagneto.at(j).timestamp;
-       temp2.append(obj2);
+       Json::Value magObj(Json::objectValue);
+       magObj["x"] = m_dataMagneto.at(j).x;
+       magObj["y"] = m_dataMagneto.at(j).y;
+       magObj["z"] = m_dataMagneto.at(j).z;
+       magObj["t"] = m_dataMagneto.at(j).timestamp;
+       magJsonValues.append(magObj);
    }
    mainRoot["record"]= init;
-   if(temp.size()!= 0)
+   if(accJsonValues.size()!= 0)
    {
-        mainRoot["accelerometres"]= temp;
+        mainRoot["accelerometres"]= accJsonValues;
    }
-   if(temp1.size()!= 0)
+   if(gyrJsonValues.size()!= 0)
    {
-        mainRoot["gyrometres"]= temp1;
+        mainRoot["gyrometres"]= gyrJsonValues;
    }
-   if(temp2.size()!= 0)
+   if(magJsonValues.size()!= 0)
    {
-        mainRoot["magnetometres"]= temp2;
+        mainRoot["magnetometres"]= magJsonValues;
    }
 
    Json::StyledWriter writer;
@@ -97,55 +97,55 @@ void WimuAcquisition::Deserialize( Json::Value& root )
 {
    // deserialize primitives
 
-    Json::Value accData = root.get("accelerometres", "");
-    for(int i =0; i<accData.size(); i++)
+    Json::Value accJsonValues = root.get("accelerometres", "");
+    for(int i =0; i<accJsonValues.size(); i++)
     {
-        frame temp;
-        temp.timestamp = accData[i].get("t", "").asLargestInt();
-        temp.x = accData[i].get("x", "").asInt();
-        temp.y = accData[i].get("y", "").asInt();
-        temp.z = accData[i].get("z", "").asInt();
+        frame value;
+        value.timestamp = accJsonValues[i].get("t", "").asLargestInt();
+        value.x = accJsonValues[i].get("x", "").asInt();
+        value.y = accJsonValues[i].get("y", "").asInt();
+        value.z = accJsonValues[i].get("z", "").asInt();
 
-        dataAccelerometer.push_back(temp);
+        m_dataAccelerometer.push_back(value);
     }
 
-    Json::Value gyrData = root.get("gyrometres", "");
-    for(int i =0; i<gyrData.size(); i++)
+    Json::Value gyrJsonValues = root.get("gyrometres", "");
+    for(int i =0; i<gyrJsonValues.size(); i++)
     {
-        frame temp;
-        temp.timestamp = gyrData[i].get("t", "").asLargestInt();
-        temp.x = gyrData[i].get("x", "").asInt();
-        temp.y = gyrData[i].get("y", "").asInt();
-        temp.z = gyrData[i].get("z", "").asInt();
+        frame value;
+        value.timestamp = gyrJsonValues[i].get("t", "").asLargestInt();
+        value.x = gyrJsonValues[i].get("x", "").asInt();
+        value.y = gyrJsonValues[i].get("y", "").asInt();
+        value.z = gyrJsonValues[i].get("z", "").asInt();
 
-        dataGyro.push_back(temp);
+        m_dataGyro.push_back(value);
     }
 
-    Json::Value magData = root.get("magnetometres", "");
-    for(int i =0; i<magData.size(); i++)
+    Json::Value magJsonValues = root.get("magnetometres", "");
+    for(int i =0; i<magJsonValues.size(); i++)
     {
-        frame temp;
-        temp.timestamp = magData[i].get("t", "").asLargestInt();
-        temp.x = magData[i].get("x", "").asInt();
-        temp.y = magData[i].get("y", "").asInt();
-        temp.z = magData[i].get("z", "").asInt();
+        frame value;
+        value.timestamp = magJsonValues[i].get("t", "").asLargestInt();
+        value.x = magJsonValues[i].get("x", "").asInt();
+        value.y = magJsonValues[i].get("y", "").asInt();
+        value.z = magJsonValues[i].get("z", "").asInt();
 
-        dataMagneto.push_back(temp);
+        m_dataMagneto.push_back(value);
     }
 
 }
 
 void WimuAcquisition::initialize()
 {
-    if(!fileAcc.empty())
+    if(!m_filepathAcc.empty())
     {
          extractAcceleroData();
     }
-    if(!fileGyro.empty())
+    if(!m_filepathGyro.empty())
     {
         extractGyrometerData();
     }
-    if(!fileMagneto.empty())
+    if(!m_filepathMagneto.empty())
     {
         extractMagnetomer();
     }
@@ -153,28 +153,18 @@ void WimuAcquisition::initialize()
 
 void WimuAcquisition::clearData()
 {
-    dataAccelerometer.clear();
-    dataMagneto.clear();
-    dataGyro.clear();
-    fileAcc = "";
-    fileGyro = "";
-    fileMagneto = "";
+    m_dataAccelerometer.clear();
+    m_dataMagneto.clear();
+    m_dataGyro.clear();
+    m_filepathAcc = "";
+    m_filepathGyro = "";
+    m_filepathMagneto = "";
 }
 
 void WimuAcquisition::extractAcceleroData()
 {
-    const char *filePath = fileAcc.c_str();
     BYTE *fileBuf;			// Pointer to our buffered data
     FILE *file = NULL;		// File pointer
-
-    // Open the file in binary mode using the "rb" format string
-    // This also checks if the file exists and/or can be opened for reading correctly
-    if ((file = fopen(filePath, "rb")) == NULL)
-        //std::cout << "Could not open specified file" << std::endl;
-        ;
-    else
-        //std::cout << "File opened successfully" << std::endl;
-        ;
 
     // Get the size of the file in bytes
     long fileSize = getFileSize(file);
@@ -187,24 +177,15 @@ void WimuAcquisition::extractAcceleroData()
     int numberOfSecondsInFile = fileSize/304;
     for(int i=0; i< numberOfSecondsInFile ; i++)
     {
-        std::vector<frame> b=readSensorDataSecond(fileBuf,i*304,freq);
-        dataAccelerometer.insert(dataAccelerometer.end(), b.begin(), b.end());
+        std::vector<frame> buffer=readSensorDataSecond(fileBuf,i*304,m_wimuFrequency);
+        m_dataAccelerometer.insert(m_dataAccelerometer.end(), buffer.begin(), buffer.end());
     }
 }
 
 void WimuAcquisition::extractGyrometerData()
 {
-    const char *filePath = fileGyro.c_str();
     BYTE *fileBuf;			// Pointer to our buffered data
     FILE *file = NULL;		// File pointer
-
-    // Open the file in binary mode using the "rb" format string
-    // This also checks if the file exists and/or can be opened for reading correctly
-    if ((file = fopen(filePath, "rb")) == NULL)
-        ;//std::cout << "Could not open specified file" << std::endl;
-    else
-        ;//std::cout << "File opened successfully" << std::endl;
-
     // Get the size of the file in bytes
     long fileSize = getFileSize(file);
 
@@ -216,24 +197,15 @@ void WimuAcquisition::extractGyrometerData()
     int numberOfSecondsInFile = fileSize/304;
     for(int i=0; i< numberOfSecondsInFile ; i++)
     {
-        std::vector<frame> b=readSensorDataSecond(fileBuf,i*304,freq);
-        dataGyro.insert(dataGyro.end(), b.begin(), b.end());
+        std::vector<frame> buffer=readSensorDataSecond(fileBuf,i*304,m_wimuFrequency);
+        m_dataGyro.insert(m_dataGyro.end(), buffer.begin(), buffer.end());
     }
 }
 
 void WimuAcquisition::extractMagnetomer()
 {
-    const char *filePath = fileMagneto.c_str();
     BYTE *fileBuf;			// Pointer to our buffered data
     FILE *file = NULL;		// File pointer
-
-    // Open the file in binary mode using the "rb" format string
-    // This also checks if the file exists and/or can be opened for reading correctly
-    if ((file = fopen(filePath, "rb")) == NULL)
-        ;//std::cout << "Could not open specified file" << std::endl;
-    else
-        ;//std::cout << "File opened successfully" << std::endl;
-
     // Get the size of the file in bytes
     long fileSize = getFileSize(file);
 
@@ -245,8 +217,8 @@ void WimuAcquisition::extractMagnetomer()
     int numberOfSecondsInFile = fileSize/304;
     for(int i=0; i< numberOfSecondsInFile ; i++)
     {
-        std::vector<frame> b=readSensorDataSecond(fileBuf,i*304,freq);
-        dataMagneto.insert(dataMagneto.end(), b.begin(), b.end());
+        std::vector<frame> buffer=readSensorDataSecond(fileBuf,i*304,m_wimuFrequency);
+        m_dataMagneto.insert(m_dataMagneto.end(), buffer.begin(), buffer.end());
     }
 }
 
@@ -261,16 +233,16 @@ long WimuAcquisition::getFileSize(FILE *file)
 }
 WimuAcquisition::WimuAcquisition(std::string filenameAccelero, std::string filenameGyro,std::string filenameMagneto, int frequence)
 {
-    this->fileAcc = filenameAccelero;
-    this->fileGyro = filenameGyro;
-    this->fileMagneto = filenameMagneto;
-    this->freq = frequence;
+    this->m_filepathAcc = filenameAccelero;
+    this->m_filepathGyro = filenameGyro;
+    this->m_filepathMagneto = filenameMagneto;
+    this->m_wimuFrequency = frequence;
 
 }
 
  std::vector<frame> WimuAcquisition::readSensorDataSecond(BYTE* fileBuf, int start,int freq)
 {
-    std::vector<frame> tmp;
+    std::vector<frame> outputFrame;
     long long time=0;
     for (int i = start; i < start+4; i++)
     {
@@ -280,34 +252,34 @@ WimuAcquisition::WimuAcquisition(std::string filenameAccelero, std::string filen
     time*=1000;
     for (int i = 0; i < freq; i++)
     {
-        frame leFrame;
-        leFrame.timestamp=time+i*(1000/freq);
-        leFrame.x=(fileBuf[start+4+2*i+1]*0x100+fileBuf[start+4+2*i]);
-        leFrame.y=(fileBuf[start+4+2*freq+2*i+1]*0x100+fileBuf[start+4+2*freq+2*i]);
-        leFrame.z=(fileBuf[start+4+4*freq+2*i+1]*0x100+fileBuf[start+4+4*freq+2*i]);
-        tmp.push_back(leFrame);
+        frame partialFrame;
+        partialFrame.timestamp=time+i*(1000/freq);
+        partialFrame.x=(fileBuf[start+4+2*i+1]*0x100+fileBuf[start+4+2*i]);
+        partialFrame.y=(fileBuf[start+4+2*freq+2*i+1]*0x100+fileBuf[start+4+2*freq+2*i]);
+        partialFrame.z=(fileBuf[start+4+4*freq+2*i+1]*0x100+fileBuf[start+4+4*freq+2*i]);
+        outputFrame.push_back(partialFrame);
     }
-    return tmp;
+    return outputFrame;
 }
 std::vector<string_timestamp> WimuAcquisition::getDates() const
 {
 	std::vector<string_timestamp> result;
     long long lastTimestamp = -1;
-    for (int i=0;i<dataAccelerometer.size();i++)
+    for (int i=0;i<m_dataAccelerometer.size();i++)
     {
-        long long t = dataAccelerometer.at(i).timestamp/1000;
+        long long t = m_dataAccelerometer.at(i).timestamp/1000;
 		int day =t/86400;
 		int lastday=lastTimestamp/86400;
 		if(lastTimestamp==-1 || day!=lastday)
         {
-			string_timestamp tmp;
+            string_timestamp s_timestamp;
                         std::time_t _time =(time_t) t;
 			char buffer[32];
 			// Format: Mo, 15.06.2009 20:20:00
-            tmp.timestamp = dataAccelerometer.at(i).timestamp;
+            s_timestamp.timestamp = m_dataAccelerometer.at(i).timestamp;
             std::strftime(buffer, 32, "%F %T", gmtime (&_time));
-			tmp.date = buffer;
-			result.push_back(tmp);
+            s_timestamp.date = buffer;
+            result.push_back(s_timestamp);
         }
         lastTimestamp = t;
     }
@@ -315,12 +287,12 @@ std::vector<string_timestamp> WimuAcquisition::getDates() const
 }
 int WimuAcquisition::getDataSize()
 {
-    return dataAccelerometer.size();
+    return m_dataAccelerometer.size();
 }
  std::vector<frame> WimuAcquisition::getDataAccelerometer(long long start,long long end) const
 {
 	std::vector<frame> result;
-    for (frame _frame : dataAccelerometer)
+    for (frame _frame : m_dataAccelerometer)
 	{
 		if(_frame.timestamp<=end && _frame.timestamp>=start)
 			result.push_back(_frame);

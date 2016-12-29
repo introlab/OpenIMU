@@ -24,9 +24,9 @@ struct string_timestamp{
 class WimuAcquisition : public IJsonSerializable
 {
 private:
-    std::vector<frame> dataAccelerometer;
-    std::vector<frame> dataGyro;
-    std::vector<frame> dataMagneto;
+    std::vector<frame> m_dataAccelerometer;
+    std::vector<frame> m_dataGyro;
+    std::vector<frame> m_dataMagneto;
 
 public:
     WimuAcquisition();
@@ -41,7 +41,7 @@ public:
     void extractGyrometerData();
     void extractMagnetomer();
 
-    std::vector<frame>readSensorDataSecond(BYTE* fileBuf, int start,int freq);
+    std::vector<frame>readSensorDataSecond(BYTE* fileBuf, int start,int m_wimuFrequency);
     long getFileSize(FILE *file);
     void setDataAccelerometer(std::vector<frame> value);
 	int getDataSize();
@@ -51,10 +51,10 @@ public:
 	static string_timestamp maxTime(std::vector<frame> frames);
 	static string_timestamp minTime(std::vector<frame> frames);
 
-    std::string fileAcc;
-    std::string fileGyro;
-    std::string fileMagneto;
-    int freq;
+    std::string m_filepathAcc;
+    std::string m_filepathGyro;
+    std::string m_filepathMagneto;
+    int m_wimuFrequency;
 };
 
 #endif // WIMUACQUISITION_H

@@ -19,10 +19,10 @@ class AlgorithmParametersDialog : public QDialog
         void parametersSetSlot();
 
     private:
-        QVBoxLayout * parametersLayout;
-        QLabel * titleLabel;
-        QPushButton * sendParametersButton;
-        QPushButton * cancelButton;
+        QVBoxLayout * m_parametersLayout;
+        QLabel * m_titleLabel;
+        QPushButton * m_sendParametersButton;
+        QPushButton * m_cancelButton;
         QWidget* m_parent;
         AlgorithmInfo m_algorithmInfo;
 };

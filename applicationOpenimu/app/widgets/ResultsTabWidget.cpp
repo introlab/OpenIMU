@@ -28,7 +28,6 @@ ResultsTabWidget::ResultsTabWidget(QWidget *parent, WimuAcquisition& accData, Re
 
 ResultsTabWidget::~ResultsTabWidget()
 {
-
 }
 
 void ResultsTabWidget::init(AlgorithmOutputInfo output, bool isSaved)
@@ -47,19 +46,17 @@ void ResultsTabWidget::init(AlgorithmOutputInfo output, bool isSaved)
         QVBoxLayout* layoutV = new QVBoxLayout();
         layoutV->addWidget(res);
         this->setLayout(layoutV);
-
-
     }
-    else
+    else if (m_algorithmOutputInfo.m_algorithmName == "Compteur de pas")
     {
-       StepCounterResults * res = new StepCounterResults(this, m_algorithmOutputInfo);
-       if(isSaved)
-       {
-           res->hideButtons();
-       }
-       QVBoxLayout* layoutV = new QVBoxLayout();
-       layoutV->addWidget(res);
-       this->setLayout(layoutV);
+        StepCounterResults * res = new StepCounterResults(this, m_algorithmOutputInfo);
+        if(isSaved)
+        {
+            res->hideButtons();
+        }
+        QVBoxLayout* layoutV = new QVBoxLayout();
+        layoutV->addWidget(res);
+        this->setLayout(layoutV);
 
     }
 }
@@ -67,28 +64,27 @@ void ResultsTabWidget::init(AlgorithmOutputInfo output, bool isSaved)
 
 void ResultsTabWidget::initFilterView(AccDataDisplay* accDataDisplay)
 {
-    layout = new QGridLayout;
-    this->setLayout(layout);
+    m_layout = new QGridLayout;
+    this->setLayout(m_layout);
     accDataDisplay->showSimplfiedDataDisplay();
-    saveResultsToDB = new QPushButton("");
+    m_saveResultsToDB = new QPushButton("");
     QIcon img(":/icons/save as record.png");
-    saveResultsToDB->setIcon(img);
-    saveResultsToDB->setIconSize(QSize(375,35));
-    saveResultsToDB->setFlat(true);
-    saveResultsToDB->setCursor(Qt::PointingHandCursor);
-    saveResultsToDB->setMaximumWidth(375);
-    saveResultsToDB->setStyleSheet("border:none");
-    connect(saveResultsToDB, SIGNAL(clicked()), this, SLOT(exportDataToDBSlot()));
+    m_saveResultsToDB->setIcon(img);
+    m_saveResultsToDB->setIconSize(QSize(375,35));
+    m_saveResultsToDB->setFlat(true);
+    m_saveResultsToDB->setCursor(Qt::PointingHandCursor);
+    m_saveResultsToDB->setMaximumWidth(375);
+    m_saveResultsToDB->setStyleSheet("border:none");
+    connect(m_saveResultsToDB, SIGNAL(clicked()), this, SLOT(exportDataToDBSlot()));
 
-    layout->addWidget(accDataDisplay);
-    layout->addWidget(saveResultsToDB,1,0, Qt::AlignCenter);
+    m_layout->addWidget(accDataDisplay);
+    m_layout->addWidget(m_saveResultsToDB,1,0, Qt::AlignCenter);
 }
 
 void ResultsTabWidget::exportToDBSlot()
 {
     bool playAudio = false;
 
-    // MainWindow -> AlgorithmTab -> ResultsTab
     AlgorithmTab * algorithmTab = (AlgorithmTab*)m_parent;
     MainWindow * mainWindow = (MainWindow*)algorithmTab->getMainWindow();
 
@@ -141,13 +137,11 @@ void ResultsTabWidget::exportToDBSlot()
     delete resultsNameInputDialog;
     mainWindow->stopSpinner(playAudio);
     mainWindow->setStatusBarText(statusMessage, status);
-    //mainWindow->refreshRecordListWidget();
 }
 
 void ResultsTabWidget::exportDataToDBSlot()
 {  
     bool playAudio = false;
-    // MainWindow -> AlgorithmTab -> ResultsTab
     AlgorithmTab * algorithmTab = (AlgorithmTab*)m_parent;
     MainWindow * mainWindow = (MainWindow*)algorithmTab->getMainWindow();
 
@@ -182,8 +176,8 @@ void ResultsTabWidget::exportDataToDBSlot()
         std::string output;
         CJsonSerializer::Serialize(m_accData, newInfo, output);
         m_databaseAccess = new DbBlock();
-        QString temp = QString::fromStdString(output);//TODO remove
-        bool result = m_databaseAccess->addRecordInDB(temp);
+        QString outputString = QString::fromStdString(output);
+        bool result = m_databaseAccess->addRecordInDB(outputString);
 
         if(!result)
         {
@@ -204,7 +198,6 @@ void ResultsTabWidget::exportDataToDBSlot()
 
 void ResultsTabWidget::exportToPdfSlot()
 {
-    // MainWindow -> AlgorithmTab -> ResultsTab
     AlgorithmTab * algorithmTab = (AlgorithmTab*)m_parent;
     MainWindow * mainWindow = (MainWindow*)algorithmTab->getMainWindow();
     mainWindow->setStatusBarText(tr("Enregistrement des résultats sous forme de fichier PDF en cours..."));
@@ -216,7 +209,6 @@ void ResultsTabWidget::exportToPdfSlot()
     QString filename = QFileDialog::getSaveFileName(this,tr("Save Document"), QDir::currentPath(),tr("PDF (*.pdf)"));
     if( !filename.isNull() )
     {
-
         PDFGenerator pdfGen(filename);
         int offset = 800;
         int lineHeight = 400;
@@ -232,15 +224,6 @@ void ResultsTabWidget::exportToPdfSlot()
         pdfGen.drawText(200,13.4*lineHeight + offset,Qt::AlignVCenter,"Algorithme appliqué: " + QString::fromStdString(m_algorithmOutputInfo.m_algorithmName));
         pdfGen.drawText(200,14.4*lineHeight + offset,Qt::AlignVCenter,"Valeur obtenue: " +QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_value)));
         pdfGen.drawText(200,15.4*lineHeight + offset,Qt::AlignVCenter,"Temps de calculs: " +QString::fromStdString(std::to_string(m_algorithmOutputInfo.m_executionTime)));
-
-       /* QPixmap pix = chartView->grab();
-        int h = painter.window().height()*0.4;
-        int w = h * 1.1;
-        int x = (painter.window().width() / 2) - (w/2);
-        int y = (painter.window().height() / 2) - (h/2);
-        painter.drawPixmap(x, y, w, h, pix);
-
-        painter.end();*/
 
         statusMessage = "Enregistrement du PDF réussi";
         status = MessageStatus::success;

@@ -12,6 +12,7 @@
 #include <QtConcurrent/QtConcurrentRun>
 #include <QByteArray>
 #include "widgets/RecordViewWidget.h"
+#include <QFileDialog>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -110,7 +111,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     vlayout->addWidget(backLine);
     vlayout->addWidget(deleteRecord);
     vlayout->addWidget(backLineDelete);
-    mainWidget->mainLayout->addLayout(vlayout);
+    mainWidget->m_mainLayout->addLayout(vlayout);
 
     listWidget->setMaximumWidth(150);
     tabWidget->setTabsClosable(true);
@@ -121,7 +122,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     tabWidget->setFont(fontTabWidget);
     tabWidget->grabGesture(Qt::PanGesture);
     tabWidget->grabGesture(Qt::PinchGesture);
-    mainWidget->mainLayout->addWidget(tabWidget);
+    mainWidget->m_mainLayout->addWidget(tabWidget);
 
     setCentralWidget(mainWidget);
     setStatusBarText(tr("Prêt"));
@@ -178,7 +179,6 @@ void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
                 msgBox.setButtonText(QMessageBox::Yes, "Oui");
                 msgBox.setButtonText(QMessageBox::No, "Non");
 
-
                 if (msgBox.exec() == QMessageBox::Yes) {
                   deleteRecordFromUUID(selectedRecord.m_recordId);
                   refreshRecordListWidget();
@@ -189,7 +189,6 @@ void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
                RecordViewWidget* recordTab = new RecordViewWidget(this,wimuAcquisition,selectedRecord);
                addTab(recordTab,selectedRecord.m_recordName);
             }
-
             isRecord = true;
         }        
     }
@@ -203,7 +202,6 @@ void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
             {
                 ResultsTabWidget* resultTab = new ResultsTabWidget(this,savedResults.m_algorithmOutputList.at(i),true);
                 addTab(resultTab,savedResults.m_algorithmOutputList.at(i).m_resultName);
-
             }
         }
     }
@@ -294,6 +292,25 @@ void MainWindow::openHomeTab()
 {
     homeWidget = new HomeWidget(this);
     addTab(homeWidget,"Accueil");
+}
+
+void MainWindow::addAlgo()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,
+        "Sélectionner un script", QStandardPaths::displayName(QStandardPaths::DocumentsLocation), "Fichier de script (*.py)");
+
+    QString destFile = "../PythonAPI/lib/algos/" + fileName.split("/").last();
+
+    bool copySucessful = QFile::copy(fileName, destFile);
+
+    if(copySucessful)
+    {
+        setStatusBarText("L'ajout s'est déroulé avec succès");
+    }
+    else
+    {
+        setStatusBarText("Une erreur s'est produite. (Le fichier existe déjà?)");
+    }
 }
 
 bool MainWindow::getRecordsFromDB()
@@ -533,7 +550,6 @@ bool MainWindow::renameRecordFromUUID(std::string uuid, std::string newname)
     request.setRawHeader("Content-Type", "application/json");
     request.setRawHeader("Content-Length", postDataSize);
 
-
     QNetworkAccessManager *manager = new QNetworkAccessManager();
     QNetworkReply *reply = manager->post(request, dataByteArray);
 
@@ -579,8 +595,6 @@ bool MainWindow::deleteRecordFromList()
     msgBox.setDefaultButton(QMessageBox::Cancel);
     int ret = msgBox.exec();
 
-    //StatusBar messages set in DeleteRecordFromUUID() and getRecordsFromDB(),
-    //We dont need to to print other messages here.
     switch (ret) {
       case QMessageBox::Ok:
         deleteRecordFromUUID(selectedRecord.m_recordId);

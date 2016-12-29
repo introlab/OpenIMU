@@ -19,7 +19,7 @@ public:
     AccDataDisplay* getAccDataDisplay();
     void prepareDisplay(WimuAcquisition acceleroData, RecordInfo recordInfo);
 private:
-    Ui::FullGraphDialog *ui;
+    Ui::FullGraphDialog *m_ui;
     AccDataDisplay* m_dataDisplay;
 };
 

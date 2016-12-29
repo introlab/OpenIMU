@@ -18,7 +18,7 @@ public:
     explicit HomeWidget(QWidget *parent = 0);
     ~HomeWidget();
 
-    Ui::HomeWidget *ui;
+    Ui::HomeWidget *m_ui;
     QWidget* m_parent;
 
 public slots:

@@ -39,28 +39,28 @@ public slots:
 
 private:
 
-    QVBoxLayout * algorithmTabLayout;
+    QVBoxLayout * m_algorithmTabLayout;
 
     // -- Algorithm List Section
-    QLabel * algorithmLabel;
-    QTableWidget * algorithmTableWidget;
-    QStringList algorithmTableHeaders;
-    QGroupBox * algorithmListGroupBox;
-    QVBoxLayout * algorithmListLayout;
+    QLabel * m_algorithmLabel;
+    QTableWidget * m_algorithmTableWidget;
+    QStringList m_algorithmTableHeaders;
+    QGroupBox * m_algorithmListGroupBox;
+    QVBoxLayout * m_algorithmListLayout;
 
     // -- Spacer Section
-    QGroupBox * spacerGroupBox;
+    QGroupBox * m_spacerGroupBox;
 
     // -- Parameter Section
-    AlgorithmDetailedView * algorithmParameters;
+    AlgorithmDetailedView * m_algorithmParameters;
 
 
     // -- Result Section
-    QPushButton * applyAlgorithm;
+    QPushButton * m_applyAlgorithm;
     QWidget* m_parent;
 
     std::string m_uuid;
-    int selectedIndexRow;
+    int m_selectedIndexRow;
     AlgorithmInfoSerializer m_algorithmSerializer;
     AlgorithmOutputInfoSerializer m_algorithmOutputSerializer;
     AlgorithmInfo m_selectedAlgorithm;
