@@ -314,6 +314,9 @@ void RecordsDialog::reponseRecue(QNetworkReply* reply)
     else
     {
         std::string strJson = reply->readAll().toStdString();
+
+        qDebug() << strJson.c_str();
+
         Json::Value root;
         Json::Reader reader;
         bool parsingSuccessful = reader.parse( strJson.c_str(), root );     //parse process
