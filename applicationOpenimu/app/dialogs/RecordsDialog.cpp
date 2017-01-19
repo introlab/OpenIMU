@@ -299,7 +299,7 @@ void RecordsDialog::reponseRecue(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError)
     {
-        std::string strJson = reply->readAll();
+        std::string strJson = reply->readAll().toStdString();
         Json::Value root;
         Json::Reader reader;
         bool parsingSuccessful = reader.parse( strJson.c_str(), root );     //parse process
@@ -313,7 +313,7 @@ void RecordsDialog::reponseRecue(QNetworkReply* reply)
     }
     else
     {
-        std::string strJson = reply->readAll();
+        std::string strJson = reply->readAll().toStdString();
         Json::Value root;
         Json::Reader reader;
         bool parsingSuccessful = reader.parse( strJson.c_str(), root );     //parse process

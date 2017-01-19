@@ -21,7 +21,7 @@ std::vector<QString> DbBlock::getDaysInDB()
     return listSavedDays;
 }
 
-bool DbBlock::addRecordInDB(QString& json)
+bool DbBlock::addRecordInDB(const QString &json)
 {
     QNetworkAccessManager *manager = new QNetworkAccessManager();
     QByteArray dataByteArray (json.toStdString().c_str(),json.toStdString().length());                                                                                                                  //Your webservice URL
@@ -50,7 +50,7 @@ bool DbBlock::addRecordInDB(QString& json)
     return true;
 }
 
-bool DbBlock::addResultsInDB(QString& json)
+bool DbBlock::addResultsInDB(const QString& json)
 {
     QNetworkAccessManager *manager = new QNetworkAccessManager();
     QByteArray dataByteArray (json.toStdString().c_str(),json.toStdString().length());                                                                                                                  //Your webservice URL

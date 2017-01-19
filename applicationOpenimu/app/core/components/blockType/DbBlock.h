@@ -16,8 +16,8 @@ class DbBlock : public QObject
         DbBlock();
         ~DbBlock();
         std::vector<QString> getDaysInDB();
-        bool addRecordInDB(QString& json);
-        bool addResultsInDB(QString& json);
+        bool addRecordInDB(const QString& json);
+        bool addResultsInDB(const QString &json);
 
 public slots:
         void reponseRecue(QNetworkReply* reply);
