@@ -67,31 +67,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../app/AccDataDisplay.ui" line="148"/>
-        <location filename="../app/AccDataDisplay.cpp" line="291"/>
+        <location filename="../app/AccdataDisplay.cpp" line="289"/>
         <source>Axe Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AccDataDisplay.ui" line="161"/>
-        <location filename="../app/AccDataDisplay.cpp" line="285"/>
+        <location filename="../app/AccdataDisplay.cpp" line="283"/>
         <source>Axe X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AccDataDisplay.ui" line="174"/>
-        <location filename="../app/AccDataDisplay.cpp" line="297"/>
+        <location filename="../app/AccdataDisplay.cpp" line="295"/>
         <source>Axe Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AccDataDisplay.ui" line="187"/>
-        <location filename="../app/AccDataDisplay.cpp" line="310"/>
+        <location filename="../app/AccdataDisplay.cpp" line="308"/>
         <source>Moyenne mobile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AccDataDisplay.ui" line="200"/>
-        <location filename="../app/AccDataDisplay.cpp" line="301"/>
+        <location filename="../app/AccdataDisplay.cpp" line="299"/>
         <source>Norme</source>
         <translation type="unfinished"></translation>
     </message>
@@ -126,7 +126,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.cpp" line="32"/>
+        <location filename="../app/AccdataDisplay.cpp" line="32"/>
         <source>Données accéléromètre (en ms)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -241,23 +241,66 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AlgorithmTab</name>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="35"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="32"/>
         <source>Tableau des algorithmes disponibles</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="133"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="130"/>
         <source>Avertissement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="240"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="237"/>
         <source>L&apos;algorithme a été appliqué avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/AlgorithmTab.cpp" line="246"/>
+        <location filename="../app/widgets/AlgorithmTab.cpp" line="243"/>
         <source>Échec de l&apos;application de l&apos;algorithme</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ApplicationMenuBar</name>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="23"/>
+        <source>&amp;Fichier</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="25"/>
+        <source>&amp;Ajouter Enregistrement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="28"/>
+        <source>&amp;Charger Enregistrement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="31"/>
+        <source>&amp;Quitter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="41"/>
+        <source>&amp;Ajouter algorithme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="46"/>
+        <source>&amp;À propos</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="48"/>
+        <source>&amp;OpenIMU</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/widgets/ApplicationMenuBar.cpp" line="53"/>
+        <source>&amp;Utilisation</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -367,57 +410,57 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>HomeWidget</name>
     <message>
-        <location filename="../app/widgets/HomeWidget.ui" line="20"/>
+        <location filename="../app/widgets/homewidget.ui" line="20"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/HomeWidget.ui" line="90"/>
+        <location filename="../app/widgets/homewidget.ui" line="90"/>
         <source>OpenIMU, logiciel de visualisation et d&apos;analyse pour centrale inertielle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/HomeWidget.ui" line="135"/>
+        <location filename="../app/widgets/homewidget.ui" line="135"/>
         <source>Fonctionnalités:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/HomeWidget.ui" line="158"/>
+        <location filename="../app/widgets/homewidget.ui" line="158"/>
         <source> - Acquisition des données brutes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/HomeWidget.ui" line="176"/>
+        <location filename="../app/widgets/homewidget.ui" line="176"/>
         <source> - Sauvegarde en base de données MongoDB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/HomeWidget.ui" line="198"/>
+        <location filename="../app/widgets/homewidget.ui" line="198"/>
         <source> - Traitement des données brutes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/HomeWidget.ui" line="216"/>
+        <location filename="../app/widgets/homewidget.ui" line="216"/>
         <source> - Application d&apos;algorithmes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/HomeWidget.ui" line="238"/>
+        <location filename="../app/widgets/homewidget.ui" line="238"/>
         <source> - Présentation des données et des résultats</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/HomeWidget.ui" line="250"/>
+        <location filename="../app/widgets/homewidget.ui" line="250"/>
         <source>- Sauvegarde de rapport d&apos;analyse au format PDF</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/HomeWidget.ui" line="289"/>
+        <location filename="../app/widgets/homewidget.ui" line="289"/>
         <source>Notes de version:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/HomeWidget.ui" line="337"/>
+        <location filename="../app/widgets/homewidget.ui" line="337"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -459,17 +502,17 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/HomeWidget.ui" line="405"/>
+        <location filename="../app/widgets/homewidget.ui" line="405"/>
         <source>Ouvrir la page github du projet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/HomeWidget.ui" line="431"/>
+        <location filename="../app/widgets/homewidget.ui" line="431"/>
         <source> https://github.com/introlab/OpenIMU</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/HomeWidget.ui" line="467"/>
+        <location filename="../app/widgets/homewidget.ui" line="467"/>
         <source>Version: Release 2.3</source>
         <translation type="unfinished"></translation>
     </message>
@@ -708,14 +751,14 @@ p, li { white-space: pre-wrap; }
     <name>MainWindow</name>
     <message>
         <location filename="../app/MainWindow.cpp" line="119"/>
-        <location filename="../app/MainWindow.cpp" line="662"/>
+        <location filename="../app/MainWindow.cpp" line="656"/>
         <source>Accueil</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/MainWindow.cpp" line="128"/>
-        <location filename="../app/MainWindow.cpp" line="212"/>
-        <location filename="../app/MainWindow.cpp" line="684"/>
+        <location filename="../app/MainWindow.cpp" line="209"/>
+        <location filename="../app/MainWindow.cpp" line="678"/>
         <source>Prêt</source>
         <translation type="unfinished"></translation>
     </message>
@@ -730,27 +773,27 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="200"/>
+        <location filename="../app/MainWindow.cpp" line="198"/>
         <source>Chargement du résultat...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="623"/>
+        <location filename="../app/MainWindow.cpp" line="617"/>
         <source>Enregistrement effacé avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="627"/>
+        <location filename="../app/MainWindow.cpp" line="621"/>
         <source>Échec de la suppression de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="635"/>
+        <location filename="../app/MainWindow.cpp" line="629"/>
         <source>Enregistrement renommé avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="639"/>
+        <location filename="../app/MainWindow.cpp" line="633"/>
         <source>Échec du changement de nom de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
@@ -965,23 +1008,23 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ResultsTabWidget</name>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="105"/>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="164"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="94"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="151"/>
         <source>Insertion des résultats dans la base de données en cours...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="217"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="203"/>
         <source>Enregistrement des résultats sous forme de fichier PDF en cours...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="223"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="209"/>
         <source>Save Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="223"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="209"/>
         <source>PDF (*.pdf)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -989,73 +1032,73 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>StepCounterResults</name>
     <message>
-        <location filename="../app/widgets/StepCounterResults.ui" line="21"/>
+        <location filename="../app/widgets/stepcounterresults.ui" line="21"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/StepCounterResults.ui" line="40"/>
+        <location filename="../app/widgets/stepcounterresults.ui" line="40"/>
         <source>Résultat d&apos;algorithme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/StepCounterResults.ui" line="80"/>
+        <location filename="../app/widgets/stepcounterresults.ui" line="80"/>
         <source>Données utilisées:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/StepCounterResults.ui" line="101"/>
+        <location filename="../app/widgets/stepcounterresults.ui" line="101"/>
         <source>Type de centralle inertielle:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/StepCounterResults.ui" line="114"/>
-        <location filename="../app/widgets/StepCounterResults.ui" line="154"/>
-        <location filename="../app/widgets/StepCounterResults.ui" line="190"/>
-        <location filename="../app/widgets/StepCounterResults.ui" line="253"/>
-        <location filename="../app/widgets/StepCounterResults.ui" line="291"/>
-        <location filename="../app/widgets/StepCounterResults.ui" line="329"/>
-        <location filename="../app/widgets/StepCounterResults.ui" line="427"/>
+        <location filename="../app/widgets/stepcounterresults.ui" line="114"/>
+        <location filename="../app/widgets/stepcounterresults.ui" line="154"/>
+        <location filename="../app/widgets/stepcounterresults.ui" line="190"/>
+        <location filename="../app/widgets/stepcounterresults.ui" line="253"/>
+        <location filename="../app/widgets/stepcounterresults.ui" line="291"/>
+        <location filename="../app/widgets/stepcounterresults.ui" line="329"/>
+        <location filename="../app/widgets/stepcounterresults.ui" line="427"/>
         <source>TextLabel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/StepCounterResults.ui" line="141"/>
+        <location filename="../app/widgets/stepcounterresults.ui" line="141"/>
         <source>Enregistrement utilisé:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/StepCounterResults.ui" line="177"/>
+        <location filename="../app/widgets/stepcounterresults.ui" line="177"/>
         <source>Position du IMU:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/StepCounterResults.ui" line="220"/>
+        <location filename="../app/widgets/stepcounterresults.ui" line="220"/>
         <source>Algorithme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/StepCounterResults.ui" line="246"/>
+        <location filename="../app/widgets/stepcounterresults.ui" line="246"/>
         <source>Algorithme appliqué:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/StepCounterResults.ui" line="278"/>
+        <location filename="../app/widgets/stepcounterresults.ui" line="278"/>
         <source>Temps de calculs:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/StepCounterResults.ui" line="316"/>
+        <location filename="../app/widgets/stepcounterresults.ui" line="316"/>
         <source>Date d&apos;application de l&apos;algorithme:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/StepCounterResults.ui" line="375"/>
+        <location filename="../app/widgets/stepcounterresults.ui" line="375"/>
         <source>Résultats:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/StepCounterResults.ui" line="420"/>
+        <location filename="../app/widgets/stepcounterresults.ui" line="420"/>
         <source>Nombre de pas réalisés sur l&apos;intervalle de temps:</source>
         <translation type="unfinished"></translation>
     </message>

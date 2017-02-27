@@ -16,7 +16,7 @@ public:
     void close();
 private:
     //OPERATOR and stuff
-    Logger& operator= (const Logger&){}
+    Logger& operator= (const Logger&){ return *this;}
     Logger (const Logger&){}
 
     // Instance

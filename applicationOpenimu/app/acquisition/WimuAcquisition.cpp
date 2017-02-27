@@ -164,61 +164,84 @@ void WimuAcquisition::clearData()
 void WimuAcquisition::extractAcceleroData()
 {
     BYTE *fileBuf;			// Pointer to our buffered data
-    FILE *file = NULL;		// File pointer
 
-    // Get the size of the file in bytes
-    long fileSize = getFileSize(file);
+    //FILE *file = NULL;		// File pointer
+    FILE *file = fopen(m_filepathAcc.c_str(),"r");
 
-    // Allocate space in the buffer for the whole file
-    fileBuf = new BYTE[fileSize];
-
-    // Read the file in to the buffer
-    fread(fileBuf, fileSize, 1, file);
-    int numberOfSecondsInFile = fileSize/304;
-    for(int i=0; i< numberOfSecondsInFile ; i++)
+    if (file)
     {
-        std::vector<frame> buffer=readSensorDataSecond(fileBuf,i*304,m_wimuFrequency);
-        m_dataAccelerometer.insert(m_dataAccelerometer.end(), buffer.begin(), buffer.end());
+
+        // Get the size of the file in bytes
+        long fileSize = getFileSize(file);
+
+        // Allocate space in the buffer for the whole file
+        fileBuf = new BYTE[fileSize];
+
+        // Read the file in to the buffer
+        fread(fileBuf, fileSize, 1, file);
+        int numberOfSecondsInFile = fileSize/304;
+        for(int i=0; i< numberOfSecondsInFile ; i++)
+        {
+            std::vector<frame> buffer=readSensorDataSecond(fileBuf,i*304,m_wimuFrequency);
+            m_dataAccelerometer.insert(m_dataAccelerometer.end(), buffer.begin(), buffer.end());
+        }
+
+
+        fclose(file);
     }
+
 }
 
 void WimuAcquisition::extractGyrometerData()
 {
     BYTE *fileBuf;			// Pointer to our buffered data
-    FILE *file = NULL;		// File pointer
+    //FILE *file = NULL;		// File pointer
     // Get the size of the file in bytes
-    long fileSize = getFileSize(file);
-
-    // Allocate space in the buffer for the whole file
-    fileBuf = new BYTE[fileSize];
-
-    // Read the file in to the buffer
-    fread(fileBuf, fileSize, 1, file);
-    int numberOfSecondsInFile = fileSize/304;
-    for(int i=0; i< numberOfSecondsInFile ; i++)
+    FILE *file = fopen(m_filepathGyro.c_str(),"r");
+    if (file)
     {
-        std::vector<frame> buffer=readSensorDataSecond(fileBuf,i*304,m_wimuFrequency);
-        m_dataGyro.insert(m_dataGyro.end(), buffer.begin(), buffer.end());
+        long fileSize = getFileSize(file);
+
+        // Allocate space in the buffer for the whole file
+        fileBuf = new BYTE[fileSize];
+
+        // Read the file in to the buffer
+        fread(fileBuf, fileSize, 1, file);
+        int numberOfSecondsInFile = fileSize/304;
+        for(int i=0; i< numberOfSecondsInFile ; i++)
+        {
+            std::vector<frame> buffer=readSensorDataSecond(fileBuf,i*304,m_wimuFrequency);
+            m_dataGyro.insert(m_dataGyro.end(), buffer.begin(), buffer.end());
+        }
+
+        fclose(file);
     }
 }
 
 void WimuAcquisition::extractMagnetomer()
 {
     BYTE *fileBuf;			// Pointer to our buffered data
-    FILE *file = NULL;		// File pointer
+    //FILE *file = NULL;		// File pointer
     // Get the size of the file in bytes
-    long fileSize = getFileSize(file);
 
-    // Allocate space in the buffer for the whole file
-    fileBuf = new BYTE[fileSize];
+    FILE *file = fopen(m_filepathMagneto.c_str(),"r");
 
-    // Read the file in to the buffer
-    fread(fileBuf, fileSize, 1, file);
-    int numberOfSecondsInFile = fileSize/304;
-    for(int i=0; i< numberOfSecondsInFile ; i++)
+    if (file)
     {
-        std::vector<frame> buffer=readSensorDataSecond(fileBuf,i*304,m_wimuFrequency);
-        m_dataMagneto.insert(m_dataMagneto.end(), buffer.begin(), buffer.end());
+        long fileSize = getFileSize(file);
+
+        // Allocate space in the buffer for the whole file
+        fileBuf = new BYTE[fileSize];
+
+        // Read the file in to the buffer
+        fread(fileBuf, fileSize, 1, file);
+        int numberOfSecondsInFile = fileSize/304;
+        for(int i=0; i< numberOfSecondsInFile ; i++)
+        {
+            std::vector<frame> buffer=readSensorDataSecond(fileBuf,i*304,m_wimuFrequency);
+            m_dataMagneto.insert(m_dataMagneto.end(), buffer.begin(), buffer.end());
+        }
+        fclose(file);
     }
 }
 
@@ -233,6 +256,9 @@ long WimuAcquisition::getFileSize(FILE *file)
 }
 WimuAcquisition::WimuAcquisition(std::string filenameAccelero, std::string filenameGyro,std::string filenameMagneto, int frequence)
 {
+
+    qDebug() <<  "WimuAcquisition with files " << filenameAccelero.c_str() <<" " << filenameGyro.c_str() << " " << filenameMagneto.c_str();
+
     this->m_filepathAcc = filenameAccelero;
     this->m_filepathGyro = filenameGyro;
     this->m_filepathMagneto = filenameMagneto;
