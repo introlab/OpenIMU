@@ -394,6 +394,26 @@ void MainWindow::addAlgo()
     }
 }
 
+void MainWindow::launchApi(){
+    qDebug() << "Launching python API";
+    QProcess* p = new QProcess();
+
+    //TODO get the result of the python script (stdout, stderr)
+#ifdef __APPLE__
+    qDebug() << "ApplicationDirPath:" << QApplication::applicationDirPath();
+    p->setWorkingDirectory(QApplication::applicationDirPath() + "/PythonAPI/src");
+    p->start("python", QStringList() << "tornado_wsgi.py");
+    connect(p,SIGNAL(finished(int)),p,SLOT(deleteLater()));
+
+#else
+    p->start("cmd.exe", QStringList() << "/c" << "..\\PythonAPI\\src\\runapi.bat");
+    p->waitForFinished(500);
+    p->deleteLater();
+#endif
+
+    qDebug() << "PythonAPI backend started.";
+}
+
 bool MainWindow::getRecordsFromDB()
 {
     startSpinner();

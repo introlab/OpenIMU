@@ -87,13 +87,7 @@ class MainWindow : public QMainWindow
         void addAlgo();
 
         //Launch the python api
-        static void launchApi(){
-            qDebug() << "Launching python API";
-            QProcess* p = new QProcess();
-            p->start("cmd.exe", QStringList() << "/c" << "..\\PythonAPI\\src\\runapi.bat");
-            p->waitForFinished(500);
-            p->deleteLater();
-        }
+        static void launchApi();
 
     private:
 

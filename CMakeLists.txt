@@ -53,6 +53,8 @@ SET (LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 SET(CMAKE_VERBOSE_MAKEFILE ON)
 
 add_subdirectory(applicationOpenimu)
+add_subdirectory(PythonAPI)
+add_subdirectory(package)
 #add_subdirectory(unitTests)
 #add_subdirectory(benchmarks)
 
