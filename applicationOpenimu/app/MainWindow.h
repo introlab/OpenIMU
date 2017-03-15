@@ -40,6 +40,7 @@ class MainWindow : public QMainWindow
 
     public slots:
 
+        void displayDebugMessage(const QString &message);
         void refreshRecordListWidget();
         void openRecordDialog();
         void closeTab(int);
@@ -87,6 +88,7 @@ class MainWindow : public QMainWindow
 
         //Launch the python api
         static void launchApi(){
+            qDebug() << "Launching python API";
             QProcess* p = new QProcess();
             p->start("cmd.exe", QStringList() << "/c" << "..\\PythonAPI\\src\\runapi.bat");
             p->waitForFinished(500);
@@ -104,7 +106,7 @@ class MainWindow : public QMainWindow
         myTreeWidget  * listWidget;
         AboutDialog *aboutDialog;
         HelpDialog *helpDialog;
-        DbBlock * databaseAccess = new DbBlock;
+        DbBlock * databaseAccess;
         RecordsDialog * rDialog;
         WimuRecord record;
         AlgorithmOutputInfoSerializer savedResults;
@@ -113,6 +115,7 @@ class MainWindow : public QMainWindow
         QLabel* spinnerStatusBar;
         QMovie* movieSpinnerBar;
         HomeWidget * homeWidget;
+        QTextEdit *m_debugTextEdit;
 };
 
 #endif // MAINWINDOW_H

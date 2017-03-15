@@ -415,52 +415,52 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/homewidget.ui" line="90"/>
+        <location filename="../app/widgets/homewidget.ui" line="89"/>
         <source>OpenIMU, logiciel de visualisation et d&apos;analyse pour centrale inertielle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/homewidget.ui" line="135"/>
+        <location filename="../app/widgets/homewidget.ui" line="134"/>
         <source>Fonctionnalités:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/homewidget.ui" line="158"/>
+        <location filename="../app/widgets/homewidget.ui" line="157"/>
         <source> - Acquisition des données brutes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/homewidget.ui" line="176"/>
+        <location filename="../app/widgets/homewidget.ui" line="175"/>
         <source> - Sauvegarde en base de données MongoDB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/homewidget.ui" line="198"/>
+        <location filename="../app/widgets/homewidget.ui" line="197"/>
         <source> - Traitement des données brutes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/homewidget.ui" line="216"/>
+        <location filename="../app/widgets/homewidget.ui" line="215"/>
         <source> - Application d&apos;algorithmes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/homewidget.ui" line="238"/>
+        <location filename="../app/widgets/homewidget.ui" line="237"/>
         <source> - Présentation des données et des résultats</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/homewidget.ui" line="250"/>
+        <location filename="../app/widgets/homewidget.ui" line="249"/>
         <source>- Sauvegarde de rapport d&apos;analyse au format PDF</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/homewidget.ui" line="289"/>
+        <location filename="../app/widgets/homewidget.ui" line="288"/>
         <source>Notes de version:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/homewidget.ui" line="337"/>
+        <location filename="../app/widgets/homewidget.ui" line="336"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -502,17 +502,17 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/homewidget.ui" line="405"/>
+        <location filename="../app/widgets/homewidget.ui" line="404"/>
         <source>Ouvrir la page github du projet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/homewidget.ui" line="431"/>
+        <location filename="../app/widgets/homewidget.ui" line="430"/>
         <source> https://github.com/introlab/OpenIMU</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/homewidget.ui" line="467"/>
+        <location filename="../app/widgets/homewidget.ui" line="466"/>
         <source>Version: Release 2.3</source>
         <translation type="unfinished"></translation>
     </message>
@@ -750,50 +750,55 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../app/MainWindow.cpp" line="119"/>
-        <location filename="../app/MainWindow.cpp" line="656"/>
+        <location filename="../app/MainWindow.cpp" line="187"/>
+        <location filename="../app/MainWindow.cpp" line="737"/>
         <source>Accueil</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="128"/>
-        <location filename="../app/MainWindow.cpp" line="209"/>
-        <location filename="../app/MainWindow.cpp" line="678"/>
+        <location filename="../app/MainWindow.cpp" line="195"/>
+        <source>Debug</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="201"/>
+        <location filename="../app/MainWindow.cpp" line="285"/>
+        <location filename="../app/MainWindow.cpp" line="759"/>
         <source>Prêt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="158"/>
+        <location filename="../app/MainWindow.cpp" line="234"/>
         <source>Chargement de l&apos;enregistrement...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="175"/>
+        <location filename="../app/MainWindow.cpp" line="251"/>
         <source>Avertissement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="198"/>
+        <location filename="../app/MainWindow.cpp" line="274"/>
         <source>Chargement du résultat...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="617"/>
+        <location filename="../app/MainWindow.cpp" line="698"/>
         <source>Enregistrement effacé avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="621"/>
+        <location filename="../app/MainWindow.cpp" line="702"/>
         <source>Échec de la suppression de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="629"/>
+        <location filename="../app/MainWindow.cpp" line="710"/>
         <source>Enregistrement renommé avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="633"/>
+        <location filename="../app/MainWindow.cpp" line="714"/>
         <source>Échec du changement de nom de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
@@ -801,77 +806,77 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QWidget</name>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="25"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="26"/>
         <source>Enregistrements</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="36"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="37"/>
         <source>Dossier séléctionné:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="38"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="39"/>
         <source>Centrale inertielle:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="41"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="42"/>
         <source>WimU</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="42"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="43"/>
         <source>Deslys trigno</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="43"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="44"/>
         <source>XSens</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="44"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="45"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="49"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="50"/>
         <source>Poignet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="50"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="51"/>
         <source>Hanche</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="51"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="52"/>
         <source>Cheville</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="52"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="53"/>
         <source>Genoux</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="53"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="54"/>
         <source>Coude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="54"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="55"/>
         <source>Tête</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="55"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="56"/>
         <source>Cou</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="60"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="61"/>
         <source>Wimu_2016_10_18_PatientX</source>
         <translation type="unfinished"></translation>
     </message>
@@ -952,55 +957,55 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RecordsDialog</name>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="46"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="47"/>
         <source>Position: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="57"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="58"/>
         <source>Nom de l&apos;enregistrement*:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="62"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="63"/>
         <source>Détails de l&apos;enregistrement: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="117"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="118"/>
         <source>Sélectionner dossier</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="120"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="121"/>
         <source>Dossier séléctionné: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="123"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="124"/>
         <source> Aucun dossier séléctionné </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="190"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="191"/>
         <source>Insertion de l&apos;enregistrement dans la base de données en cours...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="212"/>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="226"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="213"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="227"/>
         <source>Avertissement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="239"/>
         <location filename="../app/dialogs/RecordsDialog.cpp" line="240"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="241"/>
         <source>L&apos;enregistrement </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/dialogs/RecordsDialog.cpp" line="239"/>
         <location filename="../app/dialogs/RecordsDialog.cpp" line="240"/>
+        <location filename="../app/dialogs/RecordsDialog.cpp" line="241"/>
         <source> à été ajouté avec succès</source>
         <translation type="unfinished"></translation>
     </message>

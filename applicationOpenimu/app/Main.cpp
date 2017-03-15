@@ -16,9 +16,9 @@ int main(int argc, char *argv[])
     }
 
     //specify a new font.
-    QFont newFont("Helvetica",9, QFont::Light, false);
+    //QFont newFont("Helvetica",9, QFont::Light, false);
     //set font of application
-    QApplication::setFont(newFont);
+    //QApplication::setFont(newFont);
 
     MainWindow *window = new MainWindow();
     window->show();

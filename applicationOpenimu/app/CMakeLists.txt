@@ -72,11 +72,46 @@ QT5_WRAP_UI(moc_uis ${uis})
 #This will generate moc_* for Qt
 QT5_WRAP_CPP(moc_srcs ${headers})
 
+IF(APPLE)
+    # use, i.e. don't skip the full RPATH for the build tree
+    SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 
-#Application
-add_executable(applicationOpenimu Main.cpp ${srcs} ${headers} ${moc_srcs} ${moc_uis} ${srcs_qrc} ${qml} ${qm_files})
-qt5_use_modules(applicationOpenimu Sql Core Network Xml XmlPatterns Gui Widgets Quick Charts QuickControls2 LinguistTools Multimedia)
-TARGET_LINK_LIBRARIES(applicationOpenimu)
+    # when building, don't use the install RPATH already
+    # (but later on when installing)
+    SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+
+    #Rpath needs to be modified to include frameworks
+    set (CMAKE_INSTALL_RPATH "@executable_path/../Frameworks")
+
+    #Application
+    add_executable(applicationOpenimu MACOSX_BUNDLE Main.cpp ${srcs} ${headers} ${moc_srcs} ${moc_uis} ${srcs_qrc} ${qml} ${qm_files})
+    qt5_use_modules(applicationOpenimu Sql Core Network Xml XmlPatterns Gui Widgets Quick Charts QuickControls2 LinguistTools Multimedia)
+
+
+    #Make framework directory
+    set(FRAMEWORK_PATH "${EXECUTABLE_OUTPUT_PATH}/applicationOpenimu.app/Contents/Frameworks")
+    file(MAKE_DIRECTORY ${FRAMEWORK_PATH})
+
+    #Copy all frameworks from QT_INSTALL_LIBS directory!
+    #Use Qt executable to query path
+    EXEC_PROGRAM(${QT_QMAKE_EXECUTABLE} ARGS "-query QT_INSTALL_LIBS" OUTPUT_VARIABLE QTLIBS)
+
+    file(GLOB QT_FRAMEWORKS "${QTLIBS}/*.Framework")
+
+    foreach(framework ${QT_FRAMEWORKS})
+        message(STATUS "Copying ${framework}")
+        file(COPY ${framework} DESTINATION ${FRAMEWORK_PATH})
+    endforeach(framework)
+
+ELSE(APPLE)
+
+    #Application
+    add_executable(applicationOpenimu Main.cpp ${srcs} ${headers} ${moc_srcs} ${moc_uis} ${srcs_qrc} ${qml} ${qm_files})
+    qt5_use_modules(applicationOpenimu Sql Core Network Xml XmlPatterns Gui Widgets Quick Charts QuickControls2 LinguistTools Multimedia)
+    TARGET_LINK_LIBRARIES(applicationOpenimu)
+
+ENDIF(APPLE)
+
 
 
 

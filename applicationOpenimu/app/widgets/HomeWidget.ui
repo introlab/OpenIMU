@@ -83,8 +83,7 @@
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">color:#2c3e504;
-</string>
+        <string notr="true">color:#2c3e50;</string>
        </property>
        <property name="text">
         <string>OpenIMU, logiciel de visualisation et d'analyse pour centrale inertielle</string>

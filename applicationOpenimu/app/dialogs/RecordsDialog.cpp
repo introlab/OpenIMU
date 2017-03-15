@@ -17,6 +17,7 @@
 RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
 {
 
+    qDebug() << "RecordsDialog";
     m_parent = parent;
     m_current_uuid = "";
 

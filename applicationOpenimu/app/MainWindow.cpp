@@ -16,15 +16,83 @@
 
 QT_CHARTS_USE_NAMESPACE
 
+MainWindow *g_mainWindow = NULL;
+
+void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+  {
+      QString result;
+      QByteArray localMsg = msg.toLocal8Bit();
+      switch (type) {
+      case QtDebugMsg:
+          result = QString("Debug: %1 (1%2:%3, %4)\n")
+                  .arg(QString(localMsg))
+                  .arg(QString(context.file))
+                  .arg(QString::number(context.line))
+                  .arg(QString(context.function));
+          fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+          break;
+      case QtInfoMsg:
+          result = QString("Info: %1 (1%2:%3, %4)\n")
+                  .arg(QString(localMsg))
+                  .arg(QString(context.file))
+                  .arg(QString::number(context.line))
+                  .arg(QString(context.function));
+          fprintf(stderr, "Info: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+          break;
+      case QtWarningMsg:
+          result = QString("Warning: %1 (1%2:%3, %4)\n")
+                  .arg(QString(localMsg))
+                  .arg(QString(context.file))
+                  .arg(QString::number(context.line))
+                  .arg(QString(context.function));
+
+          fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+          break;
+      case QtCriticalMsg:
+          result = QString("Critical: %1 (1%2:%3, %4)\n")
+                  .arg(QString(localMsg))
+                  .arg(QString(context.file))
+                  .arg(QString::number(context.line))
+                  .arg(QString(context.function));
+
+          fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+          break;
+      case QtFatalMsg:
+          result = QString("Fatal: %1 (1%2:%3, %4)\n")
+                  .arg(QString(localMsg))
+                  .arg(QString(context.file))
+                  .arg(QString::number(context.line))
+                  .arg(QString(context.function));
+
+          fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+          abort();
+      }
+
+      //g_mainWindow->displayDebugMessage(result);
+  }
+
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
+
+    //Create debug widget
+    m_debugTextEdit = new QTextEdit(this);
+    m_debugTextEdit->setReadOnly(true);
+
+    //Add Redirection
+    g_mainWindow = this;
+
+    qInstallMessageHandler(myMessageOutput);
+    //create dbAccess
+    databaseAccess = new DbBlock;
+
     //Execute launchApi in a thread
     QtConcurrent::run(MainWindow::launchApi);
 
     this->setWindowIcon(QIcon("../applicationOpenimu/app/icons/logo.ico"));
     this->setStyleSheet("background-color:white;");
 
-    this->setWindowTitle(QString::fromUtf8("Open-IMU"));
+    this->setWindowTitle(QString::fromUtf8("OpenIMU"));
     this->setMinimumSize(1000,700);
 
     QFont font;
@@ -93,15 +161,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     QFrame* topLine = new QFrame();
     topLine->setFrameShape(QFrame::HLine);
-    topLine->setStyleSheet("color:#7f8c8d");
+    topLine->setStyleSheet("color:#7f8c8d;");
 
     QFrame* backLine = new QFrame();
     backLine->setFrameShape(QFrame::HLine);
-    backLine->setStyleSheet("color:#7f8c8d");
+    backLine->setStyleSheet("color:#7f8c8d;");
 
     QFrame* backLineDelete = new QFrame();
     backLineDelete->setFrameShape(QFrame::HLine);
-    backLineDelete->setStyleSheet("color:#7f8c8d");
+    backLineDelete->setStyleSheet("color:#7f8c8d;");
 
     QVBoxLayout* vlayout = new QVBoxLayout();
     vlayout->addWidget(explorateurLabel);
@@ -117,11 +185,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     tabWidget->setTabsClosable(true);
     homeWidget = new HomeWidget(this);
     tabWidget->addTab(homeWidget,tr("Accueil"));
-    tabWidget->setStyleSheet("background: rgb(247, 250, 255,0.6)");
+    tabWidget->setStyleSheet("background: rgb(247, 250, 255,0.6);");
     tabWidget->setCurrentWidget(tabWidget->widget(0));
     tabWidget->setFont(fontTabWidget);
     tabWidget->grabGesture(Qt::PanGesture);
     tabWidget->grabGesture(Qt::PinchGesture);
+
+    //Add debug tab
+    tabWidget->addTab(m_debugTextEdit,tr("Debug"));
+
+
     mainWidget->m_mainLayout->addWidget(tabWidget);
 
     setCentralWidget(mainWidget);
@@ -136,6 +209,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     getSavedResultsFromDB();
     getRecordsFromDB();
+
+
+
 }
 
 MainWindow::~MainWindow(){
@@ -251,6 +327,11 @@ void MainWindow::setStatusBarText(QString txt, MessageStatus status)
     statusBar->setStyleSheet(styleSheet);
 
     statusBar->showMessage(tr(txt.toStdString().c_str()));
+}
+
+void MainWindow::displayDebugMessage(const QString &message)
+{
+    m_debugTextEdit->append(message);
 }
 
 void MainWindow::deleteRecord()

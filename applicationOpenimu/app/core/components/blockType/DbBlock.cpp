@@ -83,7 +83,7 @@ void DbBlock::reponseRecue(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError)
     {
-        // qDebug() << reply->readAll();
+        qDebug() << reply->readAll();
     }
     else
     {
