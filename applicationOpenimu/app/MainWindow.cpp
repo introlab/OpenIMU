@@ -68,7 +68,7 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
           abort();
       }
 
-      //g_mainWindow->displayDebugMessage(result);
+      g_mainWindow->displayDebugMessage(result);
   }
 
 
@@ -81,6 +81,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_debugTextEdit->setReadOnly(true);
 
     //Add Redirection
+    //TODO not clean, but working
     g_mainWindow = this;
 
     qInstallMessageHandler(myMessageOutput);
@@ -192,7 +193,7 @@ MainWindow::MainWindow(QWidget *parent)
     tabWidget->grabGesture(Qt::PinchGesture);
 
     //Add debug tab
-    tabWidget->addTab(m_debugTextEdit,tr("Console"));
+    int index = tabWidget->addTab(m_debugTextEdit,tr("Console"));
 
 
     mainWidget->m_mainLayout->addWidget(tabWidget);
@@ -456,6 +457,7 @@ void MainWindow::launchApi(){
     connect(m_apiProcess,SIGNAL(finished(int)),this,SLOT(apiProcessFinished()));
     connect(m_apiProcess,SIGNAL(readyReadStandardOutput()),this,SLOT(readyReadStdOutput()));
     connect(m_apiProcess,SIGNAL(readyReadStandardError()),this,SLOT(readyReadStdError()));
+    m_apiProcess->waitForStarted();
 
 #else
     parent->m_apiProcess->start("cmd.exe", QStringList() << "/c" << "..\\PythonAPI\\src\\runapi.bat");
@@ -853,12 +855,15 @@ void MainWindow::closeTab(int index){
         return;
     }
     QWidget* tabItem = tabWidget->widget(index);
-    // Removes the tab at position index from this stack of widgets.
-    // The page widget itself is not deleted.
-    tabWidget->removeTab(index);
+    if (tabItem != m_debugTextEdit)
+    {
+        // Removes the tab at position index from this stack of widgets.
+        // The page widget itself is not deleted.
+        tabWidget->removeTab(index);
 
-    delete(tabItem);
-    tabItem = nullptr;
+        delete(tabItem);
+        tabItem = nullptr;
+    }
 }
 
 void MainWindow::closeWindow(){

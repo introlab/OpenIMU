@@ -55,6 +55,7 @@ class MainWindow : public QMainWindow
         void onListItemDoubleClicked(QTreeWidgetItem* item,int column);
         void closeWindow();
 
+
         //Visual feedback
         void startSpinner();
         void stopSpinner(bool playAudio = false);

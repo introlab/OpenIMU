@@ -750,55 +750,55 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../app/MainWindow.cpp" line="187"/>
-        <location filename="../app/MainWindow.cpp" line="811"/>
+        <location filename="../app/MainWindow.cpp" line="188"/>
+        <location filename="../app/MainWindow.cpp" line="813"/>
         <source>Accueil</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="195"/>
+        <location filename="../app/MainWindow.cpp" line="196"/>
         <source>Console</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="201"/>
-        <location filename="../app/MainWindow.cpp" line="304"/>
-        <location filename="../app/MainWindow.cpp" line="833"/>
+        <location filename="../app/MainWindow.cpp" line="202"/>
+        <location filename="../app/MainWindow.cpp" line="305"/>
+        <location filename="../app/MainWindow.cpp" line="835"/>
         <source>Prêt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="253"/>
+        <location filename="../app/MainWindow.cpp" line="254"/>
         <source>Chargement de l&apos;enregistrement...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="270"/>
+        <location filename="../app/MainWindow.cpp" line="271"/>
         <source>Avertissement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="293"/>
+        <location filename="../app/MainWindow.cpp" line="294"/>
         <source>Chargement du résultat...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="772"/>
+        <location filename="../app/MainWindow.cpp" line="774"/>
         <source>Enregistrement effacé avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="776"/>
+        <location filename="../app/MainWindow.cpp" line="778"/>
         <source>Échec de la suppression de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="784"/>
+        <location filename="../app/MainWindow.cpp" line="786"/>
         <source>Enregistrement renommé avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="788"/>
+        <location filename="../app/MainWindow.cpp" line="790"/>
         <source>Échec du changement de nom de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
