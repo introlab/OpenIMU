@@ -32,10 +32,12 @@ class MainWindow : public QMainWindow
         Q_OBJECT
     public:
        MainWindow(QWidget *parent = 0);
-       ~MainWindow();
+       virtual ~MainWindow();
        std::string getFileName(std::string s);
        void retranslateUi();
        void setStatusBarText(QString txt, MessageStatus status = none);
+
+
     signals:
 
     public slots:
@@ -85,11 +87,17 @@ class MainWindow : public QMainWindow
 
         //Add algo
         void addAlgo();
+        void apiProcessFinished();
 
-        //Launch the python api
-        static void launchApi();
+
+        void readyReadStdOutput();
+        void readyReadStdError();
 
     private:
+
+
+        //Launch the python api
+        void launchApi();
 
         QTabWidget *tabWidget;
         QString folderName;
@@ -110,6 +118,7 @@ class MainWindow : public QMainWindow
         QMovie* movieSpinnerBar;
         HomeWidget * homeWidget;
         QTextEdit *m_debugTextEdit;
+        QProcess* m_apiProcess;
 };
 
 #endif // MAINWINDOW_H

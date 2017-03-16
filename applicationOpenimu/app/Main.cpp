@@ -20,9 +20,8 @@ int main(int argc, char *argv[])
     //set font of application
     //QApplication::setFont(newFont);
 
-    MainWindow *window = new MainWindow();
-    window->show();
-
+    MainWindow window ;
+    window.show();
     return a.exec();
 }
 

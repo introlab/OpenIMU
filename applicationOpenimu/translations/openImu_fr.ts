@@ -751,54 +751,54 @@ p, li { white-space: pre-wrap; }
     <name>MainWindow</name>
     <message>
         <location filename="../app/MainWindow.cpp" line="187"/>
-        <location filename="../app/MainWindow.cpp" line="757"/>
+        <location filename="../app/MainWindow.cpp" line="811"/>
         <source>Accueil</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/MainWindow.cpp" line="195"/>
-        <source>Debug</source>
+        <source>Console</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/MainWindow.cpp" line="201"/>
-        <location filename="../app/MainWindow.cpp" line="285"/>
-        <location filename="../app/MainWindow.cpp" line="779"/>
+        <location filename="../app/MainWindow.cpp" line="304"/>
+        <location filename="../app/MainWindow.cpp" line="833"/>
         <source>Prêt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="234"/>
+        <location filename="../app/MainWindow.cpp" line="253"/>
         <source>Chargement de l&apos;enregistrement...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="251"/>
+        <location filename="../app/MainWindow.cpp" line="270"/>
         <source>Avertissement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="274"/>
+        <location filename="../app/MainWindow.cpp" line="293"/>
         <source>Chargement du résultat...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="718"/>
+        <location filename="../app/MainWindow.cpp" line="772"/>
         <source>Enregistrement effacé avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="722"/>
+        <location filename="../app/MainWindow.cpp" line="776"/>
         <source>Échec de la suppression de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="730"/>
+        <location filename="../app/MainWindow.cpp" line="784"/>
         <source>Enregistrement renommé avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="734"/>
+        <location filename="../app/MainWindow.cpp" line="788"/>
         <source>Échec du changement de nom de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
