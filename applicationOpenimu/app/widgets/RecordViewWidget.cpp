@@ -38,7 +38,7 @@ RecordViewWidget::RecordViewWidget(QWidget *parent,  const WimuAcquisition& data
     m_ui->recordDetails->setText(QString::fromStdString(m_record.m_recordDetails));
 
     AccDataDisplay *dataDisplay = new AccDataDisplay(m_acceleroData);
-    dataDisplay->showSimplfiedDataDisplay();
+    //dataDisplay->showSimplfiedDataDisplay();
 
     QIcon img(":/icons/edit2.png");
     m_ui->editButton->setIcon(img);

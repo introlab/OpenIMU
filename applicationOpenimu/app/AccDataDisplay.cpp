@@ -70,6 +70,10 @@ AccDataDisplay::AccDataDisplay(const WimuAcquisition& accData, QWidget *parent) 
 
         m_ui->graphLayout->addWidget(m_chartView);
         m_ui->sliderLayout->addWidget(m_rSlider);
+
+
+
+
         connect(m_ui->checkboxX, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayXAxis(int)));
         connect(m_ui->checkboxY, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayYAxis(int)));
         connect(m_ui->checkboxZ, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayZAxis(int)));

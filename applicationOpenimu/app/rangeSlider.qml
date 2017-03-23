@@ -1,6 +1,7 @@
 import QtQuick 2.6
 import QtQuick.Controls 2.0
 
+
 RangeSlider {
     id: control
     first.value: 0
@@ -52,3 +53,4 @@ RangeSlider {
         border.color: "#bdbebf"
     }
 }
+

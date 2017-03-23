@@ -23,5 +23,6 @@
         <file>icons/exportpdf.png</file>
         <file>icons/sauver dans la bd.png</file>
         <file>icons/save as record.png</file>
+        <file>icons/upload_loader.gif</file>
     </qresource>
 </RCC>

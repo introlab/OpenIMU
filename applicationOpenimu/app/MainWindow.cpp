@@ -94,7 +94,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->setStyleSheet("background-color:white;");
 
     this->setWindowTitle(QString::fromUtf8("OpenIMU"));
-    this->setMinimumSize(1000,700);
+    this->setMinimumSize(1024,768);
 
     QFont font;
     font.setFamily("Open Sans Regular");
@@ -134,7 +134,7 @@ MainWindow::MainWindow(QWidget *parent)
     listWidget->setFont(fontitem);
     listWidget->setCursor(Qt::PointingHandCursor);
     listWidget->setStyleSheet("border:none;"
-                              "background-color:white;}"
+                              "background-color:white;"
                               "opacity:0;");
 
     QLabel* explorateurLabel = new QLabel("Explorateur");
@@ -186,7 +186,7 @@ MainWindow::MainWindow(QWidget *parent)
     tabWidget->setTabsClosable(true);
     homeWidget = new HomeWidget(this);
     tabWidget->addTab(homeWidget,tr("Accueil"));
-    tabWidget->setStyleSheet("background: rgb(247, 250, 255,0.6);");
+    tabWidget->setStyleSheet("background-color: rgba(247, 250, 255,0);");
     tabWidget->setCurrentWidget(tabWidget->widget(0));
     tabWidget->setFont(fontTabWidget);
     tabWidget->grabGesture(Qt::PanGesture);
@@ -459,6 +459,8 @@ void MainWindow::launchApi(){
     connect(m_apiProcess,SIGNAL(readyReadStandardError()),this,SLOT(readyReadStdError()));
     m_apiProcess->waitForStarted();
 
+    //Give time for the socket server to start...
+    QThread::usleep(100000); //100ms
 #else
     parent->m_apiProcess->start("cmd.exe", QStringList() << "/c" << "..\\PythonAPI\\src\\runapi.bat");
     parent->m_apiProcess->waitForFinished(500);
