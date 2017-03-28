@@ -31,6 +31,11 @@ public:
     void init(AlgorithmOutputInfo output, bool isSaved);
     void initFilterView(AccDataDisplay* accDataDisplay);
 
+signals:
+
+    void refreshRecords();
+    void refreshResults();
+
 public slots:
     void exportToPdfSlot();
     void exportToDBSlot();

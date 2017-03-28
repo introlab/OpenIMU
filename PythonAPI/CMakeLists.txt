@@ -20,6 +20,8 @@ if(APPLE)
         #Create directory
         file(MAKE_DIRECTORY ${BUNDLE_EXECUTABLE_PATH}/PythonAPI)
 
+        message(STATUS "Copy Python files to : ${BUNDLE_EXECUTABLE_PATH}/PythonAPI")
+
         #Copy API Files
         file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src DESTINATION ${BUNDLE_EXECUTABLE_PATH}/PythonAPI)
         file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/lib DESTINATION ${BUNDLE_EXECUTABLE_PATH}/PythonAPI)

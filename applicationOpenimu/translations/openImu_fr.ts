@@ -67,31 +67,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../app/AccDataDisplay.ui" line="154"/>
-        <location filename="../app/AccdataDisplay.cpp" line="293"/>
+        <location filename="../app/AccdataDisplay.cpp" line="313"/>
         <source>Axe Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AccDataDisplay.ui" line="167"/>
-        <location filename="../app/AccdataDisplay.cpp" line="287"/>
+        <location filename="../app/AccdataDisplay.cpp" line="307"/>
         <source>Axe X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AccDataDisplay.ui" line="180"/>
-        <location filename="../app/AccdataDisplay.cpp" line="299"/>
+        <location filename="../app/AccdataDisplay.cpp" line="319"/>
         <source>Axe Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AccDataDisplay.ui" line="193"/>
-        <location filename="../app/AccdataDisplay.cpp" line="312"/>
+        <location filename="../app/AccdataDisplay.cpp" line="332"/>
         <source>Moyenne mobile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AccDataDisplay.ui" line="206"/>
-        <location filename="../app/AccdataDisplay.cpp" line="303"/>
+        <location filename="../app/AccdataDisplay.cpp" line="323"/>
         <source>Norme</source>
         <translation type="unfinished"></translation>
     </message>
@@ -751,7 +751,7 @@ p, li { white-space: pre-wrap; }
     <name>MainWindow</name>
     <message>
         <location filename="../app/MainWindow.cpp" line="188"/>
-        <location filename="../app/MainWindow.cpp" line="815"/>
+        <location filename="../app/MainWindow.cpp" line="823"/>
         <source>Accueil</source>
         <translation type="unfinished"></translation>
     </message>
@@ -762,8 +762,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../app/MainWindow.cpp" line="202"/>
-        <location filename="../app/MainWindow.cpp" line="305"/>
-        <location filename="../app/MainWindow.cpp" line="837"/>
+        <location filename="../app/MainWindow.cpp" line="308"/>
+        <location filename="../app/MainWindow.cpp" line="845"/>
         <source>Prêt</source>
         <translation type="unfinished"></translation>
     </message>
@@ -778,27 +778,27 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="294"/>
+        <location filename="../app/MainWindow.cpp" line="295"/>
         <source>Chargement du résultat...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="776"/>
+        <location filename="../app/MainWindow.cpp" line="784"/>
         <source>Enregistrement effacé avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="780"/>
+        <location filename="../app/MainWindow.cpp" line="788"/>
         <source>Échec de la suppression de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="788"/>
+        <location filename="../app/MainWindow.cpp" line="796"/>
         <source>Enregistrement renommé avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="792"/>
+        <location filename="../app/MainWindow.cpp" line="800"/>
         <source>Échec du changement de nom de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
@@ -884,12 +884,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RangeSlider</name>
     <message>
-        <location filename="../app/widgets/RangeSlider.cpp" line="67"/>
+        <location filename="../app/widgets/RangeSlider.cpp" line="72"/>
         <source>Début: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/RangeSlider.cpp" line="77"/>
+        <location filename="../app/widgets/RangeSlider.cpp" line="82"/>
         <source>Fin: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -897,59 +897,59 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RecordViewWidget</name>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="20"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="26"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="51"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="57"/>
         <source>Description de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="101"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="107"/>
         <source>Date de l&apos;enregistrement:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="120"/>
-        <location filename="../app/widgets/recordviewwidget.ui" line="159"/>
-        <location filename="../app/widgets/recordviewwidget.ui" line="198"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="126"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="165"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="204"/>
         <source>TextLabel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="146"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="152"/>
         <source>Position:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="185"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="191"/>
         <source>Centrale inertielle:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="222"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="228"/>
         <source>Supprimer l&apos;enregistrement de la base de données</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="265"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="271"/>
         <source>Nom de l&apos;enregistrement:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="306"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="312"/>
         <source>Aperçu de l&apos;enregistrement:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="326"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="332"/>
         <source>Détails de l&apos;enregistrement:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="354"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="360"/>
         <source>Aucun détail sur cet enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1014,22 +1014,22 @@ p, li { white-space: pre-wrap; }
     <name>ResultsTabWidget</name>
     <message>
         <location filename="../app/widgets/ResultsTabWidget.cpp" line="94"/>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="151"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="153"/>
         <source>Insertion des résultats dans la base de données en cours...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="203"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="208"/>
         <source>Enregistrement des résultats sous forme de fichier PDF en cours...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="209"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="214"/>
         <source>Save Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="209"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="214"/>
         <source>PDF (*.pdf)</source>
         <translation type="unfinished"></translation>
     </message>

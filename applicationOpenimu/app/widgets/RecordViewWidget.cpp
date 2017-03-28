@@ -38,6 +38,8 @@ RecordViewWidget::RecordViewWidget(QWidget *parent,  const WimuAcquisition& data
     m_ui->recordDetails->setText(QString::fromStdString(m_record.m_recordDetails));
 
     AccDataDisplay *dataDisplay = new AccDataDisplay(m_acceleroData);
+    dataDisplay->setInfo(rcd);
+    connect(dataDisplay,SIGNAL(updateRecords()),this,SIGNAL(updateRecords()));
     //dataDisplay->showSimplfiedDataDisplay();
 
     QIcon img(":/icons/edit2.png");
@@ -74,7 +76,7 @@ void RecordViewWidget::openFullGraphSlot()
 {
     if(!m_fDialog->isVisible())
     {
-        m_fDialog->show();
+        m_fDialog->exec();
     }
 }
 

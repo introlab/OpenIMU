@@ -280,7 +280,13 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
             else if (algorithmOutputInfoSerializer.m_algorithmOutput.m_dispType.compare("Numeric value")==0)
             {
                 ResultsTabWidget* res = new ResultsTabWidget(this, algorithmOutputInfoSerializer.m_algorithmOutput);
+
+                connect(res,SIGNAL(refreshRecords()),mainWindow,SLOT(refreshRecordListWidget()));
+
                 mainWindow->addTab(res,algoInfo.m_name + ": " + m_selectedRecord.m_recordName);
+
+
+
             }
             else
             {
@@ -299,5 +305,8 @@ void AlgorithmTab::reponseAlgoRecue(QNetworkReply* reply)
     {
         mainWindow->setStatusBarText("Erreur lors de l'application de l'algorithme", MessageStatus::error);
     }
+
+    mainWindow->refreshRecordListWidget();
+
     delete reply;
 }

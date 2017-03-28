@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     QApplication::setFont(newFont);
 
     MainWindow window ;
-    window.show();
+    window.showFullScreen();
     return a.exec();
 }
 

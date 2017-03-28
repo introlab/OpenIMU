@@ -24,11 +24,11 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
       QByteArray localMsg = msg.toLocal8Bit();
       switch (type) {
       case QtDebugMsg:
-          result = QString("Debug: %1 (1%2:%3, %4)\n")
-                  .arg(QString(localMsg))
-                  .arg(QString(context.file))
-                  .arg(QString::number(context.line))
-                  .arg(QString(context.function));
+          result = QString("Debug: %1\n")
+                  .arg(QString(localMsg));
+                  //.arg(QString(context.file))
+                  //.arg(QString::number(context.line))
+                  //.arg(QString(context.function));
           fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
           break;
       case QtInfoMsg:
@@ -284,6 +284,7 @@ void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
             {
                RecordViewWidget* recordTab = new RecordViewWidget(this,wimuAcquisition,selectedRecord);
                addTab(recordTab,selectedRecord.m_recordName);
+               connect(recordTab,SIGNAL(updateRecords()),this,SLOT(refreshRecordListWidget()));
             }
             isRecord = true;
         }        
@@ -298,6 +299,8 @@ void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
             {
                 ResultsTabWidget* resultTab = new ResultsTabWidget(this,savedResults.m_algorithmOutputList.at(i),true);
                 addTab(resultTab,savedResults.m_algorithmOutputList.at(i).m_resultName);
+                connect(resultTab,SIGNAL(refreshRecords()),this,SLOT(refreshRecordListWidget()));
+                connect(resultTab,SIGNAL(refreshResults()),this,SLOT(refreshRecordListWidget()));
             }
         }
     }
@@ -581,6 +584,9 @@ void MainWindow::savedResultsReponse(QNetworkReply* reply)
         savedResults.m_algorithmOutputList.clear();
         std::string reponse = reply->readAll().toStdString();
 
+
+        qDebug() << "Results: " << reponse.c_str();
+
         if(reponse != "")
         {
             savedResults.DeserializeList(reponse);
@@ -610,6 +616,8 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
    if (reply->error() == QNetworkReply::NoError)
    {
         std::string testReponse(reply->readAll());
+
+        qDebug() << "Records: " << testReponse.c_str();
 
         if(testReponse != "")
         {

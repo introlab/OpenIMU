@@ -71,9 +71,6 @@ AccDataDisplay::AccDataDisplay(const WimuAcquisition& accData, QWidget *parent) 
         m_ui->graphLayout->addWidget(m_chartView);
         m_ui->sliderLayout->addWidget(m_rSlider);
 
-
-
-
         connect(m_ui->checkboxX, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayXAxis(int)));
         connect(m_ui->checkboxY, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayYAxis(int)));
         connect(m_ui->checkboxZ, SIGNAL(stateChanged(int)), this, SLOT(slotDisplayZAxis(int)));
@@ -114,10 +111,20 @@ void AccDataDisplay::showSimplfiedDataDisplay()
 void AccDataDisplay::setInfo(RecordInfo recInfo)
 {
     m_recordInfo = recInfo;
+
+    qDebug() << "recInfo 1 "
+             << "parentID " << m_recordInfo.m_parentId.c_str()
+             << "recordID " << m_recordInfo.m_recordId.c_str();
+
 }
 
 void AccDataDisplay::slotSaveNewSetRange()
 {
+
+    qDebug() << "recInfo 2 "
+             << "parentID " << m_recordInfo.m_parentId.c_str()
+             << "recordID " << m_recordInfo.m_recordId.c_str();
+
     int tmpmin = int(m_sliceData.size()*m_lSliderValue);
     int tmpmax = int(m_sliceData.size()*m_rSliderValue);
 
@@ -148,7 +155,9 @@ void AccDataDisplay::slotSaveNewSetRange()
     wimuData->setDataAccelerometer(m_sliceData);
 
     m_recordInfo.m_recordDetails =  "Cet enregistrement est un sous-ensemble de :" + m_recordInfo.m_recordName + ". " + m_ui->recordDetailsLineEdit->text().toStdString();
+    qDebug() << "Insert record parent id : " << m_recordInfo.m_recordId.c_str();
     m_recordInfo.m_parentId = m_recordInfo.m_recordId;
+    m_recordInfo.m_recordId = "";
     m_recordInfo.m_recordName = m_ui->recordNameLineEdit->text().toStdString();
 
     std::string output;
@@ -158,6 +167,8 @@ void AccDataDisplay::slotSaveNewSetRange()
     m_databaseAccess->addRecordInDB(outputString);
 
     //TODO: FEEDBACK and Close the Dialog
+
+    connect(m_databaseAccess,SIGNAL(updated()),this,SIGNAL(updateRecords()));
 }
 
 
@@ -187,6 +198,10 @@ void AccDataDisplay::slotDisplayMovingAverage(int value){
 
 void AccDataDisplay::leftSliderValueChanged(double value)
 {
+    qDebug() << "recInfo 3 "
+             << "parentID " << m_recordInfo.m_parentId.c_str()
+             << "recordID " << m_recordInfo.m_recordId.c_str();
+
     m_lSliderValue = value;
     int tmpmin = int(m_sliceData.size()*m_lSliderValue/50);
     tmpmin = WimuAcquisition::minTime(m_availableData).timestamp + tmpmin;
@@ -198,6 +213,11 @@ void AccDataDisplay::leftSliderValueChanged(double value)
 
 void AccDataDisplay::rightSliderValueChanged(double value)
 {
+
+    qDebug() << "recInfo 4 "
+             << "parentID " << m_recordInfo.m_parentId.c_str()
+             << "recordID " << m_recordInfo.m_recordId.c_str();
+
     m_rSliderValue = value;
     int tmpmax = int(m_sliceData.size()*m_rSliderValue/50);
     tmpmax = WimuAcquisition::minTime(m_availableData).timestamp + tmpmax;
