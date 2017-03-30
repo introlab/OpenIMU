@@ -751,7 +751,7 @@ p, li { white-space: pre-wrap; }
     <name>MainWindow</name>
     <message>
         <location filename="../app/MainWindow.cpp" line="188"/>
-        <location filename="../app/MainWindow.cpp" line="823"/>
+        <location filename="../app/MainWindow.cpp" line="827"/>
         <source>Accueil</source>
         <translation type="unfinished"></translation>
     </message>
@@ -763,7 +763,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../app/MainWindow.cpp" line="202"/>
         <location filename="../app/MainWindow.cpp" line="308"/>
-        <location filename="../app/MainWindow.cpp" line="845"/>
+        <location filename="../app/MainWindow.cpp" line="849"/>
         <source>Prêt</source>
         <translation type="unfinished"></translation>
     </message>
@@ -783,22 +783,22 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="784"/>
+        <location filename="../app/MainWindow.cpp" line="788"/>
         <source>Enregistrement effacé avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="788"/>
+        <location filename="../app/MainWindow.cpp" line="792"/>
         <source>Échec de la suppression de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="796"/>
+        <location filename="../app/MainWindow.cpp" line="800"/>
         <source>Enregistrement renommé avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="800"/>
+        <location filename="../app/MainWindow.cpp" line="804"/>
         <source>Échec du changement de nom de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>

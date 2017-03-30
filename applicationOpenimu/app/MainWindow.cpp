@@ -447,6 +447,9 @@ void MainWindow::readyReadStdError()
 
 void MainWindow::launchApi(){
 
+//Python backend is now standalone
+#if 1
+
     //Be careful we are in separate thread here
 
     qDebug() << "Launching python API";
@@ -471,6 +474,7 @@ void MainWindow::launchApi(){
 #endif
 
     qDebug() << "PythonAPI backend started.";
+#endif
 }
 
 
