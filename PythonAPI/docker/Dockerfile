@@ -10,7 +10,8 @@ RUN apt-get update && apt-get install -y \
 	python-setuptools \
 	python-dev \
 	build-essential \
-	python-pip
+	python-pip \
+	iputils-ping
 	
 # Get OpenIMU/Python dependencies  
 RUN pip install --upgrade pip 
