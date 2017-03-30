@@ -448,7 +448,7 @@ void MainWindow::readyReadStdError()
 void MainWindow::launchApi(){
 
 //Python backend is now standalone
-#if 1
+#if 0
 
     //Be careful we are in separate thread here
 
