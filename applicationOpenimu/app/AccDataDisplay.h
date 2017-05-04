@@ -30,6 +30,10 @@ public:
     void setInfo(RecordInfo recInfo);
     ~AccDataDisplay();
 
+signals:
+
+    void updateRecords();
+
 public slots:
 
     void slotDisplayXAxis(int value);

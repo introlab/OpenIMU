@@ -73,7 +73,7 @@ RecordsDialog::RecordsDialog(QWidget *parent):QDialog(parent)
     m_addRecord->setMaximumWidth(105);
     m_addRecord->setStyleSheet("border:none");
     m_spinner = new QLabel();
-    m_movie = new QMovie("../applicationOpenimu/app/icons/upload_loader.gif");
+    m_movie = new QMovie("://icons/upload_loader.gif");
     m_spinner->setMovie(m_movie);
 
     m_successLabel = new QLabel();

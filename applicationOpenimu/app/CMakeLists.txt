@@ -103,6 +103,14 @@ IF(APPLE)
         file(COPY ${framework} DESTINATION ${FRAMEWORK_PATH})
     endforeach(framework)
 
+
+    #QMLFILES
+    EXEC_PROGRAM(${QT_QMAKE_EXECUTABLE} ARGS "-query QT_INSTALL_QML" OUTPUT_VARIABLE QMLFILES)
+    message(STATUS "Copying QML: ${QMLFILES}")
+    file(COPY ${QMLFILES} DESTINATION ${EXECUTABLE_OUTPUT_PATH}/applicationOpenimu.app/Contents/MacOS)
+
+
+
 ELSE(APPLE)
 
     #Application

@@ -41,87 +41,87 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AccDataDisplay</name>
     <message>
-        <location filename="../app/AccDataDisplay.ui" line="20"/>
+        <location filename="../app/AccDataDisplay.ui" line="26"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.ui" line="54"/>
+        <location filename="../app/AccDataDisplay.ui" line="60"/>
         <source>Journée d&apos;enregistrement : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.ui" line="79"/>
+        <location filename="../app/AccDataDisplay.ui" line="85"/>
         <source>DummyText</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.ui" line="101"/>
+        <location filename="../app/AccDataDisplay.ui" line="107"/>
         <source>Reset Zoom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.ui" line="131"/>
+        <location filename="../app/AccDataDisplay.ui" line="137"/>
         <source>Affichage des axes :</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.ui" line="148"/>
-        <location filename="../app/AccdataDisplay.cpp" line="289"/>
+        <location filename="../app/AccDataDisplay.ui" line="154"/>
+        <location filename="../app/AccdataDisplay.cpp" line="313"/>
         <source>Axe Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.ui" line="161"/>
-        <location filename="../app/AccdataDisplay.cpp" line="283"/>
+        <location filename="../app/AccDataDisplay.ui" line="167"/>
+        <location filename="../app/AccdataDisplay.cpp" line="307"/>
         <source>Axe X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.ui" line="174"/>
-        <location filename="../app/AccdataDisplay.cpp" line="295"/>
+        <location filename="../app/AccDataDisplay.ui" line="180"/>
+        <location filename="../app/AccdataDisplay.cpp" line="319"/>
         <source>Axe Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.ui" line="187"/>
-        <location filename="../app/AccdataDisplay.cpp" line="308"/>
+        <location filename="../app/AccDataDisplay.ui" line="193"/>
+        <location filename="../app/AccdataDisplay.cpp" line="332"/>
         <source>Moyenne mobile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.ui" line="200"/>
-        <location filename="../app/AccdataDisplay.cpp" line="299"/>
+        <location filename="../app/AccDataDisplay.ui" line="206"/>
+        <location filename="../app/AccdataDisplay.cpp" line="323"/>
         <source>Norme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.ui" line="224"/>
+        <location filename="../app/AccDataDisplay.ui" line="236"/>
         <source>Sélection Horaire :</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.ui" line="248"/>
+        <location filename="../app/AccDataDisplay.ui" line="266"/>
         <source>Modifier l&apos;enregistrement :</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.ui" line="254"/>
+        <location filename="../app/AccDataDisplay.ui" line="272"/>
         <source>Utilisez la sélection horaire pour modifier l&apos;heure de début et de fin puis sauvegardez vos changements</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.ui" line="263"/>
+        <location filename="../app/AccDataDisplay.ui" line="287"/>
         <source>Nom de l&apos;enregistrement* :</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.ui" line="273"/>
+        <location filename="../app/AccDataDisplay.ui" line="310"/>
         <source>Détails de l&apos;enregistrement : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AccDataDisplay.ui" line="321"/>
+        <location filename="../app/AccDataDisplay.ui" line="365"/>
         <source>Enregistrer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -465,40 +465,40 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Open Sans Light&apos;; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Version 2.3 - 05/12/2016&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Sauvegarde des résultats des algorithmes en base de donnée&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Implémentation de filtres de fréquence, passe haut et passe bas&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Enregistrer les résulats des filtres&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Envoyer de larges enregistrements en base de données&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Afficher les résulats dans l&apos;arborescence&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Changements sur l&apos;interface et stabilisation&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;** Versions antérieures: **&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Version 2.2 - 25/11/2016&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Renommer les enregistrements &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Découper les enregistrements par tranche horaire &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Arborescence des enregistrements sous forme d&apos;arbre              &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Algorithme FFT en python &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Exportation PDF des résultats &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Affichage du temps de calcul pour les algorithmes&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Version 2.1 - 06/11/2016&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Suppression des enregistrements &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Tabulation pour chaque résultat &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Crash sur importation résolue&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Diminution du temps de lancement de l&apos;application&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Version 2.0 - 24/10/2016&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Sauvegarde en base de données &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Application d&apos;algorithmes en python sur les données&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Implémentation de l&apos;algorithme: temps d&apos;activité &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Améliorations de l&apos;interface utilisateur &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;- Centrale inertielle supportée dans cette version: Wimu&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;Version 2.3 - 05/12/2016&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Sauvegarde des résultats des algorithmes en base de donnée&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Implémentation de filtres de fréquence, passe haut et passe bas&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Enregistrer les résulats des filtres&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Envoyer de larges enregistrements en base de données&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Afficher les résulats dans l&apos;arborescence&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Changements sur l&apos;interface et stabilisation&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;** Versions antérieures: **&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;Version 2.2 - 25/11/2016&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Renommer les enregistrements &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Découper les enregistrements par tranche horaire &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Arborescence des enregistrements sous forme d&apos;arbre              &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Algorithme FFT en python &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Exportation PDF des résultats &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Affichage du temps de calcul pour les algorithmes&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;Version 2.1 - 06/11/2016&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Suppression des enregistrements &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Tabulation pour chaque résultat &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Crash sur importation résolue&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Diminution du temps de lancement de l&apos;application&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;Version 2.0 - 24/10/2016&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Sauvegarde en base de données &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Application d&apos;algorithmes en python sur les données&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Implémentation de l&apos;algorithme: temps d&apos;activité &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Améliorations de l&apos;interface utilisateur &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;- Centrale inertielle supportée dans cette version: Wimu&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -750,55 +750,55 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../app/MainWindow.cpp" line="187"/>
-        <location filename="../app/MainWindow.cpp" line="757"/>
+        <location filename="../app/MainWindow.cpp" line="188"/>
+        <location filename="../app/MainWindow.cpp" line="827"/>
         <source>Accueil</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="195"/>
-        <source>Debug</source>
+        <location filename="../app/MainWindow.cpp" line="196"/>
+        <source>Console</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="201"/>
-        <location filename="../app/MainWindow.cpp" line="285"/>
-        <location filename="../app/MainWindow.cpp" line="779"/>
+        <location filename="../app/MainWindow.cpp" line="202"/>
+        <location filename="../app/MainWindow.cpp" line="308"/>
+        <location filename="../app/MainWindow.cpp" line="849"/>
         <source>Prêt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="234"/>
+        <location filename="../app/MainWindow.cpp" line="254"/>
         <source>Chargement de l&apos;enregistrement...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="251"/>
+        <location filename="../app/MainWindow.cpp" line="271"/>
         <source>Avertissement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="274"/>
+        <location filename="../app/MainWindow.cpp" line="295"/>
         <source>Chargement du résultat...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="718"/>
+        <location filename="../app/MainWindow.cpp" line="788"/>
         <source>Enregistrement effacé avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="722"/>
+        <location filename="../app/MainWindow.cpp" line="792"/>
         <source>Échec de la suppression de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="730"/>
+        <location filename="../app/MainWindow.cpp" line="800"/>
         <source>Enregistrement renommé avec succès</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="734"/>
+        <location filename="../app/MainWindow.cpp" line="804"/>
         <source>Échec du changement de nom de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
@@ -884,12 +884,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RangeSlider</name>
     <message>
-        <location filename="../app/widgets/RangeSlider.cpp" line="50"/>
+        <location filename="../app/widgets/RangeSlider.cpp" line="72"/>
         <source>Début: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/RangeSlider.cpp" line="60"/>
+        <location filename="../app/widgets/RangeSlider.cpp" line="82"/>
         <source>Fin: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -897,59 +897,59 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RecordViewWidget</name>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="20"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="26"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="51"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="57"/>
         <source>Description de l&apos;enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="101"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="107"/>
         <source>Date de l&apos;enregistrement:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="120"/>
-        <location filename="../app/widgets/recordviewwidget.ui" line="159"/>
-        <location filename="../app/widgets/recordviewwidget.ui" line="198"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="126"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="165"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="204"/>
         <source>TextLabel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="146"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="152"/>
         <source>Position:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="185"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="191"/>
         <source>Centrale inertielle:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="222"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="228"/>
         <source>Supprimer l&apos;enregistrement de la base de données</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="265"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="271"/>
         <source>Nom de l&apos;enregistrement:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="306"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="312"/>
         <source>Aperçu de l&apos;enregistrement:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="326"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="332"/>
         <source>Détails de l&apos;enregistrement:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/recordviewwidget.ui" line="354"/>
+        <location filename="../app/widgets/recordviewwidget.ui" line="360"/>
         <source>Aucun détail sur cet enregistrement</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1014,22 +1014,22 @@ p, li { white-space: pre-wrap; }
     <name>ResultsTabWidget</name>
     <message>
         <location filename="../app/widgets/ResultsTabWidget.cpp" line="94"/>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="151"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="153"/>
         <source>Insertion des résultats dans la base de données en cours...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="203"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="208"/>
         <source>Enregistrement des résultats sous forme de fichier PDF en cours...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="209"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="214"/>
         <source>Save Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/widgets/ResultsTabWidget.cpp" line="209"/>
+        <location filename="../app/widgets/ResultsTabWidget.cpp" line="214"/>
         <source>PDF (*.pdf)</source>
         <translation type="unfinished"></translation>
     </message>

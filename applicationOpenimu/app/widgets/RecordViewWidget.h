@@ -22,6 +22,9 @@ public:
     RecordViewWidget(QWidget *parent, const WimuAcquisition& data, RecordInfo m_record);
     ~RecordViewWidget();
 
+signals:
+    void updateRecords();
+
 public slots:
     void openFullGraphSlot();
     void renameRecord();

@@ -75,14 +75,17 @@ class InsertAlgorithmResults(Resource):
         else:
             print("Json loaded, about to insert into Mongo.")
             mongo.db.algorithmResults.insert(data)
+        return request.json
 
 class getRecords(Resource):
     def get(self):
+        print 'getRecords'
         schema = schemas.Record(many=True)
         return schema.dump(mongo.db.record.find())
 
 class getAlgorithmResults(Resource):
     def get(self):
+        print 'getAlgorithmResults'
         schema = schemas.AlgorithmResults(many=True)
         return schema.dump(mongo.db.algorithmResults.find())
 

@@ -24,11 +24,11 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
       QByteArray localMsg = msg.toLocal8Bit();
       switch (type) {
       case QtDebugMsg:
-          result = QString("Debug: %1 (1%2:%3, %4)\n")
-                  .arg(QString(localMsg))
-                  .arg(QString(context.file))
-                  .arg(QString::number(context.line))
-                  .arg(QString(context.function));
+          result = QString("Debug: %1\n")
+                  .arg(QString(localMsg));
+                  //.arg(QString(context.file))
+                  //.arg(QString::number(context.line))
+                  //.arg(QString(context.function));
           fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
           break;
       case QtInfoMsg:
@@ -68,11 +68,12 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
           abort();
       }
 
-      //g_mainWindow->displayDebugMessage(result);
+      g_mainWindow->displayDebugMessage(result);
   }
 
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), m_apiProcess(NULL)
 {
 
     //Create debug widget
@@ -80,20 +81,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     m_debugTextEdit->setReadOnly(true);
 
     //Add Redirection
+    //TODO not clean, but working
     g_mainWindow = this;
 
     qInstallMessageHandler(myMessageOutput);
     //create dbAccess
     databaseAccess = new DbBlock;
 
-    //Execute launchApi in a thread
-    QtConcurrent::run(MainWindow::launchApi);
+
 
     this->setWindowIcon(QIcon("../applicationOpenimu/app/icons/logo.ico"));
     this->setStyleSheet("background-color:white;");
 
     this->setWindowTitle(QString::fromUtf8("OpenIMU"));
-    this->setMinimumSize(1000,700);
+    this->setMinimumSize(1024,768);
 
     QFont font;
     font.setFamily("Open Sans Regular");
@@ -133,7 +134,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     listWidget->setFont(fontitem);
     listWidget->setCursor(Qt::PointingHandCursor);
     listWidget->setStyleSheet("border:none;"
-                              "background-color:white;}"
+                              "background-color:white;"
                               "opacity:0;");
 
     QLabel* explorateurLabel = new QLabel("Explorateur");
@@ -185,14 +186,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     tabWidget->setTabsClosable(true);
     homeWidget = new HomeWidget(this);
     tabWidget->addTab(homeWidget,tr("Accueil"));
-    tabWidget->setStyleSheet("background: rgb(247, 250, 255,0.6);");
+    tabWidget->setStyleSheet("background-color: rgba(247, 250, 255,0);");
     tabWidget->setCurrentWidget(tabWidget->widget(0));
     tabWidget->setFont(fontTabWidget);
     tabWidget->grabGesture(Qt::PanGesture);
     tabWidget->grabGesture(Qt::PinchGesture);
 
     //Add debug tab
-    tabWidget->addTab(m_debugTextEdit,tr("Debug"));
+    int index = tabWidget->addTab(m_debugTextEdit,tr("Console"));
 
 
     mainWidget->m_mainLayout->addWidget(tabWidget);
@@ -201,6 +202,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     setStatusBarText(tr("Prêt"));
     statusBar->setMinimumHeight(20);
     statusBar->addPermanentWidget(spinnerStatusBar);
+
+    //Execute launchApi in a thread
+    //QtConcurrent::run(MainWindow::launchApi,this);
+    launchApi();
+
 
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
     connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(onTabChanged(int)));
@@ -215,6 +221,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 }
 
 MainWindow::~MainWindow(){
+
+    qDebug("MainWindow::~MainWindow()");
+
+    if (m_apiProcess)
+    {
+        //Write CTRL-C
+        //char ctrlC = 0x03;
+        //m_apiProcess->write(&ctrlC);
+
+        m_apiProcess->close();
+        qDebug("Waiting for backend to finish");
+        m_apiProcess->waitForFinished();
+    }
+
     delete menu ;
 }
 
@@ -264,6 +284,7 @@ void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
             {
                RecordViewWidget* recordTab = new RecordViewWidget(this,wimuAcquisition,selectedRecord);
                addTab(recordTab,selectedRecord.m_recordName);
+               connect(recordTab,SIGNAL(updateRecords()),this,SLOT(refreshRecordListWidget()));
             }
             isRecord = true;
         }        
@@ -278,6 +299,8 @@ void MainWindow::onListItemDoubleClicked(QTreeWidgetItem* item, int column)
             {
                 ResultsTabWidget* resultTab = new ResultsTabWidget(this,savedResults.m_algorithmOutputList.at(i),true);
                 addTab(resultTab,savedResults.m_algorithmOutputList.at(i).m_resultName);
+                connect(resultTab,SIGNAL(refreshRecords()),this,SLOT(refreshRecordListWidget()));
+                connect(resultTab,SIGNAL(refreshResults()),this,SLOT(refreshRecordListWidget()));
             }
         }
     }
@@ -394,25 +417,67 @@ void MainWindow::addAlgo()
     }
 }
 
+void MainWindow::apiProcessFinished()
+{
+    qDebug() << "void MainWindow::apiProcessFinished()";
+    //m_apiProcess->deleteLater();
+    //m_apiProcess = NULL;
+}
+
+void MainWindow::readyReadStdOutput()
+{
+    if (m_apiProcess)
+    {
+        QByteArray stdOutput = m_apiProcess->readAllStandardOutput();
+        m_debugTextEdit->append("---------API PROCESS (Output) ---------");
+        m_debugTextEdit->append(QString::fromUtf8(stdOutput));
+    }
+}
+
+void MainWindow::readyReadStdError()
+{
+    if (m_apiProcess)
+    {
+        QByteArray stdError = m_apiProcess->readAllStandardError();
+        m_debugTextEdit->append("---------API PROCESS (Error) ---------");
+        m_debugTextEdit->append(QString::fromUtf8(stdError));
+    }
+
+}
+
 void MainWindow::launchApi(){
+
+//Python backend is now standalone
+#if 0
+
+    //Be careful we are in separate thread here
+
     qDebug() << "Launching python API";
-    QProcess* p = new QProcess();
+    m_apiProcess = new QProcess(this);
 
     //TODO get the result of the python script (stdout, stderr)
 #ifdef __APPLE__
     qDebug() << "ApplicationDirPath:" << QApplication::applicationDirPath();
-    p->setWorkingDirectory(QApplication::applicationDirPath() + "/PythonAPI/src");
-    p->start("python", QStringList() << "tornado_wsgi.py");
-    connect(p,SIGNAL(finished(int)),p,SLOT(deleteLater()));
+    m_apiProcess->setWorkingDirectory(QApplication::applicationDirPath() + "/PythonAPI/src");
+    m_apiProcess->start("python", QStringList() << "tornado_wsgi.py");
+    connect(m_apiProcess,SIGNAL(finished(int)),this,SLOT(apiProcessFinished()));
+    connect(m_apiProcess,SIGNAL(readyReadStandardOutput()),this,SLOT(readyReadStdOutput()));
+    connect(m_apiProcess,SIGNAL(readyReadStandardError()),this,SLOT(readyReadStdError()));
+    m_apiProcess->waitForStarted();
 
+    //Give time for the socket server to start...
+    QThread::usleep(100000); //100ms
 #else
-    p->start("cmd.exe", QStringList() << "/c" << "..\\PythonAPI\\src\\runapi.bat");
-    p->waitForFinished(500);
-    p->deleteLater();
+    parent->m_apiProcess->start("cmd.exe", QStringList() << "/c" << "..\\PythonAPI\\src\\runapi.bat");
+    parent->m_apiProcess->waitForFinished(500);
+    parent->m_apiProcess->deleteLater();
 #endif
 
     qDebug() << "PythonAPI backend started.";
+#endif
 }
+
+
 
 bool MainWindow::getRecordsFromDB()
 {
@@ -523,6 +588,9 @@ void MainWindow::savedResultsReponse(QNetworkReply* reply)
         savedResults.m_algorithmOutputList.clear();
         std::string reponse = reply->readAll().toStdString();
 
+
+        qDebug() << "Results: " << reponse.c_str();
+
         if(reponse != "")
         {
             savedResults.DeserializeList(reponse);
@@ -552,6 +620,8 @@ void MainWindow::reponseRecue(QNetworkReply* reply)
    if (reply->error() == QNetworkReply::NoError)
    {
         std::string testReponse(reply->readAll());
+
+        qDebug() << "Records: " << testReponse.c_str();
 
         if(testReponse != "")
         {
@@ -799,12 +869,15 @@ void MainWindow::closeTab(int index){
         return;
     }
     QWidget* tabItem = tabWidget->widget(index);
-    // Removes the tab at position index from this stack of widgets.
-    // The page widget itself is not deleted.
-    tabWidget->removeTab(index);
+    if (tabItem != m_debugTextEdit)
+    {
+        // Removes the tab at position index from this stack of widgets.
+        // The page widget itself is not deleted.
+        tabWidget->removeTab(index);
 
-    delete(tabItem);
-    tabItem = nullptr;
+        delete(tabItem);
+        tabItem = nullptr;
+    }
 }
 
 void MainWindow::closeWindow(){

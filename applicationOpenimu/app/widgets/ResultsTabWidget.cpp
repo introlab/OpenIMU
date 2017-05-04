@@ -116,6 +116,8 @@ void ResultsTabWidget::exportToDBSlot()
         serializer.Serialize(m_algorithmOutputInfo, serializedData);
 
         bool resultsAddedSuccessfully = m_databaseAccess->addResultsInDB(QString::fromStdString(serializedData));
+        connect(m_databaseAccess,SIGNAL(updated()),this,SIGNAL(refreshResults()));
+
 
         if(resultsAddedSuccessfully)
         {
@@ -178,6 +180,7 @@ void ResultsTabWidget::exportDataToDBSlot()
         m_databaseAccess = new DbBlock();
         QString outputString = QString::fromStdString(output);
         bool result = m_databaseAccess->addRecordInDB(outputString);
+        connect(m_databaseAccess,SIGNAL(updated()),this,SIGNAL(refreshRecords()));
 
         if(!result)
         {
@@ -188,6 +191,8 @@ void ResultsTabWidget::exportDataToDBSlot()
         {
             statusMessage = "Enregistrement en base de données réussi";
             status = MessageStatus::success;
+            emit refreshRecords();
+            mainWindow->refreshRecordListWidget();
         }
     }
 

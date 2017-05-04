@@ -19,6 +19,10 @@ class DbBlock : public QObject
         bool addRecordInDB(const QString& json);
         bool addResultsInDB(const QString &json);
 
+    signals:
+        void updated();
+
+
 public slots:
         void reponseRecue(QNetworkReply* reply);
         void resultInsertionResponse(QNetworkReply* reply);

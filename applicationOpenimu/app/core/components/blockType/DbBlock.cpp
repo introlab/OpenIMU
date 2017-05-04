@@ -29,6 +29,8 @@ bool DbBlock::addRecordInDB(const QString &json)
     QNetworkRequest request(QUrl("http://127.0.0.1:5000/insertrecord"));
     QByteArray postDataSize = QByteArray::number(dataByteArray.size());
 
+    qDebug() << "Inserting record of size: " << dataByteArray.size();
+
     request.setRawHeader("User-Agent", "ApplicationNameV01");
     request.setRawHeader("Content-Type", "application/json");
     request.setRawHeader("Content-Length", postDataSize);
@@ -84,6 +86,7 @@ void DbBlock::reponseRecue(QNetworkReply* reply)
     if (reply->error() == QNetworkReply::NoError)
     {
         qDebug() << reply->readAll();
+        emit updated();
     }
     else
     {
@@ -101,6 +104,7 @@ void DbBlock::resultInsertionResponse(QNetworkReply* reply)
     if (reply->error() == QNetworkReply::NoError)
     {
         std::string response(reply->readAll());
+        emit updated();
     }
     else
     {

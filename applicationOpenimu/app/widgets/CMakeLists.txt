@@ -49,3 +49,5 @@ SET(uis
     ${CMAKE_CURRENT_SOURCE_DIR}/genericalgoresults.ui
     PARENT_SCOPE
 )
+
+add_custom_target(qml_files SOURCES ../rangeSlider.qml)

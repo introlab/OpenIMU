@@ -1,6 +1,7 @@
 import QtQuick 2.6
 import QtQuick.Controls 2.0
 
+
 RangeSlider {
     id: control
     first.value: 0
@@ -14,7 +15,7 @@ RangeSlider {
     background: Rectangle {
         x: control.leftPadding
         y: control.topPadding + control.availableHeight / 2 - height / 2
-        implicitWidth: 320
+        implicitWidth: 400
         implicitHeight: 2
         width: control.availableWidth
         height: implicitHeight
@@ -52,3 +53,4 @@ RangeSlider {
         border.color: "#bdbebf"
     }
 }
+

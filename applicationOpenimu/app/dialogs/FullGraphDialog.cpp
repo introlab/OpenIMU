@@ -1,5 +1,6 @@
 #include "FullGraphDialog.h"
 #include "ui_FullGraphDialog.h"
+#include <QMainWindow>
 
 FullGraphDialog::FullGraphDialog(QWidget *parent) :
     QDialog(parent),
@@ -7,6 +8,7 @@ FullGraphDialog::FullGraphDialog(QWidget *parent) :
 {
     m_ui->setupUi(this);
     this->setWindowIcon(QIcon(":/icons/logo.ico"));
+
 }
 
 FullGraphDialog::~FullGraphDialog()
@@ -16,8 +18,9 @@ FullGraphDialog::~FullGraphDialog()
 
 void FullGraphDialog::prepareDisplay(WimuAcquisition acceleroData, RecordInfo recordInfo)
 {
-    m_dataDisplay = new AccDataDisplay(acceleroData);
+    m_dataDisplay = new AccDataDisplay(acceleroData,this);
     m_dataDisplay->setInfo(recordInfo);
+    m_dataDisplay->show();
     m_ui->mainLayout->addWidget(m_dataDisplay);
 }
 
