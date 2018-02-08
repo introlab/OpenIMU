@@ -4,4 +4,7 @@ set(GTEST_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/googletest/include CACHE INTERNAL
 set(GTEST_LIBS gtest gmock gtest_main CACHE INTERNAL "doc string")
 
 #Add liquid-dsp wrapper
-add_subdirectory(liquid-dsp)
+#Does not build with MSVC2017
+#add_subdirectory(liquid-dsp)
+
+add_subdirectory(kfr)

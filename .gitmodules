@@ -7,3 +7,6 @@
 [submodule "third_party/liquid-dsp/liquid-dsp"]
 	path = third_party/liquid-dsp/liquid-dsp
 	url = https://github.com/jgaeddert/liquid-dsp.git
+[submodule "third_party/kfr"]
+	path = third_party/kfr
+	url = https://github.com/kfrlib/kfr.git
