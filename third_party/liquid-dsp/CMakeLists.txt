@@ -180,3 +180,8 @@ set(liquid-dsp-srcs
 )
 
 add_library(liquid-dsp STATIC ${liquid-dsp-srcs} config.h.in)
+set_property(TARGET liquid-dsp PROPERTY C_STANDARD 99)
+
+set(LIQUIDDSP_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/liquid-dsp/include CACHE INTERNAL "doc string")
+set(LIQUIDDSP_LIBS liquid-dsp CACHE INTERNAL "doc string")
+

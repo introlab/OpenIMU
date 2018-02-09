@@ -8,6 +8,7 @@ include(CheckFunctionExists)
 
 #Look for minimum cmake version
 cmake_minimum_required(VERSION 3.0.2)
+set (CMAKE_CXX_STANDARD 14)
 
 #First, let's compile our dependencies
 add_subdirectory(third_party)
