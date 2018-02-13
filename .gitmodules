@@ -10,3 +10,6 @@
 [submodule "third_party/kfr"]
 	path = third_party/kfr
 	url = https://github.com/kfrlib/kfr.git
+[submodule "third_party/gsl"]
+	path = third_party/gsl
+	url = https://github.com/ampl/gsl.git

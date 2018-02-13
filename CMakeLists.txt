@@ -3,12 +3,16 @@ PROJECT (OpenIMU)
 SET(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 SET(BUILD_SHARED_LIBS TRUE)
 
+set(CMAKE_VERBOSE_MAKEFILE ON)
+
 include(CTest)
 include(CheckFunctionExists)
 
 #Look for minimum cmake version
 cmake_minimum_required(VERSION 3.0.2)
 set (CMAKE_CXX_STANDARD 14)
+
+
 
 #First, let's compile our dependencies
 add_subdirectory(third_party)
