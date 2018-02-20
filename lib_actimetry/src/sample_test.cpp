@@ -8,6 +8,11 @@
 
 
 #include "liquid.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_spline.h>
 
 
 namespace {
@@ -30,17 +35,17 @@ namespace {
 
         //1Hz sine signal to be generated
         constexpr fbase frequency = 1.0;
-        const univector<fbase, input_sr> o1 = sine(counter(0,1.0/input_sr) * 2.0 * constants<fbase>::pi * frequency);
+        const univector<fbase, input_sr * 2> o1 = sine(counter(0,1.0/input_sr) * 2.0 * constants<fbase>::pi * frequency);
 
         println("input_signal");
         println(o1.size());
         println(o1);
 
         //allocation of output vector
-        univector<fbase> resampled(o1.size() * output_sr / input_sr);
+        univector<fbase> resampled(o1.size() * output_sr / input_sr * 2);
 
         //Resampler
-        auto r = resampler<fbase>(resample_quality::low, output_sr, input_sr, 1.0, 0.49);
+        auto r = resampler<fbase>(resample_quality::normal, output_sr, input_sr, 1.0, 0.49);
 
         println("output_signal");
         //Resample & get size
@@ -196,6 +201,43 @@ namespace {
 
     }
 #endif
+
+#if 0
+    //GSL
+    TEST(GSL, Interpolation) {
+
+        int i;
+          double xi, yi, x[10], y[10];
+
+          printf ("#m=0,S=2\n");
+
+          for (i = 0; i < 10; i++)
+            {
+              x[i] = i + 0.5 * sin (i);
+              y[i] = i + cos (i * i);
+              printf ("%g %g\n", x[i], y[i]);
+            }
+
+          printf ("#m=1,S=0\n");
+
+          {
+            gsl_interp_accel *acc
+              = gsl_interp_accel_alloc ();
+            gsl_spline *spline
+              = gsl_spline_alloc (gsl_interp_cspline, 10);
+
+            gsl_spline_init (spline, x, y, 10);
+
+            for (xi = x[0]; xi < x[9]; xi += 0.001)
+              {
+                yi = gsl_spline_eval (spline, xi, acc);
+                printf ("%g %g\n", xi, yi);
+              }
+            gsl_spline_free (spline);
+            gsl_interp_accel_free (acc);
+          }
+    }
+ #endif
 
 }
 
