@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/OpenIMU">
+        <file>resources/IntRoLab.png</file>
+    </qresource>
+</RCC>

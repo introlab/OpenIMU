@@ -10,7 +10,7 @@ include(CheckFunctionExists)
 
 #Look for minimum cmake version
 cmake_minimum_required(VERSION 3.0.2)
-set (CMAKE_CXX_STANDARD 14)
+#set (CMAKE_CXX_STANDARD 14)
 
 # compile in debug or release mode
 IF(NOT CMAKE_BUILD_TYPE)
@@ -19,10 +19,10 @@ IF(NOT CMAKE_BUILD_TYPE)
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
 #First, let's compile our dependencies
-add_subdirectory(third_party)
+#add_subdirectory(third_party)
 
 #Then, compile our actimetry library
-add_subdirectory(lib_actimetry)
+#add_subdirectory(lib_actimetry)
 
 #Python
 add_subdirectory(python)
