@@ -6,6 +6,8 @@ from PyQt5.QtQuickWidgets import QQuickWidget
 from PyQt5.QtCore import Qt, QUrl
 from Charts import IMUChartView
 
+import DataImporter as importer
+
 from PyQt5.QtCore import pyqtProperty, QCoreApplication, QObject
 from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
 
@@ -24,7 +26,7 @@ class MainWindow(QMainWindow):
         self.UI.setupUi(self)
 
         # Create chart and mdiWindow
-        self.chartView = self.create_chart_view(test_data=True)
+        self.chartView = self.create_chart_view(test_data=False)
         self.add_mdi_widget(widget=self.chartView, title='QtChart')
 
         # Create WebEngineView
@@ -41,6 +43,14 @@ class MainWindow(QMainWindow):
 
         # Re-arrange subwindows
         self.UI.mdiArea.tileSubWindows()
+
+        # Load test data
+        self.testData =  importer.load_mat_file('resources/test_data.mat')['data2']
+
+        # Add to plot (accelerometer x)
+        self.chartView.add_data(self.testData[:, 0], self.testData[:, 1], Qt.red)
+        self.chartView.add_data(self.testData[:, 0], self.testData[:, 2], Qt.green)
+        self.chartView.add_data(self.testData[:, 0], self.testData[:, 3], Qt.blue)
 
         # Maximize window
         self.showMaximized()
