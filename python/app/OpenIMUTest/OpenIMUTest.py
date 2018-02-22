@@ -7,6 +7,7 @@ from PyQt5.QtCore import Qt, QUrl
 from Charts import IMUChartView
 
 import DataImporter as importer
+import Algorithms as algo
 
 from PyQt5.QtCore import pyqtProperty, QCoreApplication, QObject
 from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
@@ -40,17 +41,21 @@ class MainWindow(QMainWindow):
         self.quickWidget.setSource(QUrl.fromLocalFile("resources/test.qml"))
         self.add_mdi_widget(widget=self.quickWidget,title='QML widget')
 
-
         # Re-arrange subwindows
         self.UI.mdiArea.tileSubWindows()
 
         # Load test data
-        self.testData =  importer.load_mat_file('resources/test_data.mat')['data2']
+        self.rawData =  importer.load_mat_file('resources/test_data.mat')['data2']
+        self.intData = algo.resample_data(self.rawData,100)
 
         # Add to plot (accelerometer x)
-        self.chartView.add_data(self.testData[:, 0], self.testData[:, 1], Qt.red)
-        self.chartView.add_data(self.testData[:, 0], self.testData[:, 2], Qt.green)
-        self.chartView.add_data(self.testData[:, 0], self.testData[:, 3], Qt.blue)
+        self.chartView.add_data(self.intData[:, 0], self.intData[:, 1], Qt.red)
+        self.chartView.add_data(self.intData[:, 0], self.intData[:, 2], Qt.green)
+        self.chartView.add_data(self.intData[:, 0], self.intData[:, 3], Qt.blue)
+
+        self.chartView.set_title( ("Accelerometer data with %d curves of %d points " \
+         "(OpenGL Accelerated Series)" \
+         % (3, len(self.intData))))
 
         # Maximize window
         self.showMaximized()
