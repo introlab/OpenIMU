@@ -34,8 +34,10 @@ class MainWindow(QMainWindow):
 
         # QML engine and widget
         self.quickWidget = QQuickWidget(self)
-        self.quickWidget.setSource(QUrl.fromLocalFile('qrc:OpenIMU/resources/test.qml'))
+        self.quickWidget.setMinimumSize(400,200)
+        self.quickWidget.setSource(QUrl.fromLocalFile("resources/test.qml"))
         self.add_mdi_widget(widget=self.quickWidget,title='QML widget')
+
 
         # Re-arrange subwindows
         self.UI.mdiArea.tileSubWindows()
@@ -47,6 +49,7 @@ class MainWindow(QMainWindow):
         sub_window = QMdiSubWindow(self.UI.mdiArea)
 
         if widget is not None:
+            widget.show()
             sub_window.setWidget(widget)
             sub_window.setWindowTitle(title)
 

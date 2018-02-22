@@ -1,9 +1,27 @@
 import QtQuick 2.9
-import QtQuick.Window 2.2
+import QtQuick.Controls 1.4
 
-Window {
-    visible: true
-    width: 640
-    height: 480
-    title: qsTr("Hello World")
+Rectangle {
+  id: rectangle1
+
+  width: 100
+  height: 100
+  color: "#cf1a1a"
+
+  Button {
+          id: idButtonClick
+
+          anchors.fill: rectangle1
+
+          height: 20
+          width: 50
+
+          text: "click"
+
+          onClicked: {
+              console.log("idButtonClick");
+        }
+  }
+
 }
+
