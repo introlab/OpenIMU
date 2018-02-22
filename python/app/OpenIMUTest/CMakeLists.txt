@@ -10,6 +10,10 @@ SET(qrcs
     core.qrc
 )
 
+SET(qml
+    resources/test.qml
+)
+
 # generate rules for building source files from the resources
 QT5_ADD_RESOURCES(srcs_qrcs ${qrcs})
 
@@ -23,7 +27,7 @@ foreach(uifile ${uis})
     message(STATUS "Processing ${uifile}")
     get_filename_component (name_without_extension ${uifile} NAME_WE)
     #Add py extension to file
-    set(output_file UI_${name_without_extension}.py)
+    set(output_file ${name_without_extension}_ui.py)
     list(APPEND python_uis ${output_file})
     add_custom_target(${output_file}
         COMMAND ${PYQT5_UIC_EXECUTABLE} ${uifile} -o ${output_file}
@@ -37,7 +41,7 @@ foreach(rcfile ${qrcs})
     message(STATUS "Processing ${rcfile}")
     get_filename_component (name_without_extension ${rcfile} NAME_WE)
     #Add py extension to file
-    set(output_file RC_${name_without_extension}.py)
+    set(output_file ${name_without_extension}_rc.py)
     list(APPEND python_qrcs ${output_file})
     add_custom_target(${output_file}
         COMMAND ${PYQT5_RCC_EXECUTABLE} ${rcfile} -o ${output_file}
@@ -50,3 +54,5 @@ endforeach(rcfile)
 #Can we do better?
 add_library(dummy STATIC ${moc_uis} ${uis} ${qrcs} ${srcs_qrcs})
 add_dependencies(dummy ${python_uis} ${python_qrcs})
+
+add_custom_target(qml_files SOURCES ${qml})

@@ -1,13 +1,19 @@
-from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout
+from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QMdiSubWindow
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import Qt
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage
+from PyQt5.QtQuickWidgets import QQuickWidget
+
+from PyQt5.QtCore import Qt, QUrl
 from Charts import IMUChartView
 
+from PyQt5.QtCore import pyqtProperty, QCoreApplication, QObject
+from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
+
 # This is auto-generated from Qt .ui files
-from UI_MainWindow import Ui_MainWindow
+from MainWindow_ui import Ui_MainWindow
 
 # This is auto-generated from Qt .qrc files
-import RC_core
+import core_rc
 
 import sys
 
@@ -16,33 +22,48 @@ class MainWindow(QMainWindow):
         super(QMainWindow,self).__init__(parent=parent)
         self.UI = Ui_MainWindow()
         self.UI.setupUi(self)
+
+        # Create chart and mdiWindow
+        self.chartView = self.create_chart_view(test_data=True)
+        self.add_mdi_widget(widget=self.chartView, title='QtChart')
+
+        # Create WebEngineView
+        self.webView = QWebEngineView(self)
+        self.webView.setUrl(QUrl('https://www.google.ca'))
+        self.add_mdi_widget(widget=self.webView, title='WebEngineView')
+
+        # QML engine and widget
+        self.quickWidget = QQuickWidget(self)
+        self.quickWidget.setSource(QUrl.fromLocalFile('qrc:OpenIMU/resources/test.qml'))
+        self.add_mdi_widget(widget=self.quickWidget,title='QML widget')
+
+        # Re-arrange subwindows
+        self.UI.mdiArea.tileSubWindows()
+
+        # Maximize window
         self.showMaximized()
 
+    def add_mdi_widget(self, widget=None, title=''):
+        sub_window = QMdiSubWindow(self.UI.mdiArea)
 
-class MainWindow2(QMainWindow):
-    def __init__(self, parent=None):
-        super(QMainWindow, self).__init__(parent=parent)
-        self.centralWidget = QWidget(self)
-        self.centralLayout = QVBoxLayout(self.centralWidget)
-        self.setCentralWidget(self.centralWidget)
+        if widget is not None:
+            sub_window.setWidget(widget)
+            sub_window.setWindowTitle(title)
 
-        # Testing chart
-        self.chartView = None
-        self.add_chart_view(test_data=True)
+        sub_window.resize(640,480)
+        self.UI.mdiArea.addSubWindow(sub_window)
+        return sub_window
 
-        self.resize(640,480)
-        self.show()
-
-    def add_chart_view(self, test_data=False):
-        self.chartView = IMUChartView(self.centralWidget)
-        self.centralLayout.addWidget(self.chartView)
+    def create_chart_view(self, test_data=False):
+        chart_view = IMUChartView(self)
         if test_data is True:
-            self.chartView.add_test_data()
+            chart_view.add_test_data()
+        return chart_view
 
 
 # Main
 if __name__ == '__main__':
-    RC_core.qInitResources()
     app = QApplication(sys.argv)
+    app.setAttribute(Qt.AA_EnableHighDpiScaling)
     window = MainWindow()
     sys.exit(app.exec_())
