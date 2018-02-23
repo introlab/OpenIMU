@@ -53,9 +53,9 @@ class MainWindow(QMainWindow):
         self.chartView.add_data(self.intData[:, 0], self.intData[:, 2], Qt.green)
         self.chartView.add_data(self.intData[:, 0], self.intData[:, 3], Qt.blue)
 
-        self.chartView.set_title( ("Accelerometer data with %d curves of %d points " \
+        self.chartView.set_title( ("Accelerometer data with %d points " \
          "(OpenGL Accelerated Series)" \
-         % (3, len(self.intData))))
+         % (len(self.intData))))
 
         # Maximize window
         self.showMaximized()
