@@ -8,6 +8,7 @@ from Charts import IMUChartView
 
 import DataImporter as importer
 import Algorithms as algo
+import numpy as np
 
 from PyQt5.QtCore import pyqtProperty, QCoreApplication, QObject
 from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
@@ -46,16 +47,26 @@ class MainWindow(QMainWindow):
 
         # Load test data
         self.rawData =  importer.load_mat_file('resources/test_data.mat')['data2']
-        self.intData = algo.resample_data(self.rawData,100)
+        self.rawData[:, 0] = self.rawData[:, 0] * 24 * 60 * 60
+        self.intData = algo.resample_data(self.rawData, 100)
+
 
         # Add to plot (accelerometer x)
         self.chartView.add_data(self.intData[:, 0], self.intData[:, 1], Qt.red)
         self.chartView.add_data(self.intData[:, 0], self.intData[:, 2], Qt.green)
         self.chartView.add_data(self.intData[:, 0], self.intData[:, 3], Qt.blue)
-
         self.chartView.set_title( ("Accelerometer data with %d points " \
          "(OpenGL Accelerated Series)" \
          % (len(self.intData))))
+
+        # Add counts
+        self.epoch_secs = 60
+        self.sample_rate = 100
+        [nb_epochs, counts] = algo.freedson_adult_1998(self.rawData,self.epoch_secs, self.sample_rate)
+        self.chartView2 = self.create_chart_view(test_data=False)
+        self.add_mdi_widget(widget=self.chartView2, title='QtChart')
+        self.chartView2.add_data(np.array(range(0, int(nb_epochs))), counts, Qt.blue)
+        self.chartView2.set_title(("Counts with epoch size %d secs" % self.epoch_secs))
 
         # Maximize window
         self.showMaximized()
