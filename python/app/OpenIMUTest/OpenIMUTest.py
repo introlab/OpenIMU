@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QMdiSubWindow
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineSettings
 from PyQt5.QtQuickWidgets import QQuickWidget
 
 from PyQt5.QtCore import Qt, QUrl
@@ -35,7 +35,8 @@ class MainWindow(QMainWindow):
         self.add_mdi_widget(widget=self.chartView, title='QtChart')
 
         # Create WebEngineView
-        self.jupyter_pid = Jupyter.start_jupyter()
+        self.jupyter = Jupyter.JupyterNotebook()
+        self.jupyter.start()
         self.webView = QWebEngineView(self)
         self.webView.setUrl(QUrl('http://localhost:8888/'))
         self.add_mdi_widget(widget=self.webView, title='WebEngineView')
@@ -75,10 +76,14 @@ class MainWindow(QMainWindow):
         # Maximize window
         self.showMaximized()
 
-    def __del__(self):
-        print('stopping jupyter process ... pid:',self.jupyter_pid, 'kill', signal.SIGINT)
-        os.kill(self.jupyter_pid, 2)  # or signal.SIGKILL
+    def closeEvent(self, event):
+        print('closeEvent')
+        self.jupyter.stop()
+        del self.jupyter
+        self.jupyter = None
 
+    def __del__(self):
+        print('del...')
 
     def add_mdi_widget(self, widget=None, title=''):
         sub_window = QMdiSubWindow(self.UI.mdiArea)
@@ -103,5 +108,11 @@ class MainWindow(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setAttribute(Qt.AA_EnableHighDpiScaling)
+
+    # WebEngine settings
+    QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.PluginsEnabled, True)
+    QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.JavascriptCanOpenWindows, True)
+    QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.JavascriptEnabled, True)
+
     window = MainWindow()
     sys.exit(app.exec_())

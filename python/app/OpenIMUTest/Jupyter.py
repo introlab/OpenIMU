@@ -1,21 +1,35 @@
-import os, time, sys, subprocess
+import os, time, sys, subprocess, signal
 
 
-def start_jupyter():
+class JupyterNotebook():
+    def __init__(self):
+        self.notebooks_directory = os.getcwd() + '/notebooks'
+        self.jupyter_executable = sys.exec_prefix +'/bin/jupyter'
+        self.jupyter_pid = None
+        print('notebooks directory: ', self.notebooks_directory)
+        print('jupyter path:', self.jupyter_executable)
 
-    notebooks_directory = os.getcwd() + '/notebooks'
-    jupyter_executable = sys.exec_prefix +'/bin/jupyter'
-    print('notebooks directory: ',notebooks_directory)
-    print('jupyter path:', jupyter_executable)
+    def __del__(self):
+        self.stop()
 
-    #Launch the jupyter executable
-    pid = subprocess.Popen([jupyter_executable, 'notebook'
+    def start(self):
+        self.jupyter_pid = subprocess.Popen([self.jupyter_executable, 'notebook'
                                , "--NotebookApp.token=''"
-                               , '--notebook-dir=' + notebooks_directory
+                               , '--notebook-dir=' + self.notebooks_directory
                                , '--no-browser', '--port=8888']).pid
-    return pid
+        print('Jupyter Notebook started with pid: ', self.jupyter_pid)
+        return self.jupyter_pid
+
+    def stop(self):
+        if self.jupyter_pid is not None:
+            print('Stopping Jupyter Notebook process ... pid:', self.jupyter_pid)
+            os.kill(self.jupyter_pid, signal.SIGINT)  # or signal.SIGKILL
+            self.jupyter_pid = None
 
 
 if __name__ == '__main__':
-    pid = start_jupyter()
+    import time
+    nb = JupyterNotebook()
+    pid = nb.start()
+    time.sleep(10)
 
