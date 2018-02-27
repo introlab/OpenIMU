@@ -9,6 +9,9 @@ from Charts import IMUChartView
 import DataImporter as importer
 import Algorithms as algo
 import numpy as np
+import Jupyter
+import os
+import signal
 
 from PyQt5.QtCore import pyqtProperty, QCoreApplication, QObject
 from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
@@ -32,8 +35,9 @@ class MainWindow(QMainWindow):
         self.add_mdi_widget(widget=self.chartView, title='QtChart')
 
         # Create WebEngineView
+        self.jupyter_pid = Jupyter.start_jupyter()
         self.webView = QWebEngineView(self)
-        self.webView.setUrl(QUrl('https://www.google.ca'))
+        self.webView.setUrl(QUrl('http://localhost:8888/'))
         self.add_mdi_widget(widget=self.webView, title='WebEngineView')
 
         # QML engine and widget
@@ -70,6 +74,11 @@ class MainWindow(QMainWindow):
 
         # Maximize window
         self.showMaximized()
+
+    def __del__(self):
+        print('stopping jupyter process ... pid:',self.jupyter_pid, 'kill', signal.SIGINT)
+        os.kill(self.jupyter_pid, 2)  # or signal.SIGKILL
+
 
     def add_mdi_widget(self, widget=None, title=''):
         sub_window = QMdiSubWindow(self.UI.mdiArea)
