@@ -34,7 +34,8 @@ class IMUChartView(QChartView):
         #curve.setUseOpenGL(True)
         curve.append(self.series_to_polyline(xdata, ydata))
 
-        #if legend_text is not None:
+        if legend_text is not None:
+            curve.setName(legend_text)
 
         self.chart.addSeries(curve)
         self.chart.createDefaultAxes()
@@ -65,9 +66,9 @@ class IMUChartView(QChartView):
         npoints = 100 * 60 * 24
 
         xdata = np.linspace(0., 10., npoints)
-        self.add_data(xdata, np.sin(xdata), color=Qt.red)
-        self.add_data(xdata, np.cos(xdata), color=Qt.green)
-        self.add_data(xdata, np.cos(2 * xdata), color=Qt.blue)
+        self.add_data(xdata, np.sin(xdata), color=Qt.red, legend_text='Acc. X')
+        self.add_data(xdata, np.cos(xdata), color=Qt.green, legend_text='Acc. Y')
+        self.add_data(xdata, np.cos(2 * xdata), color=Qt.blue, legend_text='Acc. Z')
         self.set_title("Simple example with %d curves of %d points " \
                           "(OpenGL Accelerated Series)" \
                           % (self.ncurves, npoints))
@@ -85,6 +86,9 @@ if __name__ == '__main__':
     window = QMainWindow()
     imuView = IMUChartView(window)
     imuView.add_test_data()
+
+
+
     window.setCentralWidget(imuView)
     window.setWindowTitle("IMUChartView Demo")
     window.resize(640,480)
