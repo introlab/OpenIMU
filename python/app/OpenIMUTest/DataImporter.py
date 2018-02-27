@@ -9,3 +9,8 @@ def load_mat_file(filename):
     print("loading: ", filename)
     mat_contents = sio.loadmat(filename)
     return mat_contents
+
+
+def test_call():
+    print('Testing...')
+

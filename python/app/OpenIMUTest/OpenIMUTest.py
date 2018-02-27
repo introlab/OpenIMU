@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineSettings
 from PyQt5.QtQuickWidgets import QQuickWidget
 
-from PyQt5.QtCore import Qt, QUrl
+from PyQt5.QtCore import Qt, QUrl, pyqtSlot
 from Charts import IMUChartView
 
 import DataImporter as importer
@@ -38,8 +38,13 @@ class MainWindow(QMainWindow):
         self.jupyter = Jupyter.JupyterNotebook()
         self.jupyter.start()
         self.webView = QWebEngineView(self)
-        self.webView.setUrl(QUrl('http://localhost:8888/'))
+        self.webView.setUrl(QUrl('http://localhost:8888/notebooks/Notebook.ipynb'))
+        #self.webView.setUrl(QUrl('http://google.ca/'))
         self.add_mdi_widget(widget=self.webView, title='WebEngineView')
+        #Signals
+        self.webView.urlChanged.connect(self.urlChanged)
+
+
 
         # QML engine and widget
         self.quickWidget = QQuickWidget(self)
@@ -76,6 +81,10 @@ class MainWindow(QMainWindow):
         # Maximize window
         self.showMaximized()
 
+    @pyqtSlot(QUrl)
+    def urlChanged(self,url):
+        print('url: ', url)
+
     def closeEvent(self, event):
         print('closeEvent')
         self.jupyter.stop()
@@ -83,7 +92,7 @@ class MainWindow(QMainWindow):
         self.jupyter = None
 
     def __del__(self):
-        print('del...')
+        print('Done!')
 
     def add_mdi_widget(self, widget=None, title=''):
         sub_window = QMdiSubWindow(self.UI.mdiArea)
@@ -113,6 +122,9 @@ if __name__ == '__main__':
     QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.PluginsEnabled, True)
     QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.JavascriptCanOpenWindows, True)
     QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.JavascriptEnabled, True)
+    QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.LocalContentCanAccessRemoteUrls,True)
+    QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.AllowRunningInsecureContent, True)
+
 
     window = MainWindow()
     sys.exit(app.exec_())
