@@ -67,6 +67,8 @@ def gt3x_activity_extractor(data, samplerate, scale):
     # Initialize bitstream
     stream = bitstring.BitStream(data)
 
+    # TODO : Read all at once
+
     # This is really slow...
     if len(data) is int(36 * samplerate / 8):
         for index in range(0, int(samplerate)):
@@ -169,6 +171,7 @@ def gt3x_importer(filename):
 
     # Dict containing the information
     info = {}
+
     data = {}
 
     with zipfile.ZipFile(filename) as myzip:
@@ -182,6 +185,7 @@ def gt3x_importer(filename):
                     info[items[0]] = items[1]
 
         sample_rate = float(info['Sample Rate'])
+        scale = float(info['Acceleration Scale'])
         print('My Sample rate:', sample_rate)
 
         # Reading log.bin
@@ -189,6 +193,7 @@ def gt3x_importer(filename):
             filedata = myfile.read()
             print('filedata size', len(filedata), 'type:', type(filedata))
             data_offset = 0
+
             while data_offset < len(filedata):
                 # print('data_offset:', data_offset)
                 # < Little Endian, byte, byte, uint32, uint16
@@ -216,8 +221,8 @@ def gt3x_importer(filename):
                 """
 
                 if record_type is RecordType.ACTIVITY:
-                    scale = float(info['Acceleration Scale'])
-                    [x, y, z] = gt3x_activity_extractor(record_data, sample_rate, scale)
+                    # [x, y, z] = gt3x_activity_extractor(record_data, sample_rate, scale)
+                    print('skipping activity, too long...')
                     # print('lengths', len(x), len(y), len(z))
 
                 elif record_type is RecordType.BATTERY:
