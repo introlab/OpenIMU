@@ -73,7 +73,6 @@ def counts(mag, epoch=60, rate=100):
     # Split into epochs of x seconds
     epochs = np.split(tmpdata, len(tmpdata) / (rate * epoch))
 
-
     # Iterate through epochs
     for i in range(0, len(epochs)):
         counts = np.append(counts, np.sum(epochs[i]))
@@ -115,10 +114,10 @@ Test function
 """
 if __name__ == '__main__':
     np.set_printoptions(suppress=True)
-    import DataImporter as importer
+    import libopenimu.importers.DataImporter as importer
     # import matplotlib.pyplot as plt
     # Load test data
-    rawData = importer.load_mat_file('resources/test_data.mat')['data2']
+    rawData = importer.load_mat_file('../../resources/test_data.mat')['data2']
 
     # Convert time to seconds
     # Our example have fractional days increments

@@ -4,12 +4,12 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineS
 from PyQt5.QtQuickWidgets import QQuickWidget
 
 from PyQt5.QtCore import Qt, QUrl, pyqtSlot
-from Charts import IMUChartView
+from libopenimu.qt.Charts import IMUChartView
 
-import DataImporter as importer
-import Algorithms as algo
+import libopenimu.importers.DataImporter as importer
+import libopenimu.algorithms.Algorithms as algo
 import numpy as np
-import Jupyter
+import libopenimu.jupyter.Jupyter as Jupyter
 import os
 import signal
 
@@ -23,6 +23,9 @@ from MainWindow_ui import Ui_MainWindow
 import core_rc
 
 import sys
+
+import libopenimu
+
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -39,12 +42,10 @@ class MainWindow(QMainWindow):
         self.jupyter.start()
         self.webView = QWebEngineView(self)
         self.webView.setUrl(QUrl('http://localhost:8888/notebooks/Notebook.ipynb'))
-        #self.webView.setUrl(QUrl('http://google.ca/'))
+        # self.webView.setUrl(QUrl('http://google.ca/'))
         self.add_mdi_widget(widget=self.webView, title='WebEngineView')
-        #Signals
+        # Signals
         self.webView.urlChanged.connect(self.urlChanged)
-
-
 
         # QML engine and widget
         self.quickWidget = QQuickWidget(self)
@@ -59,7 +60,6 @@ class MainWindow(QMainWindow):
         self.rawData =  importer.load_mat_file('resources/test_data.mat')['data2']
         self.rawData[:, 0] = self.rawData[:, 0] * 24 * 60 * 60
         self.intData = algo.resample_data(self.rawData, 100)
-
 
         # Add to plot (accelerometer x)
         self.chartView.add_data(self.intData[:, 0], self.intData[:, 1], Qt.red, 'Accelerometer_X')
@@ -124,7 +124,6 @@ if __name__ == '__main__':
     QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.JavascriptEnabled, True)
     QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.LocalContentCanAccessRemoteUrls,True)
     QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.AllowRunningInsecureContent, True)
-
 
     window = MainWindow()
     sys.exit(app.exec_())

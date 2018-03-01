@@ -12,6 +12,7 @@ from PyQt5.QtChart import QChart, QChartView, QLineSeries, QLegend
 from PyQt5.QtCore import Qt
 import numpy as np
 
+
 class IMUChartView(QChartView):
     def __init__(self, parent=None):
         super(QChartView, self).__init__(parent=parent)
@@ -86,8 +87,6 @@ if __name__ == '__main__':
     window = QMainWindow()
     imuView = IMUChartView(window)
     imuView.add_test_data()
-
-
 
     window.setCentralWidget(imuView)
     window.setWindowTitle("IMUChartView Demo")
