@@ -11,6 +11,3 @@ def load_mat_file(filename):
     return mat_contents
 
 
-def test_call():
-    print('Testing...')
-

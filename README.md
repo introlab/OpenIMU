@@ -1,4 +1,4 @@
-# OpenIMU
+# OpenIMU - Data Analyser for Inertial Measurement Units and Actimetry Data
 
 ## Authors
 * Dominic Létourneau (@doumdi) 
@@ -20,7 +20,7 @@ Please follow those steps to setup your development environment.
 1. Using PyCharm, create a project by opening the file "{PROJECT_ROOT}/python/app/OpenIMUTest/OpenIMUTest.py"
     1. Create a Python 3.5 environment using conda in "{PROJECT_ROOT}/python/env/python-3.5"
     1. Use the conda package manager and install the following packages :
-        1. PyQt5, PyQtChart, PyInstaller, scipy, numpy, jupyter
+        1. PyQt5, PyQtChart, PyInstaller, scipy, numpy, jupyter, bitstring
 
 ### Step 2 : Open the root CMakeLists.txt in QtCreator
 1. Opening the root CMakeLists.txt will allow to create and build the project
@@ -28,7 +28,7 @@ Please follow those steps to setup your development environment.
     1. TODO : We hope to automate the creation of the Python environment in the future and automatically install the dependencies
     1. Once the project is built, you will not need QtCreator until you change or add a resource file or a QtDesigner ui file.
     
-### Step 3: Back to PyCharm for good.
+### Step 3 : Back to PyCharm for good
 1. Run the OpenIMUTest.py application from PyCharm
 2. Edit the code as you would normally do in a python program.
 
