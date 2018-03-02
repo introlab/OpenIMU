@@ -10,6 +10,7 @@ import zipfile
 import struct
 import numpy as np
 import bitstring
+import time
 
 class RecordType:
     """
@@ -35,6 +36,72 @@ class RecordType:
     ACTIVITY2 = 0x1A
 
 
+def timing(f):
+    def wrap(*args):
+        time1 = time.time()
+        ret = f(*args)
+        time2 = time.time()
+        print("%s function took %0.3f ms" % (f.__name__, (time2-time1)*1000.0))
+        return ret
+    return wrap
+
+
+def gt3x_read_uint12(data, nb_axis=3):
+    """
+    Based on the c# code here:
+    https://github.com/actigraph/GT3X-File-Format/blob/master/LogRecords/Activity.md
+
+    :param data:
+    :param nb_axis:
+    :return:
+    """
+    # print('reading.')
+
+    offset = 0
+    current = np.uint16(0)
+    byte_index = 0
+
+    # C-Style array
+    lines = int(np.floor(len(data) * 8 / (12 * nb_axis)))
+    # print ('lines:',lines)
+    samples = np.ndarray(shape=(lines, nb_axis), dtype=np.int16, order='C')
+
+    # We know exactly how many samples the data should contain
+    for line in range(0, lines):
+
+        #print('before: ', byte_index)
+        before = byte_index
+
+        for axis in range(0, nb_axis):
+            # print('axis:', axis)
+            shifter = np.uint16(0)
+
+            if (offset & 0x7) == 0x0000:
+                current = data[byte_index]
+                byte_index += 1
+                shifter = (current & 0xFF) << 4
+                offset += 8
+                current = data[byte_index]
+                byte_index += 1
+                shifter |= (current & 0xF0) >> 4
+                offset += 4
+            else:
+                shifter = (current & 0x0F) << 8
+                offset += 4
+                current = data[byte_index]
+                byte_index += 1
+                shifter |= (current & 0xFF)
+                offset += 8
+            # Sign extension
+            if (shifter & 0x0800) != 0:
+                shifter |= 0xF000
+
+            #fill data
+            samples[line][axis] = np.int16(shifter)
+            # print('sample:', np.int16(shifter))
+
+    return samples
+
 def gt3x_activity_extractor(data, samplerate, scale):
     """
 
@@ -57,48 +124,13 @@ def gt3x_activity_extractor(data, samplerate, scale):
     :param samplerate:
     :return:
     """
-    # print('Activity Extractor', 'size:', len(data), 'epoch size should be :', int(36 * samplerate / 8))
 
-    # Initialize data to zero
-    x_vec = np.zeros(int(samplerate))
-    y_vec = np.zeros(int(samplerate))
-    z_vec = np.zeros(int(samplerate))
+    # Read all at once and scale
+    samples = gt3x_read_uint12(data) / scale
+    # print('samples:', samples)
 
-    # Initialize bitstream
-    stream = bitstring.BitStream(data)
-
-    # TODO : Read all at once
-
-    # This is really slow...
-    if len(data) is int(36 * samplerate / 8):
-        for index in range(0, int(samplerate)):
-            y = np.uint16(stream.read('uint:12'))
-            x = np.uint16(stream.read('uint:12'))
-            z = np.uint16(stream.read('uint:12'))
-
-            if x > 2047:
-                x += np.uint16(61440)
-
-            if y > 2047:
-                y += np.uint16(61440)
-
-            if z > 2047:
-                z += np.uint16(61440)
-
-            # Convert to signed values
-            x = np.int16(x) / scale
-            y = np.int16(y) / scale
-            z = np.int16(z) / scale
-
-            # Fill vector
-            x_vec[index] = x
-            y_vec[index] = y
-            z_vec[index] = z
-    else:
-        print('Invalid size: ', 36 * samplerate / 8 )
-
-    return [x_vec, y_vec, z_vec]
-
+    # return samples in g
+    return samples
 
 def gt3x_battery_extractor(data, samplerate):
     """
@@ -159,6 +191,7 @@ def gt3x_parameters_extractor(data, samplerate):
     """
     # print('Metadata Extractor')
 
+@timing
 def gt3x_importer(filename):
     """
 
@@ -172,7 +205,7 @@ def gt3x_importer(filename):
     # Dict containing the information
     info = {}
 
-    data = {}
+    activity_data = []
 
     with zipfile.ZipFile(filename) as myzip:
         # Reading info.txt file
@@ -221,9 +254,10 @@ def gt3x_importer(filename):
                 """
 
                 if record_type is RecordType.ACTIVITY:
-                    # [x, y, z] = gt3x_activity_extractor(record_data, sample_rate, scale)
-                    print('skipping activity, too long...')
+                    activity_data.append(gt3x_activity_extractor(record_data, sample_rate, scale))
+                    # print('skipping activity, too long...')
                     # print('lengths', len(x), len(y), len(z))
+                    #print('shape:', activity_data.shape)
 
                 elif record_type is RecordType.BATTERY:
                     gt3x_battery_extractor(record_data, sample_rate)
@@ -232,9 +266,9 @@ def gt3x_importer(filename):
                 elif record_type is RecordType.LUX:
                     gt3x_lux_extractor(record_data, sample_rate)
                 elif record_type is RecordType.METADATA:
-                    gt3x_metadata_extractor(data, sample_rate)
+                    gt3x_metadata_extractor(record_data, sample_rate)
                 elif record_type is RecordType.PARAMETERS:
-                    gt3x_parameters_extractor(data, sample_rate)
+                    gt3x_parameters_extractor(record_data, sample_rate)
                 else:
                     print('Unhandled record type:', hex(record_type), 'size:', len(record_data))
 
@@ -242,15 +276,50 @@ def gt3x_importer(filename):
                 data_offset += 8 + len(record_data) + 1
 
 
-
+    print('activity_data len:',len(activity_data))
 
     # Return file info and data contents
-    return [info, data]
+    return [info, activity_data]
 
 
 if __name__ == '__main__':
     print('Testing gt3x importer')
+
+    # Epoch separated data
     [info, data] = gt3x_importer('test.gt3x')
-    print('info:', info)
-    print('data:', data)
-    print('Done!')
+
+    result = np.concatenate(data)
+    print('final shape:', result.shape, 'info:', info)
+
+    # print('info:', info)
+    # print('data:', data)
+
+    #taken from the example
+    # rawdata = bytearray.fromhex('00 60 08 EB D0 07 00 9E BF 00 70 08 EB F0')
+    # print('len rawdata:', len(rawdata))
+    # samples = gt3x_read_uint12(rawdata,3)
+    # print('samples:', samples)
+    import sys
+    from PyQt5.QtWidgets import QApplication
+    from PyQt5.QtWidgets import QMainWindow
+    from libopenimu.qt.Charts import IMUChartView
+    from PyQt5.QtCore import Qt
+    from numpy import linspace
+
+    time = linspace(0,len(result) / 30.0,len(result))
+    print('time size:', len(time))
+
+    app = QApplication(sys.argv)
+    window = QMainWindow()
+    imuView = IMUChartView(window)
+    # imuView.add_test_data()
+    imuView.add_data(time, result[:, 0], Qt.green, 'Accelerometer Y')
+    imuView.add_data(time, result[:, 1], Qt.red, 'Accelerometer X')
+    imuView.add_data(time, result[:, 2], Qt.blue, 'Accelerometer Z')
+
+    window.setCentralWidget(imuView)
+    window.setWindowTitle("Actigraph GTX3 Importer Demo")
+    window.resize(640, 480)
+    window.show()
+    sys.exit(app.exec_())
+

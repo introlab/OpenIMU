@@ -32,7 +32,7 @@ class IMUChartView(QChartView):
         pen.setWidthF(.4)
         curve.setPen(pen)
 
-        #curve.setUseOpenGL(True)
+        curve.setUseOpenGL(True)
         curve.append(self.series_to_polyline(xdata, ydata))
 
         if legend_text is not None:
