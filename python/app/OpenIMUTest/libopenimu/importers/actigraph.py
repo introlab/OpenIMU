@@ -9,7 +9,6 @@ Documentation of the binary format : https://github.com/actigraph/GT3X-File-Form
 import zipfile
 import struct
 import numpy as np
-import bitstring
 import time
 
 class RecordType:
@@ -68,10 +67,6 @@ def gt3x_read_uint12(data, nb_axis=3):
 
     # We know exactly how many samples the data should contain
     for line in range(0, lines):
-
-        #print('before: ', byte_index)
-        before = byte_index
-
         for axis in range(0, nb_axis):
             # print('axis:', axis)
             shifter = np.uint16(0)
@@ -102,7 +97,7 @@ def gt3x_read_uint12(data, nb_axis=3):
 
     return samples
 
-def gt3x_activity_extractor(data, samplerate, scale):
+def gt3x_activity_extractor(timestamp, data, samplerate, scale):
     """
 
     One second of raw activity samples packed into 12-bit values in YXZ order. Activity data is stored
@@ -121,18 +116,28 @@ def gt3x_activity_extractor(data, samplerate, scale):
 
 
     :param data:
+    :param timestamp:
     :param samplerate:
     :return:
     """
 
     # Read all at once and scale
     samples = gt3x_read_uint12(data) / scale
-    # print('samples:', samples)
+
+    # Add time
+    # stop, num=50, endpoint=True, retstep=False, dtype=None):
+    my_time = np.linspace(timestamp, timestamp + 1, num=samplerate, endpoint=False)
+
+    # Make sure time is of the same size (some records are not complete)
+    my_time.resize(len(samples))
+
+    # Add column at the beginning with time values
+    result = np.column_stack((my_time, samples))
 
     # return samples in g
-    return samples
+    return result
 
-def gt3x_battery_extractor(data, samplerate):
+def gt3x_battery_extractor(timestamp, data, samplerate):
     """
 
     Battery voltage in millivolts as a little-endian unsigned short (2 bytes).
@@ -150,19 +155,21 @@ def gt3x_battery_extractor(data, samplerate):
         battery *= 0.001
         # print('battery:', battery)
 
-    return battery
+    # Return timestamp and battery data
+    return np.column_stack((timestamp, battery))
 
-def gt3x_event_extractor(data, samplerate):
+def gt3x_event_extractor(timestamp, data, samplerate):
     """
 
     :param data:
     :param samplerate:
     :return:
     """
-    # print('Event Extractor')
+    #print('Event Extractor',timestamp, data)
+    return np.column_stack((timestamp, data))
 
 
-def gt3x_lux_extractor(data, samplerate):
+def gt3x_lux_extractor(timestamp, data, samplerate):
     """
 
     :param data:
@@ -170,26 +177,71 @@ def gt3x_lux_extractor(data, samplerate):
     :return:
     """
     # print('Lux Extractor')
+    lux = 0
+
+    if len(data) is 2:
+        lux = struct.unpack_from('<H', data)
+
+    return np.column_stack((timestamp, lux))
 
 
-def gt3x_metadata_extractor(data, samplerate):
+def gt3x_metadata_extractor(timestamp, data, samplerate):
     """
+    Should contain a json object
 
     :param data:
     :param samplerate:
     :return:
     """
-    # print('Metadata Extractor')
+    #print('Metadata Extractor', timestamp, data)
+    # TODO Not yet implemented
+    return np.column_stack((timestamp,data))
 
 
-def gt3x_parameters_extractor(data, samplerate):
+def gt3x_parameters_extractor(timestamp, data, samplerate):
     """
-
+    https://github.com/actigraph/GT3X-File-Format/blob/master/LogRecords/Parameters.md
     :param data:
     :param samplerate:
     :return:
     """
-    # print('Metadata Extractor')
+    #print('Parameters Extractor', timestamp, data)
+    # TODO Not yet implemented
+    return np.column_stack((timestamp,data))
+
+
+def gt3x_calculate_checksum(separator, record_type, timestamp, record_size, record_data):
+    """
+
+    A 1-byte checksum immediately follows the record payload. It is a 1's complement,
+    exclusive-or (XOR) of the log header and payload with an initial value of zero.
+
+    :param separator: 0x1E
+    :param record_type: record data type
+    :param timestamp: unix timestamp
+    :param record_size: payload size
+    :param record_data: payload
+    :return: checksum
+    """
+
+    # date = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.localtime(timestamp))
+    # print('date:', date)
+
+    checksum = np.uint8(separator)
+    checksum ^= record_type & 0xFF
+    checksum ^= (timestamp & 0xFF)
+    checksum ^= ((timestamp >> 8) & 0xFF)
+    checksum ^= ((timestamp >> 16) & 0xFF)
+    checksum ^= ((timestamp >> 24) & 0xFF)
+    checksum ^= (record_size & 0xFF)
+    checksum ^= ((record_size >> 8) & 0xFF)
+
+    for i in range(0, len(record_data)):
+        checksum ^= record_data[i]
+
+    checksum = ~checksum
+
+    return np.uint8(checksum)
 
 @timing
 def gt3x_importer(filename):
@@ -202,10 +254,16 @@ def gt3x_importer(filename):
     """
     print('Loading: ', filename)
 
-    # Dict containing the information
+    # Dict containing the information of the file
     info = {}
 
+    # Empty lists to fill with data from records
     activity_data = []
+    battery_data = []
+    lux_data = []
+    event_data = []
+    metadata_data = []
+    parameters_data = []
 
     with zipfile.ZipFile(filename) as myzip:
         # Reading info.txt file
@@ -219,7 +277,8 @@ def gt3x_importer(filename):
 
         sample_rate = float(info['Sample Rate'])
         scale = float(info['Acceleration Scale'])
-        print('My Sample rate:', sample_rate)
+        print ('info', info)
+        # print('My Sample rate:', sample_rate)
 
         # Reading log.bin
         with myzip.open('log.bin') as myfile:
@@ -237,59 +296,49 @@ def gt3x_importer(filename):
                 # print('Extracting record: ', hex(separator), hex(record_type), hex(timestamp), hex(record_size))
                 [record_data, checksum] = struct.unpack_from('<' + str(record_size) + 'sB', filedata, offset= data_offset + 8)
 
-                # TODO verify checksum
-                """
-                byte chkSum = Header.Sync;
-                chkSum ^= Header.Type;
-                var timestamp = DeviceUtilities.DateTime.ToUnixTime(Header.TimeStamp);
-                chkSum ^= (byte)(timestamp & 0xFF);
-                chkSum ^= (byte)((timestamp >> 8) & 0xFF);
-                chkSum ^= (byte)((timestamp >> 16) & 0xFF);
-                chkSum ^= (byte)((timestamp >> 24) & 0xFF);
-                chkSum ^= (byte)(Header.Size & 0xFF);
-                chkSum ^= (byte)((Header.Size >> 8) & 0xFF);
-                for (int i = 0; i < Payload.Length; ++i)
-                    chkSum ^= Payload[i];
-                chkSum = (byte)~chkSum;
-                """
+                # Verify checksum
+                cs_check = gt3x_calculate_checksum(separator, record_type, timestamp, record_size, record_data)
 
-                if record_type is RecordType.ACTIVITY:
-                    activity_data.append(gt3x_activity_extractor(record_data, sample_rate, scale))
-                    # print('skipping activity, too long...')
-                    # print('lengths', len(x), len(y), len(z))
-                    #print('shape:', activity_data.shape)
-
-                elif record_type is RecordType.BATTERY:
-                    gt3x_battery_extractor(record_data, sample_rate)
-                elif record_type is RecordType.EVENT:
-                    gt3x_event_extractor(record_data, sample_rate)
-                elif record_type is RecordType.LUX:
-                    gt3x_lux_extractor(record_data, sample_rate)
-                elif record_type is RecordType.METADATA:
-                    gt3x_metadata_extractor(record_data, sample_rate)
-                elif record_type is RecordType.PARAMETERS:
-                    gt3x_parameters_extractor(record_data, sample_rate)
+                if checksum == cs_check:
+                    if record_type is RecordType.ACTIVITY:
+                        activity_data.append(gt3x_activity_extractor(timestamp, record_data, sample_rate, scale))
+                    elif record_type is RecordType.BATTERY:
+                        battery_data.append(gt3x_battery_extractor(timestamp, record_data, sample_rate))
+                    elif record_type is RecordType.EVENT:
+                        event_data.append(gt3x_event_extractor(timestamp, record_data, sample_rate))
+                    elif record_type is RecordType.LUX:
+                        lux_data.append(gt3x_lux_extractor(timestamp, record_data, sample_rate))
+                    elif record_type is RecordType.METADATA:
+                        metadata_data.append(gt3x_metadata_extractor(timestamp, record_data, sample_rate))
+                    elif record_type is RecordType.PARAMETERS:
+                        parameters_data.append(gt3x_parameters_extractor(timestamp, record_data, sample_rate))
+                    else:
+                        print('Unhandled record type:', hex(record_type), 'size:', len(record_data))
                 else:
-                    print('Unhandled record type:', hex(record_type), 'size:', len(record_data))
+                    print('Checksum error read:',checksum, 'calculated:',cs_check)
 
                 # print('record length:', len(record_data), 'checksum:', hex(checksum))
                 data_offset += 8 + len(record_data) + 1
 
-
-    print('activity_data len:',len(activity_data))
-
     # Return file info and data contents
-    return [info, activity_data]
+    return [info, {'activity': activity_data,
+                   'battery': battery_data,
+                   'lux': lux_data,
+                   'event': event_data,
+                   'parameters': parameters_data,
+                   'metadata': metadata_data
+                   }]
 
 
 if __name__ == '__main__':
+    np.set_printoptions(suppress=True)
     print('Testing gt3x importer')
 
     # Epoch separated data
-    [info, data] = gt3x_importer('test.gt3x')
+    [info, my_dict] = gt3x_importer('test.gt3x')
 
-    result = np.concatenate(data)
-    print('final shape:', result.shape, 'info:', info)
+    activity = np.concatenate(my_dict['activity'])
+    print('final shape:', activity.shape)
 
     # print('info:', info)
     # print('data:', data)
@@ -306,20 +355,48 @@ if __name__ == '__main__':
     from PyQt5.QtCore import Qt
     from numpy import linspace
 
-    time = linspace(0,len(result) / 30.0,len(result))
-    print('time size:', len(time))
-
     app = QApplication(sys.argv)
+
+
+    # Accelerometers
     window = QMainWindow()
     imuView = IMUChartView(window)
-    # imuView.add_test_data()
-    imuView.add_data(time, result[:, 0], Qt.green, 'Accelerometer Y')
-    imuView.add_data(time, result[:, 1], Qt.red, 'Accelerometer X')
-    imuView.add_data(time, result[:, 2], Qt.blue, 'Accelerometer Z')
+    imuView.add_data(activity[:, 0], activity[:, 1], Qt.green, 'Accelerometer Y')
+    imuView.add_data(activity[:, 0], activity[:, 2], Qt.red, 'Accelerometer X')
+    imuView.add_data(activity[:, 0], activity[:, 3], Qt.blue, 'Accelerometer Z')
 
     window.setCentralWidget(imuView)
-    window.setWindowTitle("Actigraph GTX3 Importer Demo")
+    window.setWindowTitle("Actigraph GTX3 Importer Demo (Accelerometers)")
     window.resize(640, 480)
     window.show()
+
+    # Battery
+    window2 = QMainWindow()
+    imuView2 = IMUChartView(window)
+    battery = np.concatenate(my_dict['battery'])
+    print('final shape:', battery.shape)
+    imuView2.add_data(battery[:, 0], battery[:, 1], Qt.green, 'Battery')
+
+
+    window2.setCentralWidget(imuView2)
+    window2.setWindowTitle("Actigraph GTX3 Importer Demo (Battery)")
+    window2.resize(640, 480)
+    window2.show()
+
+
+    # Lux
+    window3 = QMainWindow()
+    imuView3 = IMUChartView(window)
+    lux = np.concatenate(my_dict['lux'])
+    print('final shape:', lux.shape)
+    imuView3.add_data(lux[:, 0], lux[:, 1], Qt.green, 'Lux')
+
+
+    window3.setCentralWidget(imuView3)
+    window3.setWindowTitle("Actigraph GTX3 Importer Demo (lux)")
+    window3.resize(640, 480)
+    window3.show()
+
+
     sys.exit(app.exec_())
 
