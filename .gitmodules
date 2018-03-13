@@ -1,6 +1,3 @@
-[submodule "applicationOpenimu/app/widgets/MRichTextEditor"]
-	path = old/applicationOpenimu/app/widgets/MRichTextEditor
-	url = https://github.com/Anchakor/MRichTextEditor.git
 [submodule "third_party/googletest"]
 	path = third_party/googletest
 	url = https://github.com/google/googletest.git
