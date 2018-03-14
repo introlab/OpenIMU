@@ -10,6 +10,8 @@ import zipfile
 import struct
 import numpy as np
 import time
+import sys
+import math
 
 class RecordType:
     """
@@ -33,6 +35,227 @@ class RecordType:
     SENSOR_SCHEMA = 0x18
     SENSOR_DATA = 0x19
     ACTIVITY2 = 0x1A
+
+
+class ParameterKeys:
+    """
+    All Parameters keys
+    """
+
+    # Important constants for conversion
+    class Conversion:
+        FLOAT_MINIMUM = np.double(0.00000011920928955078125)
+        FLOAT_MAXIMUM = np.double(8388608.0)
+        ENCODED_MINIMUM = np.uint32(0x00800000)
+        ENCODED_MAXIMUM = np.uint32(0x007FFFFF)
+        SIGNIFICAND_MASK = np.uint32(0x00FFFFFF)
+        EXPONENT_MINIMUM = np.int32(-128)
+        EXPONENT_MAXIMUM = np.int32(127)
+        EXPONENT_MASK = np.uint32(0xFF000000)
+        EXPONENT_OFFSET = np.int32(24)
+
+
+    #ADDRESS_SPACE = 0x0000
+    BATTERY_STATE = 0x00060000
+    BATTERY_VOLTAGE = 0x00070000
+    BOARD_REVISION = 0x00080000
+    CALIBRATION_TIME = 0x00090000
+    FIRMWARE_VERSION = 0x000D0000
+    MEMORY_SIZE = 0x00100000
+    FEATURE_CAPABILITIES = 0x001C0000
+    DISPLAY_CAPABILITIES = 0x001D0000
+    WIRELESS_FIRMWARE_VERSION = 0x00200000
+    IMU_ACCEL_SCALE = 0x00310000
+    IMU_GYRO_SCALE = 0x00320000
+    IMU_MAG_SCALE = 0x00330000
+    ACCEL_SCALE = 0x00370000
+    IMU_TEMP_SCALE = 0x00390000
+    IMU_TEMP_OFFSET = 0x003A0000
+
+    #ADDRESS_SPACE = 0x0001
+    WIRELESS_MODE = 0x00000001
+    WIRELESS_SERIAL_NUMBER = 0x00010001
+    FEATURE_ENABLE = 0x00020001
+    DISPLAY_CONFIGURATION = 0x00030001
+    NEGATIVE_G_OFFSET_X = 0x00040001
+    NEGATIVE_G_OFFSET_Y = 0x00050001
+    NEGATIVE_G_OFFSET_Z = 0x00060001
+    POSITIVE_G_OFFSET_X = 0x00070001
+    POSITIVE_G_OFFSET_Y = 0x00080001
+    POSITIVE_G_OFFSET_Z = 0x00090001
+    SAMPLE_RATE = 0x000A0001
+    TARGET_START_TIME = 0x000C0001
+    TARGET_STOP_TIME = 0x000D0001
+    TIME_OF_DAY = 0x000E0001
+    ZERO_G_OFFSET_X = 0x000F0001
+    ZERO_G_OFFSET_Y = 0x00100001
+    ZERO_G_OFFSET_Z = 0x00110001
+    HRM_SERIAL_NUMBER_H = 0x00140001
+    HRM_SERIAL_NUMBER_L = 0x00150001
+    PROXIMITY_INTERVAL = 0x00210001
+    IMU_NEGATIVE_G_OFFSET_X = 0x00220001
+    IMU_NEGATIVE_G_OFFSET_Y = 0x00230001
+    IMU_NEGATIVE_G_OFFSET_Z = 0x00240001
+    IMU_POSITIVE_G_OFFSET_X = 0x00250001
+    IMU_POSITIVE_G_OFFSET_Y = 0x00260001
+    IMU_POSITIVE_G_OFFSET_Z = 0x00270001
+    UTC_OFFSET = 0x00280001
+    IMU_ZERO_G_OFFSET_X = 0x00290001
+    IMU_ZERO_G_OFFSET_Y = 0x002A0001
+    IMU_ZERO_G_OFFSET_Z = 0x002B0001
+    SENSOR_CONFIGURATION = 0x002C0001
+
+    @staticmethod
+    def decode_float(data):
+        value = struct.unpack_from('<I', data)
+
+        if ParameterKeys.Conversion.ENCODED_MAXIMUM == value:
+            return sys.float_info.max
+        elif ParameterKeys.Conversion.ENCODED_MINIMUM == value:
+            return -sys.float_info.max
+
+        # Exponent
+        i32 = np.int32((value & ParameterKeys.Conversion.EXPONENT_MASK) >> ParameterKeys.Conversion.EXPONENT_OFFSET)
+        if 0 != (i32 & 0x80):
+            i32 |= 0xFFFFFF00
+        exponent = np.double(i32)
+
+        # Significand
+        i32 = np.int32(value & ParameterKeys.Conversion.SIGNIFICAND_MASK)
+        if 0 != (i32 & ParameterKeys.Conversion.ENCODED_MINIMUM):
+            i32 |= 0xFF000000
+        significand = np.double(i32 / ParameterKeys.Conversion.FLOAT_MAXIMUM)
+
+        # Calculate the floating point value
+        return significand * math.pow(2.0, exponent)
+
+
+    @staticmethod
+    def decode_uint32(data):
+        # print('decode uint32')
+        value = struct.unpack_from('<I', data)
+        return value
+
+    @staticmethod
+    def decode_int32(data):
+        # print('decode int32')
+        value = struct.unpack_from('<i', data)
+        return value
+
+    @staticmethod
+    def parameter_name(value):
+        # print('dict:',ParameterKeys.__dict__)
+        for v in ParameterKeys.__dict__:
+            if ParameterKeys.__dict__[v] == value:
+                return v
+        return 'unknown'
+
+    @staticmethod
+    def decode_param(key, param_data):
+
+        # Get the parameter name
+        param_name = ParameterKeys.parameter_name(key)
+        value = 0
+
+        if key == ParameterKeys.BATTERY_STATE:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.BATTERY_VOLTAGE:
+            value = ParameterKeys.decode_float(param_data)
+        elif key == ParameterKeys.BOARD_REVISION:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.CALIBRATION_TIME:
+            value = ParameterKeys.decode_uint32(param_data)
+        elif key == ParameterKeys.FIRMWARE_VERSION:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.MEMORY_SIZE:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.FEATURE_CAPABILITIES:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.DISPLAY_CAPABILITIES:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.WIRELESS_FIRMWARE_VERSION:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.IMU_ACCEL_SCALE:
+            value = ParameterKeys.decode_float(param_data)
+        elif key == ParameterKeys.IMU_GYRO_SCALE:
+            value = ParameterKeys.decode_float(param_data)
+        elif key == ParameterKeys.IMU_MAG_SCALE:
+            value = ParameterKeys.decode_float(param_data)
+        elif key == ParameterKeys.ACCEL_SCALE:
+            value = ParameterKeys.decode_float(param_data)
+        elif key == ParameterKeys.IMU_TEMP_SCALE:
+            value = ParameterKeys.decode_float(param_data)
+        elif key == ParameterKeys.IMU_TEMP_OFFSET:
+            value = ParameterKeys.decode_float(param_data)
+        elif key == ParameterKeys.WIRELESS_MODE:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.WIRELESS_SERIAL_NUMBER:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.FEATURE_ENABLE:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.DISPLAY_CONFIGURATION:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.NEGATIVE_G_OFFSET_X:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.NEGATIVE_G_OFFSET_Y:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.NEGATIVE_G_OFFSET_Z:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.POSITIVE_G_OFFSET_X:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.POSITIVE_G_OFFSET_Y:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.POSITIVE_G_OFFSET_Z:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.SAMPLE_RATE:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.TARGET_START_TIME:
+            value = ParameterKeys.decode_uint32(param_data)
+        elif key == ParameterKeys.TARGET_STOP_TIME:
+            value = ParameterKeys.decode_uint32(param_data)
+        elif key == ParameterKeys.TIME_OF_DAY:
+            value = ParameterKeys.decode_uint32(param_data)
+        elif key == ParameterKeys.ZERO_G_OFFSET_X:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.ZERO_G_OFFSET_Y:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.ZERO_G_OFFSET_Z:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.HRM_SERIAL_NUMBER_H:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.HRM_SERIAL_NUMBER_L:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.PROXIMITY_INTERVAL:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.IMU_NEGATIVE_G_OFFSET_X:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.IMU_NEGATIVE_G_OFFSET_Y:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.IMU_NEGATIVE_G_OFFSET_Z:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.IMU_POSITIVE_G_OFFSET_X:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.IMU_POSITIVE_G_OFFSET_Y:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.IMU_POSITIVE_G_OFFSET_Z:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.UTC_OFFSET:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.IMU_ZERO_G_OFFSET_X:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.IMU_ZERO_G_OFFSET_Y:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.IMU_ZERO_G_OFFSET_Z:
+            value = ParameterKeys.decode_int32(param_data)
+        elif key == ParameterKeys.SENSOR_CONFIGURATION:
+            value = ParameterKeys.decode_int32(param_data)
+        else:
+            print('Ignore key:',hex(key))
+
+        if param_name == 'unknown':
+            return {}
+        else:
+            return {param_name: value}
 
 
 def timing(f):
@@ -200,14 +423,28 @@ def gt3x_metadata_extractor(timestamp, data, samplerate):
 
 def gt3x_parameters_extractor(timestamp, data, samplerate):
     """
+    The record payload is of variable length consisting of 8-byte key/value pairs. The key is made up of a 16-bit
+    unsigned address space and 16-bit unsigned identifier. All values are encoded in a 32-bit unsigned integer.
+    The address space, identifier and value are in little-endian byte order.
+
     https://github.com/actigraph/GT3X-File-Format/blob/master/LogRecords/Parameters.md
     :param data:
     :param samplerate:
     :return:
     """
     #print('Parameters Extractor', timestamp, data)
-    # TODO Not yet implemented
-    return np.column_stack((timestamp,data))
+
+    result = {}
+
+    # Each parameter is 8 bytes
+    for param_index in range(0,int(len(data) / 8)):
+        # unsigned int32, 4 bytes of data
+        [key, param_data] = struct.unpack_from('<I4s', data, offset=param_index * 8)
+
+        # update parameters result dict
+        result.update(ParameterKeys.decode_param(key,param_data))
+
+    return [timestamp, result]
 
 
 def gt3x_calculate_checksum(separator, record_type, timestamp, record_size, record_data):
@@ -337,6 +574,9 @@ if __name__ == '__main__':
     # Epoch separated data
     [info, my_dict] = gt3x_importer('test.gt3x')
 
+    print('parameters:', my_dict['parameters'])
+
+
     activity = np.concatenate(my_dict['activity'])
     print('final shape:', activity.shape)
 
@@ -397,6 +637,6 @@ if __name__ == '__main__':
     window3.resize(640, 480)
     window3.show()
 
-
+    print('locals',locals())
     sys.exit(app.exec_())
 
