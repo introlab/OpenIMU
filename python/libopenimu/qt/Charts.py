@@ -8,7 +8,7 @@ Simple example illustrating Qt Charts capabilities to plot curves with
 a high number of points, using OpenGL accelerated series
 """
 from PyQt5.QtGui import QPolygonF, QPainter
-from PyQt5.QtChart import QChart, QChartView, QLineSeries, QLegend
+from PyQt5.QtChart import QChart, QChartView, QLineSeries, QLegend, QBarSeries, QBarSet, QBarCategoryAxis
 from PyQt5.QtCore import Qt
 import numpy as np
 
@@ -75,6 +75,46 @@ class IMUChartView(QChartView):
                           % (self.ncurves, npoints))
 
 
+class OpenIMUBarGraphView(QChartView):
+    def __init__(self, parent=None):
+        super(QChartView, self).__init__(parent=parent)
+        self.chart = QChart()
+        self.setChart(self.chart)
+        self.chart.legend().setVisible(True)
+        self.chart.legend().setAlignment(Qt.AlignBottom)
+        self.chart.setAnimationOptions(QChart.SeriesAnimations)
+        self.series = QBarSeries(self)
+        self.categoryAxis = QBarCategoryAxis(self)
+
+
+    def set_title(self, title):
+        print('Setting title: ',title)
+        self.chart.setTitle(title)
+
+    def set_category_axis(self, categories):
+        self.categoryAxis.append(categories)
+
+    def add_set(self, label, values):
+        print('adding bar set')
+        my_set = QBarSet(label, self)
+        my_set.append(values)
+        self.series.append(my_set)
+
+    def update(self):
+        self.chart.addSeries(self.series)
+        self.chart.createDefaultAxes()
+        self.chart.setAxisX(self.categoryAxis, self.series)
+
+
+    def add_test_data(self):
+        print('adding test data series')
+        self.set_title('Testing bars')
+        self.set_category_axis(['A','B','C','D'])
+        self.add_set('Test1',[0.1, 2, 3, 4])
+        self.add_set('Test2',[3, 2, 1, 4])
+        self.add_set('Test3',[4, 1, 3, 2])
+        self.update()
+
 # Testing app
 if __name__ == '__main__':
     import sys
@@ -84,12 +124,28 @@ if __name__ == '__main__':
     from PyQt5.QtCore import Qt
 
     app = QApplication(sys.argv)
-    window = QMainWindow()
-    imuView = IMUChartView(window)
-    imuView.add_test_data()
 
-    window.setCentralWidget(imuView)
-    window.setWindowTitle("IMUChartView Demo")
-    window.resize(640,480)
-    window.show()
+    def create_imu_view():
+        window = QMainWindow()
+        view = IMUChartView(window)
+        view.add_test_data()
+        window.setCentralWidget(view)
+        window.setWindowTitle("IMUChartView Demo")
+        window.resize(640,480)
+        window.show()
+        return window
+
+    def create_bar_view():
+        window = QMainWindow()
+        view = OpenIMUBarGraphView(window)
+        view.add_test_data()
+        window.setCentralWidget(view)
+        window.setWindowTitle("IMUBarGraphView Demo")
+        window.resize(640,480)
+        window.show()
+        return window
+
+
+    window1 = create_imu_view()
+    window2 = create_bar_view()
     sys.exit(app.exec_())
