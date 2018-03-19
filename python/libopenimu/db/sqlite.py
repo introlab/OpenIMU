@@ -1,10 +1,12 @@
 '''
  Will contain sqlite driver
+ @authors Simon Brière, Dominic Létourneau
+ @date 19/03/2018
 '''
 import sqlite3
 import os
 import time
-
+from sensor_types import SensorType
 
 def create_database(filename, name='Unnamed', description='No description available', author='Anonymous'):
     print('creating database : ', filename)
@@ -16,7 +18,7 @@ def create_database(filename, name='Unnamed', description='No description availa
     conn = sqlite3.connect(filename)
 
     # Create the tables
-    qry = open('schema_v1.sql', 'r').read()
+    qry = open('../../../openimu_fileformat/OpenIMU_FileFormat.sql', 'r').read()
     sqlite3.complete_statement(qry)
     conn = sqlite3.connect(filename)
     cursor = conn.cursor()
@@ -51,10 +53,25 @@ def create_database(filename, name='Unnamed', description='No description availa
 
     return conn
 
+
+def add_group(dbconn, name, description):
+    try:
+        print('Adding group:', name, 'description:',description)
+        dbconn.execute("INSERT INTO tabGroups (name, desc) VALUES (?,?)", [name,description])
+    except Exception as e:
+        message = 'Error adding group' + ': ' + str(e)
+        print('Error: ', message)
+        raise
+
+
 """
 Test function
 """
 if __name__ == '__main__':
+    print('Sensor type:', SensorType.ACCELEROMETER)
     db = create_database('openimu.db')
+    add_group(db,'Enfants','Les enfants de la famille')
+    add_group(db, 'Parents', 'Les parents de la famille')
+
     db.commit()
     db.close()
