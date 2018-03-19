@@ -86,7 +86,7 @@ CREATE TABLE tabSensorsTypes (
 
 
 CREATE TABLE tabSensors (
-                id_sensor BIGINT NOT NULL,
+                id_sensor INTEGER PRIMARY KEY NOT NULL,
                 id_data_format BIGINT NOT NULL,
                 id_sensor_type BIGINT NOT NULL,
                 name VARCHAR NOT NULL,
@@ -94,7 +94,6 @@ CREATE TABLE tabSensors (
                 location VARCHAR NOT NULL,
                 sampling_rate INTEGER NOT NULL,
                 data_rate INTEGER NOT NULL,
-                CONSTRAINT tabSensors_pk PRIMARY KEY (id_sensor),
 				FOREIGN KEY (id_data_format) REFERENCES tabDataFormat (id_data_format) ON DELETE CASCADE ON UPDATE NO ACTION NOT DEFERRABLE,
 				FOREIGN KEY (id_sensor_type) REFERENCES tabSensorsTypes (id_sensor_type) ON DELETE CASCADE ON UPDATE NO ACTION NOT DEFERRABLE
 );
