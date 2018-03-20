@@ -18,9 +18,9 @@ from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
 
 # This is auto-generated from Qt .ui files
 from MainWindow_ui import Ui_MainWindow
-from startDialog_ui import Ui_StartDialog
+from StartDialog_ui import Ui_StartDialog
 
-from ImportWindow import ImportWindow
+from ImportDialog_ui import Ui_ImportDialog
 
 # This is auto-generated from Qt .qrc files
 import core_rc
