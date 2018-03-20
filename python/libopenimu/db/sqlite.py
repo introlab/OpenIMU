@@ -43,10 +43,8 @@ def create_database(filename, name='Unnamed', description='No description availa
         creation_date = time.time()
 
         # tabDataSet -> name, desc, creation_date, upload_date, author
-        conn.execute("INSERT INTO tabDataSet (name, desc, creation_date, upload_date, author) "
+        conn.execute("INSERT INTO tabDataSet (name, description, creation_date, upload_date, author) "
                      "VALUES (?,?,?,?,?)", [name, description, creation_date, 0, author])
-
-
 
         DataFormat.populate_database(conn)
 

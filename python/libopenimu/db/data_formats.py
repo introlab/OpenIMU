@@ -17,7 +17,7 @@ class DataFormat:
     FLOAT32 = 8
     FLOAT64 = 9
 
-
+    value_types = [UINT8, SINT8, UINT16, SINT16, UINT32, SINT32, UINT64, SINT64, FLOAT32, FLOAT64]
     value_names = ['UINT8', 'SINT8', 'UINT16', 'SINT16', 'UINT32', 'SINT32', 'UINT64', 'SINT64', 'FLOAT32', 'FLOAT64']
 
 
