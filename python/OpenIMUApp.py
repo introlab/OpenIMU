@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QApplication, QDialog, QPushButton
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineSettings
 from PyQt5.QtQuickWidgets import QQuickWidget
 
-from PyQt5.QtCore import Qt, QUrl, pyqtSlot
+from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal
 from libopenimu.qt.Charts import IMUChartView
 
 import libopenimu.importers.DataImporter as importer
@@ -20,6 +20,8 @@ from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
 from MainWindow_ui import Ui_MainWindow
 from startDialog_ui import Ui_StartDialog
 
+from ImportWindow import ImportWindow
+
 # This is auto-generated from Qt .qrc files
 import core_rc
 
@@ -34,11 +36,20 @@ class MainWindow(QMainWindow):
         self.UI = Ui_MainWindow()
         self.UI.setupUi(self)
 
-        startwindow = QDialog()
+        self.startWindow = QDialog()
         startdialog = Ui_StartDialog()
-        startdialog.setupUi(startwindow)
+        startdialog.setupUi(self.startWindow)
 
-        startwindow.exec()
+        #Signals/Slots setup
+        startdialog.btnImport.clicked.connect(self.import_clicked)
+        startdialog.btnOpen.clicked.connect(self.open_clicked)
+        startdialog.btnNew.clicked.connect(self.new_clicked)
+        startdialog.btnQuit.clicked.connect(self.quit_clicked)
+
+        if (self.startWindow.exec()==QDialog.Rejected):
+            # User closed the dialog - exits!
+            exit(0)
+
 
         """
         # Create chart and mdiWindow
@@ -94,6 +105,33 @@ class MainWindow(QMainWindow):
     @pyqtSlot(QUrl)
     def urlChanged(self,url):
         print('url: ', url)
+
+    @pyqtSlot()
+    def import_clicked(self):
+        importdialog = ImportWindow()
+
+        if (importdialog.exec() == QDialog.Accepted):
+            if (self.startWindow.isVisible()):
+                self.startWindow.accept()
+
+
+    @pyqtSlot()
+    def open_clicked(self):
+            if (self.startWindow.isVisible()):
+                self.startWindow.accept()
+
+    @pyqtSlot()
+    def new_clicked(self):
+        importdialog = ImportWindow()
+        importdialog.noImportUI = True
+
+        if (importdialog.exec() == QDialog.Accepted):
+            if (self.startWindow.isVisible()):
+                self.startWindow.accept()
+
+    @pyqtSlot()
+    def quit_clicked(self):
+        exit(0)
 
     def closeEvent(self, event):
         print('closeEvent')

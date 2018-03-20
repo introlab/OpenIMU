@@ -13,5 +13,7 @@
         <file>icons/results.png</file>
         <file>icons/sensor.png</file>
         <file>icons/subrecord.png</file>
+        <file>icons/newdataset.png</file>
+        <file>icons/delete.png</file>
     </qresource>
 </RCC>
