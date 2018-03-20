@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QMdiSubWindow
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QDialog, QPushButton
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineSettings
 from PyQt5.QtQuickWidgets import QQuickWidget
 
@@ -18,6 +18,7 @@ from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
 
 # This is auto-generated from Qt .ui files
 from MainWindow_ui import Ui_MainWindow
+from startDialog_ui import Ui_StartDialog
 
 # This is auto-generated from Qt .qrc files
 import core_rc
@@ -33,6 +34,13 @@ class MainWindow(QMainWindow):
         self.UI = Ui_MainWindow()
         self.UI.setupUi(self)
 
+        startwindow = QDialog()
+        startdialog = Ui_StartDialog()
+        startdialog.setupUi(startwindow)
+
+        startwindow.exec()
+
+        """
         # Create chart and mdiWindow
         self.chartView = self.create_chart_view(test_data=False)
         self.add_mdi_widget(widget=self.chartView, title='QtChart')
@@ -77,6 +85,8 @@ class MainWindow(QMainWindow):
         self.add_mdi_widget(widget=self.chartView2, title='QtChart')
         self.chartView2.add_data(np.array(range(0, int(nb_epochs))), counts, Qt.blue, 'Counts')
         self.chartView2.set_title(("Counts with epoch size %d secs" % self.epoch_secs))
+        """
+
 
         # Maximize window
         self.showMaximized()
@@ -87,9 +97,10 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event):
         print('closeEvent')
-        self.jupyter.stop()
+        """self.jupyter.stop()
         del self.jupyter
         self.jupyter = None
+        """
 
     def __del__(self):
         print('Done!')

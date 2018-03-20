@@ -337,3 +337,7 @@ PythonAPI/lib/algos/stepCounter.pyc
 PythonAPI/lib/algos/__init__.pyc
 *.pyc
 OpenImu Installer/openimuInstaller.exe
+*.db-journal
+python/.DS_Store
+python/env/.DS_Store
+python/env/python-3.5/.DS_Store

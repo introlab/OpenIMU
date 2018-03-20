@@ -40,11 +40,12 @@ find_package(Qt5Core REQUIRED)
 
 #This will generate ui_ files (not needed by python)
 SET(uis
-    MainWindow.ui
+    resources/ui/MainWindow.ui
+    resources/ui/startDialog.ui
 )
 
 SET(qrcs
-    core.qrc
+    resources/core.qrc
 )
 
 SET(qml
