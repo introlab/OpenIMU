@@ -20,19 +20,17 @@ class DataFormat:
     value_types = [UINT8, SINT8, UINT16, SINT16, UINT32, SINT32, UINT64, SINT64, FLOAT32, FLOAT64]
     value_names = ['UINT8', 'SINT8', 'UINT16', 'SINT16', 'UINT32', 'SINT32', 'UINT64', 'SINT64', 'FLOAT32', 'FLOAT64']
 
-
     @staticmethod
-    def name(type):
-        return DataFormat.value_names[type]
-
+    def name(id_data_format):
+        return DataFormat.value_names[id_data_format]
 
     @staticmethod
     def populate_database(conn):
-        """ Will polulate database with table tabDataFormat """
+        """ Will populate database with table tabDataFormat """
         try:
-            for type in DataFormat.value_types:
+            for format_id in DataFormat.value_types:
                 conn.execute("INSERT INTO tabDataFormat (id_data_format, name)"
-                             "VALUES (?,?)",[type, DataFormat.value_names[type]])
+                             "VALUES (?,?)",[format_id, DataFormat.value_names[format_id]])
 
         except Exception as e:
             print('Insert Error: ', str(e))

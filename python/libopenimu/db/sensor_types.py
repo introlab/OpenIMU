@@ -4,12 +4,29 @@
 
 
 class SensorType:
-    ACCELEROMETER = 1
-    GYROMETER = 2
-    MAGNETOMETER = 3
-    LUX = 4
-    GPS = 5
-    HEARTRATE = 6
-    ORIENTATION = 7
-    STEP = 8
+    ACCELEROMETER = 0
+    GYROMETER = 1
+    MAGNETOMETER = 2
+    LUX = 3
+    GPS = 4
+    HEARTRATE = 5
+    ORIENTATION = 6
+    STEP = 7
 
+    value_types = [ACCELEROMETER, GYROMETER, MAGNETOMETER, LUX, GPS, HEARTRATE, ORIENTATION, STEP]
+    value_names = ['ACCELEROMETER', 'GYROMETER', 'MAGNETOMETER', 'LUX', 'GPS', 'HEARTRATE', 'ORIENTATION', 'STEP']
+
+    @staticmethod
+    def name(id_sensor_type):
+        return SensorType.value_names[id_sensor_type]
+
+    @staticmethod
+    def populate_database(conn):
+        """ Will populate database with table tabSensorTypes """
+        try:
+            for id_sensor in SensorType.value_types:
+                conn.execute("INSERT INTO tabSensorTypes (id_sensor_type, name)"
+                             "VALUES (?,?)",[id_sensor, SensorType.value_names[id_sensor]])
+
+        except Exception as e:
+            print('Insert Error: ', str(e))
