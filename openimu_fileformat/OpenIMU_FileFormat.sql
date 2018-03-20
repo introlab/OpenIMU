@@ -19,7 +19,7 @@ CREATE TABLE tabGroups (
 
 CREATE TABLE tabParticipants (
                 id_participant INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                id_group INTEGER NOT NULL,
+                id_group INTEGER,
                 name VARCHAR NOT NULL,
                 description VARCHAR,
 		FOREIGN KEY (id_group) REFERENCES tabGroups (id_group) ON DELETE CASCADE ON UPDATE NO ACTION

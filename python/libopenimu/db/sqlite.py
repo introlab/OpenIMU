@@ -46,30 +46,7 @@ def create_database(filename, name='Unnamed', description='No description availa
         conn.execute("INSERT INTO tabDataSet (name, desc, creation_date, upload_date, author) "
                      "VALUES (?,?,?,?,?)", [name, description, creation_date, 0, author])
 
-        # tabSensorsTypes (static)
-        conn.execute("INSERT INTO tabSensorsTypes (id_sensor_type, name, desc, channels, display_style)"
-                     "VALUES (?,?,?,?,?)", [SensorType.ACCELEROMETER, "Accelerometer", "values in g", 3, 0])
 
-        conn.execute("INSERT INTO tabSensorsTypes (id_sensor_type, name, desc, channels, display_style)"
-                     "VALUES (?,?,?,?,?)", [SensorType.GYROMETER, "Gyrometer", "values in rad/sec", 3, 0])
-
-        conn.execute("INSERT INTO tabSensorsTypes (id_sensor_type, name, desc, channels, display_style)"
-                     "VALUES (?,?,?,?,?)", [SensorType.MAGNETOMETER, "Magnetometer", "values in gauss", 3, 0])
-
-        conn.execute("INSERT INTO tabSensorsTypes (id_sensor_type, name, desc, channels, display_style)"
-                     "VALUES (?,?,?,?,?)", [SensorType.LUX, "Luminosity", "values in lux", 1, 0])
-
-        conn.execute("INSERT INTO tabSensorsTypes (id_sensor_type, name, desc, channels, display_style)"
-                     "VALUES (?,?,?,?,?)", [SensorType.GPS, "GPS", "GPS data", 1, 0])
-
-        conn.execute("INSERT INTO tabSensorsTypes (id_sensor_type, name, desc, channels, display_style)"
-                     "VALUES (?,?,?,?,?)", [SensorType.HEARTRATE, "Heartrate", "Heartrate in bmp", 1, 0])
-
-        conn.execute("INSERT INTO tabSensorsTypes (id_sensor_type, name, desc, channels, display_style)"
-                     "VALUES (?,?,?,?,?)", [SensorType.ORIENTATION, "Orientation", "Quaternions", 1, 0])
-
-        conn.execute("INSERT INTO tabSensorsTypes (id_sensor_type, name, desc, channels, display_style)"
-                     "VALUES (?,?,?,?,?)", [SensorType.STEP, "Steps", "Steps per minute", 1, 0])
 
         DataFormat.populate_database(conn)
 
@@ -85,7 +62,7 @@ def create_database(filename, name='Unnamed', description='No description availa
 def add_group(dbconn, name, description):
     try:
         print('Adding group:', name, 'description:',description)
-        cursor = dbconn.execute("INSERT INTO tabGroups (name, desc) VALUES (?,?)", [name,description])
+        cursor = dbconn.execute("INSERT INTO tabGroups (name, description) VALUES (?,?)", [name,description])
         return cursor.lastrowid
     except Exception as e:
         message = 'Error adding group' + ': ' + str(e)
@@ -105,11 +82,11 @@ def add_participant(dbconn, name, id_group = None, description='No description a
     try:
         print('Adding participant:', name, id_group, description)
         if id_group is not None:
-            cursor = dbconn.execute("INSERT INTO tabParticipants (id_group, name, desc) VALUES (?,?,?)",
+            cursor = dbconn.execute("INSERT INTO tabParticipants (id_group, name, description) VALUES (?,?,?)",
                                 [id_group, name, description])
             return cursor.lastrowid
         else:
-            cursor = dbconn.execute("INSERT INTO tabParticipants (name, desc) VALUES (?,?)",
+            cursor = dbconn.execute("INSERT INTO tabParticipants (name, description) VALUES (?,?)",
                                 [name, description])
             return cursor.lastrowid
 
