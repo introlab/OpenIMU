@@ -78,7 +78,7 @@ CREATE TABLE tabSensors (
                 name VARCHAR NOT NULL,
                 hw_name VARCHAR NOT NULL,
                 location VARCHAR NOT NULL,
-                sampling_rate INTEGER NOT NULL,
+                sampling_rate FLOAT NOT NULL,
                 data_rate INTEGER NOT NULL,
 		FOREIGN KEY (id_sensor_type) REFERENCES tabSensorTypes (id_sensor_type) ON DELETE CASCADE ON UPDATE NO ACTION
 );

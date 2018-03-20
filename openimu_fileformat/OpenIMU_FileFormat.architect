@@ -44,7 +44,7 @@
     <column id="COL9" populated="true" UUID="ec331901-0da6-4866-a42a-f22bf1d69d5e" autoIncrement="false" autoIncrementSequenceName="tabSensors_location_seq" defaultValue="" name="location" nullable="0" physicalName="location" precision="0" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
      <remarks></remarks>
     </column>
-    <column id="COL10" populated="true" UUID="e589509e-d03c-4e00-a2fb-68782249ee24" autoIncrement="false" autoIncrementSequenceName="tabSensors_sampling_rate_seq" defaultValue="" name="sampling_rate" nullable="0" physicalName="sampling_rate" precision="0" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="4" userDefinedTypeUUID="63b011c7-c81f-4c75-8271-632b3c87f727" >
+    <column id="COL10" populated="true" UUID="e589509e-d03c-4e00-a2fb-68782249ee24" autoIncrement="false" autoIncrementSequenceName="tabSensors_sampling_rate_seq" defaultValue="" name="sampling_rate" nullable="0" physicalName="sampling_rate" precision="0" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="6" userDefinedTypeUUID="7e55bcd0-7606-4153-b749-9c397f12c4d8" >
      <remarks></remarks>
     </column>
     <column id="COL11" populated="true" UUID="8c0aa351-078c-495a-997d-58fd278641b8" autoIncrement="false" autoIncrementSequenceName="tabSensors_data_rate_seq" defaultValue="" name="data_rate" nullable="0" physicalName="data_rate" precision="0" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="4" userDefinedTypeUUID="63b011c7-c81f-4c75-8271-632b3c87f727" >
@@ -208,7 +208,7 @@
     <column id="COL53" populated="true" UUID="b13c3b2f-7e74-482b-92d6-c47e61c4b1ab" autoIncrement="true" autoIncrementSequenceName="tabParticipants_id_participant_seq" defaultValue="" name="id_participant" nullable="0" physicalName="id_participant" precision="0" primaryKeySeq="0" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="4" userDefinedTypeUUID="63b011c7-c81f-4c75-8271-632b3c87f727" >
      <remarks></remarks>
     </column>
-    <column id="COL54" populated="true" UUID="7cc5e181-8fc3-4723-a350-eb5e04351e6f" autoIncrement="false" autoIncrementSequenceName="tabParticipants_id_group_seq" defaultValue="" name="id_group" nullable="0" physicalName="id_group" precision="0" referenceCount="2" scale="0" sourceDataTypeName="UserDefinedSQLType" type="4" userDefinedTypeUUID="63b011c7-c81f-4c75-8271-632b3c87f727" >
+    <column id="COL54" populated="true" UUID="7cc5e181-8fc3-4723-a350-eb5e04351e6f" autoIncrement="false" autoIncrementSequenceName="tabParticipants_id_group_seq" defaultValue="" name="id_group" nullable="1" physicalName="id_group" precision="0" referenceCount="2" scale="0" sourceDataTypeName="UserDefinedSQLType" type="4" userDefinedTypeUUID="63b011c7-c81f-4c75-8271-632b3c87f727" >
      <remarks></remarks>
     </column>
     <column id="COL55" populated="true" UUID="024552a7-b892-4633-b87a-79baf4c7e3f2" autoIncrement="false" autoIncrementSequenceName="tabParticipants_name_seq" defaultValue="" name="name" nullable="0" physicalName="name" precision="0" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
