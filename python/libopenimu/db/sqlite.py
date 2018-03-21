@@ -6,11 +6,14 @@
 import sqlite3
 import os
 import time
-from sensor_types import SensorType
-from data_formats import DataFormat
-from units import Units
+from libopenimu.db.sensor_types import SensorType
+from libopenimu.db.data_formats import DataFormat
+from libopenimu.db.units import Units
 import numpy as np
 import math
+from libopenimu.tools.timing import timing
+import struct
+
 
 def create_database(filename, name='Unnamed', description='No description available', author='Anonymous'):
     print('creating database : ', filename)
@@ -47,7 +50,7 @@ def create_database(filename, name='Unnamed', description='No description availa
 
         # tabDataSet -> name, desc, creation_date, upload_date, author
         conn.execute("INSERT INTO tabDataSet (name, description, creation_date, upload_date, author) "
-                     "VALUES (?,?,?,?,?)", [name, description, creation_date, 0, author])
+                     "VALUES (?,?,?,?,?)", (name, description, creation_date, 0, author))
 
         DataFormat.populate_database(conn)
 
@@ -67,7 +70,7 @@ def create_database(filename, name='Unnamed', description='No description availa
 def add_group(dbconn, name, description):
     try:
         # print('Adding group:', name, 'description:',description)
-        cursor = dbconn.execute("INSERT INTO tabGroups (name, description) VALUES (?,?)", [name,description])
+        cursor = dbconn.execute("INSERT INTO tabGroups (name, description) VALUES (?,?)", (name,description))
         return cursor.lastrowid
     except Exception as e:
         message = 'Error adding group' + ': ' + str(e)
@@ -87,7 +90,7 @@ def add_participant(dbconn, name, id_group = None, description='No description a
     try:
         # print('Adding participant:', name, id_group, description)
         cursor = dbconn.execute("INSERT INTO tabParticipants (id_group, name, description) VALUES (?,?,?)",
-                            [id_group, name, description])
+                                (id_group, name, description))
         return cursor.lastrowid
 
 
@@ -113,7 +116,7 @@ def add_sensor(dbconn, sensor_type, name, hw_name, location, sampling_rate, data
         # print('Adding sensor:', sensor_type, name, hw_name, location, sampling_rate, data_rate)
         cursor = dbconn.execute("INSERT INTO tabSensors (id_sensor_type, name, hw_name, location, sampling_rate, data_rate) "
                                 "VALUES (?,?,?,?,?,?)",
-                                [sensor_type, name, hw_name, location, sampling_rate, data_rate])
+                                (sensor_type, name, hw_name, location, sampling_rate, data_rate))
 
         return cursor.lastrowid
 
@@ -137,7 +140,7 @@ def add_channel(dbconn, id_sensor, id_unit, id_data_format, label):
         # print('Adding channel', id_sensor, id_unit, id_data_format, label)
         cursor = dbconn.execute("INSERT INTO tabChannels (id_sensor, id_unit, id_data_format, label) "
                                 "VALUES (?,?,?,?)",
-                                [id_sensor, id_unit, id_data_format, label])
+                                (id_sensor, id_unit, id_data_format, label))
         return cursor.lastrowid
 
     except Exception as e:
@@ -160,7 +163,7 @@ def add_recordset(dbconn, id_participant, name, start_timestamp=0, end_timestamp
         # print('Adding recordset', id_participant, name, start_timestamp, end_timestamp)
         cursor = dbconn.execute("INSERT INTO tabRecordSets (id_participant, name, start_timestamp, end_timestamp) "
                                 "VALUES (?,?,?,?)",
-                                [id_participant, name, start_timestamp, end_timestamp])
+                                (id_participant, name, start_timestamp, end_timestamp))
         return cursor.lastrowid
 
     except Exception as e:
@@ -184,13 +187,75 @@ def add_sensor_data(dbconn, id_recordset, id_sensor, id_channel, data_timestamp,
         # print('Adding sensor data', id_recordset, id_sensor, id_channel, data_timestamp, len(data))
         cursor = dbconn.execute("INSERT INTO tabSensorsData (id_recordset, id_sensor, id_channel, data_timestamp, data) "
                                 "VALUES (?,?,?,?,?)",
-                                [id_recordset, id_sensor, id_channel, data_timestamp, data])
+                                (id_recordset, id_sensor, id_channel, data_timestamp, data))
         return cursor.lastrowid
 
     except Exception as e:
         message = 'Error adding sensor data' + ': ' + str(e)
         print('Error: ', message)
         raise
+
+@timing
+def read_sensor_data(dbconn, id_recordset, id_sensor, id_channel):
+    """
+
+    :param dbconn:
+    :param id_recordset:
+    :param id_sensor:
+    :return:
+    """
+    try:
+        print('read_sensor_data',id_recordset, id_sensor, id_channel)
+
+        # Get raw data
+        cursor = dbconn.execute("SELECT data_timestamp, data FROM tabSensorsData WHERE id_recordset=? AND id_sensor=? AND id_channel=? "
+                                "ORDER BY data_timestamp", (id_recordset, id_sensor, id_channel))
+
+        sensor_data = cursor.fetchall()
+
+        # Get Sensor info (timestamp + data)
+        cursor = dbconn.execute("SELECT * FROM tabSensors WHERE id_sensor=?",(id_sensor,))
+
+        # All information on sensor
+        [sensor_id, sensor_type, name, hw_name, location, sampling_rate, data_rate] = cursor.fetchone()
+
+        # All information on channel
+        cursor = dbconn.execute("SELECT id_unit, id_data_format,label FROM tabChannels WHERE id_channel=?",(id_channel,))
+        [unit, data_format, label] = cursor.fetchone()
+        print("data_format", DataFormat.name(data_format),"unit",Units.name(unit), "label", label)
+
+        result = {}
+        all_data = []
+
+        # Read all data in the right format
+        for row in sensor_data:
+            if data_format == DataFormat.FLOAT32:
+                nb_bytes = len(row[1])
+                nb_samples = int(nb_bytes / 4)
+                # print('should read nb_samples:',nb_samples)
+                samples = struct.unpack_from('<' + str(nb_samples) + 'f', row[1])
+                # print('samples:', samples)
+                all_data.append((row[0],samples))
+
+
+        # Fill the result struct
+        result['data'] = all_data
+        result['id_recordset']  = id_recordset
+        result['id_sensor'] = id_sensor
+        result['id_channel'] = id_channel
+        result['id_unit'] = unit
+        result['id_data_format'] = data_format
+        result['label'] = label
+        result['sampling_rate'] = sampling_rate
+        result['data_rate'] = data_rate
+
+        return result
+
+    except Exception as e:
+        message = 'Error reading sensor data' + ': ' + str(e)
+        print('Error: ', message)
+        raise
+
 
 """
 Test function
@@ -217,11 +282,10 @@ if __name__ == '__main__':
     record = add_recordset(db, id_participant=part1, name='Un enregistrement')
 
     # Add fake data for 120 seconds
-    for timestamp in range(0,120):
+    for timestamp in range(0, 120):
         # Generate one second of data @ 100Hz
         npoints = 100
         xtime = np.linspace(0., 2 * math.pi, npoints, dtype=np.float32)
-        print('type', type(xtime), len(xtime), len(xtime.tobytes()))
         xdata = np.sin(xtime)
         ydata = np.sin(2 * xtime)
         zdata = np.sin(4 * xtime)
@@ -233,4 +297,8 @@ if __name__ == '__main__':
                         data=zdata)
 
     db.commit()
+    # Reading back data
+    data = read_sensor_data(db, record, sensor1, channel_acc_x)
+    # print('read data:',data)
+
     db.close()
