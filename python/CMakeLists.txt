@@ -60,6 +60,7 @@ QT5_ADD_RESOURCES(srcs_qrcs ${qrcs})
 #Generate .h files from the .ui files
 #QT5_WRAP_UI(moc_uis ${uis})
 
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/resources/ui/python)
 
 # Generate PyQt5 ui files
 set(python_uis)
