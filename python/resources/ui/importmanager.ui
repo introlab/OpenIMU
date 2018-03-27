@@ -31,7 +31,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Fichier à importer:</string>
+        <string>Répertoire à importer:</string>
        </property>
       </widget>
      </item>

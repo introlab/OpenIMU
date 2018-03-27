@@ -23,7 +23,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="childrenCollapsible">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <widget class="QWidget" name="">
       <layout class="QHBoxLayout" name="horizontalLayout">
@@ -50,7 +50,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Fichier(s) à importer</string>
+             <string>Répertoire(s) à importer</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -94,7 +94,7 @@
             </attribute>
             <column>
              <property name="text">
-              <string>Fichier</string>
+              <string>Répertoire</string>
              </property>
             </column>
             <column>
