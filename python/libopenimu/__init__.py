@@ -1,2 +1,2 @@
 # All modules
-__all__ = ['algorithms', 'db', 'importers', 'jupyter', 'qt', 'tools']
+__all__ = ['algorithms', 'db', 'importers', 'jupyter', 'models', 'qt', 'tools']

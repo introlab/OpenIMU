@@ -9,9 +9,8 @@ Documentation of the binary format : https://github.com/actigraph/GT3X-File-Form
 import zipfile
 import struct
 import numpy as np
-import time
-import sys
 import math
+from libopenimu.tools.timing import timing
 
 class RecordType:
     """
@@ -258,14 +257,7 @@ class ParameterKeys:
             return {param_name: value}
 
 
-def timing(f):
-    def wrap(*args):
-        time1 = time.time()
-        ret = f(*args)
-        time2 = time.time()
-        print("%s function took %0.3f ms" % (f.__name__, (time2-time1)*1000.0))
-        return ret
-    return wrap
+
 
 
 def gt3x_read_uint12(data, nb_axis=3):

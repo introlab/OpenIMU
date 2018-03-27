@@ -282,7 +282,7 @@ if __name__ == '__main__':
     record = add_recordset(db, id_participant=part1, name='Un enregistrement')
 
     # Add fake data for 120 seconds
-    for timestamp in range(0, 60 * 60 * 24):
+    for timestamp in range(0, 120):
         # Generate one second of data @ 100Hz
         npoints = 100
         xtime = np.linspace(0., 2 * math.pi, npoints, dtype=np.float32)
