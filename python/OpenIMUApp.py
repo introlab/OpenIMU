@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QMdiSubWindow
 from PyQt5.QtWidgets import QApplication, QDialog, QPushButton
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineSettings
+# from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineSettings
 from PyQt5.QtQuickWidgets import QQuickWidget
 
 from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal
@@ -167,11 +167,11 @@ if __name__ == '__main__':
     app.setAttribute(Qt.AA_EnableHighDpiScaling)
 
     # WebEngine settings
-    QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.PluginsEnabled, True)
-    QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.JavascriptCanOpenWindows, True)
-    QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.JavascriptEnabled, True)
-    QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.LocalContentCanAccessRemoteUrls,True)
-    QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.AllowRunningInsecureContent, True)
+    # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.PluginsEnabled, True)
+    # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.JavascriptCanOpenWindows, True)
+    # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.JavascriptEnabled, True)
+    # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.LocalContentCanAccessRemoteUrls,True)
+    # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.AllowRunningInsecureContent, True)
 
     window = MainWindow()
     sys.exit(app.exec_())

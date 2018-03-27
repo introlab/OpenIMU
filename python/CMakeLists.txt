@@ -16,23 +16,25 @@
 
 #TODO MAKE THIS GENERIC
 
+set(PYTHON_ENV_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/env/python-3.5)
+file(MAKE_DIRECTORY ${PYTHON_ENV_DIRECTORY})
 
 if(WIN32)
-    set(PYTHON_EXECUTABLE ${CMAKE_CURRENT_SOURCE_DIR}/env/python-3.5/bin/python.exe)
-    set(PYTHON_PIP_EXECUTABLE ${CMAKE_CURRENT_SOURCE_DIR}/env/python-3.5/bin/pip.exe)
+    set(PYTHON_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/python.exe)
+    set(PYTHON_PIP_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pip.exe)
 
     #PyQt5 Ui wrapper
-    set(PYQT5_UIC_EXECUTABLE ${CMAKE_CURRENT_SOURCE_DIR}/env/python-3.5/Scripts/pyuic5.exe)
+    set(PYQT5_UIC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyuic5.exe)
     #PyQt5 Ressources compiler
-    set(PYQT5_RCC_EXECUTABLE ${CMAKE_CURRENT_SOURCE_DIR}/env/python-3.5/Scripts/pyrcc5.exe)
+    set(PYQT5_RCC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyrcc5.exe)
 
 else(WIN32)
-    set(PYTHON_EXECUTABLE ${CMAKE_CURRENT_SOURCE_DIR}/env/python-3.5/bin/python)
-    set(PYTHON_PIP_EXECUTABLE ${CMAKE_CURRENT_SOURCE_DIR}/env/python-3.5/bin/pip)
+    set(PYTHON_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/python)
+    set(PYTHON_PIP_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pip)
     #PyQt5 Ui wrapper
-    set(PYQT5_UIC_EXECUTABLE ${CMAKE_CURRENT_SOURCE_DIR}/env/python-3.5/bin/pyuic5)
+    set(PYQT5_UIC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pyuic5)
     #PyQt5 Ressources compiler
-    set(PYQT5_RCC_EXECUTABLE ${CMAKE_CURRENT_SOURCE_DIR}/env/python-3.5/bin/pyrcc5)
+    set(PYQT5_RCC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pyrcc5)
 endif(WIN32)
 
 find_package(Qt5Core REQUIRED)
