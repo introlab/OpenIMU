@@ -1,5 +1,7 @@
-from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QMdiSubWindow
-from PyQt5.QtWidgets import QApplication, QDialog, QPushButton
+from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QMdiSubWindow, QMdiArea
+from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QTreeWidget, QTreeWidgetItem
+from PyQt5.QtGui import QIcon, QFont, QDragEnterEvent
+
 # from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineSettings
 from PyQt5.QtQuickWidgets import QQuickWidget
 
@@ -27,7 +29,6 @@ import core_rc
 import sys
 
 import libopenimu
-
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -101,6 +102,161 @@ class MainWindow(QMainWindow):
         # Maximize window
         self.showMaximized()
 
+        self.loadDemoData()
+
+        self.UI.mdiArea
+
+    def loadDemoData(self):
+        #Load demo structure
+        item = self.create_group_item("Groupe 1", 0)
+        self.UI.treeDataSet.addTopLevelItem(item)
+
+        parent = item
+        item = self.create_participant_item("Participant B",1)
+        parent.addChild(item)
+
+        item2 = self.create_records_item()
+        item.addChild(item2)
+
+        item3 = self.create_record_item("Enregistrement 1 (27/03/2018)",0)
+        item2.addChild(item3)
+
+        item5 = self.create_sensor_item("Accéléromètre", 0)
+        item3.addChild(item5)
+
+        item5 = self.create_sensor_item("Gyromètre", 1)
+        item3.addChild(item5)
+
+        item5 = self.create_sensor_item("GPS", 2)
+        item3.addChild(item5)
+
+        item4 = self.create_subrecord_item("AM",0)
+        item3.addChild(item4)
+
+        item5 = self.create_sensor_item("Accéléromètre", 0)
+        item4.addChild(item5)
+
+        item5 = self.create_sensor_item("Gyromètre", 1)
+        item4.addChild(item5)
+
+        item5 = self.create_sensor_item("GPS", 2)
+        item4.addChild(item5)
+
+        item4 = self.create_subrecord_item("PM", 1)
+        item3.addChild(item4)
+
+        item5 = self.create_sensor_item("Accéléromètre", 0)
+        item4.addChild(item5)
+
+        item5 = self.create_sensor_item("Gyromètre", 1)
+        item4.addChild(item5)
+
+        item5 = self.create_sensor_item("GPS", 2)
+        item4.addChild(item5)
+
+
+        item3 = self.create_record_item("Enregistrement 2 (29/03/2018)", 1)
+        item2.addChild(item3)
+
+        item2 = self.create_results_item()
+        item.addChild(item2)
+
+        item3 = self.create_result_item("Nombre de pas (par enregistrement)",0)
+        item2.addChild(item3)
+
+        item3 = self.create_result_item("Niveau d'activité (total)", 1)
+        item2.addChild(item3)
+
+        item = self.create_participant_item("Participant C", 2)
+        parent.addChild(item)
+
+        parent = item
+        item = self.create_records_item()
+        parent.addChild(item)
+
+        item3 = self.create_record_item("Enregistrement 1 (23/03/2018)", 3)
+        item.addChild(item3)
+
+        item = self.create_group_item("Groupe 2", 1)
+        self.UI.treeDataSet.addTopLevelItem(item)
+
+        parent = item
+        item = self.create_participant_item("Participant D", 3)
+        parent.addChild(item)
+
+        item = self.create_participant_item("Participant A", 0)
+        self.UI.treeDataSet.addTopLevelItem(item)
+
+    def create_group_item(self, name, id):
+        item = QTreeWidgetItem()
+        item.setText(0, name)
+        item.setIcon(0, QIcon(':/OpenIMU/icons/group.png'))
+        item.setData(0, Qt.UserRole, id);
+        item.setData(1, Qt.UserRole, 'group');
+        item.setFont(0, QFont('Helvetica', 14, QFont.Bold))
+        return item
+
+    def create_participant_item(self,name,id):
+        item = QTreeWidgetItem()
+        item.setText(0, name)
+        item.setIcon(0, QIcon(':/OpenIMU/icons/participant.png'))
+        item.setData(0, Qt.UserRole, id);
+        item.setData(1, Qt.UserRole, 'participant');
+        item.setFont(0, QFont('Helvetica', 13, QFont.Bold))
+        return item
+
+    def create_records_item(self):
+        item = QTreeWidgetItem()
+        item.setText(0, 'Enregistrements')
+        item.setIcon(0, QIcon(':/OpenIMU/icons/records.png'))
+        item.setData(1, Qt.UserRole, 'recordsets');
+        item.setFont(0, QFont('Helvetica', 12, QFont.StyleItalic + QFont.Bold))
+        return item
+
+    def create_results_item(self):
+        item = QTreeWidgetItem()
+        item.setText(0, 'Résultats')
+        item.setIcon(0, QIcon(':/OpenIMU/icons/results.png'))
+        item.setData(1, Qt.UserRole, 'results');
+        item.setFont(0, QFont('Helvetica', 12, QFont.StyleItalic + QFont.Bold))
+        return item
+
+    def create_record_item(self,name,id):
+        item = QTreeWidgetItem()
+        item.setText(0, name)
+        item.setIcon(0, QIcon(':/OpenIMU/icons/recordset.png'))
+        item.setData(0, Qt.UserRole, id);
+        item.setData(1, Qt.UserRole, 'recordset');
+        item.setFont(0, QFont('Helvetica', 12, QFont.Bold))
+        return item
+
+    def create_subrecord_item(self,name,id):
+        item = QTreeWidgetItem()
+        item.setText(0, name)
+        item.setIcon(0, QIcon(':/OpenIMU/icons/subrecord.png'))
+        item.setData(0, Qt.UserRole, id);
+        item.setData(1, Qt.UserRole, 'subrecord');
+        item.setFont(0, QFont('Helvetica', 12, QFont.Bold))
+        return item
+
+    def create_sensor_item(self,name,id):
+        item = QTreeWidgetItem()
+        item.setText(0, name)
+        item.setIcon(0, QIcon(':/OpenIMU/icons/sensor.png'))
+        item.setData(0, Qt.UserRole, id);
+        item.setData(1, Qt.UserRole, 'sensor');
+        item.setFont(0, QFont('Helvetica', 12))
+        return item
+
+    def create_result_item(self,name,id):
+        item = QTreeWidgetItem()
+        item.setText(0, name)
+        item.setIcon(0, QIcon(':/OpenIMU/icons/result.png'))
+        item.setData(0, Qt.UserRole, id);
+        item.setData(1, Qt.UserRole, 'result');
+        item.setFont(0, QFont('Helvetica', 12))
+        return item
+
     @pyqtSlot(QUrl)
     def urlChanged(self,url):
         print('url: ', url)
@@ -142,6 +298,21 @@ class MainWindow(QMainWindow):
     def __del__(self):
         print('Done!')
 
+    """
+    def dragEnterEvent(self, event):
+        print (event.answerRect())
+        print (self.UI.mdiArea.rect().adjusted(self.UI.mdiArea.x(),self.UI.mdiArea.y(),0,0))
+
+        if (event.answerRect().intersects(self.UI.mdiArea.rect())):
+            print("OK")
+            #event.accept()
+        else:
+            print("Not OK")
+            #event.refuse()
+
+    def dropEvent(self, QDropEvent):
+        print("DROP!")
+    """
     def add_mdi_widget(self, widget=None, title=''):
         sub_window = QMdiSubWindow(self.UI.mdiArea)
 

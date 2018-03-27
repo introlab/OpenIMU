@@ -40,7 +40,7 @@ class ImportWindow(QDialog):
             rval = False
         else:
             self.UI.txtAuthor.setStyleSheet('background-color: white;')
-            
+
         return rval
 
     @pyqtSlot()

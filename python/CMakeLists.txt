@@ -46,6 +46,7 @@ SET(uis
     resources/ui/StartDialog.ui
     resources/ui/ImportDialog.ui
     resources/ui/ImportManager.ui
+    resources/ui/GroupWidget.ui
 )
 
 SET(qrcs

@@ -7,8 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>1130</width>
-    <height>749</height>
+    <height>1188</height>
    </rect>
+  </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
   </property>
   <property name="windowTitle">
    <string>OpenIMU</string>
@@ -25,6 +28,9 @@
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="acceptDrops">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -65,16 +71,37 @@
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
       <widget class="QTreeWidget" name="treeDataSet">
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
        <property name="showDropIndicator" stdset="0">
         <bool>false</bool>
        </property>
+       <property name="dragEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::DragOnly</enum>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>true</bool>
+       </property>
        <property name="iconSize">
         <size>
-         <width>24</width>
-         <height>24</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
+       <property name="indentation">
+        <number>10</number>
+       </property>
        <property name="uniformRowHeights">
+        <bool>false</bool>
+       </property>
+       <property name="animated">
+        <bool>true</bool>
+       </property>
+       <property name="expandsOnDoubleClick">
         <bool>true</bool>
        </property>
        <attribute name="headerVisible">
