@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>893</width>
-    <height>619</height>
+    <width>906</width>
+    <height>481</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,140 +18,176 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QFrame" name="frameImport">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <property name="sizeConstraint">
-         <enum>QLayout::SetMaximumSize</enum>
-        </property>
-        <item>
-         <widget class="QLabel" name="lblImport">
-          <property name="font">
-           <font>
-            <pointsize>12</pointsize>
-            <weight>75</weight>
-            <italic>false</italic>
-            <bold>true</bold>
-           </font>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="childrenCollapsible">
+      <bool>false</bool>
+     </property>
+     <widget class="QWidget" name="">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QFrame" name="frameImport">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
           </property>
-          <property name="text">
-           <string>Fichier(s) à importer</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QColumnView" name="colFiles">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>250</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="editTriggers">
-           <set>QAbstractItemView::NoEditTriggers</set>
-          </property>
-          <property name="showDropIndicator" stdset="0">
-           <bool>false</bool>
-          </property>
-          <property name="selectionBehavior">
-           <enum>QAbstractItemView::SelectRows</enum>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>16</width>
-            <height>16</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QPushButton" name="btnAddFile">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>40</height>
-             </size>
+           <widget class="QLabel" name="lblImport">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+              <weight>75</weight>
+              <italic>false</italic>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Fichier(s) à importer</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTableWidget" name="tableFiles">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>40</height>
+              <height>16777215</height>
              </size>
             </property>
-            <property name="cursor">
-             <cursorShape>PointingHandCursor</cursorShape>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
             </property>
-            <property name="text">
-             <string>Ajouter</string>
+            <property name="showDropIndicator" stdset="0">
+             <bool>false</bool>
             </property>
-            <property name="icon">
-             <iconset resource="../core.qrc">
-              <normaloff>:/OpenIMU/icons/import.png</normaloff>:/OpenIMU/icons/import.png</iconset>
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectRows</enum>
             </property>
             <property name="iconSize">
              <size>
-              <width>20</width>
-              <height>20</height>
+              <width>16</width>
+              <height>16</height>
              </size>
             </property>
-            <property name="autoDefault">
-             <bool>false</bool>
+            <property name="columnCount">
+             <number>4</number>
             </property>
+            <attribute name="horizontalHeaderVisible">
+             <bool>true</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string>Fichier</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Format</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Groupe</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Participant</string>
+             </property>
+            </column>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="btnDelFile">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>40</height>
-             </size>
-            </property>
-            <property name="cursor">
-             <cursorShape>PointingHandCursor</cursorShape>
-            </property>
-            <property name="text">
-             <string>Supprimer</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../core.qrc">
-              <normaloff>:/OpenIMU/icons/delete.png</normaloff>:/OpenIMU/icons/delete.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-            <property name="autoDefault">
-             <bool>false</bool>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QPushButton" name="btnAddFile">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
+              <property name="text">
+               <string>Ajouter</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../core.qrc">
+                <normaloff>:/OpenIMU/icons/import.png</normaloff>:/OpenIMU/icons/import.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="autoDefault">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnDelFile">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
+              <property name="text">
+               <string>Supprimer</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../core.qrc">
+                <normaloff>:/OpenIMU/icons/delete.png</normaloff>:/OpenIMU/icons/delete.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="autoDefault">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="">
       <layout class="QFormLayout" name="formLayout">
        <property name="sizeConstraint">
         <enum>QLayout::SetMinimumSize</enum>
@@ -295,11 +331,14 @@ de collecte:</string>
         </widget>
        </item>
       </layout>
-     </item>
-    </layout>
+     </widget>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMaximumSize</enum>
+     </property>
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
@@ -308,7 +347,7 @@ de collecte:</string>
        <property name="sizeHint" stdset="0">
         <size>
          <width>40</width>
-         <height>20</height>
+         <height>10</height>
         </size>
        </property>
       </spacer>
@@ -341,7 +380,7 @@ de collecte:</string>
         </size>
        </property>
        <property name="cursor">
-        <cursorShape>SplitHCursor</cursorShape>
+        <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
         <string>Annuler</string>

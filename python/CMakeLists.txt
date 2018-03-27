@@ -43,6 +43,7 @@ SET(uis
     resources/ui/MainWindow.ui
     resources/ui/StartDialog.ui
     resources/ui/ImportDialog.ui
+    resources/ui/ImportManager.ui
 )
 
 SET(qrcs
@@ -69,7 +70,7 @@ foreach(uifile ${uis})
     set(output_file ${name_without_extension}_ui.py)
     list(APPEND python_uis ${output_file})
     add_custom_target(${output_file}
-        COMMAND ${PYQT5_UIC_EXECUTABLE} ${uifile} -o ${output_file}
+        COMMAND ${PYQT5_UIC_EXECUTABLE} ${uifile} -o resources/ui/python/${output_file}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         DEPENDS ${uifile})
 endforeach(uifile)

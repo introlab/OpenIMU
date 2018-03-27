@@ -17,10 +17,9 @@ from PyQt5.QtCore import pyqtProperty, QCoreApplication, QObject
 from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
 
 # This is auto-generated from Qt .ui files
-from MainWindow_ui import Ui_MainWindow
-from StartDialog_ui import Ui_StartDialog
-
-from ImportDialog_ui import Ui_ImportDialog
+from resources.ui.python.MainWindow_ui import Ui_MainWindow
+from resources.ui.python.StartDialog_ui import Ui_StartDialog
+from ImportWindow import ImportWindow
 
 # This is auto-generated from Qt .qrc files
 import core_rc
