@@ -130,6 +130,9 @@ class DBManager:
             print('Error: ', message)
             raise
 
+    def add_participant(self, group, name, description ):
+        return
+
 
 if __name__ == '__main__':
     manager = DBManager('openimu.db', overwrite=True)

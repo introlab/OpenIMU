@@ -1,9 +1,10 @@
 """
- Recordset
+ Sensor
  @authors Simon Brière, Dominic Létourneau
- @date 27/03/2018
+ @date 02/04/2018
 """
 
-class Recordset:
+
+class Sensor:
     def __init__(self):
         return

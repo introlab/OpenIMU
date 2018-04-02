@@ -30,9 +30,9 @@ class Group:
         print('Group','id_group:',self.id_group,'name:',self.name, 'description:',self.description)
 
     def __str__(self):
-        return 'Group: ' + str(self.tuple())
+        return 'Group: ' + str(self.as_tuple())
 
-    def tuple(self):
+    def as_tuple(self):
         return (self.id_group, self.name, self.description)
 
     def from_tuple(self, tuple):
