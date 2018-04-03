@@ -8,57 +8,63 @@ import unittest
 
 
 class Group:
-    # def __init__(self, id_group=None, name=None, description=None):
-    #    self.id_group = id_group
-    #    self.name = name
-    #    self.description = description
+    def __init__(self, *args, **kwargs):
+        # Initial state
+        self._id_group = None
+        self._name = None
+        self._description = None
 
-    def __init__(self, tuple=(None,None,None)):
-        self.id_group = None
-        self.name = None
-        self.description = None
-        self.from_tuple(tuple)
+        # Variable args
+        if len(args) == 1:
+            self.from_tuple(args[0])
+        elif len(args) == 3:
+            self._id_group = kwargs.get('id_group', None)
+            self._name = kwargs.get('name', None)
+            self._description = kwargs.get('description', None)
 
     def set_id_group(self, id_group):
-        self.id_group = id_group
+        self._id_group = id_group
 
     def get_id_group(self):
-        return self.id_group
+        return self._id_group
 
     def set_name(self, name):
-        self.name = name
+        self._name = name
 
     def get_name(self):
-        return self.name
+        return self._name
 
     def set_description(self, description):
-        self.description = description
+        self._description = description
 
     def get_description(self):
-        return self.description
+        return self._description
 
     def print(self):
-        print('Group', 'id_group:', self.id_group, 'name:', self.name, 'description:', self.description)
+        print('Group', 'id_group:', self._id_group, 'name:', self._name, 'description:', self._description)
 
     def __str__(self):
         return 'Group: ' + str(self.as_tuple())
 
     def as_tuple(self):
-        return self.id_group, self.name, self.description
+        return self._id_group, self._name, self._description
 
     def from_tuple(self, tuple):
-        (self.id_group, self.name, self.description) = tuple
+        (self._id_group, self._name, self._description) = tuple
 
     def is_valid(self):
-        if self.id_group is None:
+        if self._id_group is None:
             return False
-        if self.name is None:
+        if self._name is None:
             return False
-        if self.description is None:
+        if self._description is None:
             return False
         return True
 
-
+    # Properties
+    id_group = property(get_id_group, set_id_group)
+    name = property(get_name, set_name)
+    description = property(get_description, set_description)
 
 """
 Unit testing
@@ -78,6 +84,9 @@ class GroupTest(unittest.TestCase):
         self.assertEqual(group.get_id_group(), None)
         self.assertEqual(group.get_description(), None)
         self.assertEqual(group.get_name(), None)
+
+    def test_variable_args_construction(self):
+        pass
 
     def test_get_set_name(self):
         group = Group()
@@ -117,3 +126,18 @@ class GroupTest(unittest.TestCase):
         self.assertEqual(group.is_valid(), True)
         group2 = Group((0, 'My Name', 'My Description'))
         self.assertEqual(group2.is_valid(), True)
+
+    def test_properties(self):
+        my_id_group = 0
+        my_name = 'My Name'
+        my_description = 'My Description'
+        group = Group()
+        group.id_group = my_id_group
+        group.name = my_name
+        group.description = my_description
+        self.assertEqual(group.get_id_group(), my_id_group)
+        self.assertEqual(group.id_group, my_id_group)
+        self.assertEqual(group.get_name(), my_name)
+        self.assertEqual(group.name, my_name)
+        self.assertEqual(group.get_description(), my_description)
+        self.assertEqual(group.description, my_description)

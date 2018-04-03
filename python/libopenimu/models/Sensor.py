@@ -66,6 +66,7 @@ class Sensor:
     sampling_rate = property(get_sampling_rate, set_sampling_rate)
     data_rate = property(get_data_rate, set_data_rate)
 
+
 class SensorTest(unittest.TestCase):
 
     def setUp(self):
