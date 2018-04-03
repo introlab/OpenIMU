@@ -8,17 +8,16 @@
 import sqlite3
 import os
 import time
+
+# Basic definitions
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.data_formats import DataFormat
 from libopenimu.models.units import Units
-import numpy as np
-import math
-from libopenimu.tools.timing import timing
-import struct
 
 # All the models
 from libopenimu.models.Group import Group
 from libopenimu.models.Sensor import Sensor
+from libopenimu.models.Participant import Participant
 
 
 class DBManager:
@@ -136,7 +135,35 @@ class DBManager:
             raise
 
     def add_participant(self, group, name, description):
-        return
+        try:
+            cursor = self.db.execute("INSERT INTO tabParticipants (id_group, name, description) VALUES (?,?,?)",
+                                     (group.id_group, name, description))
+
+            # Create object
+            participant = Participant(id_participant=cursor.lastrowid, group=group, name=name, description=description)
+
+            self.db.commit()
+
+            return participant
+        except Exception as e:
+            message = 'Error adding Participant' + ': ' + str(e)
+            print('Error: ', message)
+            raise
+
+    def get_participant(self, id_participant):
+        try:
+            cursor = self.db.execute("SELECT * FROM tabParticipants WHERE id_participant=?", (id_participant,))
+
+            (_id_participant, _id_group, _name, _description) = cursor.fetchone()
+            # Get Group
+            group = self.get_group(_id_group)
+            # Return participant
+            return Participant(id_participant=id_participant, group=group, name=_name, description=_description)
+
+        except Exception as e:
+            message = 'Error getting Participant' + ': ' + str(e)
+            print('Error: ', message)
+            raise
 
     def add_sensor(self, _id_sensor_type, _name, _hw_name, _location, _sampling_rate, _data_rate):
         try:
@@ -157,7 +184,7 @@ class DBManager:
 
             return sensor
         except Exception as e:
-            message = 'Error adding group' + ': ' + str(e)
+            message = 'Error adding sensor' + ': ' + str(e)
             print('Error: ', message)
             raise
 
@@ -170,15 +197,3 @@ class DBManager:
             message = 'Error getting sensor' + ': ' + str(e)
             print('Error: ', message)
             raise
-
-
-if __name__ == '__main__':
-    manager = DBManager('openimu.db', overwrite=True)
-    manager.init_database(name='My DataSet', description='First test')
-
-    manager.add_group('group1','description1')
-    manager.add_group('group2', 'description2')
-    manager.add_group('group3', 'description3')
-
-    print('all groups', manager.get_all_groups)
-    print('get group', manager.get_group(id_group=1))

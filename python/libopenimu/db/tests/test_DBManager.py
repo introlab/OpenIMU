@@ -15,21 +15,20 @@ from libopenimu.models.sensor_types import SensorType
 
 class DBManagerTest(unittest.TestCase):
 
-    @staticmethod
-    def database_name():
-        return 'openimu.db'
+    # All tests will use this name for the database
+    TESTDB_NAME = 'openimu.db'
 
     def setUp(self):
         pass
 
     def tearDown(self):
-
-        if os.path.isfile(DBManagerTest.database_name()):
-            print('Removing database : ', DBManagerTest.database_name())
-            os.remove(DBManagerTest.database_name())
+        # Cleanup database
+        if os.path.isfile(DBManagerTest.TESTDB_NAME):
+            print('Removing database : ', DBManagerTest.TESTDB_NAME)
+            os.remove(DBManagerTest.TESTDB_NAME)
 
     def test_add_group(self):
-        manager = DBManager(filename=DBManagerTest.database_name(), overwrite=True)
+        manager = DBManager(filename=DBManagerTest.TESTDB_NAME, overwrite=True)
 
         # Group information
         name = 'Group Name'
@@ -61,3 +60,19 @@ class DBManagerTest(unittest.TestCase):
         self.assertEqual(sensor.sampling_rate, sensor2.sampling_rate)
         self.assertEqual(sensor.data_rate, sensor2.data_rate)
 
+    def test_add_participant(self):
+        manager = DBManager(filename='openimu.db', overwrite=True)
+
+        # Participant information
+        group = manager.add_group('My Group', 'My Group Description')
+        name = 'Participant Name'
+        description = 'Participant Description'
+        participant = manager.add_participant(group, name, description)
+
+        self.assertEqual(participant.group, group)
+        self.assertEqual(participant.name, name)
+        self.assertEqual(participant.description, description)
+        self.assertGreater(participant.id_participant, 0)
+
+        participant2 = manager.get_participant(participant.id_participant)
+        self.assertEqual(participant.as_tuple(), participant2.as_tuple())
