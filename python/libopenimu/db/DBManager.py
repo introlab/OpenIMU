@@ -8,9 +8,9 @@
 import sqlite3
 import os
 import time
-from libopenimu.db.sensor_types import SensorType
-from libopenimu.db.data_formats import DataFormat
-from libopenimu.db.units import Units
+from libopenimu.models.sensor_types import SensorType
+from libopenimu.models.data_formats import DataFormat
+from libopenimu.models.units import Units
 import numpy as np
 import math
 from libopenimu.tools.timing import timing
