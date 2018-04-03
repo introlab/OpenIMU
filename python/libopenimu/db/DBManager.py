@@ -18,6 +18,7 @@ import struct
 
 # All the models
 from libopenimu.models.Group import Group
+from libopenimu.models.Sensor import Sensor
 
 
 class DBManager:
@@ -42,7 +43,11 @@ class DBManager:
 
         # Create the tables
         try:
-            qry = open('../../../openimu_fileformat/OpenIMU_FileFormat.sql', 'r').read()
+            # TODO - store table sql table creation script into a local file?
+            file_path = os.path.dirname(__file__)
+            stream = open(file_path + '/../../../openimu_fileformat/OpenIMU_FileFormat.sql', 'r')
+            qry = stream.read()
+            stream.close()
             sqlite3.complete_statement(qry)
             conn = sqlite3.connect(filename)
             cursor = conn.cursor()
@@ -93,8 +98,9 @@ class DBManager:
         try:
             # print('Adding group:', name, 'description:',description)
             cursor = self.db.execute("INSERT INTO tabGroups (name, description) VALUES (?,?)", (name, description))
-            myGroup = Group((cursor.lastrowid, name, description))
-            return myGroup
+            group = Group((cursor.lastrowid, name, description))
+            self.db.commit()
+            return group
         except Exception as e:
             message = 'Error adding group' + ': ' + str(e)
             print('Error: ', message)
@@ -111,7 +117,6 @@ class DBManager:
             print('Error: ', message)
             raise
 
-    @property
     def get_all_groups(self):
         try:
             # print('Adding group:', name, 'description:',description)
@@ -130,8 +135,41 @@ class DBManager:
             print('Error: ', message)
             raise
 
-    def add_participant(self, group, name, description ):
+    def add_participant(self, group, name, description):
         return
+
+    def add_sensor(self, _id_sensor_type, _name, _hw_name, _location, _sampling_rate, _data_rate):
+        try:
+            cursor = self.db.execute("INSERT INTO tabSensors (id_sensor_type, name, hw_name, "
+                                     "location, sampling_rate, data_rate) VALUES (?,?,?,?,?,?)",
+                                     (_id_sensor_type, _name, _hw_name, _location, _sampling_rate, _data_rate))
+
+            # Create object
+            sensor = Sensor(id_sensor=cursor.lastrowid,
+                            id_sensor_type=_id_sensor_type,
+                            name=_name,
+                            hw_name=_hw_name,
+                            location=_location,
+                            sampling_rate=_sampling_rate,
+                            data_rate=_data_rate)
+
+            self.db.commit()
+
+            return sensor
+        except Exception as e:
+            message = 'Error adding group' + ': ' + str(e)
+            print('Error: ', message)
+            raise
+
+    def get_sensor(self, id_sensor):
+        try:
+            cursor = self.db.execute("SELECT * FROM tabSensors WHERE id_sensor=?", (id_sensor,))
+            return Sensor(cursor.fetchone())
+
+        except Exception as e:
+            message = 'Error getting sensor' + ': ' + str(e)
+            print('Error: ', message)
+            raise
 
 
 if __name__ == '__main__':
@@ -143,4 +181,4 @@ if __name__ == '__main__':
     manager.add_group('group3', 'description3')
 
     print('all groups', manager.get_all_groups)
-    print('get group',manager.get_group(id_group=1))
+    print('get group', manager.get_group(id_group=1))

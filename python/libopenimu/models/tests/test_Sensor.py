@@ -30,6 +30,26 @@ class SensorTest(unittest.TestCase):
         self.assertEqual(sensor.sampling_rate, None)
         self.assertEqual(sensor.data_rate, None)
 
+    def test_ctor_all_args(self):
+        _id_sensor = 0
+        _id_sensor_type = 0
+        _name = 'My Name'
+        _hw_name = 'HW Name'
+        _location = 'wrist'
+        _sampling_rate = 30.0
+        _data_rate = 1
+
+        sensor = Sensor(id_sensor=_id_sensor, id_sensor_type=_id_sensor_type, name=_name, hw_name=_hw_name,
+                        location=_location, sampling_rate=_sampling_rate, data_rate=_data_rate)
+
+        self.assertEqual(_id_sensor, sensor.id_sensor)
+        self.assertEqual(_id_sensor_type, sensor.id_sensor_type)
+        self.assertEqual(_name, sensor.name)
+        self.assertEqual(_hw_name, sensor.hw_name)
+        self.assertEqual(_location, sensor.location)
+        self.assertEqual(_sampling_rate, sensor.sampling_rate)
+        self.assertEqual(_data_rate, sensor.data_rate)
+
     def test_properties(self):
         sensor = Sensor()
         my_id = 0

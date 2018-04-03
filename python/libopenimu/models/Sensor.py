@@ -20,7 +20,9 @@ class Sensor:
 
         if len(args) is 1 and isinstance(args[0], tuple):
             self.from_tuple(args[0])
-        elif len(args) is 7:
+        elif len(args) is 1 and isinstance(args[0], Sensor):
+            self.from_tuple(args[0].as_tuple())
+        elif len(kwargs) is 7:
             self._id_sensor = kwargs.get('id_sensor', None)
             self._id_sensor_type = kwargs.get('id_sensor_type', None)
             self._name = kwargs.get('name', None)
@@ -30,6 +32,7 @@ class Sensor:
             self._data_rate = kwargs.get('data_rate', None)
         elif len(args) > 0:
             print('Unknown args size:', len(args), args)
+
 
         # Validation
         if self._id_sensor_type is not None:
@@ -85,6 +88,9 @@ class Sensor:
     def from_tuple(self, tuple):
         (self._id_sensor, self._id_sensor_type, self._name, self._hw_name,
          self._location, self._sampling_rate, self._data_rate) = tuple
+
+    def __str__(self):
+        return "Sensor: " + str(self.as_tuple())
 
     # Properties
     id_sensor = property(get_id_sensor, set_id_sensor)

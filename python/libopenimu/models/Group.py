@@ -15,7 +15,7 @@ class Group:
         # Variable args
         if len(args) == 1:
             self.from_tuple(args[0])
-        elif len(args) == 3:
+        elif len(kwargs) == 3:
             self._id_group = kwargs.get('id_group', None)
             self._name = kwargs.get('name', None)
             self._description = kwargs.get('description', None)
