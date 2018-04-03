@@ -6,7 +6,6 @@
 
 
 from libopenimu.models.Group import Group
-import unittest
 
 
 class Participant:
@@ -23,14 +22,3 @@ class Participant:
         return self.id_participant, self.group.as_tuple(), self.name, self.description
 
 
-class ParticipantTest(unittest.TestCase):
-
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
-    def test_as_tuple(self):
-        participant = Participant()
-        print(participant.as_tuple())
