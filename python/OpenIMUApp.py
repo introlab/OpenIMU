@@ -11,7 +11,7 @@ from libopenimu.qt.Charts import IMUChartView
 import numpy as np
 import libopenimu.jupyter.Jupyter as Jupyter
 
-# This is auto-generated from Qt .ui files
+# UI
 from resources.ui.python.MainWindow_ui import Ui_MainWindow
 from resources.ui.python.StartDialog_ui import Ui_StartDialog
 from libopenimu.qt.ImportWindow import ImportWindow
@@ -19,6 +19,10 @@ from libopenimu.qt.GroupWindow import GroupWindow
 from libopenimu.qt.ParticipantWindow import ParticipantWindow
 from libopenimu.qt.RecordsetWindow import RecordsetWindow
 from libopenimu.qt.ResultWindow import ResultWindow
+
+# Models
+from libopenimu.models.Group import Group
+from libopenimu.models.Participant import Participant
 
 # This is auto-generated from Qt .qrc files
 
@@ -28,6 +32,9 @@ import libopenimu
 
 
 class MainWindow(QMainWindow):
+
+
+
     def __init__(self, parent=None):
         super(QMainWindow,self).__init__(parent=parent)
         self.UI = Ui_MainWindow()
@@ -110,12 +117,17 @@ class MainWindow(QMainWindow):
 
     def loadDemoData(self):
         #Load demo structure
-        item = self.create_group_item("Groupe 1", 0)
+        new_group = Group(id_group=0, name="Groupe 1", description="Ceci est un premier groupe de démonstration")
+
+        item = self.create_group_item(new_group)
         self.UI.treeDataSet.addTopLevelItem(item)
+        self.UI.treeDataSet.groups[new_group.id_group] = new_group
 
         parent = item
-        item = self.create_participant_item("Participant B",1)
+        new_part = Participant(id_participant=1, name="Participant B", description="Participant dans un groupe", group=new_group)
+        item = self.create_participant_item(new_part)
         parent.addChild(item)
+        self.UI.treeDataSet.participants[new_part.id_participant] = new_part
 
         item2 = self.create_records_item()
         item.addChild(item2)
@@ -169,8 +181,10 @@ class MainWindow(QMainWindow):
         item3 = self.create_result_item("Niveau d'activité (total)", 1)
         item2.addChild(item3)
 
-        item = self.create_participant_item("Participant C", 2)
+        new_part = Participant(id_participant=2, name="Participant C", group=new_group)
+        item = self.create_participant_item(new_part)
         parent.addChild(item)
+        self.UI.treeDataSet.participants[new_part.id_participant] = new_part
 
         parent = item
         item = self.create_records_item()
@@ -179,30 +193,37 @@ class MainWindow(QMainWindow):
         item3 = self.create_record_item("Enregistrement 1 (23/03/2018)", 3)
         item.addChild(item3)
 
-        item = self.create_group_item("Groupe 2", 1)
+        new_group = Group(id_group=1, name="Groupe 2", description="Ceci est un deuxième groupe de démonstration")
+
+        item = self.create_group_item(new_group)
         self.UI.treeDataSet.addTopLevelItem(item)
+        self.UI.treeDataSet.groups[new_group.id_group] = new_group
 
         parent = item
-        item = self.create_participant_item("Participant D", 3)
+        new_part = Participant(id_participant=3, name="Participant D", group=new_group)
+        item = self.create_participant_item(new_part)
         parent.addChild(item)
+        self.UI.treeDataSet.participants[new_part.id_participant] = new_part
 
-        item = self.create_participant_item("Participant A", 0)
+        new_part = Participant(id_participant=0, name="Participant A", description="Participant sans groupe")
+        item = self.create_participant_item(new_part)
+        self.UI.treeDataSet.participants[new_part.id_participant] = new_part
         self.UI.treeDataSet.addTopLevelItem(item)
 
-    def create_group_item(self, name, id):
+    def create_group_item(self, group):
         item = QTreeWidgetItem()
-        item.setText(0, name)
+        item.setText(0, group.name)
         item.setIcon(0, QIcon(':/OpenIMU/icons/group.png'))
-        item.setData(0, Qt.UserRole, id);
+        item.setData(0, Qt.UserRole, group.id_group);
         item.setData(1, Qt.UserRole, 'group');
         item.setFont(0, QFont('Helvetica', 14, QFont.Bold))
         return item
 
-    def create_participant_item(self,name,id):
+    def create_participant_item(self,part):
         item = QTreeWidgetItem()
-        item.setText(0, name)
+        item.setText(0, part.name)
         item.setIcon(0, QIcon(':/OpenIMU/icons/participant.png'))
-        item.setData(0, Qt.UserRole, id);
+        item.setData(0, Qt.UserRole, part.id_participant);
         item.setData(1, Qt.UserRole, 'participant');
         item.setFont(0, QFont('Helvetica', 13, QFont.Bold))
         return item
@@ -293,6 +314,7 @@ class MainWindow(QMainWindow):
     @pyqtSlot(QTreeWidgetItem, int)
     def tree_item_clicked(self, item, column):
         # print(item.text(column))
+        item_id = item.data(0, Qt.UserRole)
         item_type = item.data(1, Qt.UserRole)
 
         # Clear all widgets
@@ -300,11 +322,11 @@ class MainWindow(QMainWindow):
             self.UI.frmMain.layout().itemAt(i).widget().setParent(None)
 
         if item_type == "group":
-            groupWidget = GroupWindow()
+            groupWidget = GroupWindow(group = self.UI.treeDataSet.groups[item_id])
             self.UI.frmMain.layout().addWidget(groupWidget)
 
         if item_type == "participant":
-            partWidget = ParticipantWindow()
+            partWidget = ParticipantWindow(participant = self.UI.treeDataSet.participants[item_id])
             self.UI.frmMain.layout().addWidget(partWidget)
 
         if item_type == "recordsets" or item_type == "recordset" or item_type == "subrecord":
@@ -361,6 +383,50 @@ class MainWindow(QMainWindow):
         if test_data is True:
             chart_view.add_test_data()
         return chart_view
+
+
+class Treedatawidget(QTreeWidget):
+
+    groups = {}
+    participants = {}
+
+    def __init__(self, parent=None):
+        super(QTreeWidget,self).__init__(parent=parent)
+
+
+    def dropEvent(self,event):
+
+        index = self.indexAt(event.pos())
+
+        source_item = self.currentItem();
+        source_type = source_item.data(1, Qt.UserRole)
+        source_id = source_item.data(0,Qt.UserRole)
+
+        target_item = self.itemFromIndex(index)
+        if target_item is not None:
+            target_type = target_item.data(1, Qt.UserRole)
+            target_id = target_item.data(0, Qt.UserRole)
+
+        if source_type == "participant":
+            # Participant can only be dragged over groups or no group at all
+            if not index.isValid():
+                # Clear source and set to no group
+                self.participants[source_id].group = None
+                new_item = source_item.clone()
+                self.addTopLevelItem(new_item)
+                event.accept()
+                return
+            else:
+
+                if target_type == "group":
+                    self.participants[source_id].group = self.groups[target_id]
+                    new_item = source_item.clone()
+                    target_item.addChild(new_item)
+                    event.accept()
+                    return
+
+            event.ignore()
+
 
 
 # Main

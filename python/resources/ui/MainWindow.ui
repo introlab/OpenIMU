@@ -68,18 +68,21 @@
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="QTreeWidget" name="treeDataSet">
+      <widget class="Treedatawidget" name="treeDataSet">
        <property name="editTriggers">
         <set>QAbstractItemView::NoEditTriggers</set>
        </property>
        <property name="showDropIndicator" stdset="0">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="dragEnabled">
         <bool>true</bool>
        </property>
        <property name="dragDropMode">
-        <enum>QAbstractItemView::DragOnly</enum>
+        <enum>QAbstractItemView::InternalMove</enum>
+       </property>
+       <property name="defaultDropAction">
+        <enum>Qt::MoveAction</enum>
        </property>
        <property name="alternatingRowColors">
         <bool>true</bool>
@@ -91,7 +94,7 @@
         </size>
        </property>
        <property name="indentation">
-        <number>10</number>
+        <number>20</number>
        </property>
        <property name="uniformRowHeights">
         <bool>false</bool>
@@ -390,6 +393,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Treedatawidget</class>
+   <extends>QTreeWidget</extends>
+   <header>OpenIMUApp</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../core.qrc"/>
  </resources>
