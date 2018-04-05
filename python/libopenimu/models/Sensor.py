@@ -28,6 +28,9 @@ class Sensor:
         if self._id_sensor_type is not None:
             SensorType.sensor_type_validation(self._id_sensor_type)
 
+    def __str__(self):
+        return "Sensor: " + str(self.as_tuple())
+
     def __eq__(self, other):
         return self.as_tuple() == other.as_tuple()
 
@@ -82,8 +85,7 @@ class Sensor:
         (self._id_sensor, self._id_sensor_type, self._name, self._hw_name,
          self._location, self._sampling_rate, self._data_rate) = tuple
 
-    def __str__(self):
-        return "Sensor: " + str(self.as_tuple())
+
 
     # Properties
     id_sensor = property(get_id_sensor, set_id_sensor)

@@ -13,6 +13,7 @@ from libopenimu.db.DBManager import DBManager
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.units import Units
 from libopenimu.models.data_formats import DataFormat
+import numpy as np
 
 
 class DBManagerTest(unittest.TestCase):
@@ -104,3 +105,19 @@ class DBManagerTest(unittest.TestCase):
         channel = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_X')
         channel2 = manager.get_channel(channel.id_channel)
         self.assertEqual(channel, channel2)
+
+    def test_add_sensor_data(self):
+        manager = DBManager(filename='openimu.db', overwrite=True)
+
+        # Create sensor in DB
+        group = manager.add_group('Group Name', 'Group Description')
+        participant = manager.add_participant(group, 'Participant Name', 'Participant Description')
+        sensor = manager.add_sensor(SensorType.ACCELEROMETER, 'Sensor Name', 'Hardware Name', 'Wrist', 30.0, 1)
+        channel = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_X')
+        recordset = manager.add_recordset(participant, 'My Record', 0, 0)
+
+        data = np.zeros(40)
+        sensordata = manager.add_sensor_data(recordset, sensor, channel, 0, data)
+
+        sensordata2 = manager.get_sensor_data(sensordata.id_sensor_data)
+        self.assertEqual(sensordata, sensordata2)

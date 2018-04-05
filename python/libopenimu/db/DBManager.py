@@ -20,6 +20,7 @@ from libopenimu.models.Sensor import Sensor
 from libopenimu.models.Participant import Participant
 from libopenimu.models.Recordset import Recordset
 from libopenimu.models.Channel import Channel
+from libopenimu.models.SensorData import SensorData
 
 class DBManager:
     def __init__(self, filename, overwrite=False):
@@ -273,5 +274,48 @@ class DBManager:
             return _channel
         except Exception as e:
             message = 'Error getting recordset' + ': ' + str(e)
+            print('Error: ', message)
+            raise
+
+    def add_sensor_data(self, recordset, sensor, channel, timestamp, data):
+        try:
+            cursor = self.db.execute("INSERT INTO tabSensorsData (id_recordset, id_sensor, "
+                                     "id_channel, data_timestamp, data) VALUES (?,?,?,?,?)",
+                                     (recordset.id_recordset, sensor.id_sensor, channel.id_channel, timestamp, data))
+
+            # Create object
+            sensordata = SensorData(id_sensor_data=cursor.lastrowid, recordset=recordset, sensor=sensor,
+                                    channel=channel, data_timestamp=timestamp, data=data)
+
+            self.db.commit()
+
+            return sensordata
+        except Exception as e:
+            message = 'Error adding sensordata' + ': ' + str(e)
+            print('Error: ', message)
+            raise
+
+    def get_sensor_data(self, id_sensor_data):
+        try:
+            cursor = self.db.execute("SELECT * FROM tabSensorsData WHERE id_sensor_data=?", (id_sensor_data,))
+
+            (_id_sensor_data, _id_recordset, _id_sensor, _id_channel, _data_timestamp, _data) = cursor.fetchone()
+
+            # Get Recordset
+            _recordset = self.get_recordset(_id_recordset)
+
+            # Get Sensor
+            _sensor = self.get_sensor(_id_sensor)
+
+            # Get Channel
+            _channel = self.get_channel(_id_channel)
+
+            # Create SensorData
+            _sensordata = SensorData(id_sensor_data=_id_sensor_data, recordset=_recordset, sensor=_sensor,
+                                     channel=_channel, data_timestamp=_data_timestamp, data=_data)
+
+            return _sensordata
+        except Exception as e:
+            message = 'Error getting sensordata' + ': ' + str(e)
             print('Error: ', message)
             raise
