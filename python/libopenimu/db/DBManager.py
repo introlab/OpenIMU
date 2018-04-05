@@ -198,4 +198,42 @@ class DBManager:
             print('Error: ', message)
             raise
 
-    def add_recordset(self, participant, name, ):
+    def add_recordset(self, participant, name, start_timestamp, end_timestamp):
+        try:
+            cursor = self.db.execute("INSERT INTO tabRecordsets (id_participant, name, start_timestamp, "
+                                     "end_timestamp) VALUES (?,?,?,?)",
+                                     (participant.id_participant, name, start_timestamp, end_timestamp))
+
+            # Create object
+            record = Recordset(id_recordset=cursor.lastrowid,
+                               participant=participant,
+                               name=name,
+                               start_timestamp=start_timestamp,
+                               end_timestamp=end_timestamp)
+
+            self.db.commit()
+
+            return record
+        except Exception as e:
+            message = 'Error adding recordset' + ': ' + str(e)
+            print('Error: ', message)
+            raise
+
+    def get_recordset(self, id_recordset):
+        try:
+            cursor = self.db.execute("SELECT * FROM tabRecordsets WHERE id_recordset=?", (id_recordset,))
+
+            (_id_record_set, _id_participant, _name, _start_timestamp, _end_timestamp) = cursor.fetchone()
+
+            # Get Participant
+            _participant = self.get_participant(_id_participant)
+
+            # Create Recordset
+            _recordset = Recordset(id_recordset=_id_record_set, participant=_participant, name=_name,
+                                   start_timestamp=_start_timestamp, end_timestamp=_end_timestamp)
+
+            return _recordset
+        except Exception as e:
+            message = 'Error getting recordset' + ': ' + str(e)
+            print('Error: ', message)
+            raise

@@ -38,17 +38,25 @@ class RecordsetTest(unittest.TestCase):
         record = Recordset()
         record.id_recordset = 3
         record.participant = Participant()
+        record.name = 'Record Name'
+        record.start_timestamp = 22
+        record.end_timestamp = 33
+
         self.assertEqual(record.get_id_recordset(), 3)
         self.assertEqual(record.participant, Participant())
+        self.assertEqual(record.name, 'Record Name')
+        self.assertEqual(record.start_timestamp, 22)
+        self.assertEqual(record.end_timestamp, 33)
 
     def test_equality(self):
         record1 = Recordset()
         record2 = Recordset()
-        self.assertEqual(record1, record2)
-
         group = Group((1, 'Group Name', 'Group Description'))
         participant = Participant((2, group.as_tuple(), 'Participant Name', 'Participant Description'))
         t = (3, participant.as_tuple(), 'Recordset Name', 10, 20)
         record3 = Recordset(t)
 
         self.assertNotEqual(record1, record3)
+        self.assertNotEqual(record2, record3)
+        self.assertEqual(record1, record2)
+        self.assertEqual(record3, record3)
