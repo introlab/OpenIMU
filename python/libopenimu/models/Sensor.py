@@ -38,6 +38,9 @@ class Sensor:
         if self._id_sensor_type is not None:
             SensorType.sensor_type_validation(self._id_sensor_type)
 
+    def __eq__(self, other):
+        return self.as_tuple() == other.as_tuple()
+
     def set_id_sensor(self, id_sensor):
         self._id_sensor = id_sensor
 

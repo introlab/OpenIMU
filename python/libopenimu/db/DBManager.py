@@ -18,7 +18,7 @@ from libopenimu.models.units import Units
 from libopenimu.models.Group import Group
 from libopenimu.models.Sensor import Sensor
 from libopenimu.models.Participant import Participant
-
+from libopenimu.models.Recordset import Recordset
 
 class DBManager:
     def __init__(self, filename, overwrite=False):
@@ -197,3 +197,5 @@ class DBManager:
             message = 'Error getting sensor' + ': ' + str(e)
             print('Error: ', message)
             raise
+
+    def add_recordset(self, participant, name, ):

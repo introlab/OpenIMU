@@ -27,6 +27,9 @@ class Participant:
     def __str__(self):
         return 'Participant: ' + str(self.as_tuple())
 
+    def __eq__(self, other):
+        return self.as_tuple() == other.as_tuple()
+
     def as_tuple(self):
         return self._id_participant, self._group.as_tuple(), self._name, self._description
 

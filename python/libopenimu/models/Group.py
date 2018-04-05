@@ -20,6 +20,12 @@ class Group:
             self._name = kwargs.get('name', None)
             self._description = kwargs.get('description', None)
 
+    def __str__(self):
+        return 'Group: ' + str(self.as_tuple())
+
+    def __eq__(self, other):
+        return self.as_tuple() == other.as_tuple()
+
     def set_id_group(self, id_group):
         self._id_group = id_group
 
@@ -40,9 +46,6 @@ class Group:
 
     def print(self):
         print('Group', 'id_group:', self._id_group, 'name:', self._name, 'description:', self._description)
-
-    def __str__(self):
-        return 'Group: ' + str(self.as_tuple())
 
     def as_tuple(self):
         return self._id_group, self._name, self._description

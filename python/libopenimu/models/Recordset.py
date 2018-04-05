@@ -11,6 +11,7 @@ class Recordset:
     def __init__(self, *args, **kwargs):
         # Initialize from kwargs (and default values)
         self._id_recordset = kwargs.get('id_recordset', None)
+        self._name = kwargs.get('name', None)
         self._participant = kwargs.get('participant', Participant())
         self._start_timestamp = kwargs.get('start_timestamp', 0)
         self._end_timestamp = kwargs.get('end_timestamp', 0)
@@ -39,6 +40,12 @@ class Recordset:
     def set_participant(self, participant):
         self._participant = participant
 
+    def get_name(self):
+        return self._name
+
+    def set_name(self, name):
+        self._name = name
+
     def get_start_timestamp(self):
         return self._start_timestamp
 
@@ -52,15 +59,16 @@ class Recordset:
         self._end_timestamp = end_timestamp
 
     def as_tuple(self):
-        return self._id_recordset, self._participant.as_tuple(), self._start_timestamp, self._end_timestamp
+        return self._id_recordset, self._participant.as_tuple(), self._name, self._start_timestamp, self._end_timestamp
 
     def from_tuple(self, t):
-        (self._id_recordset, participant_tuple, self._start_timestamp, self._end_timestamp) = t
+        (self._id_recordset, participant_tuple, self._name, self._start_timestamp, self._end_timestamp) = t
         self._participant.from_tuple(participant_tuple)
 
     # Properties
     id_recordset = property(get_id_recordset, set_id_recordset)
     participant = property(get_participant, set_participant)
+    name = property(get_name, set_name)
     start_timestamp = property(get_start_timestamp, set_start_timestamp)
     end_timestamp = property(get_end_timestamp, set_end_timestamp)
 
