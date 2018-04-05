@@ -68,11 +68,28 @@ class DBManagerTest(unittest.TestCase):
         name = 'Participant Name'
         description = 'Participant Description'
         participant = manager.add_participant(group, name, description)
+        participant2 = manager.get_participant(participant.id_participant)
 
         self.assertEqual(participant.group, group)
         self.assertEqual(participant.name, name)
         self.assertEqual(participant.description, description)
         self.assertGreater(participant.id_participant, 0)
+        self.assertEqual(participant, participant2)
 
-        participant2 = manager.get_participant(participant.id_participant)
-        self.assertEqual(participant.as_tuple(), participant2.as_tuple())
+    def test_add_recordset(self):
+        manager = DBManager(filename='openimu.db', overwrite=True)
+
+        # Participant information
+        group = manager.add_group('My Group', 'My Group Description')
+        name = 'Participant Name'
+        description = 'Participant Description'
+        participant = manager.add_participant(group, name, description)
+        recordset = manager.add_recordset(participant, 'Record Name', 10, 20)
+        recordset2 = manager.get_recordset(recordset.id_recordset)
+
+        self.assertGreater(recordset.id_recordset, 0)
+        self.assertEqual(recordset.participant, participant)
+        self.assertEqual(recordset.name, 'Record Name')
+        self.assertEqual(recordset.start_timestamp, 10)
+        self.assertEqual(recordset.end_timestamp, 20)
+        self.assertEqual(recordset, recordset2)
