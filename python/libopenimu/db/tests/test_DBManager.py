@@ -11,6 +11,8 @@ import unittest
 import os
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.sensor_types import SensorType
+from libopenimu.models.units import Units
+from libopenimu.models.data_formats import DataFormat
 
 
 class DBManagerTest(unittest.TestCase):
@@ -93,3 +95,12 @@ class DBManagerTest(unittest.TestCase):
         self.assertEqual(recordset.start_timestamp, 10)
         self.assertEqual(recordset.end_timestamp, 20)
         self.assertEqual(recordset, recordset2)
+
+    def test_add_channel(self):
+        manager = DBManager(filename='openimu.db', overwrite=True)
+
+        # Create sensor in DB
+        sensor = manager.add_sensor(SensorType.ACCELEROMETER, 'Sensor Name', 'Hardware Name', 'Wrist', 30.0, 1)
+        channel = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_X')
+        channel2 = manager.get_channel(channel.id_channel)
+        self.assertEqual(channel, channel2)

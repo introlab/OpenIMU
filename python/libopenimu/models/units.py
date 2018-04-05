@@ -27,7 +27,11 @@ class Units:
         try:
             for id_unit in Units.value_types:
                 conn.execute("INSERT INTO tabUnits (id_unit, name)"
-                             "VALUES (?,?)", [id_unit, Units.value_names[id_unit]])
+                             "VALUES (?,?)", (id_unit, Units.value_names[id_unit]))
 
         except Exception as e:
             print('Insert Error: ', str(e))
+
+    @staticmethod
+    def is_valid(id_unit):
+        return Units.value_types.__contains__(id_unit)

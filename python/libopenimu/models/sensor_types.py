@@ -33,7 +33,7 @@ class SensorType:
         try:
             for id_sensor in SensorType.value_types:
                 conn.execute("INSERT INTO tabSensorTypes (id_sensor_type, name)"
-                             "VALUES (?,?)",[id_sensor, SensorType.value_names[id_sensor]])
+                             "VALUES (?,?)", (id_sensor, SensorType.value_names[id_sensor]))
 
         except Exception as e:
             print('Insert Error: ', str(e))
