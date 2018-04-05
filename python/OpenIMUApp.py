@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QMdiSubWindow, QMdiArea
+from PyQt5.QtWidgets import QMainWindow, QWidget, QHBoxLayout
 from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QTreeWidget, QTreeWidgetItem
 from PyQt5.QtGui import QIcon, QFont, QDragEnterEvent
 
@@ -8,27 +8,22 @@ from PyQt5.QtQuickWidgets import QQuickWidget
 from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal
 from libopenimu.qt.Charts import IMUChartView
 
-import libopenimu.importers.DataImporter as importer
-import libopenimu.algorithms.Algorithms as algo
 import numpy as np
 import libopenimu.jupyter.Jupyter as Jupyter
-import os
-import signal
-
-from PyQt5.QtCore import pyqtProperty, QCoreApplication, QObject
-from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
 
 # This is auto-generated from Qt .ui files
 from resources.ui.python.MainWindow_ui import Ui_MainWindow
 from resources.ui.python.StartDialog_ui import Ui_StartDialog
-from ImportWindow import ImportWindow
+from libopenimu.qt.ImportWindow import ImportWindow
+from libopenimu.qt.GroupWindow import GroupWindow
+from libopenimu.qt.ParticipantWindow import ParticipantWindow
 
 # This is auto-generated from Qt .qrc files
-import core_rc
 
 import sys
 
 import libopenimu
+
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -49,6 +44,8 @@ class MainWindow(QMainWindow):
         if (self.startWindow.exec()==QDialog.Rejected):
             # User closed the dialog - exits!
             exit(0)
+
+
 
 
         """
@@ -98,13 +95,16 @@ class MainWindow(QMainWindow):
         self.chartView2.set_title(("Counts with epoch size %d secs" % self.epoch_secs))
         """
 
+        self.setupSignals()
 
         # Maximize window
         self.showMaximized()
 
         self.loadDemoData()
 
-        self.UI.mdiArea
+    def setupSignals(self):
+        self.UI.treeDataSet.itemClicked.connect(self.tree_item_clicked)
+
 
     def loadDemoData(self):
         #Load demo structure
@@ -121,7 +121,7 @@ class MainWindow(QMainWindow):
         item3 = self.create_record_item("Enregistrement 1 (27/03/2018)",0)
         item2.addChild(item3)
 
-        item5 = self.create_sensor_item("Accéléromètre", 0)
+        """ item5 = self.create_sensor_item("Accéléromètre", 0)
         item3.addChild(item5)
 
         item5 = self.create_sensor_item("Gyromètre", 1)
@@ -129,10 +129,10 @@ class MainWindow(QMainWindow):
 
         item5 = self.create_sensor_item("GPS", 2)
         item3.addChild(item5)
-
+        """
         item4 = self.create_subrecord_item("AM",0)
         item3.addChild(item4)
-
+        """
         item5 = self.create_sensor_item("Accéléromètre", 0)
         item4.addChild(item5)
 
@@ -141,11 +141,11 @@ class MainWindow(QMainWindow):
 
         item5 = self.create_sensor_item("GPS", 2)
         item4.addChild(item5)
-
+        """
         item4 = self.create_subrecord_item("PM", 1)
         item3.addChild(item4)
 
-        item5 = self.create_sensor_item("Accéléromètre", 0)
+        """ item5 = self.create_sensor_item("Accéléromètre", 0)
         item4.addChild(item5)
 
         item5 = self.create_sensor_item("Gyromètre", 1)
@@ -153,7 +153,7 @@ class MainWindow(QMainWindow):
 
         item5 = self.create_sensor_item("GPS", 2)
         item4.addChild(item5)
-
+        """
 
         item3 = self.create_record_item("Enregistrement 2 (29/03/2018)", 1)
         item2.addChild(item3)
@@ -288,6 +288,25 @@ class MainWindow(QMainWindow):
     def quit_clicked(self):
         exit(0)
 
+    @pyqtSlot(QTreeWidgetItem, int)
+    def tree_item_clicked(self, item, column):
+        # print(item.text(column))
+        item_type = item.data(1, Qt.UserRole)
+
+        # Clear all widgets
+        for i in reversed(range(self.UI.frmMain.layout().count())):
+            self.UI.frmMain.layout().itemAt(i).widget().setParent(None)
+
+        if item_type == "group":
+            groupWidget = GroupWindow()
+            self.UI.frmMain.layout().addWidget(groupWidget)
+
+        if item_type == "participant":
+            partWidget = ParticipantWindow()
+            self.UI.frmMain.layout().addWidget(partWidget)
+
+        self.UI.frmMain.update()
+
     def closeEvent(self, event):
         print('closeEvent')
         """self.jupyter.stop()
@@ -298,21 +317,23 @@ class MainWindow(QMainWindow):
     def __del__(self):
         print('Done!')
 
-    """
-    def dragEnterEvent(self, event):
-        print (event.answerRect())
-        print (self.UI.mdiArea.rect().adjusted(self.UI.mdiArea.x(),self.UI.mdiArea.y(),0,0))
 
-        if (event.answerRect().intersects(self.UI.mdiArea.rect())):
+    """ def dragEnterEvent(self, event):
+        print (event.answerRect())
+        #print (self.UI.mdiArea.rect().adjusted(self.UI.mdiArea.x(),self.UI.mdiArea.y(),0,0))
+        print(self.UI.mdiArea.rect().adjusted(self.UI.dockDataset.width(), self.UI.dockDataset.y(), 0, 0))
+
+        #if (event.answerRect().intersects(self.UI.mdiArea.rect())):
+        if (self.UI.mdiArea.rect().adjusted(self.UI.dockDataset.width(),self.UI.dockDataset.y(),0,0).contains(event.answerRect())):
             print("OK")
-            #event.accept()
+            event.accept()
         else:
             print("Not OK")
-            #event.refuse()
+            event.ignore()
 
-    def dropEvent(self, QDropEvent):
+    def dropEvent(self, event):
         print("DROP!")
-    """
+    
     def add_mdi_widget(self, widget=None, title=''):
         sub_window = QMdiSubWindow(self.UI.mdiArea)
 
@@ -324,7 +345,7 @@ class MainWindow(QMainWindow):
         sub_window.resize(640,480)
         self.UI.mdiArea.addSubWindow(sub_window)
         return sub_window
-
+    """
     def create_chart_view(self, test_data=False):
         chart_view = IMUChartView(self)
         if test_data is True:

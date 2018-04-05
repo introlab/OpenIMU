@@ -47,6 +47,7 @@ SET(uis
     resources/ui/ImportDialog.ui
     resources/ui/ImportManager.ui
     resources/ui/GroupWidget.ui
+    resources/ui/ParticipantWidget.ui
 )
 
 SET(qrcs
