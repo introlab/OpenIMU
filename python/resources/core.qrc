@@ -15,5 +15,6 @@
         <file>icons/subrecord.png</file>
         <file>icons/newdataset.png</file>
         <file>icons/delete.png</file>
+        <file>icons/save.png</file>
     </qresource>
 </RCC>

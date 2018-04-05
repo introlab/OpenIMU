@@ -1,8 +1,8 @@
-from ImportManager import ImportManager
+from libopenimu.qt.ImportManager import ImportManager
 from resources.ui.python.ImportDialog_ui import Ui_ImportDialog
 
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QTableWidget
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem
 
 
 class ImportWindow(QDialog):
