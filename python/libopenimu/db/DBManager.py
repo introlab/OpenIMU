@@ -19,6 +19,7 @@ from libopenimu.models.Group import Group
 from libopenimu.models.Sensor import Sensor
 from libopenimu.models.Participant import Participant
 from libopenimu.models.Recordset import Recordset
+from libopenimu.models.Channel import Channel
 
 class DBManager:
     def __init__(self, filename, overwrite=False):
@@ -233,6 +234,43 @@ class DBManager:
                                    start_timestamp=_start_timestamp, end_timestamp=_end_timestamp)
 
             return _recordset
+        except Exception as e:
+            message = 'Error getting recordset' + ': ' + str(e)
+            print('Error: ', message)
+            raise
+
+    def add_channel(self, sensor, id_unit, id_data_format, label):
+        try:
+            cursor = self.db.execute("INSERT INTO tabChannels (id_sensor, id_unit, "
+                                     "id_data_format, label) VALUES (?,?,?,?)",
+                                     (sensor.id_sensor, id_unit, id_data_format, label))
+
+            # Create object
+            channel = Channel(id_channel=cursor.lastrowid, sensor=sensor, id_unit=id_unit,
+                              id_data_format=id_data_format, label=label)
+
+            self.db.commit()
+
+            return channel
+        except Exception as e:
+            message = 'Error adding channel' + ': ' + str(e)
+            print('Error: ', message)
+            raise
+
+    def get_channel(self, id_channel):
+        try:
+            cursor = self.db.execute("SELECT * FROM tabChannels WHERE id_channel=?", (id_channel,))
+
+            (_id_channel, _id_sensor, _id_unit, _id_data_format, _label) = cursor.fetchone()
+
+            # Get Sensor
+            _sensor = self.get_sensor(_id_sensor)
+
+            # Create channel
+            _channel = Channel(id_channel=_id_channel, sensor=_sensor, id_unit=_id_unit, id_data_format=_id_data_format,
+                               label=_label)
+
+            return _channel
         except Exception as e:
             message = 'Error getting recordset' + ': ' + str(e)
             print('Error: ', message)

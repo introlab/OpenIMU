@@ -30,7 +30,11 @@ class DataFormat:
         try:
             for format_id in DataFormat.value_types:
                 conn.execute("INSERT INTO tabDataFormat (id_data_format, name)"
-                             "VALUES (?,?)",[format_id, DataFormat.value_names[format_id]])
+                             "VALUES (?,?)", (format_id, DataFormat.value_names[format_id]))
 
         except Exception as e:
             print('Insert Error: ', str(e))
+
+    @staticmethod
+    def is_valid(id_data_format):
+        return DataFormat.value_types.__contains__(id_data_format)

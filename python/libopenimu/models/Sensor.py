@@ -10,29 +10,19 @@ from libopenimu.models.sensor_types import *
 class Sensor:
     def __init__(self, *args, **kwargs):
         # Default values
-        self._id_sensor = None
-        self._id_sensor_type = None
-        self._name = None
-        self._hw_name = None
-        self._location = None
-        self._sampling_rate = None
-        self._data_rate = None
+        self._id_sensor = kwargs.get('id_sensor', None)
+        self._id_sensor_type = kwargs.get('id_sensor_type', None)
+        self._name = kwargs.get('name', None)
+        self._hw_name = kwargs.get('hw_name', None)
+        self._location = kwargs.get('location', None)
+        self._sampling_rate = kwargs.get('sampling_rate', None)
+        self._data_rate = kwargs.get('data_rate', None)
 
-        if len(args) is 1 and isinstance(args[0], tuple):
-            self.from_tuple(args[0])
-        elif len(args) is 1 and isinstance(args[0], Sensor):
-            self.from_tuple(args[0].as_tuple())
-        elif len(kwargs) is 7:
-            self._id_sensor = kwargs.get('id_sensor', None)
-            self._id_sensor_type = kwargs.get('id_sensor_type', None)
-            self._name = kwargs.get('name', None)
-            self._hw_name = kwargs.get('hw_name', None)
-            self._location = kwargs.get('location', None)
-            self._sampling_rate = kwargs.get('sampling_rate', None)
-            self._data_rate = kwargs.get('data_rate', None)
-        elif len(args) > 0:
-            print('Unknown args size:', len(args), args)
-
+        for arg in args:
+            if isinstance(arg,tuple):
+                self.from_tuple(arg)
+            elif isinstance(arg, Sensor):
+                self.from_tuple(arg.as_tuple())
 
         # Validation
         if self._id_sensor_type is not None:
