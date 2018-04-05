@@ -1,0 +1,12 @@
+from PyQt5.QtWidgets import QLineEdit, QWidget, QPushButton
+from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal
+
+from resources.ui.python.RecordsetWidget_ui import Ui_frmRecordsets
+
+
+class RecordsetWindow(QWidget):
+
+    def __init__(self, parent=None):
+        super(QWidget, self).__init__(parent=parent)
+        self.UI = Ui_frmRecordsets()
+        self.UI.setupUi(self)

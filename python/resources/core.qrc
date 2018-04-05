@@ -16,5 +16,7 @@
         <file>icons/newdataset.png</file>
         <file>icons/delete.png</file>
         <file>icons/save.png</file>
+        <file>icons/cut.png</file>
+        <file>icons/start_cut.png</file>
     </qresource>
 </RCC>

@@ -17,6 +17,8 @@ from resources.ui.python.StartDialog_ui import Ui_StartDialog
 from libopenimu.qt.ImportWindow import ImportWindow
 from libopenimu.qt.GroupWindow import GroupWindow
 from libopenimu.qt.ParticipantWindow import ParticipantWindow
+from libopenimu.qt.RecordsetWindow import RecordsetWindow
+from libopenimu.qt.ResultWindow import ResultWindow
 
 # This is auto-generated from Qt .qrc files
 
@@ -304,6 +306,14 @@ class MainWindow(QMainWindow):
         if item_type == "participant":
             partWidget = ParticipantWindow()
             self.UI.frmMain.layout().addWidget(partWidget)
+
+        if item_type == "recordsets" or item_type == "recordset" or item_type == "subrecord":
+            recordsWidget = RecordsetWindow()
+            self.UI.frmMain.layout().addWidget(recordsWidget)
+
+        if item_type == "result":
+            resultWidget = ResultWindow()
+            self.UI.frmMain.layout().addWidget(resultWidget)
 
         self.UI.frmMain.update()
 
