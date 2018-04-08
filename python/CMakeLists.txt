@@ -16,6 +16,8 @@
 
 #TODO MAKE THIS GENERIC
 
+add_subdirectory(env)
+
 set(PYTHON_ENV_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/env/python-3.5)
 file(MAKE_DIRECTORY ${PYTHON_ENV_DIRECTORY})
 
@@ -100,7 +102,7 @@ endforeach(rcfile)
 #Dummy library
 #Can we do better?
 add_library(dummy STATIC ${moc_uis} ${uis} ${qrcs} ${srcs_qrcs})
-add_dependencies(dummy ${python_uis} ${python_qrcs})
+add_dependencies(dummy ${python_uis} ${python_qrcs} python-env)
 
 add_custom_target(qml_files SOURCES ${qml})
 
