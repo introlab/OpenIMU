@@ -25,6 +25,7 @@ add_custom_command(
 
 # Will always be considered out of date...
 # Always proceed...
+# TODO - INSTALL WITH CONDA ?
 add_custom_target(
     python-env
     COMMAND ${ENV_PATH}/bin/pip install ${python_packages}
