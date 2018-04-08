@@ -99,12 +99,22 @@ foreach(rcfile ${qrcs})
 endforeach(rcfile)
 
 
+add_custom_target(qml_target SOURCES ${qml})
+
+# Find all python files
+file(GLOB_RECURSE libopenimu_python_files libopenimu/*.py)
+file(GLOB openimuapp_python_files *.py)
+
+add_custom_target(python_target SOURCES ${libopenimu_python_files} ${openimuapp_python_files})
+
+message(STATUS ${python_files})
+
 #Dummy library
 #Can we do better?
 add_library(dummy STATIC ${moc_uis} ${uis} ${qrcs} ${srcs_qrcs})
 add_dependencies(dummy ${python_uis} ${python_qrcs} python-env)
 
-add_custom_target(qml_files SOURCES ${qml})
+
 
 
 
