@@ -81,7 +81,7 @@ foreach(uifile ${uis})
     add_custom_target(${output_file}
         COMMAND ${PYQT5_UIC_EXECUTABLE} ${uifile} -o resources/ui/python/${output_file}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        DEPENDS ${uifile})
+        DEPENDS ${uifile} python-env)
 endforeach(uifile)
 
 # Generate PyQt5 resources file
@@ -95,7 +95,7 @@ foreach(rcfile ${qrcs})
     add_custom_target(${output_file}
         COMMAND ${PYQT5_RCC_EXECUTABLE} ${rcfile} -o ${output_file}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        DEPENDS ${rcfile})
+        DEPENDS ${rcfile} python-env)
 endforeach(rcfile)
 
 
