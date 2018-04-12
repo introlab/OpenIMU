@@ -214,8 +214,8 @@ class MainWindow(QMainWindow):
         item = QTreeWidgetItem()
         item.setText(0, group.name)
         item.setIcon(0, QIcon(':/OpenIMU/icons/group.png'))
-        item.setData(0, Qt.UserRole, group.id_group);
-        item.setData(1, Qt.UserRole, 'group');
+        item.setData(0, Qt.UserRole, group.id_group)
+        item.setData(1, Qt.UserRole, 'group')
         item.setFont(0, QFont('Helvetica', 14, QFont.Bold))
         return item
 
@@ -223,8 +223,8 @@ class MainWindow(QMainWindow):
         item = QTreeWidgetItem()
         item.setText(0, part.name)
         item.setIcon(0, QIcon(':/OpenIMU/icons/participant.png'))
-        item.setData(0, Qt.UserRole, part.id_participant);
-        item.setData(1, Qt.UserRole, 'participant');
+        item.setData(0, Qt.UserRole, part.id_participant)
+        item.setData(1, Qt.UserRole, 'participant')
         item.setFont(0, QFont('Helvetica', 13, QFont.Bold))
         return item
 
@@ -232,7 +232,7 @@ class MainWindow(QMainWindow):
         item = QTreeWidgetItem()
         item.setText(0, 'Enregistrements')
         item.setIcon(0, QIcon(':/OpenIMU/icons/records.png'))
-        item.setData(1, Qt.UserRole, 'recordsets');
+        item.setData(1, Qt.UserRole, 'recordsets')
         item.setFont(0, QFont('Helvetica', 12, QFont.StyleItalic + QFont.Bold))
         return item
 
@@ -240,7 +240,7 @@ class MainWindow(QMainWindow):
         item = QTreeWidgetItem()
         item.setText(0, 'Résultats')
         item.setIcon(0, QIcon(':/OpenIMU/icons/results.png'))
-        item.setData(1, Qt.UserRole, 'results');
+        item.setData(1, Qt.UserRole, 'results')
         item.setFont(0, QFont('Helvetica', 12, QFont.StyleItalic + QFont.Bold))
         return item
 
@@ -248,8 +248,8 @@ class MainWindow(QMainWindow):
         item = QTreeWidgetItem()
         item.setText(0, name)
         item.setIcon(0, QIcon(':/OpenIMU/icons/recordset.png'))
-        item.setData(0, Qt.UserRole, id);
-        item.setData(1, Qt.UserRole, 'recordset');
+        item.setData(0, Qt.UserRole, id)
+        item.setData(1, Qt.UserRole, 'recordset')
         item.setFont(0, QFont('Helvetica', 12, QFont.Bold))
         return item
 
@@ -257,8 +257,8 @@ class MainWindow(QMainWindow):
         item = QTreeWidgetItem()
         item.setText(0, name)
         item.setIcon(0, QIcon(':/OpenIMU/icons/subrecord.png'))
-        item.setData(0, Qt.UserRole, id);
-        item.setData(1, Qt.UserRole, 'subrecord');
+        item.setData(0, Qt.UserRole, id)
+        item.setData(1, Qt.UserRole, 'subrecord')
         item.setFont(0, QFont('Helvetica', 12, QFont.Bold))
         return item
 
@@ -266,8 +266,8 @@ class MainWindow(QMainWindow):
         item = QTreeWidgetItem()
         item.setText(0, name)
         item.setIcon(0, QIcon(':/OpenIMU/icons/sensor.png'))
-        item.setData(0, Qt.UserRole, id);
-        item.setData(1, Qt.UserRole, 'sensor');
+        item.setData(0, Qt.UserRole, id)
+        item.setData(1, Qt.UserRole, 'sensor')
         item.setFont(0, QFont('Helvetica', 12))
         return item
 
@@ -275,8 +275,8 @@ class MainWindow(QMainWindow):
         item = QTreeWidgetItem()
         item.setText(0, name)
         item.setIcon(0, QIcon(':/OpenIMU/icons/result.png'))
-        item.setData(0, Qt.UserRole, id);
-        item.setData(1, Qt.UserRole, 'result');
+        item.setData(0, Qt.UserRole, id)
+        item.setData(1, Qt.UserRole, 'result')
         item.setFont(0, QFont('Helvetica', 12))
         return item
 
@@ -398,7 +398,7 @@ class Treedatawidget(QTreeWidget):
 
         index = self.indexAt(event.pos())
 
-        source_item = self.currentItem();
+        source_item = self.currentItem()
         source_type = source_item.data(1, Qt.UserRole)
         source_id = source_item.data(0,Qt.UserRole)
 

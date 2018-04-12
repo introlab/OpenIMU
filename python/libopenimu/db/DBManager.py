@@ -258,6 +258,12 @@ class DBManager:
             raise
 
     def add_group(self, name, description):
+        """
+
+        :param name:
+        :param description:
+        :return: Group
+        """
 
         try:
             # print('Adding group:', name, 'description:',description)
@@ -299,7 +305,7 @@ class DBManager:
             print('Error: ', message)
             raise
 
-    def add_participant(self, group, name, description):
+    def add_participant(self, group: Group, name: object, description: object) -> object:
         try:
             cursor = self.db.execute("INSERT INTO tabParticipants (id_group, name, description) VALUES (?,?,?)",
                                      (group.id_group, name, description))
@@ -442,6 +448,9 @@ class DBManager:
 
     def add_sensor_data(self, recordset, sensor, channel, timestamp, data):
         try:
+
+            # print('Trying insert of type:', type(data))
+
             cursor = self.db.execute("INSERT INTO tabSensorsData (id_recordset, id_sensor, "
                                      "id_channel, data_timestamp, data) VALUES (?,?,?,?,?)",
                                      (recordset.id_recordset, sensor.id_sensor, channel.id_channel, timestamp, data))

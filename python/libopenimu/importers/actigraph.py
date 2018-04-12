@@ -132,13 +132,13 @@ class ParameterKeys:
     @staticmethod
     def decode_uint32(data):
         # print('decode uint32')
-        value = struct.unpack_from('<I', data)
+        (value) = struct.unpack_from('<I', data)
         return value
 
     @staticmethod
     def decode_int32(data):
         # print('decode int32')
-        value = struct.unpack_from('<i', data)
+        (value) = struct.unpack_from('<i', data)
         return value
 
     @staticmethod
@@ -249,7 +249,7 @@ class ParameterKeys:
         elif key == ParameterKeys.SENSOR_CONFIGURATION:
             value = ParameterKeys.decode_int32(param_data)
         else:
-            print('Ignore key:',hex(key))
+            print('Ignore key:', hex(key))
 
         if param_name == 'unknown':
             return {}
@@ -434,7 +434,7 @@ def gt3x_parameters_extractor(timestamp, data, samplerate):
         [key, param_data] = struct.unpack_from('<I4s', data, offset=param_index * 8)
 
         # update parameters result dict
-        result.update(ParameterKeys.decode_param(key,param_data))
+        result.update(ParameterKeys.decode_param(key, param_data))
 
     return [timestamp, result]
 
