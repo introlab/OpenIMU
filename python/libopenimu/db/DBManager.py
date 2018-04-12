@@ -22,6 +22,8 @@ from libopenimu.models.Recordset import Recordset
 from libopenimu.models.Channel import Channel
 from libopenimu.models.SensorData import SensorData
 
+import numpy as np
+
 sql_init_script = '''
 
 CREATE TABLE tabUnits (
@@ -478,6 +480,8 @@ class DBManager:
 
             (_id_sensor_data, _id_recordset, _id_sensor, _id_channel, _data_timestamp, _data) = cursor.fetchone()
 
+            print('get_sensor_data data type', type(_data))
+
             # Get Recordset
             _recordset = self.get_recordset(_id_recordset)
 
@@ -486,6 +490,13 @@ class DBManager:
 
             # Get Channel
             _channel = self.get_channel(_id_channel)
+
+            # Do something to convert bytes in the right format
+            if _channel.id_data_format == DataFormat.FLOAT32:
+                if len(_data) > 4:
+                    _data = np.frombuffer(buffer=_data, dtype=float)
+                else:
+                    _data = np.frombuffer(buffer=_data, dtype=float, count=1)
 
             # Create SensorData
             _sensordata = SensorData(id_sensor_data=_id_sensor_data, recordset=_recordset, sensor=_sensor,

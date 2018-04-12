@@ -515,12 +515,12 @@ def gt3x_importer(filename):
             while data_offset < len(filedata):
                 # print('data_offset:', data_offset)
                 # < Little Endian, byte, byte, uint32, uint16
-                [separator, record_type, timestamp, record_size] = struct.unpack_from('<BBIH', filedata, offset= data_offset)
+                [separator, record_type, timestamp, record_size] = struct.unpack_from('<BBIH', filedata, offset=data_offset)
                 if separator is not 0x1e:
                     print('Separator Error!!!')
 
                 # print('Extracting record: ', hex(separator), hex(record_type), hex(timestamp), hex(record_size))
-                [record_data, checksum] = struct.unpack_from('<' + str(record_size) + 'sB', filedata, offset= data_offset + 8)
+                [record_data, checksum] = struct.unpack_from('<' + str(record_size) + 'sB', filedata, offset=data_offset + 8)
 
                 # Verify checksum
                 cs_check = gt3x_calculate_checksum(separator, record_type, timestamp, record_size, record_data)

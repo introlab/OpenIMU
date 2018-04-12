@@ -29,10 +29,14 @@ class SensorData:
         return "SensorData: " + str(self.as_tuple())
 
     def __eq__(self, other):
-        # TODO Compare data
+        # Compare data (can be a bool or an array of bools)
+        data_compare = self.data == other.data
+        if hasattr(data_compare, "__len__"):
+            data_compare = data_compare.all()
+
         return (self.id_sensor_data == other.id_sensor_data and self.recordset == other.recordset
                 and self.sensor == other.sensor and self.channel == other.channel
-                and self.data_timestamp == other.data_timestamp)
+                and self.data_timestamp == other.data_timestamp and data_compare)
 
     def get_id_sensor_data(self):
         return self._id_sensor_data

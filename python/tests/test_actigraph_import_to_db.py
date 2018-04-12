@@ -106,9 +106,8 @@ class ActigraphDBTest(unittest.TestCase):
                 # Separate write for each channel
                 for index in range(0, len(accelerometer_channels)):
                     # print(samples[:, index])
-
-                    sd = self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[index],
-                                                    timestamp, samples[:, index])
+                    self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[index],
+                                               timestamp, samples[:, index])
 
         if data.__contains__('battery'):
             print('battery found')
@@ -138,3 +137,10 @@ class ActigraphDBTest(unittest.TestCase):
                 value = np.float32(epoch[1])
                 self.assertEqual(len(value.tobytes()), 4)
                 self.add_sensor_data_to_db(recordset, lux_sensor, lux_channel, timestamp, value)
+
+        self.db.commit()
+
+    def test_reload_from_db(self):
+        # Import data first
+        self.test_import()
+
