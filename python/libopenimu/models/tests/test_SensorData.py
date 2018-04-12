@@ -14,6 +14,7 @@ from libopenimu.models.Sensor import Sensor
 from libopenimu.models.Recordset import Recordset
 from libopenimu.models.Participant import Participant
 
+
 class SensorDataTest(unittest.TestCase):
 
     def setUp(self):
@@ -52,4 +53,4 @@ class SensorDataTest(unittest.TestCase):
         self.assertEqual(sensordata.sensor, Sensor())
         self.assertEqual(sensordata.channel, Channel())
         self.assertEqual(sensordata.data_timestamp, 10)
-        self.assertEqual(sensordata.data,[1, 2, 3, 4, 5])
+        self.assertEqual(sensordata.data, [1, 2, 3, 4, 5])

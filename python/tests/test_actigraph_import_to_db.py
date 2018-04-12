@@ -74,25 +74,25 @@ class ActigraphDBTest(unittest.TestCase):
         recordset = self.add_recordset_to_db(info['Subject Name'], info['Start Date'], info['Last Sample Time'])
         print(recordset)
 
-        accelerometer_sensor = None
-        accelerometer_channels = []
-
         if data.__contains__('activity'):
             print('activity found')
             # Create sensor
-            accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer', 'Actigraph',
+            accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer', info['Device Type'],
                                                          'Unknown', info['Sample Rate'], 1)
-            # Create channels
-            accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
-                                                                 DataFormat.FLOAT32, 'Accelerometer_X'))
 
+            accelerometer_channels = list()
+
+            # Create channels
             accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
                                                                  DataFormat.FLOAT32, 'Accelerometer_Y'))
 
             accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
+                                                                 DataFormat.FLOAT32, 'Accelerometer_X'))
+
+            accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
                                                                  DataFormat.FLOAT32, 'Accelerometer_Z'))
 
-            # Import data 
+            # Import data
             for epoch in data['activity']:
                 # An epoch will contain a timestamp and array with each acc_x, acc_y, acc_z
                 self.assertEqual(len(epoch), 2)
@@ -106,10 +106,35 @@ class ActigraphDBTest(unittest.TestCase):
                 # Separate write for each channel
                 for index in range(0, len(accelerometer_channels)):
                     # print(samples[:, index])
-                    self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[index],
-                                               timestamp, samples[:, index].tobytes())
 
+                    sd = self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[index],
+                                                    timestamp, samples[:, index])
 
-        # print(len(data['activity']))
-        # print(data['activity'][0])
-        # print(data['parameters'])
+        if data.__contains__('battery'):
+            print('battery found')
+            # Create sensor
+            volt_sensor = self.add_sensor_to_db(SensorType.BATTERY, 'Battery', info['Device Type'], 'Unknown',
+                                                1/60, 1)
+
+            # Create channel
+            volt_channel = self.add_channel_to_db(volt_sensor, Units.VOLTS, DataFormat.FLOAT32, 'Battery')
+
+            for epoch in data['battery']:
+                timestamp = epoch[0]
+                value = np.float32(epoch[1])
+                self.assertEqual(len(value.tobytes()), 4)
+                self.add_sensor_data_to_db(recordset, volt_sensor, volt_channel, timestamp, value)
+
+        if data.__contains__('lux'):
+            print('lux found')
+            # Create sensor
+            lux_sensor = self.add_sensor_to_db(SensorType.LUX, 'Lux', info['Device Type'], 'Unknown', 1, 1)
+
+            # Create channel
+            lux_channel = self.add_channel_to_db(lux_sensor, Units.LUX, DataFormat.FLOAT32, 'Lux')
+
+            for epoch in data['lux']:
+                timestamp = epoch[0]
+                value = np.float32(epoch[1])
+                self.assertEqual(len(value.tobytes()), 4)
+                self.add_sensor_data_to_db(recordset, lux_sensor, lux_channel, timestamp, value)

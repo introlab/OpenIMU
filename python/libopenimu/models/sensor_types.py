@@ -12,16 +12,15 @@ class SensorType:
     HEARTRATE = 5
     ORIENTATION = 6
     STEP = 7
+    BATTERY = 8
 
-    value_types = [ACCELEROMETER, GYROMETER, MAGNETOMETER, LUX, GPS, HEARTRATE, ORIENTATION, STEP]
-    value_names = ['ACCELEROMETER', 'GYROMETER', 'MAGNETOMETER', 'LUX', 'GPS', 'HEARTRATE', 'ORIENTATION', 'STEP']
+    value_types = [ACCELEROMETER, GYROMETER, MAGNETOMETER, LUX, GPS, HEARTRATE, ORIENTATION, STEP, BATTERY]
+    value_names = ['ACCELEROMETER', 'GYROMETER', 'MAGNETOMETER', 'LUX', 'GPS', 'HEARTRATE', 'ORIENTATION', 'STEP',
+                   'BATTERY']
 
     @staticmethod
     def is_valid_type(id_sensor_type):
-        if id_sensor_type <= SensorType.STEP:
-            return True
-        else:
-            return False
+        return SensorType.value_types.__contains__(id_sensor_type)
 
     @staticmethod
     def name(id_sensor_type):

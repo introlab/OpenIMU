@@ -12,6 +12,7 @@ import numpy as np
 import math
 from libopenimu.tools.timing import timing
 
+
 class RecordType:
     """
         All Actigraph record types.
@@ -303,7 +304,7 @@ def gt3x_read_uint12(data, nb_axis=3):
             if (shifter & 0x0800) != 0:
                 shifter |= 0xF000
 
-            #fill data
+            # Fill data
             samples[line][axis] = np.int16(shifter)
             # print('sample:', np.int16(shifter))
 
@@ -334,20 +335,13 @@ def gt3x_activity_extractor(timestamp, data, samplerate, scale):
     :return:
     """
 
-    # Read all at once and scale
-    samples = gt3x_read_uint12(data) / scale
+    # Read all at once and scale in g units
 
-    # Add time
-    # stop, num=50, endpoint=True, retstep=False, dtype=None):
-    # my_time = np.linspace(timestamp, timestamp + 1, num=samplerate, endpoint=False)
-    # my_time = np.full((len(samples)), timestamp)
-    # print(my_time)
+    # This will generate double values
+    # samples = gt3x_read_uint12(data) / scale
 
-    # Make sure time is of the same size (some records are not complete)
-    # my_time.resize(len(samples))
-
-    # Add column at the beginning with time values
-    # result = np.column_stack((my_time, samples))
+    # This will generate float values
+    samples = gt3x_read_uint12(data) / np.float32(scale)
 
     # return samples in g
     return [timestamp, samples]
@@ -372,7 +366,7 @@ def gt3x_battery_extractor(timestamp, data, samplerate):
         # print('battery:', battery)
 
     # Return timestamp and battery data
-    return np.column_stack((timestamp, battery))
+    return [timestamp, battery]
 
 
 def gt3x_event_extractor(timestamp, data, samplerate):
@@ -382,8 +376,8 @@ def gt3x_event_extractor(timestamp, data, samplerate):
     :param samplerate:
     :return:
     """
-    #print('Event Extractor',timestamp, data)
-    return np.column_stack((timestamp, data))
+    # print('Event Extractor',timestamp, data)
+    return [timestamp, data]
 
 
 def gt3x_lux_extractor(timestamp, data, samplerate):
@@ -399,7 +393,7 @@ def gt3x_lux_extractor(timestamp, data, samplerate):
     if len(data) is 2:
         lux = struct.unpack_from('<H', data)
 
-    return np.column_stack((timestamp, lux))
+    return [timestamp, np.int16(lux)]
 
 
 def gt3x_metadata_extractor(timestamp, data, samplerate):
@@ -410,9 +404,9 @@ def gt3x_metadata_extractor(timestamp, data, samplerate):
     :param samplerate:
     :return:
     """
-    #print('Metadata Extractor', timestamp, data)
+    # print('Metadata Extractor', timestamp, data)
     # TODO Not yet implemented
-    return np.column_stack((timestamp, data))
+    return [timestamp, data]
 
 
 def gt3x_parameters_extractor(timestamp, data, samplerate):
@@ -426,7 +420,7 @@ def gt3x_parameters_extractor(timestamp, data, samplerate):
     :param samplerate:
     :return:
     """
-    #print('Parameters Extractor', timestamp, data)
+    # print('Parameters Extractor', timestamp, data)
 
     result = {}
 
@@ -567,71 +561,6 @@ if __name__ == '__main__':
     print('Testing gt3x importer')
 
     # Epoch separated data
-    [info, my_dict] = gt3x_importer('test.gt3x')
+    [info, my_dict] = gt3x_importer('../../resources/samples/test.gt3x')
 
-    print('parameters:', my_dict['parameters'])
-
-
-    activity = np.concatenate(my_dict['activity'])
-    print('final shape:', activity.shape)
-
-    # print('info:', info)
-    # print('data:', data)
-
-    #taken from the example
-    # rawdata = bytearray.fromhex('00 60 08 EB D0 07 00 9E BF 00 70 08 EB F0')
-    # print('len rawdata:', len(rawdata))
-    # samples = gt3x_read_uint12(rawdata,3)
-    # print('samples:', samples)
-    import sys
-    from PyQt5.QtWidgets import QApplication
-    from PyQt5.QtWidgets import QMainWindow
-    from libopenimu.qt.Charts import IMUChartView
-    from PyQt5.QtCore import Qt
-    from numpy import linspace
-
-    app = QApplication(sys.argv)
-
-
-    # Accelerometers
-    window = QMainWindow()
-    imuView = IMUChartView(window)
-    imuView.add_data(activity[:, 0], activity[:, 1], Qt.green, 'Accelerometer Y')
-    imuView.add_data(activity[:, 0], activity[:, 2], Qt.red, 'Accelerometer X')
-    imuView.add_data(activity[:, 0], activity[:, 3], Qt.blue, 'Accelerometer Z')
-
-    window.setCentralWidget(imuView)
-    window.setWindowTitle("Actigraph GTX3 Importer Demo (Accelerometers)")
-    window.resize(640, 480)
-    window.show()
-
-    # Battery
-    window2 = QMainWindow()
-    imuView2 = IMUChartView(window)
-    battery = np.concatenate(my_dict['battery'])
-    print('final shape:', battery.shape)
-    imuView2.add_data(battery[:, 0], battery[:, 1], Qt.green, 'Battery')
-
-
-    window2.setCentralWidget(imuView2)
-    window2.setWindowTitle("Actigraph GTX3 Importer Demo (Battery)")
-    window2.resize(640, 480)
-    window2.show()
-
-
-    # Lux
-    window3 = QMainWindow()
-    imuView3 = IMUChartView(window)
-    lux = np.concatenate(my_dict['lux'])
-    print('final shape:', lux.shape)
-    imuView3.add_data(lux[:, 0], lux[:, 1], Qt.green, 'Lux')
-
-
-    window3.setCentralWidget(imuView3)
-    window3.setWindowTitle("Actigraph GTX3 Importer Demo (lux)")
-    window3.resize(640, 480)
-    window3.show()
-
-    print('locals',locals())
-    sys.exit(app.exec_())
 

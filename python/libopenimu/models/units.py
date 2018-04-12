@@ -13,9 +13,11 @@ class Units:
     GRAVITY_G = 1
     METERS_PER_SEC = 2
     RAD_PER_SEC = 3
+    VOLTS = 4
+    LUX = 5
 
-    value_types = [METERS, GRAVITY_G, METERS_PER_SEC, RAD_PER_SEC]
-    value_names = ['METERS', 'G', 'M/S', 'RAD/S']
+    value_types = [METERS, GRAVITY_G, METERS_PER_SEC, RAD_PER_SEC, VOLTS, LUX]
+    value_names = ['METERS', 'G', 'M/S', 'RAD/S', 'VOLTS', 'LUX']
 
     @staticmethod
     def name(id_unit):

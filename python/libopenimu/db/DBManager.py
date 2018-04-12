@@ -456,7 +456,8 @@ class DBManager:
 
             cursor = self.db.execute("INSERT INTO tabSensorsData (id_recordset, id_sensor, "
                                      "id_channel, data_timestamp, data) VALUES (?,?,?,?,?)",
-                                     (recordset.id_recordset, sensor.id_sensor, channel.id_channel, timestamp, data))
+                                     (recordset.id_recordset, sensor.id_sensor, channel.id_channel, timestamp,
+                                      data.tobytes()))
 
             # Create object
             sensordata = SensorData(id_sensor_data=cursor.lastrowid, recordset=recordset, sensor=sensor,
