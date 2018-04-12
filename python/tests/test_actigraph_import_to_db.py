@@ -28,6 +28,7 @@ class ActigraphDBTest(unittest.TestCase):
         self.participant = self.db.add_participant(group=self.group, name='Anonymous', description='Participant')
 
     def tearDown(self):
+        self.db.commit()
         pass
 
     def load_file(self, name='../resources/samples/test.gt3x'):
@@ -91,30 +92,22 @@ class ActigraphDBTest(unittest.TestCase):
             accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
                                                                  DataFormat.FLOAT32, 'Accelerometer_Z'))
 
-            # Import data (this is slow!)
-            i = 0
+            # Import data 
             for epoch in data['activity']:
-                # An epoch will contain multiple arrays with each time, acc_x, acc_y, acc_z
+                # An epoch will contain a timestamp and array with each acc_x, acc_y, acc_z
+                self.assertEqual(len(epoch), 2)
+
                 # print(epoch, len(epoch))
-                print(i)
-                i += 1
 
-                samples = np.ndarray(shape=(len(epoch), 4), dtype=np.float32, order='C')
+                # Get data
+                timestamp = epoch[0]
+                samples = epoch[1]
 
-                for index in range(0, len(epoch)):
-                    samples[index, 0] = epoch[index][0]
-                    samples[index, 1] = epoch[index][1]
-                    samples[index, 2] = epoch[index][2]
-                    samples[index, 3] = epoch[index][3]
-
-                timestamp = np.int64(np.floor(samples[0, 0]))
-
-                print('importing timestamp', timestamp)
+                # Separate write for each channel
                 for index in range(0, len(accelerometer_channels)):
-                    # print(type(samples[:, index + 1]))
-                    # print(type(np.zeros(30)))
+                    # print(samples[:, index])
                     self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[index],
-                                               timestamp, samples[:, index + 1].tobytes())
+                                               timestamp, samples[:, index].tobytes())
 
 
         # print(len(data['activity']))

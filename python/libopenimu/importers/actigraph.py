@@ -257,9 +257,6 @@ class ParameterKeys:
             return {param_name: value}
 
 
-
-
-
 def gt3x_read_uint12(data, nb_axis=3):
     """
     Based on the c# code here:
@@ -312,6 +309,7 @@ def gt3x_read_uint12(data, nb_axis=3):
 
     return samples
 
+
 def gt3x_activity_extractor(timestamp, data, samplerate, scale):
     """
 
@@ -341,16 +339,19 @@ def gt3x_activity_extractor(timestamp, data, samplerate, scale):
 
     # Add time
     # stop, num=50, endpoint=True, retstep=False, dtype=None):
-    my_time = np.linspace(timestamp, timestamp + 1, num=samplerate, endpoint=False)
+    # my_time = np.linspace(timestamp, timestamp + 1, num=samplerate, endpoint=False)
+    # my_time = np.full((len(samples)), timestamp)
+    # print(my_time)
 
     # Make sure time is of the same size (some records are not complete)
-    my_time.resize(len(samples))
+    # my_time.resize(len(samples))
 
     # Add column at the beginning with time values
-    result = np.column_stack((my_time, samples))
+    # result = np.column_stack((my_time, samples))
 
     # return samples in g
-    return result
+    return [timestamp, samples]
+
 
 def gt3x_battery_extractor(timestamp, data, samplerate):
     """
@@ -372,6 +373,7 @@ def gt3x_battery_extractor(timestamp, data, samplerate):
 
     # Return timestamp and battery data
     return np.column_stack((timestamp, battery))
+
 
 def gt3x_event_extractor(timestamp, data, samplerate):
     """
@@ -410,7 +412,7 @@ def gt3x_metadata_extractor(timestamp, data, samplerate):
     """
     #print('Metadata Extractor', timestamp, data)
     # TODO Not yet implemented
-    return np.column_stack((timestamp,data))
+    return np.column_stack((timestamp, data))
 
 
 def gt3x_parameters_extractor(timestamp, data, samplerate):
@@ -429,7 +431,7 @@ def gt3x_parameters_extractor(timestamp, data, samplerate):
     result = {}
 
     # Each parameter is 8 bytes
-    for param_index in range(0,int(len(data) / 8)):
+    for param_index in range(0, int(len(data) / 8)):
         # unsigned int32, 4 bytes of data
         [key, param_data] = struct.unpack_from('<I4s', data, offset=param_index * 8)
 
@@ -471,6 +473,7 @@ def gt3x_calculate_checksum(separator, record_type, timestamp, record_size, reco
     checksum = ~checksum
 
     return np.uint8(checksum)
+
 
 @timing
 def gt3x_importer(filename):
@@ -544,7 +547,7 @@ def gt3x_importer(filename):
                     else:
                         print('Unhandled record type:', hex(record_type), 'size:', len(record_data))
                 else:
-                    print('Checksum error read:',checksum, 'calculated:',cs_check)
+                    print('Checksum error read:', checksum, 'calculated:', cs_check)
 
                 # print('record length:', len(record_data), 'checksum:', hex(checksum))
                 data_offset += 8 + len(record_data) + 1

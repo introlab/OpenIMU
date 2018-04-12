@@ -225,6 +225,9 @@ class DBManager:
 
         return conn
 
+    def commit(self):
+        self.db.commit()
+
     def init_database(self, name='No name', description='No description', creation_date=time.time(),
                       upload_date=time.time(), author='Anonymous'):
         """
@@ -459,7 +462,8 @@ class DBManager:
             sensordata = SensorData(id_sensor_data=cursor.lastrowid, recordset=recordset, sensor=sensor,
                                     channel=channel, data_timestamp=timestamp, data=data)
 
-            self.db.commit()
+            # Do not commit, too slow!
+            # self.db.commit()
 
             return sensordata
         except Exception as e:
