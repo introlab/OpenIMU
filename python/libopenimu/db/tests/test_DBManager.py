@@ -142,13 +142,18 @@ class DBManagerTest(unittest.TestCase):
             recordsets1.append(manager.add_recordset(participant1, 'Record Name', 10, 20))
             recordsets2.append(manager.add_recordset(participant2, 'Record Name', 10, 20))
 
-        # Reading back
+        # Compare size
         all_from_participant_1 = manager.get_all_recordsets(participant1)
         all_from_participant_2 = manager.get_all_recordsets(participant2)
         self.assertEqual(len(all_from_participant_1), len(recordsets1))
         self.assertEqual(len(all_from_participant_2), len(recordsets2))
         self.assertEqual(len(manager.get_all_recordsets()), len(recordsets1) + len(recordsets2))
         self.assertEqual(0, len(manager.get_all_recordsets(participant3)))
+
+        # Compare contents
+        for i in range(0, count):
+            self.assertEqual(recordsets1[i], all_from_participant_1[i])
+            self.assertEqual(recordsets2[i], all_from_participant_2[i])
 
     def test_add_channel(self):
         manager = DBManager(filename='openimu.db', overwrite=True)
