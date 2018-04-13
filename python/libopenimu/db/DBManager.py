@@ -492,11 +492,7 @@ class DBManager:
             _channel = self.get_channel(_id_channel)
 
             # Do something to convert bytes in the right format
-            if _channel.id_data_format == DataFormat.FLOAT32:
-                if len(_data) > 4:
-                    _data = np.frombuffer(buffer=_data, dtype=float)
-                else:
-                    _data = np.frombuffer(buffer=_data, dtype=float, count=1)
+            _data = DataFormat.from_bytes(_data, _channel.id_data_format)
 
             # Create SensorData
             _sensordata = SensorData(id_sensor_data=_id_sensor_data, recordset=_recordset, sensor=_sensor,
