@@ -394,6 +394,28 @@ class DBManager:
             print('Error: ', message)
             raise
 
+    def get_all_sensors(self, id_sensor_type=None):
+        try:
+
+            cursor = self.db.execute("SELECT * FROM tabSensors ")
+
+            result = []
+
+            for row in cursor.fetchall():
+                if id_sensor_type is None:
+                    result.append(Sensor(row))
+                else:
+                    sensor = Sensor(row)
+                    if sensor.id_sensor_type == id_sensor_type:
+                        result.append(sensor)
+
+            return result
+
+        except Exception as e:
+            message = 'Error getting all sensors' + ': ' + str(e)
+            print('Error: ', message)
+            raise
+
     def add_recordset(self, participant, name, start_timestamp, end_timestamp):
         try:
             cursor = self.db.execute("INSERT INTO tabRecordsets (id_participant, name, start_timestamp, "

@@ -63,6 +63,34 @@ class DBManagerTest(unittest.TestCase):
         self.assertEqual(sensor.sampling_rate, sensor2.sampling_rate)
         self.assertEqual(sensor.data_rate, sensor2.data_rate)
 
+    def test_get_all_sensors(self):
+
+        manager = DBManager(filename='openimu.db', overwrite=True)
+
+        # Sensor information
+        id_sensor_type = SensorType.ACCELEROMETER
+        name = 'Accelerometer'
+        hw_name = 'OpenIMU-HW'
+        location = 'wrist'
+        sampling_rate = 30.0
+        data_rate = 1
+        count = 10
+
+        sensors = []
+
+        for i in range(0, count):
+            sensors.append(manager.add_sensor(id_sensor_type, name, hw_name, location, sampling_rate, data_rate))
+
+        all_sensors = manager.get_all_sensors()
+        self.assertEqual(len(all_sensors), len(sensors))
+
+        # Wrong type
+        self.assertEqual(0, len(manager.get_all_sensors(SensorType.BATTERY)))
+
+        # Compare content
+        for i in range(0, count):
+            self.assertEqual(sensors[i], all_sensors[i])
+
     def test_add_participant(self):
         manager = DBManager(filename='openimu.db', overwrite=True)
 
