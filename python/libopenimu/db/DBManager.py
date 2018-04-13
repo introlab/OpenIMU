@@ -341,6 +341,26 @@ class DBManager:
             print('Error: ', message)
             raise
 
+    def get_all_participants(self):
+        try:
+            # print('Adding group:', name, 'description:',description)
+            cursor = self.db.execute("SELECT * FROM tabParticipants")
+
+            result = []
+
+            # This will load groups from tuples
+            for row in cursor.fetchall():
+                (_id_participant, _id_group, _name, _description) = row
+                participant = self.get_participant(_id_participant)
+                result.append(participant)
+
+            return result
+
+        except Exception as e:
+            message = 'Error getting all participants' + ': ' + str(e)
+            print('Error: ', message)
+            raise
+
     def add_sensor(self, _id_sensor_type, _name, _hw_name, _location, _sampling_rate, _data_rate):
         try:
             cursor = self.db.execute("INSERT INTO tabSensors (id_sensor_type, name, hw_name, "

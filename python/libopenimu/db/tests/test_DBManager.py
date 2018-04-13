@@ -79,6 +79,31 @@ class DBManagerTest(unittest.TestCase):
         self.assertGreater(participant.id_participant, 0)
         self.assertEqual(participant, participant2)
 
+    def test_get_all_participants(self):
+        manager = DBManager(filename='openimu.db', overwrite=True)
+        # This will add participants
+
+        # Participant information
+        group = manager.add_group('My Group', 'My Group Description')
+        name = 'Participant Name'
+        description = 'Participant Description'
+
+        participants = []
+
+        # Multiple participants, all the same info...
+        for i in range(0, 10):
+            participants.append(manager.add_participant(group, name, description))
+
+        # Read back list of participants
+        all_participants = manager.get_all_participants()
+
+        # Compare size
+        self.assertEqual(len(participants), len(all_participants))
+
+        # Compare content
+        for i in range(0, 10):
+            self.assertEqual(participants[i], all_participants[i])
+
     def test_add_recordset(self):
         manager = DBManager(filename='openimu.db', overwrite=True)
 
