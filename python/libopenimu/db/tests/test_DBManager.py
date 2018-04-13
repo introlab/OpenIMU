@@ -101,7 +101,7 @@ class DBManagerTest(unittest.TestCase):
         self.assertEqual(len(participants), len(all_participants))
 
         # Compare content
-        for i in range(0, 10):
+        for i in range(0, len(participants)):
             self.assertEqual(participants[i], all_participants[i])
 
     def test_add_recordset(self):
@@ -122,6 +122,34 @@ class DBManagerTest(unittest.TestCase):
         self.assertEqual(recordset.end_timestamp, 20)
         self.assertEqual(recordset, recordset2)
 
+    def test_get_all_recordsets(self):
+        manager = DBManager(filename='openimu.db', overwrite=True)
+
+        # Participant information
+        group = manager.add_group('My Group', 'My Group Description')
+        name = 'Participant Name'
+        description = 'Participant Description'
+        participant1 = manager.add_participant(group, name, description)
+        participant2 = manager.add_participant(group, name, description)
+        participant3 = manager.add_participant(group, name, description)
+
+        count = 10
+        recordsets1 = []
+        recordsets2 = []
+
+        # Adding recordsets
+        for i in range(0, count):
+            recordsets1.append(manager.add_recordset(participant1, 'Record Name', 10, 20))
+            recordsets2.append(manager.add_recordset(participant2, 'Record Name', 10, 20))
+
+        # Reading back
+        all_from_participant_1 = manager.get_all_recordsets(participant1)
+        all_from_participant_2 = manager.get_all_recordsets(participant2)
+        self.assertEqual(len(all_from_participant_1), len(recordsets1))
+        self.assertEqual(len(all_from_participant_2), len(recordsets2))
+        self.assertEqual(len(manager.get_all_recordsets()), len(recordsets1) + len(recordsets2))
+        self.assertEqual(0, len(manager.get_all_recordsets(participant3)))
+
     def test_add_channel(self):
         manager = DBManager(filename='openimu.db', overwrite=True)
 
@@ -141,7 +169,7 @@ class DBManagerTest(unittest.TestCase):
         channel = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_X')
         recordset = manager.add_recordset(participant, 'My Record', 0, 0)
 
-        data = np.zeros(40)
+        data = np.zeros(40, dtype=np.float32)
         sensordata = manager.add_sensor_data(recordset, sensor, channel, 0, data)
 
         sensordata2 = manager.get_sensor_data(sensordata.id_sensor_data)

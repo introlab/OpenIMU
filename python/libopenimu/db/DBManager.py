@@ -434,6 +434,29 @@ class DBManager:
             print('Error: ', message)
             raise
 
+    def get_all_recordsets(self, participant=Participant()):
+        try:
+
+            cursor = self.db.execute("SELECT * FROM tabRecordsets")
+
+            result = []
+
+            # This will load all recordsets from tuples
+            for row in cursor.fetchall():
+                (_id_record_set, _id_participant, _name, _start_timestamp, _end_timestamp) = row
+                if participant.id_participant is None:
+                    result.append(self.get_recordset(_id_record_set))
+                elif participant.id_participant is _id_participant:
+                    result.append(self.get_recordset(_id_record_set))
+
+            return result
+
+        except Exception as e:
+            message = 'Error getting all recordsets' + ': ' + str(e)
+            print('Error: ', message)
+            raise
+
+
     def add_channel(self, sensor, id_unit, id_data_format, label):
         try:
             cursor = self.db.execute("INSERT INTO tabChannels (id_sensor, id_unit, "
