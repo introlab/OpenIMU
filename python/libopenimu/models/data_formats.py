@@ -4,6 +4,7 @@
 import sqlite3
 import numpy as np
 
+
 class DataFormat:
 
     UINT8 = 0
