@@ -3,7 +3,7 @@ import os, time, sys, subprocess, signal, platform
 
 class JupyterNotebook():
     def __init__(self):
-        self.notebooks_directory = os.getcwd() + '/notebooks'
+        self.notebooks_directory = os.getcwd() + '/../../notebooks'
         print('OS Name:', platform.system())
 
         # Installation seems to differ from one platform to another.
@@ -41,5 +41,5 @@ if __name__ == '__main__':
     import time
     nb = JupyterNotebook()
     pid = nb.start()
-    time.sleep(10)
+    time.sleep(100)
 

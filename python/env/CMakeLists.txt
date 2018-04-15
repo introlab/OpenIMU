@@ -21,6 +21,7 @@ set (python_packages
     numpy
     scipy
     PyInstaller
+    jupyter
 )
 
 if(WIN32)
