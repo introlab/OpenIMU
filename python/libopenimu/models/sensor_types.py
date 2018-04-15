@@ -14,25 +14,39 @@ class SensorType:
     STEP = 7
     BATTERY = 8
 
-    value_types = [ACCELEROMETER, GYROMETER, MAGNETOMETER, LUX, GPS, HEARTRATE, ORIENTATION, STEP, BATTERY]
-    value_names = ['ACCELEROMETER', 'GYROMETER', 'MAGNETOMETER', 'LUX', 'GPS', 'HEARTRATE', 'ORIENTATION', 'STEP',
-                   'BATTERY']
+    # All values in a dictionary
+    value_dict = {ACCELEROMETER: 'ACCELEROMETER',
+                  GYROMETER: 'GYROMETER',
+                  MAGNETOMETER: 'MAGNETOMETER',
+                  LUX: 'LUX',
+                  GPS: 'GPS',
+                  HEARTRATE: 'HEARTRATE',
+                  ORIENTATION: 'ORIENTATION',
+                  STEP: 'STEP',
+                  BATTERY: 'BATTERY'}
 
     @staticmethod
     def is_valid_type(id_sensor_type):
-        return SensorType.value_types.__contains__(id_sensor_type)
+        if id_sensor_type in SensorType.value_dict:
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def as_dict():
+        return SensorType.value_dict
 
     @staticmethod
     def name(id_sensor_type):
-        return SensorType.value_names[id_sensor_type]
+        return SensorType.value_dict[id_sensor_type]
 
     @staticmethod
     def populate_database(conn):
         """ Will populate database with table tabSensorTypes """
         try:
-            for id_sensor in SensorType.value_types:
+            for id_sensor in SensorType.value_dict:
                 conn.execute("INSERT INTO tabSensorTypes (id_sensor_type, name)"
-                             "VALUES (?,?)", (id_sensor, SensorType.value_names[id_sensor]))
+                             "VALUES (?,?)", (id_sensor, SensorType.value_dict[id_sensor]))
 
         except Exception as e:
             print('Insert Error: ', str(e))
