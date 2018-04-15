@@ -21,6 +21,18 @@ class DataFormatTest(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def test_validation(self):
+        self.assertTrue(DataFormat.is_valid(DataFormat.UINT8), 'UINT8 invalid')
+        self.assertTrue(DataFormat.is_valid(DataFormat.SINT8), 'SINT8 invalid')
+        self.assertTrue(DataFormat.is_valid(DataFormat.UINT16), 'UINT16 invalid')
+        self.assertTrue(DataFormat.is_valid(DataFormat.SINT16), 'SINT16 invalid')
+        self.assertTrue(DataFormat.is_valid(DataFormat.UINT32), 'UINT32 invalid')
+        self.assertTrue(DataFormat.is_valid(DataFormat.SINT32), 'SINT32 invalid')
+        self.assertTrue(DataFormat.is_valid(DataFormat.UINT64), 'UINT64 invalid')
+        self.assertTrue(DataFormat.is_valid(DataFormat.SINT64), 'SINT64 invalid')
+        self.assertTrue(DataFormat.is_valid(DataFormat.FLOAT32), 'FLOAT32 invalid')
+        self.assertTrue(DataFormat.is_valid(DataFormat.FLOAT64), 'FLOAT32 invalid')
+
     def test_int8_from_bytes(self):
         val = np.int8(-8)
         buffer = val.tobytes()

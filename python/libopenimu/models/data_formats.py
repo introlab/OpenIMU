@@ -17,12 +17,20 @@ class DataFormat:
     FLOAT32 = 8
     FLOAT64 = 9
 
-    value_types = [UINT8, SINT8, UINT16, SINT16, UINT32, SINT32, UINT64, SINT64, FLOAT32, FLOAT64]
-    value_names = ['UINT8', 'SINT8', 'UINT16', 'SINT16', 'UINT32', 'SINT32', 'UINT64', 'SINT64', 'FLOAT32', 'FLOAT64']
+    value_dict = {UINT8: 'UINT8',
+                  SINT8: 'SINT8',
+                  UINT16: 'UINT16',
+                  SINT16: 'SINT16',
+                  UINT32: 'UINT32',
+                  SINT32: 'SINT32',
+                  UINT64: 'UINT64',
+                  SINT64: 'SINT64',
+                  FLOAT32: 'FLOAT32',
+                  FLOAT64: 'FLOAT64'}
 
     @staticmethod
     def name(id_data_format):
-        return DataFormat.value_names[id_data_format]
+        return DataFormat.value_dict[id_data_format]
 
     @staticmethod
     def from_bytes(buffer, id_data_format):
@@ -67,13 +75,13 @@ class DataFormat:
     def populate_database(conn):
         """ Will populate database with table tabDataFormat """
         try:
-            for format_id in DataFormat.value_types:
+            for format_id in DataFormat.value_dict:
                 conn.execute("INSERT INTO tabDataFormat (id_data_format, name)"
-                             "VALUES (?,?)", (format_id, DataFormat.value_names[format_id]))
+                             "VALUES (?,?)", (format_id, DataFormat.value_dict[format_id]))
 
         except Exception as e:
             print('Insert Error: ', str(e))
 
     @staticmethod
     def is_valid(id_data_format):
-        return DataFormat.value_types.__contains__(id_data_format)
+        return DataFormat.value_dict.__contains__(id_data_format)
