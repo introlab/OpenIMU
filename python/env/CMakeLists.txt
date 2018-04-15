@@ -22,6 +22,7 @@ set (python_packages
     scipy
     PyInstaller
     jupyter
+    sqlalchemy
 )
 
 if(WIN32)

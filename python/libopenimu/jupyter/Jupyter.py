@@ -1,4 +1,38 @@
-import os, time, sys, subprocess, signal, platform
+import os, time, sys, subprocess, signal, platform, threading
+
+from threading import Thread
+
+
+class JupyterNotebook2():
+    def __init__(self):
+        self.thread = None
+        self.start_thread()
+
+    def start_thread(self):
+        self.thread = Thread(target=self.notebook_thread)
+        print('Starting thread...')
+        self.thread.start()
+
+    def join_thread(self):
+        self.thread.join()
+
+    def wait_thread(self):
+        pass
+
+    def notebook_thread(self):
+        from jupyter_console.app import launch_new_instance
+        # from IPython.terminal.ipapp import launch_new_instance
+        # from IPython.lib import passwd
+        from socket import gethostname
+        import warnings
+
+        warnings.filterwarnings("ignore", module="zmq.*")
+        sys.argv.append("notebook")
+        sys.argv.append("--IPKernelApp.pylab='inline'")
+        sys.argv.append("--NotebookApp.ip=" + gethostname())
+        sys.argv.append("--NotebookApp.open_browser=False")
+        # sys.argv.append("--NotebookApp.password=" + passwd())
+        launch_new_instance()
 
 
 class JupyterNotebook():
@@ -38,8 +72,19 @@ class JupyterNotebook():
 
 
 if __name__ == '__main__':
-    import time
-    nb = JupyterNotebook()
-    pid = nb.start()
-    time.sleep(100)
+    from jupyter_core.application import JupyterApp
+    # from IPython.terminal.ipapp import launch_new_instance
+    # from IPython.lib import passwd
+    from socket import gethostname
+    import warnings
 
+    warnings.filterwarnings("ignore", module="zmq.*")
+    sys.argv.append("notebook")
+    sys.argv.append("--IPKernelApp.pylab='inline'")
+    sys.argv.append("--NotebookApp.ip=" + gethostname())
+    sys.argv.append("--NotebookApp.open_browser=False")
+    # sys.argv.append("--NotebookApp.password=" + passwd())
+    # launch_new_instance()
+
+    app = JupyterApp()
+    app.launch_instance()
