@@ -5,6 +5,7 @@
 """
 
 from libopenimu.models.Base import Base
+from libopenimu.models.Sensor import Sensor
 from sqlalchemy import Column, Integer, String, Sequence, ForeignKey
 from sqlalchemy.orm import relationship
 

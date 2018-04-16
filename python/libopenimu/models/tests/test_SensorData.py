@@ -12,7 +12,7 @@ from libopenimu.models.SensorData import SensorData
 from libopenimu.models.Channel import Channel
 from libopenimu.models.Sensor import Sensor
 from libopenimu.models.Recordset import Recordset
-from libopenimu.models.Participant import Participant
+
 
 
 class SensorDataTest(unittest.TestCase):
