@@ -4,8 +4,8 @@
  @date 20/03/2018
 '''
 
-
-import sqlite3
+from libopenimu.models.Base import Base
+from sqlalchemy import Column, Integer, String, Sequence
 
 
 class Units:

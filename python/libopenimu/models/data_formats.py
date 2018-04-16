@@ -1,7 +1,8 @@
 """
 
 """
-import sqlite3
+from libopenimu.models.Base import Base
+from sqlalchemy import Column, Integer, String, Sequence
 import numpy as np
 
 
@@ -86,3 +87,15 @@ class DataFormat:
     @staticmethod
     def is_valid(id_data_format):
         return DataFormat.value_dict.__contains__(id_data_format)
+
+
+# Not used...
+class DBDataFormat(Base):
+    __tablename__ = 'tabDataFormats'
+    id_data_format = Column(Integer, Sequence('id_data_format_sequence'), primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+
+    # Database rep (optional)
+    def __repr__(self):
+        return "<DBDataFormat(name='%s')>" % self.name
+

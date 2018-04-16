@@ -5,8 +5,27 @@
 """
 
 
-from libopenimu.models.Group import Group
+from libopenimu.models.Base import Base
+from sqlalchemy import Column, Integer, String, Sequence, ForeignKey
+from sqlalchemy.orm import relationship
 
+
+class Participant(Base):
+    __tablename__ = 'tabParticipants'
+    id_participant = Column(Integer, Sequence('id_participant_sequence'), primary_key=True, autoincrement=True)
+    id_group = Column(Integer, ForeignKey("tabGroups.id_group"), nullable=False)
+    name = Column(String, nullable=False)
+    description = Column(String)
+
+    # Which group
+    group = relationship("Group")
+
+    # Database rep (optional)
+    def __repr__(self):
+        return "<Participant(id_group='%i', name='%s', description='%s')>" % (self.id_group, self.name, self.description)
+
+
+"""
 
 class Participant:
     def __init__(self, *args, **kwargs):
@@ -72,4 +91,6 @@ if __name__ == '__main__':
     p = Participant(id_participant=1, group=Group(), name='My Name', description='Description')
     p2 = Participant(p.as_tuple())
     print(p, p2)
+
+"""
 

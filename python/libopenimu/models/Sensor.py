@@ -4,8 +4,35 @@
  @date 02/04/2018
 """
 
-from libopenimu.models.sensor_types import *
+from libopenimu.models.Base import Base
+# from libopenimu.models.sensor_types import *
+from sqlalchemy import Column, Integer, Float, String, Sequence, TIMESTAMP, BLOB, ForeignKey
+# from sqlalchemy.orm import relationship
 
+
+class Sensor(Base):
+    __tablename__ = 'tabSensors'
+    id_sensor = Column(Integer, Sequence('id_sensor_sequence'), primary_key=True, autoincrement=True)
+    # id_sensor_type = Column(Integer, ForeignKey('tabSensorTypes.id_sensor_type'), nullable=False)
+    id_sensor_type = Column(Integer, nullable=False)
+    name = Column(String, nullable=False)
+    hw_name = Column(String, nullable=False)
+    location = Column(String, nullable=False)
+    sampling_rate = Column(Float, nullable=False)
+    data_rate = Column(Integer, nullable=False)
+
+    # Which sensor type
+    # TODO USEFUL?
+    # sensor_type = relationship("SensorType")
+
+    # Database rep (optional)
+    def __repr__(self):
+        return "<Sensor(id_sensor_type='%i', name='%s', hw_name='%s', location='%s', sampling_rate='%f'" \
+               ", data_rate='%i')>" % (self.id_sensor_type, self.name, self.hw_name, self.location, self.sampling_rate,
+                                       self.data_rate)
+
+
+"""
 
 class Sensor:
     def __init__(self, *args, **kwargs):
@@ -96,4 +123,5 @@ class Sensor:
     sampling_rate = property(get_sampling_rate, set_sampling_rate)
     data_rate = property(get_data_rate, set_data_rate)
 
+"""
 

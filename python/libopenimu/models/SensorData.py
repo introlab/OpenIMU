@@ -4,6 +4,33 @@
  @date 05/04/2018
 """
 
+from libopenimu.models.Base import Base
+from sqlalchemy import Column, Integer, Sequence, ForeignKey, TIMESTAMP, BLOB
+from sqlalchemy.orm import relationship
+
+
+class SensorData(Base):
+    __tablename__ = 'tabSensorsData'
+    id_sensor_data = Column(Integer, Sequence('id_sensor_data_sequence'), primary_key=True, autoincrement=True)
+    id_recordset = Column(Integer, ForeignKey('tabRecordsets.id_recordset'), nullable=False)
+    id_sensor = Column(Integer, ForeignKey('tabSensors.id_sensor'), nullable=False)
+    id_channel = Column(Integer, ForeignKey('tabChannels.id_channel'), nullable=False)
+    data_timestamp = Column(TIMESTAMP, nullable=False)
+    data = Column(BLOB, nullable=False)
+
+    # Relationships
+    recordset = relationship("Recordset")
+    sensor = relationship("Sensor")
+    channel = relationship("Channel")
+
+    # Database rep (optional)
+    def __repr__(self):
+        return "<SensorData(id_recordset='%i', id_sensor='%i', id_channel='%i', data_timestamp='%s', data_size='%i'" % \
+               (self.id_recordset, self.id_sensor, self.id_channel, self.data_timestamp, len(self.data))
+
+
+"""
+
 from libopenimu.models.Recordset import Recordset
 from libopenimu.models.Sensor import Sensor
 from libopenimu.models.Channel import Channel
@@ -92,3 +119,5 @@ class SensorData:
     channel = property(get_channel, set_channel)
     data_timestamp = property(get_data_timestamp, set_data_timestamp)
     data = property(get_data, set_data)
+
+"""

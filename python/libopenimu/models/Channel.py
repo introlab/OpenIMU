@@ -4,6 +4,30 @@
  @date 05/04/2018
 """
 
+from libopenimu.models.Base import Base
+from sqlalchemy import Column, Integer, String, Sequence, ForeignKey
+from sqlalchemy.orm import relationship
+
+
+class Channel(Base):
+    __tablename__ = 'tabChannels'
+    id_channel = Column(Integer, Sequence('id_channel_sequence'), primary_key=True, autoincrement=True)
+    id_sensor = Column(Integer, ForeignKey('tabSensors.id_sensor'), nullable=False)
+    id_sensor_unit = Column(Integer, nullable=False)
+    id_data_format = Column(Integer, nullable=False)
+    label = Column(String, nullable=False)
+
+    # Relationships
+    sensor = relationship("Sensor")
+
+    # Database rep (optional)
+    def __repr__(self):
+        return "<Channel(id_sensor='%i', id_sensor_unit='%s', id_data_format='%s', label='%s'" % \
+               (self.id_sensor, self.id_sensor_unit, self.id_data_format, self.label)
+
+
+"""
+
 from libopenimu.models.Sensor import Sensor
 from libopenimu.models.data_formats import DataFormat
 from libopenimu.models.units import Units
@@ -75,3 +99,5 @@ class Channel:
     id_unit = property(get_id_unit, set_id_unit)
     id_data_format = property(get_id_data_format, set_id_data_format)
     label = property(get_label, set_label)
+    
+"""

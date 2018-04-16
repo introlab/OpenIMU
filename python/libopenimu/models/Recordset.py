@@ -3,7 +3,30 @@
  @authors Simon Brière, Dominic Létourneau
  @date 05/04/2018
 """
+from libopenimu.models.Base import Base
 
+from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, TIMESTAMP
+from sqlalchemy.orm import relationship
+
+
+class Recordset(Base):
+    __tablename__ = 'tabRecordsets'
+    id_recordset = Column(Integer, Sequence('id_recordset_sequence'), primary_key=True, autoincrement=True)
+    id_participant = Column(Integer, ForeignKey('tabParticipants.id_participant'), nullable=False)
+    name = Column(String, nullable=False)
+    start_timestamp = Column(TIMESTAMP, nullable=False)
+    end_timestamp = Column(TIMESTAMP, nullable=False)
+
+    # Relationships
+    participant = relationship("Participant")
+
+    # Database rep (optional)
+    def __repr__(self):
+        return "<Recordset(id_participant='%i', name='%s', start_timestamp='%s', end_timestamp='%s'" % \
+               (self.id_participant, self.name, self.start_timestamp, self.end_timestamp)
+
+
+"""
 from libopenimu.models.Participant import Participant
 
 
@@ -71,4 +94,6 @@ class Recordset:
     name = property(get_name, set_name)
     start_timestamp = property(get_start_timestamp, set_start_timestamp)
     end_timestamp = property(get_end_timestamp, set_end_timestamp)
+"""
+
 

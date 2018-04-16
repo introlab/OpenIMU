@@ -4,6 +4,27 @@
  @date 27/03/2018
 """
 
+from libopenimu.models.Base import Base
+from sqlalchemy import Column, Integer, Float, String, Sequence, TIMESTAMP, BLOB, ForeignKey
+# from sqlalchemy.orm import relationship
+
+
+class Group(Base):
+    __tablename__ = 'tabGroups'
+
+    id_group = Column(Integer, Sequence('id_group_sequence'), primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    description = Column(String)
+
+    # Database rep (optional)
+    def __repr__(self):
+        return "<Group(name='%s', description='%s')>" % (self.name, self.description)
+
+
+
+"""
+
+# Old implementation
 
 class Group:
     def __init__(self, *args, **kwargs):
@@ -67,3 +88,4 @@ class Group:
     name = property(get_name, set_name)
     description = property(get_description, set_description)
 
+"""
