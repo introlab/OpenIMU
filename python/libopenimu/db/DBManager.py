@@ -124,6 +124,13 @@ class DBManager:
             return query.all()
 
     def add_recordset(self, participant: Participant, name, start_timestamp, end_timestamp):
+
+        #if isinstance(start_timestamp, str):
+        #    start_timestamp = datetime.datetime.fromtimestamp(int(start_timestamp))
+
+        #if isinstance(end_timestamp, str):
+        #    end_timestamp = datetime.datetime.fromtimestamp(int(end_timestamp))
+
         # Create object
         record = Recordset(participant=participant, name=name, start_timestamp=start_timestamp, end_timestamp=end_timestamp)
         self.session.add(record)
@@ -157,6 +164,10 @@ class DBManager:
         return query.first()
 
     def add_sensor_data(self, recordset: Recordset, sensor: Sensor, channel: Channel, timestamp, data):
+
+        #if isinstance(timestamp, str):
+        #    timestamp = datetime.datetime.fromtimestamp(int(timestamp))
+
         # Create object
         sensordata = SensorData(recordset=recordset, sensor=sensor,
                                 channel=channel, data_timestamp=timestamp, data=data)

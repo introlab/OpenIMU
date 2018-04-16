@@ -23,7 +23,6 @@ class ActigraphDBTest(unittest.TestCase):
         np.set_printoptions(suppress=True)
         print(__file__ + ' Creating database')
         self.db = DBManager('actigraph.db', True)
-        self.db.init_database('Test')
         self.group = self.db.add_group('MyGroup', 'MyDescription')
         self.participant = self.db.add_participant(group=self.group, name='Anonymous', description='Participant')
 
