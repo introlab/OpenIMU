@@ -14,6 +14,7 @@ from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.units import Units
 from libopenimu.models.data_formats import DataFormat
 import numpy as np
+import datetime
 
 
 class DBManagerTest(unittest.TestCase):
@@ -140,14 +141,16 @@ class DBManagerTest(unittest.TestCase):
         name = 'Participant Name'
         description = 'Participant Description'
         participant = manager.add_participant(group, name, description)
-        recordset = manager.add_recordset(participant, 'Record Name', 10, 20)
+        time1 = datetime.datetime.now()
+        time2 = datetime.datetime.now()
+        recordset = manager.add_recordset(participant, 'Record Name', time1, time2)
         recordset2 = manager.get_recordset(recordset.id_recordset)
 
         self.assertGreater(recordset.id_recordset, 0)
         self.assertEqual(recordset.participant, participant)
         self.assertEqual(recordset.name, 'Record Name')
-        self.assertEqual(recordset.start_timestamp, 10)
-        self.assertEqual(recordset.end_timestamp, 20)
+        self.assertEqual(recordset.start_timestamp, time1)
+        self.assertEqual(recordset.end_timestamp, time2)
         self.assertEqual(recordset, recordset2)
 
     def test_get_all_recordsets(self):
@@ -167,8 +170,12 @@ class DBManagerTest(unittest.TestCase):
 
         # Adding recordsets
         for i in range(0, count):
-            recordsets1.append(manager.add_recordset(participant1, 'Record Name', 10, 20))
-            recordsets2.append(manager.add_recordset(participant2, 'Record Name', 10, 20))
+            time1 = datetime.datetime.now()
+            time2 = datetime.datetime.now()
+            recordsets1.append(manager.add_recordset(participant1, 'Record Name', time1,
+                                                     time2))
+            recordsets2.append(manager.add_recordset(participant2, 'Record Name', time1,
+                                                     time2))
 
         # Compare size
         all_from_participant_1 = manager.get_all_recordsets(participant1)
@@ -200,10 +207,13 @@ class DBManagerTest(unittest.TestCase):
         participant = manager.add_participant(group, 'Participant Name', 'Participant Description')
         sensor = manager.add_sensor(SensorType.ACCELEROMETER, 'Sensor Name', 'Hardware Name', 'Wrist', 30.0, 1)
         channel = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_X')
-        recordset = manager.add_recordset(participant, 'My Record', 0, 0)
+        time1 = datetime.datetime.now()
+        time2 = datetime.datetime.now()
+        recordset = manager.add_recordset(participant, 'My Record', time1, time2)
 
         data = np.zeros(40, dtype=np.float32)
-        sensordata = manager.add_sensor_data(recordset, sensor, channel, 0, data)
+        sensordata = manager.add_sensor_data(recordset, sensor, channel, time1, data)
+        manager.commit()
 
         sensordata2 = manager.get_sensor_data(sensordata.id_sensor_data)
         self.assertEqual(sensordata, sensordata2)
