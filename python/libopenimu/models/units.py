@@ -16,24 +16,32 @@ class Units:
     VOLTS = 4
     LUX = 5
 
-    value_types = [METERS, GRAVITY_G, METERS_PER_SEC, RAD_PER_SEC, VOLTS, LUX]
-    value_names = ['METERS', 'G', 'M/S', 'RAD/S', 'VOLTS', 'LUX']
+    value_dict = {METERS: 'METERS',
+                  GRAVITY_G: 'G',
+                  METERS_PER_SEC: 'M/S',
+                  RAD_PER_SEC: 'RAD/S',
+                  VOLTS: 'VOLTS',
+                  LUX: 'LUX'}
+
+    @staticmethod
+    def as_dict():
+        return Units.value_dict
 
     @staticmethod
     def name(id_unit):
-        return Units.value_names[id_unit]
+        return Units.value_dict[id_unit]
 
     @staticmethod
     def populate_database(conn):
         """ Will populate database with table tabUnits """
         try:
-            for id_unit in Units.value_types:
+            for id_unit in Units.value_dict:
                 conn.execute("INSERT INTO tabUnits (id_unit, name)"
-                             "VALUES (?,?)", (id_unit, Units.value_names[id_unit]))
+                             "VALUES (?,?)", (id_unit, Units.value_dict[id_unit]))
 
         except Exception as e:
             print('Insert Error: ', str(e))
 
     @staticmethod
     def is_valid(id_unit):
-        return Units.value_types.__contains__(id_unit)
+        return Units.value_dict.__contains__(id_unit)

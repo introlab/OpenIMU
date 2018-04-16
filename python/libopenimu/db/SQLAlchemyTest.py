@@ -21,6 +21,7 @@ import numpy as np
 Base = declarative_base()
 
 
+# Not used...
 class DBSensorType(Base):
     __tablename__ = 'tabSensorTypes'
     id_sensor_type = Column(Integer, Sequence('id_sensor_type_sequence'), primary_key=True, autoincrement=True)
