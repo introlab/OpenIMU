@@ -69,34 +69,11 @@ class SensorTest(unittest.TestCase):
         sensor.data_rate = my_data_rate
 
         self.assertEqual(sensor.id_sensor, my_id)
-        self.assertEqual(my_id, sensor.get_id_sensor())
-
         self.assertEqual(sensor.id_sensor_type, my_id_type)
-        self.assertEqual(my_id_type, sensor.get_id_sensor_type())
-
         self.assertEqual(sensor.name, my_name)
-        self.assertEqual(my_name, sensor.get_name())
-
         self.assertEqual(sensor.hw_name, my_hw_name)
-        self.assertEqual(my_hw_name, sensor.get_hw_name())
-
         self.assertEqual(sensor.location, my_location)
-        self.assertEqual(my_location, sensor.get_location())
-
         self.assertEqual(sensor.sampling_rate, my_sampling_rate)
-        self.assertEqual(my_sampling_rate, sensor.get_sampling_rate())
-
         self.assertEqual(sensor.data_rate, my_data_rate)
-        self.assertEqual(my_data_rate, sensor.get_data_rate())
 
-    def test_as_from_tuple(self):
-        my_id = 0
-        my_id_type = SensorType.GPS
-        my_name = 'My Name'
-        my_hw_name = 'HW Name'
-        my_location = 'My Location'
-        my_sampling_rate = 1.0
-        my_data_rate = 1
-        my_tuple = (my_id, my_id_type, my_name, my_hw_name, my_location, my_sampling_rate, my_data_rate)
-        sensor = Sensor(my_tuple)
-        self.assertEqual(sensor.as_tuple(), my_tuple)
+

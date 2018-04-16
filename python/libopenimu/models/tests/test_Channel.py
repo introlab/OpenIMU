@@ -20,21 +20,20 @@ class ChannelTest(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_as_from_tuple(self):
-        t = (1, Sensor().as_tuple(), 1, 1, 'label')
-        channel = Channel(t)
-        self.assertTrue(channel.as_tuple(), t)
-
     def test_properties(self):
         channel = Channel()
         channel.id_channel = 1
-        channel.sensor = Sensor()
+        sensor = Sensor()
+        channel.sensor = sensor
+
+        # print(channel.sensor)
+
         channel.id_data_format = 0
         channel.id_unit = 0
         channel.label = 'My label'
 
         self.assertEqual(channel.id_channel, 1)
-        self.assertEqual(channel.sensor, Sensor())
+        self.assertEqual(channel.sensor, sensor)
         self.assertEqual(channel.id_data_format, 0)
         self.assertEqual(channel.id_unit, 0)
         self.assertEqual(channel.label, 'My label')

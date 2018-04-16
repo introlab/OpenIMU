@@ -5,6 +5,12 @@
 """
 
 from libopenimu.models.Base import Base
+
+# Imports important for relationships, even if not visible from this file
+from libopenimu.models.Recordset import Recordset
+from libopenimu.models.Sensor import Sensor
+from libopenimu.models.Channel import Channel
+
 from sqlalchemy import Column, Integer, Sequence, ForeignKey, TIMESTAMP, BLOB
 from sqlalchemy.orm import relationship
 

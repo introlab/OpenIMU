@@ -25,6 +25,11 @@ class Sensor(Base):
     # TODO USEFUL?
     # sensor_type = relationship("SensorType")
 
+    # def __eq__(self, other):
+    #    return self.id_sensor == other.id_sensor and self.id_sensor_type == other.id_sensor_type and \
+    #        self.name == other.name and self.hw_name == other.hw_name and self.location == other.location and \
+    #        self.sampling_rate == other.sampling_rate and self.data_rate == other.data_rate
+
     # Database rep (optional)
     def __repr__(self):
         return "<Sensor(id_sensor_type='%i', name='%s', hw_name='%s', location='%s', sampling_rate='%f'" \

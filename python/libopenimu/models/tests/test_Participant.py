@@ -20,18 +20,9 @@ class ParticipantTest(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_as_from_tuple(self):
-        my_tuple = (1, (1, 'Group Name', 'Group Description'), 'Participant Name', 'Participant Description')
-        participant = Participant(my_tuple)
-        participant2 = Participant()
-        participant2.from_tuple(my_tuple)
-
-        self.assertEqual(my_tuple, participant.as_tuple())
-        self.assertEqual(participant.as_tuple(), participant2.as_tuple())
-
     def test_properties(self):
         id_participant = 1
-        group = Group((1, 'Group Name', 'Group Description'))
+        group = Group(id_group=1, name='Group Name', description='Group Description')
         name = 'Participant Name'
         description = 'Participant Description'
 
