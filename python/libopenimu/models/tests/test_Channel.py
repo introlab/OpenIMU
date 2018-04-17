@@ -29,11 +29,21 @@ class ChannelTest(unittest.TestCase):
         # print(channel.sensor)
 
         channel.id_data_format = 0
-        channel.id_unit = 0
+        channel.id_sensor_unit = 0
         channel.label = 'My label'
 
         self.assertEqual(channel.id_channel, 1)
         self.assertEqual(channel.sensor, sensor)
         self.assertEqual(channel.id_data_format, 0)
-        self.assertEqual(channel.id_unit, 0)
+        self.assertEqual(channel.id_sensor_unit, 0)
         self.assertEqual(channel.label, 'My label')
+
+    def test_empty(self):
+        channel = Channel()
+        self.assertEqual(print(channel), None)
+        self.assertEqual(channel.id_channel, None)
+        self.assertEqual(channel.sensor, None)
+        self.assertEqual(channel.id_data_format, None)
+        self.assertEqual(channel.id_sensor_unit, None)
+        self.assertEqual(channel.label, None)
+

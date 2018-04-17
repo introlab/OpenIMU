@@ -11,7 +11,7 @@ from libopenimu.models.Recordset import Recordset
 from libopenimu.models.Sensor import Sensor
 from libopenimu.models.Channel import Channel
 
-from sqlalchemy import Column, Integer, Sequence, ForeignKey, TIMESTAMP, BLOB
+from sqlalchemy import Column, Integer, Sequence, ForeignKey, TIMESTAMP, Interval, BLOB
 from sqlalchemy.orm import relationship
 
 
@@ -21,6 +21,12 @@ class SensorData(Base):
     id_recordset = Column(Integer, ForeignKey('tabRecordsets.id_recordset'), nullable=False)
     id_sensor = Column(Integer, ForeignKey('tabSensors.id_sensor'), nullable=False)
     id_channel = Column(Integer, ForeignKey('tabChannels.id_channel'), nullable=False)
+
+    '''
+    A type for datetime.timedelta() objects.
+    The Interval type deals with datetime.timedelta objects. In PostgreSQL, the native INTERVAL type is used; 
+    for others, the value is stored as a date which is relative to the “epoch” (Jan. 1, 1970).
+    '''
     data_timestamp = Column(TIMESTAMP, nullable=False)
     data = Column(BLOB, nullable=False)
 
@@ -31,8 +37,9 @@ class SensorData(Base):
 
     # Database rep (optional)
     def __repr__(self):
-        return "<SensorData(id_recordset='%i', id_sensor='%i', id_channel='%i', data_timestamp='%s', data_size='%i'" % \
-               (self.id_recordset, self.id_sensor, self.id_channel, self.data_timestamp, len(self.data))
+        return "<SensorData(id_recordset='%s', id_sensor='%s', id_channel='%s', data_timestamp='%s', data_size='%s'" % \
+               (str(self.id_recordset), str(self.id_sensor), str(self.id_channel), str(self.data_timestamp),
+                str(len(self.data)))
 
 
 """

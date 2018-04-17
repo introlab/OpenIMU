@@ -23,8 +23,8 @@ class Channel(Base):
 
     # Database rep (optional)
     def __repr__(self):
-        return "<Channel(id_sensor='%i', id_sensor_unit='%s', id_data_format='%s', label='%s'" % \
-               (self.id_sensor, self.id_sensor_unit, self.id_data_format, self.label)
+        return "<Channel(id_sensor='%s', id_sensor_unit='%s', id_data_format='%s', label='%s'" % \
+               (str(self.id_sensor), str(self.id_sensor_unit), str(self.id_data_format), str(self.label))
 
 
 """

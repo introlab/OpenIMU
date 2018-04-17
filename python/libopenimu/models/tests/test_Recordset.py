@@ -34,3 +34,12 @@ class RecordsetTest(unittest.TestCase):
         self.assertEqual(record.name, 'Record Name')
         self.assertEqual(record.start_timestamp, 22)
         self.assertEqual(record.end_timestamp, 33)
+
+    def test_empty(self):
+        record = Recordset()
+        print(record)
+        self.assertEqual(record.id_recordset, None)
+        self.assertEqual(record.participant, None)
+        self.assertEqual(record.name, None)
+        self.assertEqual(record.start_timestamp, None)
+        self.assertEqual(record.end_timestamp, None)

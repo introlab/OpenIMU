@@ -15,14 +15,14 @@ from libopenimu.models.data_formats import DataFormat
 from libopenimu.db.DBManager import DBManager
 from libopenimu.importers.actigraph import gt3x_importer
 import numpy as np
-
+import datetime
 
 class ActigraphDBTest(unittest.TestCase):
 
     def setUp(self):
         np.set_printoptions(suppress=True)
         print(__file__ + ' Creating database')
-        self.db = DBManager('actigraph.db', True)
+        self.db = DBManager('actigraph.db', True, False)
         self.group = self.db.add_group('MyGroup', 'MyDescription')
         self.participant = self.db.add_participant(group=self.group, name='Anonymous', description='Participant')
 
@@ -49,7 +49,7 @@ class ActigraphDBTest(unittest.TestCase):
         return channel
 
     def add_sensor_data_to_db(self, recordset, sensor, channel, timestamp, data):
-        data = self.db.add_sensor_data(recordset, sensor, channel, timestamp, data)
+        data = self.db.add_sensor_data(recordset, sensor, channel, timestamp, data.tobytes())
         return data
 
     def test_import(self):
@@ -70,7 +70,15 @@ class ActigraphDBTest(unittest.TestCase):
         print(info)
 
         # Creating recordset
-        recordset = self.add_recordset_to_db(info['Subject Name'], info['Start Date'], info['Last Sample Time'])
+        # print(info['Start Date'], info['Last Sample Time'])
+        start = int(info['Start Date'])
+        stop = int(info['Last Sample Time'])
+        print(start, stop)
+        start_timestamp = datetime.datetime.fromtimestamp(0)
+        end_timestamp = datetime.datetime.fromtimestamp(0)
+        print(start_timestamp, end_timestamp)
+
+        recordset = self.add_recordset_to_db(info['Subject Name'], start_timestamp, end_timestamp)
         print(recordset)
 
         if data.__contains__('activity'):
@@ -99,7 +107,7 @@ class ActigraphDBTest(unittest.TestCase):
                 # print(epoch, len(epoch))
 
                 # Get data
-                timestamp = epoch[0]
+                timestamp = datetime.datetime.fromtimestamp(epoch[0])
                 samples = epoch[1]
 
                 # Separate write for each channel
@@ -118,7 +126,7 @@ class ActigraphDBTest(unittest.TestCase):
             volt_channel = self.add_channel_to_db(volt_sensor, Units.VOLTS, DataFormat.FLOAT32, 'Battery')
 
             for epoch in data['battery']:
-                timestamp = epoch[0]
+                timestamp = datetime.datetime.fromtimestamp(epoch[0])
                 value = np.float32(epoch[1])
                 self.assertEqual(len(value.tobytes()), 4)
                 self.add_sensor_data_to_db(recordset, volt_sensor, volt_channel, timestamp, value)
@@ -132,7 +140,7 @@ class ActigraphDBTest(unittest.TestCase):
             lux_channel = self.add_channel_to_db(lux_sensor, Units.LUX, DataFormat.FLOAT32, 'Lux')
 
             for epoch in data['lux']:
-                timestamp = epoch[0]
+                timestamp = datetime.datetime.fromtimestamp(epoch[0])
                 value = np.float32(epoch[1])
                 self.assertEqual(len(value.tobytes()), 4)
                 self.add_sensor_data_to_db(recordset, lux_sensor, lux_channel, timestamp, value)

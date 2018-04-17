@@ -134,15 +134,16 @@ class DBManagerTest(unittest.TestCase):
             self.assertEqual(participants[i], all_participants[i])
 
     def test_add_recordset(self):
-        manager = DBManager(filename='openimu.db', overwrite=True)
+        manager = DBManager(filename='openimu.db', overwrite=True, echo=False)
 
         # Participant information
         group = manager.add_group('My Group', 'My Group Description')
         name = 'Participant Name'
         description = 'Participant Description'
         participant = manager.add_participant(group, name, description)
-        time1 = datetime.datetime.now()
-        time2 = datetime.datetime.now()
+        # This gives datetime from seconds from epoch
+        time1 = datetime.datetime.fromtimestamp(0)
+        time2 = datetime.datetime.fromtimestamp(1)
         recordset = manager.add_recordset(participant, 'Record Name', time1, time2)
         recordset2 = manager.get_recordset(recordset.id_recordset)
 
@@ -170,8 +171,10 @@ class DBManagerTest(unittest.TestCase):
 
         # Adding recordsets
         for i in range(0, count):
-            time1 = datetime.datetime.now()
-            time2 = datetime.datetime.now()
+            #time1 = datetime.datetime.now()
+            #time2 = datetime.datetime.now()
+            time1 = 0;
+            time2 = 1;
             recordsets1.append(manager.add_recordset(participant1, 'Record Name', time1,
                                                      time2))
             recordsets2.append(manager.add_recordset(participant2, 'Record Name', time1,
