@@ -171,10 +171,9 @@ class DBManagerTest(unittest.TestCase):
 
         # Adding recordsets
         for i in range(0, count):
-            #time1 = datetime.datetime.now()
-            #time2 = datetime.datetime.now()
-            time1 = 0;
-            time2 = 1;
+            time1 = datetime.datetime.now()
+            time2 = datetime.datetime.now()
+
             recordsets1.append(manager.add_recordset(participant1, 'Record Name', time1,
                                                      time2))
             recordsets2.append(manager.add_recordset(participant2, 'Record Name', time1,

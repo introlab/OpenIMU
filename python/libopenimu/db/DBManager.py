@@ -170,7 +170,7 @@ class DBManager:
 
         # Create object
         sensordata = SensorData(recordset=recordset, sensor=sensor,
-                                channel=channel, data_timestamp=timestamp, data=data)
+                                channel=channel, data_timestamp=timestamp, data=data.tobytes())
 
         self.session.add(sensordata)
 

@@ -49,7 +49,7 @@ class ActigraphDBTest(unittest.TestCase):
         return channel
 
     def add_sensor_data_to_db(self, recordset, sensor, channel, timestamp, data):
-        data = self.db.add_sensor_data(recordset, sensor, channel, timestamp, data.tobytes())
+        data = self.db.add_sensor_data(recordset, sensor, channel, timestamp, data)
         return data
 
     def test_import(self):
