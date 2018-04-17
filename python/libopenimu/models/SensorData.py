@@ -16,6 +16,7 @@ from libopenimu.models.data_formats import DataFormat
 from sqlalchemy import Column, Integer, Sequence, ForeignKey, TIMESTAMP, Interval, BLOB
 from sqlalchemy.orm import relationship
 
+import numpy as np
 
 
 class SensorData(Base):
@@ -39,7 +40,20 @@ class SensorData(Base):
     channel = relationship("Channel")
 
     def to_ndarray(self):
-        return DataFormat.from_bytes(self.data, self.channel.id_data_format)
+        if type(self.data) is bytes:
+            return DataFormat.from_bytes(self.data, self.channel.id_data_format)
+        else:
+            return self.data
+
+    def to_time_series(self):
+        values = self.to_ndarray()
+
+        time = np.linspace(self.data_timestamp.timestamp(),
+                           num=len(values),
+                           stop=self.data_timestamp.timestamp() + 1,
+                           dtype=np.float32, endpoint=False)
+
+        return {'time': time, 'values': values}
 
     # Database rep (optional)
     def __repr__(self):

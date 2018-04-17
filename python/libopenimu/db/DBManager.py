@@ -199,10 +199,11 @@ class DBManager:
 
         return my_sensor_data
 
-    def get_all_sensor_data(self, recordset: Recordset):
+    def get_all_sensor_data(self, recordset: Recordset, convert=True):
         query = self.session.query(SensorData).filter(SensorData.id_recordset == recordset.id_recordset)
 
-        return query.all()
+        if not convert:
+            return query.all()
 
         # Read result, data will be bytes array
         result = query.all()

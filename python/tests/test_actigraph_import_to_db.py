@@ -215,6 +215,10 @@ class ActigraphDBTest2(unittest.TestCase):
 
     def test_read_all_data(self):
         recordsets = self.db.get_all_recordsets()
+        
         for record in recordsets:
-            all_data = self.db.get_all_sensor_data(record)
-            print('number of entries: ', len(all_data))
+            all_data = self.db.get_all_sensor_data(record, convert=False)
+            accelerometer_x = []
+            for data in all_data:
+                print(data.to_time_series())
+                break
