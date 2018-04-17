@@ -11,8 +11,11 @@ from libopenimu.models.Recordset import Recordset
 from libopenimu.models.Sensor import Sensor
 from libopenimu.models.Channel import Channel
 
+from libopenimu.models.data_formats import DataFormat
+
 from sqlalchemy import Column, Integer, Sequence, ForeignKey, TIMESTAMP, Interval, BLOB
 from sqlalchemy.orm import relationship
+
 
 
 class SensorData(Base):
@@ -34,6 +37,9 @@ class SensorData(Base):
     recordset = relationship("Recordset")
     sensor = relationship("Sensor")
     channel = relationship("Channel")
+
+    def to_ndarray(self):
+        return DataFormat.from_bytes(self.data, self.channel.id_data_format)
 
     # Database rep (optional)
     def __repr__(self):

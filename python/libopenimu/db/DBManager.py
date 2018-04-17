@@ -8,6 +8,7 @@
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import table, insert
 
 import os
 import datetime
@@ -58,6 +59,15 @@ class DBManager:
 
     def commit(self):
         self.session.commit()
+
+    def flush(self):
+        self.session.flush()
+
+    def create_session(self):
+        return self.SessionMaker()
+
+    def session_add(self, store):
+        self.session.add_all(store)
 
     def add_group(self, name, description):
         try:
@@ -125,14 +135,9 @@ class DBManager:
 
     def add_recordset(self, participant: Participant, name, start_timestamp, end_timestamp):
 
-        #if isinstance(start_timestamp, str):
-        #    start_timestamp = datetime.datetime.fromtimestamp(int(start_timestamp))
-
-        #if isinstance(end_timestamp, str):
-        #    end_timestamp = datetime.datetime.fromtimestamp(int(end_timestamp))
-
         # Create object
-        record = Recordset(participant=participant, name=name, start_timestamp=start_timestamp, end_timestamp=end_timestamp)
+        record = Recordset(participant=participant, name=name, start_timestamp=start_timestamp,
+                           end_timestamp=end_timestamp)
         self.session.add(record)
         self.commit()
         return record
@@ -165,17 +170,22 @@ class DBManager:
 
     def add_sensor_data(self, recordset: Recordset, sensor: Sensor, channel: Channel, timestamp, data):
 
-        #if isinstance(timestamp, str):
-        #    timestamp = datetime.datetime.fromtimestamp(int(timestamp))
-
         # Create object
         sensordata = SensorData(recordset=recordset, sensor=sensor,
                                 channel=channel, data_timestamp=timestamp, data=data.tobytes())
 
+        # Custom SQL code
+        """
+        self.session.execute("INSERT INTO tabSensorsData (id_recordset, id_sensor, id_channel, data_timestamp, data) "
+                             "VALUES (:id_recordset, :id_sensor, :id_channel, :data_timestamp, :data)",
+                             {'id_recordset': recordset.id_recordset, 'id_sensor': sensor.id_sensor,
+                              'id_channel': channel.id_channel, 'data_timestamp': timestamp, 'data': data.tobytes()})
+
+        """
+
         self.session.add(sensordata)
 
         # Do not commit, too slow!
-        # self.commit()
         return sensordata
 
     def get_sensor_data(self, id_sensor_data):
@@ -188,3 +198,19 @@ class DBManager:
         my_sensor_data.data = DataFormat.from_bytes(my_sensor_data.data, my_sensor_data.channel.id_data_format)
 
         return my_sensor_data
+
+    def get_all_sensor_data(self, recordset: Recordset):
+        query = self.session.query(SensorData).filter(SensorData.id_recordset == recordset.id_recordset)
+
+        return query.all()
+
+        # Read result, data will be bytes array
+        result = query.all()
+
+        # Convert to the right format
+        for sensor_data in result:
+            # print('data len:', len(sensor_data.data))
+            sensor_data.data = DataFormat.from_bytes(sensor_data.data, sensor_data.channel.id_data_format)
+
+        return result
+
