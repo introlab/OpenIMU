@@ -14,6 +14,7 @@ from libopenimu.models.units import Units
 from libopenimu.models.data_formats import DataFormat
 from libopenimu.db.DBManager import DBManager
 from libopenimu.importers.actigraph import gt3x_importer
+from libopenimu.tools.timing import datetime_from_dotnet_ticks as ticksconverter
 import numpy as np
 import datetime
 
@@ -74,8 +75,8 @@ class ActigraphDBTest(unittest.TestCase):
         start = int(info['Start Date'])
         stop = int(info['Last Sample Time'])
         print(start, stop)
-        start_timestamp = datetime.datetime.fromtimestamp(0)
-        end_timestamp = datetime.datetime.fromtimestamp(0)
+        start_timestamp = ticksconverter(start)
+        end_timestamp = ticksconverter(stop)
         print(start_timestamp, end_timestamp)
 
         recordset = self.add_recordset_to_db(info['Subject Name'], start_timestamp, end_timestamp)

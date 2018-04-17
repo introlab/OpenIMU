@@ -1,5 +1,5 @@
 import time
-
+import datetime
 
 def timing(f):
     def wrap(*args):
@@ -11,3 +11,5 @@ def timing(f):
     return wrap
 
 
+def datetime_from_dotnet_ticks(ticks):
+    return datetime.datetime(1, 1, 1) + datetime.timedelta(microseconds=ticks/10)
