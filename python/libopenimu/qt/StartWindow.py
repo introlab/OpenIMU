@@ -32,9 +32,12 @@ class StartWindow(QDialog):
 
     @pyqtSlot()
     def open_clicked(self):
-        if self.isVisible():
-            #TODO
-            self.accept()
+        file_diag = QFileDialog.getOpenFileName(caption="Nom du fichier à ouvrir", filter="*.oi")
+
+        if file_diag[0] != '':
+            self.fileName = file_diag[0]
+            if self.isVisible():
+                self.accept()
 
     @pyqtSlot()
     def new_clicked(self):

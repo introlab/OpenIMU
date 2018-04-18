@@ -230,3 +230,7 @@ class DBManager:
             message = 'Error setting dataset infos' + ': ' + str(e)
             print('Error: ', message)
             raise
+
+    def get_dataset(self):
+        query = self.session.query(DataSet)
+        return query.first()

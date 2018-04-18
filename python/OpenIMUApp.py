@@ -24,6 +24,7 @@ from libopenimu.qt.StartWindow import StartWindow
 # Models
 from libopenimu.models.Group import Group
 from libopenimu.models.Participant import Participant
+from libopenimu.models.DataSet import DataSet
 
 # Database
 from libopenimu.db.DBManager import DBManager
@@ -39,6 +40,7 @@ class MainWindow(QMainWindow):
 
     currentFileName = ''
     dbMan = []
+    currentDataSet = DataSet()
 
     def __init__(self, parent=None):
         super(QMainWindow,self).__init__(parent=parent)
@@ -62,10 +64,12 @@ class MainWindow(QMainWindow):
         self.showMaximized()
 
         # Load data
+        self.currentDataSet = self.dbMan.get_dataset()
         self.loadDemoData()
 
     def setupSignals(self):
         self.UI.treeDataSet.itemClicked.connect(self.tree_item_clicked)
+        self.UI.btnDataSetInfos.clicked.connect(self.infosRequested)
 
 
     def loadDemoData(self):
@@ -232,10 +236,20 @@ class MainWindow(QMainWindow):
         item.setData(1, Qt.UserRole, 'result')
         item.setFont(0, QFont('Helvetica', 12))
         return item
-
+######################
     @pyqtSlot(QUrl)
     def urlChanged(self,url):
         print('url: ', url)
+
+    @pyqtSlot()
+    def infosRequested(self):
+        infosWindow = ImportWindow(self.currentDataSet)
+        infosWindow.noImportUI = True
+        infosWindow.infosOnly = True
+
+        if infosWindow.exec() != QDialog.Rejected:
+            #TODO: Save data
+            self.currentDataSet.name = infosWindow.dataSet.name
 
     @pyqtSlot(QTreeWidgetItem, int)
     def tree_item_clicked(self, item, column):

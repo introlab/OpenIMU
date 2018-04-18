@@ -5,20 +5,28 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QPushButton, QPlainTextEdit, QFileDialog
 
 from libopenimu.db.DBManager import DBManager
+from libopenimu.models.DataSet import DataSet
 
 import datetime
 
 class ImportWindow(QDialog):
 
     noImportUI = False
+    infosOnly = False
     participants = []
     groups = []
     fileName = ''
 
-    def __init__(self, parent=None):
+    dataSet = DataSet()
+
+    def __init__(self, dataset=None, parent=None):
         super(QDialog, self).__init__(parent=parent)
         self.UI = Ui_ImportDialog()
         self.UI.setupUi(self)
+
+        # Manage data if present
+        self.dataSet = dataset
+        self.update_data()
 
         # Signals / Slots connections
         self.UI.btnCancel.clicked.connect(self.cancel_clicked)
@@ -30,6 +38,11 @@ class ImportWindow(QDialog):
 
     def exec(self):
         self.UI.frameImport.setVisible(not self.noImportUI)
+        #self.UI.splitter.setVisible(not self.noImportUI)
+
+        self.UI.btnBrowse.setVisible(not self.infosOnly)
+        self.UI.txtFileName.setVisible(not self.infosOnly)
+        self.UI.lblFile.setVisible(not self.infosOnly)
 
         return QDialog.exec(self)
 
@@ -55,6 +68,13 @@ class ImportWindow(QDialog):
 
         return rval
 
+    def update_data(self):
+        if self.dataSet is not None:
+            self.UI.txtAuthor.setText(self.dataSet.author)
+            self.UI.txtDesc.setPlainText(self.dataSet.description)
+            self.UI.txtName.setText(self.dataSet.name)
+            self.UI.calendarUploadDate.selectedDate = self.dataSet.upload_date
+
     @pyqtSlot()
     def browse_clicked(self):
         file_diag = QFileDialog.getSaveFileName(caption="Nom du fichier à enregistrer",filter=".oi")
@@ -69,13 +89,21 @@ class ImportWindow(QDialog):
         # Create and save file
         db = DBManager(filename=self.UI.txtFileName.text())
 
-        db.set_dataset_infos(name = self.UI.txtName.text(),
-                             desc = self.UI.txtDesc.toPlainText(),
-                             author = self.UI.txtAuthor.text(),
-                             creation_date=datetime.datetime.now(),
-                             upload_date=self.UI.calendarUploadDate.selectedDate().toPyDate())
+        self.dataSet.name = self.UI.txtName.text()
+        self.dataSet.description = self.UI.txtDesc.toPlainText(),
+        self.dataSet.author = self.UI.txtAuthor.text(),
+        self.dataSet.creation_date = datetime.datetime.now(),
+        self.dataSet.upload_date = self.UI.calendarUploadDate.selectedDate()
+
+        db.set_dataset_infos(name = self.dataSet.name,
+                             desc = self.dataSet.description,
+                             author = self.dataSet.author,
+                             creation_date=self.dataSet.creation_date,
+                             upload_date=self.dataSet.upload_date)
 
         self.fileName = self.UI.txtFileName.text()
+
+
 
         if self.validate():
             self.accept()
