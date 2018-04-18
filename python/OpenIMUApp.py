@@ -24,6 +24,9 @@ from libopenimu.qt.ResultWindow import ResultWindow
 from libopenimu.models.Group import Group
 from libopenimu.models.Participant import Participant
 
+# Database
+from libopenimu.db.DBManager import DBManager
+
 # This is auto-generated from Qt .qrc files
 
 import sys
@@ -49,7 +52,7 @@ class MainWindow(QMainWindow):
         startdialog.btnOpen.clicked.connect(self.open_clicked)
         startdialog.btnNew.clicked.connect(self.new_clicked)
         startdialog.btnQuit.clicked.connect(self.quit_clicked)
-
+        
         if (self.startWindow.exec()==QDialog.Rejected):
             # User closed the dialog - exits!
             exit(0)

@@ -26,6 +26,7 @@ from libopenimu.models.Participant import Participant
 from libopenimu.models.Recordset import Recordset
 from libopenimu.models.Channel import Channel
 from libopenimu.models.SensorData import SensorData
+from libopenimu.models.DataSet import DataSet
 
 """
 TODO This might be optimized?
@@ -215,3 +216,17 @@ class DBManager:
 
         return result
 
+    def set_dataset_infos(self, name, desc, creation_date, upload_date, author):
+
+        try:
+            self.session.query(DataSet).delete()
+            self.session.commit()
+            dataset = DataSet(name=name, description=desc, creation_date=creation_date, upload_date=upload_date, author=author)
+            self.session.add(dataset)
+            self.commit()
+            return dataset
+
+        except Exception as e:
+            message = 'Error setting dataset infos' + ': ' + str(e)
+            print('Error: ', message)
+            raise
