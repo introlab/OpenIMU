@@ -2,8 +2,11 @@ from libopenimu.qt.ImportManager import ImportManager
 from resources.ui.python.ImportDialog_ui import Ui_ImportDialog
 
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QPushButton, QPlainTextEdit, QFileDialog
 
+from libopenimu.db.DBManager import DBManager
+
+import datetime
 
 class ImportWindow(QDialog):
 
@@ -21,6 +24,8 @@ class ImportWindow(QDialog):
         self.UI.btnOK.clicked.connect(self.ok_clicked)
         self.UI.btnAddFile.clicked.connect(self.addFile_clicked)
         self.UI.btnDelFile.clicked.connect(self.removeFile_clicked)
+        self.UI.btnBrowse.clicked.connect(self.browse_clicked)
+
 
     def exec(self):
         self.UI.frameImport.setVisible(not self.noImportUI)
@@ -29,13 +34,19 @@ class ImportWindow(QDialog):
 
     def validate(self):
         rval = True
-        if (self.UI.txtName.text()==''):
+        if self.UI.txtFileName.text() == '' or self.UI.txtFileName.text()[-3:] != '.oi':
+            self.UI.txtFileName.setStyleSheet('background-color: #ffcccc;')
+            rval = False
+        else:
+            self.UI.txtFileName.setStyleSheet('background-color: white;')
+
+        if self.UI.txtName.text() == '':
             self.UI.txtName.setStyleSheet('background-color: #ffcccc;')
             rval = False
         else:
             self.UI.txtName.setStyleSheet('background-color: white;')
 
-        if (self.UI.txtAuthor.text()==''):
+        if self.UI.txtAuthor.text() == '':
             self.UI.txtAuthor.setStyleSheet('background-color: #ffcccc;')
             rval = False
         else:
@@ -44,7 +55,25 @@ class ImportWindow(QDialog):
         return rval
 
     @pyqtSlot()
+    def browse_clicked(self):
+        file_diag = QFileDialog.getSaveFileName(caption="Nom du fichier à enregistrer",filter=".oi")
+
+        if file_diag[0] != '':
+            self.UI.txtFileName.setText(file_diag[0])
+            if file_diag[0][-len(file_diag[1]):] != file_diag[1]:
+                self.UI.txtFileName.setText(self.UI.txtFileName.text() + file_diag[1])
+
+    @pyqtSlot()
     def ok_clicked(self):
+        # Create and save new file
+        db = DBManager(filename=self.UI.txtFileName.text())
+
+        db.set_dataset_infos(name = self.UI.txtName.text(),
+                             desc = self.UI.txtDesc.toPlainText(),
+                             author = self.UI.txtAuthor.text(),
+                             creation_date=datetime.datetime.now(),
+                             upload_date=self.UI.calendarUploadDate.selectedDate().toPyDate())
+
         if self.validate():
             self.accept()
 
