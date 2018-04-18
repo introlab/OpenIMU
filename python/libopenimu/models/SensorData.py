@@ -50,8 +50,8 @@ class SensorData(Base):
 
         time = np.linspace(self.data_timestamp.timestamp(),
                            num=len(values),
-                           stop=self.data_timestamp.timestamp() + 1,
-                           dtype=np.float32, endpoint=False)
+                           stop=self.data_timestamp.timestamp() + len(values) / self.sensor.sampling_rate,
+                           dtype=np.float64, endpoint=False)
 
         return {'time': time, 'values': values}
 

@@ -162,8 +162,9 @@ class ActigraphDBTest1(unittest.TestCase):
                     # print(index, timestamp, len(value_dict[timestamp][index]))
                     vector = np.concatenate(value_dict[timestamp][index])
                     # print('vector: ', len(vector), vector.shape, vector.dtype)
-                    self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[index],
-                                               datetime.datetime.fromtimestamp(timestamp), vector)
+                    if len(vector) > 0:
+                        self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[index],
+                                                   datetime.datetime.fromtimestamp(timestamp), vector)
 
             # Flush DB
             self.flush()
@@ -249,8 +250,9 @@ class ActigraphDBTest2(unittest.TestCase):
         recordsets = self.db.get_all_recordsets()
 
         for record in recordsets:
-            all_data = self.db.get_all_sensor_data(record, convert=False)
-            accelerometer_x = []
+            all_data = self.db.get_all_sensor_data(record, convert=True)
+
             for data in all_data:
-                print(data.to_time_series())
+                for time in data.to_time_series()['time']:
+                    print('time', time)
                 break
