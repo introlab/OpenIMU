@@ -13,6 +13,7 @@ class ImportWindow(QDialog):
     noImportUI = False
     participants = []
     groups = []
+    fileName = ''
 
     def __init__(self, parent=None):
         super(QDialog, self).__init__(parent=parent)
@@ -65,7 +66,7 @@ class ImportWindow(QDialog):
 
     @pyqtSlot()
     def ok_clicked(self):
-        # Create and save new file
+        # Create and save file
         db = DBManager(filename=self.UI.txtFileName.text())
 
         db.set_dataset_infos(name = self.UI.txtName.text(),
@@ -73,6 +74,8 @@ class ImportWindow(QDialog):
                              author = self.UI.txtAuthor.text(),
                              creation_date=datetime.datetime.now(),
                              upload_date=self.UI.calendarUploadDate.selectedDate().toPyDate())
+
+        self.fileName = self.UI.txtFileName.text()
 
         if self.validate():
             self.accept()

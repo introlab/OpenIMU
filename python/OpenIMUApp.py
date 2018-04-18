@@ -19,6 +19,7 @@ from libopenimu.qt.GroupWindow import GroupWindow
 from libopenimu.qt.ParticipantWindow import ParticipantWindow
 from libopenimu.qt.RecordsetWindow import RecordsetWindow
 from libopenimu.qt.ResultWindow import ResultWindow
+from libopenimu.qt.StartWindow import StartWindow
 
 # Models
 from libopenimu.models.Group import Group
@@ -36,82 +37,31 @@ import libopenimu
 
 class MainWindow(QMainWindow):
 
-
+    currentFileName = ''
+    dbMan = []
 
     def __init__(self, parent=None):
         super(QMainWindow,self).__init__(parent=parent)
         self.UI = Ui_MainWindow()
         self.UI.setupUi(self)
 
-        self.startWindow = QDialog()
-        startdialog = Ui_StartDialog()
-        startdialog.setupUi(self.startWindow)
+        startWindow = StartWindow()
 
-        #Signals/Slots setup
-        startdialog.btnImport.clicked.connect(self.import_clicked)
-        startdialog.btnOpen.clicked.connect(self.open_clicked)
-        startdialog.btnNew.clicked.connect(self.new_clicked)
-        startdialog.btnQuit.clicked.connect(self.quit_clicked)
-        
-        if (self.startWindow.exec()==QDialog.Rejected):
+        if (startWindow.exec()==QDialog.Rejected):
             # User closed the dialog - exits!
             exit(0)
 
+        # Init database manager
+        self.currentFileName = startWindow.fileName
+        self.dbMan = DBManager(self.currentFileName)
 
-
-
-        """
-        # Create chart and mdiWindow
-        self.chartView = self.create_chart_view(test_data=False)
-        self.add_mdi_widget(widget=self.chartView, title='QtChart')
-
-        # Create WebEngineView
-        self.jupyter = Jupyter.JupyterNotebook()
-        self.jupyter.start()
-        self.webView = QWebEngineView(self)
-        self.webView.setUrl(QUrl('http://localhost:8888/notebooks/Notebook.ipynb'))
-        # self.webView.setUrl(QUrl('http://google.ca/'))
-        self.add_mdi_widget(widget=self.webView, title='WebEngineView')
-        # Signals
-        self.webView.urlChanged.connect(self.urlChanged)
-
-        # QML engine and widget
-        self.quickWidget = QQuickWidget(self)
-        self.quickWidget.setMinimumSize(400,200)
-        self.quickWidget.setSource(QUrl.fromLocalFile("resources/test.qml"))
-        self.add_mdi_widget(widget=self.quickWidget,title='QML widget')
-
-        # Re-arrange subwindows
-        self.UI.mdiArea.tileSubWindows()
-
-        # Load test data
-        self.rawData =  importer.load_mat_file('resources/test_data.mat')['data2']
-        self.rawData[:, 0] = self.rawData[:, 0] * 24 * 60 * 60
-        self.intData = algo.resample_data(self.rawData, 100)
-
-        # Add to plot (accelerometer x)
-        self.chartView.add_data(self.intData[:, 0], self.intData[:, 1], Qt.red, 'Accelerometer_X')
-        self.chartView.add_data(self.intData[:, 0], self.intData[:, 2], Qt.green, 'Accelerometer_Y')
-        self.chartView.add_data(self.intData[:, 0], self.intData[:, 3], Qt.blue, 'Accelerometer_Z')
-        self.chartView.set_title( ("Accelerometer data with %d points " \
-         "(OpenGL Accelerated Series)" \
-         % (len(self.intData))))
-
-        # Add counts
-        self.epoch_secs = 60
-        self.sample_rate = 100
-        [nb_epochs, counts] = algo.freedson_adult_1998(self.rawData,self.epoch_secs, self.sample_rate)
-        self.chartView2 = self.create_chart_view(test_data=False)
-        self.add_mdi_widget(widget=self.chartView2, title='QtChart')
-        self.chartView2.add_data(np.array(range(0, int(nb_epochs))), counts, Qt.blue, 'Counts')
-        self.chartView2.set_title(("Counts with epoch size %d secs" % self.epoch_secs))
-        """
-
+        # Setup signals and slots
         self.setupSignals()
 
         # Maximize window
         self.showMaximized()
 
+        # Load data
         self.loadDemoData()
 
     def setupSignals(self):
@@ -286,33 +236,6 @@ class MainWindow(QMainWindow):
     @pyqtSlot(QUrl)
     def urlChanged(self,url):
         print('url: ', url)
-
-    @pyqtSlot()
-    def import_clicked(self):
-        importdialog = ImportWindow()
-
-        if (importdialog.exec() == QDialog.Accepted):
-            if (self.startWindow.isVisible()):
-                self.startWindow.accept()
-
-
-    @pyqtSlot()
-    def open_clicked(self):
-            if (self.startWindow.isVisible()):
-                self.startWindow.accept()
-
-    @pyqtSlot()
-    def new_clicked(self):
-        importdialog = ImportWindow()
-        importdialog.noImportUI = True
-
-        if (importdialog.exec() == QDialog.Accepted):
-            if (self.startWindow.isVisible()):
-                self.startWindow.accept()
-
-    @pyqtSlot()
-    def quit_clicked(self):
-        exit(0)
 
     @pyqtSlot(QTreeWidgetItem, int)
     def tree_item_clicked(self, item, column):
