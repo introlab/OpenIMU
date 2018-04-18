@@ -57,8 +57,8 @@ class ActigraphDBTest1(unittest.TestCase):
         return channel
 
     def add_sensor_data_to_db(self, recordset, sensor, channel, timestamp, data):
-        self.db.add_sensor_data(recordset, sensor, channel, timestamp, data)
-        # return data
+        sensor_data = self.db.add_sensor_data(recordset, sensor, channel, timestamp, data)
+        return sensor_data
 
     @timing
     def commit(self):

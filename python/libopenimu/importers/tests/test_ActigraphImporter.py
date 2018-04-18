@@ -26,11 +26,12 @@ class ActigraphImporterTest(unittest.TestCase):
         pass
 
     def test_loading(self):
-        importer = ActigraphImporter()
-        importer.load('../../../resources/samples/test.gt3x')
+        importer = ActigraphImporter('test.db')
+        result = importer.load('../../../resources/samples/test.gt3x')
+        importer.import_to_database(result)
 
     def test_async_loading(self):
-        importer = ActigraphImporter()
+        importer = ActigraphImporter('test.db')
 
         print('Starting threads...')
         # Start threads
