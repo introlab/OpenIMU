@@ -30,7 +30,7 @@ class DBManagerTest(unittest.TestCase):
 
     def tearDown(self):
         # Cleanup database
-        if False:
+        if True:
             if os.path.isfile(DBManagerTest.TESTDB_NAME):
                 print('Removing database : ', DBManagerTest.TESTDB_NAME)
                 os.remove(DBManagerTest.TESTDB_NAME)
@@ -204,6 +204,27 @@ class DBManagerTest(unittest.TestCase):
         channel = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_X')
         channel2 = manager.get_channel(channel.id_channel)
         self.assertEqual(channel, channel2)
+
+    def test_get_all_channels(self):
+        manager = DBManager(filename='openimu.db', overwrite=True)
+
+        # Create sensor in DB
+        sensor = manager.add_sensor(SensorType.ACCELEROMETER, 'Sensor Name', 'Hardware Name', 'Wrist', 30.0, 1)
+        channelx = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_X')
+        channely = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_Y')
+        channelz = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_Z')
+
+        # Get all channels (from all sensor)
+        channels = manager.get_all_channels()
+        self.assertEqual(len(channels), 3)
+
+        # Get all channels (from valid sensor)
+        channels = manager.get_all_channels(sensor=sensor)
+        self.assertEqual(len(channels), 3)
+
+        # Get all channels (from invalid sensor)
+        channels = manager.get_all_channels(sensor=Sensor())
+        self.assertEqual(len(channels), 0)
 
     def test_add_sensor_data(self):
         manager = DBManager(filename='openimu.db', overwrite=True)

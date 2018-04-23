@@ -37,7 +37,7 @@ Offering the same interface as DBManagerOld
 
 
 class DBManager:
-    def __init__(self, filename, overwrite=False, echo=True):
+    def __init__(self, filename, overwrite=False, echo=False):
         # Cleanup database
         if overwrite is True:
             if os.path.isfile(filename):
@@ -168,6 +168,19 @@ class DBManager:
     def get_channel(self, id_channel):
         query = self.session.query(Channel).filter(Channel.id_channel == id_channel)
         return query.first()
+
+    def get_all_channels(self, **kwargs):
+        sensor = kwargs.get('sensor', None)
+
+        # Get all channels
+        query = self.session.query(Channel)
+
+        if sensor is not None:
+            query = query.join(Sensor).filter(Sensor.id_sensor == sensor.id_sensor)
+
+        # Return all channels
+        return query.all()
+
 
     def add_sensor_data(self, recordset: Recordset, sensor: Sensor, channel: Channel, timestamp, data):
 
