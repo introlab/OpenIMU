@@ -49,6 +49,8 @@ class ActigraphImporter(BaseImporter):
         recordset = self.add_recordset_to_db(info['Subject Name'], start_timestamp, end_timestamp)
         print(recordset)
 
+        # all_counts = [0, 0, 0]
+
         if data.__contains__('activity'):
 
             print('activity found')
@@ -101,6 +103,7 @@ class ActigraphImporter(BaseImporter):
                 for index in range(0, len(accelerometer_channels)):
                     # Using last timestamp to append data
                     value_dict[all_timestamps[-1]][index].append(samples[:, index])
+                    # print("samples shape", samples.shape, samples[:, index].shape)
 
                 # Update timestamp
                 last_timestamp = current_timestamp
@@ -108,14 +111,21 @@ class ActigraphImporter(BaseImporter):
             # Insert into DB as chunks of data
             # print('should insert records count: ', len(all_timestamps))
             # print('should insert data count:', len(value_dict))
+            counters = [0, 0, 0]
+
             for timestamp in all_timestamps:
                 for index in range(0, len(value_dict[timestamp])):
                     # print(index, timestamp, len(value_dict[timestamp][index]))
                     vector = np.concatenate(value_dict[timestamp][index])
+                    # print('inserting values :', len(value_dict[timestamp][index]))
                     # print('vector: ', len(vector), vector.shape, vector.dtype)
+                    counters[index] += len(vector)
                     if len(vector) > 0:
                         self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[index],
                                                    datetime.datetime.fromtimestamp(timestamp), vector)
+
+            print('total samples inserted:', counters)
+            print('total timestamps processed:', len(all_timestamps))
 
             # Flush DB
             self.db.flush()

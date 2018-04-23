@@ -176,11 +176,10 @@ class DBManager:
         query = self.session.query(Channel)
 
         if sensor is not None:
-            query = query.join(Sensor).filter(Sensor.id_sensor == sensor.id_sensor)
+            query = query.filter(Channel.id_sensor == sensor.id_sensor)
 
         # Return all channels
         return query.all()
-
 
     def add_sensor_data(self, recordset: Recordset, sensor: Sensor, channel: Channel, timestamp, data):
 
@@ -225,11 +224,11 @@ class DBManager:
 
         if sensor is not None:
             # print('Should filter sensor id', sensor.id_sensor)
-            query = query.join(Sensor).filter(Sensor.id_sensor == sensor.id_sensor)
+            query = query.filter(SensorData.id_sensor == sensor.id_sensor)
 
         if channel is not None:
-            # print('Should filter channel')
-            query = query.join(Channel).filter(Channel.id_channel == channel.id_channel)
+            # print('Should filter channel', channel.id_channel)
+            query = query.filter(SensorData.id_channel == channel.id_channel)
 
         # print(query)
 
@@ -265,4 +264,5 @@ class DBManager:
         query = self.session.query(DataSet)
         return query.first()
 
-
+    def close(self):
+        self.session.close()

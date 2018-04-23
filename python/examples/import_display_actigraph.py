@@ -77,7 +77,8 @@ if __name__ == '__main__':
                     print('Found Channel', channel)
 
                     # Will get all data (converted to floats)
-                    channel_data = manager.get_all_sensor_data(recordset=record, convert=True, sensor=sensor, channel=channel)
+                    channel_data = manager.get_all_sensor_data(recordset=record, convert=True, sensor=sensor,
+                                                               channel=channel)
 
                     print('Channel data len', len(channel_data))
                     timeseries.append(create_data_timeseries(channel_data))

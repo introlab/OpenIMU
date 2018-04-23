@@ -59,3 +59,6 @@ class BaseImporter:
     def add_sensor_data_to_db(self, recordset, sensor, channel, timestamp, data):
         sensor_data = self.db.add_sensor_data(recordset, sensor, channel, timestamp, data)
         return sensor_data
+
+    def close(self):
+        self.db.close()

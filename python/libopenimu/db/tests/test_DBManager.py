@@ -265,29 +265,37 @@ class DBManagerTest(unittest.TestCase):
         manager.commit()
 
         # Test with no args, return everything in the recordset
-        sensordata_res = manager.get_all_sensor_data(recordset=recordset)
+        sensordata_res = manager.get_all_sensor_data(recordset=recordset, convert=True)
         self.assertEqual(len(sensordata_res), 2)
+        for sensor_data in sensordata_res:
+            self.assertEqual(len(sensor_data.data), len(data))
 
         # Test with a valid sensor arg
-        sensordata_res = manager.get_all_sensor_data(recordset=recordset, sensor=sensor)
+        sensordata_res = manager.get_all_sensor_data(recordset=recordset, convert=True, sensor=sensor)
         self.assertEqual(len(sensordata_res), 2)
+        for sensor_data in sensordata_res:
+            self.assertEqual(len(sensor_data.data), len(data))
 
         # Test with not the right sensor arg
-        sensordata_res = manager.get_all_sensor_data(recordset=recordset, sensor=sensor2)
+        sensordata_res = manager.get_all_sensor_data(recordset=recordset, convert=True, sensor=sensor2)
         self.assertEqual(len(sensordata_res), 0)
 
         # Testing with invalid sensor arg
-        sensordata_res = manager.get_all_sensor_data(recordset=recordset, sensor=Sensor())
+        sensordata_res = manager.get_all_sensor_data(recordset=recordset, convert=True, sensor=Sensor())
         self.assertEqual(len(sensordata_res), 0)
 
         # Testing with channel1
-        sensordata_res = manager.get_all_sensor_data(recordset=recordset, channel=channel1)
+        sensordata_res = manager.get_all_sensor_data(recordset=recordset, convert=True, channel=channel1)
         self.assertEqual(len(sensordata_res), 1)
+        for sensor_data in sensordata_res:
+            self.assertEqual(len(sensor_data.data), len(data))
 
         # Testing with channel2
-        sensordata_res = manager.get_all_sensor_data(recordset=recordset, channel=channel2)
+        sensordata_res = manager.get_all_sensor_data(recordset=recordset, convert=True, channel=channel2)
         self.assertEqual(len(sensordata_res), 1)
+        for sensor_data in sensordata_res:
+            self.assertEqual(len(sensor_data.data), len(data))
 
         # Testing with invalid channel
-        sensordata_res = manager.get_all_sensor_data(recordset=recordset, channel=Channel())
+        sensordata_res = manager.get_all_sensor_data(recordset=recordset, convert=True, channel=Channel())
         self.assertEqual(len(sensordata_res), 0)
