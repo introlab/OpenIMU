@@ -200,21 +200,38 @@ class DBManager:
 
         return my_sensor_data
 
-    def get_all_sensor_data(self, recordset: Recordset, convert=True):
+    def get_all_sensor_data(self, recordset: Recordset, **kwargs):
+
+        # Initialize from kwargs (and default values)
+        convert = kwargs.get('convert', False)
+        sensor = kwargs.get('sensor', None)
+        channel = kwargs.get('channel', None)
+
+        # Get all sensor data from recordset
         query = self.session.query(SensorData).filter(SensorData.id_recordset == recordset.id_recordset)
+
+        if sensor is not None:
+            # print('Should filter sensor id', sensor.id_sensor)
+            query = query.join(Sensor).filter(Sensor.id_sensor == sensor.id_sensor)
+
+        if channel is not None:
+            # print('Should filter channel')
+            query = query.join(Channel).filter(Channel.id_channel == channel.id_channel)
+
+        # print(query)
 
         if not convert:
             return query.all()
+        else:
+            # Read result, data will be bytes array
+            result = query.all()
 
-        # Read result, data will be bytes array
-        result = query.all()
+            # Convert to the right format
+            for sensor_data in result:
+                # print('data len:', len(sensor_data.data))
+                sensor_data.data = DataFormat.from_bytes(sensor_data.data, sensor_data.channel.id_data_format)
 
-        # Convert to the right format
-        for sensor_data in result:
-            # print('data len:', len(sensor_data.data))
-            sensor_data.data = DataFormat.from_bytes(sensor_data.data, sensor_data.channel.id_data_format)
-
-        return result
+            return result
 
     def set_dataset_infos(self, name, desc, creation_date, upload_date, author):
 
@@ -234,3 +251,5 @@ class DBManager:
     def get_dataset(self):
         query = self.session.query(DataSet)
         return query.first()
+
+

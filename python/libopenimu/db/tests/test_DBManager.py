@@ -13,6 +13,9 @@ from libopenimu.db.DBManager import DBManager
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.units import Units
 from libopenimu.models.data_formats import DataFormat
+from libopenimu.models.Sensor import Sensor
+from libopenimu.models.Channel import Channel
+
 import numpy as np
 import datetime
 
@@ -27,9 +30,10 @@ class DBManagerTest(unittest.TestCase):
 
     def tearDown(self):
         # Cleanup database
-        if os.path.isfile(DBManagerTest.TESTDB_NAME):
-            print('Removing database : ', DBManagerTest.TESTDB_NAME)
-            os.remove(DBManagerTest.TESTDB_NAME)
+        if False:
+            if os.path.isfile(DBManagerTest.TESTDB_NAME):
+                print('Removing database : ', DBManagerTest.TESTDB_NAME)
+                os.remove(DBManagerTest.TESTDB_NAME)
 
     def test_add_group(self):
         manager = DBManager(filename=DBManagerTest.TESTDB_NAME, overwrite=True)
@@ -219,3 +223,50 @@ class DBManagerTest(unittest.TestCase):
 
         sensordata2 = manager.get_sensor_data(sensordata.id_sensor_data)
         self.assertEqual(sensordata, sensordata2)
+
+    def test_get_all_sensor_data_with_args(self):
+        manager = DBManager(filename='openimu.db', overwrite=True, echo=False)
+
+        # Create sensor in DB
+        group = manager.add_group('Group Name', 'Group Description')
+        participant = manager.add_participant(group, 'Participant Name', 'Participant Description')
+        sensor = manager.add_sensor(SensorType.ACCELEROMETER, 'Sensor Name', 'Hardware Name', 'Wrist', 30.0, 1)
+        sensor2 = manager.add_sensor(SensorType.GYROMETER, 'Sensor Name', 'Hardware Name', 'Wrist', 30.0, 1)
+        channel1 = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_X')
+        channel2 = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_Y')
+        time1 = datetime.datetime.now()
+        time2 = datetime.datetime.now()
+        recordset = manager.add_recordset(participant, 'My Record', time1, time2)
+
+        data = np.zeros(40, dtype=np.float32)
+        sensordata = manager.add_sensor_data(recordset, sensor, channel1, time1, data)
+        sensordata = manager.add_sensor_data(recordset, sensor, channel2, time1, data)
+        manager.commit()
+
+        # Test with no args, return everything in the recordset
+        sensordata_res = manager.get_all_sensor_data(recordset=recordset)
+        self.assertEqual(len(sensordata_res), 2)
+
+        # Test with a valid sensor arg
+        sensordata_res = manager.get_all_sensor_data(recordset=recordset, sensor=sensor)
+        self.assertEqual(len(sensordata_res), 2)
+
+        # Test with not the right sensor arg
+        sensordata_res = manager.get_all_sensor_data(recordset=recordset, sensor=sensor2)
+        self.assertEqual(len(sensordata_res), 0)
+
+        # Testing with invalid sensor arg
+        sensordata_res = manager.get_all_sensor_data(recordset=recordset, sensor=Sensor())
+        self.assertEqual(len(sensordata_res), 0)
+
+        # Testing with channel1
+        sensordata_res = manager.get_all_sensor_data(recordset=recordset, channel=channel1)
+        self.assertEqual(len(sensordata_res), 1)
+
+        # Testing with channel2
+        sensordata_res = manager.get_all_sensor_data(recordset=recordset, channel=channel2)
+        self.assertEqual(len(sensordata_res), 1)
+
+        # Testing with invalid channel
+        sensordata_res = manager.get_all_sensor_data(recordset=recordset, channel=Channel())
+        self.assertEqual(len(sensordata_res), 0)
