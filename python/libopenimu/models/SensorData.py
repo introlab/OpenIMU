@@ -46,14 +46,19 @@ class SensorData(Base):
             return self.data
 
     def to_time_series(self):
-        values = self.to_ndarray()
+        if self.sensor.sampling_rate > 0:
+            values = self.to_ndarray()
 
-        time = np.linspace(self.data_timestamp.timestamp(),
-                           num=len(values),
-                           stop=self.data_timestamp.timestamp() + len(values) / self.sensor.sampling_rate,
-                           dtype=np.float64, endpoint=False)
+            time = np.linspace(self.data_timestamp.timestamp(),
+                               num=len(values),
+                               stop=self.data_timestamp.timestamp() + len(values) / self.sensor.sampling_rate,
+                               dtype=np.float64, endpoint=False)
 
-        return {'time': time, 'values': values}
+            return {'time': time, 'values': values}
+        else:
+            values = self.to_ndarray()
+            assert(len(values) == 1)
+            return {'time': [self.data_timestamp.timestamp()], 'values': values}
 
     # Database rep (optional)
     def __repr__(self):

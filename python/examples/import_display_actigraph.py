@@ -51,7 +51,9 @@ if __name__ == '__main__':
     from PyQt5.QtCore import Qt
     app = QApplication(sys.argv)
 
-    timeseries  = []
+    timeseries_acc = []
+    timeseries_batt = []
+    timeseries_lux = []
 
     if not os.path.isfile('actigraph.db'):
         print('importing actigraph data')
@@ -74,30 +76,74 @@ if __name__ == '__main__':
                 print('Found Accelerometer')
                 channels = manager.get_all_channels(sensor=sensor)
                 for channel in channels:
-                    print('Found Channel', channel)
+                    print('Found Channel (acc)', channel)
 
                     # Will get all data (converted to floats)
                     channel_data = manager.get_all_sensor_data(recordset=record, convert=True, sensor=sensor,
                                                                channel=channel)
 
                     print('Channel data len', len(channel_data))
-                    timeseries.append(create_data_timeseries(channel_data))
-                    timeseries[-1]['label'] = channel.label
+                    timeseries_acc.append(create_data_timeseries(channel_data))
+                    timeseries_acc[-1]['label'] = channel.label
+            if sensor.id_sensor_type == SensorType.BATTERY:
+                print('Found Battery')
+                channels = manager.get_all_channels(sensor=sensor)
+                for channel in channels:
+                    print('Found Channel (batt)', channel)
+                    channel_data = manager.get_all_sensor_data(recordset=record, convert=True, sensor=sensor,
+                                                               channel=channel)
+                    timeseries_batt.append(create_data_timeseries(channel_data))
+                    timeseries_batt[-1]['label'] = channel.label
+
+            if sensor.id_sensor_type == SensorType.LUX:
+                print('Found Lux')
+                channels = manager.get_all_channels(sensor=sensor)
+                for channel in channels:
+                    print('Found Channel (lux)', channel)
+                    channel_data = manager.get_all_sensor_data(recordset=record, convert=True, sensor=sensor,
+                                                               channel=channel)
+                    timeseries_lux.append(create_data_timeseries(channel_data))
+                    timeseries_lux[-1]['label'] = channel.label
 
     # Create widgets
-    window = QMainWindow()
-    view = IMUChartView(window)
-    window.setCentralWidget(view)
-    window.setWindowTitle("IMUChartView Demo")
-    window.resize(640, 480)
 
+    # Accelerometers
+    def create_window(label=''):
+        window = QMainWindow()
+        view = IMUChartView(window)
+        window.setCentralWidget(view)
+        window.setWindowTitle(label)
+        window.resize(640, 480)
+        return [window, view]
+
+    [window_acc, view_acc] = create_window('IMUChartView Demo (Accelerometers)')
+
+    # All colors needed for 5 series
     colors = [Qt.red, Qt.green, Qt.darkBlue]
 
     # Add series
-    for series in timeseries:
-        view.add_data(series['x'], series['y'], color=colors.pop(), legend_text=series['label'])
+    for series in timeseries_acc:
+        view_acc.add_data(series['x'], series['y'], color=colors.pop(), legend_text=series['label'])
 
-    window.show()
+    window_acc.show()
+
+    # Battery
+    [window_batt, view_batt] = create_window('IMUChartView Demo (Battery)')
+
+    # Add series
+    for series in timeseries_batt:
+        view_batt.add_data(series['x'], series['y'], color=Qt.darkGreen, legend_text=series['label'])
+
+    window_batt.show()
+
+    # Lux
+    [window_lux, view_lux] = create_window('IMUChartView Demo (Lux)')
+
+    # Add series
+    for series in timeseries_lux:
+        view_lux.add_data(series['x'], series['y'], color=Qt.darkCyan, legend_text=series['label'])
+
+    window_lux.show()
 
     # Exec application
     sys.exit(app.exec_())
