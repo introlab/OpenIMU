@@ -71,6 +71,10 @@ class CutPoints:
         # The base frequency for cut points
         return 10.0
 
+    @staticmethod
+    def dict():
+        return CutPoints.values
+
 
 def filter_data(data, fs, lowcut, highcut, order=5):
 
