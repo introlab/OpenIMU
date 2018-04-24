@@ -42,8 +42,8 @@ def resample_data(data, rate):
 def svm(data):
     # create result array
     mag = np.array((data[:, 0], np.sqrt(data[:, 1]**2 + data[:, 2]**2 + data[:, 3]**2))).transpose()
-    print('mag : ',mag)
-    print('mag shape ',mag.shape)
+    print('mag : ', mag)
+    print('mag shape ', mag.shape)
     return mag
 
 """
