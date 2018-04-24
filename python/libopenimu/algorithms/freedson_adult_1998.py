@@ -38,6 +38,7 @@ epoch = 60 seconds
 
 from libopenimu.models.SensorData import SensorData
 import numpy as np
+from scipy.signal import butter, sosfilt, sosfreqz
 
 
 class CutPoints:
@@ -70,8 +71,18 @@ class CutPoints:
         return 10.0
 
 
-def filter_data(data, in_sampling_rate, out_samping_rate):
-    pass
+def filter_data(data, fs, lowcut, highcut, order=5):
+
+    # Create bandpass filter
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    high = highcut / nyq
+    sos = butter(order, [low, high], btype='band', output='sos')
+
+    # Process data
+    sosfilt(sos, data)
+
+    return sosfilt(sos, data)
 
 
 def generate_60s_epoch(timeseries, sampling_rate):
@@ -116,8 +127,8 @@ def freedson_adult_1998(samples: list, sampling_rate):
         # Get time series
         timeseries = sensor_data.to_time_series()
 
-        # TODO
-        # Filter data bandpass (0.25-2.5 Hz)
+        # Filter data bandpass (0.25-2.5 Hz), order = 4
+        timeseries['values'] = filter_data(timeseries['values'], fs=sampling_rate, lowcut=0.25, highcut=2.5, order=4)
 
         # Separate into 60 secs epochs
         nb_samples = np.int32(60 * sampling_rate)
@@ -138,10 +149,10 @@ def freedson_adult_1998(samples: list, sampling_rate):
 
             # Convert and scale to compare to reference cutpoints
             # Factor 128 is calculated since 2g = 256 (max 8 bit values)
-            sum = int(128.0 * np.sum(np.abs(epoch[1])) * complete_factor / scale)
+            sum = int(128.0 * np.sum(np.abs(epoch[1])) * complete_factor)
 
             # Classify
-            results[CutPoints.classify(sum)] += 1
+            results[CutPoints.classify(sum, scale)] += 1
 
     print('results', results)
     return results
