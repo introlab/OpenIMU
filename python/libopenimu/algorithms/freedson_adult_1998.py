@@ -77,7 +77,7 @@ def filter_data(data, fs, lowcut, highcut, order=5):
     nyq = 0.5 * fs
     low = lowcut / nyq
     high = highcut / nyq
-    sos = butter(order, [low, high], btype='band', output='sos')
+    sos = butter(order, [low, high], btype='band', analog=False, output='sos')
 
     # Process data
     sosfilt(sos, data)
