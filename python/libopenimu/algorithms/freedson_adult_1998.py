@@ -36,23 +36,25 @@ epoch = 60 seconds
 
 """
 
-import sys
+from libopenimu.models.SensorData import SensorData
+import numpy as np
 
 
 class CutPoints:
-    # Cut points
+    # Cut points according to original paper
 
     SEDENTARY = 'Sedentary'
     LIGHT = 'Light'
     MODERATE = 'Moderate'
     VIGOROUS = 'Vigorous'
     VERY_VIGOROUS = 'Very Vigorous'
+    UNKNOWN = 'Unknown'
 
     values = {SEDENTARY: [0, 99],
               LIGHT: [100, 1951],
               MODERATE: [1952, 5724],
               VIGOROUS: [5725, 9498],
-              VERY_VIGOROUS: [9499, sys.maxsize]}
+              VERY_VIGOROUS: [9499, np.iinfo(np.int64).max]}
 
     @staticmethod
     def classify(value, scale=1.0):
@@ -60,7 +62,7 @@ class CutPoints:
             if CutPoints.values[keys][0] * scale <= value <= CutPoints.values[keys][1] * scale:
                 return keys
         # Not found
-        return 'Unknown'
+        return CutPoints.UNKNOWN
 
     @staticmethod
     def base_frequency():
@@ -68,13 +70,124 @@ class CutPoints:
         return 10.0
 
 
-def resample_data(data, in_sampling_rate, out_samping_rate):
+def filter_data(data, in_sampling_rate, out_samping_rate):
     pass
 
 
-def freedson_adult_1998(timeseries, sampling_rate):
-    pass
+def generate_60s_epoch(timeseries, sampling_rate):
+    # Number of samples in an epoch
+    nb_samples = np.int32(60 * sampling_rate)
+
+    # A list of 60 seconds epochs @ sampling_rate
+    epochs = [[list(), list()]]
+
+    # print('epoch size : ', nb_samples)
+    # print('timeseries size : ', len(timeseries['values']))
+
+    time = timeseries['time']
+    values = timeseries['values']
+
+    for i in range(0, len(time)):
+        if len(epochs[-1][0]) >= nb_samples:
+            epochs.append([list(), list()])
+
+        # Insert values
+        epochs[-1][0].append(np.double(time[i]))
+        epochs[-1][1].append(np.float32(values[i]))
+
+    # print('found epochs: ', len(epochs))
+
+    return epochs
 
 
+def freedson_adult_1998(samples: list, sampling_rate):
 
+    scale = sampling_rate / CutPoints.base_frequency()
+    print("Scaling: ", scale)
+
+    results = {CutPoints.SEDENTARY: 0,
+               CutPoints.LIGHT: 0,
+               CutPoints.MODERATE: 0,
+               CutPoints.VIGOROUS: 0,
+               CutPoints.VERY_VIGOROUS: 0,
+               CutPoints.UNKNOWN: 0}
+
+    for sensor_data in samples:
+        # Get time series
+        timeseries = sensor_data.to_time_series()
+
+        # TODO
+        # Filter data bandpass (0.25-2.5 Hz)
+
+        # Separate into 60 secs epochs
+        nb_samples = np.int32(60 * sampling_rate)
+        epochs = generate_60s_epoch(timeseries, sampling_rate)
+
+        for epoch in epochs:
+            # print('len epoch 0,1', len(epoch[0]), len(epoch[1]))
+            assert(len(epoch[0]) == len(epoch[1]))
+
+            # Do not process empty epochs
+            if len(epoch[0]) == 0:
+                continue
+
+            # Calculate if we have a fraction of an epoch
+            complete_factor = nb_samples / len(epoch[1])
+
+            # print('complete_factor: ', complete_factor)
+
+            # Convert and scale to compare to reference cutpoints
+            # Factor 128 is calculated since 2g = 256 (max 8 bit values)
+            sum = int(128.0 * np.sum(np.abs(epoch[1])) * complete_factor / scale)
+
+            # Classify
+            results[CutPoints.classify(sum)] += 1
+
+    print('results', results)
+    return results
+
+
+if __name__ == '__main__':
+    from libopenimu.importers.ActigraphImporter import ActigraphImporter
+    from libopenimu.models.sensor_types import SensorType
+    from libopenimu.db.DBManager import DBManager
+
+    import os
+
+
+    db_filename = 'freedson.db'
+
+    def import_data():
+        # This will create the database (or overwrite it)s
+        importer = ActigraphImporter(db_filename)
+        # Load content of the file to the database
+        results = importer.load('../../resources/samples/test.gt3x')
+        importer.import_to_database(results)
+
+    if not os.path.isfile(db_filename):
+        print('importing actigraph data')
+        import_data()
+
+    manager = DBManager(db_filename)
+
+    # Get recordsets
+    recordsets = manager.get_all_recordsets()
+
+    for record in recordsets:
+        # Get all sensors in record
+        sensors = manager.get_all_sensors()
+        for sensor in sensors:
+            if sensor.id_sensor_type == SensorType.ACCELEROMETER:
+                print('Found Accelerometer')
+                channels = manager.get_all_channels(sensor=sensor)
+                for channel in channels:
+
+                    if channel.label == 'Accelerometer_Y':
+                        print('Processing Channel :', channel)
+                        # Will get all data (converted to floats)
+                        channel_data = manager.get_all_sensor_data(recordset=record, convert=True, sensor=sensor,
+                                                                   channel=channel)
+
+                        # Process all sensor data
+                        results = freedson_adult_1998(channel_data, sensor.sampling_rate)
 
