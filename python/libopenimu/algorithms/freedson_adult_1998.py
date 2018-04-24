@@ -72,8 +72,13 @@ class CutPoints:
         return 10.0
 
     @staticmethod
-    def dict():
-        return CutPoints.values
+    def build_dict():
+        return {CutPoints.SEDENTARY: 0,
+                CutPoints.LIGHT: 0,
+                CutPoints.MODERATE: 0,
+                CutPoints.VIGOROUS: 0,
+                CutPoints.VERY_VIGOROUS: 0,
+                CutPoints.UNKNOWN: 0}
 
 
 def filter_data(data, fs, lowcut, highcut, order=5):
@@ -122,12 +127,7 @@ def freedson_adult_1998(samples: list, sampling_rate):
     scale = sampling_rate / CutPoints.base_frequency()
     print("Scaling: ", scale)
 
-    results = {CutPoints.SEDENTARY: 0,
-               CutPoints.LIGHT: 0,
-               CutPoints.MODERATE: 0,
-               CutPoints.VIGOROUS: 0,
-               CutPoints.VERY_VIGOROUS: 0,
-               CutPoints.UNKNOWN: 0}
+    results = CutPoints.build_dict()
 
     for sensor_data in samples:
         # Get time series
