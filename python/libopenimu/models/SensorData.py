@@ -54,6 +54,10 @@ class SensorData(Base):
                                stop=self.data_timestamp.timestamp() + len(values) / self.sensor.sampling_rate,
                                dtype=np.float64, endpoint=False)
 
+            # np.set_printoptions(suppress=True)
+            # if len(time) > 0:
+            # print('time', self.data_timestamp)
+
             return {'time': time, 'values': values}
         else:
             values = self.to_ndarray()

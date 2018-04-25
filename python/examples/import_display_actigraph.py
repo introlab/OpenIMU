@@ -39,6 +39,9 @@ def create_data_timeseries(sensor_data_list: list):
     time_array = np.concatenate(time_values)
     data_array = np.concatenate(data_values)
 
+    # Test, remove first time
+    # time_array = time_array - time_array[0]
+
     # print('time_array_shape, data_array_shape', time_array.shape, data_array.shape)
     # return data
     return {'x': time_array, 'y': data_array}
@@ -82,6 +85,7 @@ if __name__ == '__main__':
                                                                channel=channel)
                     timeseries_acc.append(create_data_timeseries(channel_data))
                     timeseries_acc[-1]['label'] = channel.label
+                    break
             if sensor.id_sensor_type == SensorType.BATTERY:
                 channels = manager.get_all_channels(sensor=sensor)
                 for channel in channels:
@@ -90,6 +94,7 @@ if __name__ == '__main__':
                                                                channel=channel)
                     timeseries_batt.append(create_data_timeseries(channel_data))
                     timeseries_batt[-1]['label'] = channel.label
+
 
             if sensor.id_sensor_type == SensorType.LUX:
                 channels = manager.get_all_channels(sensor=sensor)
