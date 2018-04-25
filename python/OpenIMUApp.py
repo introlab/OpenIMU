@@ -11,6 +11,8 @@ from libopenimu.qt.Charts import IMUChartView
 import numpy as np
 import libopenimu.jupyter.Jupyter as Jupyter
 
+from enum import Enum
+
 # UI
 from resources.ui.python.MainWindow_ui import Ui_MainWindow
 from resources.ui.python.StartDialog_ui import Ui_StartDialog
@@ -29,11 +31,16 @@ from libopenimu.models.DataSet import DataSet
 # Database
 from libopenimu.db.DBManager import DBManager
 
-# This is auto-generated from Qt .qrc files
-
+# Python
 import sys
+from datetime import datetime
 
-import libopenimu
+class LogTypes(Enum):
+    LOGTYPE_INFO = 0
+    LOGTYPE_WARNING = 1
+    LOGTYPE_ERROR = 2
+    LOGTYPE_DEBUG = 3
+    LOGTYPE_DONE = 4
 
 
 class MainWindow(QMainWindow):
@@ -46,6 +53,8 @@ class MainWindow(QMainWindow):
         super(QMainWindow,self).__init__(parent=parent)
         self.UI = Ui_MainWindow()
         self.UI.setupUi(self)
+
+        self.add_to_log("OpenIMU - Prêt à travailler.", LogTypes.LOGTYPE_INFO)
 
         startWindow = StartWindow()
 
@@ -64,12 +73,25 @@ class MainWindow(QMainWindow):
         self.showMaximized()
 
         # Load data
+        self.add_to_log("Chargement des données...", LogTypes.LOGTYPE_INFO)
         self.currentDataSet = self.dbMan.get_dataset()
-        self.loadDemoData()
+        self.load_data_from_dataset()
+        #self.loadDemoData()
+        self.add_to_log("Données chargées!", LogTypes.LOGTYPE_DONE)
+
 
     def setupSignals(self):
         self.UI.treeDataSet.itemClicked.connect(self.tree_item_clicked)
         self.UI.btnDataSetInfos.clicked.connect(self.infosRequested)
+        self.UI.btnAddGroup.clicked.connect(self.newGroupRequested)
+
+    def load_data_from_dataset(self):
+        # Groups
+        groups = self.dbMan.get_all_groups()
+        for group in groups:
+            item = self.create_group_item(group)
+            self.UI.treeDataSet.addTopLevelItem(item)
+            self.UI.treeDataSet.groups[group.id_group] = group
 
 
     def loadDemoData(self):
@@ -236,6 +258,59 @@ class MainWindow(QMainWindow):
         item.setData(1, Qt.UserRole, 'result')
         item.setFont(0, QFont('Helvetica', 12))
         return item
+
+    def update_group(self,group):
+        #Find the group in the treelist
+        if group.id_group in self.UI.treeDataSet.groups.keys():
+            self.UI.treeDataSet.groups[group.id_group] = group
+            for i in range (0, self.UI.treeDataSet.topLevelItemCount()):
+                item = self.UI.treeDataSet.topLevelItem(i)
+                if item.data(0,Qt.UserRole)==group.id_group:
+                    item.setText(0,group.name)
+                    break
+
+        else:
+            item = self.create_group_item(group)
+            self.UI.treeDataSet.addTopLevelItem(item)
+            self.UI.treeDataSet.groups[group.id_group] = group
+
+        self.UI.treeDataSet.setCurrentItem(item)
+
+    def clear_main_widgets(self):
+        for i in reversed(range(self.UI.frmMain.layout().count())):
+            self.UI.frmMain.layout().itemAt(i).widget().setParent(None)
+
+    def show_group(self,group=None):
+        self.clear_main_widgets()
+
+        groupWidget = GroupWindow(dbManager=self.dbMan, group=group)
+        self.UI.frmMain.layout().addWidget(groupWidget)
+
+        groupWidget.dataSaved.connect(self.dataWasSaved)
+        groupWidget.dataCancelled.connect(self.dataWasCancelled)
+
+
+    def add_to_log(self, text, log_type):
+        format = ""
+        if log_type == LogTypes.LOGTYPE_INFO:
+            format = "<span style='color:black'>"
+        if log_type == LogTypes.LOGTYPE_WARNING:
+            format = "<span style='color:orange;font-style:italic'>"
+        if log_type == LogTypes.LOGTYPE_ERROR:
+            format = "<span style='color:red;font-weight:bold'>"
+        if log_type == LogTypes.LOGTYPE_DEBUG:
+            format = "<span style='color:grey;font-style:italic'>"
+        if log_type == LogTypes.LOGTYPE_DONE:
+            format = "<span style='color:green;font-weight:bold'>"
+
+        self.UI.txtLog.append("<span style='color:grey'>" + datetime.now().strftime("%H:%M:%S.%f") + " </span>" + format + text + "</span>")
+        self.UI.txtLog.ensureCursorVisible();
+
+
+    def get_current_widget_data_type(self):
+        #TODO: checks!
+        return self.UI.frmMain.layout().itemAt(0).widget().data_type
+
 ######################
     @pyqtSlot(QUrl)
     def urlChanged(self,url):
@@ -243,13 +318,17 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def infosRequested(self):
-        infosWindow = ImportWindow(self.currentDataSet)
+        infosWindow = ImportWindow(dataset=self.currentDataSet, filename=self.currentFileName)
         infosWindow.noImportUI = True
         infosWindow.infosOnly = True
 
         if infosWindow.exec() != QDialog.Rejected:
             #TODO: Save data
             self.currentDataSet.name = infosWindow.dataSet.name
+
+    @pyqtSlot()
+    def newGroupRequested(self):
+        self.show_group()
 
     @pyqtSlot(QTreeWidgetItem, int)
     def tree_item_clicked(self, item, column):
@@ -258,12 +337,12 @@ class MainWindow(QMainWindow):
         item_type = item.data(1, Qt.UserRole)
 
         # Clear all widgets
-        for i in reversed(range(self.UI.frmMain.layout().count())):
-            self.UI.frmMain.layout().itemAt(i).widget().setParent(None)
+        self.clear_main_widgets()
 
         if item_type == "group":
-            groupWidget = GroupWindow(group = self.UI.treeDataSet.groups[item_id])
-            self.UI.frmMain.layout().addWidget(groupWidget)
+            self.show_group(self.UI.treeDataSet.groups[item_id])
+            #groupWidget = GroupWindow(dbManager=self.dbMan, group = self.UI.treeDataSet.groups[item_id])
+            #self.UI.frmMain.layout().addWidget(groupWidget)
 
         if item_type == "participant":
             partWidget = ParticipantWindow(participant = self.UI.treeDataSet.participants[item_id])
@@ -279,6 +358,24 @@ class MainWindow(QMainWindow):
 
         self.UI.frmMain.update()
 
+    @pyqtSlot()
+    def dataWasSaved(self):
+        item_type = self.get_current_widget_data_type()
+
+        if item_type == "group":
+            group = self.UI.frmMain.layout().itemAt(0).widget().group
+            self.update_group(group)
+            self.add_to_log("Groupe " + group.name + " mis à jour.", LogTypes.LOGTYPE_DONE)
+
+
+    @pyqtSlot()
+    def dataWasCancelled(self):
+        item_type = self.get_current_widget_data_type()
+
+        if item_type == "group":
+            if self.UI.frmMain.layout().itemAt(0).widget().group is None:
+                self.clear_main_widgets()
+
     def closeEvent(self, event):
         print('closeEvent')
         """self.jupyter.stop()
@@ -289,42 +386,13 @@ class MainWindow(QMainWindow):
     def __del__(self):
         print('Done!')
 
-
-    """ def dragEnterEvent(self, event):
-        print (event.answerRect())
-        #print (self.UI.mdiArea.rect().adjusted(self.UI.mdiArea.x(),self.UI.mdiArea.y(),0,0))
-        print(self.UI.mdiArea.rect().adjusted(self.UI.dockDataset.width(), self.UI.dockDataset.y(), 0, 0))
-
-        #if (event.answerRect().intersects(self.UI.mdiArea.rect())):
-        if (self.UI.mdiArea.rect().adjusted(self.UI.dockDataset.width(),self.UI.dockDataset.y(),0,0).contains(event.answerRect())):
-            print("OK")
-            event.accept()
-        else:
-            print("Not OK")
-            event.ignore()
-
-    def dropEvent(self, event):
-        print("DROP!")
-    
-    def add_mdi_widget(self, widget=None, title=''):
-        sub_window = QMdiSubWindow(self.UI.mdiArea)
-
-        if widget is not None:
-            widget.show()
-            sub_window.setWidget(widget)
-            sub_window.setWindowTitle(title)
-
-        sub_window.resize(640,480)
-        self.UI.mdiArea.addSubWindow(sub_window)
-        return sub_window
-    """
     def create_chart_view(self, test_data=False):
         chart_view = IMUChartView(self)
         if test_data is True:
             chart_view.add_test_data()
         return chart_view
 
-
+########################################################################################################################
 class Treedatawidget(QTreeWidget):
 
     groups = {}

@@ -70,7 +70,7 @@ class DBManager:
     def session_add(self, store):
         self.session.add_all(store)
 
-    def add_group(self, name, description):
+    """def add_group(self, name, description):
         try:
             group = Group(name=name, description=description)
             self.session.add(group)
@@ -79,6 +79,24 @@ class DBManager:
 
         except Exception as e:
             message = 'Error adding group' + ': ' + str(e)
+            print('Error: ', message)
+            raise
+    """
+    def update_group(self, group):
+        try:
+            if group.id_group is None:
+                self.session.add(group)
+            else:
+                src_group = self.session.query(Group).filter(Group.id_group == group.id_group).first()
+                src_group.name = group.name
+                src_group.description = group.description
+                group.id_group = src_group.id_group
+
+            self.commit()
+            return group
+
+        except Exception as e:
+            message = 'Error updating group' + ': ' + str(e)
             print('Error: ', message)
             raise
 

@@ -4,18 +4,21 @@ from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal
 from resources.ui.python.GroupWidget_ui import Ui_frmGroup
 
 from libopenimu.models.Group import Group
+from libopenimu.qt.DataEditor import DataEditor
 
-
-class GroupWindow(QWidget):
+class GroupWindow(DataEditor):
 
     group = Group()
+    dbMan = None
 
-    def __init__(self, group=None, parent=None):
+    def __init__(self, dbManager, group=None, parent=None):
         super(QWidget, self).__init__(parent=parent)
         self.UI = Ui_frmGroup()
         self.UI.setupUi(self)
 
         self.group = group
+        self.dbMan = dbManager
+        self.data_type = "group"
 
         # Signals / Slots connections
         self.UI.btnCancel.clicked.connect(self.cancel_clicked)
@@ -47,24 +50,40 @@ class GroupWindow(QWidget):
             self.UI.txtDesc.setPlainText("")
 
     def enable_buttons(self, enable):
-        self.UI.btnCancel.setEnabled(enable)
+        self.UI.btnCancel.setEnabled(enable or self.group is None)
         self.UI.btnSave.setEnabled(enable)
+
+    def update_modified_status(self):
+        self.enable_buttons(
+                            (self.group is not None and self.UI.txtName.text() != self.group.name) or
+                            (self.group is None and self.UI.txtName.text() != "") or
+                            (self.group is not None and self.UI.txtDesc.toPlainText() != self.group.description) or
+                            (self.group is None and self.UI.txtDesc.toPlainText() != "")
+                            )
 
     @pyqtSlot()
     def save_clicked(self):
         if self.validate():
-            print("TODO!")
+            if self.group is None:
+                self.group = Group()
+            self.group.name = self.UI.txtName.text()
+            self.group.description = self.UI.txtDesc.toPlainText()
+            self.group = self.dbMan.update_group(self.group)
+            self.enable_buttons(False)
+            self.dataSaved.emit()
+
 
     @pyqtSlot()
     def cancel_clicked(self):
-        print("TODO!")
+        self.update_data()
+        self.dataCancelled.emit()
+
 
     @pyqtSlot(str)
     def name_edited(self, new_value):
-        # TODO: Compare with values from model and set buttons accordingly
-        self.enable_buttons(True)
+        self.update_modified_status()
 
     @pyqtSlot()
     def desc_edited(self):
-        # TODO: Compare with values from model and set buttons accordingly
-        self.enable_buttons(True)
+        self.update_modified_status()
+

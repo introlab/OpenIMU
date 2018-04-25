@@ -22,7 +22,7 @@ class Group(Base):
     # Database rep (optional)
     def __repr__(self):
 
-        return "<Group(name='%s', description='%s')>" % (self.name, self.description)
+        return "<Group(id=%d name='%s', description='%s')>" % (self.id_group, self.name, self.description)
 
 
 

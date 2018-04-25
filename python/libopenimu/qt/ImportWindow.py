@@ -8,6 +8,7 @@ from libopenimu.db.DBManager import DBManager
 from libopenimu.models.DataSet import DataSet
 
 import datetime
+import time
 
 class ImportWindow(QDialog):
 
@@ -17,16 +18,18 @@ class ImportWindow(QDialog):
     groups = []
     fileName = ''
 
-    dataSet = DataSet()
+    dataSet = None
 
-    def __init__(self, dataset=None, parent=None):
+    def __init__(self, dataset=None, parent=None, filename = None):
         super(QDialog, self).__init__(parent=parent)
         self.UI = Ui_ImportDialog()
         self.UI.setupUi(self)
 
         # Manage data if present
         self.dataSet = dataset
+        self.fileName = filename
         self.update_data()
+
 
         # Signals / Slots connections
         self.UI.btnCancel.clicked.connect(self.cancel_clicked)
@@ -73,7 +76,8 @@ class ImportWindow(QDialog):
             self.UI.txtAuthor.setText(self.dataSet.author)
             self.UI.txtDesc.setPlainText(self.dataSet.description)
             self.UI.txtName.setText(self.dataSet.name)
-            self.UI.calendarUploadDate.selectedDate = self.dataSet.upload_date
+            self.UI.calendarUploadDate.setSelectedDate(self.dataSet.upload_date)
+        self.UI.txtFileName.setText(self.fileName)
 
     @pyqtSlot()
     def browse_clicked(self):
@@ -89,11 +93,15 @@ class ImportWindow(QDialog):
         # Create and save file
         db = DBManager(filename=self.UI.txtFileName.text())
 
+        if self.dataSet is None:
+            self.dataSet = DataSet()
+            self.dataSet.creation_date = time
+
         self.dataSet.name = self.UI.txtName.text()
-        self.dataSet.description = self.UI.txtDesc.toPlainText(),
-        self.dataSet.author = self.UI.txtAuthor.text(),
-        self.dataSet.creation_date = datetime.datetime.now(),
-        self.dataSet.upload_date = self.UI.calendarUploadDate.selectedDate()
+        self.dataSet.description = self.UI.txtDesc.toPlainText()
+        self.dataSet.author = self.UI.txtAuthor.text()
+
+        self.dataSet.upload_date = self.UI.calendarUploadDate.selectedDate().toPyDate()
 
         db.set_dataset_infos(name = self.dataSet.name,
                              desc = self.dataSet.description,
@@ -102,8 +110,6 @@ class ImportWindow(QDialog):
                              upload_date=self.dataSet.upload_date)
 
         self.fileName = self.UI.txtFileName.text()
-
-
 
         if self.validate():
             self.accept()
