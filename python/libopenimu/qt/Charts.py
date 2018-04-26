@@ -8,7 +8,8 @@ Simple example illustrating Qt Charts capabilities to plot curves with
 a high number of points, using OpenGL accelerated series
 """
 from PyQt5.QtGui import QPolygonF, QPainter, QMouseEvent, QResizeEvent
-from PyQt5.QtChart import QChart, QChartView, QLineSeries, QLegend, QBarSeries, QBarSet, QBarCategoryAxis, QDateTimeAxis
+from PyQt5.QtChart import QChart, QChartView, QLineSeries, QLegend, QBarSeries, QBarSet
+from PyQt5.QtChart import QDateTimeAxis, QValueAxis, QBarCategoryAxis
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsSimpleTextItem
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QPointF, QRectF, QPoint
 import numpy as np
@@ -58,11 +59,13 @@ class IMUChartView(QChartView):
         curve.setPen(pen)
 
         curve.setUseOpenGL(True)
-        curve.append(self.series_to_polyline(xdata, ydata))
+        # curve.append(self.series_to_polyline(xdata, ydata))
 
         # epoch = datetime.datetime.now()
-        # for i in range(0, len(xdata)):
-            # curve.append(QPointF(xdata[i], ydata[i]))
+        for i in range(0, len(xdata)):
+            # Time must be in ms
+            ms = np.int64(xdata[i] * 1000)
+            curve.append(QPointF(ms, ydata[i]))
             # mytime = datetime.datetime.fromtimestamp(xdata[i])
             # ms = np.int64((mytime - epoch).total_seconds() * 1000.0)
             # curve.append((mytime - epoch).total_seconds(), ydata[i])
@@ -77,9 +80,27 @@ class IMUChartView(QChartView):
         curve.clicked.connect(self.lineseries_clicked)
         curve.hovered.connect(self.lineseries_hovered)
 
+
+        # self.chart.createDefaultAxes()
+
+        # Add series
         self.chart.addSeries(curve)
-        self.chart.createDefaultAxes()
         self.ncurves += 1
+
+        # Create axis X
+        axisX = QDateTimeAxis()
+        axisX.setTickCount(5)
+        axisX.setFormat("dd MMM yyyy")
+        axisX.setTitleText("Date")
+        self.chart.addAxis(axisX, Qt.AlignBottom)
+        curve.attachAxis(axisX)
+
+        # Create axis Y
+        axisY = QValueAxis()
+        axisY.setLabelFormat("%.3f")
+        axisY.setTitleText("Values")
+        self.chart.addAxis(axisY, Qt.AlignLeft)
+        curve.attachAxis(axisY)
 
     def tooltip(self):
         pass
@@ -120,8 +141,12 @@ class IMUChartView(QChartView):
         # Handling rubberbands
         super().mouseMoveEvent(e)
 
-        self.xTextItem.setText('X: ' + str(self.chart.mapToValue(e.pos()).x()))
-        self.yTextItem.setText('Y: ' + str(self.chart.mapToValue(e.pos()).y()))
+        # Go back to seconds (instead of ms)
+        xmap = self.chart.mapToValue(e.pos()).x() / 1000.0
+        ymap = self.chart.mapToValue(e.pos()).y()
+
+        self.xTextItem.setText('X: ' + str(datetime.datetime.fromtimestamp(xmap)))
+        self.yTextItem.setText('Y: ' + str(ymap))
 
     def mousePressEvent(self, e: QMouseEvent):
         # Handling rubberbands
@@ -175,9 +200,9 @@ class OpenIMUBarGraphView(QChartView):
         print('adding test data series')
         self.set_title('Testing bars')
         self.set_category_axis(['A','B','C','D'])
-        self.add_set('Test1',[0.1, 2, 3, 4])
-        self.add_set('Test2',[3, 2, 1, 4])
-        self.add_set('Test3',[4, 1, 3, 2])
+        self.add_set('Test1', [0.1, 2, 3, 4])
+        self.add_set('Test2', [3, 2, 1, 4])
+        self.add_set('Test3', [4, 1, 3, 2])
         self.update()
 
 
