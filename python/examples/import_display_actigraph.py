@@ -85,7 +85,7 @@ if __name__ == '__main__':
                                                                channel=channel)
                     timeseries_acc.append(create_data_timeseries(channel_data))
                     timeseries_acc[-1]['label'] = channel.label
-                    break
+
             if sensor.id_sensor_type == SensorType.BATTERY:
                 channels = manager.get_all_channels(sensor=sensor)
                 for channel in channels:
