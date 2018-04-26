@@ -10,7 +10,7 @@ a high number of points, using OpenGL accelerated series
 from PyQt5.QtGui import QPolygonF, QPainter, QMouseEvent, QResizeEvent
 from PyQt5.QtChart import QChart, QChartView, QLineSeries, QLegend, QBarSeries, QBarSet, QSplineSeries, QXYSeries
 from PyQt5.QtChart import QDateTimeAxis, QValueAxis, QBarCategoryAxis
-from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsSimpleTextItem
+from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsSimpleTextItem, QGraphicsLineItem
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QPointF, QRectF, QPoint, QDateTime
 
 from qwt.plot import QwtPlot
@@ -26,6 +26,8 @@ class IMUChartView(QChartView):
         super(QChartView, self).__init__(parent=parent)
 
         self.reftime = datetime.datetime.now()
+        self.cursor = QGraphicsLineItem()
+        self.scene().addItem(self.cursor)
 
         # self.setScene(QGraphicsScene())
         self.chart = QChart()
@@ -233,6 +235,22 @@ class IMUChartView(QChartView):
     def mousePressEvent(self, e: QMouseEvent):
         # Handling rubberbands
         super().mousePressEvent(e)
+
+        xmap = self.chart.mapToValue(e.pos()).x()
+        ymap = self.chart.mapToValue(e.pos()).y()
+
+        self.cursor.setPos(e.pos())
+
+        pen = self.cursor.pen()
+        pen.setColor(Qt.red)
+        pen.setWidthF(1.5)
+        self.cursor.setPen(pen)
+        # On Top
+        self.cursor.setZValue(100.0)
+
+        # self.cursor.set
+        self.cursor.setLine(e.pos().x(), e.pos().y(), e.pos().x(), e.pos().y() + 1000)
+        self.cursor.show()
         pass
 
     def mouseReleaseEvent(self, e: QMouseEvent):
