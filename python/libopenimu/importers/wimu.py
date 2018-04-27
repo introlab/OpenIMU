@@ -73,7 +73,7 @@ class WIMUSettings:
             self.crc = struct.unpack_from('<I', data, offset=46)
 
 
-class WIMUConfig_DateTimeOptions:
+class DateTimeOptions:
     time_offset = np.uint16(0)
     enable_gps_time = False
     enable_auto_offset = False
@@ -83,7 +83,7 @@ class WIMUConfig_DateTimeOptions:
                                                'enable_auto_offset': self.enable_auto_offset}])
 
 
-class WIMUConfig_UIOptions:
+class UIOptions:
     led_blink_time = np.uint8(0)
     write_led = False
     enable_marking = False
@@ -96,7 +96,7 @@ class WIMUConfig_UIOptions:
                                               'ble_activity_led': self.ble_activity_led}])
 
 
-class WIMUConfig_GlobalOptions:
+class GlobalOptions:
     sampling_rate = np.uint16(0)
     enable_watchdog = False
 
@@ -105,7 +105,7 @@ class WIMUConfig_GlobalOptions:
                                               'enable_watchdog': self.enable_watchdog}])
 
 
-class WIMUConfig_LoggerOptions:
+class LoggerOptions:
     max_files_in_folder = np.uint8(0)
     split_by_day = False
 
@@ -114,7 +114,7 @@ class WIMUConfig_LoggerOptions:
                                               'split_by_day': self.split_by_day}])
 
 
-class WIMUConfig_GPSOptions:
+class GPSOptions:
     interval = np.uint8(0)
     force_cold = False
     enable_scan_when_charged = False
@@ -124,7 +124,7 @@ class WIMUConfig_GPSOptions:
                                               'enable_scan_when_charged': self.enable_scan_when_charged}])
 
 
-class WIMUConfig_PowerOptions:
+class PowerOptions:
     power_manage = False
     enable_motion_detection = False
     adv_power_manage = False
@@ -135,35 +135,35 @@ class WIMUConfig_PowerOptions:
                                               'adv_power_manage': self.adv_power_manage}])
 
 
-class WIMUConfig_BLEOptions:
+class BLEOptions:
     enable_control = False
 
     def __str__(self):
         return str([self.__class__.__name__, {'enable_control': self.enable_control}])
 
 
-class WIMUConfig_AccOptions:
+class AccOptions:
     range = np.uint8(0)
 
     def __str__(self):
         return str([self.__class__.__name__, {'range': self.range}])
 
 
-class WIMUConfig_GyroOptions:
+class GyroOptions:
     range = np.uint8(0)
 
     def __str__(self):
         return str([self.__class__.__name__, {'range': self.range}])
 
 
-class WIMUConfig_MagOptions:
+class MagOptions:
     range = np.uint8(0)
 
     def __str__(self):
         return str([self.__class__.__name__, {'range': self.range}])
 
 
-class WIMUConfig_IMUOptions:
+class IMUOptions:
     beta = np.float(0.0)
     disable_magneto = False
     auto_calib_gyro = False
@@ -172,18 +172,19 @@ class WIMUConfig_IMUOptions:
         return str([self.__class__.__name__, {'beta': self.beta, 'disable_magneto': self.disable_magneto,
                                               'auto_calib_gyro': self.auto_calib_gyro}])
 
+
 class WIMUConfig:
-    datetime = WIMUConfig_DateTimeOptions()
-    ui = WIMUConfig_UIOptions()
-    general = WIMUConfig_GlobalOptions()
-    logger = WIMUConfig_LoggerOptions()
-    gps = WIMUConfig_GPSOptions()
-    power = WIMUConfig_PowerOptions()
-    ble = WIMUConfig_BLEOptions()
-    acc = WIMUConfig_AccOptions()
-    gyro = WIMUConfig_GyroOptions()
-    magneto = WIMUConfig_MagOptions()
-    imu = WIMUConfig_IMUOptions()
+    datetime = DateTimeOptions()
+    ui = UIOptions()
+    general = GlobalOptions()
+    logger = LoggerOptions()
+    gps = GPSOptions()
+    power = PowerOptions()
+    ble = BLEOptions()
+    acc = AccOptions()
+    gyro = GyroOptions()
+    magneto = MagOptions()
+    imu = IMUOptions()
     enabled_modules = np.uint16(0)
     crc = np.uint32(0)
 
@@ -296,6 +297,7 @@ class WIMUConfig:
         else:
             pass
 
+
 @timing
 def wimu_load_settings(data):
     print('settings reading length: ', len(data))
@@ -304,40 +306,39 @@ def wimu_load_settings(data):
     print(settings)
     return settings
 
+
 @timing
 def wimu_load_config(data, settings : WIMUSettings):
-    """
-
-    :param data:
-    :return:
-
-
-
-    """
     config = WIMUConfig()
     config.from_bytes(data, settings.hw_id)
     print(config)
     return config
 
+
 @timing
 def wimu_load_acc(time_data, acc_data):
     pass
+
 
 @timing
 def wimu_load_gps(time_data, index_data, gps_data):
     pass
 
+
 @timing
 def wimu_load_gyro(time_data, gyro_data):
     pass
+
 
 @timing
 def wimu_load_pow(time_data, pow_data):
     pass
 
+
 @timing
 def wimu_load_log(time_data, log_data):
     pass
+
 
 @timing
 def wimu_importer(filename):
