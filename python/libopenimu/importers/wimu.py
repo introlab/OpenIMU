@@ -7,10 +7,80 @@ import numpy as np
 import math
 
 
+class WIMUSettings:
+    # Serial Number
+    id = np.uint16(0)
+    # Hardware revision id
+    hw_id = np.uint8(0)
+    # Version number
+    version_major = np.uint8(0)
+    version_minor = np.uint8(0)
+    version_rev = np.uint8(0)
+    # Acc gains and offsets
+    acc_gain = [np.int16(0), np.int16(0), np.int16(0)]
+    acc_offset = [np.int16(0), np.int16(0), np.int16(0)]
+    # Gyro gains and offsets
+    gyro_gain = [np.int16(0), np.int16(0), np.int16(0)]
+    gyro_offset = [np.int16(0), np.int16(0), np.int16(0)]
+    # Magneto gains and offsets
+    mag_gain = [np.int16(0), np.int16(0), np.int16(0)]
+    mag_offset = [np.int16(0), np.int16(0), np.int16(0)]
+    # CRC
+    crc = np.uint32(0)
+
+    def __str__(self):
+        my_dict = {}
+        my_dict['id'] = self.id
+        my_dict['hw_id'] = self.hw_id
+        my_dict['version_major'] = self.version_major
+        my_dict['version_minor'] = self.version_minor
+        my_dict['version_rev'] = self.version_rev
+        my_dict['acc_gain'] = self.acc_gain
+        my_dict['acc_offset'] = self.acc_offset
+        my_dict['gyro_gain'] = self.acc_gain
+        my_dict['gyro_offset'] = self.acc_offset
+        my_dict['mag_gain'] = self.acc_gain
+        my_dict['mag_offset'] = self.acc_offset
+        my_dict['crc'] = self.crc
+        return str([self.__class__.__name__, my_dict])
+
+    def from_bytes(self, data):
+        # unsigned short, unsigned char
+        [self.id, self.hw_id] = struct.unpack_from('<HB', data, offset=0)
+
+        if self.hw_id == 3:
+            print('error hw_id not supported:', self.hw_id)
+            return
+        else:
+            assert(len(data) == 50)
+            self.version_major = 2
+            self.version_minor = 0
+            self.version_rev = 0
+            # Read gains, offsets (3x signed short)
+            self.acc_gain[0], self.acc_gain[1], self.acc_gain[2] = struct.unpack_from('<hhh', data, offset=3)
+            self.acc_offset[0], self.acc_offset[1], self.acc_offset[2] = struct.unpack_from('<hhh', data, offset=9)
+
+            self.gyro_gain[0], self.gyro_gain[1], self.gyro_gain[2] = struct.unpack_from('<hhh', data, offset=15)
+            self.gyro_offset[0], self.gyro_offset[1], self.gyro_offset[2] = struct.unpack_from('<hhh', data, offset=21)
+
+            self.mag_gain[0], self.mag_gain[1], self.mag_gain[2] = struct.unpack_from('<hhh', data, offset=27)
+            self.mag_offset[0], self.mag_offset[1], self.mag_offset[2] = struct.unpack_from('<hhh', data, offset=33)
+
+            # Read 7 unused bytes
+            struct.unpack_from('<BBBBBBB', data, offset=39)
+
+            # Read CRC (unsigned int)
+            self.crc = struct.unpack_from('<I', data, offset=46)
+
+
 class WIMUConfig_DateTimeOptions:
     time_offset = np.uint16(0)
     enable_gps_time = False
     enable_auto_offset = False
+
+    def __str__(self):
+        return str([self.__class__.__name__,  {'time_offset':self.time_offset, 'enable_gps_time':self.enable_gps_time,
+                                               'enable_auto_offset': self.enable_auto_offset}])
 
 
 class WIMUConfig_UIOptions:
@@ -20,15 +90,28 @@ class WIMUConfig_UIOptions:
     gps_fix_led = False
     ble_activity_led = False
 
+    def __str__(self):
+        return str([self.__class__.__name__, {'led_blink_time': self.led_blink_time, 'write_led': self.write_led,
+                                              'enable_marking': self.enable_marking, 'gps_fix_led': self.gps_fix_led,
+                                              'ble_activity_led': self.ble_activity_led}])
+
 
 class WIMUConfig_GlobalOptions:
     sampling_rate = np.uint16(0)
     enable_watchdog = False
 
+    def __str__(self):
+        return str([self.__class__.__name__, {'sampling_rate': self.sampling_rate,
+                                              'enable_watchdog': self.enable_watchdog}])
+
 
 class WIMUConfig_LoggerOptions:
     max_files_in_folder = np.uint8(0)
     split_by_day = False
+
+    def __str__(self):
+        return str([self.__class__.__name__, {'max_files_in_folder': self.max_files_in_folder,
+                                              'split_by_day': self.split_by_day}])
 
 
 class WIMUConfig_GPSOptions:
@@ -36,27 +119,48 @@ class WIMUConfig_GPSOptions:
     force_cold = False
     enable_scan_when_charged = False
 
+    def __str__(self):
+        return str([self.__class__.__name__, {'interval': self.interval, 'force_cold': self.force_cold,
+                                              'enable_scan_when_charged': self.enable_scan_when_charged}])
+
 
 class WIMUConfig_PowerOptions:
     power_manage = False
     enable_motion_detection = False
     adv_power_manage = False
 
+    def __str__(self):
+        return str([self.__class__.__name__, {'power_manage': self.power_manage,
+                                              'enable_motion_detection': self.enable_motion_detection,
+                                              'adv_power_manage': self.adv_power_manage}])
+
 
 class WIMUConfig_BLEOptions:
     enable_control = False
+
+    def __str__(self):
+        return str([self.__class__.__name__, {'enable_control': self.enable_control}])
 
 
 class WIMUConfig_AccOptions:
     range = np.uint8(0)
 
+    def __str__(self):
+        return str([self.__class__.__name__, {'range': self.range}])
+
 
 class WIMUConfig_GyroOptions:
     range = np.uint8(0)
 
+    def __str__(self):
+        return str([self.__class__.__name__, {'range': self.range}])
+
 
 class WIMUConfig_MagOptions:
     range = np.uint8(0)
+
+    def __str__(self):
+        return str([self.__class__.__name__, {'range': self.range}])
 
 
 class WIMUConfig_IMUOptions:
@@ -64,7 +168,9 @@ class WIMUConfig_IMUOptions:
     disable_magneto = False
     auto_calib_gyro = False
 
-
+    def __str__(self):
+        return str([self.__class__.__name__, {'beta': self.beta, 'disable_magneto': self.disable_magneto,
+                                              'auto_calib_gyro': self.auto_calib_gyro}])
 
 class WIMUConfig:
     datetime = WIMUConfig_DateTimeOptions()
@@ -81,8 +187,25 @@ class WIMUConfig:
     enabled_modules = np.uint16(0)
     crc = np.uint32(0)
 
+    def __str__(self):
+        my_dict = {}
+        my_dict['datetime'] = str(self.datetime)
+        my_dict['ui'] = str(self.ui)
+        my_dict['general'] = str(self.general)
+        my_dict['logger'] = str(self.logger)
+        my_dict['gps'] = str(self.gps)
+        my_dict['power'] = str(self.power)
+        my_dict['ble'] = str(self.ble)
+        my_dict['acc'] = str(self.acc)
+        my_dict['gyro'] = str(self.gyro)
+        my_dict['magneto'] = str(self.magneto)
+        my_dict['imu'] = str(self.imu)
+        my_dict['enabled_modules'] = str(self.enabled_modules)
+        my_dict['crc'] = str(self.crc)
+        return str([__class__.__name__, my_dict])
+
     def from_bytes(self, data, hw_id=2):
-        print('WIMUConfig.from_bytes', len(data))
+        # print('WIMUConfig.from_bytes', len(data))
         if hw_id == 2:
             buf16 = np.uint16(0)
             buf8 = np.uint8(0)
@@ -106,9 +229,9 @@ class WIMUConfig:
 
             self.ui.led_blink_time = np.bitwise_and(buf8, 0x7c) >> 2
 
-            print('general.enable_watchdog', self.general.enable_watchdog)
-            print('general.sampling_rate', self.general.sampling_rate)
-            print('ui.led_blink_time', self.ui.led_blink_time)
+            # print('general.enable_watchdog', self.general.enable_watchdog)
+            # print('general.sampling_rate', self.general.sampling_rate)
+            # print('ui.led_blink_time', self.ui.led_blink_time)
 
             # Unsigned char, Log filetime
             buf8 = struct.unpack_from('<B', data, offset=7)
@@ -132,10 +255,10 @@ class WIMUConfig:
             if np.bitwise_and(buf8, 0x80):
                 self.datetime.time_offset = -self.datetime.time_offset
 
-            print('self.ui.write_led', self.ui.write_led)
-            print('self.ui.enable_marking', self.ui.enable_marking)
-            print('self.logger.split_by_day', self.logger.split_by_day)
-            print('self.datetime.time_offset', self.datetime.time_offset)
+            # print('self.ui.write_led', self.ui.write_led)
+            # print('self.ui.enable_marking', self.ui.enable_marking)
+            # print('self.logger.split_by_day', self.logger.split_by_day)
+            # print('self.datetime.time_offset', self.datetime.time_offset)
 
             # GPS dead time
             buf8 = struct.unpack_from('<B', data, offset=10)
@@ -151,7 +274,7 @@ class WIMUConfig:
             if np.bitwise_and(buf8, 0x08):
                 self.gps.force_cold = True
 
-            print('self.gps.force_cold',self.gps.force_cold)
+            # print('self.gps.force_cold',self.gps.force_cold)
 
             # Power options
             buf8 = struct.unpack_from('<B', data, offset=14)
@@ -164,9 +287,9 @@ class WIMUConfig:
             self.gyro.range = struct.unpack_from('<B', data, offset=17)
             self.magneto.range = struct.unpack_from('<B', data, offset=18)
 
-            print('self.acc.range', self.acc.range)
-            print('self.gyro.range', self.gyro.range)
-            print('self.magneto.range', self.magneto.range)
+            # print('self.acc.range', self.acc.range)
+            # print('self.gyro.range', self.gyro.range)
+            # print('self.magneto.range', self.magneto.range)
 
             # Ignore the rest...
 
@@ -175,125 +298,14 @@ class WIMUConfig:
 
 @timing
 def wimu_load_settings(data):
-    """
-    QDataStream ds(*data);
-    ds.setByteOrder(QDataStream::LittleEndian);
-
-    ds >> id;
-    ds >> hw_id;
-
-    if (hw_id==3){
-        ds >> version_major;
-        ds >> version_minor;
-        ds >> version_rev;
-    }else{
-        // WIMUv2
-        version_major = 2;
-        version_minor = 0;
-        version_rev = 0;
-    }
-
-    for (int i=0; i<3; i++)
-        ds >> acc_gain[i];
-    for (int i=0; i<3; i++)
-        ds >> acc_offset[i];
-    for (int i=0; i<3; i++)
-        ds >> gyro_gain[i];
-    for (int i=0; i<3; i++)
-        ds >> gyro_offset[i];
-    for (int i=0; i<3; i++)
-        ds >> mag_gain[i];
-    for (int i=0; i<3; i++)
-        ds >> mag_offset[i];
-
-    if (hw_id==2){
-        //WIMUv2 unused bytes
-        quint8 old_byte;
-        for (int i=0; i<7; i++){
-            ds >> old_byte;
-        }
-    }
-    ds >> crc;
-
-    quint16 id;             // Serial Number
-    quint8 hw_id; 			// Hardware revision ID
-    quint8 version_major;   // Version Number
-    quint8 version_minor;
-    quint8 version_rev;
-    qint16 acc_gain[3];     // Accelerometers gain
-    qint16 acc_offset[3];   // Accelerometers offset
-    qint16 gyro_gain[3];    // Gyroscope gain
-    qint16 gyro_offset[3];  // Gyroscope offset
-    qint16 mag_gain[3];     // Magnetometers gain
-    qint16 mag_offset[3];   // Magnetometers offset
-    quint32 crc;
-
-
-    :param data:
-    :return:
-    """
     print('settings reading length: ', len(data))
-
-    result = {}
-
-    # data_offset = 0
-
-    # unsigned short, unsigned char
-    [id, hw_id] = struct.unpack_from('<HB', data, offset=0)
-
-    version_major = 0
-    version_minor = 0
-    version_rev = 0
-    acc_gain = [0, 0, 0]
-    acc_offset = [0, 0, 0]
-    gyro_gain = [0, 0, 0]
-    gyro_offset = [0, 0, 0]
-    mag_gain = [0, 0, 0]
-    mag_offset = [0, 0, 0]
-    crc = 0
-
-    if hw_id == 3:
-        pass
-    else:
-        version_major = 2
-        version_minor = 0
-        version_rev = 0
-        # Read gains, offsets (3x signed short)
-        acc_gain[0], acc_gain[1], acc_gain[2] = struct.unpack_from('<hhh', data, offset=3)
-        acc_offset[0], acc_offset[1], acc_offset[2] = struct.unpack_from('<hhh', data, offset=9)
-
-        gyro_gain[0], gyro_gain[1], gyro_gain[2] = struct.unpack_from('<hhh', data, offset=15)
-        gyro_offset[0], gyro_offset[1], gyro_offset[2] = struct.unpack_from('<hhh', data, offset=21)
-
-        mag_gain[0], mag_gain[1], mag_gain[2] = struct.unpack_from('<hhh', data, offset=27)
-        mag_offset[0], mag_offset[1], mag_offset[2] = struct.unpack_from('<hhh', data, offset=33)
-
-        # Read 7 unused bytes
-        struct.unpack_from('<BBBBBBB', data, offset=39)
-
-        # Read CRC (unsigned int)
-        crc = struct.unpack_from('<I', data, offset=46)
-
-    # Fill results
-    result['id'] = id
-    result['hw_id'] = hw_id
-    result['version_major'] = version_major
-    result['version_minor'] = version_minor
-    result['version_rev'] = version_rev
-    result['acc_gains'] = acc_gain
-    result['acc_offsets'] = acc_offset
-    result['gyro_gains'] = gyro_gain
-    result['gyro_offsets'] = gyro_offset
-    result['mag_gains'] = mag_gain
-    result['mag_offsets'] = mag_offset
-    # Useless CRC for now
-    # result['crc'] = crc
-
-    print('settings', result)
-    return result
+    settings = WIMUSettings()
+    settings.from_bytes(data)
+    print(settings)
+    return settings
 
 @timing
-def wimu_load_config(data, hw_id =2):
+def wimu_load_config(data, settings : WIMUSettings):
     """
 
     :param data:
@@ -303,8 +315,9 @@ def wimu_load_config(data, hw_id =2):
 
     """
     config = WIMUConfig()
-    config.from_bytes(data, hw_id)
-    return {'config': config}
+    config.from_bytes(data, settings.hw_id)
+    print(config)
+    return config
 
 @timing
 def wimu_load_acc(time_data, acc_data):
@@ -333,7 +346,7 @@ def wimu_importer(filename):
         return None
 
     print('wimu_importer processing', filename)
-    result = {}
+    results = {}
 
     with zipfile.ZipFile(filename) as myzip:
         print('zip opened')
@@ -342,19 +355,20 @@ def wimu_importer(filename):
         # First read settings file
         if namelist.__contains__('PreProcess/SETTINGS'):
             settings = wimu_load_settings(myzip.open('PreProcess/SETTINGS').read())
-            result['settings'] = settings
+            results['settings'] = settings
 
         else:
             return None
 
         # Then read config file
         if namelist.__contains__('PreProcess/CONFIG.WCF'):
-            config = wimu_load_config(myzip.open('PreProcess/CONFIG.WCF').read())
-            result['config'] = config
+            config = wimu_load_config(myzip.open('PreProcess/CONFIG.WCF').read(), results['settings'])
+            results['config'] = config
         else:
             return None
 
-        return result
+        print(str(results))
+        return results
 
         # Must have matching pairs with VALUES /TIME
         filedict = {}
