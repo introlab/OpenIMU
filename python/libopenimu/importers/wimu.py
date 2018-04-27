@@ -187,6 +187,7 @@ class WIMUConfig:
     imu = IMUOptions()
     enabled_modules = np.uint16(0)
     crc = np.uint32(0)
+    WIMUSettings = WIMUSettings()
 
     def __str__(self):
         my_dict = {}
@@ -300,7 +301,6 @@ class WIMUConfig:
 
 @timing
 def wimu_load_settings(data):
-    print('settings reading length: ', len(data))
     settings = WIMUSettings()
     settings.from_bytes(data)
     print(settings)
@@ -308,35 +308,36 @@ def wimu_load_settings(data):
 
 
 @timing
-def wimu_load_config(data, settings : WIMUSettings):
+def wimu_load_config(data, settings: WIMUSettings):
     config = WIMUConfig()
     config.from_bytes(data, settings.hw_id)
+    config.settings = settings
     print(config)
     return config
 
 
 @timing
-def wimu_load_acc(time_data, acc_data):
+def wimu_load_acc(time_data, acc_data, config: WIMUConfig):
     pass
 
 
 @timing
-def wimu_load_gps(time_data, index_data, gps_data):
+def wimu_load_gps(time_data, index_data, gps_data, config: WIMUConfig):
     pass
 
 
 @timing
-def wimu_load_gyro(time_data, gyro_data):
+def wimu_load_gyro(time_data, gyro_data, config: WIMUConfig):
     pass
 
 
 @timing
-def wimu_load_pow(time_data, pow_data):
+def wimu_load_pow(time_data, pow_data, config: WIMUConfig):
     pass
 
 
 @timing
-def wimu_load_log(time_data, log_data):
+def wimu_load_log(time_data, log_data, config: WIMUConfig):
     pass
 
 
@@ -355,18 +356,15 @@ def wimu_importer(filename):
 
         # First read settings file
         if namelist.__contains__('PreProcess/SETTINGS'):
-            settings = wimu_load_settings(myzip.open('PreProcess/SETTINGS').read())
-            results['settings'] = settings
-
+            results['settings'] = wimu_load_settings(myzip.open('PreProcess/SETTINGS').read())
         else:
-            return None
+            return results
 
         # Then read config file
         if namelist.__contains__('PreProcess/CONFIG.WCF'):
-            config = wimu_load_config(myzip.open('PreProcess/CONFIG.WCF').read(), results['settings'])
-            results['config'] = config
+            results['config'] = wimu_load_config(myzip.open('PreProcess/CONFIG.WCF').read(), results['settings'])
         else:
-            return None
+            return results
 
         print(str(results))
         return results
