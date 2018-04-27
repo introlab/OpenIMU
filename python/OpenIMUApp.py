@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow, QWidget, QHBoxLayout
-from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QTreeWidget, QTreeWidgetItem
+from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QTreeWidget, QTreeWidgetItem, QMessageBox
 from PyQt5.QtGui import QIcon, QFont, QDragEnterEvent
 
 # from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineSettings
@@ -35,6 +35,7 @@ from libopenimu.db.DBManager import DBManager
 import sys
 from datetime import datetime
 
+
 class LogTypes(Enum):
     LOGTYPE_INFO = 0
     LOGTYPE_WARNING = 1
@@ -44,13 +45,12 @@ class LogTypes(Enum):
 
 
 class MainWindow(QMainWindow):
-
     currentFileName = ''
     dbMan = []
     currentDataSet = DataSet()
 
     def __init__(self, parent=None):
-        super(QMainWindow,self).__init__(parent=parent)
+        super(QMainWindow, self).__init__(parent=parent)
         self.UI = Ui_MainWindow()
         self.UI.setupUi(self)
 
@@ -58,7 +58,7 @@ class MainWindow(QMainWindow):
 
         startWindow = StartWindow()
 
-        if (startWindow.exec()==QDialog.Rejected):
+        if (startWindow.exec() == QDialog.Rejected):
             # User closed the dialog - exits!
             exit(0)
 
@@ -67,7 +67,7 @@ class MainWindow(QMainWindow):
         self.dbMan = DBManager(self.currentFileName)
 
         # Setup signals and slots
-        self.setupSignals()
+        self.setup_signals()
 
         # Maximize window
         self.showMaximized()
@@ -76,34 +76,30 @@ class MainWindow(QMainWindow):
         self.add_to_log("Chargement des données...", LogTypes.LOGTYPE_INFO)
         self.currentDataSet = self.dbMan.get_dataset()
         self.load_data_from_dataset()
-        #self.loadDemoData()
+        # self.loadDemoData()
         self.add_to_log("Données chargées!", LogTypes.LOGTYPE_DONE)
 
-
-    def setupSignals(self):
+    def setup_signals(self):
         self.UI.treeDataSet.itemClicked.connect(self.tree_item_clicked)
         self.UI.btnDataSetInfos.clicked.connect(self.infosRequested)
         self.UI.btnAddGroup.clicked.connect(self.newGroupRequested)
+        self.UI.btnDelete.clicked.connect(self.delete_requested)
 
     def load_data_from_dataset(self):
         # Groups
         groups = self.dbMan.get_all_groups()
         for group in groups:
-            item = self.create_group_item(group)
-            self.UI.treeDataSet.addTopLevelItem(item)
-            self.UI.treeDataSet.groups[group.id_group] = group
-
+            item = self.UI.treeDataSet.add_group(group)
 
     def loadDemoData(self):
-        #Load demo structure
+        # Load demo structure
         new_group = Group(id_group=0, name="Groupe 1", description="Ceci est un premier groupe de démonstration")
 
-        item = self.create_group_item(new_group)
-        self.UI.treeDataSet.addTopLevelItem(item)
-        self.UI.treeDataSet.groups[new_group.id_group] = new_group
+        item = self.UI.treeDataSet.add_group(new_group)
 
         parent = item
-        new_part = Participant(id_participant=1, name="Participant B", description="Participant dans un groupe", group=new_group)
+        new_part = Participant(id_participant=1, name="Participant B", description="Participant dans un groupe",
+                               group=new_group)
         item = self.create_participant_item(new_part)
         parent.addChild(item)
         self.UI.treeDataSet.participants[new_part.id_participant] = new_part
@@ -111,7 +107,7 @@ class MainWindow(QMainWindow):
         item2 = self.create_records_item()
         item.addChild(item2)
 
-        item3 = self.create_record_item("Enregistrement 1 (27/03/2018)",0)
+        item3 = self.create_record_item("Enregistrement 1 (27/03/2018)", 0)
         item2.addChild(item3)
 
         """ item5 = self.create_sensor_item("Accéléromètre", 0)
@@ -123,7 +119,7 @@ class MainWindow(QMainWindow):
         item5 = self.create_sensor_item("GPS", 2)
         item3.addChild(item5)
         """
-        item4 = self.create_subrecord_item("AM",0)
+        item4 = self.create_subrecord_item("AM", 0)
         item3.addChild(item4)
         """
         item5 = self.create_sensor_item("Accéléromètre", 0)
@@ -154,7 +150,7 @@ class MainWindow(QMainWindow):
         item2 = self.create_results_item()
         item.addChild(item2)
 
-        item3 = self.create_result_item("Nombre de pas (par enregistrement)",0)
+        item3 = self.create_result_item("Nombre de pas (par enregistrement)", 0)
         item2.addChild(item3)
 
         item3 = self.create_result_item("Niveau d'activité (total)", 1)
@@ -174,9 +170,7 @@ class MainWindow(QMainWindow):
 
         new_group = Group(id_group=1, name="Groupe 2", description="Ceci est un deuxième groupe de démonstration")
 
-        item = self.create_group_item(new_group)
-        self.UI.treeDataSet.addTopLevelItem(item)
-        self.UI.treeDataSet.groups[new_group.id_group] = new_group
+        item = self.UI.treeDataSet.add_group(new_group)
 
         parent = item
         new_part = Participant(id_participant=3, name="Participant D", group=new_group)
@@ -189,16 +183,8 @@ class MainWindow(QMainWindow):
         self.UI.treeDataSet.participants[new_part.id_participant] = new_part
         self.UI.treeDataSet.addTopLevelItem(item)
 
-    def create_group_item(self, group):
-        item = QTreeWidgetItem()
-        item.setText(0, group.name)
-        item.setIcon(0, QIcon(':/OpenIMU/icons/group.png'))
-        item.setData(0, Qt.UserRole, group.id_group)
-        item.setData(1, Qt.UserRole, 'group')
-        item.setFont(0, QFont('Helvetica', 14, QFont.Bold))
-        return item
 
-    def create_participant_item(self,part):
+    def create_participant_item(self, part):
         item = QTreeWidgetItem()
         item.setText(0, part.name)
         item.setIcon(0, QIcon(':/OpenIMU/icons/participant.png'))
@@ -223,7 +209,7 @@ class MainWindow(QMainWindow):
         item.setFont(0, QFont('Helvetica', 12, QFont.StyleItalic + QFont.Bold))
         return item
 
-    def create_record_item(self,name,id):
+    def create_record_item(self, name, id):
         item = QTreeWidgetItem()
         item.setText(0, name)
         item.setIcon(0, QIcon(':/OpenIMU/icons/recordset.png'))
@@ -232,7 +218,7 @@ class MainWindow(QMainWindow):
         item.setFont(0, QFont('Helvetica', 12, QFont.Bold))
         return item
 
-    def create_subrecord_item(self,name,id):
+    def create_subrecord_item(self, name, id):
         item = QTreeWidgetItem()
         item.setText(0, name)
         item.setIcon(0, QIcon(':/OpenIMU/icons/subrecord.png'))
@@ -241,7 +227,7 @@ class MainWindow(QMainWindow):
         item.setFont(0, QFont('Helvetica', 12, QFont.Bold))
         return item
 
-    def create_sensor_item(self,name,id):
+    def create_sensor_item(self, name, id):
         item = QTreeWidgetItem()
         item.setText(0, name)
         item.setIcon(0, QIcon(':/OpenIMU/icons/sensor.png'))
@@ -250,7 +236,7 @@ class MainWindow(QMainWindow):
         item.setFont(0, QFont('Helvetica', 12))
         return item
 
-    def create_result_item(self,name,id):
+    def create_result_item(self, name, id):
         item = QTreeWidgetItem()
         item.setText(0, name)
         item.setIcon(0, QIcon(':/OpenIMU/icons/result.png'))
@@ -259,14 +245,14 @@ class MainWindow(QMainWindow):
         item.setFont(0, QFont('Helvetica', 12))
         return item
 
-    def update_group(self,group):
-        #Find the group in the treelist
+    def update_group(self, group):
+        # Find the group in the treelist
         if group.id_group in self.UI.treeDataSet.groups.keys():
             self.UI.treeDataSet.groups[group.id_group] = group
-            for i in range (0, self.UI.treeDataSet.topLevelItemCount()):
+            for i in range(0, self.UI.treeDataSet.topLevelItemCount()):
                 item = self.UI.treeDataSet.topLevelItem(i)
-                if item.data(0,Qt.UserRole)==group.id_group:
-                    item.setText(0,group.name)
+                if self.UI.treeDataSet.get_item_id(item) == group.id_group:
+                    item.setText(0, group.name)
                     break
 
         else:
@@ -280,7 +266,7 @@ class MainWindow(QMainWindow):
         for i in reversed(range(self.UI.frmMain.layout().count())):
             self.UI.frmMain.layout().itemAt(i).widget().setParent(None)
 
-    def show_group(self,group=None):
+    def show_group(self, group=None):
         self.clear_main_widgets()
 
         groupWidget = GroupWindow(dbManager=self.dbMan, group=group)
@@ -288,7 +274,6 @@ class MainWindow(QMainWindow):
 
         groupWidget.dataSaved.connect(self.dataWasSaved)
         groupWidget.dataCancelled.connect(self.dataWasCancelled)
-
 
     def add_to_log(self, text, log_type):
         format = ""
@@ -303,17 +288,17 @@ class MainWindow(QMainWindow):
         if log_type == LogTypes.LOGTYPE_DONE:
             format = "<span style='color:green;font-weight:bold'>"
 
-        self.UI.txtLog.append("<span style='color:grey'>" + datetime.now().strftime("%H:%M:%S.%f") + " </span>" + format + text + "</span>")
+        self.UI.txtLog.append("<span style='color:grey'>" + datetime.now().strftime(
+            "%H:%M:%S.%f") + " </span>" + format + text + "</span>")
         self.UI.txtLog.ensureCursorVisible();
 
-
     def get_current_widget_data_type(self):
-        #TODO: checks!
+        # TODO: checks!
         return self.UI.frmMain.layout().itemAt(0).widget().data_type
 
-######################
+    ######################
     @pyqtSlot(QUrl)
-    def urlChanged(self,url):
+    def urlChanged(self, url):
         print('url: ', url)
 
     @pyqtSlot()
@@ -323,7 +308,7 @@ class MainWindow(QMainWindow):
         infosWindow.infosOnly = True
 
         if infosWindow.exec() != QDialog.Rejected:
-            #TODO: Save data
+            # TODO: Save data
             self.currentDataSet.name = infosWindow.dataSet.name
 
     @pyqtSlot()
@@ -333,19 +318,19 @@ class MainWindow(QMainWindow):
     @pyqtSlot(QTreeWidgetItem, int)
     def tree_item_clicked(self, item, column):
         # print(item.text(column))
-        item_id = item.data(0, Qt.UserRole)
-        item_type = item.data(1, Qt.UserRole)
+        item_id = self.UI.treeDataSet.get_item_id(item)
+        item_type = self.UI.treeDataSet.get_item_type(item)
 
         # Clear all widgets
         self.clear_main_widgets()
 
         if item_type == "group":
             self.show_group(self.UI.treeDataSet.groups[item_id])
-            #groupWidget = GroupWindow(dbManager=self.dbMan, group = self.UI.treeDataSet.groups[item_id])
-            #self.UI.frmMain.layout().addWidget(groupWidget)
+            # groupWidget = GroupWindow(dbManager=self.dbMan, group = self.UI.treeDataSet.groups[item_id])
+            # self.UI.frmMain.layout().addWidget(groupWidget)
 
         if item_type == "participant":
-            partWidget = ParticipantWindow(participant = self.UI.treeDataSet.participants[item_id])
+            partWidget = ParticipantWindow(participant=self.UI.treeDataSet.participants[item_id])
             self.UI.frmMain.layout().addWidget(partWidget)
 
         if item_type == "recordsets" or item_type == "recordset" or item_type == "subrecord":
@@ -367,7 +352,6 @@ class MainWindow(QMainWindow):
             self.update_group(group)
             self.add_to_log("Groupe " + group.name + " mis à jour.", LogTypes.LOGTYPE_DONE)
 
-
     @pyqtSlot()
     def dataWasCancelled(self):
         item_type = self.get_current_widget_data_type()
@@ -375,6 +359,25 @@ class MainWindow(QMainWindow):
         if item_type == "group":
             if self.UI.frmMain.layout().itemAt(0).widget().group is None:
                 self.clear_main_widgets()
+
+    @pyqtSlot()
+    def delete_requested(self):
+        item_id = self.UI.treeDataSet.get_item_id(self.UI.treeDataSet.currentItem())
+        item_type = self.UI.treeDataSet.get_item_type(self.UI.treeDataSet.currentItem())
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Question)
+
+        msg.setText("Désirez-vous vraiment supprimer " + self.UI.treeDataSet.currentItem().text(0) + " et tous les éléments associés?")
+        msg.setWindowTitle("Confirmation de suppression")
+        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+
+        rval = msg.exec()
+        if rval == QMessageBox.Yes:
+            if item_type == "group":
+                group = self.UI.treeDataSet.groups[item_id]
+                self.dbMan.delete_group(group)
+                self.UI.treeDataSet.remove_group(group)
+
 
     def closeEvent(self, event):
         print('closeEvent')
@@ -392,23 +395,48 @@ class MainWindow(QMainWindow):
             chart_view.add_test_data()
         return chart_view
 
+
 ########################################################################################################################
 class Treedatawidget(QTreeWidget):
-
     groups = {}
     participants = {}
 
     def __init__(self, parent=None):
-        super(QTreeWidget,self).__init__(parent=parent)
+        super(QTreeWidget, self).__init__(parent=parent)
 
+    def remove_group(self,group):
+        for i in range(0, self.topLevelItemCount()):
+            if self.get_item_id(self.topLevelItem(i)) == group.id_group:
+                self.takeTopLevelItem(i)
+                self.groups[group.id_group] = None
+                break
 
-    def dropEvent(self,event):
+    def add_group(self, group):
+        item = QTreeWidgetItem()
+        item.setText(0, group.name)
+        item.setIcon(0, QIcon(':/OpenIMU/icons/group.png'))
+        item.setData(0, Qt.UserRole, group.id_group)
+        item.setData(1, Qt.UserRole, 'group')
+        item.setFont(0, QFont('Helvetica', 14, QFont.Bold))
+
+        self.addTopLevelItem(item)
+        self.groups[group.id_group] = group
+
+        return item
+
+    def get_item_type(self,item):
+        return item.data(1, Qt.UserRole)
+
+    def get_item_id(self,item):
+        return item.data(0, Qt.UserRole)
+
+    def dropEvent(self, event):
 
         index = self.indexAt(event.pos())
 
         source_item = self.currentItem()
         source_type = source_item.data(1, Qt.UserRole)
-        source_id = source_item.data(0,Qt.UserRole)
+        source_id = source_item.data(0, Qt.UserRole)
 
         target_item = self.itemFromIndex(index)
         if target_item is not None:
@@ -434,7 +462,6 @@ class Treedatawidget(QTreeWidget):
                     return
 
             event.ignore()
-
 
 
 # Main

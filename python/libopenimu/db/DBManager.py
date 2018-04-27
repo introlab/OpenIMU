@@ -70,18 +70,7 @@ class DBManager:
     def session_add(self, store):
         self.session.add_all(store)
 
-    """def add_group(self, name, description):
-        try:
-            group = Group(name=name, description=description)
-            self.session.add(group)
-            self.commit()
-            return group
-
-        except Exception as e:
-            message = 'Error adding group' + ': ' + str(e)
-            print('Error: ', message)
-            raise
-    """
+    ######## GROUPS
     def update_group(self, group):
         try:
             if group.id_group is None:
@@ -100,6 +89,15 @@ class DBManager:
             print('Error: ', message)
             raise
 
+    def delete_group(self, group):
+        try:
+            self.session.delete(group)
+            self.commit()
+        except Exception as e:
+            message = 'Error deleting group' + ': ' + str(e)
+            print('Error: ', message)
+            raise
+
     def get_group(self, id_group):
         query = self.session.query(Group).filter(Group.id_group == id_group)
         # print('first group', query.first())
@@ -110,6 +108,7 @@ class DBManager:
         # print('all groups', query.all())
         return query.all()
 
+    #####################
     def add_participant(self, group: Group, name, description):
         # Create object
         participant = Participant(group=group, name=name, description=description)
