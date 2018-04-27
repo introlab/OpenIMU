@@ -7,8 +7,7 @@ from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QPushButton, QPlainTextEd
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.DataSet import DataSet
 
-import datetime
-import time
+from datetime import datetime
 
 class ImportWindow(QDialog):
 
@@ -95,7 +94,7 @@ class ImportWindow(QDialog):
 
         if self.dataSet is None:
             self.dataSet = DataSet()
-            self.dataSet.creation_date = time
+            self.dataSet.creation_date = datetime.now()
 
         self.dataSet.name = self.UI.txtName.text()
         self.dataSet.description = self.UI.txtDesc.toPlainText()

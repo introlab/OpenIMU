@@ -14,7 +14,7 @@ from sqlalchemy.orm import relationship
 class Participant(Base):
     __tablename__ = 'tabParticipants'
     id_participant = Column(Integer, Sequence('id_participant_sequence'), primary_key=True, autoincrement=True)
-    id_group = Column(Integer, ForeignKey("tabGroups.id_group"), nullable=False)
+    id_group = Column(Integer, ForeignKey("tabGroups.id_group", ondelete="CASCADE"), nullable=True)
     name = Column(String, nullable=False)
     description = Column(String)
 
