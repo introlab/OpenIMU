@@ -9,6 +9,7 @@ import numpy as np
 
 db_filename = 'actigraph.db'
 
+
 @timing
 def import_data_from_actigraph_file(filename):
     # This will create the database (or overwrite it)s
@@ -94,7 +95,6 @@ if __name__ == '__main__':
                                                                channel=channel)
                     timeseries_batt.append(create_data_timeseries(channel_data))
                     timeseries_batt[-1]['label'] = channel.label
-
 
             if sensor.id_sensor_type == SensorType.LUX:
                 channels = manager.get_all_channels(sensor=sensor)

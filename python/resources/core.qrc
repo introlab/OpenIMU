@@ -18,5 +18,6 @@
         <file>icons/save.png</file>
         <file>icons/cut.png</file>
         <file>icons/start_cut.png</file>
+	<file>html/map.html</file>
     </qresource>
 </RCC>
