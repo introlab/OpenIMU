@@ -5,7 +5,7 @@ import zipfile
 import struct
 import numpy as np
 import datetime
-import math
+from io import BytesIO
 
 
 class WIMUSettings:
@@ -322,36 +322,175 @@ def wimu_load_config(data, settings: WIMUSettings):
 @timing
 def wimu_load_acc(time_data, acc_data, config: WIMUConfig):
     # Format TIMESTAMP (uint32), X (int16) * SAMPLING_RATE, Y(int16) * SAMPLING_RATE, Z(int16) * SAMPLING_RATE
-    print('sampling rate is:', config.general.sampling_rate, ' len is', len(acc_data))
-    print('epoch size:', (config.general.sampling_rate * 6 + 4))
+    # print('sampling rate is:', config.general.sampling_rate, ' len is', len(acc_data))
+    # print('epoch size:', (config.general.sampling_rate * 6 + 4))
     epoch_size = (config.general.sampling_rate * 6 + 4)
     nb_epochs = len(acc_data) / epoch_size
-    print('should read nb_epochs', nb_epochs)
+    # print('should read nb_epochs', nb_epochs)
+
+    # Time data is a text file, each line contains a timestamp
+    f = BytesIO(time_data)
+
+    timestamps = []
+
+    acc_x = {}
+    acc_y = {}
+    acc_z = {}
+
+    last_timestamp = 0
 
     for i in range(int(nb_epochs)):
-        [timestamp] = struct.unpack_from('<I', acc_data, offset=i * epoch_size)
+
+        # This is the timestamp, in the file, but it is not used
+        struct.unpack_from('<I', acc_data, offset=i * epoch_size)
+
+        # Read timestamp from corrected file and use it instead
+        timestamp = int(f.readline())
+
+        # Check for continuous timestamps
+        if len(timestamps) == 0:
+            # print('create index:', timestamp)
+            timestamps.append(timestamp)
+            # Create empty array
+            acc_x[timestamp] = []
+            acc_y[timestamp] = []
+            acc_z[timestamp] = []
+            last_timestamp = timestamp
+        elif timestamp > last_timestamp + 1:
+            # print('create index:', timestamp)
+            timestamps.append(timestamp)
+            # Create empty array
+            acc_x[timestamp] = []
+            acc_y[timestamp] = []
+            acc_z[timestamp] = []
+        elif timestamp >= timestamps[-1] + 3600:
+            # print('create index:', timestamp)
+            timestamps.append(timestamp)
+            # Create empty array
+            acc_x[timestamp] = []
+            acc_y[timestamp] = []
+            acc_z[timestamp] = []
 
         # Read Acc-X
         x = np.frombuffer(acc_data, dtype=np.int16, count=config.general.sampling_rate,
                           offset=i * epoch_size + 4)
 
+        # Read Acc-Y
         y = np.frombuffer(acc_data, dtype=np.int16, count=config.general.sampling_rate,
                           offset=i * epoch_size + 4 + 2 * len(x))
 
+        # Read Acc-Z
         z = np.frombuffer(acc_data, dtype=np.int16, count=config.general.sampling_rate,
                           offset=i * epoch_size + 4 + 2 * len(x) + 2 * len(y))
 
-        # print('timestamp', timestamp)
-        mydate = datetime.datetime.fromtimestamp(timestamp)
-        # print('date', mydate)
+        # Accumulate vectors (use last known
+        acc_x[timestamps[-1]].append(x)
+        acc_y[timestamps[-1]].append(y)
+        acc_z[timestamps[-1]].append(z)
 
-@timing
-def wimu_load_gps(time_data, index_data, gps_data, config: WIMUConfig):
-    pass
+        # Store last timestamp for next iteration
+        last_timestamp = timestamp
+
+    # print('aggregated values', len(acc_x), len(acc_y), len(acc_z))
+    acc_result = []
+    for timestamp in timestamps:
+        acc_result.append([timestamp, {'acc_x': np.concatenate(acc_x[timestamp]),
+                                       'acc_y': np.concatenate(acc_y[timestamp]),
+                                       'acc_z': np.concatenate(acc_z[timestamp])}])
+
+    return acc_result
 
 
 @timing
 def wimu_load_gyro(time_data, gyro_data, config: WIMUConfig):
+    # Format TIMESTAMP (uint32), X (int16) * SAMPLING_RATE, Y(int16) * SAMPLING_RATE, Z(int16) * SAMPLING_RATE
+    # print('sampling rate is:', config.general.sampling_rate, ' len is', len(acc_data))
+    # print('epoch size:', (config.general.sampling_rate * 6 + 4))
+    epoch_size = (config.general.sampling_rate * 6 + 4)
+    nb_epochs = len(gyro_data) / epoch_size
+    # print('should read nb_epochs', nb_epochs)
+
+    # Time data is a text file, each line contains a timestamp
+    f = BytesIO(time_data)
+
+    timestamps = []
+
+    gyro_x = {}
+    gyro_y = {}
+    gyro_z = {}
+
+    last_timestamp = 0
+
+    for i in range(int(nb_epochs)):
+
+        # This is the timestamp, in the file, but it is not used
+        struct.unpack_from('<I', gyro_data, offset=i * epoch_size)
+
+        # Read timestamp from corrected file and use it instead
+        timestamp = int(f.readline())
+
+        # Check for continuous timestamps
+        if len(timestamps) == 0:
+            # print('create index:', timestamp)
+            timestamps.append(timestamp)
+            # Create empty array
+            gyro_x[timestamp] = []
+            gyro_y[timestamp] = []
+            gyro_z[timestamp] = []
+            last_timestamp = timestamp
+        elif timestamp > last_timestamp + 1:
+            # print('create index:', timestamp)
+            timestamps.append(timestamp)
+            # Create empty array
+            gyro_x[timestamp] = []
+            gyro_y[timestamp] = []
+            gyro_z[timestamp] = []
+        elif timestamp >= timestamps[-1] + 3600:
+            # print('create index:', timestamp)
+            timestamps.append(timestamp)
+            # Create empty array
+            gyro_x[timestamp] = []
+            gyro_y[timestamp] = []
+            gyro_z[timestamp] = []
+
+        # Read Acc-X
+        x = np.frombuffer(gyro_data, dtype=np.int16, count=config.general.sampling_rate,
+                          offset=i * epoch_size + 4)
+
+        # Read Acc-Y
+        y = np.frombuffer(gyro_data, dtype=np.int16, count=config.general.sampling_rate,
+                          offset=i * epoch_size + 4 + 2 * len(x))
+
+        # Read Acc-Z
+        z = np.frombuffer(gyro_data, dtype=np.int16, count=config.general.sampling_rate,
+                          offset=i * epoch_size + 4 + 2 * len(x) + 2 * len(y))
+
+        # Accumulate vectors (use last known
+        gyro_x[timestamps[-1]].append(x)
+        gyro_y[timestamps[-1]].append(y)
+        gyro_z[timestamps[-1]].append(z)
+
+        # Store last timestamp for next iteration
+        last_timestamp = timestamp
+
+    # print('aggregated values', len(acc_x), len(acc_y), len(acc_z))
+    gyro_result = []
+    for timestamp in timestamps:
+        gyro_result.append([timestamp, {'gyro_x': np.concatenate(gyro_x[timestamp]),
+                                        'gyro_y': np.concatenate(gyro_y[timestamp]),
+                                        'gyro_z': np.concatenate(gyro_z[timestamp])}])
+
+    return gyro_result
+
+
+@timing
+def wimu_load_magneto(time_data, magneto_data, config: WIMUConfig):
+    # No magnetometer on v2...
+    pass
+
+
+@timing
+def wimu_load_gps(time_data, index_data, gps_data, config: WIMUConfig):
     pass
 
 
@@ -389,6 +528,13 @@ def wimu_importer(filename):
             results['config'] = wimu_load_config(myzip.open('PreProcess/CONFIG.WCF').read(), results['settings'])
         else:
             return results
+
+        # Create empty lists
+        results['acc'] = []
+        results['gyr'] = []
+        results['gps'] = []
+        results['log'] = []
+        results['pow'] = []
 
         # Must have matching pairs with VALUES /TIME
         filedict = {}
@@ -439,14 +585,14 @@ def wimu_importer(filename):
                     print('opening acc data', key)
                     acc_data = myzip.open(key).read()
                     time_data = myzip.open(filedict[key][0]).read()
-                    wimu_load_acc(time_data, acc_data, results['config'])
+                    results['acc'].append(wimu_load_acc(time_data, acc_data, results['config']))
                 else:
                     print('error ACC')
             elif 'GYR' in key:
                 if len(filedict[key]) == 1:
                     gyro_data = myzip.open(key).read()
                     time_data = myzip.open(filedict[key][0]).read()
-                    wimu_load_gyro(time_data, gyro_data, results['config'])
+                    results['gyr'].append(wimu_load_gyro(time_data, gyro_data, results['config']))
                 else:
                     print('error GYRO')
             elif 'GPS' in key:
@@ -480,4 +626,7 @@ def wimu_importer(filename):
 # Testing app
 if __name__ == '__main__':
     result = wimu_importer('../../resources/samples/WIMU_ACC_GPS_GYRO_PreProcess.zip')
-    print(result)
+
+    for acc in result['acc']:
+        if len(acc) > 0:
+            print('acc timestamp', len(acc), acc[0][0])
