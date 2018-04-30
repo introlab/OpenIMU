@@ -4,6 +4,7 @@ import os
 import zipfile
 import struct
 import numpy as np
+import datetime
 import math
 
 
@@ -212,14 +213,16 @@ class WIMUConfig:
             buf16 = np.uint16(0)
             buf8 = np.uint8(0)
 
-            # Unsigned int
-            self.enabled_modules = struct.unpack_from('<I', data, offset=0)
+            # Enabled modules
+            [self.enabled_modules] = struct.unpack_from('<H', data, offset=0)
 
-            # Unsigned short
-            buf16 = struct.unpack_from('<H', data, offset=4)
+            # Empty buf16
+            [buf16] == struct.unpack_from('<H', data, offset=2)
 
             # Unsigned char, CPU Options
-            buf8 = struct.unpack_from('<B', data, offset=6)
+            [buf8] = struct.unpack_from('<B', data, offset=4)
+
+            print('cpu options', hex(buf8))
 
             if np.bitwise_and(buf8, 0x01):
                 self.general.enable_watchdog = True
@@ -236,13 +239,13 @@ class WIMUConfig:
             # print('ui.led_blink_time', self.ui.led_blink_time)
 
             # Unsigned char, Log filetime
-            buf8 = struct.unpack_from('<B', data, offset=7)
+            [buf8] = struct.unpack_from('<B', data, offset=5)
 
             # Unsigned char, Log reset time
-            buf8 = struct.unpack_from('<B', data, offset=8)
+            [buf8] = struct.unpack_from('<B', data, offset=6)
 
             # Unsigned char, Logger options
-            buf8 = struct.unpack_from('<B', data, offset=9)
+            [buf8] = struct.unpack_from('<B', data, offset=7)
 
             if np.bitwise_and(buf8, 0x01):
                 self.ui.write_led = True
@@ -263,31 +266,31 @@ class WIMUConfig:
             # print('self.datetime.time_offset', self.datetime.time_offset)
 
             # GPS dead time
-            buf8 = struct.unpack_from('<B', data, offset=10)
+            [buf8] = struct.unpack_from('<B', data, offset=8)
 
             # GPS Degrad time
-            buf8 = struct.unpack_from('<B', data, offset=11)
+            [buf8] = struct.unpack_from('<B', data, offset=9)
 
             # GPS Deadrec time
-            buf8 = struct.unpack_from('<B', data, offset=12)
+            [buf8] = struct.unpack_from('<B', data, offset=10)
 
             # GPS options
-            buf8 = struct.unpack_from('<B', data, offset=13)
+            [buf8] = struct.unpack_from('<B', data, offset=11)
             if np.bitwise_and(buf8, 0x08):
                 self.gps.force_cold = True
 
             # print('self.gps.force_cold',self.gps.force_cold)
 
             # Power options
-            buf8 = struct.unpack_from('<B', data, offset=14)
+            [buf8] = struct.unpack_from('<B', data, offset=12)
 
             # Zigbee options
-            buf8 = struct.unpack_from('<B', data, offset=15)
+            [buf8] = struct.unpack_from('<B', data, offset=13)
 
             # Acc range
-            self.acc.range = struct.unpack_from('<B', data, offset=16)
-            self.gyro.range = struct.unpack_from('<B', data, offset=17)
-            self.magneto.range = struct.unpack_from('<B', data, offset=18)
+            self.acc.range = struct.unpack_from('<B', data, offset=14)
+            self.gyro.range = struct.unpack_from('<B', data, offset=15)
+            self.magneto.range = struct.unpack_from('<B', data, offset=16)
 
             # print('self.acc.range', self.acc.range)
             # print('self.gyro.range', self.gyro.range)
@@ -318,8 +321,29 @@ def wimu_load_config(data, settings: WIMUSettings):
 
 @timing
 def wimu_load_acc(time_data, acc_data, config: WIMUConfig):
-    pass
+    # Format TIMESTAMP (uint32), X (int16) * SAMPLING_RATE, Y(int16) * SAMPLING_RATE, Z(int16) * SAMPLING_RATE
+    print('sampling rate is:', config.general.sampling_rate, ' len is', len(acc_data))
+    print('epoch size:', (config.general.sampling_rate * 6 + 4))
+    epoch_size = (config.general.sampling_rate * 6 + 4)
+    nb_epochs = len(acc_data) / epoch_size
+    print('should read nb_epochs', nb_epochs)
 
+    for i in range(int(nb_epochs)):
+        [timestamp] = struct.unpack_from('<I', acc_data, offset=i * epoch_size)
+
+        # Read Acc-X
+        x = np.frombuffer(acc_data, dtype=np.int16, count=config.general.sampling_rate,
+                          offset=i * epoch_size + 4)
+
+        y = np.frombuffer(acc_data, dtype=np.int16, count=config.general.sampling_rate,
+                          offset=i * epoch_size + 4 + 2 * len(x))
+
+        z = np.frombuffer(acc_data, dtype=np.int16, count=config.general.sampling_rate,
+                          offset=i * epoch_size + 4 + 2 * len(x) + 2 * len(y))
+
+        # print('timestamp', timestamp)
+        mydate = datetime.datetime.fromtimestamp(timestamp)
+        # print('date', mydate)
 
 @timing
 def wimu_load_gps(time_data, index_data, gps_data, config: WIMUConfig):
@@ -365,9 +389,6 @@ def wimu_importer(filename):
             results['config'] = wimu_load_config(myzip.open('PreProcess/CONFIG.WCF').read(), results['settings'])
         else:
             return results
-
-        print(str(results))
-        return results
 
         # Must have matching pairs with VALUES /TIME
         filedict = {}
@@ -415,16 +436,17 @@ def wimu_importer(filename):
             # print(key, filedict[key])
             if 'ACC' in key:
                 if len(filedict[key]) == 1:
+                    print('opening acc data', key)
                     acc_data = myzip.open(key).read()
                     time_data = myzip.open(filedict[key][0]).read()
-                    wimu_load_acc(time_data, acc_data)
+                    wimu_load_acc(time_data, acc_data, results['config'])
                 else:
                     print('error ACC')
             elif 'GYR' in key:
                 if len(filedict[key]) == 1:
                     gyro_data = myzip.open(key).read()
                     time_data = myzip.open(filedict[key][0]).read()
-                    wimu_load_gyro(time_data, gyro_data)
+                    wimu_load_gyro(time_data, gyro_data, results['config'])
                 else:
                     print('error GYRO')
             elif 'GPS' in key:
@@ -432,27 +454,27 @@ def wimu_importer(filename):
                     gps_data = myzip.open(key).read()
                     index_data = myzip.open(filedict[key][0]).read()
                     time_data = myzip.open(filedict[key][1]).read()
-                    wimu_load_gps(time_data, index_data, gps_data)
+                    wimu_load_gps(time_data, index_data, gps_data, results['config'])
                 else:
                     print('error GPS')
             elif 'POW' in key:
                 if len(filedict[key]) == 1:
                     pow_data = myzip.open(key).read()
                     time_data = myzip.open(filedict[key][0]).read()
-                    wimu_load_pow(time_data, pow_data)
+                    wimu_load_pow(time_data, pow_data, results['config'])
                 else:
                     print('error POW')
             elif 'LOG' in key:
                 if len(filedict[key]) == 1:
                     log_data = myzip.open(key).read()
                     time_data = myzip.open(filedict[key][0]).read()
-                    wimu_load_log(time_data, log_data)
+                    wimu_load_log(time_data, log_data, results['config'])
                 else:
                     print('error LOG')
             else:
                 print('unhandled key', key)
 
-    return result
+    return results
 
 
 # Testing app
