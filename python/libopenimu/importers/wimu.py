@@ -8,6 +8,19 @@ import datetime
 from io import BytesIO
 
 
+class ModuleIDs:
+    MODULE_CPU = 0
+    MODULE_BLE = 1
+    MODULE_GPS = 2
+    MODULE_GYRO = 3
+    MODULE_MAGNETO = 4
+    MODULE_ACC = 5
+    MODULE_DATALOGGER = 6
+    MODULE_USB = 7
+    MODULE_POWER = 8
+    MODULE_IMU = 9
+
+
 class WIMUSettings:
     # Serial Number
     id = np.uint16(0)
@@ -50,7 +63,7 @@ class WIMUSettings:
         [self.id, self.hw_id] = struct.unpack_from('<HB', data, offset=0)
 
         if self.hw_id == 3:
-            print('error hw_id not supported:', self.hw_id)
+            print('error hw_id not yet supported:', self.hw_id)
             return
         else:
             assert(len(data) == 50)
@@ -80,7 +93,7 @@ class DateTimeOptions:
     enable_auto_offset = False
 
     def __str__(self):
-        return str([self.__class__.__name__,  {'time_offset':self.time_offset, 'enable_gps_time':self.enable_gps_time,
+        return str([self.__class__.__name__,  {'time_offset': self.time_offset, 'enable_gps_time':self.enable_gps_time,
                                                'enable_auto_offset': self.enable_auto_offset}])
 
 
@@ -146,12 +159,68 @@ class BLEOptions:
 class AccOptions:
     range = np.uint8(0)
 
+    """
+        Acc.
+        0 = +/- 2g
+        1 = +/- 4g
+        2 = +/- 8g
+        3 = +/- 16g
+    """
+    @staticmethod
+    def conversion_to_g(value_range, value, hw_id=2):
+        # Same conversion for any hw_id
+        if value_range <= 3:
+            adc_min = -32767
+            adc_max = 32767
+            s_values = [2.0, 4.0, 8.0, 16.0]
+            return (((value + np.abs(adc_min)) / (np.abs(adc_min) + adc_max))
+                    * 2 * s_values[value_range]) - s_values[value_range]
+        else:
+            return None
+
+    @staticmethod
+    def range_max(value_range, hw_id=2):
+        # Same range for any hw_id
+        s_values = [2.0, 4.0, 8.0, 16.0]
+        if value_range <= 3:
+            return s_values[value_range]
+        else:
+            return None
+
     def __str__(self):
         return str([self.__class__.__name__, {'range': self.range}])
 
 
 class GyroOptions:
     range = np.uint8(0)
+
+    """
+        Gyro.
+        0 = +/- 250 deg/sec
+        1 = +/- 500 deg/sec
+        2 = +/- 1000 deg/sec
+        3 = +/- 2000 deg/sec
+    """
+    @staticmethod
+    def conversion_to_deg_per_sec(value_range, value, hw_id=2):
+        # Same conversion for any hw_id
+        if value_range <= 3:
+            adc_min = -32767
+            adc_max = 32767
+            s_values = [250.0, 500.0, 1000.0, 2000.0]
+            return (((value + np.abs(adc_min)) / (np.abs(adc_min) + adc_max))
+                    * 2 * s_values[value_range]) - s_values[value_range]
+        else:
+            return None
+
+    @staticmethod
+    def range_max(value_range, hw_id=2):
+        # Same range for any hw_id
+        s_values = [250.0, 500.0, 1000.0, 2000.0]
+        if value_range <= 3:
+            return s_values[value_range]
+        else:
+            return None
 
     def __str__(self):
         return str([self.__class__.__name__, {'range': self.range}])
@@ -188,10 +257,10 @@ class WIMUConfig:
     imu = IMUOptions()
     enabled_modules = np.uint16(0)
     crc = np.uint32(0)
-    WIMUSettings = WIMUSettings()
+    settings = WIMUSettings()
 
     def __str__(self):
-        my_dict = {}
+        my_dict = dict()
         my_dict['datetime'] = str(self.datetime)
         my_dict['ui'] = str(self.ui)
         my_dict['general'] = str(self.general)
@@ -288,9 +357,9 @@ class WIMUConfig:
             [buf8] = struct.unpack_from('<B', data, offset=13)
 
             # Acc range
-            self.acc.range = struct.unpack_from('<B', data, offset=14)
-            self.gyro.range = struct.unpack_from('<B', data, offset=15)
-            self.magneto.range = struct.unpack_from('<B', data, offset=16)
+            [self.acc.range] = struct.unpack_from('<B', data, offset=14)
+            [self.gyro.range] = struct.unpack_from('<B', data, offset=15)
+            [self.magneto.range] = struct.unpack_from('<B', data, offset=16)
 
             # print('self.acc.range', self.acc.range)
             # print('self.gyro.range', self.gyro.range)
@@ -372,21 +441,27 @@ def wimu_load_acc(time_data, acc_data, config: WIMUConfig):
             acc_z[timestamp] = []
 
         # Read Acc-X
-        x = np.frombuffer(acc_data, dtype=np.int16, count=config.general.sampling_rate,
-                          offset=i * epoch_size + 4)
+        x_raw = np.frombuffer(acc_data, dtype=np.int16, count=config.general.sampling_rate,
+                              offset=i * epoch_size + 4)
 
         # Read Acc-Y
-        y = np.frombuffer(acc_data, dtype=np.int16, count=config.general.sampling_rate,
-                          offset=i * epoch_size + 4 + 2 * len(x))
+        y_raw = np.frombuffer(acc_data, dtype=np.int16, count=config.general.sampling_rate,
+                              offset=i * epoch_size + 4 + 2 * len(x_raw))
 
         # Read Acc-Z
-        z = np.frombuffer(acc_data, dtype=np.int16, count=config.general.sampling_rate,
-                          offset=i * epoch_size + 4 + 2 * len(x) + 2 * len(y))
+        z_raw = np.frombuffer(acc_data, dtype=np.int16, count=config.general.sampling_rate,
+                              offset=i * epoch_size + 4 + 2 * len(x_raw) + 2 * len(y_raw))
+
+        # Conversion to g
+        range_max = np.float32(AccOptions.range_max(config.acc.range, config.settings.hw_id))
+        x_conv = (x_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
+        y_conv = (y_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
+        z_conv = (z_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
 
         # Accumulate vectors (use last known
-        acc_x[timestamps[-1]].append(x)
-        acc_y[timestamps[-1]].append(y)
-        acc_z[timestamps[-1]].append(z)
+        acc_x[timestamps[-1]].append(x_conv)
+        acc_y[timestamps[-1]].append(y_conv)
+        acc_z[timestamps[-1]].append(z_conv)
 
         # Store last timestamp for next iteration
         last_timestamp = timestamp
@@ -454,21 +529,27 @@ def wimu_load_gyro(time_data, gyro_data, config: WIMUConfig):
             gyro_z[timestamp] = []
 
         # Read Acc-X
-        x = np.frombuffer(gyro_data, dtype=np.int16, count=config.general.sampling_rate,
-                          offset=i * epoch_size + 4)
+        x_raw = np.frombuffer(gyro_data, dtype=np.int16, count=config.general.sampling_rate,
+                              offset=i * epoch_size + 4)
 
         # Read Acc-Y
-        y = np.frombuffer(gyro_data, dtype=np.int16, count=config.general.sampling_rate,
-                          offset=i * epoch_size + 4 + 2 * len(x))
+        y_raw = np.frombuffer(gyro_data, dtype=np.int16, count=config.general.sampling_rate,
+                              offset=i * epoch_size + 4 + 2 * len(x_raw))
 
         # Read Acc-Z
-        z = np.frombuffer(gyro_data, dtype=np.int16, count=config.general.sampling_rate,
-                          offset=i * epoch_size + 4 + 2 * len(x) + 2 * len(y))
+        z_raw = np.frombuffer(gyro_data, dtype=np.int16, count=config.general.sampling_rate,
+                              offset=i * epoch_size + 4 + 2 * len(x_raw) + 2 * len(y_raw))
 
-        # Accumulate vectors (use last known
-        gyro_x[timestamps[-1]].append(x)
-        gyro_y[timestamps[-1]].append(y)
-        gyro_z[timestamps[-1]].append(z)
+        # Conversion to deg/sec
+        range_max = np.float32(GyroOptions.range_max(config.gyro.range, config.settings.hw_id))
+        x_conv = (x_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
+        y_conv = (y_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
+        z_conv = (z_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
+
+        # Accumulate vectors (use last known)
+        gyro_x[timestamps[-1]].append(x_conv)
+        gyro_y[timestamps[-1]].append(y_conv)
+        gyro_z[timestamps[-1]].append(z_conv)
 
         # Store last timestamp for next iteration
         last_timestamp = timestamp

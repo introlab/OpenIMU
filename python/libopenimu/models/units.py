@@ -13,13 +13,15 @@ class Units:
     GRAVITY_G = 1
     METERS_PER_SEC = 2
     RAD_PER_SEC = 3
-    VOLTS = 4
-    LUX = 5
+    DEG_PER_SEC = 4
+    VOLTS = 5
+    LUX = 6
 
     value_dict = {METERS: 'METERS',
                   GRAVITY_G: 'G',
                   METERS_PER_SEC: 'M/S',
                   RAD_PER_SEC: 'RAD/S',
+                  DEG_PER_SEC: 'DEG/S',
                   VOLTS: 'VOLTS',
                   LUX: 'LUX'}
 
