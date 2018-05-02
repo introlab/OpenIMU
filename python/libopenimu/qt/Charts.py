@@ -21,6 +21,7 @@ import numpy as np
 from scipy.signal import decimate
 import datetime
 
+
 class IMUChartView(QChartView):
     def __init__(self, parent=None):
         super(QChartView, self).__init__(parent=parent)
@@ -68,18 +69,21 @@ class IMUChartView(QChartView):
         decimate_factor = len(xdata) / 100000.0
 
         if decimate_factor > 1.0:
-            decimate_factor = int(np.round(decimate_factor))
+            decimate_factor = int(np.floor(decimate_factor))
             print('decimate factor', decimate_factor)
             # x = decimate(xdata, decimate_factor)
             # y = decimate(ydata, decimate_factor)
-            x = np.ndarray(int(len(xdata) / decimate_factor) + 1, dtype=np.float64)
-            y = np.ndarray(int(len(ydata) / decimate_factor) + 1, dtype=np.float64)
-            for i in range(0, len(xdata), decimate_factor):
-                index = int(i / decimate_factor)
-                x[index] = xdata[i]
-                y[index] = ydata[i]
+            x = np.ndarray(int(len(xdata) / decimate_factor), dtype=np.float64)
+            y = np.ndarray(int(len(ydata) / decimate_factor), dtype=np.float64)
+            for i in range(len(x)):
+                index = i * decimate_factor
+                assert(index < len(xdata))
+                x[i] = xdata[index]
+                y[i] = ydata[index]
+                if x[i] < x[0]:
+                    print('timestamp error', x[i], x[0])
 
-            print('return size', len(x), len(y))
+            print('return size', len(x), len(y), 'timestamp', x[0])
             return x, y
         else:
             return xdata, ydata

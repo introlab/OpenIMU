@@ -278,6 +278,8 @@ class DBManager:
             query = query.filter(SensorData.id_channel == channel.id_channel)
 
         # print(query)
+        # Make sure data is ordered by timestamps
+        query = query.order_by(SensorData.data_timestamp.asc())
 
         if not convert:
             return query.all()

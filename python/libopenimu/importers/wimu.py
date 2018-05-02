@@ -416,6 +416,10 @@ def wimu_load_acc(time_data, acc_data, config: WIMUConfig):
         # Read timestamp from corrected file and use it instead
         timestamp = int(f.readline())
 
+        if timestamp <= last_timestamp:
+            print('ERROR Acc timestamp in the past', 'diff:', timestamp - last_timestamp)
+            continue
+
         # Check for continuous timestamps
         if len(timestamps) == 0:
             # print('create index:', timestamp)
@@ -503,6 +507,10 @@ def wimu_load_gyro(time_data, gyro_data, config: WIMUConfig):
 
         # Read timestamp from corrected file and use it instead
         timestamp = int(f.readline())
+
+        if timestamp <= last_timestamp:
+            print('ERROR Gyro timestamp in the past', 'diff:', timestamp - last_timestamp)
+            continue
 
         # Check for continuous timestamps
         if len(timestamps) == 0:
@@ -663,6 +671,7 @@ def wimu_importer(filename):
             # print(key, filedict[key])
             if 'ACC' in key:
                 if len(filedict[key]) == 1:
+                    print('processing: ',  key)
                     acc_data = myzip.open(key).read()
                     time_data = myzip.open(filedict[key][0]).read()
                     results['acc'].append(wimu_load_acc(time_data, acc_data, results['config']))
