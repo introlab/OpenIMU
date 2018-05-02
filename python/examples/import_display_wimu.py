@@ -44,13 +44,6 @@ def create_data_timeseries(sensor_data_list: list):
     else:
         return {'x': [], 'y': []}
 
-    # Test, remove first time
-    # time_array = time_array - time_array[0]
-
-    # print('time_array_shape, data_array_shape', time_array.shape, data_array.shape)
-    # return data
-
-
 
 # Testing app
 if __name__ == '__main__':
@@ -63,6 +56,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
 
     timeseries_acc = []
+    timeseries_gyro = []
 
     if not os.path.isfile(db_filename):
         print('importing wimu data')
@@ -88,10 +82,18 @@ if __name__ == '__main__':
                                                                channel=channel)
                     timeseries_acc.append(create_data_timeseries(channel_data))
                     timeseries_acc[-1]['label'] = channel.label
+            if sensor.id_sensor_type == SensorType.GYROMETER:
+                print('Found Gyro')
+                channels = manager.get_all_channels(sensor=sensor)
+                for channel in channels:
+                    print('Found Channel (gyro)', channel)
+                    # Will get all data (converted to floats)
+                    channel_data = manager.get_all_sensor_data(recordset=record, convert=True, sensor=sensor,
+                                                               channel=channel)
+                    timeseries_gyro.append(create_data_timeseries(channel_data))
+                    timeseries_gyro[-1]['label'] = channel.label
 
     # Create widgets
-
-    # Accelerometers
     def create_window(label=''):
         window = QMainWindow()
         view = IMUChartView(window)
@@ -100,9 +102,11 @@ if __name__ == '__main__':
         window.resize(640, 480)
         return [window, view]
 
+
+    # Accelerometers
     [window_acc, view_acc] = create_window('IMUChartView Demo (Accelerometers)')
 
-    # All colors needed for 5 series
+    # All colors needed for 3 series
     colors = [Qt.red, Qt.green, Qt.darkBlue]
 
     # Add series
@@ -110,6 +114,18 @@ if __name__ == '__main__':
         view_acc.add_data(series['x'], series['y'], color=colors.pop(), legend_text=series['label'])
 
     window_acc.show()
+
+    # Gyro
+    [window_gyro, view_gyro] = create_window('IMUChartView Demo (Gyro)')
+
+    # All colors needed for 3 series
+    colors = [Qt.red, Qt.green, Qt.darkBlue]
+
+    # Add series
+    for series in timeseries_gyro:
+        view_gyro.add_data(series['x'], series['y'], color=colors.pop(), legend_text=series['label'])
+
+    window_gyro.show()
 
     # Exec application
     sys.exit(app.exec_())
