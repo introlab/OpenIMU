@@ -587,12 +587,12 @@ def wimu_load_log(time_data, log_data, config: WIMUConfig):
 
 @timing
 def wimu_importer(filename):
+    results = {}
     if not os.path.isfile(filename):
         print('file not found')
-        return None
+        return results
 
     print('wimu_importer processing', filename)
-    results = {}
 
     with zipfile.ZipFile(filename) as myzip:
         print('zip opened')
@@ -663,7 +663,6 @@ def wimu_importer(filename):
             # print(key, filedict[key])
             if 'ACC' in key:
                 if len(filedict[key]) == 1:
-                    print('opening acc data', key)
                     acc_data = myzip.open(key).read()
                     time_data = myzip.open(filedict[key][0]).read()
                     results['acc'].append(wimu_load_acc(time_data, acc_data, results['config']))
