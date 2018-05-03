@@ -8,6 +8,89 @@ import datetime
 from io import BytesIO
 
 
+class GPSGeodetic:
+    message_id = np.uint8(0)
+    nav_valid = np.uint16(0)
+    nav_type = np.uint16(0)
+    extended_week_number = np.uint16(0)
+    tow = np.uint32(0)
+    year = np.uint16(0)
+    month = np.uint8(0)
+    day = np.uint8(0)
+    hour = np.uint8(0)
+    minute = np.uint8(0)
+    second = np.uint16(0)
+    satellite_id_list = np.uint32(0)
+    latitude = np.int32(0)
+    longitude = np.int32(0)
+    altitude_ellipsoid = np.int32(0)
+    altitude_mls = np.int32(0)
+    map_datum = np.int8(0)
+    speed_over_ground = np.uint16(0)
+    course_over_ground = np.uint16(0)
+    magnetic_variation = np.int16(0)
+    climb_rate = np.int16(0)
+    heading_rate = np.int16(0)
+
+    def from_bytes(self, data, offset=0):
+        assert(len(data) == 91)
+        [self.message_id] = struct.unpack_from('>B', data, offset=0)
+        [self.nav_valid] = struct.unpack_from('>H', data, offset=1)
+        [self.nav_type] = struct.unpack_from('>H', data, offset=3)
+        [self.extended_week_number] = struct.unpack_from('>H', data, offset=5)
+        [self.tow] = struct.unpack_from('>I', data, offset=7)
+        [self.year] = struct.unpack_from('>H', data, offset=11)
+        [self.month] = struct.unpack_from('>B', data, offset=13)
+        [self.day] = struct.unpack_from('>B', data, offset=14)
+        [self.hour] = struct.unpack_from('>B', data, offset=15)
+        [self.minute] = struct.unpack_from('>B', data, offset=16)
+        [self.second] = struct.unpack_from('>H', data, offset=17)
+        [self.satellite_id_list] = struct.unpack_from('>I', data, offset=19)
+        [self.latitude] = struct.unpack_from('>i', data, offset=23)
+        [self.longitude] = struct.unpack_from('>i', data, offset=27)
+        [self.altitude_ellipsoid] = struct.unpack_from('>i', data, offset=31)
+        [self.altitude_mls] = struct.unpack_from('>i', data, offset=35)
+        [self.map_datum] = struct.unpack_from('>b', data, offset=39)
+        [self.speed_over_ground] = struct.unpack_from('>H', data, offset=40)
+        [self.course_over_ground] = struct.unpack_from('>H', data, offset=42)
+        [self.magnetic_variation] = struct.unpack_from('>h', data, offset=44)
+        [self.climb_rate] = struct.unpack_from('>h', data, offset=46)
+        [self.heading_rate] = struct.unpack_from('>h', data, offset=48)
+
+        print('latitude', self.latitude / 1e7, 'longitude', self.longitude / 1e7)
+
+
+
+    def to_bytes(self):
+        return bytes()
+
+
+class SIRFFrame:
+    start_seq = np.uint16(0)
+    payload_len = np.uint16(0)
+    payload = bytes()
+    checksum = np.uint16(0)
+    stop_seq = np.uint16(0)
+
+    def from_bytes(self, data, offset=0):
+        # print('from_bytes buf len', len(data), 'offset', offset)
+        [self.start_seq] = struct.unpack_from('>H', data, offset=offset)
+        # print('start_seq', hex(self.start_seq))
+        [self.payload_len] = struct.unpack_from('>H', data, offset=offset + 2)
+        self.payload_len = np.bitwise_and(self.payload_len, 0x07FF)
+        # print('payload_size', self.payload_len)
+        self.payload = data[offset+4:offset+4+self.payload_len]
+        # struct.unpack_from('>' + str(self.payload_len) + 'B', data, offset=offset + 4)
+        # print('payload_len', len(self.payload))
+        [self.checksum] = struct.unpack_from('>H', data, offset=offset + 4 + len(self.payload))
+        # print('checksum', hex(self.checksum))
+        [self.stop_seq] = struct.unpack_from('>H', data, offset=offset + 6 + len(self.payload))
+        # print('stop_seq', hex(self.stop_seq))
+
+    def len(self):
+        return 8 + len(self.payload)
+
+
 class ModuleIDs:
     MODULE_CPU = 0
     MODULE_BLE = 1
@@ -580,7 +663,20 @@ def wimu_load_magneto(time_data, magneto_data, config: WIMUConfig):
 
 @timing
 def wimu_load_gps(time_data, index_data, gps_data, config: WIMUConfig):
-    pass
+
+    frames = []
+    offset = 0
+    while offset < len(gps_data):
+        frame = SIRFFrame()
+        frame.from_bytes(gps_data, offset=offset)
+
+        # TODO Verify checksum
+        if len(frame.payload) > 0:
+            if frame.payload[0] == 0x29:
+                geo = GPSGeodetic()
+                geo.from_bytes(frame.payload)
+
+        offset += frame.len()
 
 
 @timing
