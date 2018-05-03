@@ -12,7 +12,7 @@ from sqlalchemy.orm import relationship
 class Recordset(Base):
     __tablename__ = 'tabRecordsets'
     id_recordset = Column(Integer, Sequence('id_recordset_sequence'), primary_key=True, autoincrement=True)
-    id_participant = Column(Integer, ForeignKey('tabParticipants.id_participant'), nullable=False)
+    id_participant = Column(Integer, ForeignKey('tabParticipants.id_participant', ondelete="CASCADE"), nullable=False)
     name = Column(String, nullable=False)
 
     '''

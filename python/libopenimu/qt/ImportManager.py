@@ -13,6 +13,7 @@ class ImportManager(QDialog):
 
     filename = ""
     filetype = ""
+    filetype_id = -1
     participant = ""
     group = ""
     dbMan = None
@@ -78,6 +79,7 @@ class ImportManager(QDialog):
         if (self.validate()):
             self.filename = self.UI.txtFileName.text()
             self.filetype = self.UI.cmbFileType.currentText()
+            self.filetype_id = self.UI.cmbFileType.currentData()
             self.participant = self.UI.cmbParticipant.currentData()
             self.accept()
 
