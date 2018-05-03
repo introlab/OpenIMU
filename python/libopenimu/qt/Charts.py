@@ -13,10 +13,6 @@ from PyQt5.QtChart import QDateTimeAxis, QValueAxis, QBarCategoryAxis
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsSimpleTextItem, QGraphicsLineItem
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QPointF, QRectF, QPoint, QDateTime
 
-from qwt.plot import QwtPlot
-from qwt.plot_curve import QwtPlotCurve
-
-
 import numpy as np
 from scipy.signal import decimate
 import datetime
@@ -243,17 +239,20 @@ class IMUChartView(QChartView):
         xmap = self.chart.mapToValue(e.pos()).x()
         ymap = self.chart.mapToValue(e.pos()).y()
 
-        self.cursor.setPos(e.pos())
-
         pen = self.cursor.pen()
-        pen.setColor(Qt.red)
-        pen.setWidthF(1.5)
+        pen.setColor(Qt.blue)
+        pen.setWidthF(1.0)
         self.cursor.setPen(pen)
         # On Top
         self.cursor.setZValue(100.0)
 
+        area = self.chart.plotArea()
+        x = e.pos().x()
+        y1 = area.y()
+        y2 = area.y() + area.height()
+
         # self.cursor.set
-        self.cursor.setLine(e.pos().x(), e.pos().y(), e.pos().x(), e.pos().y() + 1000)
+        self.cursor.setLine(x, y1, x, y2)
         self.cursor.show()
         pass
 
@@ -339,30 +338,7 @@ if __name__ == '__main__':
         window.show()
         return window
 
-
-    def create_qwt_chart():
-        window = QMainWindow()
-
-        x = np.linspace(-10, 10, 500)
-        y1, y2 = np.cos(x), np.sin(x)
-        my_plot = QwtPlot("Two curves")
-        curve1, curve2 = QwtPlotCurve("Curve 1"), QwtPlotCurve("Curve 2")
-        curve1.setData(x, y1)
-        curve2.setData(x, y2)
-        curve1.attach(my_plot)
-        curve2.attach(my_plot)
-        my_plot.resize(600, 300)
-        my_plot.replot()
-        my_plot.show()
-
-        window.setCentralWidget(my_plot)
-
-        window.setWindowTitle("QWT Demo")
-        window.resize(640, 480)
-        window.show()
-        return window
-
-    window = create_qwt_chart()
+    window = create_imu_view()
     # window2 = create_bar_view()
 
     sys.exit(app.exec_())

@@ -23,7 +23,6 @@ set (python_packages
     PyInstaller
     jupyter
     sqlalchemy
-    PythonQwt
 )
 
 if(WIN32)
