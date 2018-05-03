@@ -99,6 +99,9 @@ if __name__ == '__main__':
                     timeseries_gyro.append(create_data_timeseries(channel_data))
                     timeseries_gyro[-1]['label'] = channel.label
 
+        # Only first recordset
+        break
+
     # Create widgets
     def create_window(label=''):
         window = QMainWindow()

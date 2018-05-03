@@ -111,6 +111,9 @@ if __name__ == '__main__':
                     timeseries_lux.append(create_data_timeseries(channel_data))
                     timeseries_lux[-1]['label'] = channel.label
 
+        # Only first recordset
+        break
+
     # Create widgets
 
     # Accelerometers
