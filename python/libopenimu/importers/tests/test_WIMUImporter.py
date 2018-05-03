@@ -12,6 +12,8 @@ import numpy as np
 import datetime
 import libopenimu.importers.wimu as wimu
 from libopenimu.importers.WIMUImporter import WIMUImporter
+from libopenimu.models.Participant import Participant
+from libopenimu.db.DBManager import DBManager
 
 
 class WIMUImporterTest(unittest.TestCase):
@@ -45,8 +47,15 @@ class WIMUImporterTest(unittest.TestCase):
         self.assertAlmostEqual(wimu.GyroOptions.conversion_to_deg_per_sec(5, 32767, 2), None)
 
     def test_loading(self):
+        manager = DBManager('test.db', overwrite=True)
+        participant = Participant(name='My Participant', description='Participant Description')
+        manager.update_participant(participant)
+
         # Import to database
-        importer = WIMUImporter('test.db')
+        importer = WIMUImporter(manager, participant)
         results = importer.load('../../../resources/samples/WIMU_ACC_GPS_GYRO_PreProcess.zip')
         importer.import_to_database(results)
-        importer.close()
+
+        recordsets = manager.get_all_recordsets(participant)
+        print('recordsets', recordsets)
+        self.assertGreater(len(recordsets), 0)

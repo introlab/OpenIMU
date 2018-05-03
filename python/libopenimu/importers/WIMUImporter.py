@@ -5,23 +5,42 @@ import libopenimu.importers.wimu as wimu
 
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.units import Units
+from libopenimu.models.Recordset import Recordset
 from libopenimu.models.data_formats import DataFormat
 from libopenimu.tools.timing import timing
+from libopenimu.db.DBManager import DBManager
+from libopenimu.models.Participant import Participant
 
 import numpy as np
 import datetime
 
 
 class WIMUImporter(BaseImporter):
-    def __init__(self, db_filename):
-        super().__init__(db_filename)
+    def __init__(self, manager: DBManager, participant: Participant):
+        super().__init__(manager, participant)
         print('WIMU Importer')
+        # No recordsets when starting
+        self.recordsets = []
 
     @timing
     def load(self, filename):
         print('WIMUImporter loading:', filename)
         result = wimu.wimu_importer(filename)
         return result
+
+    def get_recordset(self, timestamp):
+        my_time = datetime.datetime.fromtimestamp(timestamp)
+
+        # Find a record the same day
+        for record in self.recordsets:
+            # Same date return this record
+            if record.start_timestamp.date() == my_time.date():
+                return record
+
+        # Return new record
+        recordset = self.db.add_recordset(self.participant, str(my_time.date()), my_time, my_time)
+        self.recordsets.append(recordset)
+        return recordset
 
     @timing
     def import_to_database(self, result):
@@ -32,7 +51,7 @@ class WIMUImporter(BaseImporter):
         start_timestamp = datetime.datetime.now()
         end_timestamp = datetime.datetime.now()
 
-        recordset = self.add_recordset_to_db('unknown', start_timestamp, end_timestamp)
+        # recordset = self.add_recordset_to_db('unknown', start_timestamp, end_timestamp)
 
         if result.__contains__('acc'):
 
@@ -61,6 +80,12 @@ class WIMUImporter(BaseImporter):
                     acc_x = acc_dict['acc_x']
                     acc_y = acc_dict['acc_y']
                     acc_z = acc_dict['acc_z']
+
+                    recordset = self.get_recordset(timestamp)
+
+                    # Update end_timestamp if required
+                    if timestamp > recordset.end_timestamp.timestamp():
+                        recordset.end_timestamp = datetime.datetime.fromtimestamp(timestamp)
 
                     if len(acc_x) > 0:
                         self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[0],
@@ -102,6 +127,12 @@ class WIMUImporter(BaseImporter):
                     gyro_x = gyro_dict['gyro_x']
                     gyro_y = gyro_dict['gyro_y']
                     gyro_z = gyro_dict['gyro_z']
+
+                    recordset = self.get_recordset(timestamp)
+
+                    # Update end_timestamp if required
+                    if timestamp > recordset.end_timestamp.timestamp():
+                        recordset.end_timestamp = datetime.datetime.fromtimestamp(timestamp)
 
                     if len(gyro_x) > 0:
                         self.add_sensor_data_to_db(recordset, gyro_sensor, gyro_channels[0],

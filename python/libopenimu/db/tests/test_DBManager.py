@@ -14,6 +14,8 @@ from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.units import Units
 from libopenimu.models.data_formats import DataFormat
 from libopenimu.models.Sensor import Sensor
+from libopenimu.models.Group import Group
+from libopenimu.models.Participant import Participant
 from libopenimu.models.Channel import Channel
 
 import numpy as np
@@ -39,9 +41,9 @@ class DBManagerTest(unittest.TestCase):
         manager = DBManager(filename=DBManagerTest.TESTDB_NAME, overwrite=True)
 
         # Group information
-        name = 'Group Name'
-        description = 'Group Description'
-        group = manager.add_group(name=name, description=description)
+        group = Group(name = 'Group Name', description = 'Group Description')
+        manager.update_group(group)
+
         group2 = manager.get_group(group.id_group)
         self.assertEqual(group.id_group, group2.id_group)
         self.assertEqual(group.name, group2.name)
@@ -100,15 +102,20 @@ class DBManagerTest(unittest.TestCase):
         manager = DBManager(filename='openimu.db', overwrite=True)
 
         # Participant information
-        group = manager.add_group('My Group', 'My Group Description')
-        name = 'Participant Name'
-        description = 'Participant Description'
-        participant = manager.add_participant(group, name, description)
+        group_name = 'My Group'
+        group_description = 'My Group Description'
+        group = Group(name=group_name, description=group_description)
+        manager.update_group(group)
+
+        participant_name = 'Participant'
+        participant_description = 'Participant Description'
+        participant = Participant(name=participant_name, description=participant_description, group=group)
+        manager.update_participant(participant)
         participant2 = manager.get_participant(participant.id_participant)
 
         self.assertEqual(participant.group, group)
-        self.assertEqual(participant.name, name)
-        self.assertEqual(participant.description, description)
+        self.assertEqual(participant.name, participant_name)
+        self.assertEqual(participant.description, participant_description)
         self.assertGreater(participant.id_participant, 0)
         self.assertEqual(participant, participant2)
 
@@ -117,7 +124,7 @@ class DBManagerTest(unittest.TestCase):
         # This will add participants
 
         # Participant information
-        group = manager.add_group('My Group', 'My Group Description')
+        group = manager.update_group(Group(name='My Group', description='My Group Description'))
         name = 'Participant Name'
         description = 'Participant Description'
 
@@ -125,10 +132,11 @@ class DBManagerTest(unittest.TestCase):
 
         # Multiple participants, all the same info...
         for i in range(0, 10):
-            participants.append(manager.add_participant(group, name, description))
+            participants.append(manager.update_participant(Participant(name=name,
+                                                                       description=description, group=group)))
 
         # Read back list of participants
-        all_participants = manager.get_all_participants()
+        all_participants = manager.get_participants_for_group(group)
 
         # Compare size
         self.assertEqual(len(participants), len(all_participants))
@@ -141,10 +149,10 @@ class DBManagerTest(unittest.TestCase):
         manager = DBManager(filename='openimu.db', overwrite=True, echo=False)
 
         # Participant information
-        group = manager.add_group('My Group', 'My Group Description')
+        group = manager.update_group(Group(name='My Group', description='My Group Description'))
         name = 'Participant Name'
         description = 'Participant Description'
-        participant = manager.add_participant(group, name, description)
+        participant = manager.update_participant(Participant(name=name, description=description, group=group))
         # This gives datetime from seconds from epoch
         time1 = datetime.datetime.fromtimestamp(0)
         time2 = datetime.datetime.fromtimestamp(1)
@@ -162,12 +170,12 @@ class DBManagerTest(unittest.TestCase):
         manager = DBManager(filename='openimu.db', overwrite=True)
 
         # Participant information
-        group = manager.add_group('My Group', 'My Group Description')
+        group = manager.update_group(Group(name='My Group', description='My Group Description'))
         name = 'Participant Name'
         description = 'Participant Description'
-        participant1 = manager.add_participant(group, name, description)
-        participant2 = manager.add_participant(group, name, description)
-        participant3 = manager.add_participant(group, name, description)
+        participant1 = manager.update_participant(Participant(name=name, description=description, group=group))
+        participant2 = manager.update_participant(Participant(name=name, description=description, group=group))
+        participant3 = manager.update_participant(Participant(name=name, description=description, group=group))
 
         count = 10
         recordsets1 = []
@@ -230,8 +238,10 @@ class DBManagerTest(unittest.TestCase):
         manager = DBManager(filename='openimu.db', overwrite=True)
 
         # Create sensor in DB
-        group = manager.add_group('Group Name', 'Group Description')
-        participant = manager.add_participant(group, 'Participant Name', 'Participant Description')
+        group = manager.update_group(Group(name='Group Name', description='Group Description'))
+        participant = manager.update_participant(Participant(name='Participant Name',
+                                                             description='Participant Description', group=group))
+
         sensor = manager.add_sensor(SensorType.ACCELEROMETER, 'Sensor Name', 'Hardware Name', 'Wrist', 30.0, 1)
         channel = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_X')
         time1 = datetime.datetime.now()
@@ -249,8 +259,9 @@ class DBManagerTest(unittest.TestCase):
         manager = DBManager(filename='openimu.db', overwrite=True, echo=False)
 
         # Create sensor in DB
-        group = manager.add_group('Group Name', 'Group Description')
-        participant = manager.add_participant(group, 'Participant Name', 'Participant Description')
+        group = manager.update_group(Group(name='Group Name', description='Group Description'))
+        participant = manager.update_participant(Participant(name='Participant Name',
+                                                             description='Participant Description', group=group))
         sensor = manager.add_sensor(SensorType.ACCELEROMETER, 'Sensor Name', 'Hardware Name', 'Wrist', 30.0, 1)
         sensor2 = manager.add_sensor(SensorType.GYROMETER, 'Sensor Name', 'Hardware Name', 'Wrist', 30.0, 1)
         channel1 = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_X')
