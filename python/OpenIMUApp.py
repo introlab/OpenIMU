@@ -294,6 +294,10 @@ class MainWindow(QMainWindow):
     def delete_requested(self):
         item_id = self.UI.treeDataSet.get_item_id(self.UI.treeDataSet.currentItem())
         item_type = self.UI.treeDataSet.get_item_type(self.UI.treeDataSet.currentItem())
+
+        if item_type == "recordsets" or item_type == "results":
+            return
+
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Question)
 
@@ -313,6 +317,11 @@ class MainWindow(QMainWindow):
                 part = self.UI.treeDataSet.participants[item_id]
                 self.dbMan.delete_participant(part)
                 self.UI.treeDataSet.remove_participant(part)
+
+            if item_type == "recordset":
+                recordset = self.UI.treeDataSet.recordsets[item_id]
+                self.dbMan.delete_recordset(recordset)
+                self.UI.treeDataSet.remove_recordset(recordset)
 
             self.add_to_log(item_name + " a été supprimé.", LogTypes.LOGTYPE_DONE)
             self.clear_main_widgets()
@@ -373,6 +382,16 @@ class Treedatawidget(QTreeWidget):
 
         self.participants[participant.id_participant] = None
         self.items_participants[participant.id_participant] = None
+
+    def remove_recordset(self, recordset):
+        item = self.items_recordsets.get(recordset.id_recordset, None)
+        for i in range(0, item.parent().childCount()):
+            if item.parent().child(i) == item:
+                item.parent().takeChild(i)
+                break
+
+        self.recordsets[recordset.id_recordset] = None
+        self.items_recordsets[recordset.id_recordset] = None
 
     def update_group(self, group):
         item = self.items_groups.get(group.id_group, None)

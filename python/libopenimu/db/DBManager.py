@@ -188,6 +188,7 @@ class DBManager:
             query = self.session.query(Sensor).filter(Sensor.id_sensor_type == id_sensor_type)
             return query.all()
 
+    #####################
     def add_recordset(self, participant: Participant, name, start_timestamp, end_timestamp):
 
         # Create object
@@ -202,6 +203,16 @@ class DBManager:
         print('get_recordset', query.first())
         return query.first()
 
+    def delete_recordset(self, recordset):
+        try:
+            self.session.delete(recordset)
+            self.commit()
+        except Exception as e:
+            message = 'Error deleting recordset' + ': ' + str(e)
+            print('Error: ', message)
+            raise
+
+    #####################
     def get_all_recordsets(self, participant=Participant()):
         if participant.id_participant is None:
             query = self.session.query(Recordset)
