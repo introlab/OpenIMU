@@ -137,7 +137,7 @@ class DBManager:
         return query.all()
     """
 
-    def get_participants_for_group(self,group):
+    def get_participants_for_group(self, group):
         if group is not None:
             query = self.session.query(Participant).filter(Participant.id_group == group.id_group)
         else:
