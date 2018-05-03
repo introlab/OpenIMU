@@ -22,9 +22,9 @@ import numpy as np
 class SensorData(Base):
     __tablename__ = 'tabSensorsData'
     id_sensor_data = Column(Integer, Sequence('id_sensor_data_sequence'), primary_key=True, autoincrement=True)
-    id_recordset = Column(Integer, ForeignKey('tabRecordsets.id_recordset'), nullable=False)
-    id_sensor = Column(Integer, ForeignKey('tabSensors.id_sensor'), nullable=False)
-    id_channel = Column(Integer, ForeignKey('tabChannels.id_channel'), nullable=False)
+    id_recordset = Column(Integer, ForeignKey('tabRecordsets.id_recordset', ondelete="CASCADE"), nullable=False)
+    id_sensor = Column(Integer, ForeignKey('tabSensors.id_sensor', ondelete="CASCADE"), nullable=False)
+    id_channel = Column(Integer, ForeignKey('tabChannels.id_channel', ondelete="CASCADE"), nullable=False)
 
     '''
     A type for datetime.timedelta() objects.
@@ -36,8 +36,8 @@ class SensorData(Base):
 
     # Relationships
     recordset = relationship("Recordset")
-    sensor = relationship("Sensor")
-    channel = relationship("Channel")
+    sensor = relationship("Sensor", cascade="delete")
+    channel = relationship("Channel", cascade="delete")
 
     def to_ndarray(self):
         if type(self.data) is bytes:

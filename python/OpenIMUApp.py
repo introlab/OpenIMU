@@ -96,128 +96,25 @@ class MainWindow(QMainWindow):
         self.UI.btnImport.clicked.connect(self.importRequested)
 
     def load_data_from_dataset(self):
+        self.UI.treeDataSet.clear()
+
         # Groups
         groups = self.dbMan.get_all_groups()
         for group in groups:
             self.UI.treeDataSet.update_group(group)
-            participants = self.dbMan.get_participants_for_group(group)
-            for participant in participants:
-                self.UI.treeDataSet.update_participant(participant)
 
-        # Participants without a group
-        participants = self.dbMan.get_participants_for_group(None)
+        # Participants
+        participants = self.dbMan.get_all_participants()
         for participant in participants:
             self.UI.treeDataSet.update_participant(participant)
 
-    def loadDemoData(self):
-        # Load demo structure
-        new_group = Group(id_group=0, name="Groupe 1", description="Ceci est un premier groupe de démonstration")
+        # Recordsets
+        recordsets = self.dbMan.get_all_recordsets()
+        for recordset in recordsets:
+            self.UI.treeDataSet.update_recordset(recordset)
 
-        item = self.UI.treeDataSet.update_group(new_group)
 
-        new_part = Participant(id_participant=1, name="Participant B", description="Participant dans un groupe",
-                               group=new_group)
-        item = self.UI.treeDataSet.update_participant(new_part)
-
-        item2 = self.create_records_item()
-        item.addChild(item2)
-
-        item3 = self.create_record_item("Enregistrement 1 (27/03/2018)", 0)
-        item2.addChild(item3)
-
-        """ item5 = self.create_sensor_item("Accéléromètre", 0)
-        item3.addChild(item5)
-
-        item5 = self.create_sensor_item("Gyromètre", 1)
-        item3.addChild(item5)
-
-        item5 = self.create_sensor_item("GPS", 2)
-        item3.addChild(item5)
-        """
-        item4 = self.create_subrecord_item("AM", 0)
-        item3.addChild(item4)
-        """
-        item5 = self.create_sensor_item("Accéléromètre", 0)
-        item4.addChild(item5)
-
-        item5 = self.create_sensor_item("Gyromètre", 1)
-        item4.addChild(item5)
-
-        item5 = self.create_sensor_item("GPS", 2)
-        item4.addChild(item5)
-        """
-        item4 = self.create_subrecord_item("PM", 1)
-        item3.addChild(item4)
-
-        """ item5 = self.create_sensor_item("Accéléromètre", 0)
-        item4.addChild(item5)
-
-        item5 = self.create_sensor_item("Gyromètre", 1)
-        item4.addChild(item5)
-
-        item5 = self.create_sensor_item("GPS", 2)
-        item4.addChild(item5)
-        """
-
-        item3 = self.create_record_item("Enregistrement 2 (29/03/2018)", 1)
-        item2.addChild(item3)
-
-        item2 = self.create_results_item()
-        item.addChild(item2)
-
-        item3 = self.create_result_item("Nombre de pas (par enregistrement)", 0)
-        item2.addChild(item3)
-
-        item3 = self.create_result_item("Niveau d'activité (total)", 1)
-        item2.addChild(item3)
-
-        new_part = Participant(id_participant=2, name="Participant C", group=new_group)
-        item = self.UI.treeDataSet.update_participant(new_part)
-
-        parent = item
-        item = self.create_records_item()
-        parent.addChild(item)
-
-        item3 = self.create_record_item("Enregistrement 1 (23/03/2018)", 3)
-        item.addChild(item3)
-
-        new_group = Group(id_group=1, name="Groupe 2", description="Ceci est un deuxième groupe de démonstration")
-
-        item = self.UI.treeDataSet.update_group(new_group)
-
-        parent = item
-        new_part = Participant(id_participant=3, name="Participant D", group=new_group)
-        item = self.UI.treeDataSet.update_participant(new_part)
-
-        new_part = Participant(id_participant=0, name="Participant A", description="Participant sans groupe")
-        item = self.UI.treeDataSet.update_participant(new_part)
-
-    def create_records_item(self):
-        item = QTreeWidgetItem()
-        item.setText(0, 'Enregistrements')
-        item.setIcon(0, QIcon(':/OpenIMU/icons/records.png'))
-        item.setData(1, Qt.UserRole, 'recordsets')
-        item.setFont(0, QFont('Helvetica', 12, QFont.StyleItalic + QFont.Bold))
-        return item
-
-    def create_results_item(self):
-        item = QTreeWidgetItem()
-        item.setText(0, 'Résultats')
-        item.setIcon(0, QIcon(':/OpenIMU/icons/results.png'))
-        item.setData(1, Qt.UserRole, 'results')
-        item.setFont(0, QFont('Helvetica', 12, QFont.StyleItalic + QFont.Bold))
-        return item
-
-    def create_record_item(self, name, id):
-        item = QTreeWidgetItem()
-        item.setText(0, name)
-        item.setIcon(0, QIcon(':/OpenIMU/icons/recordset.png'))
-        item.setData(0, Qt.UserRole, id)
-        item.setData(1, Qt.UserRole, 'recordset')
-        item.setFont(0, QFont('Helvetica', 12, QFont.Bold))
-        return item
-
-    def create_subrecord_item(self, name, id):
+    """def create_subrecord_item(self, name, id):
         item = QTreeWidgetItem()
         item.setText(0, name)
         item.setIcon(0, QIcon(':/OpenIMU/icons/subrecord.png'))
@@ -243,7 +140,7 @@ class MainWindow(QMainWindow):
         item.setData(1, Qt.UserRole, 'result')
         item.setFont(0, QFont('Helvetica', 12))
         return item
-
+"""
     def update_group(self, group):
         item = self.UI.treeDataSet.update_group(group)
         self.UI.treeDataSet.setCurrentItem(item)
@@ -303,8 +200,8 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def importRequested(self):
         importer = ImportBrowser(dataManager=self.dbMan)
-
-        importer.exec()
+        if importer.exec() == QDialog.Accepted:
+            self.load_data_from_dataset()
 
     @pyqtSlot()
     def infosRequested(self):
@@ -441,9 +338,11 @@ class MainWindow(QMainWindow):
 class Treedatawidget(QTreeWidget):
     groups = {}
     participants = {}
+    recordsets = {}
 
     items_groups = {}
     items_participants = {}
+    items_recordsets = {}
 
     participantDragged = pyqtSignal(Participant)
 
@@ -509,6 +408,24 @@ class Treedatawidget(QTreeWidget):
             else:
                 group_item.addChild(item)
 
+            parent = item
+            # Recordings
+            item = QTreeWidgetItem()
+            item.setText(0, 'Enregistrements')
+            item.setIcon(0, QIcon(':/OpenIMU/icons/records.png'))
+            item.setData(1, Qt.UserRole, 'recordsets')
+            item.setFont(0, QFont('Helvetica', 12, QFont.StyleItalic + QFont.Bold))
+            parent.addChild(item)
+
+            # Results
+            item = QTreeWidgetItem()
+            item.setText(0, 'Résultats')
+            item.setIcon(0, QIcon(':/OpenIMU/icons/results.png'))
+            item.setData(1, Qt.UserRole, 'results')
+            item.setFont(0, QFont('Helvetica', 12, QFont.StyleItalic + QFont.Bold))
+            parent.addChild(item)
+
+            item = parent
         else:
             item.setText(0, part.name)
             # Check if we must move it or not, if the group changed
@@ -536,6 +453,31 @@ class Treedatawidget(QTreeWidget):
         self.items_participants[part.id_participant] = item
         return item
 
+    def update_recordset(self, recordset):
+        item = self.items_recordsets.get(recordset.id_recordset, None)
+        if item is None:
+            item = QTreeWidgetItem()
+            item.setText(0, recordset.name)
+            item.setIcon(0, QIcon(':/OpenIMU/icons/recordset.png'))
+            item.setData(0, Qt.UserRole, recordset.id_recordset)
+            item.setData(1, Qt.UserRole, 'recordset')
+            item.setFont(0, QFont('Helvetica', 12, QFont.Bold))
+
+            part_item = self.items_participants.get(recordset.id_participant,None)
+            if part_item is not None:
+                for i in range(0, part_item.childCount()):
+                    if self.get_item_type(part_item.child(i)) == "recordsets":
+                        part_item.child(i).addChild(item)
+
+        else:
+            item.setText(0, recordset.name)
+
+        self.recordsets[recordset.id_recordset] = recordset
+        self.items_recordsets[recordset.id_recordset] = item
+
+        return item
+
+
     def get_item_type(self,item):
         if item is not None:
             return item.data(1, Qt.UserRole)
@@ -547,6 +489,18 @@ class Treedatawidget(QTreeWidget):
             return item.data(0, Qt.UserRole)
         else:
             return ""
+
+    def clear(self):
+
+        self.groups = {}
+        self.participants = {}
+        self.recordsets = {}
+
+        self.items_groups = {}
+        self.items_participants = {}
+        self.items_recordsets = {}
+
+        super().clear()
 
     def dropEvent(self, event):
 
