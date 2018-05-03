@@ -7,7 +7,7 @@
 
 import sqlalchemy
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker,query
 from sqlalchemy.sql import table, insert
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
@@ -188,6 +188,7 @@ class DBManager:
             query = self.session.query(Sensor).filter(Sensor.id_sensor_type == id_sensor_type)
             return query.all()
 
+    #####################
     def add_recordset(self, participant: Participant, name, start_timestamp, end_timestamp):
 
         # Create object
@@ -202,6 +203,15 @@ class DBManager:
         print('get_recordset', query.first())
         return query.first()
 
+    def delete_recordset(self, recordset):
+        try:
+            self.session.delete(recordset)
+            self.commit()
+        except Exception as e:
+            message = 'Error deleting recordset' + ': ' + str(e)
+            print('Error: ', message)
+            raise
+
     def get_all_recordsets(self, participant=Participant()):
         if participant.id_participant is None:
             query = self.session.query(Recordset)
@@ -209,7 +219,12 @@ class DBManager:
         else:
             query = self.session.query(Recordset).filter(Recordset.id_participant == participant.id_participant)
             return query.all()
+    #####################
+    def get_sensors(self,recordset):
+        query = self.session.query(Sensor).join(SensorData).filter(SensorData.id_recordset == recordset.id_recordset).group_by(Sensor.id_sensor)
+        return query.all()
 
+    #####################
     def add_channel(self, sensor, id_sensor_unit, id_data_format, label):
         # Create object
         channel = Channel(sensor=sensor, id_sensor_unit=id_sensor_unit,
@@ -300,6 +315,7 @@ class DBManager:
                 sensor_data.data = DataFormat.from_bytes(sensor_data.data, sensor_data.channel.id_data_format)
 
             return result
+
 
     def set_dataset_infos(self, name, desc, creation_date, upload_date, author):
 

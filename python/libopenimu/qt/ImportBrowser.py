@@ -48,10 +48,6 @@ class ImportBrowser(QDialog):
             #else:
                 #TODO: Error message
 
-
-
-
-
         self.accept()
 
     @pyqtSlot()
