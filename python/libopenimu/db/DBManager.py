@@ -313,5 +313,3 @@ class DBManager:
         query = self.session.query(DataSet)
         return query.first()
 
-    def close(self):
-        self.session.close()

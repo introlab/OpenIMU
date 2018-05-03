@@ -1,6 +1,7 @@
 from libopenimu.importers.WIMUImporter import WIMUImporter
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.sensor_types import SensorType
+from libopenimu.models.Participant import Participant
 from libopenimu.qt.Charts import IMUChartView
 from libopenimu.tools.timing import timing
 
@@ -13,7 +14,12 @@ db_filename = 'wimu.db'
 @timing
 def import_data_from_wimu_file(filename):
     # This will create the database (or overwrite it)s
-    importer = WIMUImporter(db_filename)
+
+    manager = DBManager(db_filename, overwrite=True)
+    participant = Participant(name='My Participant', description='Participant Description')
+    manager.update_participant(participant)
+
+    importer = WIMUImporter(manager, participant)
     # Load content of the file to the database
     results = importer.load(filename)
     importer.import_to_database(results)

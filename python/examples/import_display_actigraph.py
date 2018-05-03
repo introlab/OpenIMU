@@ -1,6 +1,7 @@
 from libopenimu.importers.ActigraphImporter import ActigraphImporter
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.sensor_types import SensorType
+from libopenimu.models.Participant import Participant
 from libopenimu.qt.Charts import IMUChartView
 from libopenimu.tools.timing import timing
 
@@ -12,8 +13,13 @@ db_filename = 'actigraph.db'
 
 @timing
 def import_data_from_actigraph_file(filename):
+
+    manager = DBManager(db_filename, overwrite=True)
+    participant = Participant(name='My Participant', description='Participant Description')
+    manager.update_participant(participant)
+
     # This will create the database (or overwrite it)s
-    importer = ActigraphImporter(db_filename)
+    importer = ActigraphImporter(manager, participant)
     # Load content of the file to the database
     results = importer.load(filename)
     importer.import_to_database(results)

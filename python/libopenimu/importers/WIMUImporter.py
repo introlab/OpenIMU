@@ -7,14 +7,16 @@ from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.units import Units
 from libopenimu.models.data_formats import DataFormat
 from libopenimu.tools.timing import timing
+from libopenimu.db.DBManager import DBManager
+from libopenimu.models.Participant import Participant
 
 import numpy as np
 import datetime
 
 
 class WIMUImporter(BaseImporter):
-    def __init__(self, db_filename):
-        super().__init__(db_filename)
+    def __init__(self, manager: DBManager, participant: Participant):
+        super().__init__(manager, participant)
         print('WIMU Importer')
 
     @timing

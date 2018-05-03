@@ -7,6 +7,8 @@
 """
 
 from libopenimu.importers.BaseImporter import BaseImporter
+from libopenimu.db.DBManager import DBManager
+from libopenimu.models.Participant import Participant
 import libopenimu.importers.actigraph as actigraph
 
 
@@ -21,8 +23,8 @@ import datetime
 
 
 class ActigraphImporter(BaseImporter):
-    def __init__(self, db_filename):
-        super().__init__(db_filename)
+    def __init__(self, manager: DBManager, participant: Participant):
+        super().__init__(manager, participant)
         print('Actigraph Importer')
 
     @timing

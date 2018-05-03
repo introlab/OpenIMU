@@ -11,6 +11,7 @@ import unittest
 from libopenimu.importers.ActigraphImporter import ActigraphImporter
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.sensor_types import SensorType
+from libopenimu.models.Participant import Participant
 
 import numpy as np
 
@@ -28,8 +29,13 @@ class ActigraphImporterTest(unittest.TestCase):
         pass
 
     def test_loading(self):
+
+        manager = DBManager('test.db', overwrite=True)
+        participant = Participant(name='My Participant', description='Participant Description')
+        manager.update_participant(participant)
+
         # Import to database
-        importer = ActigraphImporter('test.db')
+        importer = ActigraphImporter(manager, participant)
         results = importer.load('../../../resources/samples/test.gt3x')
 
         samples = 0
@@ -39,7 +45,7 @@ class ActigraphImporterTest(unittest.TestCase):
         print('samples imported (each channels)', samples)
 
         importer.import_to_database(results)
-        importer.close()
+
 
         # Reload from database
         manager = DBManager('test.db')
@@ -71,7 +77,12 @@ class ActigraphImporterTest(unittest.TestCase):
         self.assertEqual(samples, loaded_samples)
 
     def test_async_loading(self):
-        importer = ActigraphImporter('test.db')
+
+        manager = DBManager('test.db', overwrite=True)
+        participant = Participant(name='My Participant', description='Participant Description')
+        manager.update_participant(participant)
+
+        importer = ActigraphImporter(manager, participant)
 
         print('Starting threads...')
         # Start threads
@@ -83,4 +94,9 @@ class ActigraphImporterTest(unittest.TestCase):
         # Wait for threads
         for t in threads:
             t.join()
+
+        recordsets = manager.get_all_recordsets(participant)
+        print('recordsets', recordsets)
+        self.assertGreater(len(recordsets), 0)
+
 

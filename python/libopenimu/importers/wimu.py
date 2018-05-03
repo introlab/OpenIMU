@@ -719,11 +719,3 @@ def wimu_importer(filename):
 
     return results
 
-
-# Testing app
-if __name__ == '__main__':
-    result = wimu_importer('../../resources/samples/WIMU_ACC_GPS_GYRO_PreProcess.zip')
-
-    for acc in result['acc']:
-        if len(acc) > 0:
-            print('acc timestamp', len(acc), acc[0][0])

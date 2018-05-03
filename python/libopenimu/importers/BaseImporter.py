@@ -9,7 +9,6 @@
 import threading
 from libopenimu.tools.timing import timing
 from libopenimu.db.DBManager import DBManager
-from libopenimu.models.Group import Group
 from libopenimu.models.Participant import Participant
 
 @timing
@@ -21,18 +20,14 @@ def load_worker(importer, filename):
 
 
 class BaseImporter:
-    def __init__(self, db_filename):
+    def __init__(self, manager: DBManager, participant: Participant):
         print('BaseImporter')
-        self.db = DBManager(filename=db_filename, overwrite=True, echo=False)
 
-        # TODO should be specified by users...
-        # self.group = self.db.add_group('MyGroup', 'MyDescription')
-        # self.participant = self.db.add_participant(group=self.group, name='Anonymous', description='Participant')
-        self.group = Group(name='MyGroup', description='MyDescription')
-        self.db.update_group(self.group)
+        # This is the manager that will be used for importation, externally created
+        self.db = manager
 
-        self.participant = Participant(name='Anonymous', description='Participant description', group=self.group)
-        self.db.update_participant(self.participant)
+        # This is the participant
+        self.participant = participant
 
     def async_load(self, filename):
         print('will call load on importer with filename: ', filename)
@@ -45,6 +40,7 @@ class BaseImporter:
         pass
 
     def import_to_database(self, result):
+        print('Nothing to do in BaseImporter.import_to_database')
         pass
 
     def loaded_callback(self, result):
@@ -66,6 +62,3 @@ class BaseImporter:
     def add_sensor_data_to_db(self, recordset, sensor, channel, timestamp, data):
         sensor_data = self.db.add_sensor_data(recordset, sensor, channel, timestamp, data)
         return sensor_data
-
-    def close(self):
-        self.db.close()
