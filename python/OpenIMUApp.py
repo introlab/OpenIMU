@@ -254,7 +254,13 @@ class MainWindow(QMainWindow):
             self.show_participant(self.UI.treeDataSet.participants[item_id])
 
         if item_type == "recordsets" or item_type == "recordset" or item_type == "subrecord":
-            recordsWidget = RecordsetWindow()
+            if item_type == "recordsets":
+                part = self.UI.treeDataSet.participants[self.UI.treeDataSet.get_item_id(item.parent())]
+                records = self.dbMan.get_all_recordsets(part)
+            else:
+                records = [self.UI.treeDataSet.recordsets[item_id]]
+
+            recordsWidget = RecordsetWindow(manager=self.dbMan, recordset=records)
             self.UI.frmMain.layout().addWidget(recordsWidget)
 
         if item_type == "result":

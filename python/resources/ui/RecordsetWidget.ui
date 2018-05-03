@@ -7,13 +7,16 @@
     <x>0</x>
     <y>0</y>
     <width>1150</width>
-    <height>1237</height>
+    <height>874</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>2</number>
+   </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
@@ -255,7 +258,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <property name="spacing">
-       <number>0</number>
+       <number>5</number>
       </property>
       <property name="leftMargin">
        <number>0</number>
@@ -272,33 +275,14 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QLabel" name="lblSensorIcon">
-          <property name="maximumSize">
-           <size>
-            <width>48</width>
-            <height>48</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="pixmap">
-           <pixmap resource="../core.qrc">:/OpenIMU/icons/sensor.png</pixmap>
-          </property>
-          <property name="scaledContents">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="lblSensors">
+         <widget class="QLabel" name="lblData">
           <property name="font">
            <font>
             <pointsize>17</pointsize>
            </font>
           </property>
           <property name="text">
-           <string>Capteurs</string>
+           <string>Données</string>
           </property>
          </widget>
         </item>
@@ -311,16 +295,41 @@
         </property>
         <item>
          <widget class="QListWidget" name="lstSensors">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="maximumSize">
            <size>
             <width>150</width>
             <height>16777215</height>
            </size>
           </property>
+          <property name="isWrapping" stdset="0">
+           <bool>true</bool>
+          </property>
+          <property name="viewMode">
+           <enum>QListView::IconMode</enum>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item>
-         <widget class="QMdiArea" name="mdiArea"/>
+         <widget class="QMdiArea" name="mdiArea">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Ignored">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="documentMode">
+           <bool>false</bool>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
