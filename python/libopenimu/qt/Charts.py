@@ -10,7 +10,8 @@ a high number of points, using OpenGL accelerated series
 from PyQt5.QtGui import QPolygonF, QPainter, QMouseEvent, QResizeEvent
 from PyQt5.QtChart import QChart, QChartView, QLineSeries, QLegend, QBarSeries, QBarSet, QSplineSeries, QXYSeries
 from PyQt5.QtChart import QDateTimeAxis, QValueAxis, QBarCategoryAxis
-from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsSimpleTextItem, QGraphicsLineItem
+from PyQt5.QtWidgets import QGraphicsSimpleTextItem, QGraphicsLineItem, QHBoxLayout, QWidget, QLabel, QToolButton
+from PyQt5.QtWidgets import QSpacerItem, QSizePolicy
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QPointF, QRectF, QPoint, QDateTime
 
 import numpy as np
@@ -37,14 +38,48 @@ class IMUChartView(QChartView):
         self.setRubberBand(QChartView.HorizontalRubberBand)
 
         # X, Y label on bottom
-        self.xTextItem = QGraphicsSimpleTextItem(self.chart)
-        self.xTextItem.setText('X: ')
-        self.yTextItem = QGraphicsSimpleTextItem(self.chart)
-        self.yTextItem.setText('Y: ')
-        self.update_x_y_coords()
+        # self.xTextItem = QGraphicsSimpleTextItem(self.chart)
+        # self.xTextItem.setText('X: ')
+        # self.yTextItem = QGraphicsSimpleTextItem(self.chart)
+        # self.yTextItem.setText('Y: ')
+        # self.update_x_y_coords()
 
         # Track mouse
         self.setMouseTracking(True)
+
+        # Top Widgets
+        newWidget = QWidget(self)
+        newLayout = QHBoxLayout()
+        newWidget.setLayout(newLayout)
+        labelx = QLabel(self)
+        labelx.setText('X:')
+        self.labelXValue = QLabel(self)
+        labely = QLabel(self)
+        labely.setText('Y:')
+        self.labelYValue = QLabel(self)
+
+        # Test buttons
+        newLayout.addWidget(QToolButton(self))
+        newLayout.addWidget(QToolButton(self))
+        newLayout.addWidget(QToolButton(self))
+
+        # Spacer
+        newLayout.addItem(QSpacerItem(10, 10, QSizePolicy.Expanding, QSizePolicy.Minimum))
+
+        # Labels
+        newLayout.addWidget(labelx)
+        newLayout.addWidget(self.labelXValue)
+        self.labelXValue.setMinimumWidth(200)
+        self.labelXValue.setMaximumWidth(200)
+        newLayout.addWidget(labely)
+        newLayout.addWidget(self.labelYValue)
+        self.labelYValue.setMinimumWidth(200)
+        self.labelYValue.setMaximumWidth(200)
+
+        parent.layout().setMenuBar(newWidget)
+
+        # self.layout()
+
 
     @pyqtSlot(QPointF)
     def lineseries_clicked(self, point):
@@ -55,8 +90,9 @@ class IMUChartView(QChartView):
         print('lineseries hovered', point)
 
     def update_x_y_coords(self):
-        self.xTextItem.setPos(self.chart.size().width() / 2 - 100, self.chart.size().height() - 40)
-        self.yTextItem.setPos(self.chart.size().width() / 2 + 100, self.chart.size().height() - 40)
+        pass
+        # self.xTextItem.setPos(self.chart.size().width() / 2 - 100, self.chart.size().height() - 40)
+        # self.yTextItem.setPos(self.chart.size().width() / 2 + 100, self.chart.size().height() - 40)
 
     def decimate(self, xdata, ydata):
         assert(len(xdata) == len(ydata))
@@ -229,8 +265,12 @@ class IMUChartView(QChartView):
         xmap = self.chart.mapToValue(e.pos()).x()
         ymap = self.chart.mapToValue(e.pos()).y()
 
-        self.xTextItem.setText('X: ' + str(datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp())))
-        self.yTextItem.setText('Y: ' + str(ymap))
+        self.labelXValue.setText(str(datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp())))
+        self.labelYValue.setText(str(ymap))
+
+
+        # self.xTextItem.setText('X: ' + str(datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp())))
+        # self.yTextItem.setText('Y: ' + str(ymap))
 
     def mousePressEvent(self, e: QMouseEvent):
         # Handling rubberbands
@@ -268,8 +308,6 @@ class IMUChartView(QChartView):
         area = self.chart.plotArea()
         line = self.cursor.line()
         self.cursor.setLine(line.x1(), area.y(), line.x2(), area.y() + area.height())
-
-
 
         # self.scene().setSceneRect(0, 0, e.size().width(), e.size().height())
         # Need to reposition X,Y labels
