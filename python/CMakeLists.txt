@@ -52,6 +52,7 @@ SET(uis
     resources/ui/ParticipantWidget.ui
     resources/ui/RecordsetWidget.ui
     resources/ui/ResultWidget.ui
+    resources/ui/ImportBrowser.ui
 )
 
 SET(qrcs

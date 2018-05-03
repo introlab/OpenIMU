@@ -11,7 +11,7 @@ from datetime import datetime
 
 class ImportWindow(QDialog):
 
-    noImportUI = False
+    showImport = False
     infosOnly = False
     participants = []
     groups = []
@@ -19,7 +19,7 @@ class ImportWindow(QDialog):
 
     dataSet = None
 
-    def __init__(self, dataset=None, parent=None, filename = None):
+    def __init__(self, dataset=None, parent=None, filename = None, showImport = False):
         super(QDialog, self).__init__(parent=parent)
         self.UI = Ui_ImportDialog()
         self.UI.setupUi(self)
@@ -27,20 +27,22 @@ class ImportWindow(QDialog):
         # Manage data if present
         self.dataSet = dataset
         self.fileName = filename
+        self.showImport = showImport
         self.update_data()
-
 
         # Signals / Slots connections
         self.UI.btnCancel.clicked.connect(self.cancel_clicked)
         self.UI.btnOK.clicked.connect(self.ok_clicked)
-        self.UI.btnAddFile.clicked.connect(self.addFile_clicked)
-        self.UI.btnDelFile.clicked.connect(self.removeFile_clicked)
+        #self.UI.btnAddFile.clicked.connect(self.addFile_clicked)
+        #self.UI.btnDelFile.clicked.connect(self.removeFile_clicked)
         self.UI.btnBrowse.clicked.connect(self.browse_clicked)
 
 
     def exec(self):
-        self.UI.frameImport.setVisible(not self.noImportUI)
+        #self.UI.frameImport.setVisible(not self.showImport)
         #self.UI.splitter.setVisible(not self.noImportUI)
+        if self.showImport:
+            self.UI.btnOK.setText("Suivant")
 
         self.UI.btnBrowse.setVisible(not self.infosOnly)
         self.UI.txtFileName.setVisible(not self.infosOnly)
@@ -116,7 +118,7 @@ class ImportWindow(QDialog):
     @pyqtSlot()
     def cancel_clicked(self):
         self.reject()
-
+"""
     @pyqtSlot()
     def addFile_clicked(self):
         importman = ImportManager()
@@ -156,4 +158,4 @@ class ImportWindow(QDialog):
             #print(self.UI.tableFiles.selectedItems()[0].row())
 
             self.UI.tableFiles.removeRow(self.UI.tableFiles.selectedItems()[0].row())
-
+"""

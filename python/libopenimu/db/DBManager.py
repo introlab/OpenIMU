@@ -9,6 +9,8 @@ import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import table, insert
+from sqlalchemy.engine import Engine
+from sqlalchemy import event
 
 import os
 import datetime
@@ -57,6 +59,12 @@ class DBManager:
 
         # Session instance
         self.session = self.SessionMaker()
+
+    @event.listens_for(Engine, "connect")
+    def set_sqlite_pragma(dbapi_connection, connection_record):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()
 
     def commit(self):
         self.session.commit()
@@ -132,10 +140,9 @@ class DBManager:
         query = self.session.query(Participant).filter(Participant.id_participant == id_participant)
         return query.first()
 
-    """def get_all_participants(self):
+    def get_all_participants(self):
         query = self.session.query(Participant)
         return query.all()
-    """
 
     def get_participants_for_group(self, group):
         if group is not None:
