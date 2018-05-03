@@ -25,6 +25,10 @@ import datetime
 class ActigraphImporter(BaseImporter):
     def __init__(self, manager: DBManager, participant: Participant):
         super().__init__(manager, participant)
+
+        # No recordsets when starting
+        self.recordsets = []
+
         print('Actigraph Importer')
 
     @timing
@@ -32,6 +36,21 @@ class ActigraphImporter(BaseImporter):
         print('ActigraphImporter loading:', filename)
         result = actigraph.gt3x_importer(filename)
         return result
+
+    def get_recordset(self, timestamp):
+        my_time = datetime.datetime.fromtimestamp(timestamp)
+
+        # Find a record the same day
+        for record in self.recordsets:
+            # Same date return this record
+            if record.start_timestamp.date() == my_time.date():
+                return record
+
+        # Return new record
+        recordset = self.db.add_recordset(self.participant, str(my_time.date()), my_time, my_time)
+        self.recordsets.append(recordset)
+        return recordset
+
 
     @timing
     def import_to_database(self, result):
@@ -43,13 +62,10 @@ class ActigraphImporter(BaseImporter):
         # print(info['Start Date'], info['Last Sample Time'])
         start = int(info['Start Date'])
         stop = int(info['Last Sample Time'])
-        print(start, stop)
+
         start_timestamp = ticksconverter(start)
         end_timestamp = ticksconverter(stop)
-        print(start_timestamp, end_timestamp)
 
-        recordset = self.add_recordset_to_db(info['Subject Name'], start_timestamp, end_timestamp)
-        print(recordset)
 
         # all_counts = [0, 0, 0]
 
@@ -121,6 +137,13 @@ class ActigraphImporter(BaseImporter):
                     vector = np.concatenate(value_dict[timestamp][index])
                     # print('inserting values :', len(value_dict[timestamp][index]))
                     # print('vector: ', len(vector), vector.shape, vector.dtype)
+
+                    recordset = self.get_recordset(timestamp)
+
+                    # Update end_timestamp if required
+                    if timestamp > recordset.end_timestamp.timestamp():
+                        recordset.end_timestamp = datetime.datetime.fromtimestamp(timestamp)
+
                     counters[index] += len(vector)
                     if len(vector) > 0:
                         self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[index],
@@ -144,6 +167,13 @@ class ActigraphImporter(BaseImporter):
             for epoch in data['battery']:
                 timestamp = datetime.datetime.fromtimestamp(epoch[0])
                 value = np.float32(epoch[1])
+
+                recordset = self.get_recordset(epoch[0])
+
+                # Update end_timestamp if required
+                if epoch[0] > recordset.end_timestamp.timestamp():
+                    recordset.end_timestamp = timestamp
+
                 self.add_sensor_data_to_db(recordset, volt_sensor, volt_channel, timestamp, value)
 
             # Flush to DB (ram)
@@ -160,6 +190,13 @@ class ActigraphImporter(BaseImporter):
             for epoch in data['lux']:
                 timestamp = datetime.datetime.fromtimestamp(epoch[0])
                 value = np.float32(epoch[1])
+
+                recordset = self.get_recordset(epoch[0])
+
+                # Update end_timestamp if required
+                if epoch[0] > recordset.end_timestamp.timestamp():
+                    recordset.end_timestamp = timestamp
+
                 self.add_sensor_data_to_db(recordset, lux_sensor, lux_channel, timestamp, value)
 
             # Flush to DB (ram)

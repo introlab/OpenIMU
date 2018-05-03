@@ -51,7 +51,7 @@ class ActigraphImporterTest(unittest.TestCase):
         manager = DBManager('test.db')
 
         recordsets = manager.get_all_recordsets()
-        self.assertEqual(len(recordsets), 1)
+        self.assertGreater(len(recordsets), 0)
 
         loaded_samples = 0
 
