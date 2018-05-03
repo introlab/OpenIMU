@@ -417,7 +417,7 @@ def wimu_load_acc(time_data, acc_data, config: WIMUConfig):
         timestamp = int(f.readline())
 
         if timestamp <= last_timestamp:
-            print('ERROR Acc timestamp in the past', 'diff:', timestamp - last_timestamp)
+            # print('ERROR Acc timestamp in the past', 'diff:', timestamp - last_timestamp)
             continue
 
         # Check for continuous timestamps
@@ -509,7 +509,7 @@ def wimu_load_gyro(time_data, gyro_data, config: WIMUConfig):
         timestamp = int(f.readline())
 
         if timestamp <= last_timestamp:
-            print('ERROR Gyro timestamp in the past', 'diff:', timestamp - last_timestamp)
+            # print('ERROR Gyro timestamp in the past', 'diff:', timestamp - last_timestamp)
             continue
 
         # Check for continuous timestamps
@@ -593,6 +593,10 @@ def wimu_load_log(time_data, log_data, config: WIMUConfig):
     pass
 
 
+def sorted_by_id(my_dict):
+    return []
+
+
 @timing
 def wimu_importer(filename):
     results = {}
@@ -630,7 +634,7 @@ def wimu_importer(filename):
 
         # First pass extract files with no TIME
         for file in namelist:
-            # print('listing:', file)
+            print('listing:', file)
             if '.DAT' in file:
                 if '/ACC_' in file:
                     filedict[file] = []
@@ -666,6 +670,9 @@ def wimu_importer(filename):
                     else:
                         print('key error', key)
 
+        # Test sort
+        sorted_by_id(filedict)
+
         # now process data if everything is ok
         for key in filedict:
             # print(key, filedict[key])
@@ -679,6 +686,7 @@ def wimu_importer(filename):
                     print('error ACC')
             elif 'GYR' in key:
                 if len(filedict[key]) == 1:
+                    print('processing: ', key)
                     gyro_data = myzip.open(key).read()
                     time_data = myzip.open(filedict[key][0]).read()
                     results['gyr'].append(wimu_load_gyro(time_data, gyro_data, results['config']))
