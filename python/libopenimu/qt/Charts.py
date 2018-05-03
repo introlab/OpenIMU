@@ -264,6 +264,13 @@ class IMUChartView(QChartView):
     def resizeEvent(self, e: QResizeEvent):
         super().resizeEvent(e)
 
+        # Update cursor height
+        area = self.chart.plotArea()
+        line = self.cursor.line()
+        self.cursor.setLine(line.x1(), area.y(), line.x2(), area.y() + area.height())
+
+
+
         # self.scene().setSceneRect(0, 0, e.size().width(), e.size().height())
         # Need to reposition X,Y labels
         self.update_x_y_coords()
