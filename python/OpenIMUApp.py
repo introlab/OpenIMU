@@ -22,6 +22,7 @@ from libopenimu.qt.ParticipantWindow import ParticipantWindow
 from libopenimu.qt.RecordsetWindow import RecordsetWindow
 from libopenimu.qt.ResultWindow import ResultWindow
 from libopenimu.qt.StartWindow import StartWindow
+from libopenimu.qt.ImportBrowser import ImportBrowser
 
 # Models
 from libopenimu.models.Group import Group
@@ -58,7 +59,7 @@ class MainWindow(QMainWindow):
 
         startWindow = StartWindow()
 
-        if (startWindow.exec() == QDialog.Rejected):
+        if startWindow.exec() == QDialog.Rejected:
             # User closed the dialog - exits!
             exit(0)
 
@@ -81,6 +82,10 @@ class MainWindow(QMainWindow):
         # self.loadDemoData()
         self.add_to_log("Données chargées!", LogTypes.LOGTYPE_DONE)
 
+        # If we need to import data, show the import dialog
+        if startWindow.importing :
+            self.importRequested()
+
     def setup_signals(self):
         self.UI.treeDataSet.itemClicked.connect(self.tree_item_clicked)
         self.UI.btnDataSetInfos.clicked.connect(self.infosRequested)
@@ -88,6 +93,7 @@ class MainWindow(QMainWindow):
         self.UI.btnAddParticipant.clicked.connect(self.newParticipantRequested)
         self.UI.treeDataSet.participantDragged.connect(self.participant_was_dragged)
         self.UI.btnDelete.clicked.connect(self.delete_requested)
+        self.UI.btnImport.clicked.connect(self.importRequested)
 
     def load_data_from_dataset(self):
         # Groups
@@ -293,6 +299,12 @@ class MainWindow(QMainWindow):
     @pyqtSlot(QUrl)
     def urlChanged(self, url):
         print('url: ', url)
+
+    @pyqtSlot()
+    def importRequested(self):
+        importer = ImportBrowser(dataManager=self.dbMan)
+
+        importer.exec()
 
     @pyqtSlot()
     def infosRequested(self):

@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QPushButton, QPlainTextEd
 class StartWindow(QDialog):
 
     fileName = ''
+    importing = False
 
     def __init__(self, parent=None):
         super(QDialog, self).__init__(parent=parent)
@@ -24,9 +25,11 @@ class StartWindow(QDialog):
     @pyqtSlot()
     def import_clicked(self):
         importdialog = ImportWindow()
+        importdialog.showImport = True
 
         if (importdialog.exec() == QDialog.Accepted):
             self.fileName = importdialog.fileName
+            self.importing = True
             if self.isVisible():
                 self.accept()
 
@@ -42,7 +45,7 @@ class StartWindow(QDialog):
     @pyqtSlot()
     def new_clicked(self):
         importdialog = ImportWindow()
-        importdialog.noImportUI = True
+        importdialog.showImport = False
 
         if (importdialog.exec() == QDialog.Accepted):
             self.fileName = importdialog.fileName

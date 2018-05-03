@@ -140,10 +140,9 @@ class DBManager:
         query = self.session.query(Participant).filter(Participant.id_participant == id_participant)
         return query.first()
 
-    """def get_all_participants(self):
+    def get_all_participants(self):
         query = self.session.query(Participant)
         return query.all()
-    """
 
     def get_participants_for_group(self,group):
         if group is not None:
