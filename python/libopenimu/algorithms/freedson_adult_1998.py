@@ -167,6 +167,7 @@ def freedson_adult_1998(samples: list, sampling_rate):
 if __name__ == '__main__':
     from libopenimu.importers.ActigraphImporter import ActigraphImporter
     from libopenimu.models.sensor_types import SensorType
+    from libopenimu.models.Participant import Participant
     from libopenimu.db.DBManager import DBManager
 
     import os
@@ -175,11 +176,19 @@ if __name__ == '__main__':
     db_filename = 'freedson.db'
 
     def import_data():
-        # This will create the database (or overwrite it)s
-        importer = ActigraphImporter(db_filename)
+
+        manager = DBManager(db_filename)
+
+        # Create participant
+        participant = manager.update_participant(Participant(name='Participant', description='No description'))
+
+        # Create importer
+        importer = ActigraphImporter(manager, participant)
+
         # Load content of the file to the database
         results = importer.load('../../resources/samples/test.gt3x')
         importer.import_to_database(results)
+
 
     if not os.path.isfile(db_filename):
         print('importing actigraph data')
