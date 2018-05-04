@@ -8,6 +8,7 @@
 
 from abc import abstractmethod
 
+
 class BaseAlgorithm:
     def __init__(self):
         pass
@@ -18,6 +19,10 @@ class BaseAlgorithmFactory:
 
     def __init__(self):
         pass
+
+    @staticmethod
+    def factory_count():
+        return len(BaseAlgorithmFactory.factories)
 
     @staticmethod
     def register_factory(factory):

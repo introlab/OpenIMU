@@ -22,4 +22,5 @@ class TestBaseAlgorithmFactory(unittest.TestCase):
     def test_registered_factories(self):
         print('Printing factories: ')
         base.BaseAlgorithmFactory.print_factories()
+        self.assertGreater(base.BaseAlgorithmFactory.factory_count(), 0)
 
