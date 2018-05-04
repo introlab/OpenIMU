@@ -284,6 +284,16 @@ de collecte:</string>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>txtFileName</tabstop>
+  <tabstop>txtName</tabstop>
+  <tabstop>txtAuthor</tabstop>
+  <tabstop>txtDesc</tabstop>
+  <tabstop>calendarUploadDate</tabstop>
+  <tabstop>btnOK</tabstop>
+  <tabstop>btnCancel</tabstop>
+  <tabstop>btnBrowse</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
