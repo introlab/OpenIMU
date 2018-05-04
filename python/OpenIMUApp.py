@@ -35,6 +35,7 @@ from libopenimu.db.DBManager import DBManager
 # Python
 import sys
 from datetime import datetime
+import locale
 
 
 class LogTypes(Enum):
