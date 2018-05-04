@@ -10,11 +10,20 @@ from abc import abstractmethod
 
 
 class BaseAlgorithm:
-    def __init__(self):
+    def __init__(self, params):
+        self.configure(params)
+
+    @abstractmethod
+    def configure(self, params: dict):
+        pass
+
+    @abstractmethod
+    def calculate(self):
         pass
 
 
 class BaseAlgorithmFactory:
+    # Will hold all factories
     factories = list()
 
     def __init__(self):
@@ -35,6 +44,14 @@ class BaseAlgorithmFactory:
             print('factory name', factory.name())
             print('factory params', factory.params())
 
+    @staticmethod
+    def get_factory_named(name):
+        for factory in BaseAlgorithmFactory.factories:
+            if factory.name() == name:
+                return factory
+        return None
+
+    @abstractmethod
     def create(self, params: dict):
         return None
 

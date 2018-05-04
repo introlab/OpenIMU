@@ -24,3 +24,6 @@ class TestBaseAlgorithmFactory(unittest.TestCase):
         base.BaseAlgorithmFactory.print_factories()
         self.assertGreater(base.BaseAlgorithmFactory.factory_count(), 0)
 
+    def test_get_factory_named(self):
+        self.assertEqual(base.BaseAlgorithmFactory.get_factory_named('Unknown'), None)
+        self.assertNotEqual(base.BaseAlgorithmFactory.get_factory_named('FreedsonAdult1998Factory'), None)
