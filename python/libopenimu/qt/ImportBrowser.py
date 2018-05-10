@@ -38,7 +38,7 @@ class ImportBrowser(QDialog):
             if file_type == ImporterTypes.ACTIGRAPH:
                 data_importer = ActigraphImporter(manager=self.dbMan, participant=part)
 
-            if file_type == ImporterTypes.OPENIMU:
+            if file_type == ImporterTypes.WIMU:
                 data_importer = WIMUImporter(manager=self.dbMan, participant=part)
 
             if data_importer is not None:

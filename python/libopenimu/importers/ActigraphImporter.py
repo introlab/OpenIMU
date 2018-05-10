@@ -147,7 +147,7 @@ class ActigraphImporter(BaseImporter):
                     counters[index] += len(vector)
                     if len(vector) > 0:
                         self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[index],
-                                                   datetime.datetime.fromtimestamp(timestamp), vector)
+                                                   datetime.datetime.fromtimestamp(timestamp), datetime.datetime.fromtimestamp(timestamp+len(value_dict[timestamp][index])), vector)
 
             print('total samples inserted:', counters)
             print('total timestamps processed:', len(all_timestamps))
@@ -174,7 +174,7 @@ class ActigraphImporter(BaseImporter):
                 if epoch[0] > recordset.end_timestamp.timestamp():
                     recordset.end_timestamp = timestamp
 
-                self.add_sensor_data_to_db(recordset, volt_sensor, volt_channel, timestamp, value)
+                self.add_sensor_data_to_db(recordset, volt_sensor, volt_channel, timestamp, datetime.datetime.fromtimestamp(epoch[0]+1), value)
 
             # Flush to DB (ram)
             self.db.flush()
@@ -197,7 +197,7 @@ class ActigraphImporter(BaseImporter):
                 if epoch[0] > recordset.end_timestamp.timestamp():
                     recordset.end_timestamp = timestamp
 
-                self.add_sensor_data_to_db(recordset, lux_sensor, lux_channel, timestamp, value)
+                self.add_sensor_data_to_db(recordset, lux_sensor, lux_channel, timestamp, datetime.datetime.fromtimestamp(epoch[0]+1), value)
 
             # Flush to DB (ram)
             self.db.flush()

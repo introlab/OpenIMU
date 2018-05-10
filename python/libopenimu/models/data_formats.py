@@ -73,6 +73,26 @@ class DataFormat:
         else:
             return None
 
+
+    @staticmethod
+    def get_num_bytes(id_data_format):
+        assert (DataFormat.is_valid(id_data_format))
+
+        if id_data_format is DataFormat.UINT8 or id_data_format is DataFormat.SINT8:
+            return 1
+
+        if id_data_format is DataFormat.UINT16 or id_data_format is DataFormat.SINT16:
+            return 2
+
+        if id_data_format is DataFormat.UINT32 or id_data_format is DataFormat.SINT32 or id_data_format is DataFormat.FLOAT32:
+            return 4
+
+        if id_data_format is DataFormat.UINT64 or id_data_format is DataFormat.SINT64 or id_data_format is DataFormat.FLOAT64:
+            return 8
+
+        return None
+
+
     @staticmethod
     def populate_database(conn):
         """ Will populate database with table tabDataFormat """
@@ -89,11 +109,11 @@ class DataFormat:
         return DataFormat.value_dict.__contains__(id_data_format)
 
 
-# Not used...
 class DBDataFormat(Base):
     __tablename__ = 'tabDataFormats'
     id_data_format = Column(Integer, Sequence('id_data_format_sequence'), primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
+    precision = Column(Integer, nullable=False)
 
     # Database rep (optional)
     def __repr__(self):

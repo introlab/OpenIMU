@@ -88,16 +88,25 @@ class WIMUImporter(BaseImporter):
                         recordset.end_timestamp = datetime.datetime.fromtimestamp(timestamp)
 
                     if len(acc_x) > 0:
+                        data_len = len(acc_x) / config.general.sampling_rate
+                        end_timestamp = timestamp + data_len
                         self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[0],
-                                                   datetime.datetime.fromtimestamp(timestamp), acc_x)
+                                                   datetime.datetime.fromtimestamp(timestamp),
+                                                   datetime.datetime.fromtimestamp(end_timestamp), acc_x)
 
                     if len(acc_y) > 0:
+                        data_len = len(acc_y) / config.general.sampling_rate
+                        end_timestamp = timestamp + data_len
                         self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[1],
-                                                   datetime.datetime.fromtimestamp(timestamp), acc_y)
+                                                   datetime.datetime.fromtimestamp(timestamp),
+                                                   datetime.datetime.fromtimestamp(end_timestamp), acc_y)
 
                     if len(acc_z) > 0:
+                        data_len = len(acc_z) / config.general.sampling_rate
+                        end_timestamp = timestamp + data_len
                         self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[2],
-                                                   datetime.datetime.fromtimestamp(timestamp), acc_z)
+                                                   datetime.datetime.fromtimestamp(timestamp),
+                                                   datetime.datetime.fromtimestamp(end_timestamp), acc_z)
 
                 self.db.flush()
 
@@ -135,16 +144,25 @@ class WIMUImporter(BaseImporter):
                         recordset.end_timestamp = datetime.datetime.fromtimestamp(timestamp)
 
                     if len(gyro_x) > 0:
+                        data_len = len(gyro_x) / config.general.sampling_rate
+                        end_timestamp = timestamp + data_len
                         self.add_sensor_data_to_db(recordset, gyro_sensor, gyro_channels[0],
-                                                   datetime.datetime.fromtimestamp(timestamp), gyro_x)
+                                                   datetime.datetime.fromtimestamp(timestamp),
+                                                   datetime.datetime.fromtimestamp(end_timestamp), gyro_x)
 
                     if len(gyro_y) > 0:
+                        data_len = len(gyro_y) / config.general.sampling_rate
+                        end_timestamp = timestamp + data_len
                         self.add_sensor_data_to_db(recordset, gyro_sensor, gyro_channels[1],
-                                                   datetime.datetime.fromtimestamp(timestamp), gyro_y)
+                                                   datetime.datetime.fromtimestamp(timestamp),
+                                                   datetime.datetime.fromtimestamp(end_timestamp), gyro_y)
 
                     if len(gyro_z) > 0:
+                        data_len = len(gyro_z) / config.general.sampling_rate
+                        end_timestamp = timestamp + data_len
                         self.add_sensor_data_to_db(recordset, gyro_sensor, gyro_channels[2],
-                                                   datetime.datetime.fromtimestamp(timestamp), gyro_z)
+                                                   datetime.datetime.fromtimestamp(timestamp),
+                                                   datetime.datetime.fromtimestamp(end_timestamp), gyro_z)
 
                 self.db.flush()
 

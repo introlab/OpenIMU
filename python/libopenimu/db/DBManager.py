@@ -8,7 +8,7 @@
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker,query
-from sqlalchemy.sql import table, insert
+from sqlalchemy.sql import table, insert, text
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
 
@@ -250,11 +250,11 @@ class DBManager:
         # Return all channels
         return query.all()
 
-    def add_sensor_data(self, recordset: Recordset, sensor: Sensor, channel: Channel, timestamp, data):
+    def add_sensor_data(self, recordset: Recordset, sensor: Sensor, channel: Channel, start_timestamp, end_timestamp, data):
 
         # Create object
         sensordata = SensorData(recordset=recordset, sensor=sensor,
-                                channel=channel, data_timestamp=timestamp, data=data.tobytes())
+                                channel=channel, start_timestamp=start_timestamp, end_timestamp=end_timestamp, data=data.tobytes())
 
         # Custom SQL code
         """
@@ -281,15 +281,19 @@ class DBManager:
 
         return my_sensor_data
 
-    def get_all_sensor_data(self, recordset: Recordset, **kwargs):
+    def get_all_sensor_data(self, **kwargs):
 
         # Initialize from kwargs (and default values)
         convert = kwargs.get('convert', False)
         sensor = kwargs.get('sensor', None)
         channel = kwargs.get('channel', None)
+        recordset = kwargs.get('recordset', None)
 
-        # Get all sensor data from recordset
-        query = self.session.query(SensorData).filter(SensorData.id_recordset == recordset.id_recordset)
+        # Get all sensor data
+        query = self.session.query(SensorData)
+
+        if recordset is not None:
+            query = query.filter(SensorData.id_recordset == recordset.id_recordset)
 
         if sensor is not None:
             # print('Should filter sensor id', sensor.id_sensor)
@@ -301,7 +305,7 @@ class DBManager:
 
         # print(query)
         # Make sure data is ordered by timestamps
-        query = query.order_by(SensorData.data_timestamp.asc())
+        query = query.order_by(SensorData.start_timestamp.asc())
 
         if not convert:
             return query.all()
@@ -315,7 +319,6 @@ class DBManager:
                 sensor_data.data = DataFormat.from_bytes(sensor_data.data, sensor_data.channel.id_data_format)
 
             return result
-
 
     def set_dataset_infos(self, name, desc, creation_date, upload_date, author):
 

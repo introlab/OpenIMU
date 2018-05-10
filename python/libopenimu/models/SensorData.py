@@ -31,7 +31,8 @@ class SensorData(Base):
     The Interval type deals with datetime.timedelta objects. In PostgreSQL, the native INTERVAL type is used; 
     for others, the value is stored as a date which is relative to the “epoch” (Jan. 1, 1970).
     '''
-    data_timestamp = Column(TIMESTAMP, nullable=False)
+    start_timestamp = Column(TIMESTAMP, nullable=False)
+    end_timestamp = Column(TIMESTAMP, nullable=False)
     data = Column(BLOB, nullable=False)
 
     # Relationships
@@ -66,8 +67,8 @@ class SensorData(Base):
 
     # Database rep (optional)
     def __repr__(self):
-        return "<SensorData(id_recordset='%s', id_sensor='%s', id_channel='%s', data_timestamp='%s', data_size='%s'" % \
-               (str(self.id_recordset), str(self.id_sensor), str(self.id_channel), str(self.data_timestamp),
+        return "<SensorData(id_recordset='%s', id_sensor='%s', id_channel='%s', start_timestamp='%s', end_timestamp='%s', data_size='%s'" % \
+               (str(self.id_recordset), str(self.id_sensor), str(self.id_channel), str(self.start_timestamp), str(self.end_timestamp),
                 str(len(self.data)))
 
 

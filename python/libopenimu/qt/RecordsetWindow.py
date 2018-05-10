@@ -15,6 +15,7 @@ class RecordsetWindow(QWidget):
     recordsets = []
     dbMan = None
     sensors = []
+    sensors_colors = []
 
     #sensorsColor = ['e0c31e', '14148c', '006325', '6400aa', '14aaff', 'ae32a0', '80c342', '868482']
 
@@ -45,6 +46,7 @@ class RecordsetWindow(QWidget):
 
     def paintEvent(self, QPaintEvent):
         self.draw_recordsets()
+        self.draw_sensors()
         self.draw_dates()
 
     def load_sensors(self):
@@ -53,20 +55,21 @@ class RecordsetWindow(QWidget):
 
         # Create sensor colors
         used_colors = []
-        colors = QColor.colorNames()
+        #colors = QColor.colorNames()
+        colors = ['darkblue','darkcyan','darkgoldenrod','darkgreen','darkgrey','darkkhaki','darkmagenta','darkolivegreen', 'darkorange', 'darkorchid', 'darkred', 'darksalmon', 'darkseagreen', 'darkslateblue', 'darkslategray', 'darkslategrey', 'darkturquoise', 'darkviolet']
 
         # Filter "bad" colors for sensors
-        colors.remove("white")
+        """colors.remove("white")
         colors.remove("black")
         colors.remove("transparent")
         colors.remove("red")
-        colors.remove("green")
+        colors.remove("green")"""
 
-        shuffle(colors)
+        # shuffle(colors)
         color_index = 0
 
-        for record in self.recordsets:
-            self.sensors += self.dbMan.get_sensors(record)
+        if len(self.recordsets) > 0:
+            self.sensors += self.dbMan.get_sensors(self.recordsets[0])
 
         for sensor in self.sensors:
             index = -1
@@ -91,6 +94,7 @@ class RecordsetWindow(QWidget):
                 item = QListWidgetItem(QIcon(':/OpenIMU/icons/sensor.png'), sensor_name)
                 item.setCheckState(Qt.Unchecked)
                 item.setForeground(QColor(colors[color_index]))
+                self.sensors_colors.append(colors[color_index])
                 color_index += 1
                 if color_index >= len(colors):
                     color_index = 0
@@ -101,6 +105,11 @@ class RecordsetWindow(QWidget):
                     self.UI.lstSensors.insertItem(index+1,item)
 
     def update_recordset_infos(self):
+        if len(self.recordsets) == 0:
+            self.UI.lblTotalValue.setText("Aucune donnée.")
+            self.UI.lblDurationValue.setText("Aucune donnée.")
+            return
+
         start_time = self.recordsets[0].start_timestamp
         end_time = self.recordsets[len(self.recordsets)-1].end_timestamp
 
@@ -117,6 +126,9 @@ class RecordsetWindow(QWidget):
         return (((current_time - self.recordsets[0].start_timestamp).total_seconds()) / time_span) * self.UI.graphTimeline.width()
 
     def draw_dates(self):
+        if len(self.recordsets) == 0:
+            return
+
         # Computations
         start_time = self.recordsets[0].start_timestamp
         end_time = self.recordsets[len(self.recordsets) - 1].end_timestamp
@@ -151,8 +163,9 @@ class RecordsetWindow(QWidget):
         transPen = QPen(Qt.transparent)
 
         # Empty rectangle (background)
-        #self.timeScene.addRect(0,0,self.UI.graphTimeline.width(),self.UI.graphTimeline.height(),transPen,QBrush(Qt.red))
+        self.timeScene.addRect(0,0,self.UI.graphTimeline.width(),self.UI.graphTimeline.height(),transPen,QBrush(Qt.red))
         self.timeScene.setBackgroundBrush(QBrush(Qt.red))
+
 
         # Recording length
         for record in self.recordsets:
@@ -161,5 +174,26 @@ class RecordsetWindow(QWidget):
             span = end_pos - start_pos
             self.timeScene.addRect(start_pos, 0, span, self.UI.graphTimeline.height(), transPen, greenBrush)
 
+    def draw_sensors(self):
+        if len(self.sensors) == 0:
+            return
+
+        bar_height = (3*(self.UI.graphTimeline.height()/4))/len(self.sensors)
+        # for sensor in self.sensors:
+        for i in range(0, len(self.sensors)):
+            sensor = self.sensors[i]
+            sensorBrush = QBrush(QColor(self.sensors_colors[i]))
+            # print (sensor.name + " = " + self.sensors_colors[i])
+            sensorPen = QPen(Qt.transparent)
+            for record in self.recordsets:
+                datas = self.dbMan.get_all_sensor_data(sensor=sensor, recordset=record, channel=sensor.channels[0])
+                for data in datas:
+                    start_pos = self.get_relative_timeview_pos(data.start_timestamp)
+                    end_pos = self.get_relative_timeview_pos(data.end_timestamp)
+                    span = end_pos - start_pos
+                    self.timeScene.addRect(start_pos, i*bar_height+(self.UI.graphTimeline.height()/4), span, bar_height, sensorPen, sensorBrush)
+
+
+        return
 
 

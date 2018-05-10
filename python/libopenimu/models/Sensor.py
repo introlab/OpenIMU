@@ -7,7 +7,7 @@
 from libopenimu.models.Base import Base
 # from libopenimu.models.sensor_types import *
 from sqlalchemy import Column, Integer, Float, String, Sequence, TIMESTAMP, BLOB, ForeignKey
-# from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship
 
 
 class Sensor(Base):
@@ -24,6 +24,7 @@ class Sensor(Base):
     # Which sensor type
     # TODO USEFUL?
     # sensor_type = relationship("SensorType")
+    channels = relationship("Channel")
 
     # def __eq__(self, other):
     #    return self.id_sensor == other.id_sensor and self.id_sensor_type == other.id_sensor_type and \
