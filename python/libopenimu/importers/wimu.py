@@ -664,7 +664,7 @@ def wimu_load_magneto(time_data, magneto_data, config: WIMUConfig):
 @timing
 def wimu_load_gps(time_data, index_data, gps_data, config: WIMUConfig):
 
-    return None
+    # return None
 
     frames = []
     offset = 0
