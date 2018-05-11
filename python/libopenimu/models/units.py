@@ -16,6 +16,7 @@ class Units:
     DEG_PER_SEC = 4
     VOLTS = 5
     LUX = 6
+    NONE = 7
 
     value_dict = {METERS: 'METERS',
                   GRAVITY_G: 'G',
@@ -23,7 +24,8 @@ class Units:
                   RAD_PER_SEC: 'RAD/S',
                   DEG_PER_SEC: 'DEG/S',
                   VOLTS: 'VOLTS',
-                  LUX: 'LUX'}
+                  LUX: 'LUX',
+                  NONE: 'NONE'}
 
     @staticmethod
     def as_dict():

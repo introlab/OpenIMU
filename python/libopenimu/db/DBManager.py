@@ -257,7 +257,8 @@ class DBManager:
 
         # Create object
         sensordata = SensorData(recordset=recordset, sensor=sensor,
-                                channel=channel, start_timestamp=start_timestamp, end_timestamp=end_timestamp, data=data.tobytes())
+                                channel=channel, start_timestamp=start_timestamp, end_timestamp=end_timestamp,
+                                data=data.tobytes())
 
         # Custom SQL code
         """
