@@ -166,5 +166,27 @@ class WIMUImporter(BaseImporter):
 
                 self.db.flush()
 
+            if result.__contains__('gps'):
+
+                gps_sensor = self.add_sensor_to_db(SensorType.GPS, 'GPS',
+                                                   'WIMUGPS',
+                                                   'Unknown', 1.0, 1)
+
+                gps_channel = self.add_channel_to_db(gps_sensor, Units.NONE, DataFormat.UINT8, 'GPS_SIRF')
+
+                for item in result['gps']:
+                    # GPS item is a dict with key = timestamp, value = geo data
+                    for key in item:
+                        # print('gps item : ', key)
+                        timestamp = key
+
+                        recordset = self.get_recordset(timestamp)
+
+                        self.add_sensor_data_to_db(recordset, gps_sensor, gps_channel,
+                                                   datetime.datetime.fromtimestamp(timestamp),
+                                                   datetime.datetime.fromtimestamp(timestamp), item[key])
+
+                self.db.flush()
+
         # Write data to file
         self.db.commit()

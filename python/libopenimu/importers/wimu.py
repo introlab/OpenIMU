@@ -64,7 +64,8 @@ class GPSGeodetic:
 
         return True
 
-    def to_bytes(self):
+    # Same interface as numpy vectors for serialization
+    def tobytes(self):
         return bytes()
 
 
@@ -854,7 +855,7 @@ def wimu_importer(filename):
                     gps_data = myzip.open(key).read()
                     index_data = myzip.open(filedict[key][0]).read()
                     time_data = myzip.open(filedict[key][1]).read()
-                    wimu_load_gps(time_data, index_data, gps_data, results['config'])
+                    results['gps'].append(wimu_load_gps(time_data, index_data, gps_data, results['config']))
                 else:
                     print('error GPS')
             elif 'POW' in key:
