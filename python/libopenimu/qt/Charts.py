@@ -76,7 +76,8 @@ class IMUChartView(QChartView):
         self.labelYValue.setMinimumWidth(200)
         self.labelYValue.setMaximumWidth(200)
 
-        parent.layout().setMenuBar(newWidget)
+        if parent is not None:
+            parent.layout().setMenuBar(newWidget)
 
         # self.layout()
 

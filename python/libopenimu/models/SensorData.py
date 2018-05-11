@@ -50,9 +50,9 @@ class SensorData(Base):
         if self.sensor.sampling_rate > 0:
             values = self.to_ndarray()
 
-            time = np.linspace(self.data_timestamp.timestamp(),
+            time = np.linspace(self.start_timestamp.timestamp(),
                                num=len(values),
-                               stop=self.data_timestamp.timestamp() + len(values) / self.sensor.sampling_rate,
+                               stop=self.start_timestamp.timestamp() + len(values) / self.sensor.sampling_rate,
                                dtype=np.float64, endpoint=False)
 
             # np.set_printoptions(suppress=True)
@@ -63,7 +63,7 @@ class SensorData(Base):
         else:
             values = self.to_ndarray()
             assert(len(values) == 1)
-            return {'time': [self.data_timestamp.timestamp()], 'values': values}
+            return {'time': [self.start_timestamp.timestamp()], 'values': values}
 
     # Database rep (optional)
     def __repr__(self):

@@ -1,11 +1,18 @@
-from PyQt5.QtWidgets import QLineEdit, QWidget, QPushButton, QListWidget, QListWidgetItem, QGraphicsScene, QGraphicsRectItem, QGraphicsItem, QGraphicsView, QGraphicsTextItem
+from PyQt5.QtWidgets import QLineEdit, QWidget, QPushButton, QListWidget, QListWidgetItem, QGraphicsScene, QGraphicsRectItem, QGraphicsItem, QGraphicsView, QGraphicsTextItem, QMdiArea, QHBoxLayout
 from PyQt5.QtGui import QIcon, QBrush, QPen, QColor
-from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal, QModelIndex
+from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal, QModelIndex, QPoint, QRect
 
 from resources.ui.python.RecordsetWidget_ui import Ui_frmRecordsets
 
 from libopenimu.models.Recordset import Recordset
 from libopenimu.db.DBManager import DBManager
+
+from libopenimu.models.sensor_types import SensorType
+
+from libopenimu.qt.Charts import IMUChartView
+from libopenimu.tools.timing import timing
+import os
+import numpy as np
 
 from datetime import datetime,timedelta
 from random import shuffle
@@ -14,8 +21,9 @@ class RecordsetWindow(QWidget):
 
     recordsets = []
     dbMan = None
-    sensors = []
-    sensors_colors = []
+    sensors = {}
+    sensors_items = {}
+    sensors_graphs = {}
 
     #sensorsColor = ['e0c31e', '14148c', '006325', '6400aa', '14aaff', 'ae32a0', '80c342', '868482']
 
@@ -44,6 +52,8 @@ class RecordsetWindow(QWidget):
         # Load sensors for that recordset
         self.load_sensors()
 
+        self.UI.lstSensors.itemChanged.connect(self.sensor_current_changed)
+
     def paintEvent(self, QPaintEvent):
         self.draw_recordsets()
         self.draw_sensors()
@@ -51,7 +61,8 @@ class RecordsetWindow(QWidget):
 
     def load_sensors(self):
         self.UI.lstSensors.clear()
-        self.sensors = []
+        self.sensors = {}
+        self.sensors_items = {}
 
         # Create sensor colors
         used_colors = []
@@ -69,9 +80,10 @@ class RecordsetWindow(QWidget):
         color_index = 0
 
         if len(self.recordsets) > 0:
-            self.sensors += self.dbMan.get_sensors(self.recordsets[0])
+            for sensor in self.dbMan.get_sensors(self.recordsets[0]):
+                self.sensors[sensor.id_sensor] = sensor
 
-        for sensor in self.sensors:
+        for sensor in self.sensors.values():
             index = -1
             location_item = self.UI.lstSensors.findItems(sensor.location, Qt.MatchExactly)
             if len(location_item) == 0:
@@ -94,7 +106,9 @@ class RecordsetWindow(QWidget):
                 item = QListWidgetItem(QIcon(':/OpenIMU/icons/sensor.png'), sensor_name)
                 item.setCheckState(Qt.Unchecked)
                 item.setForeground(QColor(colors[color_index]))
-                self.sensors_colors.append(colors[color_index])
+                item.setData(Qt.UserRole, sensor.id_sensor)
+                #self.sensors_colors.append(colors[color_index])
+                self.sensors_items[sensor.id_sensor] = item
                 color_index += 1
                 if color_index >= len(colors):
                     color_index = 0
@@ -180,9 +194,9 @@ class RecordsetWindow(QWidget):
 
         bar_height = (3*(self.UI.graphTimeline.height()/4))/len(self.sensors)
         # for sensor in self.sensors:
-        for i in range(0, len(self.sensors)):
-            sensor = self.sensors[i]
-            sensorBrush = QBrush(QColor(self.sensors_colors[i]))
+        i = 0
+        for sensor in self.sensors.values():
+            sensorBrush = QBrush(self.sensors_items[sensor.id_sensor].foreground())
             # print (sensor.name + " = " + self.sensors_colors[i])
             sensorPen = QPen(Qt.transparent)
             for record in self.recordsets:
@@ -192,8 +206,102 @@ class RecordsetWindow(QWidget):
                     end_pos = self.get_relative_timeview_pos(data.end_timestamp)
                     span = end_pos - start_pos
                     self.timeScene.addRect(start_pos, i*bar_height+(self.UI.graphTimeline.height()/4), span, bar_height, sensorPen, sensorBrush)
+            i += 1
 
+    @pyqtSlot(QListWidgetItem)
+    def sensor_current_changed(self, item):
+        sensor = self.sensors[item.data(Qt.UserRole)]
+        timeseries = []
+        # Color map
+        colors = [Qt.red, Qt.green, Qt.darkBlue]
 
-        return
+        if item.checkState() == Qt.Checked:
+            # Choose the correct display for each sensor
 
+            if sensor.id_sensor_type == SensorType.ACCELEROMETER \
+                or sensor.id_sensor_type == SensorType.GYROMETER \
+                    or sensor.id_sensor_type == SensorType.BATTERY\
+                        or sensor.id_sensor_type == SensorType.LUX:
+                channels = self.dbMan.get_all_channels(sensor=sensor)
+                for channel in channels:
+                    # Will get all data (converted to floats)
+                    channel_data = []
+                    for record in self.recordsets:
+                        channel_data += self.dbMan.get_all_sensor_data(recordset=record, convert=True, sensor=sensor,channel=channel)
 
+                    timeseries.append(self.create_data_timeseries(channel_data))
+                    timeseries[-1]['label'] = channel.label
+
+                graph = IMUChartView()
+                # graph.add_test_data()
+                # Add series
+                for series in timeseries:
+                    graph.add_data(series['x'], series['y'], color=colors.pop(), legend_text=series['label'])
+
+                graph.set_title(item.text())
+                self.UI.mdiArea.addSubWindow(graph)
+                graph.show()
+
+                self.sensors_graphs[sensor.id_sensor] = graph
+
+                self.tile_graphs_vertically()
+
+        else:
+            # Remove from display
+            if self.sensors_graphs[sensor.id_sensor] is not None:
+                self.UI.mdiArea.removeSubWindow(self.sensors_graphs[sensor.id_sensor].parent())
+                self.sensors_graphs[sensor.id_sensor] = None
+
+    @timing
+    def create_data_timeseries(self, sensor_data_list: list):
+
+        time_values = []
+        data_values = []
+
+        for sensor_data in sensor_data_list:
+            # print('sensor_data', sensor_data)
+            # Will get a dict with keys:  time, values
+            vals = sensor_data.to_time_series()
+            # print('vals is length', len(vals))
+            time_values.append(vals['time'])
+            data_values.append(vals['values'])
+
+        # print('time_values length', len(time_values))
+        # print('data_values length', len(data_values))
+
+        # Concat vectors
+        time_array = np.concatenate(time_values)
+        data_array = np.concatenate(data_values)
+
+        # Test, remove first time
+        # time_array = time_array - time_array[0]
+
+        # print('time_array_shape, data_array_shape', time_array.shape, data_array.shape)
+        # return data
+        return {'x': time_array, 'y': data_array}
+
+    def tile_graphs_horizontally(self):
+
+        if self.UI.mdiArea.subWindowList() is None:
+            return
+
+        position = QPoint(0,0)
+
+        for window in self.UI.mdiArea.subWindowList():
+            rect = QRect(0,0, self.UI.mdiArea.width() / len(self.UI.mdiArea.subWindowList()), self.UI.mdiArea.height())
+            window.setGeometry(rect)
+            window.move(position)
+            position.setX(position.x() + window.width())
+
+    def tile_graphs_vertically(self):
+
+        if self.UI.mdiArea.subWindowList() is None:
+            return
+
+        position = QPoint(0,0)
+
+        for window in self.UI.mdiArea.subWindowList():
+            rect = QRect(0,0, self.UI.mdiArea.width(), self.UI.mdiArea.height()/ len(self.UI.mdiArea.subWindowList()))
+            window.setGeometry(rect)
+            window.move(position)
+            position.setY(position.y() + window.height())

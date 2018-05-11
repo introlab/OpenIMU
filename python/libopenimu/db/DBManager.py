@@ -6,8 +6,8 @@
 """
 
 import sqlalchemy
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker,query
+from sqlalchemy import create_engine, asc, desc
+from sqlalchemy.orm import sessionmaker,query, session
 from sqlalchemy.sql import table, insert, text
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
@@ -213,11 +213,14 @@ class DBManager:
             raise
 
     def get_all_recordsets(self, participant=Participant()):
+
         if participant.id_participant is None:
             query = self.session.query(Recordset)
+            query.order_by(asc(Recordset.start_timestamp))
             return query.all()
         else:
             query = self.session.query(Recordset).filter(Recordset.id_participant == participant.id_participant)
+            query.order_by(asc(Recordset.start_timestamp))
             return query.all()
     #####################
     def get_sensors(self,recordset):
