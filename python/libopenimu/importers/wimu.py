@@ -74,21 +74,54 @@ class SIRFFrame:
     payload = bytes()
     checksum = np.uint16(0)
     stop_seq = np.uint16(0)
+    valid = False
 
     def from_bytes(self, data, offset=0):
         # print('from_bytes buf len', len(data), 'offset', offset)
-        [self.start_seq] = struct.unpack_from('>H', data, offset=offset)
-        # print('start_seq', hex(self.start_seq))
+        # Align with start_seq
+        while offset < len(data):
+            [self.start_seq] = struct.unpack_from('>H', data, offset=offset)
+            if self.start_seq != 0xa0a2:
+                # print('Error start_seq:', hex(self.start_seq))
+                # print('from_bytes buf len', len(data), 'offset', offset)
+                offset = offset + 2
+            else:
+                # Temp valid
+                self.valid = True
+                break
+
+        # Not valid
+        if not self.valid:
+            print('error start_seq', hex(self.start_seq))
+            return len(data)
+
         [self.payload_len] = struct.unpack_from('>H', data, offset=offset + 2)
         self.payload_len = np.bitwise_and(self.payload_len, 0x07FF)
         # print('payload_size', self.payload_len)
         self.payload = data[offset+4:offset+4+self.payload_len]
-        # struct.unpack_from('>' + str(self.payload_len) + 'B', data, offset=offset + 4)
         # print('payload_len', len(self.payload))
         [self.checksum] = struct.unpack_from('>H', data, offset=offset + 4 + len(self.payload))
         # print('checksum', hex(self.checksum))
         [self.stop_seq] = struct.unpack_from('>H', data, offset=offset + 6 + len(self.payload))
         # print('stop_seq', hex(self.stop_seq))
+
+        if self.stop_seq == 0xb0b3:
+            self.valid = True
+            return offset + 8 + len(self.payload)
+        else:
+            # print('error stop_seq', hex(self.stop_seq), 'offset', offset)
+            # Backtrack offset to find end seq from begin
+            self.valid = False
+            while offset < len(data):
+                [self.stop_seq] = struct.unpack_from('>H', data, offset=offset)
+                if self.stop_seq == 0xb0b3:
+                    return offset + 2
+                else:
+                    offset = offset + 2
+
+        # This should not occur???
+        self.valid = False
+        return len(data)
 
     def len(self):
         return 8 + len(self.payload)
@@ -667,21 +700,32 @@ def wimu_load_magneto(time_data, magneto_data, config: WIMUConfig):
 @timing
 def wimu_load_gps(time_data, index_data, gps_data, config: WIMUConfig):
 
-    # return None
+    # Time data is a text file, each line contains a timestamp
+    f = BytesIO(time_data)
 
-    frames = []
+    geo_frames = {}
     offset = 0
+
     while offset < len(gps_data):
         frame = SIRFFrame()
-        frame.from_bytes(gps_data, offset=offset)
+        # This will update the offset
+        offset = frame.from_bytes(gps_data, offset=offset)
 
-        # TODO Verify checksum
+        if not frame.valid:
+            continue
+
         if len(frame.payload) > 0:
             if frame.payload[0] == 0x29:
+                # Read timestamp from corrected file and use it instead
+                timestamp = int(f.readline())
                 geo = GPSGeodetic()
-                geo.from_bytes(frame.payload)
+                if geo.from_bytes(frame.payload):
+                    geo_frames[timestamp] = geo
 
-        offset += frame.len()
+    # Returning valid frames
+    print('wimu_load_gps : ', len(geo_frames))
+
+    return geo_frames
 
 
 @timing
