@@ -53,7 +53,8 @@ class WIMUImporterTest(unittest.TestCase):
 
         # Import to database
         importer = WIMUImporter(manager, participant)
-        results = importer.load('../../../resources/samples/WIMU_ACC_GPS_GYRO_PreProcess.zip')
+        # results = importer.load('../../../resources/samples/WIMU_ACC_GPS_GYRO_PreProcess.zip')
+        results = importer.load('../../../resources/samples/REPAR_Sujet7_Semaine_T4.zip')
         importer.import_to_database(results)
 
         recordsets = manager.get_all_recordsets(participant)

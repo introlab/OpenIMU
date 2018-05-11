@@ -33,7 +33,10 @@ class GPSGeodetic:
     heading_rate = np.int16(0)
 
     def from_bytes(self, data, offset=0):
-        assert(len(data) == 91)
+        if len(data) != 91:
+            print('Error GPSGeo len:', len(data))
+            return False
+
         [self.message_id] = struct.unpack_from('>B', data, offset=0)
         [self.nav_valid] = struct.unpack_from('>H', data, offset=1)
         [self.nav_type] = struct.unpack_from('>H', data, offset=3)
@@ -57,9 +60,9 @@ class GPSGeodetic:
         [self.climb_rate] = struct.unpack_from('>h', data, offset=46)
         [self.heading_rate] = struct.unpack_from('>h', data, offset=48)
 
-        print('latitude', self.latitude / 1e7, 'longitude', self.longitude / 1e7)
+        # print('latitude', self.latitude / 1e7, 'longitude', self.longitude / 1e7)
 
-
+        return True
 
     def to_bytes(self):
         return bytes()
@@ -708,16 +711,28 @@ def wimu_importer(filename):
         print('zip opened')
         namelist = myzip.namelist()
 
-        # First read settings file
-        if namelist.__contains__('PreProcess/SETTINGS'):
-            results['settings'] = wimu_load_settings(myzip.open('PreProcess/SETTINGS').read())
-        else:
+        print('zip contains : ', namelist)
+
+        # First find SETTINGS file
+        for file in namelist:
+            if 'PreProcess/SETTINGS' in file:
+                print('Loading settings')
+                results['settings'] = wimu_load_settings(myzip.open(file).read())
+
+        # Testing for settings file
+        if not results.__contains__('settings'):
+            print('PreProcess/SETTINGS not found')
             return results
 
-        # Then read config file
-        if namelist.__contains__('PreProcess/CONFIG.WCF'):
-            results['config'] = wimu_load_config(myzip.open('PreProcess/CONFIG.WCF').read(), results['settings'])
-        else:
+        # Then find CONFIG.WCF file
+        for file in namelist:
+            if 'PreProcess/CONFIG.WCF' in file:
+                print('Loading config')
+                results['config'] = wimu_load_config(myzip.open(file).read(), results['settings'])
+
+        # Testing for config file
+        if not results.__contains__('config'):
+            print('PreProcess/CONFIG.WCF not found')
             return results
 
         # Create empty lists
@@ -734,15 +749,15 @@ def wimu_importer(filename):
         for file in namelist:
             print('listing:', file)
             if '.DAT' in file:
-                if '/ACC_' in file:
+                if 'PreProcess/ACC_' in file:
                     filedict[file] = []
-                elif '/GYR_' in file:
+                elif 'PreProcess/GYR_' in file:
                     filedict[file] = []
-                elif '/POW_' in file:
+                elif 'PreProcess/POW_' in file:
                     filedict[file] = []
-                elif '/GPS_' in file:
+                elif 'PreProcess/GPS_' in file:
                     filedict[file] = []
-                elif '/LOG_' in file:
+                elif 'PreProcess/LOG_' in file:
                     filedict[file] = []
                 else:
                     pass
@@ -755,13 +770,13 @@ def wimu_importer(filename):
 
         for file in namelist:
             if '.DAT' in file:
-                if 'TIME_' in file:
+                if 'PreProcess/TIME_' in file:
                     key = file.replace('TIME_', "")
                     if filedict.__contains__(key):
                         filedict[key].append(file)
                     else:
                         print('key error', key)
-                if 'INDEX_' in file:
+                if 'PreProcess/INDEX_' in file:
                     key = file.replace('INDEX_', "")
                     if filedict.__contains__(key):
                         filedict[key].append(file)
