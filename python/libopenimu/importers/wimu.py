@@ -31,11 +31,16 @@ class GPSGeodetic:
     magnetic_variation = np.int16(0)
     climb_rate = np.int16(0)
     heading_rate = np.int16(0)
+    original_data = bytes()
+    valid = False
 
     def from_bytes(self, data, offset=0):
         if len(data) != 91:
             print('Error GPSGeo len:', len(data))
+            self.valid = False
             return False
+
+        self.original_data = data
 
         [self.message_id] = struct.unpack_from('>B', data, offset=0)
         [self.nav_valid] = struct.unpack_from('>H', data, offset=1)
@@ -66,7 +71,7 @@ class GPSGeodetic:
 
     # Same interface as numpy vectors for serialization
     def tobytes(self):
-        return bytes()
+        return self.original_data
 
 
 class SIRFFrame:
