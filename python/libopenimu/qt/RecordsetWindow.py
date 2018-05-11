@@ -10,6 +10,8 @@ from libopenimu.db.DBManager import DBManager
 from libopenimu.models.sensor_types import SensorType
 
 from libopenimu.qt.Charts import IMUChartView
+from libopenimu.qt.GPSView import GPSView
+
 from libopenimu.tools.timing import timing
 import os
 import numpy as np
@@ -222,16 +224,17 @@ class RecordsetWindow(QWidget):
                 or sensor.id_sensor_type == SensorType.GYROMETER \
                     or sensor.id_sensor_type == SensorType.BATTERY\
                         or sensor.id_sensor_type == SensorType.LUX:
+
                 channels = self.dbMan.get_all_channels(sensor=sensor)
                 for channel in channels:
                     # Will get all data (converted to floats)
                     channel_data = []
                     for record in self.recordsets:
-                        channel_data += self.dbMan.get_all_sensor_data(recordset=record, convert=True, sensor=sensor,channel=channel)
+                        channel_data += self.dbMan.get_all_sensor_data(recordset=record, convert=True, sensor=sensor,
+                                                                       channel=channel)
 
                     timeseries.append(self.create_data_timeseries(channel_data))
                     timeseries[-1]['label'] = channel.label
-
                 graph = IMUChartView()
                 # graph.add_test_data()
                 # Add series
@@ -245,6 +248,11 @@ class RecordsetWindow(QWidget):
                 self.sensors_graphs[sensor.id_sensor] = graph
 
                 self.tile_graphs_vertically()
+
+            if sensor.id_sensor_type == SensorType.GPS:
+                graph = GPSView(self.UI.mdiArea)
+                self.UI.mdiArea.addSubWindow(graph)
+                graph.show()
 
         else:
             # Remove from display
