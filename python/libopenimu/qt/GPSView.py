@@ -30,9 +30,12 @@ class GPSView(QWebEngineView):
         if self.pageReady is True:
             self.page().runJavaScript('setCurrentPosition(' + str(latitude) + ',' + str(longitude) + ');')
         else:
-            print('Cannot set position, page not ready, saving for later')
+            # print('Cannot set position, page not ready, saving for later')
             self.path.append([latitude, longitude])
 
+    def clearMap(self):
+        if self.pageReady is True:
+            self.page().runJavaScript('clearMap();')
 
     @pyqtSlot(bool)
     def pageLoaded(self, state):

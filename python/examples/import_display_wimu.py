@@ -168,6 +168,7 @@ if __name__ == '__main__':
     for key in gps_vals:
         # Write on the map...
         [latitude, longitude] = gps_vals[key]
+        print('key:', key)
         # Will be added to path...
         if latitude != 0 and longitude != 0:
             view_gps.setCurrentPosition(latitude, longitude)
