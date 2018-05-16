@@ -32,7 +32,7 @@ function initMap() {
 		
 	});
 	
-	map.setOptions({draggable: false, zoomControl: true, scrollwheel: true, disableDoubleClickZoom: true});
+	map.setOptions({draggable: true, zoomControl: true, scrollwheel: true, disableDoubleClickZoom: false});
 	
 	marker = new google.maps.Marker({
 		position: myLatLng,
@@ -42,8 +42,8 @@ function initMap() {
 	});
 	track = new google.maps.Polyline({
 		strokeColor: '#6699ff',
-		strokeOpacity: 1.0,
-		strokeWeight: 3
+		strokeOpacity: 0.8,
+		strokeWeight: 2
 	});
 	track.setMap(map);
 }
