@@ -7,6 +7,9 @@ import core_rc
 
 class GPSView(QWebEngineView):
     def __init__(self, parent):
+
+        self.path = []
+
         super(QWebEngineView, self).__init__(parent)
 
         self.pageReady = False
@@ -20,11 +23,15 @@ class GPSView(QWebEngineView):
         # Load file from qrc
         self.setUrl(QUrl('qrc:/OpenIMU/html/map.html'))
 
+        # 3IT = 45.3790193,-71.9430778
+        # self.setCurrentPosition(45.3790193, -71.9430778)
+
     def setCurrentPosition(self, latitude, longitude):
         if self.pageReady is True:
             self.page().runJavaScript('setCurrentPosition(' + str(latitude) + ',' + str(longitude) + ');')
         else:
-            print('Cannot set position, page not ready')
+            print('Cannot set position, page not ready, saving for later')
+            self.path.append([latitude, longitude])
 
 
     @pyqtSlot(bool)
@@ -33,8 +40,9 @@ class GPSView(QWebEngineView):
 
         if state is True:
             self.pageReady = True
-            # 3IT = 45.3790193,-71.9430778
-            self.setCurrentPosition(45.3790193, -71.9430778)
+            for coords in self.path:
+                self.setCurrentPosition(coords[0], coords[1])
+
 
 
 # Testing app
