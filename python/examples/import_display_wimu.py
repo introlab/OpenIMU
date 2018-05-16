@@ -3,6 +3,7 @@ from libopenimu.db.DBManager import DBManager
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.Participant import Participant
 from libopenimu.qt.Charts import IMUChartView
+from libopenimu.qt.GPSView import GPSView
 from libopenimu.tools.timing import timing
 
 import os
@@ -63,10 +64,11 @@ if __name__ == '__main__':
 
     timeseries_acc = []
     timeseries_gyro = []
+    gps_vals = {}
 
     if not os.path.isfile(db_filename):
         print('importing wimu data')
-        import_data_from_wimu_file('../resources/samples/WIMU_ACC_GPS_GYRO_PreProcess.zip')
+        import_data_from_wimu_file('../resources/samples/REPAR_Sujet7_Semaine_T4.zip')
 
     # manager will handle the newly created database
     manager = DBManager(db_filename, overwrite=False)
@@ -98,6 +100,21 @@ if __name__ == '__main__':
                                                                channel=channel)
                     timeseries_gyro.append(create_data_timeseries(channel_data))
                     timeseries_gyro[-1]['label'] = channel.label
+            if sensor.id_sensor_type == SensorType.GPS:
+                print('Found GPS')
+                channels = manager.get_all_channels(sensor=sensor)
+                for channel in channels:
+                    print('Found channel GPS', channel)
+                    # No convesion for GPS, stored in raw binary
+                    channel_data = manager.get_all_sensor_data(recordset=record, convert=False, sensor=sensor,
+                                                               channel=channel)
+
+                    from libopenimu.importers.wimu import GPSGeodetic
+                    for sensor_data in channel_data:
+                        geo = GPSGeodetic()
+                        geo.from_bytes(sensor_data.data)
+                        # print(geo)
+                        gps_vals[sensor_data.start_timestamp] = [geo.get_latitude(), geo.get_longitude()]
 
         # Only first recordset
         break
@@ -106,6 +123,14 @@ if __name__ == '__main__':
     def create_window(label=''):
         window = QMainWindow()
         view = IMUChartView(window)
+        window.setCentralWidget(view)
+        window.setWindowTitle(label)
+        window.resize(640, 480)
+        return [window, view]
+
+    def create_gps_view(label=''):
+        window = QMainWindow()
+        view = GPSView(window)
         window.setCentralWidget(view)
         window.setWindowTitle(label)
         window.resize(640, 480)
@@ -135,6 +160,18 @@ if __name__ == '__main__':
         view_gyro.add_data(series['x'], series['y'], color=colors.pop(), legend_text=series['label'])
 
     window_gyro.show()
+
+    # GPS
+    [window_gps, view_gps] = create_gps_view('GPS')
+
+    window_gps.show()
+    for key in gps_vals:
+        # Write on the map...
+        [latitude, longitude] = gps_vals[key]
+        print('key:', key)
+        # Will be added to path...
+        if latitude != 0 and longitude != 0:
+            view_gps.setCurrentPosition(latitude, longitude)
 
     # Exec application
     sys.exit(app.exec_())

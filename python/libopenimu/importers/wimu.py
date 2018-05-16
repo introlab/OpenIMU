@@ -65,9 +65,20 @@ class GPSGeodetic:
         [self.climb_rate] = struct.unpack_from('>h', data, offset=46)
         [self.heading_rate] = struct.unpack_from('>h', data, offset=48)
 
+        # TODO continue other fields
+
         # print('latitude', self.latitude / 1e7, 'longitude', self.longitude / 1e7)
 
         return True
+
+    def get_latitude(self):
+        return self.latitude / 1e7
+
+    def get_longitude(self):
+        return self.longitude / 1e7
+
+    def __str__(self):
+        return "GPSGeodetic latitude: %s, longitude %s" % (str(self.latitude / 1e7), str(self.longitude / 1e7))
 
     # Same interface as numpy vectors for serialization
     def tobytes(self):
