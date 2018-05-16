@@ -12,7 +12,7 @@ from PyQt5.QtChart import QChart, QChartView, QLineSeries, QLegend, QBarSeries, 
 from PyQt5.QtChart import QDateTimeAxis, QValueAxis, QBarCategoryAxis
 from PyQt5.QtWidgets import QGraphicsSimpleTextItem, QGraphicsLineItem, QHBoxLayout, QWidget, QLabel, QToolButton
 from PyQt5.QtWidgets import QSpacerItem, QSizePolicy
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QPointF, QRectF, QPoint, QDateTime
+from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QPointF, QRectF, QPoint, QDateTime, QObject
 
 import numpy as np
 from scipy.signal import decimate
@@ -20,6 +20,9 @@ import datetime
 
 
 class IMUChartView(QChartView):
+
+    aboutToClose = pyqtSignal(QObject)
+
     def __init__(self, parent=None):
         super(QChartView, self).__init__(parent=parent)
 
@@ -81,6 +84,8 @@ class IMUChartView(QChartView):
 
         # self.layout()
 
+    def closeEvent(self, QCloseEvent):
+        self.aboutToClose.emit(self)
 
     @pyqtSlot(QPointF)
     def lineseries_clicked(self, point):
