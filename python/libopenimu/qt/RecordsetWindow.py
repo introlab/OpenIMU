@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QLineEdit, QWidget, QPushButton, QListWidget, QListWidgetItem, QGraphicsScene, QGraphicsRectItem, QGraphicsItem, QGraphicsView, QGraphicsTextItem, QMdiArea, QHBoxLayout
-from PyQt5.QtGui import QIcon, QBrush, QPen, QColor
-from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal, QModelIndex, QPoint, QRect
+from PyQt5.QtGui import QIcon, QBrush, QPen, QColor, QPixmap
+from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal, QModelIndex, QPoint, QRect, QObject
 
 from resources.ui.python.RecordsetWidget_ui import Ui_frmRecordsets
 
@@ -26,6 +26,8 @@ class RecordsetWindow(QWidget):
     sensors = {}
     sensors_items = {}
     sensors_graphs = {}
+
+    time_pixmap = False
 
     #sensorsColor = ['e0c31e', '14148c', '006325', '6400aa', '14aaff', 'ae32a0', '80c342', '868482']
 
@@ -57,9 +59,12 @@ class RecordsetWindow(QWidget):
         self.UI.lstSensors.itemChanged.connect(self.sensor_current_changed)
 
     def paintEvent(self, QPaintEvent):
-        self.draw_recordsets()
-        self.draw_sensors()
-        self.draw_dates()
+        if not self.time_pixmap:
+            self.draw_recordsets()
+            self.draw_sensors()
+            self.draw_dates()
+            self.time_pixmap = True
+
 
     def load_sensors(self):
         self.UI.lstSensors.clear()
@@ -242,16 +247,17 @@ class RecordsetWindow(QWidget):
                     graph.add_data(series['x'], series['y'], color=colors.pop(), legend_text=series['label'])
 
                 graph.set_title(item.text())
-                self.UI.mdiArea.addSubWindow(graph)
+                self.UI.mdiArea.addSubWindow(graph).setWindowTitle(item.text())
                 graph.show()
 
                 self.sensors_graphs[sensor.id_sensor] = graph
+                graph.aboutToClose.connect(self.graph_was_closed)
 
                 self.tile_graphs_vertically()
 
             if sensor.id_sensor_type == SensorType.GPS:
                 graph = GPSView(self.UI.mdiArea)
-                self.UI.mdiArea.addSubWindow(graph)
+                self.UI.mdiArea.addSubWindow(graph).setWindowTitle(item.text())
                 graph.show()
 
         else:
@@ -259,6 +265,17 @@ class RecordsetWindow(QWidget):
             if self.sensors_graphs[sensor.id_sensor] is not None:
                 self.UI.mdiArea.removeSubWindow(self.sensors_graphs[sensor.id_sensor].parent())
                 self.sensors_graphs[sensor.id_sensor] = None
+
+    @pyqtSlot(QObject)
+    def graph_was_closed(self, graph):
+        for sensor_id, sensor_graph in self.sensors_graphs.items():
+            if sensor_graph == graph:
+                self.sensors_graphs[sensor_id] = None
+                self.sensors_items[sensor_id].setCheckState(Qt.Unchecked)
+                break
+
+        # self.tile_graphs_vertically()
+
 
     @timing
     def create_data_timeseries(self, sensor_data_list: list):
