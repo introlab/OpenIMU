@@ -282,9 +282,11 @@ class IMUChartView(QChartView):
         # Handling rubberbands
         super().mousePressEvent(e)
 
-        xmap = self.chart.mapToValue(e.pos()).x()
-        ymap = self.chart.mapToValue(e.pos()).y()
+        self.setCursorPosition(e.pos().x())
 
+        pass
+
+    def setCursorPosition(self, pos):
         pen = self.cursor.pen()
         pen.setColor(Qt.blue)
         pen.setWidthF(1.0)
@@ -293,14 +295,15 @@ class IMUChartView(QChartView):
         self.cursor.setZValue(100.0)
 
         area = self.chart.plotArea()
-        x = e.pos().x()
+        x = pos
         y1 = area.y()
         y2 = area.y() + area.height()
 
         # self.cursor.set
         self.cursor.setLine(x, y1, x, y2)
         self.cursor.show()
-        pass
+
+
 
     def mouseReleaseEvent(self, e: QMouseEvent):
         # Handling rubberbands

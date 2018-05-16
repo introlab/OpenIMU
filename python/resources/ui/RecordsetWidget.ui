@@ -104,7 +104,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QGraphicsView" name="graphTimeline">
+    <widget class="TimeView" name="graphTimeline">
      <property name="sizePolicy">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -117,17 +117,39 @@
        <height>100</height>
       </size>
      </property>
+     <property name="cursor" stdset="0">
+      <cursorShape>IBeamCursor</cursorShape>
+     </property>
      <property name="verticalScrollBarPolicy">
       <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
      <property name="horizontalScrollBarPolicy">
       <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
+     <property name="dragMode">
+      <enum>QGraphicsView::NoDrag</enum>
+     </property>
      <property name="cacheMode">
       <set>QGraphicsView::CacheBackground</set>
      </property>
      <property name="viewportUpdateMode">
       <enum>QGraphicsView::FullViewportUpdate</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="lblCursorTime">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Date/Heure du curseur</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
@@ -359,6 +381,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TimeView</class>
+   <extends>QGraphicsView</extends>
+   <header>libopenimu.qt.TimeView</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../core.qrc"/>
  </resources>

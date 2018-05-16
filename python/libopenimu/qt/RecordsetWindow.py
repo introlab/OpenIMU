@@ -1,11 +1,13 @@
 from PyQt5.QtWidgets import QLineEdit, QWidget, QPushButton, QListWidget, QListWidgetItem, QGraphicsScene, QGraphicsRectItem, QGraphicsItem, QGraphicsView, QGraphicsTextItem, QMdiArea, QHBoxLayout
 from PyQt5.QtGui import QIcon, QBrush, QPen, QColor, QPixmap
-from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal, QModelIndex, QPoint, QRect, QObject
+from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal, QModelIndex, QPoint, QRect, QObject, QDateTime
 
 from resources.ui.python.RecordsetWidget_ui import Ui_frmRecordsets
 
 from libopenimu.models.Recordset import Recordset
 from libopenimu.db.DBManager import DBManager
+
+from libopenimu.qt.TimeView import TimeView
 
 from libopenimu.models.sensor_types import SensorType
 
@@ -29,6 +31,8 @@ class RecordsetWindow(QWidget):
 
     time_pixmap = False
 
+    time_bar = None
+
     #sensorsColor = ['e0c31e', '14148c', '006325', '6400aa', '14aaff', 'ae32a0', '80c342', '868482']
 
     def __init__(self, manager, recordset, parent=None):
@@ -43,6 +47,8 @@ class RecordsetWindow(QWidget):
         self.timeScene = QGraphicsScene()
         self.UI.graphTimeline.setScene(self.timeScene)
         self.UI.graphTimeline.fitInView(self.timeScene.sceneRect(),Qt.KeepAspectRatio)
+        self.UI.graphTimeline.time_clicked.connect(self.timeview_clicked)
+
         """blackBrush = QBrush(Qt.black)
         blueBrush = QBrush(Qt.blue)
         blackPen = QPen(Qt.black)
@@ -63,6 +69,7 @@ class RecordsetWindow(QWidget):
             self.draw_recordsets()
             self.draw_sensors()
             self.draw_dates()
+            self.draw_timebar()
             self.time_pixmap = True
 
 
@@ -140,6 +147,8 @@ class RecordsetWindow(QWidget):
         # Duration
         self.UI.lblDurationValue.setText(str(end_time-start_time))
 
+        self.UI.lblCursorTime.setText(str(start_time))
+
     def get_relative_timeview_pos(self, current_time):
         start_time = self.recordsets[0].start_timestamp
         end_time = self.recordsets[len(self.recordsets) - 1].end_timestamp
@@ -215,6 +224,11 @@ class RecordsetWindow(QWidget):
                     self.timeScene.addRect(start_pos, i*bar_height+(self.UI.graphTimeline.height()/4), span, bar_height, sensorPen, sensorBrush)
             i += 1
 
+    def draw_timebar(self):
+        self.time_bar = self.timeScene.addLine(0, 0, 0, self.timeScene.height(), QPen(Qt.cyan))
+
+
+
     @pyqtSlot(QListWidgetItem)
     def sensor_current_changed(self, item):
         sensor = self.sensors[item.data(Qt.UserRole)]
@@ -276,6 +290,16 @@ class RecordsetWindow(QWidget):
 
         # self.tile_graphs_vertically()
 
+    @pyqtSlot(int)
+    def timeview_clicked(self, x):
+        self.time_bar.setPos(x,0)
+
+        # Find time corresponding to that position
+        timestamp = (x / self.timeScene.width()) * (self.recordsets[len(self.recordsets)-1].end_timestamp - self.recordsets[0].start_timestamp) + self.recordsets[0].start_timestamp
+        self.UI.lblCursorTime.setText(str(timestamp))
+
+        for graph in self.sensors_graphs.values():
+            graph.setCursorPosition(float(x))
 
     @timing
     def create_data_timeseries(self, sensor_data_list: list):
@@ -330,3 +354,4 @@ class RecordsetWindow(QWidget):
             window.setGeometry(rect)
             window.move(position)
             position.setY(position.y() + window.height())
+
