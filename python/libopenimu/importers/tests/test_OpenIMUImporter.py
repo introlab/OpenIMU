@@ -32,5 +32,5 @@ class OpenIMUImporterTest(unittest.TestCase):
         # Import to database
         importer = OpenIMUImporter(manager, participant)
         results = importer.load('../../../resources/samples/openimu_sample.oimu')
-        print('results', results)
+        # print('results', results)
         importer.import_to_database(results)

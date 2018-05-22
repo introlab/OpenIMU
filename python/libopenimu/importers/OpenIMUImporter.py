@@ -75,6 +75,7 @@ class OpenIMUImporter(BaseImporter):
         results = {}
         timestamp = None
 
+
         while True:
 
             chunk = file.read(1)
@@ -91,15 +92,22 @@ class OpenIMUImporter(BaseImporter):
             elif headChar[0] == b't':
                 n = n + 1
                 chunk = file.read(struct.calcsize("i"))
-                timestamp = self.processTimestampChunk(chunk)
+                current_timestamp = self.processTimestampChunk(chunk)
+
+                if timestamp is None:
+                    timestamp = current_timestamp
+                else:
+                    if current_timestamp >= timestamp + 3600:  # Max 1 hour of data per timestamp
+                        timestamp = current_timestamp
 
                 # Initialize data structure at this timestamp
-                # print('Initialize data structure with timestamp: ', timestamp)
-                results[timestamp] = {}
-                results[timestamp]['gps'] = []
-                results[timestamp]['power'] = []
-                results[timestamp]['imu'] = []
-                results[timestamp]['baro'] = []
+                if not results.__contains__(timestamp):
+                    print("init timestamp = ", timestamp)
+                    results[timestamp] = {}
+                    results[timestamp]['gps'] = []
+                    results[timestamp]['power'] = []
+                    results[timestamp]['imu'] = []
+                    results[timestamp]['baro'] = []
 
             elif headChar[0] == b'i':
                 n = n + 1
