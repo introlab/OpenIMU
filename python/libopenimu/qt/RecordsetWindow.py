@@ -266,6 +266,7 @@ class RecordsetWindow(QWidget):
 
                 self.sensors_graphs[sensor.id_sensor] = graph
                 graph.aboutToClose.connect(self.graph_was_closed)
+                graph.cursorMoved.connect(self.graph_cursor_changed)
 
                 self.tile_graphs_vertically()
 
@@ -275,6 +276,8 @@ class RecordsetWindow(QWidget):
                 graph.show()
                 self.sensors_graphs[sensor.id_sensor] = graph
                 graph.aboutToClose.connect(self.graph_was_closed)
+                graph.cursorMoved.connect(self.graph_cursor_changed)
+
 
         else:
             # Remove from display
@@ -292,6 +295,16 @@ class RecordsetWindow(QWidget):
 
         # self.tile_graphs_vertically()
 
+    @pyqtSlot(datetime)
+    def graph_cursor_changed(self, timestamp):
+        for graph in self.sensors_graphs.values():
+            if graph is not None:
+                graph.setCursorPositionFromTime(timestamp,False)
+
+        pos = self.get_relative_timeview_pos(timestamp)
+        self.time_bar.setPos(pos,0)
+
+
     @pyqtSlot(int)
     def timeview_clicked(self, x):
         self.time_bar.setPos(x,0)
@@ -302,10 +315,10 @@ class RecordsetWindow(QWidget):
 
         for graph in self.sensors_graphs.values():
             if graph is not None:
-                try:
-                    graph.setCursorPosition(timestamp)
-                except AttributeError:
-                    continue
+                #try:
+                    graph.setCursorPositionFromTime(timestamp, True)
+                #except AttributeError:
+                #    continue
 
     @timing
     def create_data_timeseries(self, sensor_data_list: list):
