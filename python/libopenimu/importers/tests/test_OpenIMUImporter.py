@@ -25,4 +25,12 @@ class OpenIMUImporterTest(unittest.TestCase):
         pass
 
     def test_load(self):
-        pass
+        manager = DBManager('test.db', overwrite=True)
+        participant = Participant(name='My Participant', description='Participant Description')
+        manager.update_participant(participant)
+
+        # Import to database
+        importer = OpenIMUImporter(manager, participant)
+        results = importer.load('../../../resources/samples/openimu_sample.oimu')
+        # results = importer.load('../../../resources/samples/3.oimu')
+        importer.import_to_database(results)
