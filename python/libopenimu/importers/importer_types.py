@@ -6,5 +6,5 @@ class ImporterTypes:
     OPENIMU = 2
     CSV = 3
 
-    value_types = [WIMU, ACTIGRAPH] # , OPENIMU, CSV
-    value_names = ['WIMU', 'Actigraph'] # , 'OpenIMU', 'Text File (CSV)'
+    value_types = [WIMU, ACTIGRAPH, OPENIMU]  # , OPENIMU, CSV
+    value_names = ['WIMU', 'Actigraph', 'OpenIMU']  # , 'OpenIMU', 'Text File (CSV)'
