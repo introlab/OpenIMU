@@ -21,7 +21,7 @@ class UnitsTest(unittest.TestCase):
 
     def test_as_dict(self):
         my_dict = Units.as_dict()
-        self.assertEqual(len(my_dict), 10)
+        self.assertEqual(len(my_dict), 11)
 
     def test_validation(self):
         self.assertTrue(Units.is_valid(Units.METERS))
@@ -34,4 +34,5 @@ class UnitsTest(unittest.TestCase):
         self.assertTrue(Units.is_valid(Units.NONE))
         self.assertTrue(Units.is_valid(Units.AMPERES))
         self.assertTrue(Units.is_valid(Units.KPA))
+        self.assertTrue(Units.is_valid(Units.UTESLA))
 

@@ -19,6 +19,7 @@ class Units:
     NONE = 7
     AMPERES = 8
     KPA = 9
+    UTESLA = 10
 
     value_dict = {METERS: 'METERS',
                   GRAVITY_G: 'G',
@@ -29,7 +30,8 @@ class Units:
                   LUX: 'LUX',
                   NONE: 'NONE',
                   AMPERES: 'AMPS',
-                  KPA: 'KILOPASCALS'}
+                  KPA: 'KILOPASCALS',
+                  UTESLA: 'MICROTESLA'}
 
     @staticmethod
     def as_dict():
