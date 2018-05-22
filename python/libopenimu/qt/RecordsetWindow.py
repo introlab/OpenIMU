@@ -10,6 +10,7 @@ from libopenimu.db.DBManager import DBManager
 from libopenimu.qt.TimeView import TimeView
 
 from libopenimu.models.sensor_types import SensorType
+from libopenimu.importers.wimu import GPSGeodetic
 
 from libopenimu.qt.Charts import IMUChartView
 from libopenimu.qt.GPSView import GPSView
@@ -130,7 +131,7 @@ class RecordsetWindow(QWidget):
                 if index == -1:
                     self.UI.lstSensors.addItem(item)
                 else:
-                    self.UI.lstSensors.insertItem(index+1,item)
+                    self.UI.lstSensors.insertItem(index+2,item)
 
     def update_recordset_infos(self):
         if len(self.recordsets) == 0:
@@ -213,14 +214,14 @@ class RecordsetWindow(QWidget):
         i = 0
         for sensor in self.sensors.values():
             sensorBrush = QBrush(self.sensors_items[sensor.id_sensor].foreground())
-            # print (sensor.name + " = " + self.sensors_colors[i])
             sensorPen = QPen(Qt.transparent)
             for record in self.recordsets:
                 datas = self.dbMan.get_all_sensor_data(sensor=sensor, recordset=record, channel=sensor.channels[0])
                 for data in datas:
+
                     start_pos = self.get_relative_timeview_pos(data.start_timestamp)
                     end_pos = self.get_relative_timeview_pos(data.end_timestamp)
-                    span = end_pos - start_pos
+                    span = max(end_pos - start_pos, 1)
                     self.timeScene.addRect(start_pos, i*bar_height+(self.UI.graphTimeline.height()/4), span, bar_height, sensorPen, sensorBrush)
             i += 1
 
@@ -239,21 +240,22 @@ class RecordsetWindow(QWidget):
         if item.checkState() == Qt.Checked:
             # Choose the correct display for each sensor
 
+            channels = self.dbMan.get_all_channels(sensor=sensor)
+            for channel in channels:
+                # Will get all data (converted to floats)
+                channel_data = []
+                for record in self.recordsets:
+                    channel_data += self.dbMan.get_all_sensor_data(recordset=record, convert=True, sensor=sensor,
+                                                                   channel=channel)
+
             if sensor.id_sensor_type == SensorType.ACCELEROMETER \
                 or sensor.id_sensor_type == SensorType.GYROMETER \
                     or sensor.id_sensor_type == SensorType.BATTERY\
                         or sensor.id_sensor_type == SensorType.LUX:
 
-                channels = self.dbMan.get_all_channels(sensor=sensor)
-                for channel in channels:
-                    # Will get all data (converted to floats)
-                    channel_data = []
-                    for record in self.recordsets:
-                        channel_data += self.dbMan.get_all_sensor_data(recordset=record, convert=True, sensor=sensor,
-                                                                       channel=channel)
+                timeseries.append(self.create_data_timeseries(channel_data))
+                timeseries[-1]['label'] = channel.label
 
-                    timeseries.append(self.create_data_timeseries(channel_data))
-                    timeseries[-1]['label'] = channel.label
                 graph = IMUChartView()
                 # graph.add_test_data()
                 # Add series
@@ -272,6 +274,15 @@ class RecordsetWindow(QWidget):
 
             if sensor.id_sensor_type == SensorType.GPS:
                 graph = GPSView(self.UI.mdiArea)
+
+                for data in channel_data:
+                    gps = GPSGeodetic()
+                    gps.from_bytes(data.data)
+                    if gps.latitude != 0 and gps.longitude !=0:
+                        graph.addPosition(data.start_timestamp, gps.latitude/1e7,gps.longitude/1e7)
+                        graph.setCursorPositionFromTime(data.start_timestamp)
+                    # print (gps)
+
                 self.UI.mdiArea.addSubWindow(graph).setWindowTitle(item.text())
                 graph.show()
                 self.sensors_graphs[sensor.id_sensor] = graph

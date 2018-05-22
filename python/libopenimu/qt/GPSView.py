@@ -1,6 +1,8 @@
 import sys
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
-from PyQt5.QtCore import QUrl, pyqtSlot, pyqtSignal, Qt, QObject, QDateTime
+from PyQt5.QtCore import QUrl, pyqtSlot, pyqtSignal, Qt, QObject, QDateTime, QPointF
+
+import datetime
 
 # This will automatically load qrc
 import core_rc
@@ -8,11 +10,15 @@ import core_rc
 class GPSView(QWebEngineView):
 
     aboutToClose = pyqtSignal(QObject)
-    cursorMoved = pyqtSignal(QDateTime)
+    cursorMoved = pyqtSignal(datetime.datetime)
 
     def __init__(self, parent):
 
         self.path = []
+        self.marker_position = []
+        self.positions = {}
+
+        self.reftime = datetime.datetime.now()
 
         super(QWebEngineView, self).__init__(parent)
 
@@ -33,13 +39,53 @@ class GPSView(QWebEngineView):
     def closeEvent(self, QCloseEvent):
         self.aboutToClose.emit(self)
 
+    def addPosition(self, timestamp, latitude, longitude):
+        if timestamp < self.reftime:
+            self.reftime = timestamp
+
+        self.positions[timestamp] = QPointF(latitude, longitude)
+        if self.pageReady is True:
+            self.page().runJavaScript('addPosition(' + str(latitude) + ',' + str(longitude) + ');')
+        else:
+            # print('Cannot set position, page not ready, saving for later')
+            self.path.append([latitude, longitude])
+
+    def setCursorPositionFromTime(self, timestamp, emit_signal=False):
+
+        timestamp -= datetime.timedelta(microseconds=timestamp.microsecond)
+        position = None
+
+        try:
+            position = self.positions[timestamp]
+        except KeyError:
+            # Find the closest best position
+            if timestamp < self.reftime:
+                timestamp = self.reftime
+
+            while timestamp >= self.reftime:
+                timestamp = timestamp - datetime.timedelta(seconds=1)
+                try:
+                    position = self.positions[timestamp]
+                    break
+                except KeyError:
+                    continue
+
+        if position is not None:
+            self.marker_position = [position.x(), position.y()]
+            if self.pageReady:
+                self.page().runJavaScript('setMarkerPosition(' + str(position.x()) + ',' + str(position.y()) + ');')
+
+        #if emit_signal:
+        #    self.cursorMoved.emit(timestamp)
+
+    """
     def setCurrentPosition(self, latitude, longitude):
         if self.pageReady is True:
             self.page().runJavaScript('setCurrentPosition(' + str(latitude) + ',' + str(longitude) + ');')
         else:
             # print('Cannot set position, page not ready, saving for later')
             self.path.append([latitude, longitude])
-
+    """
     def clearMap(self):
         if self.pageReady is True:
             self.page().runJavaScript('clearMap();')
@@ -51,7 +97,9 @@ class GPSView(QWebEngineView):
         if state is True:
             self.pageReady = True
             for coords in self.path:
-                self.setCurrentPosition(coords[0], coords[1])
+                self.page().runJavaScript('addPosition(' + str(coords[0]) + ',' + str(coords[1]) + ');')
+            if self.marker_position != []:
+                self.page().runJavaScript('setMarkerPosition(' + str(self.marker_position[0]) + ',' + str(self.marker_position[1]) + ');')
 
 
 

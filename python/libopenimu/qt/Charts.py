@@ -230,7 +230,7 @@ class IMUChartView(QChartView):
         self.update_axes()
 
     def set_title(self, title):
-        print('Setting title: ', title)
+        # print('Setting title: ', title)
         self.chart.setTitle(title)
 
     def series_to_polyline(self, xdata, ydata):
