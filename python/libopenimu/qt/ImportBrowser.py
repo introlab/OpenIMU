@@ -10,6 +10,7 @@ from libopenimu.qt.ImportManager import ImportManager
 from libopenimu.importers.importer_types import ImporterTypes
 from libopenimu.importers.WIMUImporter import WIMUImporter
 from libopenimu.importers.ActigraphImporter import ActigraphImporter
+from libopenimu.importers.OpenIMUImporter import OpenIMUImporter
 
 class ImportBrowser(QDialog):
     dbMan = None
@@ -40,6 +41,9 @@ class ImportBrowser(QDialog):
 
             if file_type == ImporterTypes.WIMU:
                 data_importer = WIMUImporter(manager=self.dbMan, participant=part)
+
+            if file_type == ImporterTypes.OPENIMU:
+                data_importer = OpenIMUImporter(manager=self.dbMan, participant=part)
 
             if data_importer is not None:
                 results = data_importer.load(file_name)
