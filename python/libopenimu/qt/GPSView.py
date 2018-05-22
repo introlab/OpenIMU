@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
-from PyQt5.QtCore import QUrl, pyqtSlot, pyqtSignal, Qt, QObject
+from PyQt5.QtCore import QUrl, pyqtSlot, pyqtSignal, Qt, QObject, QDateTime
 
 # This will automatically load qrc
 import core_rc
@@ -8,6 +8,7 @@ import core_rc
 class GPSView(QWebEngineView):
 
     aboutToClose = pyqtSignal(QObject)
+    cursorMoved = pyqtSignal(QDateTime)
 
     def __init__(self, parent):
 
