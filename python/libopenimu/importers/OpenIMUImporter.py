@@ -54,10 +54,13 @@ class OpenIMUImporter(BaseImporter):
 
         print('import_imu_to_database')
 
+        # Sample rate is hardcoded for now
+        sample_rate = 50
+
         # Create sensors
         accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer',
                                                      'OpenIMU-HW',
-                                                     'Unknown', 50, 1)
+                                                     'Unknown', sample_rate, 1)
 
         accelerometer_channels = list()
 
@@ -74,7 +77,7 @@ class OpenIMUImporter(BaseImporter):
         # Create sensor
         gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyro',
                                             'OpenIMU-HW',
-                                            'Unknown', 50, 1)
+                                            'Unknown', sample_rate, 1)
 
         gyro_channels = list()
 
@@ -91,7 +94,7 @@ class OpenIMUImporter(BaseImporter):
         # Create sensor
         mag_sensor = self.add_sensor_to_db(SensorType.MAGNETOMETER, 'Magnetometer',
                                             'OpenIMU-HW',
-                                            'Unknown', 50, 1)
+                                            'Unknown', sample_rate, 1)
 
         mag_channels = list()
 
@@ -105,28 +108,35 @@ class OpenIMUImporter(BaseImporter):
         mag_channels.append(self.add_channel_to_db(mag_sensor, Units.UTESLA,
                                                     DataFormat.FLOAT32, 'Mag_Z'))
 
-        values = np.array(data, dtype=float)
-        print("Values shape: ", values.shape)
+        values = np.array(data, dtype=np.float32)
+        # print("Values shape: ", values.shape)
+        end_timestamp = timestamp + int(np.floor(len(values) / sample_rate))
 
-        end_timestamp = timestamp + len(values) / 50
+        # Calculate last index to remove extra values
+        real_size = int(np.floor(len(values) / sample_rate) * sample_rate)
+        # print('real size:', real_size)
+
+        # Update end_timestamp if required
+        if end_timestamp > recordset.end_timestamp.timestamp():
+            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
 
         # Acc
         for i in range(len(accelerometer_channels)):
             self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[i],
                                        datetime.datetime.fromtimestamp(timestamp),
-                                       datetime.datetime.fromtimestamp(end_timestamp), values[:, i])
+                                       datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i])
 
         # Gyro
         for i in range(len(gyro_channels)):
             self.add_sensor_data_to_db(recordset, gyro_sensor, gyro_channels[i],
                                        datetime.datetime.fromtimestamp(timestamp),
-                                       datetime.datetime.fromtimestamp(end_timestamp), values[:, i + 3])
+                                       datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i + 3])
 
         # Magnetometer
         for i in range(len(mag_channels)):
             self.add_sensor_data_to_db(recordset, mag_sensor, mag_channels[i],
                                        datetime.datetime.fromtimestamp(timestamp),
-                                       datetime.datetime.fromtimestamp(end_timestamp), values[:, i + 6])
+                                       datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i + 6])
 
         self.db.commit()
 
@@ -150,12 +160,16 @@ class OpenIMUImporter(BaseImporter):
                                                  DataFormat.FLOAT32, 'Current')
 
         # Get data in the form of array
-        values = np.array(data, dtype=float)
+        values = np.array(data, dtype=np.float32)
         # print("Values shape: ", values.shape)
         # print(values[:, 0])
         # print(values[:, 1])
 
         end_timestamp = timestamp + len(values)
+
+        # Update end_timestamp if required
+        if end_timestamp > recordset.end_timestamp.timestamp():
+            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
 
         self.add_sensor_data_to_db(recordset, battery_sensor, battery_channel,
                                    datetime.datetime.fromtimestamp(timestamp),
