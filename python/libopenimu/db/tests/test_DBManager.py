@@ -249,7 +249,7 @@ class DBManagerTest(unittest.TestCase):
         recordset = manager.add_recordset(participant, 'My Record', time1, time2)
 
         data = np.zeros(40, dtype=np.float32)
-        sensordata = manager.add_sensor_data(recordset, sensor, channel, time1, data)
+        sensordata = manager.add_sensor_data(recordset, sensor, channel, time1, time1, data)
         manager.commit()
 
         sensordata2 = manager.get_sensor_data(sensordata.id_sensor_data)
@@ -271,8 +271,8 @@ class DBManagerTest(unittest.TestCase):
         recordset = manager.add_recordset(participant, 'My Record', time1, time2)
 
         data = np.zeros(40, dtype=np.float32)
-        sensordata = manager.add_sensor_data(recordset, sensor, channel1, time1, data)
-        sensordata = manager.add_sensor_data(recordset, sensor, channel2, time1, data)
+        sensordata = manager.add_sensor_data(recordset, sensor, channel1, time1, time1, data)
+        sensordata = manager.add_sensor_data(recordset, sensor, channel2, time1, time1, data)
         manager.commit()
 
         # Test with no args, return everything in the recordset
