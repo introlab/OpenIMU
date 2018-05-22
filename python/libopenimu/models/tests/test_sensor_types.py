@@ -21,7 +21,7 @@ class SensorTypeTest(unittest.TestCase):
 
     def test_as_dict(self):
         my_dict = SensorType.as_dict()
-        self.assertEqual(len(my_dict), 9)
+        self.assertEqual(len(my_dict), 11)
 
     def test_validation(self):
         self.assertTrue(SensorType.is_valid_type(SensorType.ACCELEROMETER), "Accelerometer type invalid")
@@ -33,3 +33,5 @@ class SensorTypeTest(unittest.TestCase):
         self.assertTrue(SensorType.is_valid_type(SensorType.ORIENTATION), "Orientation type invalid")
         self.assertTrue(SensorType.is_valid_type(SensorType.STEP), "Step type invalid")
         self.assertTrue(SensorType.is_valid_type(SensorType.BATTERY), "Battery type invalid")
+        self.assertTrue(SensorType.is_valid_type(SensorType.CURRENT), "Current type invalid")
+        self.assertTrue(SensorType.is_valid_type(SensorType.BAROMETER), "Barometer type invalid")
