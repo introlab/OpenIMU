@@ -24,6 +24,7 @@ class OpenIMUImporter(BaseImporter):
         # No recordsets when starting
         self.recordsets = []
 
+    @timing
     def load(self, filename):
         print('OpenIMUImporter.load')
         results = {}
@@ -34,9 +35,56 @@ class OpenIMUImporter(BaseImporter):
         print('Done!')
         return results
 
+    @timing
+    def import_imu_to_database(self, timestamp, data: list):
+
+        # Create sensors
+        accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer',
+                                                     'OpenIMU-Device',
+                                                     'Unknown', 50, 1)
+
+        accelerometer_channels = list()
+
+        # Create channels
+        accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
+                                                             DataFormat.FLOAT32, 'Accelerometer_X'))
+
+        accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
+                                                             DataFormat.FLOAT32, 'Accelerometer_Y'))
+
+        accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
+                                                             DataFormat.FLOAT32, 'Accelerometer_Z'))
+
+    @timing
+    def import_power_to_database(self, timestamp, data: list):
+        pass
+
+    @timing
+    def import_gps_to_database(self, timestamp, data: list):
+        pass
+
+    @timing
+    def import_baro_to_database(self, timestamp, data: list):
+        pass
+
+
+    @timing
     def import_to_database(self, result):
         print('OpenIMUImporter.import_to_database')
-        pass
+
+        for timestamp in result:
+            if result[timestamp].__contains__('imu'):
+                # print('contains imu')
+                self.import_imu_to_database(timestamp, result[timestamp]['imu'])
+            if result[timestamp].__contains__('power'):
+                # print('contains power')
+                self.import_power_to_database(timestamp, result[timestamp]['imu'])
+            if result[timestamp].__contains__('gps'):
+                # print('contains gps')
+                self.import_gps_to_database(timestamp, result[timestamp]['imu'])
+            if result[timestamp].__contains__('baro'):
+                # print('contains baro')
+                self.import_baro_to_database(timestamp, result[timestamp]['imu'])
 
     def processImuChunk(self, chunk, debug=False):
         data = struct.unpack("9f", chunk)
@@ -75,7 +123,7 @@ class OpenIMUImporter(BaseImporter):
         results = {}
         timestamp = None
 
-
+        # Todo better than while 1?
         while True:
 
             chunk = file.read(1)
