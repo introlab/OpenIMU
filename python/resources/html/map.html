@@ -47,6 +47,16 @@ function initMap() {
 	});
 	track.setMap(map);
 }
+
+function addPosition(lat, lng){
+  var path = track.getPath();
+  
+  myLatLng = new google.maps.LatLng(lat, lng);
+  // Because path is an MVCArray, we can simply append a new coordinate
+  // and it will automatically appear.
+  path.push(myLatLng);
+}
+
 function setCurrentPosition(lat, lng) {
   var path = track.getPath();
   
@@ -60,6 +70,12 @@ function setCurrentPosition(lat, lng) {
   // Recenter map
   map.setCenter(myLatLng);
   //map.setZoom(15);
+}
+
+function setMarkerPosition(lat, lng){
+  myLatLng = new google.maps.LatLng(lat, lng);
+  marker.setPosition(myLatLng);
+  map.setCenter(myLatLng);
 }
 function clearMap() {
 	path.clear();
