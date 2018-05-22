@@ -23,15 +23,7 @@ from random import shuffle
 
 class RecordsetWindow(QWidget):
 
-    recordsets = []
-    dbMan = None
-    sensors = {}
-    sensors_items = {}
-    sensors_graphs = {}
 
-    time_pixmap = False
-
-    time_bar = None
 
     #sensorsColor = ['e0c31e', '14148c', '006325', '6400aa', '14aaff', 'ae32a0', '80c342', '868482']
 
@@ -39,6 +31,14 @@ class RecordsetWindow(QWidget):
         super(QWidget, self).__init__(parent=parent)
         self.UI = Ui_frmRecordsets()
         self.UI.setupUi(self)
+
+        self.sensors = {}
+        self.sensors_items = {}
+        self.sensors_graphs = {}
+
+        self.time_pixmap = False
+
+        self.time_bar = None
 
         self.dbMan = manager
         self.recordsets = recordset
@@ -273,6 +273,8 @@ class RecordsetWindow(QWidget):
                 graph = GPSView(self.UI.mdiArea)
                 self.UI.mdiArea.addSubWindow(graph).setWindowTitle(item.text())
                 graph.show()
+                self.sensors_graphs[sensor.id_sensor] = graph
+                graph.aboutToClose.connect(self.graph_was_closed)
 
         else:
             # Remove from display
@@ -299,7 +301,11 @@ class RecordsetWindow(QWidget):
         self.UI.lblCursorTime.setText(str(timestamp))
 
         for graph in self.sensors_graphs.values():
-            graph.setCursorPosition(float(x))
+            if graph is not None:
+                try:
+                    graph.setCursorPosition(timestamp)
+                except AttributeError:
+                    continue
 
     @timing
     def create_data_timeseries(self, sensor_data_list: list):

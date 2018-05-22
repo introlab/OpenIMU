@@ -1,11 +1,14 @@
 import sys
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
-from PyQt5.QtCore import QUrl, pyqtSlot, pyqtSignal, Qt
+from PyQt5.QtCore import QUrl, pyqtSlot, pyqtSignal, Qt, QObject
 
 # This will automatically load qrc
 import core_rc
 
 class GPSView(QWebEngineView):
+
+    aboutToClose = pyqtSignal(QObject)
+
     def __init__(self, parent):
 
         self.path = []
@@ -25,6 +28,9 @@ class GPSView(QWebEngineView):
 
         # 3IT = 45.3790193,-71.9430778
         # self.setCurrentPosition(45.3790193, -71.9430778)
+
+    def closeEvent(self, QCloseEvent):
+        self.aboutToClose.emit(self)
 
     def setCurrentPosition(self, latitude, longitude):
         if self.pageReady is True:
