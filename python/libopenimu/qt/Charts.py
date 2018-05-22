@@ -16,7 +16,7 @@ from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QPointF, QRectF, QPoint, QDat
 
 import numpy as np
 from scipy.signal import decimate
-import datetime
+import datetime, time
 
 
 class IMUChartView(QChartView):
@@ -206,9 +206,10 @@ class IMUChartView(QChartView):
         # curve.append(self.series_to_polyline(xdecimated * 1000.0, ydecimated))
         for i in range(len(xdecimated)):
             # TODO hack
-            self.reftime = datetime.datetime.fromtimestamp(xdecimated[0])
             x = xdecimated[i] - xdecimated[0]
             curve.append(QPointF(x, ydecimated[i]))
+
+        self.reftime = datetime.datetime.fromtimestamp(xdecimated[0])
 
         if legend_text is not None:
             curve.setName(legend_text)
@@ -286,13 +287,16 @@ class IMUChartView(QChartView):
 
         pass
 
-    def setCursorPosition(self, pos):
+    def setCursorPosition(self, timestamp):
         pen = self.cursor.pen()
         pen.setColor(Qt.blue)
         pen.setWidthF(1.0)
         self.cursor.setPen(pen)
         # On Top
         self.cursor.setZValue(100.0)
+
+        # Converts timestamp to x value
+        pos = self.chart.mapToPosition(QPointF(time.mktime(timestamp.toTuple()))).x()
 
         area = self.chart.plotArea()
         x = pos
