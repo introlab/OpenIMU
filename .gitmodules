@@ -1,3 +1,12 @@
-[submodule "applicationOpenimu/app/widgets/MRichTextEditor"]
-	path = applicationOpenimu/app/widgets/MRichTextEditor
-	url = https://github.com/Anchakor/MRichTextEditor.git
+[submodule "third_party/googletest"]
+	path = third_party/googletest
+	url = https://github.com/google/googletest.git
+[submodule "third_party/liquid-dsp/liquid-dsp"]
+	path = third_party/liquid-dsp/liquid-dsp
+	url = https://github.com/jgaeddert/liquid-dsp.git
+[submodule "third_party/kfr"]
+	path = third_party/kfr
+	url = https://github.com/kfrlib/kfr.git
+[submodule "third_party/gsl"]
+	path = third_party/gsl
+	url = https://github.com/ampl/gsl.git

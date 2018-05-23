@@ -1,0 +1,23 @@
+<RCC>
+    <qresource prefix="/OpenIMU">
+        <file>IntRoLab.png</file>
+        <file>test.qml</file>
+        <file>icons/import.png</file>
+        <file>icons/open.png</file>
+        <file>icons/participant.png</file>
+        <file>icons/process.png</file>
+        <file>icons/group.png</file>
+        <file>icons/records.png</file>
+        <file>icons/recordset.png</file>
+        <file>icons/result.png</file>
+        <file>icons/results.png</file>
+        <file>icons/sensor.png</file>
+        <file>icons/subrecord.png</file>
+        <file>icons/newdataset.png</file>
+        <file>icons/delete.png</file>
+        <file>icons/save.png</file>
+        <file>icons/cut.png</file>
+        <file>icons/start_cut.png</file>
+	<file>html/map.html</file>
+    </qresource>
+</RCC>
