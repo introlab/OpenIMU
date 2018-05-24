@@ -53,6 +53,7 @@ SET(uis
     resources/ui/RecordsetWidget.ui
     resources/ui/ResultWidget.ui
     resources/ui/ImportBrowser.ui
+    resources/ui/ExportCSV.ui
 )
 
 SET(qrcs
