@@ -7,10 +7,10 @@
 Simple example illustrating Qt Charts capabilities to plot curves with
 a high number of points, using OpenGL accelerated series
 """
-from PyQt5.QtGui import QPolygonF, QPainter, QMouseEvent, QResizeEvent
+from PyQt5.QtGui import QPolygonF, QPainter, QMouseEvent, QResizeEvent, QBrush
 from PyQt5.QtChart import QChart, QChartView, QLineSeries, QLegend, QBarSeries, QBarSet, QSplineSeries, QXYSeries
 from PyQt5.QtChart import QDateTimeAxis, QValueAxis, QBarCategoryAxis
-from PyQt5.QtWidgets import QGraphicsSimpleTextItem, QGraphicsLineItem, QHBoxLayout, QWidget, QLabel, QToolButton
+from PyQt5.QtWidgets import QGraphicsSimpleTextItem, QGraphicsLineItem, QHBoxLayout, QWidget, QLabel, QToolButton, QOpenGLWidget
 from PyQt5.QtWidgets import QSpacerItem, QSizePolicy
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QPointF, QRectF, QPoint, QDateTime, QObject
 
@@ -27,6 +27,10 @@ class IMUChartView(QChartView):
     def __init__(self, parent=None):
         super(QChartView, self).__init__(parent=parent)
 
+        self.setFixedHeight(400)
+        #self.setMinimumHeight(400)
+        self.setSizePolicy(QSizePolicy.MinimumExpanding,QSizePolicy.Fixed)
+
         self.reftime = datetime.datetime.now()
         self.cursor = QGraphicsLineItem()
         self.scene().addItem(self.cursor)
@@ -37,7 +41,7 @@ class IMUChartView(QChartView):
         # self.scene().addItem(self.chart)
         self.setChart(self.chart)
         self.chart.legend().setVisible(True)
-        self.chart.legend().setAlignment(Qt.AlignBottom)
+        self.chart.legend().setAlignment(Qt.AlignTop)
         self.ncurves = 0
         self.setRenderHint(QPainter.Antialiasing)
         self.setRubberBand(QChartView.HorizontalRubberBand)
@@ -64,12 +68,12 @@ class IMUChartView(QChartView):
         self.labelYValue = QLabel(self)
 
         # Test buttons
-        newLayout.addWidget(QToolButton(self))
-        newLayout.addWidget(QToolButton(self))
-        newLayout.addWidget(QToolButton(self))
+        #newLayout.addWidget(QToolButton(self))
+        #newLayout.addWidget(QToolButton(self))
+        #newLayout.addWidget(QToolButton(self))
 
         # Spacer
-        newLayout.addItem(QSpacerItem(10, 10, QSizePolicy.Expanding, QSizePolicy.Minimum))
+        #newLayout.addItem(QSpacerItem(10, 10, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
         # Labels
         newLayout.addWidget(labelx)
@@ -85,6 +89,17 @@ class IMUChartView(QChartView):
             parent.layout().setMenuBar(newWidget)
 
         # self.layout()
+
+        self.build_style()
+
+
+    def build_style(self):
+        self.setStyleSheet("QLabel{color:blue;}")
+
+        self.setBackgroundBrush(QBrush(Qt.darkGray))
+        self.chart.setPlotAreaBackgroundBrush(QBrush(Qt.black))
+        self.chart.setPlotAreaBackgroundVisible(True)
+
 
     def save_as_png(self, file_path):
         pixmap = self.grab()

@@ -1,6 +1,7 @@
 import sys
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 from PyQt5.QtCore import QUrl, pyqtSlot, pyqtSignal, Qt, QObject, QDateTime, QPointF
+from PyQt5.QtWidgets import QSizePolicy
 
 import datetime
 
@@ -14,14 +15,14 @@ class GPSView(QWebEngineView):
 
     def __init__(self, parent):
 
+        super(QWebEngineView, self).__init__(parent)
         self.path = []
         self.marker_position = []
         self.positions = {}
 
+        self.setFixedHeight(300)
+
         self.reftime = datetime.datetime.now()
-
-        super(QWebEngineView, self).__init__(parent)
-
         self.pageReady = False
 
         # Settings
