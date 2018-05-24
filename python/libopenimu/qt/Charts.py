@@ -86,6 +86,20 @@ class IMUChartView(QChartView):
 
         # self.layout()
 
+    def save_as_png(self, file_path):
+        pixmap = self.grab()
+
+        child = self.findChild(QOpenGLWidget)
+
+        painter = QPainter(pixmap)
+        if child is not None:
+            d = child.mapToGlobal(QPoint()) - self.mapToGlobal(QPoint())
+            painter.setCompositionMode(QPainter.CompositionMode_SourceAtop)
+            painter.drawImage(d, child.grabFramebuffer())
+
+        painter.end()
+        pixmap.save(file_path, 'PNG')
+
     def closeEvent(self, QCloseEvent):
         self.aboutToClose.emit(self)
 
