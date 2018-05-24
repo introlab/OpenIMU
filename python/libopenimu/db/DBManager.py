@@ -342,3 +342,54 @@ class DBManager:
         query = self.session.query(DataSet)
         return query.first()
 
+    def export_csv(self, directory):
+        print('DBManager, export_csv in :', directory)
+
+        groups = self.get_all_groups()
+
+        if len(groups) == 0:
+            group_dir = directory + '/NO_GROUP/'
+            if os.path.exists(directory):
+                if not os.path.exists(group_dir):
+                    os.mkdir(group_dir)
+
+                # Get all participants
+                participants = self.get_all_participants()
+                for participant in participants:
+                    self.export_csv_participant(participant, group_dir)
+
+        else:
+            for group in groups:
+                group_dir = directory + '/ID_GROUP_' + str(group.id_group) + '/'
+                if os.path.exists(directory):
+                    if not os.path.exists(group_dir):
+                        os.mkdir(group_dir)
+                    # Get all participants
+                    participants = self.get_participants_for_group(group)
+                    for participant in participants:
+                        self.export_csv_participant(participant, group_dir)
+
+    def export_csv_participant(self, participant : Participant, directory):
+        if os.path.exists(directory):
+            participant_dir = directory + '/ID_PARTICIPANT_' + str(participant.id_participant) + '/'
+            # Create participant directory
+            if not os.path.exists(participant_dir):
+                os.mkdir(participant_dir)
+            # Process all recordsets
+            records = self.get_all_recordsets(participant)
+            for record in records:
+                self.export_csv_recordset(participant, record, participant_dir)
+
+    def export_csv_recordset(self, participant : Participant, recordset : Recordset, directory):
+        if os.path.exists(directory):
+            # Create recordset directory
+            record_dir = directory + 'ID_RECORDSET_' + str(recordset.id_recordset) + '/'
+            if not os.path.exists(record_dir):
+                os.mkdir(record_dir)
+            # Do something
+            all_data = self.get_all_sensor_data(recordset=recordset)
+            for data in all_data:
+                self.export_csv_sensor_data(data, record_dir)
+
+    def export_csv_sensor_data(self, sensordata : SensorData, directory):
+        pass
