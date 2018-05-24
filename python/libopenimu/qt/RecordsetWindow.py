@@ -312,8 +312,8 @@ class RecordsetWindow(QWidget):
             if graph is not None:
                 graph.setCursorPositionFromTime(timestamp,False)
 
-        pos = self.get_relative_timeview_pos(timestamp)
-        self.time_bar.setPos(pos,0)
+       # pos = self.get_relative_timeview_pos(timestamp)
+       # self.time_bar.setPos(pos,0)
 
 
     @pyqtSlot(int)

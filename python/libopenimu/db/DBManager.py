@@ -215,12 +215,11 @@ class DBManager:
     def get_all_recordsets(self, participant=Participant()):
 
         if participant.id_participant is None:
-            query = self.session.query(Recordset)
-            query.order_by(asc(Recordset.start_timestamp))
+            query = self.session.query(Recordset).order_by(asc(Recordset.start_timestamp))
+            print (query)
             return query.all()
         else:
-            query = self.session.query(Recordset).filter(Recordset.id_participant == participant.id_participant)
-            query.order_by(asc(Recordset.start_timestamp))
+            query = self.session.query(Recordset).filter(Recordset.id_participant == participant.id_participant).order_by(asc(Recordset.start_timestamp))
             return query.all()
     #####################
     def get_sensors(self,recordset):
