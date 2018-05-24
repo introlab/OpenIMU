@@ -250,9 +250,10 @@ class RecordsetWindow(QWidget):
             if sensor.id_sensor_type == SensorType.ACCELEROMETER \
                     or sensor.id_sensor_type == SensorType.GYROMETER \
                     or sensor.id_sensor_type == SensorType.BATTERY \
-                    or sensor.id_sensor_type == SensorType.LUX:
-
-
+                    or sensor.id_sensor_type == SensorType.LUX \
+                    or sensor.id_sensor_type == SensorType.CURRENT \
+                    or sensor.id_sensor_type == SensorType.BAROMETER \
+                    or sensor.id_sensor_type == SensorType.MAGNETOMETER:
 
                 graph = IMUChartView()
                 # graph.add_test_data()
