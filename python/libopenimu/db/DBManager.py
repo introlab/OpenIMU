@@ -14,6 +14,7 @@ from sqlalchemy import event
 
 import os
 import datetime
+import numpy as np
 
 # Basic definitions
 from libopenimu.models.sensor_types import SensorType
@@ -36,6 +37,7 @@ TODO This might be optimized?
 Offering the same interface as DBManagerOld
 
 """
+
 
 
 class DBManager:
@@ -222,7 +224,7 @@ class DBManager:
             query = self.session.query(Recordset).filter(Recordset.id_participant == participant.id_participant).order_by(asc(Recordset.start_timestamp))
             return query.all()
     #####################
-    def get_sensors(self,recordset):
+    def get_sensors(self, recordset):
         query = self.session.query(Sensor).join(SensorData).filter(SensorData.id_recordset == recordset.id_recordset).group_by(Sensor.id_sensor)
         return query.all()
 
@@ -310,6 +312,9 @@ class DBManager:
         # Make sure data is ordered by timestamps
         query = query.order_by(SensorData.start_timestamp.asc())
 
+        # And then per channel
+        # query = query.order_by(SensorData.channel.asc())
+
         if not convert:
             return query.all()
         else:
@@ -386,10 +391,50 @@ class DBManager:
             record_dir = directory + 'ID_RECORDSET_' + str(recordset.id_recordset) + '/'
             if not os.path.exists(record_dir):
                 os.mkdir(record_dir)
-            # Do something
-            all_data = self.get_all_sensor_data(recordset=recordset)
-            for data in all_data:
-                self.export_csv_sensor_data(data, record_dir)
 
-    def export_csv_sensor_data(self, sensordata : SensorData, directory):
-        pass
+            # Get all sensors
+            sensors = self.get_sensors(recordset)
+
+            for sensor in sensors:
+                # Do something
+                all_data = self.get_all_sensor_data(recordset=recordset, sensor=sensor)
+
+                self.export_csv_sensor_data(sensor, all_data, record_dir)
+
+    def export_csv_sensor_data(self, sensor : Sensor, sensors_data : list, directory):
+        result = {}
+        for sensor_data in sensors_data:
+            if not result.__contains__(sensor_data.channel.id_channel):
+                result[sensor_data.channel.id_channel] = []
+
+            series = sensor_data.to_time_series()
+            result[sensor_data.channel.id_channel].append(series)
+
+        filename = directory + sensor.name + '.CSV'
+        print('output to file : ', filename)
+
+        value_list = []
+
+        # Write CSV header
+        header = str()
+        channels = self.get_all_channels(sensor=sensor)
+        for channel in channels:
+            header = header + 'TIME;' + channel.label + ';'
+
+
+        for channel_key in result:
+            time = []
+            values = []
+            for list_item in result[channel_key]:
+                time.append(list_item['time'])
+                values.append(list_item['values'])
+
+            all_time = np.concatenate(time)
+            all_values = np.concatenate(values)
+            value_list.append(all_time)
+            value_list.append(all_values)
+
+        my_array = np.array(value_list)
+        # print('dims:', my_array.shape)
+        # Write values
+        np.savetxt(filename, my_array.transpose(), delimiter=";", header=header)

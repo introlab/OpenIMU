@@ -30,3 +30,4 @@ class ExportWindow(QDialog):
         directory = self.UI.lineDir.text()
         print('Should export in : ', directory)
         self.dbMan.export_csv(directory)
+        self.accept()
