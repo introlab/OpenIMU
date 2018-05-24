@@ -6,8 +6,10 @@ from libopenimu.models.data_formats import DataFormat
 from libopenimu.tools.timing import timing
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.Participant import Participant
+from libopenimu.importers.wimu import GPSGeodetic
 
 import numpy as np
+import math
 import datetime
 
 import struct
@@ -154,7 +156,7 @@ class OpenIMUImporter(BaseImporter):
 
         # Create channels
         battery_channel = self.add_channel_to_db(battery_sensor, Units.VOLTS,
-                                                 DataFormat.FLOAT32, 'Battery')
+                                                 DataFormat.FLOAT32, 'Voltage')
 
         current_channel = self.add_channel_to_db(current_sensor, Units.AMPERES,
                                                  DataFormat.FLOAT32, 'Current')
@@ -183,11 +185,76 @@ class OpenIMUImporter(BaseImporter):
 
     @timing
     def import_gps_to_database(self, timestamp, recordset, data: list):
-        pass
+
+        # Create sensors
+        gps_sensor = self.add_sensor_to_db(SensorType.GPS, 'GPS',
+                                            'OpenIMU-HW',
+                                            'Unknown', 1, 1)
+
+        gps_channel = self.add_channel_to_db(gps_sensor, Units.NONE,
+                                              DataFormat.UINT8, 'GPS_SIRF')
+
+        # Get data in the form of array
+        values = np.array(data, dtype=np.float32)
+        # print("Values shape: ", values.shape)
+        # print(values[:, 0])
+        # print(values[:, 1])
+
+        end_timestamp = timestamp + len(values)
+
+        # Update end_timestamp if required
+        if end_timestamp > recordset.end_timestamp.timestamp():
+            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
+
+
+        # print('GPS DATA ', values)
+        # Regenerate GPS data to be stored in the DB as SIRF data
+        # TODO Better GPS solution?
+
+        # We have one sample per second of GPS data
+        for i in range(len(values)):
+            val = values[i]
+            geo = GPSGeodetic()
+            # Discard invalid data
+            if math.isnan(val[1]) or math.isnan(val[2]):
+                continue
+            geo.latitude = val[1] * 1e7
+            geo.longitude = val[2] * 1e7
+            #altitude = val[3] * 1e7
+            self.add_sensor_data_to_db(recordset, gps_sensor, gps_channel,
+                                       datetime.datetime.fromtimestamp(timestamp + i),
+                                       datetime.datetime.fromtimestamp(timestamp + i), geo)
+
+        # Commit to file
+        self.db.commit()
+
+
+
+
 
     @timing
     def import_baro_to_database(self, timestamp, recordset, data: list):
-        pass
+        # Create sensors
+        baro_sensor = self.add_sensor_to_db(SensorType.BAROMETER, 'Barometer',
+                                               'OpenIMU-HW',
+                                               'Unknown', 1, 1)
+
+        baro_channel = self.add_channel_to_db(baro_sensor, Units.KPA,
+                                                 DataFormat.FLOAT32, 'Pressure')
+
+        # Get data in the form of array
+        values = np.array(data, dtype=np.float32)
+        print("Values shape: ", values.shape)
+
+        end_timestamp = timestamp + len(values)
+
+        # Update end_timestamp if required
+        if end_timestamp > recordset.end_timestamp.timestamp():
+            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
+
+        self.add_sensor_data_to_db(recordset, baro_sensor, baro_channel,
+                                   datetime.datetime.fromtimestamp(timestamp),
+                                   datetime.datetime.fromtimestamp(end_timestamp), values[:, 1])
 
     @timing
     def import_to_database(self, result):
