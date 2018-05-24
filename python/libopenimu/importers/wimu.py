@@ -958,7 +958,85 @@ def wimu_load_gps(time_data, index_data, gps_data, config: WIMUConfig):
 
 @timing
 def wimu_load_pow(time_data, pow_data, config: WIMUConfig):
-    pass
+    # Format: Temperature, Battery, Status once per sec FOR WIMU3 only!!
+    epoch_size = (6 + 4)
+    nb_epochs = len(pow_data) / epoch_size
+    # Time data is a text file, each line contains a timestamp
+    f = BytesIO(time_data)
+
+    timestamps = []
+
+    temperature = {}
+    battery = {}
+    status = {}
+
+    last_timestamp = 0
+
+    for i in range(int(nb_epochs)):
+
+        # This is the timestamp, in the file, but it is not used
+        struct.unpack_from('<I', pow_data, offset=i * epoch_size)
+
+        # Read timestamp from corrected file and use it instead
+        try:
+            timestamp = int(f.readline())
+
+            if timestamp <= last_timestamp:
+                # print('ERROR Gyro timestamp in the past', 'diff:', timestamp - last_timestamp)
+                continue
+
+            # Check for continuous timestamps
+            if len(timestamps) == 0:
+                # print('create index:', timestamp)
+                timestamps.append(timestamp)
+                # Create empty array
+                temperature[timestamp] = []
+                battery[timestamp] = []
+                status[timestamp] = []
+                last_timestamp = timestamp
+            elif timestamp > last_timestamp + 1:
+                # print('create index:', timestamp)
+                timestamps.append(timestamp)
+                # Create empty array
+                temperature[timestamp] = []
+                battery[timestamp] = []
+                status[timestamp] = []
+            elif timestamp >= timestamps[-1] + 3600:
+                # print('create index:', timestamp)
+                timestamps.append(timestamp)
+                # Create empty array
+                temperature[timestamp] = []
+                battery[timestamp] = []
+                status[timestamp] = []
+
+            # Read Temperature
+            temp_raw = np.frombuffer(pow_data, dtype=np.uint16, count=1, offset=i * epoch_size + 4)
+
+            # Read Battery
+            batt_raw = np.frombuffer(pow_data, dtype=np.uint16, count=1, offset=i * epoch_size + 4 + 2 * len(temp_raw))
+
+            # Read Status
+            status_raw = np.frombuffer(pow_data, dtype=np.uint16, count=1, offset=i * epoch_size + 4 + 2 * len(temp_raw) + 2 * len(batt_raw))
+
+            # Accumulate vectors (use last known)
+            temperature[timestamps[-1]].append(np.float32(temp_raw / 100.0))
+            battery[timestamps[-1]].append(np.float32(batt_raw / 100.0))
+            status[timestamps[-1]].append(status_raw)
+
+            # Store last timestamp for next iteration
+            last_timestamp = timestamp
+        except ValueError:
+            # Value can't be converted to int, e.g. empty line
+            continue
+
+    # print('aggregated values', len(acc_x), len(acc_y), len(acc_z))
+    pow_result = []
+    for timestamp in timestamps:
+        pow_result.append([timestamp, {'temperature': np.concatenate(temperature[timestamp]),
+                                       'battery': np.concatenate(battery[timestamp]),
+                                       'power_status': np.concatenate(status[timestamp])}])
+
+    return pow_result
 
 
 @timing
@@ -1100,7 +1178,8 @@ def wimu_importer(filename):
                 if len(filedict[key]) == 1:
                     pow_data = myzip.open(key).read()
                     time_data = myzip.open(filedict[key][0]).read()
-                    wimu_load_pow(time_data, pow_data, results['config'])
+                    if results['settings'].hw_id == 3: #Don't load on WIMU v2, as format is different and mostly useless now
+                        results['pow'].append(wimu_load_pow(time_data, pow_data, results['config']))
                 else:
                     print('error POW')
             elif 'LOG' in key:

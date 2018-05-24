@@ -221,6 +221,38 @@ class WIMUImporter(BaseImporter):
                                                        datetime.datetime.fromtimestamp(end_timestamp), mag_z)
 
                     self.db.flush()
+            if result.__contains__('pow'):
+                temp_sensor = self.add_sensor_to_db(SensorType.TEMPERATURE, 'Temperature', 'WIMUGPS', 'Unknown', 1.0, 1)
+                temp_channel = self.add_channel_to_db(temp_sensor, Units.CELCIUS, DataFormat.FLOAT32, 'Temperature')
+
+                batt_sensor = self.add_sensor_to_db(SensorType.BATTERY, 'Battery', 'WIMUGPS', 'Unknown', 1.0, 1)
+                batt_channel = self.add_channel_to_db(batt_sensor, Units.VOLTS, DataFormat.FLOAT32, 'Level')
+
+                #TODO: Power status.
+
+                for item in result['pow']:
+                    for record in item:
+                        [timestamp, pow_dict] = record
+
+                        temperature = pow_dict['temperature']
+                        battery = pow_dict['battery']
+
+                        recordset = self.get_recordset(timestamp)
+
+                        # Update end_timestamp if required
+                        if timestamp > recordset.end_timestamp.timestamp():
+                            recordset.end_timestamp = datetime.datetime.fromtimestamp(timestamp)
+
+                        self.add_sensor_data_to_db(recordset, temp_sensor, temp_channel,
+                                                   datetime.datetime.fromtimestamp(timestamp),
+                                                   datetime.datetime.fromtimestamp(timestamp+len(temperature)),temperature)
+
+                        self.add_sensor_data_to_db(recordset, batt_sensor, batt_channel,
+                                                   datetime.datetime.fromtimestamp(timestamp),
+                                                   datetime.datetime.fromtimestamp(timestamp + len(battery)),
+                                                   battery)
+
+                    self.db.flush()
 
             if result.__contains__('gps'):
 
