@@ -330,7 +330,8 @@ class AccOptions:
                 adc_max = 4095
                 s_values = [1.5, 2.0, 4.0, 8.0]
 
-            return (((value + np.abs(adc_min)) / (np.abs(adc_min) + adc_max))
+            #(y_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
+            return (((value + np.float32(np.abs(adc_min))) / (np.float32(np.abs(adc_min)) + adc_max))
                     * 2 * s_values[value_range]) - s_values[value_range]
         else:
             return None
@@ -373,7 +374,7 @@ class GyroOptions:
                 adc_max = 4095
                 s_values = [500.0]
 
-            return (((value + np.abs(adc_min)) / (np.abs(adc_min) + adc_max))
+            return (((value + np.float32(np.abs(adc_min))) / (np.float32(np.abs(adc_min)) + adc_max))
                     * 2 * s_values[value_range]) - s_values[value_range]
         else:
             return None
@@ -396,6 +397,36 @@ class GyroOptions:
 
 class MagOptions:
     range = np.uint8(0)
+
+
+    @staticmethod
+    def conversion_to_gauss(value_range, value, hw_id=2):
+        # Same conversion for any hw_id
+        if value_range <= 8:
+            adc_min = -32767
+            adc_max = 32767
+            s_values = [0.88, 1.3, 1.9, 2.5, 4.0, 4.7, 5.6, 8.1]
+            if hw_id == 2:
+                adc_min = -4095
+                adc_max = 4095
+                s_values = [0.7, 1.0, 1.5, 2.0, 3.2, 3.8, 4.5, 6.5]
+
+            return (((value + np.float32(np.abs(adc_min))) / (np.float32(np.abs(adc_min)) + adc_max))
+                    * 2 * s_values[value_range]) - s_values[value_range]
+        else:
+            return None
+
+    @staticmethod
+    def range_max(value_range, hw_id=2):
+        # Same range for any hw_id
+        s_values = [0.88, 1.3, 1.9, 2.5, 4.0, 4.7, 5.6, 8.1]
+        if hw_id == 2:
+            return [0.7, 1.0, 1.5, 2.0, 3.2, 3.8, 4.5, 6.5]
+
+        if value_range <= 8:
+            return s_values[value_range]
+        else:
+            return None
 
     def __str__(self):
         return str([self.__class__.__name__, {'range': self.range}])
@@ -671,9 +702,11 @@ def wimu_load_acc(time_data, acc_data, config: WIMUConfig):
 
             # Conversion to g
             range_max = np.float32(AccOptions.range_max(config.acc.range, config.settings.hw_id))
-            x_conv = (x_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
-            y_conv = (y_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
-            z_conv = (z_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
+            x_conv = config.acc.conversion_to_g(config.acc.range, x_raw, config.settings.hw_id)
+            y_conv = config.acc.conversion_to_g(config.acc.range, y_raw, config.settings.hw_id)
+            z_conv = config.acc.conversion_to_g(config.acc.range, z_raw, config.settings.hw_id)
+            """y_conv = (y_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
+            z_conv = (z_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max"""
 
             # Accumulate vectors (use last known
             acc_x[timestamps[-1]].append(x_conv)
@@ -766,10 +799,15 @@ def wimu_load_gyro(time_data, gyro_data, config: WIMUConfig):
                                   offset=i * epoch_size + 4 + 2 * len(x_raw) + 2 * len(y_raw))
 
             # Conversion to deg/sec
+            """
             range_max = np.float32(GyroOptions.range_max(config.gyro.range, config.settings.hw_id))
             x_conv = (x_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
             y_conv = (y_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
             z_conv = (z_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
+            """
+            x_conv = config.gyro.conversion_to_deg_per_sec(config.gyro.range, x_raw, config.settings.hw_id)
+            y_conv = config.gyro.conversion_to_deg_per_sec(config.gyro.range, y_raw, config.settings.hw_id)
+            z_conv = config.gyro.conversion_to_deg_per_sec(config.gyro.range, z_raw, config.settings.hw_id)
 
             # Accumulate vectors (use last known)
             gyro_x[timestamps[-1]].append(x_conv)
@@ -794,8 +832,97 @@ def wimu_load_gyro(time_data, gyro_data, config: WIMUConfig):
 
 @timing
 def wimu_load_magneto(time_data, magneto_data, config: WIMUConfig):
-    # No magnetometer on v2...
-    pass
+    # Format TIMESTAMP (uint32), X (int16) * SAMPLING_RATE, Y(int16) * SAMPLING_RATE, Z(int16) * SAMPLING_RATE
+    # print('sampling rate is:', config.general.sampling_rate, ' len is', len(acc_data))
+    # print('epoch size:', (config.general.sampling_rate * 6 + 4))
+    epoch_size = (config.general.sampling_rate * 6 + 4)
+    nb_epochs = len(magneto_data) / epoch_size
+    # print('should read nb_epochs', nb_epochs)
+
+    # Time data is a text file, each line contains a timestamp
+    f = BytesIO(time_data)
+
+    timestamps = []
+
+    mag_x = {}
+    mag_y = {}
+    mag_z = {}
+
+    last_timestamp = 0
+
+    for i in range(int(nb_epochs)):
+
+        # This is the timestamp, in the file, but it is not used
+        struct.unpack_from('<I', magneto_data, offset=i * epoch_size)
+
+        # Read timestamp from corrected file and use it instead
+        try:
+            timestamp = int(f.readline())
+
+            if timestamp <= last_timestamp:
+                # print('ERROR Gyro timestamp in the past', 'diff:', timestamp - last_timestamp)
+                continue
+
+            # Check for continuous timestamps
+            if len(timestamps) == 0:
+                # print('create index:', timestamp)
+                timestamps.append(timestamp)
+                # Create empty array
+                mag_x[timestamp] = []
+                mag_y[timestamp] = []
+                mag_z[timestamp] = []
+                last_timestamp = timestamp
+            elif timestamp > last_timestamp + 1:
+                # print('create index:', timestamp)
+                timestamps.append(timestamp)
+                # Create empty array
+                mag_x[timestamp] = []
+                mag_y[timestamp] = []
+                mag_z[timestamp] = []
+            elif timestamp >= timestamps[-1] + 3600:
+                # print('create index:', timestamp)
+                timestamps.append(timestamp)
+                # Create empty array
+                mag_x[timestamp] = []
+                mag_y[timestamp] = []
+                mag_z[timestamp] = []
+
+            # Read X
+            x_raw = np.frombuffer(magneto_data, dtype=np.int16, count=config.general.sampling_rate,
+                                  offset=i * epoch_size + 4)
+
+            # Read Y
+            y_raw = np.frombuffer(magneto_data, dtype=np.int16, count=config.general.sampling_rate,
+                                  offset=i * epoch_size + 4 + 2 * len(x_raw))
+
+            # Read Z
+            z_raw = np.frombuffer(magneto_data, dtype=np.int16, count=config.general.sampling_rate,
+                                  offset=i * epoch_size + 4 + 2 * len(x_raw) + 2 * len(y_raw))
+
+            # Conversion to gauss
+            x_conv = config.magneto.conversion_to_gauss(config.magneto.range, x_raw, config.settings.hw_id)
+            y_conv = config.magneto.conversion_to_gauss(config.magneto.range, y_raw, config.settings.hw_id)
+            z_conv = config.magneto.conversion_to_gauss(config.magneto.range, z_raw, config.settings.hw_id)
+
+            # Accumulate vectors (use last known)
+            mag_x[timestamps[-1]].append(x_conv)
+            mag_y[timestamps[-1]].append(y_conv)
+            mag_z[timestamps[-1]].append(z_conv)
+
+            # Store last timestamp for next iteration
+            last_timestamp = timestamp
+        except ValueError:
+            # Value can't be converted to int, e.g. empty line
+            continue
+
+    # print('aggregated values', len(acc_x), len(acc_y), len(acc_z))
+    mag_result = []
+    for timestamp in timestamps:
+        mag_result.append([timestamp, {'magneto_x': np.concatenate(mag_x[timestamp]),
+                                        'magneto_y': np.concatenate(mag_y[timestamp]),
+                                        'magneto_z': np.concatenate(mag_z[timestamp])}])
+
+    return mag_result
 
 
 @timing
@@ -886,6 +1013,7 @@ def wimu_importer(filename):
         results['gps'] = []
         results['log'] = []
         results['pow'] = []
+        results['mag'] = []
 
         # Must have matching pairs with VALUES /TIME
         filedict = {}
@@ -897,6 +1025,8 @@ def wimu_importer(filename):
                 if 'PreProcess/ACC_' in file:
                     filedict[file] = []
                 elif 'PreProcess/GYR_' in file:
+                    filedict[file] = []
+                elif 'PreProcess/MAG_' in file:
                     filedict[file] = []
                 elif 'PreProcess/POW_' in file:
                     filedict[file] = []
@@ -948,6 +1078,14 @@ def wimu_importer(filename):
                     gyro_data = myzip.open(key).read()
                     time_data = myzip.open(filedict[key][0]).read()
                     results['gyr'].append(wimu_load_gyro(time_data, gyro_data, results['config']))
+                else:
+                    print('error GYRO')
+            elif 'MAG' in key:
+                if len(filedict[key]) == 1:
+                    print('processing: ', key)
+                    mag_data = myzip.open(key).read()
+                    time_data = myzip.open(filedict[key][0]).read()
+                    results['mag'].append(wimu_load_magneto(time_data, mag_data, results['config']))
                 else:
                     print('error GYRO')
             elif 'GPS' in key:

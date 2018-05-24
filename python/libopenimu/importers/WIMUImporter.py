@@ -166,6 +166,62 @@ class WIMUImporter(BaseImporter):
 
                 self.db.flush()
 
+            if result.__contains__('mag'):
+                # Create sensor
+                mag_sensor = self.add_sensor_to_db(SensorType.MAGNETOMETER, 'Magneto',
+                                                    'WIMUGPS',
+                                                    'Unknown', config.general.sampling_rate, 1)
+
+                mag_channels = list()
+
+                # Create channels
+                mag_channels.append(self.add_channel_to_db(mag_sensor, Units.GAUSS,
+                                                            DataFormat.FLOAT32, 'Magneto_X'))
+
+                mag_channels.append(self.add_channel_to_db(mag_sensor, Units.GAUSS,
+                                                            DataFormat.FLOAT32, 'Magneto_Y'))
+
+                mag_channels.append(self.add_channel_to_db(mag_sensor, Units.GAUSS,
+                                                            DataFormat.FLOAT32, 'Magneto_Z'))
+
+                for item in result['mag']:
+
+                    # We have a list of list
+                    for record in item:
+                        [timestamp, mag_dict] = record
+                        mag_x = mag_dict['magneto_x']
+                        mag_y = mag_dict['magneto_y']
+                        mag_z = mag_dict['magneto_z']
+
+                        recordset = self.get_recordset(timestamp)
+
+                        # Update end_timestamp if required
+                        if timestamp > recordset.end_timestamp.timestamp():
+                            recordset.end_timestamp = datetime.datetime.fromtimestamp(timestamp)
+
+                        if len(mag_x) > 0:
+                            data_len = len(mag_x) / config.general.sampling_rate
+                            end_timestamp = timestamp + data_len
+                            self.add_sensor_data_to_db(recordset, mag_sensor, mag_channels[0],
+                                                       datetime.datetime.fromtimestamp(timestamp),
+                                                       datetime.datetime.fromtimestamp(end_timestamp), mag_x)
+
+                        if len(mag_y) > 0:
+                            data_len = len(mag_y) / config.general.sampling_rate
+                            end_timestamp = timestamp + data_len
+                            self.add_sensor_data_to_db(recordset, mag_sensor, mag_channels[1],
+                                                       datetime.datetime.fromtimestamp(timestamp),
+                                                       datetime.datetime.fromtimestamp(end_timestamp), mag_y)
+
+                        if len(mag_z) > 0:
+                            data_len = len(mag_z) / config.general.sampling_rate
+                            end_timestamp = timestamp + data_len
+                            self.add_sensor_data_to_db(recordset, mag_sensor, mag_channels[2],
+                                                       datetime.datetime.fromtimestamp(timestamp),
+                                                       datetime.datetime.fromtimestamp(end_timestamp), mag_z)
+
+                    self.db.flush()
+
             if result.__contains__('gps'):
 
                 gps_sensor = self.add_sensor_to_db(SensorType.GPS, 'GPS',

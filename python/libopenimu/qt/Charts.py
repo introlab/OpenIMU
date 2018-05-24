@@ -322,7 +322,7 @@ class IMUChartView(QChartView):
     def setCursorPosition(self, pos, emit_signal=False):
         # print (pos)
         pen = self.cursor.pen()
-        pen.setColor(Qt.blue)
+        pen.setColor(Qt.cyan)
         pen.setWidthF(1.0)
         self.cursor.setPen(pen)
         # On Top
