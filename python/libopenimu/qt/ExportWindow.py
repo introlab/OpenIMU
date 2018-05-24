@@ -10,7 +10,8 @@ class ExportWindow(QDialog):
         self.UI = Ui_ExportCSV()
         self.UI.setupUi(self)
         self.UI.dirButton.clicked.connect(self.directory_selection_clicked)
-        self.UI.buttonBox.accepted.connect(self.export)
+        self.UI.btnOK.clicked.connect(self.export)
+        self.UI.btnCancel.clicked.connect(self.reject)
         self.dbMan = dataManager
 
 

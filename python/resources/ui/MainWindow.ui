@@ -433,6 +433,9 @@
          <pointsize>10</pointsize>
         </font>
        </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
        <property name="text">
         <string>Exporter les données</string>
        </property>
