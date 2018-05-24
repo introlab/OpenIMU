@@ -206,8 +206,17 @@ class WIMUSettings:
         [self.id, self.hw_id] = struct.unpack_from('<HB', data, offset=0)
 
         if self.hw_id == 3:
-            print('error hw_id not yet supported:', self.hw_id)
-            return
+            self.version_major, self.version_minor, self.version_rev = struct.unpack_from('<BBB', data, offset=3)
+            self.acc_gain[0], self.acc_gain[1], self.acc_gain[2] = struct.unpack_from('<hhh', data, offset=6)
+            self.acc_offset[0], self.acc_offset[1], self.acc_offset[2] = struct.unpack_from('<hhh', data, offset=12)
+
+            self.gyro_gain[0], self.gyro_gain[1], self.gyro_gain[2] = struct.unpack_from('<hhh', data, offset=18)
+            self.gyro_offset[0], self.gyro_offset[1], self.gyro_offset[2] = struct.unpack_from('<hhh', data, offset=24)
+
+            self.mag_gain[0], self.mag_gain[1], self.mag_gain[2] = struct.unpack_from('<hhh', data, offset=30)
+            self.mag_offset[0], self.mag_offset[1], self.mag_offset[2] = struct.unpack_from('<hhh', data, offset=36)
+
+            self.crc = struct.unpack_from('<I', data, offset=42)
         else:
             assert(len(data) == 50)
             self.version_major = 2
@@ -303,7 +312,7 @@ class AccOptions:
     range = np.uint8(0)
 
     """
-        Acc.
+        Acc. - WIMU3
         0 = +/- 2g
         1 = +/- 4g
         2 = +/- 8g
@@ -316,6 +325,11 @@ class AccOptions:
             adc_min = -32767
             adc_max = 32767
             s_values = [2.0, 4.0, 8.0, 16.0]
+            if hw_id == 2:
+                adc_min = -4095
+                adc_max = 4095
+                s_values = [1.5, 2.0, 4.0, 8.0]
+
             return (((value + np.abs(adc_min)) / (np.abs(adc_min) + adc_max))
                     * 2 * s_values[value_range]) - s_values[value_range]
         else:
@@ -323,8 +337,11 @@ class AccOptions:
 
     @staticmethod
     def range_max(value_range, hw_id=2):
-        # Same range for any hw_id
+
         s_values = [2.0, 4.0, 8.0, 16.0]
+        if hw_id == 2:
+            s_values = [1.5, 2.0, 4.0, 8.0]
+
         if value_range <= 3:
             return s_values[value_range]
         else:
@@ -338,7 +355,7 @@ class GyroOptions:
     range = np.uint8(0)
 
     """
-        Gyro.
+        Gyro. - WIMU 3
         0 = +/- 250 deg/sec
         1 = +/- 500 deg/sec
         2 = +/- 1000 deg/sec
@@ -351,6 +368,11 @@ class GyroOptions:
             adc_min = -32767
             adc_max = 32767
             s_values = [250.0, 500.0, 1000.0, 2000.0]
+            if hw_id==2:
+                adc_min = -4095
+                adc_max = 4095
+                s_values = [500.0]
+
             return (((value + np.abs(adc_min)) / (np.abs(adc_min) + adc_max))
                     * 2 * s_values[value_range]) - s_values[value_range]
         else:
@@ -360,6 +382,9 @@ class GyroOptions:
     def range_max(value_range, hw_id=2):
         # Same range for any hw_id
         s_values = [250.0, 500.0, 1000.0, 2000.0]
+        if hw_id==2:
+            return 500.0
+
         if value_range <= 3:
             return s_values[value_range]
         else:
@@ -421,9 +446,9 @@ class WIMUConfig:
 
     def from_bytes(self, data, hw_id=2):
         # print('WIMUConfig.from_bytes', len(data))
+        buf16 = np.uint16(0)
+        buf8 = np.uint8(0)
         if hw_id == 2:
-            buf16 = np.uint16(0)
-            buf8 = np.uint8(0)
 
             # Enabled modules
             [self.enabled_modules] = struct.unpack_from('<H', data, offset=0)
@@ -509,6 +534,50 @@ class WIMUConfig:
             # print('self.magneto.range', self.magneto.range)
 
             # Ignore the rest...
+        if hw_id == 3:
+            # Enabled modules
+            [self.enabled_modules] = struct.unpack_from('<H', data, offset=0)
+
+            # General config
+            [self.datetime.time_offset] = struct.unpack_from('<b', data, offset=2)
+
+            [self.datetime.enable_gps_time, self.datetime.enable_auto_offset] = struct.unpack_from('<??', data, offset=3)
+            [self.ui.led_blink_time] = struct.unpack_from('<B', data, offset=5)
+            [self.ui.write_led, self.ui.enable_marking, self.ui.gps_fix_led, self.ui.ble_activity_led] = struct.unpack_from('<????', data, offset=6)
+
+            current_offset = 10
+            if self.settings.version_major == 3 and self.settings.version_minor <=3 and self.settings.version_rev<=3:
+                [self.general.sampling_rate] = struct.unpack_from('<B', data, offset=current_offset)
+                current_offset +=1
+            else:
+                [self.general.sampling_rate] = struct.unpack_from('<H', data, offset=current_offset)
+                current_offset += 2
+
+            [self.general.enable_watchdog] = struct.unpack_from('<?', data, current_offset)
+
+            #Logger
+            [self.logger.max_files_in_folder] = struct.unpack_from('<B', data, current_offset+1)
+            [self.logger.split_by_day] = struct.unpack_from('<?', data, current_offset+2)
+
+            #GPS
+            [self.gps.interval] = struct.unpack_from('<B', data, current_offset+3)
+            [self.gps.force_cold, self.gps.enable_scan_when_charged] = struct.unpack_from('<??', data, current_offset+4)
+
+            #Power
+            [self.power.power_manage, self.power.enable_motion_detection, self.power.adv_power_manage] = struct.unpack_from('<???', data, current_offset+6)
+
+            #BLE
+            [self.ble.enable_control] = struct.unpack_from('<?', data, current_offset+9)
+
+            #Sensors
+            [self.acc.range, self.gyro.range, self.magneto.range] = struct.unpack_from('<BBB', data, current_offset+10)
+
+            #Orientation
+            [self.imu.beta] = struct.unpack_from('<f', data, current_offset+13)
+            [self.imu.disable_magneto, self.imu.auto_calib_gyro] = struct.unpack_from('<??', data, current_offset+17)
+
+            #CRC
+            [self.crc] = struct.unpack_from('<I', data, current_offset+19)
 
         else:
             pass
@@ -557,61 +626,65 @@ def wimu_load_acc(time_data, acc_data, config: WIMUConfig):
         struct.unpack_from('<I', acc_data, offset=i * epoch_size)
 
         # Read timestamp from corrected file and use it instead
-        timestamp = int(f.readline())
+        try:
+            timestamp = int(f.readline())
 
-        if timestamp <= last_timestamp:
-            # print('ERROR Acc timestamp in the past', 'diff:', timestamp - last_timestamp)
-            continue
+            if timestamp <= last_timestamp:
+                # print('ERROR Acc timestamp in the past', 'diff:', timestamp - last_timestamp)
+                continue
 
-        # Check for continuous timestamps
-        if len(timestamps) == 0:
-            # print('create index:', timestamp)
-            timestamps.append(timestamp)
-            # Create empty array
-            acc_x[timestamp] = []
-            acc_y[timestamp] = []
-            acc_z[timestamp] = []
+            # Check for continuous timestamps
+            if len(timestamps) == 0:
+                # print('create index:', timestamp)
+                timestamps.append(timestamp)
+                # Create empty array
+                acc_x[timestamp] = []
+                acc_y[timestamp] = []
+                acc_z[timestamp] = []
+                last_timestamp = timestamp
+            elif timestamp > last_timestamp + 1:
+                # print('create index:', timestamp)
+                timestamps.append(timestamp)
+                # Create empty array
+                acc_x[timestamp] = []
+                acc_y[timestamp] = []
+                acc_z[timestamp] = []
+            elif timestamp >= timestamps[-1] + 3600:
+                # print('create index:', timestamp)
+                timestamps.append(timestamp)
+                # Create empty array
+                acc_x[timestamp] = []
+                acc_y[timestamp] = []
+                acc_z[timestamp] = []
+
+            # Read Acc-X
+            x_raw = np.frombuffer(acc_data, dtype=np.int16, count=config.general.sampling_rate,
+                                  offset=i * epoch_size + 4)
+
+            # Read Acc-Y
+            y_raw = np.frombuffer(acc_data, dtype=np.int16, count=config.general.sampling_rate,
+                                  offset=i * epoch_size + 4 + 2 * len(x_raw))
+
+            # Read Acc-Z
+            z_raw = np.frombuffer(acc_data, dtype=np.int16, count=config.general.sampling_rate,
+                                  offset=i * epoch_size + 4 + 2 * len(x_raw) + 2 * len(y_raw))
+
+            # Conversion to g
+            range_max = np.float32(AccOptions.range_max(config.acc.range, config.settings.hw_id))
+            x_conv = (x_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
+            y_conv = (y_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
+            z_conv = (z_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
+
+            # Accumulate vectors (use last known
+            acc_x[timestamps[-1]].append(x_conv)
+            acc_y[timestamps[-1]].append(y_conv)
+            acc_z[timestamps[-1]].append(z_conv)
+
+            # Store last timestamp for next iteration
             last_timestamp = timestamp
-        elif timestamp > last_timestamp + 1:
-            # print('create index:', timestamp)
-            timestamps.append(timestamp)
-            # Create empty array
-            acc_x[timestamp] = []
-            acc_y[timestamp] = []
-            acc_z[timestamp] = []
-        elif timestamp >= timestamps[-1] + 3600:
-            # print('create index:', timestamp)
-            timestamps.append(timestamp)
-            # Create empty array
-            acc_x[timestamp] = []
-            acc_y[timestamp] = []
-            acc_z[timestamp] = []
-
-        # Read Acc-X
-        x_raw = np.frombuffer(acc_data, dtype=np.int16, count=config.general.sampling_rate,
-                              offset=i * epoch_size + 4)
-
-        # Read Acc-Y
-        y_raw = np.frombuffer(acc_data, dtype=np.int16, count=config.general.sampling_rate,
-                              offset=i * epoch_size + 4 + 2 * len(x_raw))
-
-        # Read Acc-Z
-        z_raw = np.frombuffer(acc_data, dtype=np.int16, count=config.general.sampling_rate,
-                              offset=i * epoch_size + 4 + 2 * len(x_raw) + 2 * len(y_raw))
-
-        # Conversion to g
-        range_max = np.float32(AccOptions.range_max(config.acc.range, config.settings.hw_id))
-        x_conv = (x_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
-        y_conv = (y_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
-        z_conv = (z_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
-
-        # Accumulate vectors (use last known
-        acc_x[timestamps[-1]].append(x_conv)
-        acc_y[timestamps[-1]].append(y_conv)
-        acc_z[timestamps[-1]].append(z_conv)
-
-        # Store last timestamp for next iteration
-        last_timestamp = timestamp
+        except ValueError:
+            # Value can't be converted to int, e.g. empty line
+            continue
 
     # print('aggregated values', len(acc_x), len(acc_y), len(acc_z))
     acc_result = []
@@ -649,61 +722,65 @@ def wimu_load_gyro(time_data, gyro_data, config: WIMUConfig):
         struct.unpack_from('<I', gyro_data, offset=i * epoch_size)
 
         # Read timestamp from corrected file and use it instead
-        timestamp = int(f.readline())
+        try:
+            timestamp = int(f.readline())
 
-        if timestamp <= last_timestamp:
-            # print('ERROR Gyro timestamp in the past', 'diff:', timestamp - last_timestamp)
-            continue
+            if timestamp <= last_timestamp:
+                # print('ERROR Gyro timestamp in the past', 'diff:', timestamp - last_timestamp)
+                continue
 
-        # Check for continuous timestamps
-        if len(timestamps) == 0:
-            # print('create index:', timestamp)
-            timestamps.append(timestamp)
-            # Create empty array
-            gyro_x[timestamp] = []
-            gyro_y[timestamp] = []
-            gyro_z[timestamp] = []
+            # Check for continuous timestamps
+            if len(timestamps) == 0:
+                # print('create index:', timestamp)
+                timestamps.append(timestamp)
+                # Create empty array
+                gyro_x[timestamp] = []
+                gyro_y[timestamp] = []
+                gyro_z[timestamp] = []
+                last_timestamp = timestamp
+            elif timestamp > last_timestamp + 1:
+                # print('create index:', timestamp)
+                timestamps.append(timestamp)
+                # Create empty array
+                gyro_x[timestamp] = []
+                gyro_y[timestamp] = []
+                gyro_z[timestamp] = []
+            elif timestamp >= timestamps[-1] + 3600:
+                # print('create index:', timestamp)
+                timestamps.append(timestamp)
+                # Create empty array
+                gyro_x[timestamp] = []
+                gyro_y[timestamp] = []
+                gyro_z[timestamp] = []
+
+            # Read Acc-X
+            x_raw = np.frombuffer(gyro_data, dtype=np.int16, count=config.general.sampling_rate,
+                                  offset=i * epoch_size + 4)
+
+            # Read Acc-Y
+            y_raw = np.frombuffer(gyro_data, dtype=np.int16, count=config.general.sampling_rate,
+                                  offset=i * epoch_size + 4 + 2 * len(x_raw))
+
+            # Read Acc-Z
+            z_raw = np.frombuffer(gyro_data, dtype=np.int16, count=config.general.sampling_rate,
+                                  offset=i * epoch_size + 4 + 2 * len(x_raw) + 2 * len(y_raw))
+
+            # Conversion to deg/sec
+            range_max = np.float32(GyroOptions.range_max(config.gyro.range, config.settings.hw_id))
+            x_conv = (x_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
+            y_conv = (y_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
+            z_conv = (z_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
+
+            # Accumulate vectors (use last known)
+            gyro_x[timestamps[-1]].append(x_conv)
+            gyro_y[timestamps[-1]].append(y_conv)
+            gyro_z[timestamps[-1]].append(z_conv)
+
+            # Store last timestamp for next iteration
             last_timestamp = timestamp
-        elif timestamp > last_timestamp + 1:
-            # print('create index:', timestamp)
-            timestamps.append(timestamp)
-            # Create empty array
-            gyro_x[timestamp] = []
-            gyro_y[timestamp] = []
-            gyro_z[timestamp] = []
-        elif timestamp >= timestamps[-1] + 3600:
-            # print('create index:', timestamp)
-            timestamps.append(timestamp)
-            # Create empty array
-            gyro_x[timestamp] = []
-            gyro_y[timestamp] = []
-            gyro_z[timestamp] = []
-
-        # Read Acc-X
-        x_raw = np.frombuffer(gyro_data, dtype=np.int16, count=config.general.sampling_rate,
-                              offset=i * epoch_size + 4)
-
-        # Read Acc-Y
-        y_raw = np.frombuffer(gyro_data, dtype=np.int16, count=config.general.sampling_rate,
-                              offset=i * epoch_size + 4 + 2 * len(x_raw))
-
-        # Read Acc-Z
-        z_raw = np.frombuffer(gyro_data, dtype=np.int16, count=config.general.sampling_rate,
-                              offset=i * epoch_size + 4 + 2 * len(x_raw) + 2 * len(y_raw))
-
-        # Conversion to deg/sec
-        range_max = np.float32(GyroOptions.range_max(config.gyro.range, config.settings.hw_id))
-        x_conv = (x_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
-        y_conv = (y_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
-        z_conv = (z_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
-
-        # Accumulate vectors (use last known)
-        gyro_x[timestamps[-1]].append(x_conv)
-        gyro_y[timestamps[-1]].append(y_conv)
-        gyro_z[timestamps[-1]].append(z_conv)
-
-        # Store last timestamp for next iteration
-        last_timestamp = timestamp
+        except ValueError:
+            # Value can't be converted to int, e.g. empty line
+            continue
 
     # print('aggregated values', len(acc_x), len(acc_y), len(acc_z))
     gyro_result = []

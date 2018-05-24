@@ -387,6 +387,12 @@
      </item>
      <item>
       <widget class="QToolButton" name="btnProcess">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>32</height>
+        </size>
+       </property>
        <property name="cursor">
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
