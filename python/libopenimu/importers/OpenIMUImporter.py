@@ -244,7 +244,7 @@ class OpenIMUImporter(BaseImporter):
 
         # Get data in the form of array
         values = np.array(data, dtype=np.float32)
-        # print("Values shape: ", values.shape)
+        print("Values shape: ", values.shape)
 
         end_timestamp = timestamp + len(values)
 
@@ -254,7 +254,7 @@ class OpenIMUImporter(BaseImporter):
 
         self.add_sensor_data_to_db(recordset, baro_sensor, baro_channel,
                                    datetime.datetime.fromtimestamp(timestamp),
-                                   datetime.datetime.fromtimestamp(end_timestamp), values[:, 0])
+                                   datetime.datetime.fromtimestamp(end_timestamp), values[:, 1])
 
     @timing
     def import_to_database(self, result):
