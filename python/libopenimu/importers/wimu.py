@@ -82,7 +82,14 @@ class GPSGeodetic:
 
     # Same interface as numpy vectors for serialization
     def tobytes(self):
-        return self.original_data
+        if len(self.original_data) > 0:
+            return self.original_data
+        else:
+            # TODO Write all fields
+            data = np.zeros(91, dtype=np.uint8)
+            struct.pack_into('>i', data, 23, int(self.latitude))
+            struct.pack_into('>i', data, 27, int(self.longitude))
+            return data
 
 
 class SIRFFrame:
