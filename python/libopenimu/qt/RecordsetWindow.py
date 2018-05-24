@@ -232,7 +232,7 @@ class RecordsetWindow(QWidget):
         sensor = self.sensors[item.data(Qt.UserRole)]
         timeseries = []
         # Color map
-        colors = [Qt.red, Qt.green, Qt.yellow]
+        colors = [Qt.red, Qt.green, Qt.yellow, Qt.cyan]
 
         if item.checkState() == Qt.Checked:
             # Choose the correct display for each sensor
@@ -254,7 +254,8 @@ class RecordsetWindow(QWidget):
                     or sensor.id_sensor_type == SensorType.CURRENT \
                     or sensor.id_sensor_type == SensorType.BAROMETER \
                     or sensor.id_sensor_type == SensorType.MAGNETOMETER \
-                    or sensor.id_sensor_type == SensorType.TEMPERATURE:
+                    or sensor.id_sensor_type == SensorType.TEMPERATURE \
+                    or sensor.id_sensor_type == SensorType.ORIENTATION:
 
                 graph = IMUChartView()
                 # graph.add_test_data()

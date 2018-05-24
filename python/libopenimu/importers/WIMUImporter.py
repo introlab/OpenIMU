@@ -221,6 +221,68 @@ class WIMUImporter(BaseImporter):
                                                        datetime.datetime.fromtimestamp(end_timestamp), mag_z)
 
                     self.db.flush()
+
+            if result.__contains__('imu'):
+
+                # Create sensor
+                imu_sensor = self.add_sensor_to_db(SensorType.ORIENTATION, 'Orientation',
+                                                             'WIMUGPS',
+                                                             'Unknown', config.general.sampling_rate, 1)
+
+                imu_channels = list()
+
+                # Create channels
+                imu_channels.append(self.add_channel_to_db(imu_sensor, Units.NONE, DataFormat.FLOAT32, 'Q0'))
+                imu_channels.append(self.add_channel_to_db(imu_sensor, Units.NONE, DataFormat.FLOAT32, 'Q1'))
+                imu_channels.append(self.add_channel_to_db(imu_sensor, Units.NONE, DataFormat.FLOAT32, 'Q2'))
+                imu_channels.append(self.add_channel_to_db(imu_sensor, Units.NONE, DataFormat.FLOAT32, 'Q3'))
+
+                for item in result['imu']:
+
+                    # We have a list of list
+                    for record in item:
+                        [timestamp, acc_dict] = record
+                        q0 = acc_dict['q0']
+                        q1 = acc_dict['q1']
+                        q2 = acc_dict['q2']
+                        q3 = acc_dict['q3']
+
+                        recordset = self.get_recordset(timestamp)
+
+                        # Update end_timestamp if required
+                        if timestamp > recordset.end_timestamp.timestamp():
+                            recordset.end_timestamp = datetime.datetime.fromtimestamp(timestamp)
+
+                        if len(q0) > 0:
+                            data_len = len(q0) / config.general.sampling_rate
+                            end_timestamp = timestamp + data_len
+                            self.add_sensor_data_to_db(recordset, imu_sensor, imu_channels[0],
+                                                       datetime.datetime.fromtimestamp(timestamp),
+                                                       datetime.datetime.fromtimestamp(end_timestamp), q0)
+
+                        if len(q1) > 0:
+                            data_len = len(q1) / config.general.sampling_rate
+                            end_timestamp = timestamp + data_len
+                            self.add_sensor_data_to_db(recordset, imu_sensor, imu_channels[1],
+                                                       datetime.datetime.fromtimestamp(timestamp),
+                                                       datetime.datetime.fromtimestamp(end_timestamp), q1)
+
+                        if len(q2) > 0:
+                            data_len = len(q2) / config.general.sampling_rate
+                            end_timestamp = timestamp + data_len
+                            self.add_sensor_data_to_db(recordset, imu_sensor, imu_channels[2],
+                                                       datetime.datetime.fromtimestamp(timestamp),
+                                                       datetime.datetime.fromtimestamp(end_timestamp), q2)
+
+                        if len(q3) > 0:
+                            data_len = len(q3) / config.general.sampling_rate
+                            end_timestamp = timestamp + data_len
+                            self.add_sensor_data_to_db(recordset, imu_sensor, imu_channels[3],
+                                                       datetime.datetime.fromtimestamp(timestamp),
+                                                       datetime.datetime.fromtimestamp(end_timestamp), q3)
+
+                    self.db.flush()
+
             if result.__contains__('pow'):
                 temp_sensor = self.add_sensor_to_db(SensorType.TEMPERATURE, 'Temperature', 'WIMUGPS', 'Unknown', 1.0, 1)
                 temp_channel = self.add_channel_to_db(temp_sensor, Units.CELCIUS, DataFormat.FLOAT32, 'Temperature')

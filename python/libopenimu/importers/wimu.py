@@ -924,6 +924,103 @@ def wimu_load_magneto(time_data, magneto_data, config: WIMUConfig):
 
     return mag_result
 
+@timing
+def wimu_load_imu(time_data, imu_data, config: WIMUConfig):
+    # Format TIMESTAMP (uint32), Q0 (float32) * SAMPLING_RATE, Q1(float32) * SAMPLING_RATE, Q2(float32) * SAMPLING_RATE, Q3(float32) * SAMPLING_RATE
+    # print('sampling rate is:', config.general.sampling_rate, ' len is', len(acc_data))
+    # print('epoch size:', (config.general.sampling_rate * 16 + 4))
+    epoch_size = (config.general.sampling_rate * 16 + 4)
+    nb_epochs = len(imu_data) / epoch_size
+    # print('should read nb_epochs', nb_epochs)
+
+    # Time data is a text file, each line contains a timestamp
+    f = BytesIO(time_data)
+
+    timestamps = []
+
+    q0 = {}
+    q1 = {}
+    q2 = {}
+    q3 = {}
+
+    last_timestamp = 0
+
+    for i in range(int(nb_epochs)):
+
+        # This is the timestamp, in the file, but it is not used
+        struct.unpack_from('<I', imu_data, offset=i * epoch_size)
+
+        # Read timestamp from corrected file and use it instead
+        try:
+            timestamp = int(f.readline())
+
+            if timestamp <= last_timestamp:
+                # print('ERROR Acc timestamp in the past', 'diff:', timestamp - last_timestamp)
+                continue
+
+            # Check for continuous timestamps
+            if len(timestamps) == 0:
+                # print('create index:', timestamp)
+                timestamps.append(timestamp)
+                # Create empty array
+                q0[timestamp] = []
+                q1[timestamp] = []
+                q2[timestamp] = []
+                q3[timestamp] = []
+                last_timestamp = timestamp
+            elif timestamp > last_timestamp + 1:
+                # print('create index:', timestamp)
+                timestamps.append(timestamp)
+                # Create empty array
+                q0[timestamp] = []
+                q1[timestamp] = []
+                q2[timestamp] = []
+                q3[timestamp] = []
+            elif timestamp >= timestamps[-1] + 3600:
+                # print('create index:', timestamp)
+                timestamps.append(timestamp)
+                # Create empty array
+                q0[timestamp] = []
+                q1[timestamp] = []
+                q2[timestamp] = []
+                q3[timestamp] = []
+
+            # Read Q0
+            q0_raw = np.frombuffer(imu_data, dtype=np.float32, count=config.general.sampling_rate,
+                                  offset=i * epoch_size + 4)
+
+            # Read Q1
+            q1_raw = np.frombuffer(imu_data, dtype=np.float32, count=config.general.sampling_rate,
+                                  offset=i * epoch_size + 4 + 4 * len(q0_raw))
+
+            # Read Q2
+            q2_raw = np.frombuffer(imu_data, dtype=np.float32, count=config.general.sampling_rate,
+                                  offset=i * epoch_size + 4 + 4 * len(q0_raw) + 4 * len(q1_raw))
+
+            q3_raw = np.frombuffer(imu_data, dtype=np.float32, count=config.general.sampling_rate,
+                                   offset=i * epoch_size + 4 + 4 * len(q0_raw) + 4 * len(q1_raw) + 4 * len(q2_raw))
+
+            # Accumulate vectors (use last known
+            q0[timestamps[-1]].append(np.float32(q0_raw))
+            q1[timestamps[-1]].append(np.float32(q1_raw))
+            q2[timestamps[-1]].append(np.float32(q2_raw))
+            q3[timestamps[-1]].append(np.float32(q3_raw))
+
+            # Store last timestamp for next iteration
+            last_timestamp = timestamp
+        except ValueError:
+            # Value can't be converted to int, e.g. empty line
+            continue
+
+    # print('aggregated values', len(acc_x), len(acc_y), len(acc_z))
+    imu_result = []
+    for timestamp in timestamps:
+        imu_result.append([timestamp, {'q0': np.concatenate(q0[timestamp]),
+                                       'q1': np.concatenate(q1[timestamp]),
+                                       'q2': np.concatenate(q2[timestamp]),
+                                       'q3': np.concatenate(q3[timestamp])}])
+
+    return imu_result
 
 @timing
 def wimu_load_gps(time_data, index_data, gps_data, config: WIMUConfig):
@@ -1092,6 +1189,7 @@ def wimu_importer(filename):
         results['log'] = []
         results['pow'] = []
         results['mag'] = []
+        results['imu'] = []
 
         # Must have matching pairs with VALUES /TIME
         filedict = {}
@@ -1111,6 +1209,8 @@ def wimu_importer(filename):
                 elif 'PreProcess/GPS_' in file:
                     filedict[file] = []
                 elif 'PreProcess/LOG_' in file:
+                    filedict[file] = []
+                elif 'PreProcess/IMU_' in file:
                     filedict[file] = []
                 else:
                     pass
@@ -1182,6 +1282,13 @@ def wimu_importer(filename):
                         results['pow'].append(wimu_load_pow(time_data, pow_data, results['config']))
                 else:
                     print('error POW')
+            elif 'IMU' in key:
+                if len(filedict[key]) == 1:
+                    imu_data = myzip.open(key).read()
+                    time_data = myzip.open(filedict[key][0]).read()
+                    results['imu'].append(wimu_load_imu(time_data, imu_data, results['config']))
+                else:
+                    print('error IMU')
             elif 'LOG' in key:
                 if len(filedict[key]) == 1:
                     log_data = myzip.open(key).read()

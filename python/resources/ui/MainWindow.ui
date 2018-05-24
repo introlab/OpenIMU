@@ -434,7 +434,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Sauvegarder en CSV</string>
+        <string>Exporter les données</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
