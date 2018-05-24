@@ -23,6 +23,7 @@ from libopenimu.qt.RecordsetWindow import RecordsetWindow
 from libopenimu.qt.ResultWindow import ResultWindow
 from libopenimu.qt.StartWindow import StartWindow
 from libopenimu.qt.ImportBrowser import ImportBrowser
+from libopenimu.qt.ExportWindow import ExportWindow
 
 # Models
 from libopenimu.models.Group import Group
@@ -96,6 +97,7 @@ class MainWindow(QMainWindow):
         self.UI.treeDataSet.participantDragged.connect(self.participant_was_dragged)
         self.UI.btnDelete.clicked.connect(self.delete_requested)
         self.UI.btnImport.clicked.connect(self.importRequested)
+        self.UI.btnExportCSV.clicked.connect(self.exportCSVRequested)
 
     def load_data_from_dataset(self):
         self.UI.treeDataSet.clear()
@@ -204,6 +206,13 @@ class MainWindow(QMainWindow):
         importer = ImportBrowser(dataManager=self.dbMan)
         if importer.exec() == QDialog.Accepted:
             self.load_data_from_dataset()
+
+    @pyqtSlot()
+    def exportCSVRequested(self):
+        exporter = ExportWindow(self.dbMan, self)
+        if exporter.exec() == QDialog.Accepted:
+            print("Accepted")
+
 
     @pyqtSlot()
     def infosRequested(self):
