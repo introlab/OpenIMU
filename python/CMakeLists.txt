@@ -16,9 +16,10 @@
 
 #TODO MAKE THIS GENERIC
 
+set (PYTHON_VERSION 3.6)
 add_subdirectory(env)
 
-set(PYTHON_ENV_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/env/python-3.6)
+set(PYTHON_ENV_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/env/python-${PYTHON_VERSION})
 # file(MAKE_DIRECTORY ${PYTHON_ENV_DIRECTORY})
 
 if(WIN32)
@@ -117,6 +118,22 @@ add_library(dummy STATIC ${moc_uis} ${uis} ${qrcs} ${srcs_qrcs})
 add_dependencies(dummy ${python_uis} ${python_qrcs} python-env)
 
 
+if (APPLE)
+
+    #PyInstaller (Beta, Still have problems with QtWebEngine not found.)
+    set (installer_args
+        # --paths ${PYTHON_ENV_DIRECTORY}/lib/python${PYTHON_VERSION}/site-packages/PyQt5
+        --hidden-import scipy._lib.messagestream
+        --hidden-import sqlalchemy.ext.baked
+        --clean
+        -y
+    )
 
 
+    add_custom_target(package
+        COMMAND ${PYTHON_ENV_DIRECTORY}/bin/pyinstaller ${installer_args} ${CMAKE_CURRENT_SOURCE_DIR}/OpenIMUApp.py
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        DEPENDS python_target ${python_uis} ${python_qrcs} python-env
+    )
 
+endif(APPLE)
