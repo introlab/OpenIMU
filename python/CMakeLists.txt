@@ -127,6 +127,7 @@ if (APPLE)
         --hidden-import sqlalchemy.ext.baked
         --clean
         -y
+        --windowed
     )
 
 
