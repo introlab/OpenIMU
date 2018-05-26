@@ -1,21 +1,4 @@
-#Generate the python environment
-#Will need Anaconda
-#Python 3.5 required
-
-# Example:
-# conda create python=3.5 -p /Users/dominic/WA/OpenIMU.git/python/env
-
-# Dans le répertoire env, installer les packages: PyQt5, PyInstaller, numpy, scipy
-# pip install PyQt5, PyQtChart, PyInstaller, scipy, numpy
-
-#find_package( PythonInterp 3.5 REQUIRED )
-#find_package( PythonLibs 3.5 REQUIRED )
-
-#PYTHONINTERP_FOUND         - Was the Python executable found
-#PYTHON_EXECUTABLE          - path to the Python interpreter
-
 #TODO MAKE THIS GENERIC
-
 set (PYTHON_VERSION 3.6)
 add_subdirectory(env)
 
@@ -25,6 +8,7 @@ set(PYTHON_ENV_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/env/python-${PYTHON_VERSION
 if(WIN32)
     set(PYTHON_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/python.exe)
     set(PYTHON_PIP_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pip.exe)
+    set(PYTHON_INSTALLER_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyinstaller.exe)
 
     #PyQt5 Ui wrapper
     set(PYQT5_UIC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyuic5.exe)
@@ -34,6 +18,7 @@ if(WIN32)
 else(WIN32)
     set(PYTHON_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/python)
     set(PYTHON_PIP_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pip)
+    set(PYTHON_INSTALLER_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pyinstaller)
     #PyQt5 Ui wrapper
     set(PYQT5_UIC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pyuic5)
     #PyQt5 Ressources compiler
@@ -117,24 +102,26 @@ message(STATUS ${python_files})
 add_library(dummy STATIC ${moc_uis} ${uis} ${qrcs} ${srcs_qrcs})
 add_dependencies(dummy ${python_uis} ${python_qrcs} python-env)
 
+#PyInstaller (Beta, Still have problems with QtWebEngine not found.)
+set (installer_args
+    # --paths ${PYTHON_ENV_DIRECTORY}/lib/python${PYTHON_VERSION}/site-packages/PyQt5
+    # --paths ${PYTHON_ENV_DIRECTORY}/lib/site-packages/site-packages/zmq
+    # --paths ${PYTHON_ENV_DIRECTORY}/lib/site-packages/site-packages/scipy
+    --hidden-import scipy._lib.messagestream
+    --hidden-import scipy.linalg
+    --hidden-import scipy.signal
+    --hidden-import scipy.fftpack
+    --hidden-import sqlalchemy.ext.baked
+    --clean
+    -y
+    --windowed
+    #--icon
+)
 
-if (APPLE)
-
-    #PyInstaller (Beta, Still have problems with QtWebEngine not found.)
-    set (installer_args
-        # --paths ${PYTHON_ENV_DIRECTORY}/lib/python${PYTHON_VERSION}/site-packages/PyQt5
-        --hidden-import scipy._lib.messagestream
-        --hidden-import sqlalchemy.ext.baked
-        --clean
-        -y
-        --windowed
-    )
+add_custom_target(python_package
+    COMMAND ${PYTHON_INSTALLER_EXECUTABLE} ${installer_args} ${CMAKE_CURRENT_SOURCE_DIR}/OpenIMUApp.py
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    DEPENDS python_target ${python_uis} ${python_qrcs} python-env
+)
 
 
-    add_custom_target(package
-        COMMAND ${PYTHON_ENV_DIRECTORY}/bin/pyinstaller ${installer_args} ${CMAKE_CURRENT_SOURCE_DIR}/OpenIMUApp.py
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        DEPENDS python_target ${python_uis} ${python_qrcs} python-env
-    )
-
-endif(APPLE)
