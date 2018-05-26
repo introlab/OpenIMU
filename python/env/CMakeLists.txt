@@ -50,7 +50,7 @@ else(WIN32)
     # Create environment, will produce python executable
     add_custom_command(
         OUTPUT ${ENV_PATH}/bin/python
-        COMMAND ${CONDA_PATH} create -y -p ${ENV_PATH} python=${PYTHON_VERSION}
+        COMMAND ${CONDA_PATH} create -c anaconda -c conda-forge -y -p ${ENV_PATH} python=${PYTHON_VERSION} ${conda_packages}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
@@ -59,7 +59,7 @@ else(WIN32)
     # TODO - INSTALL WITH CONDA ?
     add_custom_target(
         python-env
-        COMMAND ${ENV_PATH}/bin/pip install ${python_packages}
+        COMMAND ${ENV_PATH}/bin/pip install ${pip_packages}
         WORKING_DIRECTORY ${ENV_PATH}
         DEPENDS ${ENV_PATH}/bin/python
     )
