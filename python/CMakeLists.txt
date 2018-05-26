@@ -105,14 +105,9 @@ add_dependencies(dummy ${python_uis} ${python_qrcs} python-env)
 #PyInstaller (Beta, Still have problems with QtWebEngine not found.)
 set (installer_args
     # --paths ${PYTHON_ENV_DIRECTORY}/lib/python${PYTHON_VERSION}/site-packages/PyQt5
-    # --paths ${PYTHON_ENV_DIRECTORY}/lib/site-packages/site-packages/zmq
-    # --paths ${PYTHON_ENV_DIRECTORY}/lib/site-packages/site-packages/scipy
     --hidden-import scipy._lib.messagestream
-    --hidden-import scipy.linalg
-    --hidden-import scipy.signal
-    --hidden-import scipy.fftpack
     --hidden-import sqlalchemy.ext.baked
-    --clean
+    # --clean
     -y
     --windowed
     #--icon

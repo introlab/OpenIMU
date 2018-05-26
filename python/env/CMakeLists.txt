@@ -18,6 +18,7 @@ file(MAKE_DIRECTORY ${ENV_PATH})
 set (pip_packages
     PyQt5
     PyQtChart
+    PyQt3D
 )
 
 set (conda_packages

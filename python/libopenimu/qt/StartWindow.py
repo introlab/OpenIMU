@@ -3,7 +3,7 @@ from resources.ui.python.StartDialog_ui import Ui_StartDialog
 from libopenimu.qt.ImportWindow import ImportWindow
 
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QPushButton, QPlainTextEdit, QFileDialog
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QPushButton, QPlainTextEdit, QFileDialog, QApplication
 
 
 class StartWindow(QDialog):
@@ -54,4 +54,4 @@ class StartWindow(QDialog):
 
     @pyqtSlot()
     def quit_clicked(self):
-        exit(0)
+        QApplication.quit()
