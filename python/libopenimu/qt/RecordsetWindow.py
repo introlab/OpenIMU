@@ -15,6 +15,7 @@ from libopenimu.importers.wimu import GPSGeodetic
 
 from libopenimu.qt.Charts import IMUChartView
 from libopenimu.qt.GPSView import GPSView
+from libopenimu.qt.ProcessSelectWindow import ProcessSelectWindow
 
 from libopenimu.tools.timing import timing
 import os
@@ -60,6 +61,9 @@ class RecordsetWindow(QWidget):
         self.load_sensors()
 
         self.UI.lstSensors.itemChanged.connect(self.sensor_current_changed)
+
+        # Connect process button
+        self.UI.btnProcess.clicked.connect(self.on_process_recordset)
 
     def paintEvent(self, QPaintEvent):
         if not self.time_pixmap:
@@ -369,6 +373,11 @@ class RecordsetWindow(QWidget):
         # return data
         return {'x': time_array, 'y': data_array}
 
+    @pyqtSlot()
+    def on_process_recordset(self):
+        # Display Process Window
+        window = ProcessSelectWindow(self.dbMan, [self.recordsets])
+        window.exec()
 
 """
     def tile_graphs_horizontally(self):

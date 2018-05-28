@@ -1,5 +1,7 @@
 from .BaseAlgorithm import BaseAlgorithmFactory
 from .BaseAlgorithm import BaseAlgorithm
+from libopenimu.models.sensor_types import SensorType
+
 
 # actual algorithm is here
 from .freedson_adult_1998 import freedson_adult_1998
@@ -13,7 +15,7 @@ class FreedsonAdult1998(BaseAlgorithm):
         print('FreedsonAdult1998.configure')
         pass
 
-    def calculate(self):
+    def calculate(self, recordsets : list):
         print('FreedsonAdult1998.calculate')
         return {}
 
@@ -33,6 +35,15 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
     def name(self):
         return 'FreedsonAdult1998Factory'
 
+    def description(self):
+        return '''
+        FreedsonAdult1998 Factory
+        Description here.
+        
+        '''
+
+    def required_sensors(self):
+        return [SensorType.ACCELEROMETER]
 
 # Factory init
 def init():
