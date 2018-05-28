@@ -48,6 +48,7 @@
        </property>
        <property name="font">
         <font>
+         <family>Mongolian Baiti</family>
          <pointsize>31</pointsize>
         </font>
        </property>

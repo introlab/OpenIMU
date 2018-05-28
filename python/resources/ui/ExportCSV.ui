@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
+    <width>720</width>
     <height>171</height>
    </rect>
   </property>
@@ -24,6 +24,12 @@
      </property>
      <item row="1" column="0">
       <widget class="QLabel" name="lblDestDir">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="font">
         <font>
          <weight>75</weight>
@@ -63,7 +69,7 @@
         <widget class="QPushButton" name="dirButton">
          <property name="minimumSize">
           <size>
-           <width>0</width>
+           <width>100</width>
            <height>40</height>
           </size>
          </property>
@@ -80,30 +86,30 @@
        </item>
       </layout>
      </item>
-     <item row="2" column="1">
-      <widget class="QLabel" name="label_2">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>15</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="lineWidth">
-        <number>0</number>
-       </property>
-       <property name="text">
-        <string>Le contenu entier de la base de données sera exporté.</string>
-       </property>
-      </widget>
-     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_2">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>15</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="lineWidth">
+      <number>0</number>
+     </property>
+     <property name="text">
+      <string>Le contenu entier de la base de données sera exporté.</string>
+     </property>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">

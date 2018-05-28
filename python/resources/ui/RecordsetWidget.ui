@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QLabel#lblCursorTime{color:blue;}</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>2</number>
@@ -42,7 +45,7 @@
       <widget class="QLabel" name="lblInfos">
        <property name="font">
         <font>
-         <pointsize>17</pointsize>
+         <pointsize>15</pointsize>
          <italic>false</italic>
         </font>
        </property>
@@ -72,6 +75,7 @@
       <widget class="QLabel" name="lblTotalValue">
        <property name="font">
         <font>
+         <pointsize>9</pointsize>
          <weight>75</weight>
          <bold>true</bold>
         </font>
@@ -92,6 +96,7 @@
       <widget class="QLabel" name="lblDurationValue">
        <property name="font">
         <font>
+         <pointsize>9</pointsize>
          <weight>75</weight>
          <bold>true</bold>
         </font>
@@ -102,6 +107,22 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="lblCursorTime">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Date/Heure du curseur</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="TimeView" name="graphTimeline">
@@ -138,22 +159,6 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="lblCursorTime">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Date/Heure du curseur</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QGroupBox" name="grpSubRecord">
      <property name="title">
       <string>Édition</string>
@@ -164,7 +169,7 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>40</height>
+          <height>32</height>
          </size>
         </property>
         <property name="cursor">
@@ -206,7 +211,7 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>40</height>
+          <height>32</height>
          </size>
         </property>
         <property name="cursor">
@@ -232,7 +237,7 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>40</height>
+          <height>32</height>
          </size>
         </property>
         <property name="cursor">
@@ -318,7 +323,7 @@
          <widget class="QLabel" name="lblData">
           <property name="font">
            <font>
-            <pointsize>17</pointsize>
+            <pointsize>15</pointsize>
            </font>
           </property>
           <property name="text">
@@ -374,8 +379,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>970</width>
-             <height>525</height>
+             <width>976</width>
+             <height>537</height>
             </rect>
            </property>
            <property name="sizePolicy">

@@ -17,7 +17,7 @@
    <string>OpenIMU</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QDockWidget::title{text-align:left;margin-left:10px;}</string>
+   <string notr="true">QDockWidget::title{text-align:left;margin-left:10px;background-color:transparent; }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -33,23 +33,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1245</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menu_File">
-    <property name="title">
-     <string>_File</string>
-    </property>
-    <addaction name="actionQuit"/>
-   </widget>
-   <addaction name="menu_File"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dockDataset">
@@ -80,7 +63,7 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>11</pointsize>
+         <pointsize>9</pointsize>
         </font>
        </property>
        <property name="cursor">
@@ -123,8 +106,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>24</width>
+         <height>24</height>
         </size>
        </property>
        <property name="indentation">
@@ -165,6 +148,9 @@
          <property name="cursor">
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
+         <property name="toolTip">
+          <string>Nouveau Groupe</string>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -190,6 +176,9 @@
          </property>
          <property name="cursor">
           <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>Nouveau Participant</string>
          </property>
          <property name="text">
           <string/>
@@ -229,6 +218,9 @@
          </property>
          <property name="cursor">
           <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>Supprimer</string>
          </property>
          <property name="text">
           <string/>
@@ -425,13 +417,8 @@
        <property name="minimumSize">
         <size>
          <width>0</width>
-         <height>45</height>
+         <height>32</height>
         </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
        </property>
        <property name="cursor">
         <cursorShape>PointingHandCursor</cursorShape>

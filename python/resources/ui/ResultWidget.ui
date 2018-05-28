@@ -39,7 +39,7 @@
       <widget class="QLabel" name="lblInfos">
        <property name="font">
         <font>
-         <pointsize>17</pointsize>
+         <pointsize>15</pointsize>
          <italic>false</italic>
         </font>
        </property>
