@@ -46,7 +46,9 @@
        <property name="font">
         <font>
          <pointsize>15</pointsize>
+         <weight>75</weight>
          <italic>false</italic>
+         <bold>true</bold>
         </font>
        </property>
        <property name="text">
@@ -57,25 +59,18 @@
     </layout>
    </item>
    <item>
-    <layout class="QFormLayout" name="formLayout">
-     <property name="fieldGrowthPolicy">
-      <enum>QFormLayout::ExpandingFieldsGrow</enum>
-     </property>
-     <property name="formAlignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-     </property>
-     <item row="0" column="0">
-      <widget class="QLabel" name="lblTotal">
-       <property name="text">
-        <string>Plage des enregistrements: </string>
-       </property>
-      </widget>
-     </item>
+    <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="1">
       <widget class="QLabel" name="lblTotalValue">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="font">
         <font>
-         <pointsize>9</pointsize>
+         <pointsize>12</pointsize>
          <weight>75</weight>
          <bold>true</bold>
         </font>
@@ -87,6 +82,12 @@
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="lblDuration">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Temps total:</string>
        </property>
@@ -94,9 +95,15 @@
      </item>
      <item row="1" column="1">
       <widget class="QLabel" name="lblDurationValue">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="font">
         <font>
-         <pointsize>9</pointsize>
+         <pointsize>12</pointsize>
          <weight>75</weight>
          <bold>true</bold>
         </font>
@@ -106,12 +113,93 @@
        </property>
       </widget>
      </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="lblTotal">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Plage des enregistrements: </string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QPushButton" name="btnProcess">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="mouseTracking">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Traiter ces données</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../core.qrc">
+         <normaloff>:/OpenIMU/icons/results.png</normaloff>:/OpenIMU/icons/results.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QPushButton" name="btnStartEdit">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="text">
+        <string>Diviser l'enregistrement</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../core.qrc">
+         <normaloff>:/OpenIMU/icons/cut.png</normaloff>:/OpenIMU/icons/cut.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
     <widget class="QLabel" name="lblCursorTime">
      <property name="font">
       <font>
+       <pointsize>14</pointsize>
        <weight>75</weight>
        <bold>true</bold>
       </font>
@@ -120,7 +208,7 @@
       <string>Date/Heure du curseur</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>
@@ -160,39 +248,13 @@
    </item>
    <item>
     <widget class="QGroupBox" name="grpSubRecord">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="title">
       <string>Édition</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
-      <item>
-       <widget class="QPushButton" name="btnStartEdit">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="cursor">
-         <cursorShape>PointingHandCursor</cursorShape>
-        </property>
-        <property name="text">
-         <string>Diviser l'enregistrement</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../core.qrc">
-          <normaloff>:/OpenIMU/icons/cut.png</normaloff>:/OpenIMU/icons/cut.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
       <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
@@ -379,8 +441,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>976</width>
-             <height>537</height>
+             <width>970</width>
+             <height>486</height>
             </rect>
            </property>
            <property name="sizePolicy">

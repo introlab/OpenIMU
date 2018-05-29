@@ -365,7 +365,7 @@ class DBManager:
 
         else:
             for group in groups:
-                group_dir = directory + '/ID_GROUP_' + str(group.id_group) + '/'
+                group_dir = directory + '/GROUP_ID_' + str(group.id_group) + '+' + group.name + '/'
                 if os.path.exists(directory):
                     if not os.path.exists(group_dir):
                         os.mkdir(group_dir)
@@ -376,7 +376,7 @@ class DBManager:
 
     def export_csv_participant(self, participant : Participant, directory):
         if os.path.exists(directory):
-            participant_dir = directory + '/ID_PARTICIPANT_' + str(participant.id_participant) + '/'
+            participant_dir = directory + '/PARTICIPANT_ID_' + str(participant.id_participant) + '_' + participant.name + '/'
             # Create participant directory
             if not os.path.exists(participant_dir):
                 os.mkdir(participant_dir)
@@ -388,7 +388,7 @@ class DBManager:
     def export_csv_recordset(self, participant : Participant, recordset : Recordset, directory):
         if os.path.exists(directory):
             # Create recordset directory
-            record_dir = directory + 'ID_RECORDSET_' + str(recordset.id_recordset) + '/'
+            record_dir = directory + 'RECORDSET_ID_' + str(recordset.id_recordset) + '_' + str(recordset.name) + '/'
             if not os.path.exists(record_dir):
                 os.mkdir(record_dir)
 

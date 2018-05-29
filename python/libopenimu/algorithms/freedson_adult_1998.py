@@ -160,7 +160,7 @@ def freedson_adult_1998(samples: list, sampling_rate):
             # Classify
             results[CutPoints.classify(sum, scale)] += 1
 
-    print('results', results)
+    # print('results', results)
     return results
 
 
