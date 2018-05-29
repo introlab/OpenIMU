@@ -63,8 +63,7 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
 
         my_info = {}
 
-        my_info['description'] = \
-        '''
+        my_info['description'] = """ \
         It is a uniaxial accelerometer that assesses accelerations ranging from 0.05-2.0 G and is band limited with a
         frequency response from 0.25-2.5 Hz.
         
@@ -88,11 +87,12 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
         
         epoch = 60 seconds
                 
-        '''
+        """
         my_info['name'] = self.name()
         my_info['author'] = 'Dominic Létourneau'
         my_info['version'] = '0.1'
-        my_info['reference'] = 'Insert ref here'
+        my_info['reference'] = ("Freedson PS1, Melanson E, Sirard J., Calibration of the Computer Science and "
+                                "Applications, Inc. accelerometer., Med Sci Sports Exerc. 1998 May;30(5):777-81")
 
         return my_info
 

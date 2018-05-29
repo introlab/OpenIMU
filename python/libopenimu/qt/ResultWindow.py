@@ -13,7 +13,6 @@ class ResultWindow(QWidget):
         self.UI.setupUi(self)
         self.resize(800, 600)
 
-
     def display_freedson_1998(self, results : list, recordsets : list):
 
         layout = QVBoxLayout()
