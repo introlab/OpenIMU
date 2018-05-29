@@ -23,18 +23,20 @@ class FreedsonAdult1998(BaseAlgorithm):
 
         for record in recordsets:
             # Get all sensors in record
-            sensors = manager.get_all_sensors()
+            sensors = manager.get_all_sensors(id_sensor_type=SensorType.ACCELEROMETER)
             for sensor in sensors:
-                if sensor.id_sensor_type == SensorType.ACCELEROMETER:
-                    print('Found Accelerometer')
-                    channels = manager.get_all_channels(sensor=sensor)
-                    for channel in channels:
-                        if channel.label == 'Accelerometer_Y':
-                            print('Processing Channel :', channel)
-                            # Will get all data (converted to floats)
-                            channel_data = manager.get_all_sensor_data(recordset=record, convert=True, sensor=sensor,
-                                                                       channel=channel)
 
+                # print('Found Accelerometer')
+                channels = manager.get_all_channels(sensor=sensor)
+
+                # print('Found channels: ', channels)
+                for channel in channels:
+                    if channel.label == 'Accelerometer_Y':
+                        # print('Processing Channel :', channel)
+                        # Will get all data (converted to floats)
+                        channel_data = manager.get_all_sensor_data(recordset=record, convert=True, sensor=sensor,
+                                                                   channel=channel)
+                        if len(channel_data) > 0:
                             # Process all sensor data
                             results.append(freedson_adult_1998(channel_data, sensor.sampling_rate))
 
