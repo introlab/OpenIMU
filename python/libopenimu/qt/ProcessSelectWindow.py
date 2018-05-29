@@ -1,8 +1,9 @@
-from PyQt5.QtWidgets import QDialog, QComboBox, QLineEdit, QFileDialog, QHBoxLayout, QListWidgetItem
+from PyQt5.QtWidgets import QDialog, QComboBox, QLineEdit, QFileDialog, QHBoxLayout, QListWidgetItem, QMainWindow
 from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal
 from resources.ui.python.ProcessSelectDialog_ui import Ui_dlgProcessSelect
 from libopenimu.db.DBManager import DBManager
 from libopenimu.algorithms.BaseAlgorithm import BaseAlgorithmFactory
+from libopenimu.qt.ResultWindow import ResultWindow
 
 
 class ProcessSelectWindow(QDialog):
@@ -57,3 +58,11 @@ class ProcessSelectWindow(QDialog):
             algo = self.factory.create(params)
             results = algo.calculate(self.dbMan, self.recordsets)
             print('Algo results', results)
+            window = QMainWindow(self)
+            window.setWindowTitle('Results: ' + self.factory.info()['name'])
+            widget = ResultWindow(self)
+            widget.display_freedson_1998(results, self.recordsets)
+            window.setCentralWidget(widget)
+            window.resize(800, 600)
+            window.show()
+
