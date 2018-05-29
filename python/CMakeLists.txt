@@ -110,7 +110,7 @@ set (installer_args
     # --clean
     -y
     --windowed
-    #--icon
+    --icon ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/OpenIMU.ico
 )
 
 add_custom_target(python_package
