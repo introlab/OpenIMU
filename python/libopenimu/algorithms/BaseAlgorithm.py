@@ -43,7 +43,7 @@ class BaseAlgorithmFactory:
         for factory in BaseAlgorithmFactory.factories:
             print('factory name', factory.name())
             print('factory params', factory.params())
-            print('factory description', factory.description())
+            print('factory info', factory.info())
 
     @staticmethod
     def get_factory_named(name):
@@ -65,7 +65,17 @@ class BaseAlgorithmFactory:
         pass
 
     @abstractmethod
-    def description(self):
+    def info(self):
+        '''
+        Should return a dict with
+        'description' : string
+        'author' : string
+        'version' : string
+        'name' : string
+        'reference': string
+        '
+        :return dict:
+        '''
         pass
 
     @abstractmethod

@@ -55,12 +55,25 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QListWidget" name="listWidget"/>
+      <widget class="QListWidget" name="listWidget">
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>16777215</height>
+        </size>
+       </property>
+      </widget>
      </item>
      <item>
       <layout class="QFormLayout" name="formLayout">
        <item row="0" column="0">
         <widget class="QLabel" name="lblName">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>Nom</string>
          </property>
@@ -68,6 +81,12 @@
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="lblAuthor">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>Auteur</string>
          </property>
@@ -77,8 +96,8 @@
         <widget class="QLabel" name="lblAuthorValue">
          <property name="font">
           <font>
-           <weight>75</weight>
-           <bold>true</bold>
+           <weight>50</weight>
+           <bold>false</bold>
           </font>
          </property>
          <property name="text">
@@ -88,6 +107,12 @@
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="lblVersion">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>Version</string>
          </property>
@@ -97,8 +122,8 @@
         <widget class="QLabel" name="lblVersionValue">
          <property name="font">
           <font>
-           <weight>75</weight>
-           <bold>true</bold>
+           <weight>50</weight>
+           <bold>false</bold>
           </font>
          </property>
          <property name="text">
@@ -108,6 +133,12 @@
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="lblDesc">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>Description</string>
          </property>
@@ -117,8 +148,8 @@
         <widget class="QPlainTextEdit" name="txtDesc">
          <property name="font">
           <font>
-           <weight>75</weight>
-           <bold>true</bold>
+           <weight>50</weight>
+           <bold>false</bold>
           </font>
          </property>
          <property name="readOnly">
@@ -128,6 +159,12 @@
        </item>
        <item row="4" column="0">
         <widget class="QLabel" name="lblRef">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>Référence</string>
          </property>
@@ -137,8 +174,8 @@
         <widget class="QLabel" name="lblRefValue">
          <property name="font">
           <font>
-           <weight>75</weight>
-           <bold>true</bold>
+           <weight>50</weight>
+           <bold>false</bold>
           </font>
          </property>
          <property name="text">
@@ -153,8 +190,8 @@
         <widget class="QLabel" name="lblNameValue">
          <property name="font">
           <font>
-           <weight>75</weight>
-           <bold>true</bold>
+           <weight>50</weight>
+           <bold>false</bold>
           </font>
          </property>
          <property name="text">
@@ -246,5 +283,22 @@
  <resources>
   <include location="../core.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>btnCancel</sender>
+   <signal>clicked()</signal>
+   <receiver>dlgProcessSelect</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>624</x>
+     <y>443</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>346</x>
+     <y>237</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

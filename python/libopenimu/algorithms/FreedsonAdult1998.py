@@ -33,14 +33,44 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
         return dict()
 
     def name(self):
-        return 'FreedsonAdult1998Factory'
+        return 'Freedson Adult 1998'
 
-    def description(self):
-        return '''
-        FreedsonAdult1998 Factory
-        Description here.
-        
+    def info(self):
+
+        my_info = {}
+
+        my_info['description'] = \
         '''
+        It is a uniaxial accelerometer that assesses accelerations ranging from 0.05-2.0 G and is band limited with a
+        frequency response from 0.25-2.5 Hz.
+        
+        The acceleration signal is filtered by an analog bandpass filter and digitized by an 8 bit A/D converter at a sampling
+        rate of 10 samples per second.
+        
+        Each digitized signal is summed over a user specified time interval (epoch), and at the end of each epoch the activity
+        count is stored internally and the accumulator is reset to zero. In the current study, a 60-s epoch was used and
+        activity counts were expressed as the average counts per minute over the 6 min of exercise.
+        
+        
+        Cut points (intensity buckets):
+        * https://actigraph.desk.com/customer/portal/articles/2515802
+        
+        Counts (accelerator sum over 60 s)
+        * https://actigraph.desk.com/customer/portal/articles/2515580-What-are-counts-
+        
+        Notes:
+        --> Only Y axis used on Actigraph devices.
+        8 bits = 256 = 2g
+        
+        epoch = 60 seconds
+                
+        '''
+        my_info['name'] = self.name()
+        my_info['author'] = 'Dominic Létourneau'
+        my_info['version'] = '0.1'
+        my_info['reference'] = 'Insert ref here'
+
+        return my_info
 
     def required_sensors(self):
         return [SensorType.ACCELEROMETER]
