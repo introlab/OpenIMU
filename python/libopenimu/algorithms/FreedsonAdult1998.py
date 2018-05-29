@@ -1,23 +1,45 @@
 from .BaseAlgorithm import BaseAlgorithmFactory
 from .BaseAlgorithm import BaseAlgorithm
 from libopenimu.models.sensor_types import SensorType
-
+from libopenimu.db.DBManager import DBManager
 
 # actual algorithm is here
 from .freedson_adult_1998 import freedson_adult_1998
 
 
 class FreedsonAdult1998(BaseAlgorithm):
-    def __init__(self, params):
-        super(BaseAlgorithm, self).__init__(params)
+    def __init__(self, params: dict):
+        super().__init__(params)
 
     def configure(self, params: dict):
         print('FreedsonAdult1998.configure')
         pass
 
-    def calculate(self, recordsets : list):
+    def calculate(self, manager: DBManager, recordsets : list):
         print('FreedsonAdult1998.calculate')
-        return {}
+        print('Using recordsets', recordsets)
+
+        results = []
+
+        for record in recordsets:
+            # Get all sensors in record
+            sensors = manager.get_all_sensors()
+            for sensor in sensors:
+                if sensor.id_sensor_type == SensorType.ACCELEROMETER:
+                    print('Found Accelerometer')
+                    channels = manager.get_all_channels(sensor=sensor)
+                    for channel in channels:
+                        if channel.label == 'Accelerometer_Y':
+                            print('Processing Channel :', channel)
+                            # Will get all data (converted to floats)
+                            channel_data = manager.get_all_sensor_data(recordset=record, convert=True, sensor=sensor,
+                                                                       channel=channel)
+
+                            # Process all sensor data
+                            results.append(freedson_adult_1998(channel_data, sensor.sampling_rate))
+
+        # Return an array with results for each recordset
+        return results
 
 
 class FreedsonAdult1998Factory(BaseAlgorithmFactory):

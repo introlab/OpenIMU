@@ -8,9 +8,11 @@
 
 from abc import abstractmethod
 from libopenimu.models.Recordset import Recordset
+from libopenimu.db.DBManager import DBManager
+
 
 class BaseAlgorithm:
-    def __init__(self, params):
+    def __init__(self, params: dict):
         self.configure(params)
 
     @abstractmethod
@@ -18,7 +20,7 @@ class BaseAlgorithm:
         pass
 
     @abstractmethod
-    def calculate(self, recordsets : list):
+    def calculate(self, manager: DBManager, recordsets : list):
         pass
 
 
@@ -54,6 +56,7 @@ class BaseAlgorithmFactory:
 
     @abstractmethod
     def create(self, params: dict):
+        self.configure(params)
         return None
 
     @abstractmethod

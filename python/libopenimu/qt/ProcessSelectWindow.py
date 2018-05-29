@@ -14,7 +14,7 @@ class ProcessSelectWindow(QDialog):
         # print('recordsets: ', recordsets)
         self.recordsets = recordsets
         self.fill_algorithms_list()
-
+        self.factory = None
         # Connect signals
         self.UI.btnProcess.clicked.connect(self.on_process_button_clicked)
 
@@ -31,8 +31,8 @@ class ProcessSelectWindow(QDialog):
     def on_list_widget_item_clicked(self, item : QListWidgetItem):
         # print('onListWidgetItemClicked')
         # Fill info
-        factory = BaseAlgorithmFactory.get_factory_named(item.text())
-        info = factory.info()
+        self.factory = BaseAlgorithmFactory.get_factory_named(item.text())
+        info = self.factory.info()
         if info.__contains__('author'):
             self.UI.lblAuthorValue.setText(info['author'])
 
@@ -51,4 +51,9 @@ class ProcessSelectWindow(QDialog):
     @pyqtSlot()
     def on_process_button_clicked(self):
         print('on_process_button_clicked')
-        pass
+        if self.factory is not None:
+            # For testing, should display a configuration GUI first
+            params = {}
+            algo = self.factory.create(params)
+            results = algo.calculate(self.dbMan, self.recordsets)
+            print('Algo results', results)
