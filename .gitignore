@@ -7,4 +7,4 @@ python/dist/
 python/build/
 __pycache__/
 python/resources/python/
-
+CMakeLists.txt.user
