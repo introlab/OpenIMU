@@ -5,6 +5,9 @@ from libopenimu.db.DBManager import DBManager
 from libopenimu.algorithms.BaseAlgorithm import BaseAlgorithmFactory
 from libopenimu.qt.ResultWindow import ResultWindow
 
+from libopenimu.models.ProcessedData import ProcessedData
+from libopenimu.models.Recordset import Recordset
+
 
 class ProcessSelectWindow(QDialog):
     def __init__(self, dataManager : DBManager, recordsets : list, parent=None):
@@ -12,10 +15,15 @@ class ProcessSelectWindow(QDialog):
         self.UI = Ui_dlgProcessSelect()
         self.UI.setupUi(self)
         self.dbMan = dataManager
+
+        self.UI.frameInfos.hide()
+
         # print('recordsets: ', recordsets)
         self.recordsets = recordsets
         self.fill_algorithms_list()
         self.factory = None
+
+        self.UI.btnProcess.setEnabled(False)
         # Connect signals
         self.UI.btnProcess.clicked.connect(self.on_process_button_clicked)
 
@@ -38,7 +46,7 @@ class ProcessSelectWindow(QDialog):
             self.UI.lblAuthorValue.setText(info['author'])
 
         if info.__contains__('description'):
-            self.UI.txtDesc.setPlainText(info['description'])
+            self.UI.txtDesc.setPlainText(info['description'].replace('\t',"").replace("        ",""))
 
         if info.__contains__('name'):
             self.UI.lblNameValue.setText(info['name'])
@@ -49,6 +57,9 @@ class ProcessSelectWindow(QDialog):
         if info.__contains__('reference'):
             self.UI.lblRefValue.setText(info['reference'])
 
+        self.UI.frameInfos.show()
+        self.UI.btnProcess.setEnabled(True)
+
     @pyqtSlot()
     def on_process_button_clicked(self):
         print('on_process_button_clicked')
@@ -58,11 +69,20 @@ class ProcessSelectWindow(QDialog):
             algo = self.factory.create(params)
             results = algo.calculate(self.dbMan, self.recordsets)
             print('Algo results', results)
-            window = QMainWindow(self)
+            """window = QMainWindow(self)
             window.setWindowTitle('Results: ' + self.factory.info()['name'])
             widget = ResultWindow(self)
             widget.display_freedson_1998(results, self.recordsets)
             window.setCentralWidget(widget)
             window.resize(800, 600)
-            window.show()
+            window.show()"""
+
+            #Save to database
+            name = self.factory.info()['name'] + " - " + self.recordsets[0].name
+            if len(self.recordsets) > 0:
+                name += " @ " + self.recordsets[len(self.recordsets) - 1].name
+
+            self.dbMan.add_processed_data(self.factory.info()['unique_id'], name, results, self.recordsets)
+
+            self.accept()
 
