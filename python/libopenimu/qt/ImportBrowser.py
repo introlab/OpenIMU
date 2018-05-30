@@ -1,5 +1,5 @@
 from PyQt5.QtCore import pyqtSlot, Qt
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QTableWidget, QPushButton, QPlainTextEdit, QFileDialog
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QLabel, QTableWidget, QPushButton, QPlainTextEdit
 
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.DataSet import DataSet
@@ -11,6 +11,7 @@ from libopenimu.importers.importer_types import ImporterTypes
 from libopenimu.importers.WIMUImporter import WIMUImporter
 from libopenimu.importers.ActigraphImporter import ActigraphImporter
 from libopenimu.importers.OpenIMUImporter import OpenIMUImporter
+from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog
 
 class ImportBrowser(QDialog):
     dbMan = None
@@ -24,13 +25,32 @@ class ImportBrowser(QDialog):
         self.UI.btnOK.clicked.connect(self.ok_clicked)
         self.UI.btnAddFile.clicked.connect(self.add_clicked)
         self.UI.btnDelFile.clicked.connect(self.del_clicked)
-
         self.dbMan = dataManager
+
 
     @pyqtSlot()
     def ok_clicked(self):
         # Do the importation
         table = self.UI.tableFiles
+
+        # Create progress dialog
+        dialog = ProgressDialog(table.rowCount(), self)
+        dialog.setWindowTitle('Importation...')
+
+        class Importer:
+            def __init__(self, filename, importer):
+                self.filename = filename
+                self.importer = importer
+
+            def process(self):
+                print('Importer loading', self.filename)
+                results = self.importer.load(self.filename)
+                print('Importer saving to db')
+                self.importer.import_to_database(results)
+                print('Importer done!')
+
+        importers = []
+
         for i in range(0, table.rowCount()):
             part = table.item(i,3).data(Qt.UserRole)
             file_type = table.item(i,1).data(Qt.UserRole)
@@ -46,17 +66,37 @@ class ImportBrowser(QDialog):
                 data_importer = OpenIMUImporter(manager=self.dbMan, participant=part)
 
             if data_importer is not None:
-                results = data_importer.load(file_name)
-                data_importer.import_to_database(results)
+                importers.append(Importer(file_name, data_importer))
 
-            #else:
+                # results = data_importer.load(file_name)
+                # data_importer.import_to_database(results)
+            else:
                 #TODO: Error message
+                self.reject()
+
+        # Run in background all importers (in sequence)
+        all_functions = []
+        for importer in importers:
+            all_functions.append(importer.process)
+
+        process = BackgroundProcess(all_functions)
+        process.finished.connect(dialog.accept)
+        process.trigger.connect(dialog.trigger)
+        process.start()
+
+        # Show progress dialog
+        dialog.exec()
 
         self.accept()
 
     @pyqtSlot()
     def cancel_clicked(self):
         self.reject()
+
+
+    @pyqtSlot()
+    def thread_finished(self):
+        print('Thread Finished')
 
     @pyqtSlot()
     def add_clicked(self):
