@@ -51,7 +51,7 @@ class DBManager:
         print('Using sqlalchemy version: ', sqlalchemy.__version__)
 
         # Create engine (sqlite), echo will output logging information
-        self.engine = create_engine('sqlite:///' + filename, echo=echo)
+        self.engine = create_engine('sqlite:///' + filename + '?check_same_thread=False', echo=echo)
 
         # Will create all tables
         Base.metadata.create_all(self.engine)
@@ -61,6 +61,7 @@ class DBManager:
 
         # Session instance
         self.session = self.SessionMaker()
+
 
     @event.listens_for(Engine, "connect")
     def set_sqlite_pragma(dbapi_connection, connection_record):

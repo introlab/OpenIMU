@@ -49,7 +49,7 @@ class AppleWatchImporter(BaseImporter):
         with open(filename, "rb") as file:
             print('Loading File: ', filename)
             results = self.readDataFile(file)
-            
+
         return results
 
     def import_to_database(self, result):
