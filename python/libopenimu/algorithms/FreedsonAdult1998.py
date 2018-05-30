@@ -3,6 +3,10 @@ from .BaseAlgorithm import BaseAlgorithm
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.db.DBManager import DBManager
 
+from PyQt5.QtWidgets import QWidget, QVBoxLayout,QScrollArea
+
+from libopenimu.qt.Charts import OpenIMUBarGraphView
+
 # actual algorithm is here
 from .freedson_adult_1998 import freedson_adult_1998
 
@@ -102,6 +106,35 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
 
     def required_sensors(self):
         return [SensorType.ACCELEROMETER]
+
+    def build_display_widget(self, parent_widget:QWidget, results, recordsets):
+
+        layout = QVBoxLayout()
+        # Add Scroll area
+        scroll = QScrollArea(parent=parent_widget)
+        #parent_widget.layout().addWidget(scroll)
+
+        scroll.setLayout(layout)
+        layout.addWidget(scroll)
+        view = OpenIMUBarGraphView(scroll)
+        view.set_title('Active minutes')
+        layout.addWidget(view)
+
+        if len(results) == len(recordsets):
+            for i in range(len(results)):
+                view.set_category_axis(results[i].keys())
+                values = []
+
+                for key in results[i]:
+                    values.append(results[i][key])
+
+                label = recordsets[i].name
+                view.add_set(label, values)
+
+        # Update view
+        view.update()
+
+        return scroll
 
 # Factory init
 def init():

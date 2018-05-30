@@ -10,6 +10,8 @@ from abc import abstractmethod
 from libopenimu.models.Recordset import Recordset
 from libopenimu.db.DBManager import DBManager
 
+from PyQt5.QtWidgets import QWidget
+
 
 class BaseAlgorithm:
     def __init__(self, params: dict):
@@ -54,6 +56,13 @@ class BaseAlgorithmFactory:
                 return factory
         return None
 
+    @staticmethod
+    def get_factory_with_id(id):
+        for factory in BaseAlgorithmFactory.factories:
+            if factory.unique_id() == id:
+                return factory
+        return None
+
     @abstractmethod
     def create(self, params: dict):
         self.configure(params)
@@ -88,3 +97,7 @@ class BaseAlgorithmFactory:
     @abstractmethod
     def required_sensors(self):
         return []
+
+    @abstractmethod
+    def build_display_widget(self, parent_widget:QWidget, results, recordsets):
+        return QWidget()
