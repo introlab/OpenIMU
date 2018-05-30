@@ -365,6 +365,7 @@ class GyroOptions:
     @staticmethod
     def conversion_to_deg_per_sec(value_range, value, hw_id=2):
         # Same conversion for any hw_id
+
         if value_range <= 3:
             adc_min = -32767
             adc_max = 32767
@@ -372,7 +373,8 @@ class GyroOptions:
             if hw_id==2:
                 adc_min = -4095
                 adc_max = 4095
-                s_values = [500.0]
+                # TODO FIXME
+                s_values = [500.0, 500.0, 500.0, 500.0]
 
             return (((value + np.float32(np.abs(adc_min))) / (np.float32(np.abs(adc_min)) + adc_max))
                     * 2 * s_values[value_range]) - s_values[value_range]
@@ -383,7 +385,7 @@ class GyroOptions:
     def range_max(value_range, hw_id=2):
         # Same range for any hw_id
         s_values = [250.0, 500.0, 1000.0, 2000.0]
-        if hw_id==2:
+        if hw_id == 2:
             return 500.0
 
         if value_range <= 3:
