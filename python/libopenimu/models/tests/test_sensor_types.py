@@ -21,7 +21,7 @@ class SensorTypeTest(unittest.TestCase):
 
     def test_as_dict(self):
         my_dict = SensorType.as_dict()
-        self.assertEqual(len(my_dict), 11)
+        self.assertEqual(len(my_dict), 12)
 
     def test_validation(self):
         self.assertTrue(SensorType.is_valid_type(SensorType.ACCELEROMETER), "Accelerometer type invalid")
