@@ -77,7 +77,7 @@ class ProcessSelectWindow(QDialog):
             window.resize(800, 600)
             window.show()"""
 
-            #Save to database
+            # Save to database
             name = self.factory.info()['name'] + " - " + self.recordsets[0].name
             if len(self.recordsets) > 0:
                 name += " @ " + self.recordsets[len(self.recordsets) - 1].name

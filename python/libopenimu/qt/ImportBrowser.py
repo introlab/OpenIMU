@@ -13,10 +13,11 @@ from libopenimu.importers.ActigraphImporter import ActigraphImporter
 from libopenimu.importers.OpenIMUImporter import OpenIMUImporter
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog
 
+
 class ImportBrowser(QDialog):
     dbMan = None
 
-    def __init__(self, dataManager, parent = None):
+    def __init__(self, dataManager, parent=None):
         super(QDialog, self).__init__(parent=parent)
         self.UI = Ui_ImportBrowser()
         self.UI.setupUi(self)
@@ -52,9 +53,9 @@ class ImportBrowser(QDialog):
         importers = []
 
         for i in range(0, table.rowCount()):
-            part = table.item(i,3).data(Qt.UserRole)
-            file_type = table.item(i,1).data(Qt.UserRole)
-            file_name = table.item(i,0).text()
+            part = table.item(i, 3).data(Qt.UserRole)
+            file_type = table.item(i, 1).data(Qt.UserRole)
+            file_name = table.item(i, 0).text()
             data_importer = None
             if file_type == ImporterTypes.ACTIGRAPH:
                 data_importer = ActigraphImporter(manager=self.dbMan, participant=part)
@@ -92,7 +93,6 @@ class ImportBrowser(QDialog):
     @pyqtSlot()
     def cancel_clicked(self):
         self.reject()
-
 
     @pyqtSlot()
     def thread_finished(self):

@@ -14,7 +14,6 @@ class ProgressDialog(QProgressDialog):
         self.time.start()
         self.startTimer(1000)
 
-
     @pyqtSlot()
     def trigger(self):
         self.count = self.count + 1
