@@ -372,18 +372,20 @@ class DBManager:
             self.session.add(ref)
             self.commit()
 
-        return
+        return data
 
     def get_all_processed_data(self, participant=Participant()):
 
+        datas = None
         if participant.id_participant is None:
             query = self.session.query(ProcessedData)
-            #print (query)
-            return query.all()
+            datas = query.all()
         else:
             query = self.session.query(ProcessedData).filter(ProcessedData.processed_data_ref.recordset.participant.id_participant == participant.id_participant)
-            print(query)
-            return query.all()
+            #print(query)
+            datas = query.all()
+
+        return datas
 
     #####################
     def export_csv(self, directory):

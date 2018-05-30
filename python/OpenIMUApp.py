@@ -273,10 +273,12 @@ class MainWindow(QMainWindow):
 
             recordsWidget = RecordsetWindow(manager=self.dbMan, recordset=records)
             self.UI.frmMain.layout().addWidget(recordsWidget)
+            recordsWidget.dataDisplayRequest.connect(self.UI.treeDataSet.select_item)
 
         if item_type == "result":
-            resultWidget = ResultWindow()
+            resultWidget = ResultWindow(manager=self.dbMan, results=self.UI.treeDataSet.results[item_id])
             self.UI.frmMain.layout().addWidget(resultWidget)
+
 
         self.UI.frmMain.update()
 
@@ -433,7 +435,7 @@ class Treedatawidget(QTreeWidget):
             item.setIcon(0, QIcon(':/OpenIMU/icons/group.png'))
             item.setData(0, Qt.UserRole, group.id_group)
             item.setData(1, Qt.UserRole, 'group')
-            item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
+            item.setFont(0, QFont('Helvetica', 12, QFont.Bold))
 
             self.addTopLevelItem(item)
             self.groups[group.id_group] = group
@@ -452,7 +454,7 @@ class Treedatawidget(QTreeWidget):
             item.setIcon(0, QIcon(':/OpenIMU/icons/participant.png'))
             item.setData(0, Qt.UserRole, part.id_participant)
             item.setData(1, Qt.UserRole, 'participant')
-            item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
+            item.setFont(0, QFont('Helvetica', 12, QFont.Bold))
 
             if group_item is None: #Participant without a group
                 self.addTopLevelItem(item)
@@ -465,7 +467,7 @@ class Treedatawidget(QTreeWidget):
             item.setText(0, 'Enregistrements')
             item.setIcon(0, QIcon(':/OpenIMU/icons/records.png'))
             item.setData(1, Qt.UserRole, 'recordsets')
-            item.setFont(0, QFont('Helvetica', 10, QFont.Bold))
+            item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
             parent.addChild(item)
 
             # Results
@@ -473,7 +475,7 @@ class Treedatawidget(QTreeWidget):
             item.setText(0, 'Résultats')
             item.setIcon(0, QIcon(':/OpenIMU/icons/results.png'))
             item.setData(1, Qt.UserRole, 'results')
-            item.setFont(0, QFont('Helvetica', 10, QFont.Bold))
+            item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
             parent.addChild(item)
 
             item = parent
@@ -512,7 +514,7 @@ class Treedatawidget(QTreeWidget):
             item.setIcon(0, QIcon(':/OpenIMU/icons/recordset.png'))
             item.setData(0, Qt.UserRole, recordset.id_recordset)
             item.setData(1, Qt.UserRole, 'recordset')
-            item.setFont(0, QFont('Helvetica', 10, QFont.Bold))
+            item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
 
             part_item = self.items_participants.get(recordset.id_participant,None)
             if part_item is not None:
@@ -536,7 +538,7 @@ class Treedatawidget(QTreeWidget):
             item.setIcon(0, QIcon(':/OpenIMU/icons/result.png'))
             item.setData(0, Qt.UserRole, result.id_processed_data)
             item.setData(1, Qt.UserRole, 'result')
-            item.setFont(0, QFont('Helvetica', 10, QFont.Bold))
+            item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
 
             part_item = self.items_participants.get(result.processed_data_ref[0].recordset.id_participant,None)
             if part_item is not None:
@@ -564,6 +566,10 @@ class Treedatawidget(QTreeWidget):
             return item.data(0, Qt.UserRole)
         else:
             return ""
+
+    @pyqtSlot(str, int)
+    def select_item(self, item_type, item_id):
+        print ("Selecting " + item_type + ", ID " + str(item_id))
 
     def clear(self):
 

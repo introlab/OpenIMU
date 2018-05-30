@@ -6,4 +6,7 @@ class DataEditor(QWidget):
     dataSaved = pyqtSignal()
     dataCancelled = pyqtSignal()
 
+
+
+
     data_type = "none"

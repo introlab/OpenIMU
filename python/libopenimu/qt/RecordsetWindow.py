@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QLineEdit, QWidget, QPushButton, QListWidget, QListWidgetItem, QGraphicsScene, \
     QGraphicsRectItem, QGraphicsItem, QGraphicsView, QGraphicsTextItem, QMdiArea, QVBoxLayout, QScrollArea, QApplication
+from PyQt5.QtWidgets import QDialog
 from PyQt5.QtGui import QIcon, QBrush, QPen, QColor, QPixmap
 from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal, QModelIndex, QPoint, QRect, QObject, QDateTime
 
@@ -24,8 +25,9 @@ import numpy as np
 from datetime import datetime, timedelta
 from random import shuffle
 
-
 class RecordsetWindow(QWidget):
+
+    dataDisplayRequest = pyqtSignal(str, int)
 
     # sensorsColor = ['e0c31e', '14148c', '006325', '6400aa', '14aaff', 'ae32a0', '80c342', '868482']
 
@@ -377,7 +379,9 @@ class RecordsetWindow(QWidget):
     def on_process_recordset(self):
         # Display Process Window
         window = ProcessSelectWindow(self.dbMan, self.recordsets)
-        window.exec()
+
+        if window.exec() == QDialog.Accepted:
+            self.dataDisplayRequest.emit("result", window.id_result)
 
 """
     def tile_graphs_horizontally(self):
