@@ -24,7 +24,7 @@ class Sensor(Base):
     # Which sensor type
     # TODO USEFUL?
     # sensor_type = relationship("SensorType")
-    channels = relationship("Channel")
+    channels = relationship("Channel", cascade = "all,delete-orphan")
 
     # def __eq__(self, other):
     #    return self.id_sensor == other.id_sensor and self.id_sensor_type == other.id_sensor_type and \

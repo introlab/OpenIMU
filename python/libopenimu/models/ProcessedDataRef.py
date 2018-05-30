@@ -12,7 +12,7 @@ class ProcessedDataRef(Base):
     id_subrecord = Column(Integer, ForeignKey("tabSubrecords.id_subrecord", ondelete="CASCADE"), nullable=True)
 
     # Relationships
-    processed_data = relationship("ProcessedData")
+    processed_data = relationship("ProcessedData",cascade = "all,delete")
     recordset = relationship("Recordset")
     subrecord = relationship("Subrecord")
 

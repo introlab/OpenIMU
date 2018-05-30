@@ -24,7 +24,7 @@ class Recordset(Base):
     end_timestamp = Column(TIMESTAMP, nullable=False)
 
     # Relationships
-    participant = relationship("Participant", cascade="all,delete")
+    participant = relationship("Participant")
 
     # Database rep (optional)
     def __repr__(self):

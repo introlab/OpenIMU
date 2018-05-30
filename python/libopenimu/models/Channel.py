@@ -19,7 +19,7 @@ class Channel(Base):
     label = Column(String, nullable=False)
 
     # Relationships
-    sensor = relationship("Sensor")
+    sensor = relationship("Sensor", cascade = "all,delete")
 
     # Database rep (optional)
     def __repr__(self):

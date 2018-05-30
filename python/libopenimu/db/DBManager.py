@@ -211,6 +211,7 @@ class DBManager:
         return query.first()
 
     def delete_recordset(self, recordset):
+        id = recordset.id_recordset
         try:
             self.session.delete(recordset)
             self.commit()
@@ -218,6 +219,11 @@ class DBManager:
             message = 'Error deleting recordset' + ': ' + str(e)
             print('Error: ', message)
             raise
+
+        # Check if we have orphan sensors definition and, if so, delete them
+        """query = self.session.query(Sensor).join(SensorData).filter(SensorData.id_recordset == id)
+        if len(query.all()) == 0:
+            print ("READY TO DELETE SENSORS!")"""
 
     def get_all_recordsets(self, participant=Participant()):
 

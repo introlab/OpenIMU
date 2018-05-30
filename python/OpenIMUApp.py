@@ -332,23 +332,31 @@ class MainWindow(QMainWindow):
             item_name = self.UI.treeDataSet.currentItem().text(0)
             if item_type == "group":
                 group = self.UI.treeDataSet.groups[item_id]
-                self.dbMan.delete_group(group)
                 self.UI.treeDataSet.remove_group(group)
+                self.dbMan.delete_group(group)
 
             if item_type == "participant":
                 part = self.UI.treeDataSet.participants[item_id]
-                self.dbMan.delete_participant(part)
                 self.UI.treeDataSet.remove_participant(part)
+                self.dbMan.delete_participant(part)
 
             if item_type == "recordset":
+                # Find and remove all related results
+                for result in self.UI.treeDataSet.results.values():
+                    for ref in result.processed_data_ref:
+                        if ref.recordset.id_recordset == item_id:
+                            self.UI.treeDataSet.remove_result(result)
+                            self.dbMan.delete_processed_data(result)
+                            break
+
                 recordset = self.UI.treeDataSet.recordsets[item_id]
                 self.dbMan.delete_recordset(recordset)
                 self.UI.treeDataSet.remove_recordset(recordset)
 
             if item_type == "result":
                 result = self.UI.treeDataSet.results[item_id]
-                self.dbMan.delete_processed_data(result)
                 self.UI.treeDataSet.remove_result(result)
+                self.dbMan.delete_processed_data(result)
 
             self.add_to_log(item_name + " a été supprimé.", LogTypes.LOGTYPE_DONE)
             self.clear_main_widgets()
@@ -394,6 +402,12 @@ class Treedatawidget(QTreeWidget):
 
     def remove_group(self,group):
         item = self.items_groups.get(group.id_group, None)
+        # Remove all participants items in that group
+        for i in range(0, item.childCount()):
+            child = item.child(i)
+            child_id = self.get_item_id(child)
+            self.remove_participant(self.participants[child_id])
+
         for i in range(0, self.topLevelItemCount()):
             if self.topLevelItem(i) == item:
                 self.takeTopLevelItem(i)
@@ -403,6 +417,18 @@ class Treedatawidget(QTreeWidget):
 
     def remove_participant(self,participant):
         item = self.items_participants.get(participant.id_participant, None)
+
+        # Remove all recordsets and results items from participant
+        for i in range(0, item.childCount()):
+            child_type = self.get_item_type(item.child(i))
+            for j in range(0, item.child(i).childCount()):
+                child = item.child(i).child(j)
+                child_id = self.get_item_id(child)
+                if child_type == "recordsets":
+                    self.remove_recordset(self.recordsets[child_id])
+                if child_type == "results":
+                    self.remove_result(self.results[child_id])
+
         if participant.id_group is None: # Participant without a group
             for i in range(0, self.topLevelItemCount()):
                 if self.topLevelItem(i) == item:
@@ -426,6 +452,7 @@ class Treedatawidget(QTreeWidget):
 
         self.recordsets[recordset.id_recordset] = None
         self.items_recordsets[recordset.id_recordset] = None
+
 
     def remove_result(self, result):
         item = self.items_results.get(result.id_processed_data, None)
@@ -550,7 +577,10 @@ class Treedatawidget(QTreeWidget):
             item.setData(1, Qt.UserRole, 'result')
             item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
 
-            part_item = self.items_participants.get(result.processed_data_ref[0].recordset.id_participant,None)
+            part_item = None
+            if len(result.processed_data_ref)>0:
+                part_item = self.items_participants.get(result.processed_data_ref[0].recordset.id_participant,None)
+
             if part_item is not None:
                 # TODO: subrecords...
                 for i in range(0, part_item.childCount()):
