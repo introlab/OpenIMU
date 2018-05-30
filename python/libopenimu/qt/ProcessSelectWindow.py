@@ -7,10 +7,12 @@ from libopenimu.qt.ResultWindow import ResultWindow
 
 from libopenimu.models.ProcessedData import ProcessedData
 from libopenimu.models.Recordset import Recordset
+from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog
 
 
 class ProcessSelectWindow(QDialog):
     id_result = -1
+
     def __init__(self, dataManager : DBManager, recordsets : list, parent=None):
         super(QDialog, self).__init__(parent=parent)
         self.UI = Ui_dlgProcessSelect()
@@ -65,10 +67,46 @@ class ProcessSelectWindow(QDialog):
     def on_process_button_clicked(self):
         print('on_process_button_clicked')
         if self.factory is not None:
+
+            class Processor:
+                def __init__(self, algo, dbmanager, recordsets):
+                    self.algo = algo
+                    self.dbMan = dbmanager
+                    self.recordsets = recordsets
+                    self.results = {}
+
+                def process(self):
+                    print('Processor starting')
+                    self.results = algo.calculate(self.dbMan, self.recordsets)
+                    print('results:', self.results)
+                    print('Processor done!')
+
+                def get_results(self):
+                    print('getting results')
+                    return self.results
+
+
             # For testing, should display a configuration GUI first
             params = {}
             algo = self.factory.create(params)
-            results = algo.calculate(self.dbMan, self.recordsets)
+
+            # Create background process
+            processor = Processor(algo, self.dbMan, self.recordsets)
+            process = BackgroundProcess([processor.process])
+
+            # Create progress dialog
+            dialog = ProgressDialog(1, self)
+            dialog.setWindowTitle('Traitement...')
+
+            process.finished.connect(dialog.accept)
+            process.trigger.connect(dialog.trigger)
+            process.start()
+
+            dialog.exec()
+
+            results = processor.get_results()
+
+            # results = algo.calculate(self.dbMan, self.recordsets)
             print('Algo results', results)
             """window = QMainWindow(self)
             window.setWindowTitle('Results: ' + self.factory.info()['name'])

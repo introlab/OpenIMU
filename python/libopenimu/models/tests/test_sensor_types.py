@@ -35,3 +35,4 @@ class SensorTypeTest(unittest.TestCase):
         self.assertTrue(SensorType.is_valid_type(SensorType.BATTERY), "Battery type invalid")
         self.assertTrue(SensorType.is_valid_type(SensorType.CURRENT), "Current type invalid")
         self.assertTrue(SensorType.is_valid_type(SensorType.BAROMETER), "Barometer type invalid")
+        self.assertTrue(SensorType.is_valid_type(SensorType.TEMPERATURE), "Temperature type invalid")
