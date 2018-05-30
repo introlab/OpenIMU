@@ -381,6 +381,8 @@ class OpenIMUBarGraphView(QChartView):
         self.chart.setAnimationOptions(QChart.SeriesAnimations)
         self.series = QBarSeries(self)
         self.categoryAxis = QBarCategoryAxis(self)
+        self.setMinimumHeight(400)
+        self.setMinimumWidth(400)
 
     def set_title(self, title):
         print('Setting title: ', title)

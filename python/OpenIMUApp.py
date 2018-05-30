@@ -8,6 +8,9 @@ from PyQt5.QtQuickWidgets import QQuickWidget
 from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal
 from libopenimu.qt.Charts import IMUChartView
 
+from libopenimu.models.ProcessedData import ProcessedData
+from libopenimu.models.Base import Base
+
 import numpy as np
 import libopenimu.jupyter.Jupyter as Jupyter
 
@@ -65,6 +68,7 @@ class MainWindow(QMainWindow):
         if startWindow.exec() == QDialog.Rejected:
             # User closed the dialog - exits!
             exit(0)
+            return
 
         # Init database manager
         self.currentFileName = startWindow.fileName
@@ -81,6 +85,7 @@ class MainWindow(QMainWindow):
         self.currentDataSet = self.dbMan.get_dataset()
         self.load_data_from_dataset()
         self.UI.treeDataSet.setCurrentItem(None)
+        self.UI.treeDataSet.owner = self
 
         # self.loadDemoData()
         self.add_to_log("Données chargées!", LogTypes.LOGTYPE_DONE)
@@ -117,6 +122,11 @@ class MainWindow(QMainWindow):
         for recordset in recordsets:
             self.UI.treeDataSet.update_recordset(recordset)
 
+        # Results
+        results = self.dbMan.get_all_processed_data()
+        for result in results:
+            self.UI.treeDataSet.update_result(result)
+
 
     """def create_subrecord_item(self, name, id):
         item = QTreeWidgetItem()
@@ -136,15 +146,7 @@ class MainWindow(QMainWindow):
         item.setFont(0, QFont('Helvetica', 12))
         return item
 
-    def create_result_item(self, name, id):
-        item = QTreeWidgetItem()
-        item.setText(0, name)
-        item.setIcon(0, QIcon(':/OpenIMU/icons/result.png'))
-        item.setData(0, Qt.UserRole, id)
-        item.setData(1, Qt.UserRole, 'result')
-        item.setFont(0, QFont('Helvetica', 12))
-        return item
-"""
+  """
     def update_group(self, group):
         item = self.UI.treeDataSet.update_group(group)
         self.UI.treeDataSet.setCurrentItem(item)
@@ -273,10 +275,13 @@ class MainWindow(QMainWindow):
 
             recordsWidget = RecordsetWindow(manager=self.dbMan, recordset=records)
             self.UI.frmMain.layout().addWidget(recordsWidget)
+            recordsWidget.dataDisplayRequest.connect(self.UI.treeDataSet.select_item)
+            recordsWidget.dataUpdateRequest.connect(self.UI.treeDataSet.update_item)
 
         if item_type == "result":
-            resultWidget = ResultWindow()
+            resultWidget = ResultWindow(manager=self.dbMan, results=self.UI.treeDataSet.results[item_id])
             self.UI.frmMain.layout().addWidget(resultWidget)
+
 
         self.UI.frmMain.update()
 
@@ -318,7 +323,7 @@ class MainWindow(QMainWindow):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Question)
 
-        msg.setText("Désirez-vous vraiment supprimer " + self.UI.treeDataSet.currentItem().text(0) + " et tous les éléments associés?")
+        msg.setText("Désirez-vous vraiment supprimer \"" + self.UI.treeDataSet.currentItem().text(0) + "\" et tous les éléments associés?")
         msg.setWindowTitle("Confirmation de suppression")
         msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
 
@@ -327,31 +332,47 @@ class MainWindow(QMainWindow):
             item_name = self.UI.treeDataSet.currentItem().text(0)
             if item_type == "group":
                 group = self.UI.treeDataSet.groups[item_id]
-                self.dbMan.delete_group(group)
                 self.UI.treeDataSet.remove_group(group)
+                self.dbMan.delete_group(group)
 
             if item_type == "participant":
                 part = self.UI.treeDataSet.participants[item_id]
-                self.dbMan.delete_participant(part)
                 self.UI.treeDataSet.remove_participant(part)
+                self.dbMan.delete_participant(part)
 
             if item_type == "recordset":
+                # Find and remove all related results
+                for result in self.UI.treeDataSet.results.values():
+                    for ref in result.processed_data_ref:
+                        if ref.recordset.id_recordset == item_id:
+                            self.UI.treeDataSet.remove_result(result)
+                            self.dbMan.delete_processed_data(result)
+                            break
+
                 recordset = self.UI.treeDataSet.recordsets[item_id]
                 self.dbMan.delete_recordset(recordset)
                 self.UI.treeDataSet.remove_recordset(recordset)
+
+            if item_type == "result":
+                result = self.UI.treeDataSet.results[item_id]
+                self.UI.treeDataSet.remove_result(result)
+                self.dbMan.delete_processed_data(result)
 
             self.add_to_log(item_name + " a été supprimé.", LogTypes.LOGTYPE_DONE)
             self.clear_main_widgets()
 
     def closeEvent(self, event):
-        print('closeEvent')
+        pass
+        # print('closeEvent')
+
         """self.jupyter.stop()
         del self.jupyter
         self.jupyter = None
         """
 
     def __del__(self):
-        print('Done!')
+        # print('Done!')
+        pass
 
     def create_chart_view(self, test_data=False):
         chart_view = IMUChartView(self)
@@ -365,18 +386,28 @@ class Treedatawidget(QTreeWidget):
     groups = {}
     participants = {}
     recordsets = {}
+    results = {}
 
     items_groups = {}
     items_participants = {}
     items_recordsets = {}
+    items_results = {}
 
     participantDragged = pyqtSignal(Participant)
+
+    owner = None
 
     def __init__(self, parent=None):
         super(QTreeWidget, self).__init__(parent=parent)
 
     def remove_group(self,group):
         item = self.items_groups.get(group.id_group, None)
+        # Remove all participants items in that group
+        for i in range(0, item.childCount()):
+            child = item.child(i)
+            child_id = self.get_item_id(child)
+            self.remove_participant(self.participants[child_id])
+
         for i in range(0, self.topLevelItemCount()):
             if self.topLevelItem(i) == item:
                 self.takeTopLevelItem(i)
@@ -386,6 +417,18 @@ class Treedatawidget(QTreeWidget):
 
     def remove_participant(self,participant):
         item = self.items_participants.get(participant.id_participant, None)
+
+        # Remove all recordsets and results items from participant
+        for i in range(0, item.childCount()):
+            child_type = self.get_item_type(item.child(i))
+            for j in range(0, item.child(i).childCount()):
+                child = item.child(i).child(j)
+                child_id = self.get_item_id(child)
+                if child_type == "recordsets":
+                    self.remove_recordset(self.recordsets[child_id])
+                if child_type == "results":
+                    self.remove_result(self.results[child_id])
+
         if participant.id_group is None: # Participant without a group
             for i in range(0, self.topLevelItemCount()):
                 if self.topLevelItem(i) == item:
@@ -410,6 +453,17 @@ class Treedatawidget(QTreeWidget):
         self.recordsets[recordset.id_recordset] = None
         self.items_recordsets[recordset.id_recordset] = None
 
+
+    def remove_result(self, result):
+        item = self.items_results.get(result.id_processed_data, None)
+        for i in range(0, item.parent().childCount()):
+            if item.parent().child(i) == item:
+                item.parent().takeChild(i)
+                break
+
+        self.results[result.id_processed_data] = None
+        self.items_results[result.id_processed_data] = None
+
     def update_group(self, group):
         item = self.items_groups.get(group.id_group, None)
         if item is None:
@@ -418,7 +472,7 @@ class Treedatawidget(QTreeWidget):
             item.setIcon(0, QIcon(':/OpenIMU/icons/group.png'))
             item.setData(0, Qt.UserRole, group.id_group)
             item.setData(1, Qt.UserRole, 'group')
-            item.setFont(0, QFont('Helvetica', 10, QFont.Bold))
+            item.setFont(0, QFont('Helvetica', 12, QFont.Bold))
 
             self.addTopLevelItem(item)
             self.groups[group.id_group] = group
@@ -437,7 +491,7 @@ class Treedatawidget(QTreeWidget):
             item.setIcon(0, QIcon(':/OpenIMU/icons/participant.png'))
             item.setData(0, Qt.UserRole, part.id_participant)
             item.setData(1, Qt.UserRole, 'participant')
-            item.setFont(0, QFont('Helvetica', 9, QFont.Bold))
+            item.setFont(0, QFont('Helvetica', 12, QFont.Bold))
 
             if group_item is None: #Participant without a group
                 self.addTopLevelItem(item)
@@ -450,7 +504,7 @@ class Treedatawidget(QTreeWidget):
             item.setText(0, 'Enregistrements')
             item.setIcon(0, QIcon(':/OpenIMU/icons/records.png'))
             item.setData(1, Qt.UserRole, 'recordsets')
-            item.setFont(0, QFont('Helvetica', 8, QFont.Bold))
+            item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
             parent.addChild(item)
 
             # Results
@@ -458,7 +512,7 @@ class Treedatawidget(QTreeWidget):
             item.setText(0, 'Résultats')
             item.setIcon(0, QIcon(':/OpenIMU/icons/results.png'))
             item.setData(1, Qt.UserRole, 'results')
-            item.setFont(0, QFont('Helvetica', 8, QFont.Bold))
+            item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
             parent.addChild(item)
 
             item = parent
@@ -497,7 +551,7 @@ class Treedatawidget(QTreeWidget):
             item.setIcon(0, QIcon(':/OpenIMU/icons/recordset.png'))
             item.setData(0, Qt.UserRole, recordset.id_recordset)
             item.setData(1, Qt.UserRole, 'recordset')
-            item.setFont(0, QFont('Helvetica', 9, QFont.Bold))
+            item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
 
             part_item = self.items_participants.get(recordset.id_participant,None)
             if part_item is not None:
@@ -513,6 +567,33 @@ class Treedatawidget(QTreeWidget):
 
         return item
 
+    def update_result(self, result: ProcessedData):
+        item = self.items_results.get(result.id_processed_data, None)
+        if item is None:
+            item = QTreeWidgetItem()
+            item.setText(0, result.name)
+            item.setIcon(0, QIcon(':/OpenIMU/icons/result.png'))
+            item.setData(0, Qt.UserRole, result.id_processed_data)
+            item.setData(1, Qt.UserRole, 'result')
+            item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
+
+            part_item = None
+            if len(result.processed_data_ref)>0:
+                part_item = self.items_participants.get(result.processed_data_ref[0].recordset.id_participant,None)
+
+            if part_item is not None:
+                # TODO: subrecords...
+                for i in range(0, part_item.childCount()):
+                    if self.get_item_type(part_item.child(i)) == "results":
+                        part_item.child(i).addChild(item)
+
+        else:
+            item.setText(0, result.name)
+
+        self.results[result.id_processed_data] = result
+        self.items_results[result.id_processed_data] = item
+
+        return item
 
     def get_item_type(self,item):
         if item is not None:
@@ -526,15 +607,55 @@ class Treedatawidget(QTreeWidget):
         else:
             return ""
 
+    @pyqtSlot(str, int)
+    def select_item(self, item_type, item_id):
+        #print ("Selecting " + item_type + ", ID " + str(item_id))
+        item = None
+        if item_type == "group":
+            item = self.items_groups.get(item_id, None)
+
+        if item_type == "participant":
+            item = self.items_participants.get(item_id, None)
+
+        if item_type == "recordset":
+            item = self.items_recordsets.get(item_id, None)
+
+        if item_type == "result":
+            item = self.items_results.get(item_id, None)
+
+        if item is not None:
+            self.setCurrentItem(item)
+            self.owner.tree_item_clicked(item, 0)
+
+    @pyqtSlot(str, Base)
+    def update_item(self, item_type, data):
+        # print ("Selecting " + item_type + ", ID " + str(item_id))
+        item = None
+        if item_type == "group":
+            self.update_group(data)
+
+        if item_type == "participant":
+            self.update_participant(data)
+
+        if item_type == "recordset":
+            self.update_recordset(data)
+
+        if item_type == "result":
+            self.update_result(data)
+
+
+
     def clear(self):
 
         self.groups = {}
         self.participants = {}
         self.recordsets = {}
+        self.results = {}
 
         self.items_groups = {}
         self.items_participants = {}
         self.items_recordsets = {}
+        self.items_results = {}
 
         super().clear()
 

@@ -14,6 +14,7 @@ if(WIN32)
     set(PYQT5_UIC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyuic5.exe)
     #PyQt5 Ressources compiler
     set(PYQT5_RCC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyrcc5.exe)
+    set(APP_ICON ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/OpenIMU.ico)
 
 else(WIN32)
     set(PYTHON_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/python)
@@ -23,6 +24,7 @@ else(WIN32)
     set(PYQT5_UIC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pyuic5)
     #PyQt5 Ressources compiler
     set(PYQT5_RCC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pyrcc5)
+    set(APP_ICON ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/OpenIMU.icns)
 endif(WIN32)
 
 find_package(Qt5Core REQUIRED)
@@ -111,7 +113,7 @@ set (installer_args
     # --clean
     -y
     --windowed
-    #--icon
+    --icon ${APP_ICON}
 )
 
 add_custom_target(python_package

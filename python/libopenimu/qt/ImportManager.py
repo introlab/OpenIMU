@@ -53,19 +53,19 @@ class ImportManager(QDialog):
 
     def validate(self):
         rval = True
-        if self.UI.txtFileName.text()=='':
+        if self.UI.txtFileName.text() == '':
             self.UI.txtFileName.setStyleSheet('background-color: #ffcccc;')
             rval = False
         else:
             self.UI.txtFileName.setStyleSheet('')
 
-        if (self.UI.cmbFileType.currentText()==''):
+        if self.UI.cmbFileType.currentText() == '':
             self.UI.cmbFileType.setStyleSheet('background-color: #ffcccc;')
             rval = False
         else:
             self.UI.cmbFileType.setStyleSheet('')
 
-        if (self.UI.cmbParticipant.currentText()==''):
+        if self.UI.cmbParticipant.currentText() == '':
             self.UI.cmbParticipant.setStyleSheet('background-color: #ffcccc;')
             rval = False
         else:
@@ -75,8 +75,8 @@ class ImportManager(QDialog):
 
     @pyqtSlot()
     def ok_clicked(self):
-        #Validate items
-        if (self.validate()):
+        # Validate items
+        if self.validate():
             self.filename = self.UI.txtFileName.text()
             self.filetype = self.UI.cmbFileType.currentText()
             self.filetype_id = self.UI.cmbFileType.currentData()
@@ -110,7 +110,6 @@ class ImportManager(QDialog):
     @pyqtSlot()
     def participant_cancelled(self):
         self.part_diag.reject()
-
 
     @pyqtSlot()
     def participant_saved(self):

@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QLineEdit, QWidget, QPushButton, QListWidget, QListWidgetItem, QGraphicsScene, \
     QGraphicsRectItem, QGraphicsItem, QGraphicsView, QGraphicsTextItem, QMdiArea, QVBoxLayout, QScrollArea, QApplication
+from PyQt5.QtWidgets import QDialog
 from PyQt5.QtGui import QIcon, QBrush, QPen, QColor, QPixmap
 from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal, QModelIndex, QPoint, QRect, QObject, QDateTime
 
@@ -11,11 +12,13 @@ from libopenimu.db.DBManager import DBManager
 from libopenimu.qt.TimeView import TimeView
 
 from libopenimu.models.sensor_types import SensorType
+from libopenimu.models.Base import Base
 from libopenimu.importers.wimu import GPSGeodetic
 
 from libopenimu.qt.Charts import IMUChartView
 from libopenimu.qt.GPSView import GPSView
 from libopenimu.qt.ProcessSelectWindow import ProcessSelectWindow
+
 
 from libopenimu.tools.timing import timing
 import os
@@ -24,12 +27,14 @@ import numpy as np
 from datetime import datetime, timedelta
 from random import shuffle
 
-
 class RecordsetWindow(QWidget):
+
+    dataDisplayRequest = pyqtSignal(str, int)
+    dataUpdateRequest = pyqtSignal(str, Base)
 
     # sensorsColor = ['e0c31e', '14148c', '006325', '6400aa', '14aaff', 'ae32a0', '80c342', '868482']
 
-    def __init__(self, manager, recordset, parent=None):
+    def __init__(self, manager, recordset : list, parent=None):
         super(QWidget, self).__init__(parent=parent)
         self.UI = Ui_frmRecordsets()
         self.UI.setupUi(self)
@@ -376,8 +381,11 @@ class RecordsetWindow(QWidget):
     @pyqtSlot()
     def on_process_recordset(self):
         # Display Process Window
-        window = ProcessSelectWindow(self.dbMan, [self.recordsets])
-        window.exec()
+        window = ProcessSelectWindow(self.dbMan, self.recordsets)
+
+        if window.exec() == QDialog.Accepted:
+            self.dataUpdateRequest.emit("result", window.processed_data)
+            self.dataDisplayRequest.emit("result", window.processed_data.id_processed_data)
 
 """
     def tile_graphs_horizontally(self):

@@ -16,6 +16,8 @@ import os
 import datetime
 import numpy as np
 
+import pickle
+
 # Basic definitions
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.data_formats import DataFormat
@@ -30,6 +32,8 @@ from libopenimu.models.Recordset import Recordset
 from libopenimu.models.Channel import Channel
 from libopenimu.models.SensorData import SensorData
 from libopenimu.models.DataSet import DataSet
+from libopenimu.models.ProcessedData import ProcessedData
+from libopenimu.models.ProcessedDataRef import ProcessedDataRef
 
 """
 TODO This might be optimized?
@@ -51,7 +55,7 @@ class DBManager:
         print('Using sqlalchemy version: ', sqlalchemy.__version__)
 
         # Create engine (sqlite), echo will output logging information
-        self.engine = create_engine('sqlite:///' + filename, echo=echo)
+        self.engine = create_engine('sqlite:///' + filename + '?check_same_thread=False', echo=echo)
 
         # Will create all tables
         Base.metadata.create_all(self.engine)
@@ -61,6 +65,7 @@ class DBManager:
 
         # Session instance
         self.session = self.SessionMaker()
+
 
     @event.listens_for(Engine, "connect")
     def set_sqlite_pragma(dbapi_connection, connection_record):
@@ -206,6 +211,7 @@ class DBManager:
         return query.first()
 
     def delete_recordset(self, recordset):
+        id = recordset.id_recordset
         try:
             self.session.delete(recordset)
             self.commit()
@@ -213,6 +219,11 @@ class DBManager:
             message = 'Error deleting recordset' + ': ' + str(e)
             print('Error: ', message)
             raise
+
+        # Check if we have orphan sensors definition and, if so, delete them
+        """query = self.session.query(Sensor).join(SensorData).filter(SensorData.id_recordset == id)
+        if len(query.all()) == 0:
+            print ("READY TO DELETE SENSORS!")"""
 
     def get_all_recordsets(self, participant=Participant()):
 
@@ -347,6 +358,51 @@ class DBManager:
         query = self.session.query(DataSet)
         return query.first()
 
+    #####################
+    def add_processed_data(self, data_processor_id: int, name: str, results, recordsets):
+        # Add results
+        data = ProcessedData()
+        data.id_data_processor = data_processor_id
+        data.data = pickle.dumps(results)
+        data.name = name
+        data.processed_time = datetime.datetime.now()
+
+        self.session.add(data)
+        self.commit()
+
+        # Add references
+        for record in recordsets:
+            ref = ProcessedDataRef()
+            ref.id_processed_data = data.id_processed_data
+            ref.recordset = record
+            self.session.add(ref)
+            self.commit()
+
+        return data
+
+    def get_all_processed_data(self, participant=Participant()):
+
+        datas = None
+        if participant.id_participant is None:
+            query = self.session.query(ProcessedData)
+            datas = query.all()
+        else:
+            query = self.session.query(ProcessedData).filter(ProcessedData.processed_data_ref.recordset.participant.id_participant == participant.id_participant)
+            #print(query)
+            datas = query.all()
+
+        return datas
+
+    def delete_processed_data(self, result):
+        try:
+            self.session.delete(result)
+            self.commit()
+        except Exception as e:
+            message = 'Error deleting processed data' + ': ' + str(e)
+            print('Error: ', message)
+            raise
+
+    #####################
     def export_csv(self, directory):
         print('DBManager, export_csv in :', directory)
 

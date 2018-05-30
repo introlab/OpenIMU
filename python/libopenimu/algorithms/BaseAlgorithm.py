@@ -8,9 +8,13 @@
 
 from abc import abstractmethod
 from libopenimu.models.Recordset import Recordset
+from libopenimu.db.DBManager import DBManager
+
+from PyQt5.QtWidgets import QWidget
+
 
 class BaseAlgorithm:
-    def __init__(self, params):
+    def __init__(self, params: dict):
         self.configure(params)
 
     @abstractmethod
@@ -18,7 +22,7 @@ class BaseAlgorithm:
         pass
 
     @abstractmethod
-    def calculate(self, recordsets : list):
+    def calculate(self, manager: DBManager, recordsets : list):
         pass
 
 
@@ -43,7 +47,7 @@ class BaseAlgorithmFactory:
         for factory in BaseAlgorithmFactory.factories:
             print('factory name', factory.name())
             print('factory params', factory.params())
-            print('factory description', factory.description())
+            print('factory info', factory.info())
 
     @staticmethod
     def get_factory_named(name):
@@ -52,8 +56,16 @@ class BaseAlgorithmFactory:
                 return factory
         return None
 
+    @staticmethod
+    def get_factory_with_id(id):
+        for factory in BaseAlgorithmFactory.factories:
+            if factory.unique_id() == id:
+                return factory
+        return None
+
     @abstractmethod
     def create(self, params: dict):
+        self.configure(params)
         return None
 
     @abstractmethod
@@ -65,9 +77,27 @@ class BaseAlgorithmFactory:
         pass
 
     @abstractmethod
-    def description(self):
+    def unique_id(self):
+        pass
+
+    @abstractmethod
+    def info(self):
+        '''
+        Should return a dict with
+        'description' : string
+        'author' : string
+        'version' : string
+        'name' : string
+        'reference': string
+        '
+        :return dict:
+        '''
         pass
 
     @abstractmethod
     def required_sensors(self):
         return []
+
+    @abstractmethod
+    def build_display_widget(self, parent_widget:QWidget, results, recordsets):
+        return QWidget()

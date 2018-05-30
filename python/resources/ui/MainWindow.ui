@@ -23,6 +23,12 @@
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QFrame" name="frmMain">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="frameShape">
        <enum>QFrame::Box</enum>
       </property>
@@ -58,12 +64,12 @@
        <property name="minimumSize">
         <size>
          <width>0</width>
-         <height>40</height>
+         <height>44</height>
         </size>
        </property>
        <property name="font">
         <font>
-         <pointsize>9</pointsize>
+         <pointsize>10</pointsize>
         </font>
        </property>
        <property name="cursor">
@@ -407,7 +413,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btnExportCSV">
+      <widget class="QToolButton" name="btnExportCSV">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -440,6 +446,9 @@
          <width>24</width>
          <height>24</height>
         </size>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
        </property>
       </widget>
      </item>
