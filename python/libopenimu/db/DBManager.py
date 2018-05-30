@@ -16,6 +16,8 @@ import os
 import datetime
 import numpy as np
 
+import pickle
+
 # Basic definitions
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.data_formats import DataFormat
@@ -30,6 +32,8 @@ from libopenimu.models.Recordset import Recordset
 from libopenimu.models.Channel import Channel
 from libopenimu.models.SensorData import SensorData
 from libopenimu.models.DataSet import DataSet
+from libopenimu.models.ProcessedData import ProcessedData
+from libopenimu.models.ProcessedDataRef import ProcessedDataRef
 
 """
 TODO This might be optimized?
@@ -347,6 +351,40 @@ class DBManager:
         query = self.session.query(DataSet)
         return query.first()
 
+    #####################
+    def add_processed_data(self, data_processor_id: int, name: str, results, recordsets):
+        # Add results
+        data = ProcessedData()
+        data.id_data_processor = data_processor_id
+        data.data = pickle.dumps(results)
+        data.name = name
+        data.processed_time = datetime.datetime.now()
+
+        self.session.add(data)
+        self.commit()
+
+        # Add references
+        for record in recordsets:
+            ref = ProcessedDataRef()
+            ref.id_processed_data = data.id_processed_data
+            ref.recordset = record
+            self.session.add(ref)
+            self.commit()
+
+        return
+
+    def get_all_processed_data(self, participant=Participant()):
+
+        if participant.id_participant is None:
+            query = self.session.query(ProcessedData)
+            #print (query)
+            return query.all()
+        else:
+            query = self.session.query(ProcessedData).filter(ProcessedData.processed_data_ref.recordset.participant.id_participant == participant.id_participant)
+            print(query)
+            return query.all()
+
+    #####################
     def export_csv(self, directory):
         print('DBManager, export_csv in :', directory)
 

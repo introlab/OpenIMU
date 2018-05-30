@@ -68,6 +68,10 @@ class BaseAlgorithmFactory:
         pass
 
     @abstractmethod
+    def unique_id(self):
+        pass
+
+    @abstractmethod
     def info(self):
         '''
         Should return a dict with

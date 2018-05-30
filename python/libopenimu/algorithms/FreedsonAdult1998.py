@@ -59,23 +59,26 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
     def name(self):
         return 'Freedson Adult 1998'
 
+    def unique_id(self):
+        return 1
+
     def info(self):
 
         my_info = {}
 
         my_info['description'] = """ \
-        It is a uniaxial accelerometer that assesses accelerations ranging from 0.05-2.0 G and is band limited with a
+        It is a uniaxial accelerometer that assesses accelerations ranging from 0.05-2.0 G and is band limited with a 
         frequency response from 0.25-2.5 Hz.
-        
+                
         The acceleration signal is filtered by an analog bandpass filter and digitized by an 8 bit A/D converter at a 
         sampling rate of 10 samples per second.
         
         Each digitized signal is summed over a user specified time interval (epoch), and at the end of each epoch 
         the activity count is stored internally and the accumulator is reset to zero. In the current study, a 60-s
-        epoch was used and activity counts were expressed as the average counts per minute over the 6 min of exercise. 
+         epoch was used and activity counts were expressed as the average counts per minute over the 6 min of exercise. 
         
         
-        Cut points (intensity buckets):
+        Cut points (intensity buckets): 
         * https://actigraph.desk.com/customer/portal/articles/2515802
         
         Counts (accelerator sum over 60 s)
@@ -86,13 +89,14 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
         8 bits = 256 = 2g
         
         epoch = 60 seconds
-                
+                        
         """
         my_info['name'] = self.name()
         my_info['author'] = 'Dominic Létourneau'
         my_info['version'] = '0.1'
         my_info['reference'] = ("Freedson PS1, Melanson E, Sirard J., Calibration of the Computer Science and "
                                 "Applications, Inc. accelerometer., Med Sci Sports Exerc. 1998 May;30(5):777-81")
+        my_info['unique_id'] = self.unique_id()
 
         return my_info
 
