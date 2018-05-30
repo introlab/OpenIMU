@@ -115,7 +115,7 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
         #parent_widget.layout().addWidget(scroll)
 
         scroll.setLayout(layout)
-        layout.addWidget(scroll)
+        #layout.addWidget(scroll)
         view = OpenIMUBarGraphView(scroll)
         view.set_title('Active minutes')
         layout.addWidget(view)

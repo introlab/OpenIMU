@@ -273,10 +273,12 @@ class MainWindow(QMainWindow):
 
             recordsWidget = RecordsetWindow(manager=self.dbMan, recordset=records)
             self.UI.frmMain.layout().addWidget(recordsWidget)
+            recordsWidget.dataDisplayRequest.connect(self.UI.treeDataSet.select_item)
 
         if item_type == "result":
             resultWidget = ResultWindow(manager=self.dbMan, results=self.UI.treeDataSet.results[item_id])
             self.UI.frmMain.layout().addWidget(resultWidget)
+
 
         self.UI.frmMain.update()
 
@@ -564,6 +566,10 @@ class Treedatawidget(QTreeWidget):
             return item.data(0, Qt.UserRole)
         else:
             return ""
+
+    @pyqtSlot(str, int)
+    def select_item(self, item_type, item_id):
+        print ("Selecting " + item_type + ", ID " + str(item_id))
 
     def clear(self):
 

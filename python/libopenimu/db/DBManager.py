@@ -372,7 +372,7 @@ class DBManager:
             self.session.add(ref)
             self.commit()
 
-        return
+        return data
 
     def get_all_processed_data(self, participant=Participant()):
 
