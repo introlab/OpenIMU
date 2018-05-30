@@ -10,7 +10,7 @@ from libopenimu.models.Recordset import Recordset
 
 
 class ProcessSelectWindow(QDialog):
-    id_result = -1
+    processed_data = None
     def __init__(self, dataManager : DBManager, recordsets : list, parent=None):
         super(QDialog, self).__init__(parent=parent)
         self.UI = Ui_dlgProcessSelect()
@@ -83,8 +83,7 @@ class ProcessSelectWindow(QDialog):
             if len(self.recordsets) > 1:
                 name += " @ " + self.recordsets[len(self.recordsets) - 1].name
 
-            added = self.dbMan.add_processed_data(self.factory.info()['unique_id'], name, results, self.recordsets)
-            self.id_result = added.id_processed_data
+            self.processed_data = self.dbMan.add_processed_data(self.factory.info()['unique_id'], name, results, self.recordsets)
 
             self.accept()
 

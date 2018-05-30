@@ -36,9 +36,9 @@ class SensorData(Base):
     data = Column(BLOB, nullable=False)
 
     # Relationships
-    recordset = relationship("Recordset")
-    sensor = relationship("Sensor", cascade="delete")
-    channel = relationship("Channel", cascade="delete")
+    recordset = relationship("Recordset", cascade="all,delete")
+    sensor = relationship("Sensor", cascade="all,delete")
+    channel = relationship("Channel", cascade="all,delete")
 
     def to_ndarray(self):
         if type(self.data) is bytes:

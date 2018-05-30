@@ -12,11 +12,13 @@ from libopenimu.db.DBManager import DBManager
 from libopenimu.qt.TimeView import TimeView
 
 from libopenimu.models.sensor_types import SensorType
+from libopenimu.models.Base import Base
 from libopenimu.importers.wimu import GPSGeodetic
 
 from libopenimu.qt.Charts import IMUChartView
 from libopenimu.qt.GPSView import GPSView
 from libopenimu.qt.ProcessSelectWindow import ProcessSelectWindow
+
 
 from libopenimu.tools.timing import timing
 import os
@@ -28,6 +30,7 @@ from random import shuffle
 class RecordsetWindow(QWidget):
 
     dataDisplayRequest = pyqtSignal(str, int)
+    dataUpdateRequest = pyqtSignal(str, Base)
 
     # sensorsColor = ['e0c31e', '14148c', '006325', '6400aa', '14aaff', 'ae32a0', '80c342', '868482']
 
@@ -381,7 +384,8 @@ class RecordsetWindow(QWidget):
         window = ProcessSelectWindow(self.dbMan, self.recordsets)
 
         if window.exec() == QDialog.Accepted:
-            self.dataDisplayRequest.emit("result", window.id_result)
+            self.dataUpdateRequest.emit("result", window.processed_data)
+            self.dataDisplayRequest.emit("result", window.processed_data.id_processed_data)
 
 """
     def tile_graphs_horizontally(self):

@@ -9,6 +9,7 @@ from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal
 from libopenimu.qt.Charts import IMUChartView
 
 from libopenimu.models.ProcessedData import ProcessedData
+from libopenimu.models.Base import Base
 
 import numpy as np
 import libopenimu.jupyter.Jupyter as Jupyter
@@ -84,6 +85,7 @@ class MainWindow(QMainWindow):
         self.currentDataSet = self.dbMan.get_dataset()
         self.load_data_from_dataset()
         self.UI.treeDataSet.setCurrentItem(None)
+        self.UI.treeDataSet.owner = self
 
         # self.loadDemoData()
         self.add_to_log("Données chargées!", LogTypes.LOGTYPE_DONE)
@@ -274,6 +276,7 @@ class MainWindow(QMainWindow):
             recordsWidget = RecordsetWindow(manager=self.dbMan, recordset=records)
             self.UI.frmMain.layout().addWidget(recordsWidget)
             recordsWidget.dataDisplayRequest.connect(self.UI.treeDataSet.select_item)
+            recordsWidget.dataUpdateRequest.connect(self.UI.treeDataSet.update_item)
 
         if item_type == "result":
             resultWidget = ResultWindow(manager=self.dbMan, results=self.UI.treeDataSet.results[item_id])
@@ -320,7 +323,7 @@ class MainWindow(QMainWindow):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Question)
 
-        msg.setText("Désirez-vous vraiment supprimer " + self.UI.treeDataSet.currentItem().text(0) + " et tous les éléments associés?")
+        msg.setText("Désirez-vous vraiment supprimer \"" + self.UI.treeDataSet.currentItem().text(0) + "\" et tous les éléments associés?")
         msg.setWindowTitle("Confirmation de suppression")
         msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
 
@@ -341,6 +344,11 @@ class MainWindow(QMainWindow):
                 recordset = self.UI.treeDataSet.recordsets[item_id]
                 self.dbMan.delete_recordset(recordset)
                 self.UI.treeDataSet.remove_recordset(recordset)
+
+            if item_type == "result":
+                result = self.UI.treeDataSet.results[item_id]
+                self.dbMan.delete_processed_data(result)
+                self.UI.treeDataSet.remove_result(result)
 
             self.add_to_log(item_name + " a été supprimé.", LogTypes.LOGTYPE_DONE)
             self.clear_main_widgets()
@@ -378,6 +386,8 @@ class Treedatawidget(QTreeWidget):
     items_results = {}
 
     participantDragged = pyqtSignal(Participant)
+
+    owner = None
 
     def __init__(self, parent=None):
         super(QTreeWidget, self).__init__(parent=parent)
@@ -424,7 +434,7 @@ class Treedatawidget(QTreeWidget):
                 item.parent().takeChild(i)
                 break
 
-        self.results[result.result.id_processed_data] = None
+        self.results[result.id_processed_data] = None
         self.items_results[result.id_processed_data] = None
 
     def update_group(self, group):
@@ -569,7 +579,41 @@ class Treedatawidget(QTreeWidget):
 
     @pyqtSlot(str, int)
     def select_item(self, item_type, item_id):
-        print ("Selecting " + item_type + ", ID " + str(item_id))
+        #print ("Selecting " + item_type + ", ID " + str(item_id))
+        item = None
+        if item_type == "group":
+            item = self.items_groups.get(item_id, None)
+
+        if item_type == "participant":
+            item = self.items_participants.get(item_id, None)
+
+        if item_type == "recordset":
+            item = self.items_recordsets.get(item_id, None)
+
+        if item_type == "result":
+            item = self.items_results.get(item_id, None)
+
+        if item is not None:
+            self.setCurrentItem(item)
+            self.owner.tree_item_clicked(item, 0)
+
+    @pyqtSlot(str, Base)
+    def update_item(self, item_type, data):
+        # print ("Selecting " + item_type + ", ID " + str(item_id))
+        item = None
+        if item_type == "group":
+            self.update_group(data)
+
+        if item_type == "participant":
+            self.update_participant(data)
+
+        if item_type == "recordset":
+            self.update_recordset(data)
+
+        if item_type == "result":
+            self.update_result(data)
+
+
 
     def clear(self):
 

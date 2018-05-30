@@ -387,6 +387,15 @@ class DBManager:
 
         return datas
 
+    def delete_processed_data(self, result):
+        try:
+            self.session.delete(result)
+            self.commit()
+        except Exception as e:
+            message = 'Error deleting processed data' + ': ' + str(e)
+            print('Error: ', message)
+            raise
+
     #####################
     def export_csv(self, directory):
         print('DBManager, export_csv in :', directory)

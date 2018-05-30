@@ -16,7 +16,7 @@ class ProcessedData(Base):
     # Relationships
     #recordset = relationship("Recordset")
     #subrecord = relationship("Subrecord")
-    processed_data_ref = relationship("ProcessedDataRef", backref="processed_data")
+    processed_data_ref = relationship("ProcessedDataRef",cascade = "all,delete")
 
     # Database rep (optional)
     def __repr__(self):
