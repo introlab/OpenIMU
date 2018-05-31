@@ -281,7 +281,7 @@ class MainWindow(QMainWindow):
                 records = [self.UI.treeDataSet.recordsets[item_id]]
 
             recordsWidget = RecordsetWindow(manager=self.dbMan, recordset=records)
-            recordsWidget.setStyleSheet(self.styleSheet())
+            recordsWidget.setStyleSheet(recordsWidget.styleSheet() + self.styleSheet())
             self.UI.frmMain.layout().addWidget(recordsWidget)
             recordsWidget.dataDisplayRequest.connect(self.UI.treeDataSet.select_item)
             recordsWidget.dataUpdateRequest.connect(self.UI.treeDataSet.update_item)

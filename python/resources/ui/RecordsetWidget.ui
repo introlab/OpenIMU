@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1150</width>
+    <width>1181</width>
     <height>874</height>
    </rect>
   </property>
@@ -16,7 +16,8 @@
   <property name="styleSheet">
    <string notr="true">QLabel#lblCursorTime{color:cyan;}
 
-QWidget#displayContents,QFrame#frmSensors,QScrollArea{background-color:rgba(0,0,0,0%);}</string>
+QWidget#displayContents,QFrame#frmSensors,QScrollArea{background-color:rgba(0,0,0,0%);}
+</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -510,27 +511,36 @@ QWidget#displayContents,QFrame#frmSensors,QScrollArea{background-color:rgba(0,0,
         </item>
         <item>
          <widget class="QScrollArea" name="displayArea">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="horizontalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="sizeAdjustPolicy">
+           <enum>QAbstractScrollArea::AdjustIgnored</enum>
           </property>
           <property name="widgetResizable">
            <bool>true</bool>
           </property>
           <widget class="QWidget" name="displayContents">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>970</width>
-             <height>529</height>
-            </rect>
-           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <property name="spacing">
+             <number>1</number>
+            </property>
+            <property name="sizeConstraint">
+             <enum>QLayout::SetDefaultConstraint</enum>
+            </property>
+           </layout>
           </widget>
          </widget>
         </item>

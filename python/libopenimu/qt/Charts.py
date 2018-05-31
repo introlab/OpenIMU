@@ -27,9 +27,12 @@ class IMUChartView(QChartView):
     def __init__(self, parent=None):
         super(QChartView, self).__init__(parent=parent)
 
-        self.setFixedHeight(400)
-        #self.setMinimumHeight(400)
-        self.setSizePolicy(QSizePolicy.MinimumExpanding,QSizePolicy.Fixed)
+        #self.setFixedHeight(400)
+        self.setMinimumHeight(500)
+        """self.setMaximumHeight(700)
+        self.setFixedHeight(700)
+        self.setMinimumWidth(1500)
+        self.setSizePolicy(QSizePolicy.Fixed,QSizePolicy.Fixed)"""
 
         self.reftime = datetime.datetime.now()
         self.cursor = QGraphicsLineItem()
@@ -85,9 +88,9 @@ class IMUChartView(QChartView):
         self.labelYValue.setMinimumWidth(200)
         self.labelYValue.setMaximumWidth(200)
 
-        if parent is not None:
+        """if parent is not None:
             parent.layout().setMenuBar(newWidget)
-
+"""
         # self.layout()
 
         self.build_style()
@@ -139,7 +142,7 @@ class IMUChartView(QChartView):
 
         if decimate_factor > 1.0:
             decimate_factor = int(np.floor(decimate_factor))
-            print('decimate factor', decimate_factor)
+            #print('decimate factor', decimate_factor)
             # x = decimate(xdata, decimate_factor)
             # y = decimate(ydata, decimate_factor)
             self.decim_factor = decimate_factor
@@ -153,14 +156,14 @@ class IMUChartView(QChartView):
                 if x[i] < x[0]:
                     print('timestamp error', x[i], x[0])
 
-            print('return size', len(x), len(y), 'timestamp', x[0])
+            #print('return size', len(x), len(y), 'timestamp', x[0])
             return x, y
         else:
             return xdata, ydata
 
     @pyqtSlot(float, float)
     def axis_range_changed(self, min, max):
-        print('axis_range_changed', min, max)
+        #print('axis_range_changed', min, max)
         for axis in self.chart.axes():
             axis.applyNiceNumbers()
 

@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QLineEdit, QWidget, QPushButton, QListWidget, QListWidgetItem, QGraphicsScene, \
+from PyQt5.QtWidgets import QLineEdit, QWidget, QPushButton, QListWidget, QListWidgetItem, QGraphicsScene, QLayout, \
     QGraphicsRectItem, QGraphicsItem, QGraphicsView, QGraphicsTextItem, QMdiArea, QVBoxLayout, QScrollArea, QApplication
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtGui import QIcon, QBrush, QPen, QColor, QPixmap
@@ -60,8 +60,10 @@ class RecordsetWindow(QWidget):
         self.UI.graphTimeline.time_clicked.connect(self.timeview_clicked)
 
         # Init graph viewer
-        self.UI.displayContents.setLayout(QVBoxLayout())
-        self.UI.displayContents.setStyleSheet("background-color:rgba(0,0,0,0%);")
+        #layout = QVBoxLayout()
+        #layout.setSizeConstraint(QLayout.SetFixedSize)
+        #self.UI.displayContents.setLayout(layout)
+        #self.UI.displayContents.setMinimumWidth(self.UI.displayArea.width())
 
         # Update general informations about recordsets
         self.update_recordset_infos()
@@ -271,7 +273,7 @@ class RecordsetWindow(QWidget):
                     or sensor.id_sensor_type == SensorType.TEMPERATURE \
                     or sensor.id_sensor_type == SensorType.ORIENTATION:
 
-                graph = IMUChartView()
+                graph = IMUChartView(self.UI.displayContents)
                 # graph.add_test_data()
                 # Add series
                 for series in timeseries:
@@ -300,6 +302,7 @@ class RecordsetWindow(QWidget):
                 # self.UI.mdiArea.addSubWindow(graph).setWindowTitle(item.text())
                 self.sensors_graphs[sensor.id_sensor] = graph
                 self.UI.displayContents.layout().insertWidget(0,graph)
+                #self.UI.displayContents.layout().addWidget(graph)
                 graph.show()
                 QApplication.instance().processEvents()
 
