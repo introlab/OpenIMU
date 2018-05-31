@@ -4,7 +4,7 @@ class ImporterTypes:
     WIMU = 0
     ACTIGRAPH = 1
     OPENIMU = 2
-    CSV = 3
+    APPLEWATCH = 3
 
-    value_types = [WIMU, ACTIGRAPH, OPENIMU]  # , OPENIMU, CSV
-    value_names = ['WIMU', 'Actigraph', 'OpenIMU']  # , 'OpenIMU', 'Text File (CSV)'
+    value_types = [WIMU, ACTIGRAPH, OPENIMU, APPLEWATCH]
+    value_names = ['WIMU', 'Actigraph', 'OpenIMU', 'AppleWatch']
