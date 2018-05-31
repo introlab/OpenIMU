@@ -37,4 +37,4 @@ class AppleWatchImporterTest(unittest.TestCase):
 
         results = importer.load('../../../resources/samples/AppleWatch.zip')
         # print('results', results)
-        # importer.import_to_database(results)
+        importer.import_to_database(results)

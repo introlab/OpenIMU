@@ -42,7 +42,8 @@ class AppleWatchImporter(BaseImporter):
 
     def __init__(self, manager: DBManager, participant: Participant):
         super().__init__(manager, participant)
-        pass
+        # No recordsets when starting
+        self.recordsets = []
 
     def load(self, filename):
         print('AppleWatchImporter.load')
@@ -64,9 +65,12 @@ class AppleWatchImporter(BaseImporter):
             print('zip opened')
             namelist = myzip.namelist()
 
-            print('zip contains : ', namelist)
+            # print('zip contains : ', namelist)
 
+            # TODO
             # First find SETTINGS file
+
+            # Then process data files
             for file in namelist:
                 if '.data' in file:
                     print('Reading file: ', file)
@@ -79,21 +83,150 @@ class AppleWatchImporter(BaseImporter):
                             if not results.__contains__(timestamp):
                                 results[timestamp] = values[timestamp]
                             else:
-                                results[timestamp]['battery'].append(values[timestamp]['battery'])
-                                results[timestamp]['sensoria'].append(values[timestamp]['sensoria'])
-                                results[timestamp]['heartrate'].append(values[timestamp]['heartrate'])
-                                results[timestamp]['motion'].append(values[timestamp]['motion'])
-                                # results[timestamp]['location'].append(values[timestamp]['location'])
-                                results[timestamp]['coordinates'].append(values[timestamp]['coordinates'])
+                                if len(values[timestamp]['battery']) > 0:
+                                    results[timestamp]['battery'] = values[timestamp]['battery']
+
+                                if len(values[timestamp]['sensoria']) > 0:
+                                    results[timestamp]['sensoria'] = values[timestamp]['sensoria']
+
+                                if len(values[timestamp]['heartrate']) > 0:
+                                    results[timestamp]['heartrate'] = values[timestamp]['heartrate']
+
+                                if len(values[timestamp]['motion']) > 0:
+                                    results[timestamp]['motion'] = values[timestamp]['motion']
+
+                                # if len(values[timestamp]['location']) > 0:
+                                #     results[timestamp]['location'] = values[timestamp]['location']
+                                #   pass
+
+                                if len(values[timestamp]['coordinates']) > 0:
+                                    results[timestamp]['coordinates'] = values[timestamp]['coordinates']
                 else:
                     pass
                     # print('Unknown file : ', file)
 
         return results
 
+    def get_recordset(self, timestamp):
+        my_time = datetime.datetime.fromtimestamp(timestamp)
+
+        # Find a record the same day
+        for record in self.recordsets:
+            # Same date return this record
+            if record.start_timestamp.date() == my_time.date():
+                return record
+
+        # Return new record
+        recordset = self.db.add_recordset(self.participant, str(my_time.date()), my_time, my_time)
+        self.recordsets.append(recordset)
+        return recordset
+
+    def import_motion_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
+
+        # print('import_motion_to_database')
+        # print('data', data, len(data))
+
+        values = np.array(data, dtype=np.float32)
+        # print("Values shape: ", values.shape)
+        end_timestamp = timestamp + int(np.floor(len(values) / sample_rate))
+        # print("timestamps, ", timestamp, end_timestamp)
+
+        # Calculate last index to remove extra values
+        real_size = int(np.floor(len(values) / sample_rate) * sample_rate)
+        # print('real size:', real_size)
+
+        # Update end_timestamp if required
+        if end_timestamp > recordset.end_timestamp.timestamp():
+            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
+
+        if real_size > 0:
+            # Acc
+            for i in range(len(channels['acc'])):
+                self.add_sensor_data_to_db(recordset, sensors['acc'], channels['acc'][i],
+                                           datetime.datetime.fromtimestamp(timestamp),
+                                           datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i])
+
+            # Gyro
+            for i in range(len(channels['gyro'])):
+                self.add_sensor_data_to_db(recordset, sensors['gyro'], channels['gyro'][i],
+                                           datetime.datetime.fromtimestamp(timestamp),
+                                           datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i + 6])
+
+        self.db.commit()
+
     def import_to_database(self, result):
         print('AppleWatchImporter.import_to_database')
-        pass
+
+        # Sample rate is hardcoded for now
+        sample_rate = 50
+
+        # Create sensors
+        accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer',
+                                                     'AppleWatch',
+                                                     'Unknown', sample_rate, 1)
+
+        accelerometer_channels = list()
+
+        # Create channels
+        accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
+                                                             DataFormat.FLOAT32, 'Accelerometer_X'))
+
+        accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
+                                                             DataFormat.FLOAT32, 'Accelerometer_Y'))
+
+        accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
+                                                             DataFormat.FLOAT32, 'Accelerometer_Z'))
+
+        # Create sensor
+        gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyro',
+                                            'AppleWatch',
+                                            'Unknown', sample_rate, 1)
+
+        gyro_channels = list()
+
+        # Create channels
+        gyro_channels.append(self.add_channel_to_db(gyro_sensor, Units.DEG_PER_SEC,
+                                                    DataFormat.FLOAT32, 'Gyro_X'))
+
+        gyro_channels.append(self.add_channel_to_db(gyro_sensor, Units.DEG_PER_SEC,
+                                                    DataFormat.FLOAT32, 'Gyro_Y'))
+
+        gyro_channels.append(self.add_channel_to_db(gyro_sensor, Units.DEG_PER_SEC,
+                                                    DataFormat.FLOAT32, 'Gyro_Z'))
+
+        # Create sensor and channels dict
+        sensors = {'acc': accelerometer_sensor, 'gyro': gyro_sensor}
+        channels = {'acc': accelerometer_channels, 'gyro': gyro_channels}
+
+        for timestamp in result:
+
+            # Change recordset each day
+            recordset = self.get_recordset(timestamp)
+
+            if result[timestamp].__contains__('battery'):
+                # print('battery')
+                # self.import_imu_to_database(timestamp, recordset, result[timestamp]['imu'])
+                pass
+            if result[timestamp].__contains__('sensoria'):
+                # print('sensoria')
+                # self.import_power_to_database(timestamp, recordset, result[timestamp]['power'])
+                pass
+            if result[timestamp].__contains__('heartrate'):
+                # print('heartrate')
+                # self.import_gps_to_database(timestamp, recordset, result[timestamp]['gps'])
+                pass
+            if result[timestamp].__contains__('motion'):
+                # print('motion')
+                self.import_motion_to_database(sample_rate, timestamp, recordset, sensors, channels,
+                                               result[timestamp]['motion'])
+                pass
+            if result[timestamp].__contains__('coordinates'):
+                # print('coordinates baro')
+                # self.import_baro_to_database(timestamp, recordset, result[timestamp]['baro'])
+                pass
+
+        # Commit to DB
+        self.db.commit()
 
     def readDataFile(self, file, debug=True):
         '''
@@ -128,10 +261,24 @@ class AppleWatchImporter(BaseImporter):
             print('sensor_id : ', hex(sensor_id))
 
         try:
+
+            last_timestamp = None
+
             while file.readable():
                 # Read timestamp
                 [timestamp_ms] = struct.unpack("<Q", file.read(8))
                 timestamp_sec = int(np.round(timestamp_ms / 1000))
+
+                if sensor_id == self.MOTION_ID:
+                    if last_timestamp is None:
+                        last_timestamp = timestamp_sec
+                    else:
+                        if timestamp_sec < last_timestamp:
+                            print('error backward timestamp')
+                        if timestamp_sec > last_timestamp + 3600:
+                            # print('One hour, changing timestamp')
+                            last_timestamp = timestamp_sec
+
                 if debug:
                     print('TIMESTAMP (MS): ', timestamp_ms)
                     print('time: ',  datetime.datetime.fromtimestamp(timestamp_sec))
@@ -144,7 +291,7 @@ class AppleWatchImporter(BaseImporter):
                     results[timestamp_sec]['sensoria'] = []
                     results[timestamp_sec]['heartrate'] = []
                     results[timestamp_sec]['motion'] = []
-                    # results[timestamp_sec]['location'] = []
+                    results[timestamp_sec]['location'] = []
                     results[timestamp_sec]['beacons'] = []
                     results[timestamp_sec]['coordinates'] = []
 
@@ -166,7 +313,7 @@ class AppleWatchImporter(BaseImporter):
                 elif sensor_id == self.MOTION_ID:
                     # Motion data
                     data =  self.read_motion_data(file.read(52), debug)
-                    results[timestamp_sec]['motion'].append(data)
+                    results[last_timestamp]['motion'].append(data)
 
                 # elif sensor_id == self.LOCATION_ID:
                 #    # Location data

@@ -11,6 +11,7 @@ from libopenimu.importers.importer_types import ImporterTypes
 from libopenimu.importers.WIMUImporter import WIMUImporter
 from libopenimu.importers.ActigraphImporter import ActigraphImporter
 from libopenimu.importers.OpenIMUImporter import OpenIMUImporter
+from libopenimu.importers.AppleWatchImporter import AppleWatchImporter
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog
 
 
@@ -65,6 +66,9 @@ class ImportBrowser(QDialog):
 
             if file_type == ImporterTypes.OPENIMU:
                 data_importer = OpenIMUImporter(manager=self.dbMan, participant=part)
+
+            if file_type == ImporterTypes.APPLEWATCH:
+                data_importer = AppleWatchImporter(manager=self.dbMan, participant=part)
 
             if data_importer is not None:
                 importers.append(Importer(file_name, data_importer))
