@@ -128,7 +128,7 @@ de collecte:</string>
             <string/>
            </property>
            <property name="placeholderText">
-            <string>Fichier qui contiendra les données</string>
+            <string>Fichier .oi qui contiendra les données</string>
            </property>
           </widget>
          </item>
