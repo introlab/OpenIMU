@@ -14,7 +14,7 @@
    <string>Exporter les données en CSV</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QLabel#label_2{color:blue;}</string>
+   <string notr="true">QLabel#label_2{color:yellow;}</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -69,7 +69,7 @@
         <widget class="QPushButton" name="dirButton">
          <property name="minimumSize">
           <size>
-           <width>100</width>
+           <width>125</width>
            <height>40</height>
           </size>
          </property>
@@ -109,6 +109,9 @@
      <property name="text">
       <string>Le contenu entier de la base de données sera exporté.</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
     </widget>
    </item>
    <item>
@@ -133,7 +136,7 @@
       <widget class="QPushButton" name="btnOK">
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>150</width>
          <height>40</height>
         </size>
        </property>
@@ -152,7 +155,7 @@
       <widget class="QPushButton" name="btnCancel">
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>150</width>
          <height>40</height>
         </size>
        </property>

@@ -13,6 +13,9 @@ class ProgressDialog(QProgressDialog):
         self.time = QTime.currentTime()
         self.time.start()
         self.startTimer(1000)
+        self.setCancelButton(None)
+
+        self.setStyleSheet("QProgressDialog{background-image:url(:/OpenIMU/background/dark_metal.jpg); border-radius:0px;}")
 
     @pyqtSlot()
     def trigger(self):

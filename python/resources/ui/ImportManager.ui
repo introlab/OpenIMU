@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>frmImportManager</class>
- <widget class="QDialog" name="frmImportManager">
+ <class>ImportManager</class>
+ <widget class="QDialog" name="ImportManager">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
+    <width>814</width>
     <height>264</height>
    </rect>
   </property>
@@ -51,7 +51,7 @@
         <widget class="QPushButton" name="btnBrowse">
          <property name="minimumSize">
           <size>
-           <width>0</width>
+           <width>150</width>
            <height>40</height>
           </size>
          </property>
@@ -116,7 +116,7 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>0</width>
+           <width>150</width>
            <height>40</height>
           </size>
          </property>
@@ -191,7 +191,7 @@
       <widget class="QPushButton" name="btnImport">
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>150</width>
          <height>40</height>
         </size>
        </property>
@@ -220,7 +220,7 @@
       <widget class="QPushButton" name="btnCancel">
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>150</width>
          <height>40</height>
         </size>
        </property>

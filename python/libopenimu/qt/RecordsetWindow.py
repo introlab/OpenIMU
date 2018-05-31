@@ -39,6 +39,9 @@ class RecordsetWindow(QWidget):
         self.UI = Ui_frmRecordsets()
         self.UI.setupUi(self)
 
+        #TODO
+        self.UI.grpSubRecord.hide()
+
         self.sensors = {}
         self.sensors_items = {}
         self.sensors_graphs = {}
@@ -58,6 +61,7 @@ class RecordsetWindow(QWidget):
 
         # Init graph viewer
         self.UI.displayContents.setLayout(QVBoxLayout())
+        self.UI.displayContents.setStyleSheet("background-color:rgba(0,0,0,0%);")
 
         # Update general informations about recordsets
         self.update_recordset_infos()
@@ -86,7 +90,7 @@ class RecordsetWindow(QWidget):
         # Create sensor colors
         used_colors = []
         # colors = QColor.colorNames()
-        colors = ['darkblue', 'darkcyan', 'darkgoldenrod', 'darkgreen', 'darkgrey', 'darkkhaki', 'darkmagenta',
+        colors = ['darkblue', 'darkcyan', 'darkgreen', 'darkkhaki', 'darkmagenta',
                   'darkolivegreen', 'darkorange', 'darkorchid', 'darkred', 'darksalmon', 'darkseagreen',
                   'darkslateblue', 'darkslategray', 'darkslategrey', 'darkturquoise', 'darkviolet']
 
@@ -110,6 +114,7 @@ class RecordsetWindow(QWidget):
             if len(location_item) == 0:
                 item = QListWidgetItem(sensor.location)
                 item.setFlags(Qt.NoItemFlags)
+                item.setForeground(QBrush(Qt.black))
                 self.UI.lstSensors.addItem(item)
             else:
                 index = self.UI.lstSensors.indexFromItem(location_item[0]).row()
@@ -332,6 +337,7 @@ class RecordsetWindow(QWidget):
 
         pos = self.get_relative_timeview_pos(timestamp)
         self.time_bar.setPos(pos,0)
+        self.UI.lblCursorTime.setText(str(timestamp))
 
     @pyqtSlot(int)
     def timeview_clicked(self, x):
@@ -382,6 +388,7 @@ class RecordsetWindow(QWidget):
     def on_process_recordset(self):
         # Display Process Window
         window = ProcessSelectWindow(self.dbMan, self.recordsets)
+        window.setStyleSheet(self.styleSheet())
 
         if window.exec() == QDialog.Accepted:
             self.dataUpdateRequest.emit("result", window.processed_data)

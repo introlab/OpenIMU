@@ -12,6 +12,9 @@ class ExportWindow(QDialog):
         self.UI.dirButton.clicked.connect(self.directory_selection_clicked)
         self.UI.btnOK.clicked.connect(self.export)
         self.UI.btnCancel.clicked.connect(self.reject)
+        self.UI.lineDir.textChanged.connect(self.directory_changed)
+        self.UI.btnOK.setEnabled(False)
+
         self.dbMan = dataManager
 
 
@@ -25,6 +28,12 @@ class ExportWindow(QDialog):
         if directory:
             self.UI.lineDir.setText(directory)
 
+    @pyqtSlot()
+    def directory_changed(self):
+        if self.UI.lineDir.text() != "":
+            self.UI.btnOK.setEnabled(True)
+        else:
+            self.UI.btnOK.setEnabled(False)
     @pyqtSlot()
     def export(self):
         directory = self.UI.lineDir.text()

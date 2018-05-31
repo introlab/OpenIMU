@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QDialog, QComboBox, QLineEdit, QFileDialog, QHBoxLayout
 from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal
 
-from resources.ui.python.ImportManager_ui import Ui_frmImportManager
+from resources.ui.python.ImportManager_ui import Ui_ImportManager
 
 from libopenimu.importers.importer_types import ImporterTypes
 from libopenimu.db.DBManager import DBManager
@@ -20,7 +20,7 @@ class ImportManager(QDialog):
 
     def __init__(self, dbManager, parent=None):
         super(QDialog, self).__init__(parent=parent)
-        self.UI = Ui_frmImportManager()
+        self.UI = Ui_ImportManager()
         self.UI.setupUi(self)
 
         self.dbMan = dbManager
@@ -97,9 +97,14 @@ class ImportManager(QDialog):
     @pyqtSlot()
     def new_participant_requested(self):
         self.part_diag = QDialog()
+        self.part_diag.setStyleSheet("QDialog{background-image:url(:/OpenIMU/background/dark_metal.jpg);}")
         layout = QHBoxLayout(self.part_diag)
+        self.part_diag.setMinimumWidth(600)
 
         self.part_widget = ParticipantWindow(dbManager=self.dbMan)
+        self.part_widget.setStyleSheet(self.styleSheet())
+
+        #print(self.styleSheet())
         layout.addWidget(self.part_widget )
 
         self.part_widget.dataCancelled.connect(self.participant_cancelled)

@@ -60,10 +60,14 @@ class MainWindow(QMainWindow):
         super(QMainWindow, self).__init__(parent=parent)
         self.UI = Ui_MainWindow()
         self.UI.setupUi(self)
+        self.UI.dockToolBar.setTitleBarWidget(QWidget())
+        self.UI.dockDataset.setTitleBarWidget(QWidget())
+        self.UI.dockLog.hide()
 
         self.add_to_log("OpenIMU - Prêt à travailler.", LogTypes.LOGTYPE_INFO)
 
         startWindow = StartWindow()
+        startWindow.setStyleSheet(self.styleSheet())
 
         if startWindow.exec() == QDialog.Rejected:
             # User closed the dialog - exits!
@@ -206,12 +210,14 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def importRequested(self):
         importer = ImportBrowser(dataManager=self.dbMan)
+        importer.setStyleSheet(self.styleSheet())
         if importer.exec() == QDialog.Accepted:
             self.load_data_from_dataset()
 
     @pyqtSlot()
     def exportCSVRequested(self):
         exporter = ExportWindow(self.dbMan, self)
+        exporter.setStyleSheet(self.styleSheet())
         if exporter.exec() == QDialog.Accepted:
             print("Accepted")
 
@@ -219,6 +225,7 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def infosRequested(self):
         infosWindow = ImportWindow(dataset=self.currentDataSet, filename=self.currentFileName)
+        infosWindow.setStyleSheet(self.styleSheet())
         infosWindow.noImportUI = True
         infosWindow.infosOnly = True
 
@@ -274,6 +281,7 @@ class MainWindow(QMainWindow):
                 records = [self.UI.treeDataSet.recordsets[item_id]]
 
             recordsWidget = RecordsetWindow(manager=self.dbMan, recordset=records)
+            recordsWidget.setStyleSheet(self.styleSheet())
             self.UI.frmMain.layout().addWidget(recordsWidget)
             recordsWidget.dataDisplayRequest.connect(self.UI.treeDataSet.select_item)
             recordsWidget.dataUpdateRequest.connect(self.UI.treeDataSet.update_item)
