@@ -55,6 +55,7 @@ class AppleWatchImporter(BaseImporter):
                 print('Loading File: ', filename)
                 results = self.readDataFile(file)
 
+        print('results len', len(results))
         return results
 
     def load_zip(self, filename):
@@ -71,7 +72,19 @@ class AppleWatchImporter(BaseImporter):
                     print('Reading file: ', file)
                     my_file = myzip.open(file)
                     values = self.readDataFile(my_file, False)
-                    print('values', values)
+
+                    # Add to global results
+                    if values is not None:
+                        for timestamp in values:
+                            if not results.__contains__(timestamp):
+                                results[timestamp] = values[timestamp]
+                            else:
+                                results[timestamp]['battery'].append(values[timestamp]['battery'])
+                                results[timestamp]['sensoria'].append(values[timestamp]['sensoria'])
+                                results[timestamp]['heartrate'].append(values[timestamp]['heartrate'])
+                                results[timestamp]['motion'].append(values[timestamp]['motion'])
+                                # results[timestamp]['location'].append(values[timestamp]['location'])
+                                results[timestamp]['coordinates'].append(values[timestamp]['coordinates'])
                 else:
                     pass
                     # print('Unknown file : ', file)
