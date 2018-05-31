@@ -56,19 +56,19 @@ class ImportWindow(QDialog):
             self.UI.txtFileName.setStyleSheet('background-color: #ffcccc;')
             rval = False
         else:
-            self.UI.txtFileName.setStyleSheet('background-color: white;')
+            self.UI.txtFileName.setStyleSheet('background-color: rgba(226, 226, 226, 90%);')
 
         if self.UI.txtName.text() == '':
             self.UI.txtName.setStyleSheet('background-color: #ffcccc;')
             rval = False
         else:
-            self.UI.txtName.setStyleSheet('background-color: white;')
+            self.UI.txtName.setStyleSheet('background-color: rgba(226, 226, 226, 90%);')
 
         if self.UI.txtAuthor.text() == '':
             self.UI.txtAuthor.setStyleSheet('background-color: #ffcccc;')
             rval = False
         else:
-            self.UI.txtAuthor.setStyleSheet('background-color: white;')
+            self.UI.txtAuthor.setStyleSheet('background-color: rgba(226, 226, 226, 90%);')
 
         return rval
 

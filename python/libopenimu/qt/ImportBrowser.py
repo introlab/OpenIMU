@@ -54,9 +54,9 @@ class ImportBrowser(QDialog):
         importers = []
 
         for i in range(0, table.rowCount()):
-            part = table.item(i, 3).data(Qt.UserRole)
-            file_type = table.item(i, 1).data(Qt.UserRole)
-            file_name = table.item(i, 0).text()
+            part = table.item(i, 1).data(Qt.UserRole)
+            file_type = table.item(i, 2).data(Qt.UserRole)
+            file_name = table.item(i, 3).text()
             data_importer = None
             if file_type == ImporterTypes.ACTIGRAPH:
                 data_importer = ActigraphImporter(manager=self.dbMan, participant=part)
@@ -105,6 +105,7 @@ class ImportBrowser(QDialog):
     @pyqtSlot()
     def add_clicked(self):
         importman = ImportManager(dbManager=self.dbMan)
+        importman.setStyleSheet(self.styleSheet())
 
         if importman.exec() == QDialog.Accepted:
             # Add file to list
@@ -114,21 +115,21 @@ class ImportBrowser(QDialog):
             table.setRowCount(row + 1)
             cell = QTableWidgetItem()
             cell.setText(importman.filename)
-            table.setItem(row, 0, cell)
+            table.setItem(row, 3, cell)
             cell = QTableWidgetItem()
             cell.setText(importman.filetype)
             cell.setData(Qt.UserRole, importman.filetype_id)
-            table.setItem(row, 1, cell)
+            table.setItem(row, 2, cell)
             cell = QTableWidgetItem()
             group = ""
             if importman.participant.group is not None:
                 group = importman.participant.group.name
             cell.setText(group)
-            table.setItem(row, 2, cell)
+            table.setItem(row, 0, cell)
             cell = QTableWidgetItem()
             cell.setText(importman.participant.name)
             cell.setData(Qt.UserRole,importman.participant)
-            table.setItem(row, 3, cell)
+            table.setItem(row, 1, cell)
 
             table.resizeColumnsToContents()
 

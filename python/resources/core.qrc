@@ -18,6 +18,11 @@
         <file>icons/save.png</file>
         <file>icons/cut.png</file>
         <file>icons/start_cut.png</file>
-	<file>html/map.html</file>
+        <file>html/map.html</file>
+        <file>background/dark_metal.jpg</file>
+        <file>background/light_metal.jpg</file>
+        <file>background/gray_texture.jpg</file>
+        <file>background/beton.jpg</file>
+        <file>background/metal-texture.jpg</file>
     </qresource>
 </RCC>
