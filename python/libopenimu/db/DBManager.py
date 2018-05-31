@@ -113,6 +113,9 @@ class DBManager:
             print('Error: ', message)
             raise
 
+        # Check if we have orphan items dandling around
+        self.clean_db()
+
     def get_group(self, id_group):
         query = self.session.query(Group).filter(Group.id_group == id_group)
         # print('first group', query.first())
@@ -167,6 +170,9 @@ class DBManager:
             print('Error: ', message)
             raise
 
+        # Check if we have orphan items dandling around
+        self.clean_db()
+
     #####################
     def add_sensor(self, _id_sensor_type, _name, _hw_name, _location, _sampling_rate, _data_rate):
         # Create object
@@ -220,10 +226,37 @@ class DBManager:
             print('Error: ', message)
             raise
 
-        # Check if we have orphan sensors definition and, if so, delete them
-        """query = self.session.query(Sensor).join(SensorData).filter(SensorData.id_recordset == id)
-        if len(query.all()) == 0:
-            print ("READY TO DELETE SENSORS!")"""
+        # Check if we have orphan items dandling around
+        self.clean_db()
+
+    def delete_orphan_sensors(self):
+        query = self.session.query(Sensor.id_sensor).outerjoin(SensorData).filter(SensorData.id_sensor_data == None)
+        orphan_sensors = query.all()
+        if len(orphan_sensors) > 0:
+            query = self.session.query(Sensor.id_sensor).filter(Sensor.id_sensor.in_(query)).delete(
+                synchronize_session=False)
+            self.commit()
+
+    def delete_orphan_channels(self):
+        query = self.session.query(Channel.id_channel).outerjoin(SensorData).filter(SensorData.id_sensor_data == None)
+        orphan_channels = query.all()
+        if len(orphan_channels) > 0:
+            query = self.session.query(Channel.id_channel).filter(Channel.id_channel.in_(query)).delete(
+                synchronize_session=False)
+            self.commit()
+
+    def delete_orphan_processed_data(self):
+        query = self.session.query(ProcessedData.id_processed_data).outerjoin(ProcessedDataRef).filter(ProcessedDataRef.id_processed_data_ref == None)
+        orphan = query.all()
+        if len(orphan) > 0:
+            query = self.session.query(ProcessedData.id_processed_data).filter(ProcessedData.id_processed_data.in_(query)).delete(
+                synchronize_session=False)
+            self.commit()
+
+    def clean_db(self):
+        self.delete_orphan_channels()
+        self.delete_orphan_sensors()
+        self.delete_orphan_processed_data()
 
     def get_all_recordsets(self, participant=Participant()):
 
