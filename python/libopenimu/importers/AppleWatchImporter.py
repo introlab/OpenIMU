@@ -67,7 +67,10 @@ class AppleWatchImporter(BaseImporter):
 
             # print('zip contains : ', namelist)
 
+            # TODO
             # First find SETTINGS file
+
+            # Then process data files
             for file in namelist:
                 if '.data' in file:
                     print('Reading file: ', file)
@@ -90,9 +93,7 @@ class AppleWatchImporter(BaseImporter):
                                     results[timestamp]['heartrate'] = values[timestamp]['heartrate']
 
                                 if len(values[timestamp]['motion']) > 0:
-                                    # print('len motion = ', len(values[timestamp]['motion']))
                                     results[timestamp]['motion'] = values[timestamp]['motion']
-                                    # print('len results motion = ', len(results[timestamp]['motion']))
 
                                 # if len(values[timestamp]['location']) > 0:
                                 #     results[timestamp]['location'] = values[timestamp]['location']
@@ -260,10 +261,24 @@ class AppleWatchImporter(BaseImporter):
             print('sensor_id : ', hex(sensor_id))
 
         try:
+
+            last_timestamp = None
+
             while file.readable():
                 # Read timestamp
                 [timestamp_ms] = struct.unpack("<Q", file.read(8))
                 timestamp_sec = int(np.round(timestamp_ms / 1000))
+
+                if sensor_id == self.MOTION_ID:
+                    if last_timestamp is None:
+                        last_timestamp = timestamp_sec
+                    else:
+                        if timestamp_sec < last_timestamp:
+                            print('error backward timestamp')
+                        if timestamp_sec > last_timestamp + 3600:
+                            # print('One hour, changing timestamp')
+                            last_timestamp = timestamp_sec
+
                 if debug:
                     print('TIMESTAMP (MS): ', timestamp_ms)
                     print('time: ',  datetime.datetime.fromtimestamp(timestamp_sec))
@@ -276,7 +291,7 @@ class AppleWatchImporter(BaseImporter):
                     results[timestamp_sec]['sensoria'] = []
                     results[timestamp_sec]['heartrate'] = []
                     results[timestamp_sec]['motion'] = []
-                    # results[timestamp_sec]['location'] = []
+                    results[timestamp_sec]['location'] = []
                     results[timestamp_sec]['beacons'] = []
                     results[timestamp_sec]['coordinates'] = []
 
@@ -298,7 +313,7 @@ class AppleWatchImporter(BaseImporter):
                 elif sensor_id == self.MOTION_ID:
                     # Motion data
                     data =  self.read_motion_data(file.read(52), debug)
-                    results[timestamp_sec]['motion'].append(data)
+                    results[last_timestamp]['motion'].append(data)
 
                 # elif sensor_id == self.LOCATION_ID:
                 #    # Location data
