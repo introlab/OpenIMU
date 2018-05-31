@@ -63,7 +63,8 @@ class AppleWatchImporter(BaseImporter):
 
             # First find SETTINGS file
             for file in namelist:
-                if '.data' in file:
+                if 'watch_Sensoria.data' in file:
+                    print('Reading file: ', file)
                     my_file = myzip.open(file)
                     self.readDataFile(my_file, True)
                 else:
@@ -100,69 +101,74 @@ class AppleWatchImporter(BaseImporter):
         if debug:
             print('reading header : ', hex(id), hex(version), participant_id)
 
-        while file.readable():
-            # Read sensor ID
-            [sensor_id] = struct.unpack("<B", file.read(1))
+        # Read sensor ID
+        [sensor_id] = struct.unpack("<B", file.read(1))
+        print('sensor_id : ', hex(sensor_id))
+        try:
+            while file.readable():
+                # Read timestamp
+                [timestamp_ms] = struct.unpack("<Q", file.read(8))
+                if debug:
+                    print('TIMESTAMP: ', timestamp_ms)
 
-            print('sensor_id : ', hex(sensor_id))
+                print('time: ',  datetime.datetime.fromtimestamp(int(timestamp_ms/1000)))
 
-            # Read timestamp
-            [timestamp_ms] = struct.unpack("<Q", file.read(8))
-            if debug:
-                print('TIMESTAMP: ', timestamp_ms)
+                # Initialize data structure at this timestamp if required
+                if not results.__contains__(timestamp_ms):
+                    print("init timestamp = ", timestamp_ms)
+                    results[timestamp_ms] = {}
+                    results[timestamp_ms]['battery'] = []
+                    results[timestamp_ms]['sensoria'] = []
+                    results[timestamp_ms]['heartrate'] = []
+                    results[timestamp_ms]['motion'] = []
+                    # results[timestamp_ms]['location'] = []
+                    results[timestamp_ms]['beacons'] = []
+                    results[timestamp_ms]['coordinates'] = []
 
-            # Initialize data structure at this timestamp if required
-            if not results.__contains__(timestamp_ms):
-                print("init timestamp = ", timestamp_ms)
-                results[timestamp_ms] = {}
-                results[timestamp_ms]['battery'] = []
-                results[timestamp_ms]['sensoria'] = []
-                results[timestamp_ms]['heartrate'] = []
-                results[timestamp_ms]['motion'] = []
-                # results[timestamp_ms]['location'] = []
-                results[timestamp_ms]['beacons'] = []
-                results[timestamp_ms]['coordinates'] = []
+                if sensor_id == self.BATTERY_ID:
+                    # Battery data
+                    data = self.read_battery_data(file.read(2), debug)
+                    results[timestamp_ms]['battery'].append(data)
 
-            if sensor_id == self.BATTERY_ID:
-                # Battery data
-                data = self.read_battery_data(file.read(2), debug)
-                results[timestamp_ms]['battery'].append(data)
+                elif sensor_id == self.SENSORIA_ID:
+                    # Sensoria data
+                    data = self.read_sensoria_data(file.read(20), debug)
+                    results[timestamp_ms]['sensoria'].append(data)
 
-            elif sensor_id == self.SENSORIA_ID:
-                # Sensoria data
-                data = self.read_sensoria_data(file.read(42), debug)
-                results[timestamp_ms]['sensoria'].append(data)
+                elif sensor_id == self.HEARTRATE_ID:
+                    # Heartrate data
+                    data = self.read_heartrate_data(file.read(1), debug)
+                    results[timestamp_ms]['heartrate'].append(data)
 
-            elif sensor_id == self.HEARTRATE_ID:
-                # Heartrate data
-                data = self.read_heartrate_data(file.read(1), debug)
-                results[timestamp_ms]['heartrate'].append(data)
+                elif sensor_id == self.MOTION_ID:
+                    # Motion data
+                    data =  self.read_motion_data(file.read(52), debug)
+                    results[timestamp_ms]['motion'].append(data)
 
-            elif sensor_id == self.MOTION_ID:
-                # Motion data
-                data =  self.read_motion_data(file.read(52), debug)
-                results[timestamp_ms]['motion'].append(data)
+                # elif sensor_id == self.LOCATION_ID:
+                #    # Location data
+                #    # ????
+                #    data = self.read_location_data(file.read(0), debug)
+                #    results[timestamp_ms]['location'].append(data)
 
-            # elif sensor_id == self.LOCATION_ID:
-            #    # Location data
-            #    # ????
-            #    data = self.read_location_data(file.read(0), debug)
-            #    results[timestamp_ms]['location'].append(data)
+                elif sensor_id == self.BEACONS_ID:
+                    # Beacons data
+                    data = self.read_beacons_data(file.read(5), debug)
+                    results[timestamp_ms]['beacons'].append(data)
 
-            elif sensor_id == self.BEACONS_ID:
-                # Beacons data
-                data = self.read_beacons_data(file.read(5), debug)
-                results[timestamp_ms]['beacons'].append(data)
+                elif sensor_id == self.COORDINATES_ID:
+                    # Coordinates data
+                    # ??? (LOCATION ???)
+                    data = self.read_coordinates_data(file.read(28), debug)
+                    results[timestamp_ms]['coordinates'].append(data)
 
-            elif sensor_id == self.COORDINATES_ID:
-                # Coordinates data
-                # ??? (LOCATION ???)
-                data = self.read_coordinates_data(file.read(28), debug)
-                results[timestamp_ms]['coordinates'].append(data)
+                else:
+                    print("unknown sensor_id: ", hex(sensor_id))
+                    return None
 
-            else:
-                print("unknown sensor_id: ", hex(sensor_id))
-                return None
+        except:
+            pass
+
         return results
 
     def read_battery_data(self, chunk, debug=False):
@@ -197,8 +203,12 @@ class AppleWatchImporter(BaseImporter):
         ◦ magnetometer (x,y,z)
 
         """
-        assert(len(chunk) == 42)
-        data = struct.unpack("<3h9f", chunk)
+        assert(len(chunk) == 20)
+
+        data = struct.unpack("<20B", chunk)
+
+        # assert(len(chunk) == 42)
+        # data = struct.unpack("<3h9f", chunk)
         if debug:
             print('SENSORIA: ', data)
         return data
