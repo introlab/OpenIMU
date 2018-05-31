@@ -120,9 +120,41 @@ class AppleWatchImporter(BaseImporter):
         self.recordsets.append(recordset)
         return recordset
 
-    def import_motion_to_database(self, timestamp, recordset, data: list):
+    def import_motion_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
 
         # print('import_motion_to_database')
+        # print('data', data, len(data))
+
+        values = np.array(data, dtype=np.float32)
+        # print("Values shape: ", values.shape)
+        end_timestamp = timestamp + int(np.floor(len(values) / sample_rate))
+        # print("timestamps, ", timestamp, end_timestamp)
+
+        # Calculate last index to remove extra values
+        real_size = int(np.floor(len(values) / sample_rate) * sample_rate)
+        # print('real size:', real_size)
+
+        # Update end_timestamp if required
+        if end_timestamp > recordset.end_timestamp.timestamp():
+            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
+
+        if real_size > 0:
+            # Acc
+            for i in range(len(channels['acc'])):
+                self.add_sensor_data_to_db(recordset, sensors['acc'], channels['acc'][i],
+                                           datetime.datetime.fromtimestamp(timestamp),
+                                           datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i])
+
+            # Gyro
+            for i in range(len(channels['gyro'])):
+                self.add_sensor_data_to_db(recordset, sensors['gyro'], channels['gyro'][i],
+                                           datetime.datetime.fromtimestamp(timestamp),
+                                           datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i + 6])
+
+        self.db.commit()
+
+    def import_to_database(self, result):
+        print('AppleWatchImporter.import_to_database')
 
         # Sample rate is hardcoded for now
         sample_rate = 50
@@ -161,39 +193,13 @@ class AppleWatchImporter(BaseImporter):
         gyro_channels.append(self.add_channel_to_db(gyro_sensor, Units.DEG_PER_SEC,
                                                     DataFormat.FLOAT32, 'Gyro_Z'))
 
-        # print('data', data, len(data))
-        values = np.array(data, dtype=np.float32)
-        # print("Values shape: ", values.shape)
-        end_timestamp = timestamp + int(np.floor(len(values) / sample_rate))
-
-        # Calculate last index to remove extra values
-        real_size = int(np.floor(len(values) / sample_rate) * sample_rate)
-        # print('real size:', real_size)
-
-        # Update end_timestamp if required
-        if end_timestamp > recordset.end_timestamp.timestamp():
-            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
-
-        if real_size > 0:
-            # Acc
-            for i in range(len(accelerometer_channels)):
-                self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[i],
-                                           datetime.datetime.fromtimestamp(timestamp),
-                                           datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i])
-
-            # Gyro
-            for i in range(len(gyro_channels)):
-                self.add_sensor_data_to_db(recordset, gyro_sensor, gyro_channels[i],
-                                           datetime.datetime.fromtimestamp(timestamp),
-                                           datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i + 6])
-
-        self.db.commit()
-
-    def import_to_database(self, result):
-        print('AppleWatchImporter.import_to_database')
+        # Create sensor and channels dict
+        sensors = {'acc': accelerometer_sensor, 'gyro': gyro_sensor}
+        channels = {'acc': accelerometer_channels, 'gyro': gyro_channels}
 
         for timestamp in result:
 
+            # Change recordset each day
             recordset = self.get_recordset(timestamp)
 
             if result[timestamp].__contains__('battery'):
@@ -209,8 +215,9 @@ class AppleWatchImporter(BaseImporter):
                 # self.import_gps_to_database(timestamp, recordset, result[timestamp]['gps'])
                 pass
             if result[timestamp].__contains__('motion'):
-                # print('motion baro')
-                self.import_motion_to_database(timestamp, recordset, result[timestamp]['motion'])
+                # print('motion')
+                self.import_motion_to_database(sample_rate, timestamp, recordset, sensors, channels,
+                                               result[timestamp]['motion'])
                 pass
             if result[timestamp].__contains__('coordinates'):
                 # print('coordinates baro')
