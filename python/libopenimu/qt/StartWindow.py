@@ -25,6 +25,7 @@ class StartWindow(QDialog):
     @pyqtSlot()
     def import_clicked(self):
         importdialog = ImportWindow()
+        importdialog.setStyleSheet(self.styleSheet())
         importdialog.showImport = True
 
         if (importdialog.exec() == QDialog.Accepted):
@@ -45,6 +46,7 @@ class StartWindow(QDialog):
     @pyqtSlot()
     def new_clicked(self):
         importdialog = ImportWindow()
+        importdialog.setStyleSheet(self.styleSheet())
         importdialog.showImport = False
 
         if (importdialog.exec() == QDialog.Accepted):

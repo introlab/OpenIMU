@@ -60,10 +60,14 @@ class MainWindow(QMainWindow):
         super(QMainWindow, self).__init__(parent=parent)
         self.UI = Ui_MainWindow()
         self.UI.setupUi(self)
+        self.UI.dockToolBar.setTitleBarWidget(QWidget())
+        self.UI.dockDataset.setTitleBarWidget(QWidget())
+        self.UI.dockLog.hide()
 
         self.add_to_log("OpenIMU - Prêt à travailler.", LogTypes.LOGTYPE_INFO)
 
         startWindow = StartWindow()
+        startWindow.setStyleSheet(self.styleSheet())
 
         if startWindow.exec() == QDialog.Rejected:
             # User closed the dialog - exits!
@@ -206,12 +210,14 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def importRequested(self):
         importer = ImportBrowser(dataManager=self.dbMan)
+        importer.setStyleSheet(self.styleSheet())
         if importer.exec() == QDialog.Accepted:
             self.load_data_from_dataset()
 
     @pyqtSlot()
     def exportCSVRequested(self):
         exporter = ExportWindow(self.dbMan, self)
+        exporter.setStyleSheet(self.styleSheet())
         if exporter.exec() == QDialog.Accepted:
             print("Accepted")
 
@@ -219,6 +225,7 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def infosRequested(self):
         infosWindow = ImportWindow(dataset=self.currentDataSet, filename=self.currentFileName)
+        infosWindow.setStyleSheet(self.styleSheet())
         infosWindow.noImportUI = True
         infosWindow.infosOnly = True
 
@@ -274,6 +281,7 @@ class MainWindow(QMainWindow):
                 records = [self.UI.treeDataSet.recordsets[item_id]]
 
             recordsWidget = RecordsetWindow(manager=self.dbMan, recordset=records)
+            recordsWidget.setStyleSheet(recordsWidget.styleSheet() + self.styleSheet())
             self.UI.frmMain.layout().addWidget(recordsWidget)
             recordsWidget.dataDisplayRequest.connect(self.UI.treeDataSet.select_item)
             recordsWidget.dataUpdateRequest.connect(self.UI.treeDataSet.update_item)
@@ -343,11 +351,12 @@ class MainWindow(QMainWindow):
             if item_type == "recordset":
                 # Find and remove all related results
                 for result in self.UI.treeDataSet.results.values():
-                    for ref in result.processed_data_ref:
-                        if ref.recordset.id_recordset == item_id:
-                            self.UI.treeDataSet.remove_result(result)
-                            self.dbMan.delete_processed_data(result)
-                            break
+                    if result is not None:
+                        for ref in result.processed_data_ref:
+                            if ref.recordset.id_recordset == item_id:
+                                self.UI.treeDataSet.remove_result(result)
+                                self.dbMan.delete_processed_data(result)
+                                break
 
                 recordset = self.UI.treeDataSet.recordsets[item_id]
                 self.dbMan.delete_recordset(recordset)
@@ -425,9 +434,15 @@ class Treedatawidget(QTreeWidget):
                 child = item.child(i).child(j)
                 child_id = self.get_item_id(child)
                 if child_type == "recordsets":
-                    self.remove_recordset(self.recordsets[child_id])
+                    try:
+                        self.remove_recordset(self.recordsets[child_id])
+                    except KeyError:
+                        continue
                 if child_type == "results":
-                    self.remove_result(self.results[child_id])
+                    try:
+                        self.remove_result(self.results[child_id])
+                    except KeyError:
+                        continue
 
         if participant.id_group is None: # Participant without a group
             for i in range(0, self.topLevelItemCount()):

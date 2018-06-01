@@ -37,7 +37,7 @@ class GroupWindow(DataEditor):
             self.UI.txtName.setStyleSheet('background-color: #ffcccc;')
             rval = False
         else:
-            self.UI.txtName.setStyleSheet('background-color: white;')
+            self.UI.txtName.setStyleSheet('background-color: rgba(226, 226, 226, 90%);')
 
         return rval
 

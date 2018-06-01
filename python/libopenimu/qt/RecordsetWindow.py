@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QLineEdit, QWidget, QPushButton, QListWidget, QListWidgetItem, QGraphicsScene, \
+from PyQt5.QtWidgets import QLineEdit, QWidget, QPushButton, QListWidget, QListWidgetItem, QGraphicsScene, QLayout, \
     QGraphicsRectItem, QGraphicsItem, QGraphicsView, QGraphicsTextItem, QMdiArea, QVBoxLayout, QScrollArea, QApplication
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtGui import QIcon, QBrush, QPen, QColor, QPixmap
@@ -39,6 +39,9 @@ class RecordsetWindow(QWidget):
         self.UI = Ui_frmRecordsets()
         self.UI.setupUi(self)
 
+        #TODO
+        self.UI.grpSubRecord.hide()
+
         self.sensors = {}
         self.sensors_items = {}
         self.sensors_graphs = {}
@@ -57,7 +60,10 @@ class RecordsetWindow(QWidget):
         self.UI.graphTimeline.time_clicked.connect(self.timeview_clicked)
 
         # Init graph viewer
-        self.UI.displayContents.setLayout(QVBoxLayout())
+        #layout = QVBoxLayout()
+        #layout.setSizeConstraint(QLayout.SetFixedSize)
+        #self.UI.displayContents.setLayout(layout)
+        #self.UI.displayContents.setMinimumWidth(self.UI.displayArea.width())
 
         # Update general informations about recordsets
         self.update_recordset_infos()
@@ -86,7 +92,7 @@ class RecordsetWindow(QWidget):
         # Create sensor colors
         used_colors = []
         # colors = QColor.colorNames()
-        colors = ['darkblue', 'darkcyan', 'darkgoldenrod', 'darkgreen', 'darkgrey', 'darkkhaki', 'darkmagenta',
+        colors = ['darkblue', 'darkcyan', 'darkgreen', 'darkkhaki', 'darkmagenta',
                   'darkolivegreen', 'darkorange', 'darkorchid', 'darkred', 'darksalmon', 'darkseagreen',
                   'darkslateblue', 'darkslategray', 'darkslategrey', 'darkturquoise', 'darkviolet']
 
@@ -110,6 +116,7 @@ class RecordsetWindow(QWidget):
             if len(location_item) == 0:
                 item = QListWidgetItem(sensor.location)
                 item.setFlags(Qt.NoItemFlags)
+                item.setForeground(QBrush(Qt.black))
                 self.UI.lstSensors.addItem(item)
             else:
                 index = self.UI.lstSensors.indexFromItem(location_item[0]).row()
@@ -264,9 +271,10 @@ class RecordsetWindow(QWidget):
                     or sensor.id_sensor_type == SensorType.BAROMETER \
                     or sensor.id_sensor_type == SensorType.MAGNETOMETER \
                     or sensor.id_sensor_type == SensorType.TEMPERATURE \
+                    or sensor.id_sensor_type == SensorType.HEARTRATE \
                     or sensor.id_sensor_type == SensorType.ORIENTATION:
 
-                graph = IMUChartView()
+                graph = IMUChartView(self.UI.displayContents)
                 # graph.add_test_data()
                 # Add series
                 for series in timeseries:
@@ -295,6 +303,7 @@ class RecordsetWindow(QWidget):
                 # self.UI.mdiArea.addSubWindow(graph).setWindowTitle(item.text())
                 self.sensors_graphs[sensor.id_sensor] = graph
                 self.UI.displayContents.layout().insertWidget(0,graph)
+                #self.UI.displayContents.layout().addWidget(graph)
                 graph.show()
                 QApplication.instance().processEvents()
 
@@ -332,6 +341,7 @@ class RecordsetWindow(QWidget):
 
         pos = self.get_relative_timeview_pos(timestamp)
         self.time_bar.setPos(pos,0)
+        self.UI.lblCursorTime.setText(str(timestamp))
 
     @pyqtSlot(int)
     def timeview_clicked(self, x):
@@ -382,6 +392,7 @@ class RecordsetWindow(QWidget):
     def on_process_recordset(self):
         # Display Process Window
         window = ProcessSelectWindow(self.dbMan, self.recordsets)
+        window.setStyleSheet(self.styleSheet())
 
         if window.exec() == QDialog.Accepted:
             self.dataUpdateRequest.emit("result", window.processed_data)

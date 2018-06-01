@@ -128,7 +128,7 @@ de collecte:</string>
             <string/>
            </property>
            <property name="placeholderText">
-            <string>Fichier qui contiendra les données</string>
+            <string>Fichier .oi qui contiendra les données</string>
            </property>
           </widget>
          </item>
@@ -136,7 +136,7 @@ de collecte:</string>
           <widget class="QPushButton" name="btnBrowse">
            <property name="minimumSize">
             <size>
-             <width>0</width>
+             <width>125</width>
              <height>40</height>
             </size>
            </property>
@@ -246,7 +246,7 @@ de collecte:</string>
       <widget class="QPushButton" name="btnOK">
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>150</width>
          <height>40</height>
         </size>
        </property>
@@ -265,7 +265,7 @@ de collecte:</string>
       <widget class="QPushButton" name="btnCancel">
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>150</width>
          <height>40</height>
         </size>
        </property>

@@ -14,6 +14,21 @@
    <string>Assistant - Importation</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>1</number>
+   </property>
+   <property name="leftMargin">
+    <number>10</number>
+   </property>
+   <property name="topMargin">
+    <number>10</number>
+   </property>
+   <property name="rightMargin">
+    <number>10</number>
+   </property>
+   <property name="bottomMargin">
+    <number>10</number>
+   </property>
    <item>
     <widget class="QFrame" name="frameImport">
      <property name="sizePolicy">
@@ -27,21 +42,55 @@
        <enum>QLayout::SetDefaultConstraint</enum>
       </property>
       <item>
-       <widget class="QLabel" name="lblImport">
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-          <weight>75</weight>
-          <italic>false</italic>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Fichier(s) à importer</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
+       <widget class="QFrame" name="frameTitle">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="lblIcon">
+           <property name="maximumSize">
+            <size>
+             <width>48</width>
+             <height>48</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../core.qrc">:/OpenIMU/icons/import.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lblInfos">
+           <property name="font">
+            <font>
+             <pointsize>15</pointsize>
+             <weight>75</weight>
+             <italic>false</italic>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Fichiers à importer</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
       <item>
@@ -83,18 +132,14 @@
          <bool>true</bool>
         </attribute>
         <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="verticalHeaderVisible">
          <bool>false</bool>
         </attribute>
-        <column>
-         <property name="text">
-          <string>Fichier</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Format</string>
-         </property>
-        </column>
+        <attribute name="verticalHeaderStretchLastSection">
+         <bool>false</bool>
+        </attribute>
         <column>
          <property name="text">
           <string>Groupe</string>
@@ -105,6 +150,16 @@
           <string>Participant</string>
          </property>
         </column>
+        <column>
+         <property name="text">
+          <string>Format</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Fichier</string>
+         </property>
+        </column>
        </widget>
       </item>
       <item>
@@ -113,7 +168,7 @@
          <widget class="QPushButton" name="btnAddFile">
           <property name="minimumSize">
            <size>
-            <width>0</width>
+            <width>250</width>
             <height>40</height>
            </size>
           </property>
@@ -148,7 +203,7 @@
          <widget class="QPushButton" name="btnDelFile">
           <property name="minimumSize">
            <size>
-            <width>0</width>
+            <width>250</width>
             <height>40</height>
            </size>
           </property>
@@ -173,6 +228,19 @@
           </property>
          </widget>
         </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
        </layout>
       </item>
      </layout>
@@ -180,6 +248,9 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <property name="spacing">
+      <number>10</number>
+     </property>
      <property name="sizeConstraint">
       <enum>QLayout::SetMaximumSize</enum>
      </property>
@@ -200,7 +271,7 @@
       <widget class="QPushButton" name="btnOK">
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>150</width>
          <height>40</height>
         </size>
        </property>
@@ -209,6 +280,16 @@
        </property>
        <property name="text">
         <string>Importer</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../core.qrc">
+         <normaloff>:/OpenIMU/icons/import.png</normaloff>:/OpenIMU/icons/import.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
        </property>
        <property name="autoDefault">
         <bool>false</bool>
@@ -219,7 +300,7 @@
       <widget class="QPushButton" name="btnCancel">
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>150</width>
          <height>40</height>
         </size>
        </property>
@@ -228,6 +309,16 @@
        </property>
        <property name="text">
         <string>Annuler</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../core.qrc">
+         <normaloff>:/OpenIMU/icons/delete.png</normaloff>:/OpenIMU/icons/delete.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
        </property>
        <property name="autoDefault">
         <bool>false</bool>

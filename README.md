@@ -4,6 +4,11 @@
 * Dominic Létourneau (@doumdi) 
 * Simon Brière (@sbriere)
 
+## Screenshots
+![Screenshot_1](./docs/images/Screenshot_1.png)
+![Screenshot_2](./docs/images/Screenshot_2.png)
+![Screenshot_2](./docs/images/Screenshot_3.png)
+
 ## Getting Started for Developers
 Please follow those steps to setup your development environment.
 

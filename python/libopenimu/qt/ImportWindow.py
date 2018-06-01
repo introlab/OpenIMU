@@ -9,6 +9,7 @@ from libopenimu.models.DataSet import DataSet
 
 from datetime import datetime
 
+
 class ImportWindow(QDialog):
 
     showImport = False
@@ -33,14 +34,13 @@ class ImportWindow(QDialog):
         # Signals / Slots connections
         self.UI.btnCancel.clicked.connect(self.cancel_clicked)
         self.UI.btnOK.clicked.connect(self.ok_clicked)
-        #self.UI.btnAddFile.clicked.connect(self.addFile_clicked)
-        #self.UI.btnDelFile.clicked.connect(self.removeFile_clicked)
+        # self.UI.btnAddFile.clicked.connect(self.addFile_clicked)
+        # self.UI.btnDelFile.clicked.connect(self.removeFile_clicked)
         self.UI.btnBrowse.clicked.connect(self.browse_clicked)
 
-
     def exec(self):
-        #self.UI.frameImport.setVisible(not self.showImport)
-        #self.UI.splitter.setVisible(not self.noImportUI)
+        # self.UI.frameImport.setVisible(not self.showImport)
+        # self.UI.splitter.setVisible(not self.noImportUI)
         if self.showImport:
             self.UI.btnOK.setText("Suivant")
 
@@ -56,19 +56,19 @@ class ImportWindow(QDialog):
             self.UI.txtFileName.setStyleSheet('background-color: #ffcccc;')
             rval = False
         else:
-            self.UI.txtFileName.setStyleSheet('background-color: white;')
+            self.UI.txtFileName.setStyleSheet('background-color: rgba(226, 226, 226, 90%);')
 
         if self.UI.txtName.text() == '':
             self.UI.txtName.setStyleSheet('background-color: #ffcccc;')
             rval = False
         else:
-            self.UI.txtName.setStyleSheet('background-color: white;')
+            self.UI.txtName.setStyleSheet('background-color: rgba(226, 226, 226, 90%);')
 
         if self.UI.txtAuthor.text() == '':
             self.UI.txtAuthor.setStyleSheet('background-color: #ffcccc;')
             rval = False
         else:
-            self.UI.txtAuthor.setStyleSheet('background-color: white;')
+            self.UI.txtAuthor.setStyleSheet('background-color: rgba(226, 226, 226, 90%);')
 
         return rval
 
@@ -82,7 +82,7 @@ class ImportWindow(QDialog):
 
     @pyqtSlot()
     def browse_clicked(self):
-        file_diag = QFileDialog.getSaveFileName(caption="Nom du fichier à enregistrer",filter=".oi")
+        file_diag = QFileDialog.getSaveFileName(caption="Nom du fichier à enregistrer", filter=".oi")
 
         if file_diag[0] != '':
             self.UI.txtFileName.setText(file_diag[0])
@@ -91,28 +91,29 @@ class ImportWindow(QDialog):
 
     @pyqtSlot()
     def ok_clicked(self):
-        # Create and save file
-        db = DBManager(filename=self.UI.txtFileName.text())
-
-        if self.dataSet is None:
-            self.dataSet = DataSet()
-            self.dataSet.creation_date = datetime.now()
-
-        self.dataSet.name = self.UI.txtName.text()
-        self.dataSet.description = self.UI.txtDesc.toPlainText()
-        self.dataSet.author = self.UI.txtAuthor.text()
-
-        self.dataSet.upload_date = self.UI.calendarUploadDate.selectedDate().toPyDate()
-
-        db.set_dataset_infos(name = self.dataSet.name,
-                             desc = self.dataSet.description,
-                             author = self.dataSet.author,
-                             creation_date=self.dataSet.creation_date,
-                             upload_date=self.dataSet.upload_date)
-
-        self.fileName = self.UI.txtFileName.text()
-
+        # Only create file if validate
         if self.validate():
+            # Create and save file
+            db = DBManager(filename=self.UI.txtFileName.text())
+
+            if self.dataSet is None:
+                self.dataSet = DataSet()
+                self.dataSet.creation_date = datetime.now()
+
+            self.dataSet.name = self.UI.txtName.text()
+            self.dataSet.description = self.UI.txtDesc.toPlainText()
+            self.dataSet.author = self.UI.txtAuthor.text()
+
+            self.dataSet.upload_date = self.UI.calendarUploadDate.selectedDate().toPyDate()
+
+            db.set_dataset_infos(name=self.dataSet.name,
+                                 desc=self.dataSet.description,
+                                 author=self.dataSet.author,
+                                 creation_date=self.dataSet.creation_date,
+                                 upload_date=self.dataSet.upload_date)
+
+            self.fileName = self.UI.txtFileName.text()
+
             self.accept()
 
     @pyqtSlot()
