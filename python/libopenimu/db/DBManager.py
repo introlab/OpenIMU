@@ -454,7 +454,7 @@ class DBManager:
 
         else:
             for group in groups:
-                group_dir = directory + '/GROUP_ID_' + str(group.id_group) + '+' + group.name + '/'
+                group_dir = directory + '/GROUP_ID_' + str(group.id_group) + '_' + group.name + '/'
                 if os.path.exists(directory):
                     if not os.path.exists(group_dir):
                         os.mkdir(group_dir)
