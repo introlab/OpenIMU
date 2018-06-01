@@ -271,6 +271,7 @@ class RecordsetWindow(QWidget):
                     or sensor.id_sensor_type == SensorType.BAROMETER \
                     or sensor.id_sensor_type == SensorType.MAGNETOMETER \
                     or sensor.id_sensor_type == SensorType.TEMPERATURE \
+                    or sensor.id_sensor_type == SensorType.HEARTRATE \
                     or sensor.id_sensor_type == SensorType.ORIENTATION:
 
                 graph = IMUChartView(self.UI.displayContents)
