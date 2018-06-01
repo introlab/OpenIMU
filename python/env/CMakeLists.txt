@@ -15,13 +15,23 @@ set (ENV_PATH ${CMAKE_CURRENT_SOURCE_DIR}/python-${PYTHON_VERSION})
 file(MAKE_DIRECTORY ${ENV_PATH})
 
 # Define packages to install
-set (pip_packages
-    PyQt5
-    PyQtChart
-    PyQt3D
-)
+if(WIN32)
+    set (pip_packages
+        PyQt5
+        PyQtChart
+        PyQt3D
+        pypiwin32
+    )
+else(WIN32)
+    set (pip_packages
+        PyQt5
+        PyQtChart
+        PyQt3D
+    )
+endif(WIN32)
 
 set (conda_packages
+    cython
     numpy
     scipy
     PyInstaller
