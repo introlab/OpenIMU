@@ -180,6 +180,33 @@ class AppleWatchImporter(BaseImporter):
 
         self.db.commit()
 
+    def import_heartrate_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
+
+        # print('import_motion_to_database')
+        # print('data', data, len(data))
+
+        values = np.array(data, dtype=np.float32)
+        # print("Values shape: ", values.shape)
+        end_timestamp = timestamp + int(np.floor(len(values) / sample_rate))
+        # print("timestamps, ", timestamp, end_timestamp)
+
+        # Calculate last index to remove extra values
+        real_size = int(np.floor(len(values) / sample_rate) * sample_rate)
+        # print('real size:', real_size)
+
+        # Update end_timestamp if required
+        if end_timestamp > recordset.end_timestamp.timestamp():
+            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
+
+        if real_size > 0:
+            # print('heartrate size:', real_size)
+            # Heartrate
+            self.add_sensor_data_to_db(recordset, sensors['heartrate'], channels['heartrate'],
+                                       datetime.datetime.fromtimestamp(timestamp),
+                                       datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, 0])
+
+        self.db.commit()
+
     def import_to_database(self, result):
         print('AppleWatchImporter.import_to_database')
 
@@ -225,9 +252,21 @@ class AppleWatchImporter(BaseImporter):
 
         battery_channel = self.add_channel_to_db(battery_sensor, Units.VOLTS, DataFormat.FLOAT32, 'Battery Percentage')
 
+        # Heartrate
+        heartrate_sensor = self.add_sensor_to_db(SensorType.BATTERY, 'Heartrate', 'AppleWatch', 'Unknown', 1, 1)
+
+        heartrate_channel = self.add_channel_to_db(heartrate_sensor, Units.BPM, DataFormat.FLOAT32, 'Heartrate')
+
         # Create sensor and channels dict
-        sensors = {'acc': accelerometer_sensor, 'gyro': gyro_sensor, 'batt': battery_sensor}
-        channels = {'acc': accelerometer_channels, 'gyro': gyro_channels, 'batt': battery_channel}
+        sensors = {'acc': accelerometer_sensor,
+                   'gyro': gyro_sensor,
+                   'batt': battery_sensor,
+                   'heartrate': heartrate_sensor}
+
+        channels = {'acc': accelerometer_channels,
+                    'gyro': gyro_channels,
+                    'batt': battery_channel,
+                    'heartrate': heartrate_channel}
 
         for timestamp in result:
             # Change recordset each day
@@ -245,8 +284,9 @@ class AppleWatchImporter(BaseImporter):
                 pass
             if result[timestamp].__contains__('heartrate'):
                 # print('heartrate')
-                # self.import_gps_to_database(timestamp, recordset, result[timestamp]['gps'])
-                pass
+                self.import_heartrate_to_database(1, timestamp, recordset, sensors, channels,
+                                                result[timestamp]['heartrate'])
+
             if result[timestamp].__contains__('motion'):
                 # print('motion')
                 self.import_motion_to_database(sample_rate, timestamp, recordset, sensors, channels,
