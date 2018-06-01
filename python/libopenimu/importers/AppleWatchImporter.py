@@ -235,7 +235,7 @@ class AppleWatchImporter(BaseImporter):
             # Build gps data
             geo = GPSGeodetic()
             geo.latitude = values[0][0] * 1e7
-            geo.longitude = values[0][0] * 1e7
+            geo.longitude = values[0][1] * 1e7
 
             # Store
             self.add_sensor_data_to_db(recordset, sensors['coordinates'], channels['coordinates'],
