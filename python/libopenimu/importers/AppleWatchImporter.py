@@ -154,6 +154,32 @@ class AppleWatchImporter(BaseImporter):
 
         self.db.commit()
 
+    def import_battery_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
+
+        # print('import_motion_to_database')
+        # print('data', data, len(data))
+
+        values = np.array(data, dtype=np.float32)
+        # print("Values shape: ", values.shape)
+        end_timestamp = timestamp + int(np.floor(len(values) / sample_rate))
+        # print("timestamps, ", timestamp, end_timestamp)
+
+        # Calculate last index to remove extra values
+        real_size = int(np.floor(len(values) / sample_rate) * sample_rate)
+        # print('real size:', real_size)
+
+        # Update end_timestamp if required
+        if end_timestamp > recordset.end_timestamp.timestamp():
+            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
+
+        if real_size > 0:
+            # Batt
+            self.add_sensor_data_to_db(recordset, sensors['batt'], channels['batt'],
+                                       datetime.datetime.fromtimestamp(timestamp),
+                                       datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, 0])
+
+        self.db.commit()
+
     def import_to_database(self, result):
         print('AppleWatchImporter.import_to_database')
 
@@ -194,19 +220,25 @@ class AppleWatchImporter(BaseImporter):
         gyro_channels.append(self.add_channel_to_db(gyro_sensor, Units.DEG_PER_SEC,
                                                     DataFormat.FLOAT32, 'Gyro_Z'))
 
+        # Battery
+        battery_sensor = self.add_sensor_to_db(SensorType.BATTERY, 'Battery', 'AppleWatch', 'Unknown', 1, 1)
+
+        battery_channel = self.add_channel_to_db(battery_sensor, Units.VOLTS, DataFormat.FLOAT32, 'Battery Percentage')
+
         # Create sensor and channels dict
-        sensors = {'acc': accelerometer_sensor, 'gyro': gyro_sensor}
-        channels = {'acc': accelerometer_channels, 'gyro': gyro_channels}
+        sensors = {'acc': accelerometer_sensor, 'gyro': gyro_sensor, 'batt': battery_sensor}
+        channels = {'acc': accelerometer_channels, 'gyro': gyro_channels, 'batt': battery_channel}
 
         for timestamp in result:
-
             # Change recordset each day
             recordset = self.get_recordset(timestamp)
 
             if result[timestamp].__contains__('battery'):
                 # print('battery')
                 # self.import_imu_to_database(timestamp, recordset, result[timestamp]['imu'])
-                pass
+                self.import_battery_to_database(1, timestamp, recordset, sensors, channels,
+                                               result[timestamp]['battery'])
+
             if result[timestamp].__contains__('sensoria'):
                 # print('sensoria')
                 # self.import_power_to_database(timestamp, recordset, result[timestamp]['power'])
