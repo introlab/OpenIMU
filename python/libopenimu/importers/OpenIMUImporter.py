@@ -105,7 +105,7 @@ class OpenIMUImporter(BaseImporter):
                                    datetime.datetime.fromtimestamp(timestamp),
                                    datetime.datetime.fromtimestamp(end_timestamp), values[:, 0])
 
-        self.add_sensor_data_to_db(recordset, sensors['current'], channels['battery'],
+        self.add_sensor_data_to_db(recordset, sensors['current'], channels['current'],
                                    datetime.datetime.fromtimestamp(timestamp),
                                    datetime.datetime.fromtimestamp(end_timestamp), values[:, 1])
 
