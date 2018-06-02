@@ -22,7 +22,7 @@ import string
 class OpenIMUImporter(BaseImporter):
     def __init__(self, manager: DBManager, participant: Participant):
         super().__init__(manager, participant)
-        print('OpenIMU Importer')
+        # print('OpenIMU Importer')
         # No recordsets when starting
         self.recordsets = []
 
@@ -42,7 +42,7 @@ class OpenIMUImporter(BaseImporter):
 
     @timing
     def load(self, filename):
-        print('OpenIMUImporter.load')
+        # print('OpenIMUImporter.load')
         results = {}
         with open(filename, "rb") as file:
             print('Loading File: ', filename)
@@ -52,14 +52,151 @@ class OpenIMUImporter(BaseImporter):
         return results
 
     @timing
-    def import_imu_to_database(self, timestamp, recordset, data: list):
+    def import_imu_to_database(self, timestamp, sample_rate, sensors, channels, recordset, data: list):
+        # print('import_imu_to_database')
+        values = np.array(data, dtype=np.float32)
+        # print("Values shape: ", values.shape)
+        end_timestamp = timestamp + int(np.floor(len(values) / sample_rate))
 
-        print('import_imu_to_database')
+        # Calculate last index to remove extra values
+        real_size = int(np.floor(len(values) / sample_rate) * sample_rate)
+        # print('real size:', real_size)
 
-        # Sample rate is hardcoded for now
-        sample_rate = 50
+        # Update end_timestamp if required
+        if end_timestamp > recordset.end_timestamp.timestamp():
+            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
 
-        # Create sensors
+        # Acc
+        for i in range(len(channels['acc'])):
+            self.add_sensor_data_to_db(recordset, sensors['acc'], channels['acc'][i],
+                                       datetime.datetime.fromtimestamp(timestamp),
+                                       datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i])
+
+        # Gyro
+        for i in range(len(channels['gyro'])):
+            self.add_sensor_data_to_db(recordset, sensors['gyro'], channels['gyro'][i],
+                                       datetime.datetime.fromtimestamp(timestamp),
+                                       datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i + 3])
+
+        # Magnetometer
+        for i in range(len(channels['mag'])):
+            self.add_sensor_data_to_db(recordset, sensors['mag'], channels['mag'][i],
+                                       datetime.datetime.fromtimestamp(timestamp),
+                                       datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i + 6])
+
+        self.db.commit()
+
+    @timing
+    def import_power_to_database(self, timestamp, sensors, channels, recordset, data: list):
+
+        # Get data in the form of array
+        values = np.array(data, dtype=np.float32)
+        # print("Values shape: ", values.shape)
+        # print(values[:, 0])
+        # print(values[:, 1])
+
+        end_timestamp = timestamp + len(values)
+
+        # Update end_timestamp if required
+        if end_timestamp > recordset.end_timestamp.timestamp():
+            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
+
+        self.add_sensor_data_to_db(recordset, sensors['battery'], channels['battery'],
+                                   datetime.datetime.fromtimestamp(timestamp),
+                                   datetime.datetime.fromtimestamp(end_timestamp), values[:, 0])
+
+        self.add_sensor_data_to_db(recordset, sensors['current'], channels['battery'],
+                                   datetime.datetime.fromtimestamp(timestamp),
+                                   datetime.datetime.fromtimestamp(end_timestamp), values[:, 1])
+
+        self.db.commit()
+
+    @timing
+    def import_gps_to_database(self, timestamp, sensors, channels, recordset, data: list):
+
+        # Get data in the form of array
+        values = np.array(data, dtype=np.float32)
+        # print("Values shape: ", values.shape)
+        # print(values[:, 0])
+        # print(values[:, 1])
+
+        end_timestamp = timestamp + len(values)
+
+        # Update end_timestamp if required
+        if end_timestamp > recordset.end_timestamp.timestamp():
+            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
+
+        # print('GPS DATA ', values)
+        # Regenerate GPS data to be stored in the DB as SIRF data
+        # TODO Better GPS solution?
+
+        # We have one sample per second of GPS data
+        for i in range(len(values)):
+            val = values[i]
+            geo = GPSGeodetic()
+            # Discard invalid data
+            if math.isnan(val[1]) or math.isnan(val[2]):
+                continue
+            geo.latitude = val[1] * 1e7
+            geo.longitude = val[2] * 1e7
+            # altitude = val[3] * 1e7
+            self.add_sensor_data_to_db(recordset, sensors['gps'], channels['gps'],
+                                       datetime.datetime.fromtimestamp(timestamp + i),
+                                       datetime.datetime.fromtimestamp(timestamp + i), geo)
+
+        # Commit to file
+        self.db.commit()
+
+    @timing
+    def import_baro_to_database(self,  timestamp, sensors, channels, recordset, data: list):
+        # Get data in the form of array
+        values = np.array(data, dtype=np.float32)
+        print("Values shape: ", values.shape)
+
+        end_timestamp = timestamp + len(values)
+
+        # Update end_timestamp if required
+        if end_timestamp > recordset.end_timestamp.timestamp():
+            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
+
+        self.add_sensor_data_to_db(recordset, sensors['baro'], channels['baro'],
+                                   datetime.datetime.fromtimestamp(timestamp),
+                                   datetime.datetime.fromtimestamp(end_timestamp), values[:, 1])
+
+    def create_sensor_and_channels(self, sample_rate):
+        # Baro
+        baro_sensor = self.add_sensor_to_db(SensorType.BAROMETER, 'Barometer',
+                                            'OpenIMU-HW',
+                                            'Unknown', 1, 1)
+
+        baro_channel = self.add_channel_to_db(baro_sensor, Units.KPA,
+                                              DataFormat.FLOAT32, 'Pressure')
+
+        # Battery
+        battery_sensor = self.add_sensor_to_db(SensorType.BATTERY, 'Battery',
+                                                     'OpenIMU-HW',
+                                                     'Unknown', 1, 1)
+
+        battery_channel = self.add_channel_to_db(battery_sensor, Units.VOLTS,
+                                                 DataFormat.FLOAT32, 'Voltage')
+
+        # Current
+        current_sensor = self.add_sensor_to_db(SensorType.CURRENT, 'Current',
+                                                     'OpenIMU-HW',
+                                                     'Unknown', 1, 1)
+
+        current_channel = self.add_channel_to_db(current_sensor, Units.AMPERES,
+                                                 DataFormat.FLOAT32, 'Current')
+
+        # GPS
+        gps_sensor = self.add_sensor_to_db(SensorType.GPS, 'GPS',
+                                            'OpenIMU-HW',
+                                            'Unknown', 1, 1)
+
+        gps_channel = self.add_channel_to_db(gps_sensor, Units.NONE,
+                                              DataFormat.UINT8, 'GPS_SIRF')
+
+        # Accelerometers
         accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer',
                                                      'OpenIMU-HW',
                                                      'Unknown', sample_rate, 1)
@@ -76,7 +213,7 @@ class OpenIMUImporter(BaseImporter):
         accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
                                                              DataFormat.FLOAT32, 'Accelerometer_Z'))
 
-        # Create sensor
+        # Gyro
         gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyro',
                                             'OpenIMU-HW',
                                             'Unknown', sample_rate, 1)
@@ -93,172 +230,54 @@ class OpenIMUImporter(BaseImporter):
         gyro_channels.append(self.add_channel_to_db(gyro_sensor, Units.DEG_PER_SEC,
                                                     DataFormat.FLOAT32, 'Gyro_Z'))
 
-        # Create sensor
+        # Magnetometer
         mag_sensor = self.add_sensor_to_db(SensorType.MAGNETOMETER, 'Magnetometer',
-                                            'OpenIMU-HW',
-                                            'Unknown', sample_rate, 1)
+                                           'OpenIMU-HW',
+                                           'Unknown', sample_rate, 1)
 
         mag_channels = list()
 
         # Create channels
         mag_channels.append(self.add_channel_to_db(mag_sensor, Units.UTESLA,
-                                                    DataFormat.FLOAT32, 'Mag_X'))
+                                                   DataFormat.FLOAT32, 'Mag_X'))
 
         mag_channels.append(self.add_channel_to_db(mag_sensor, Units.UTESLA,
-                                                    DataFormat.FLOAT32, 'Mag_Y'))
+                                                   DataFormat.FLOAT32, 'Mag_Y'))
 
         mag_channels.append(self.add_channel_to_db(mag_sensor, Units.UTESLA,
-                                                    DataFormat.FLOAT32, 'Mag_Z'))
+                                                   DataFormat.FLOAT32, 'Mag_Z'))
 
-        values = np.array(data, dtype=np.float32)
-        # print("Values shape: ", values.shape)
-        end_timestamp = timestamp + int(np.floor(len(values) / sample_rate))
-
-        # Calculate last index to remove extra values
-        real_size = int(np.floor(len(values) / sample_rate) * sample_rate)
-        # print('real size:', real_size)
-
-        # Update end_timestamp if required
-        if end_timestamp > recordset.end_timestamp.timestamp():
-            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
-
-        # Acc
-        for i in range(len(accelerometer_channels)):
-            self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[i],
-                                       datetime.datetime.fromtimestamp(timestamp),
-                                       datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i])
-
-        # Gyro
-        for i in range(len(gyro_channels)):
-            self.add_sensor_data_to_db(recordset, gyro_sensor, gyro_channels[i],
-                                       datetime.datetime.fromtimestamp(timestamp),
-                                       datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i + 3])
-
-        # Magnetometer
-        for i in range(len(mag_channels)):
-            self.add_sensor_data_to_db(recordset, mag_sensor, mag_channels[i],
-                                       datetime.datetime.fromtimestamp(timestamp),
-                                       datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i + 6])
-
+        # Commit to DB
         self.db.commit()
 
-    @timing
-    def import_power_to_database(self, timestamp, recordset, data: list):
+        # Create sensor and channels dict
+        sensors = {'acc': accelerometer_sensor,
+                   'gyro': gyro_sensor,
+                   'mag': mag_sensor,
+                   'battery': battery_sensor,
+                   'current': current_sensor,
+                   'gps': gps_sensor,
+                   'baro': baro_sensor}
 
-        # Create sensors
-        battery_sensor = self.add_sensor_to_db(SensorType.BATTERY, 'Battery',
-                                                     'OpenIMU-HW',
-                                                     'Unknown', 1, 1)
+        channels = {'acc': accelerometer_channels,
+                    'gyro': gyro_channels,
+                    'mag': mag_channels,
+                    'battery': battery_channel,
+                    'current': current_channel,
+                    'gps': gps_channel,
+                    'baro': baro_channel}
 
-        current_sensor = self.add_sensor_to_db(SensorType.CURRENT, 'Current',
-                                                     'OpenIMU-HW',
-                                                     'Unknown', 1, 1)
-
-        # Create channels
-        battery_channel = self.add_channel_to_db(battery_sensor, Units.VOLTS,
-                                                 DataFormat.FLOAT32, 'Voltage')
-
-        current_channel = self.add_channel_to_db(current_sensor, Units.AMPERES,
-                                                 DataFormat.FLOAT32, 'Current')
-
-        # Get data in the form of array
-        values = np.array(data, dtype=np.float32)
-        # print("Values shape: ", values.shape)
-        # print(values[:, 0])
-        # print(values[:, 1])
-
-        end_timestamp = timestamp + len(values)
-
-        # Update end_timestamp if required
-        if end_timestamp > recordset.end_timestamp.timestamp():
-            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
-
-        self.add_sensor_data_to_db(recordset, battery_sensor, battery_channel,
-                                   datetime.datetime.fromtimestamp(timestamp),
-                                   datetime.datetime.fromtimestamp(end_timestamp), values[:, 0])
-
-        self.add_sensor_data_to_db(recordset, current_sensor, current_channel,
-                                   datetime.datetime.fromtimestamp(timestamp),
-                                   datetime.datetime.fromtimestamp(end_timestamp), values[:, 1])
-
-        self.db.commit()
-
-    @timing
-    def import_gps_to_database(self, timestamp, recordset, data: list):
-
-        # Create sensors
-        gps_sensor = self.add_sensor_to_db(SensorType.GPS, 'GPS',
-                                            'OpenIMU-HW',
-                                            'Unknown', 1, 1)
-
-        gps_channel = self.add_channel_to_db(gps_sensor, Units.NONE,
-                                              DataFormat.UINT8, 'GPS_SIRF')
-
-        # Get data in the form of array
-        values = np.array(data, dtype=np.float32)
-        # print("Values shape: ", values.shape)
-        # print(values[:, 0])
-        # print(values[:, 1])
-
-        end_timestamp = timestamp + len(values)
-
-        # Update end_timestamp if required
-        if end_timestamp > recordset.end_timestamp.timestamp():
-            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
-
-
-        # print('GPS DATA ', values)
-        # Regenerate GPS data to be stored in the DB as SIRF data
-        # TODO Better GPS solution?
-
-        # We have one sample per second of GPS data
-        for i in range(len(values)):
-            val = values[i]
-            geo = GPSGeodetic()
-            # Discard invalid data
-            if math.isnan(val[1]) or math.isnan(val[2]):
-                continue
-            geo.latitude = val[1] * 1e7
-            geo.longitude = val[2] * 1e7
-            #altitude = val[3] * 1e7
-            self.add_sensor_data_to_db(recordset, gps_sensor, gps_channel,
-                                       datetime.datetime.fromtimestamp(timestamp + i),
-                                       datetime.datetime.fromtimestamp(timestamp + i), geo)
-
-        # Commit to file
-        self.db.commit()
-
-
-
-
-
-    @timing
-    def import_baro_to_database(self, timestamp, recordset, data: list):
-        # Create sensors
-        baro_sensor = self.add_sensor_to_db(SensorType.BAROMETER, 'Barometer',
-                                               'OpenIMU-HW',
-                                               'Unknown', 1, 1)
-
-        baro_channel = self.add_channel_to_db(baro_sensor, Units.KPA,
-                                                 DataFormat.FLOAT32, 'Pressure')
-
-        # Get data in the form of array
-        values = np.array(data, dtype=np.float32)
-        print("Values shape: ", values.shape)
-
-        end_timestamp = timestamp + len(values)
-
-        # Update end_timestamp if required
-        if end_timestamp > recordset.end_timestamp.timestamp():
-            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
-
-        self.add_sensor_data_to_db(recordset, baro_sensor, baro_channel,
-                                   datetime.datetime.fromtimestamp(timestamp),
-                                   datetime.datetime.fromtimestamp(end_timestamp), values[:, 1])
+        return sensors, channels
 
     @timing
     def import_to_database(self, result):
         print('OpenIMUImporter.import_to_database')
+
+        # TODO use configuration, hardcoded for now
+        sample_rate = 50
+
+        # First create all sensors and channels
+        sensors, channels = self.create_sensor_and_channels(sample_rate)
 
         for timestamp in result:
 
@@ -266,16 +285,16 @@ class OpenIMUImporter(BaseImporter):
 
             if result[timestamp].__contains__('imu'):
                 # print('contains imu')
-                self.import_imu_to_database(timestamp, recordset, result[timestamp]['imu'])
+                self.import_imu_to_database(timestamp, sample_rate, sensors, channels, recordset, result[timestamp]['imu'])
             if result[timestamp].__contains__('power'):
                 # print('contains power')
-                self.import_power_to_database(timestamp, recordset, result[timestamp]['power'])
+                self.import_power_to_database(timestamp, sensors, channels, recordset, result[timestamp]['power'])
             if result[timestamp].__contains__('gps'):
                 # print('contains gps')
-                self.import_gps_to_database(timestamp, recordset, result[timestamp]['gps'])
+                self.import_gps_to_database(timestamp, sensors, channels, recordset, result[timestamp]['gps'])
             if result[timestamp].__contains__('baro'):
                 # print('contains baro')
-                self.import_baro_to_database(timestamp, recordset, result[timestamp]['baro'])
+                self.import_baro_to_database(timestamp, sensors, channels, recordset, result[timestamp]['baro'])
 
     def processImuChunk(self, chunk, debug=False):
         data = struct.unpack("9f", chunk)
@@ -315,7 +334,7 @@ class OpenIMUImporter(BaseImporter):
         timestamp = None
 
         # Todo better than while 1?
-        while True:
+        while file.readable():
 
             chunk = file.read(1)
             if len(chunk) < 1:
