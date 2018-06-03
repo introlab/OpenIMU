@@ -55,12 +55,15 @@ class OpenIMUImporter(BaseImporter):
     def import_imu_to_database(self, timestamp, sample_rate, sensors, channels, recordset, data: list):
         # print('import_imu_to_database')
         values = np.array(data, dtype=np.float32)
-        # print("Values shape: ", values.shape)
+        print("Values shape: ", values.shape)
         end_timestamp = timestamp + int(np.floor(len(values) / sample_rate))
 
         # Calculate last index to remove extra values
         real_size = int(np.floor(len(values) / sample_rate) * sample_rate)
-        # print('real size:', real_size)
+        print('real size:', real_size)
+
+        if real_size == 0:
+            return False
 
         # Update end_timestamp if required
         if end_timestamp > recordset.end_timestamp.timestamp():
@@ -86,12 +89,18 @@ class OpenIMUImporter(BaseImporter):
 
         self.db.commit()
 
+        return True
+
     @timing
     def import_power_to_database(self, timestamp, sensors, channels, recordset, data: list):
 
         # Get data in the form of array
         values = np.array(data, dtype=np.float32)
-        # print("Values shape: ", values.shape)
+        print("Values shape: ", values.shape)
+
+        if len(values) == 0:
+            return False
+
         # print(values[:, 0])
         # print(values[:, 1])
 
@@ -111,14 +120,19 @@ class OpenIMUImporter(BaseImporter):
 
         self.db.commit()
 
+        return True
+
     @timing
     def import_gps_to_database(self, timestamp, sensors, channels, recordset, data: list):
 
         # Get data in the form of array
         values = np.array(data, dtype=np.float32)
-        # print("Values shape: ", values.shape)
+        print("Values shape: ", values.shape)
         # print(values[:, 0])
         # print(values[:, 1])
+
+        if len(values) == 0:
+            return False
 
         end_timestamp = timestamp + len(values)
 
@@ -147,11 +161,16 @@ class OpenIMUImporter(BaseImporter):
         # Commit to file
         self.db.commit()
 
+        return True
+
     @timing
     def import_baro_to_database(self,  timestamp, sensors, channels, recordset, data: list):
         # Get data in the form of array
         values = np.array(data, dtype=np.float32)
         print("Values shape: ", values.shape)
+
+        if len(values) == 0:
+            return False
 
         end_timestamp = timestamp + len(values)
 
@@ -162,6 +181,11 @@ class OpenIMUImporter(BaseImporter):
         self.add_sensor_data_to_db(recordset, sensors['baro'], channels['baro'],
                                    datetime.datetime.fromtimestamp(timestamp),
                                    datetime.datetime.fromtimestamp(end_timestamp), values[:, 1])
+
+        # Commit to file
+        self.db.commit()
+
+        return True
 
     def create_sensor_and_channels(self, sample_rate):
         # Baro
@@ -295,6 +319,9 @@ class OpenIMUImporter(BaseImporter):
             if result[timestamp].__contains__('baro'):
                 # print('contains baro')
                 self.import_baro_to_database(timestamp, sensors, channels, recordset, result[timestamp]['baro'])
+                
+        # Make sure everything is commited to DB
+        self.db.commit()
 
     def processImuChunk(self, chunk, debug=False):
         data = struct.unpack("9f", chunk)
