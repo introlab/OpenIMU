@@ -46,7 +46,7 @@ class OpenIMUImporter(BaseImporter):
         results = {}
         with open(filename, "rb") as file:
             print('Loading File: ', filename)
-            results = self.readDataFile(file)
+            results = self.readDataFile(file, False)
 
         print('Done!')
         return results
@@ -55,12 +55,15 @@ class OpenIMUImporter(BaseImporter):
     def import_imu_to_database(self, timestamp, sample_rate, sensors, channels, recordset, data: list):
         # print('import_imu_to_database')
         values = np.array(data, dtype=np.float32)
-        # print("Values shape: ", values.shape)
+        print("Values shape: ", values.shape)
         end_timestamp = timestamp + int(np.floor(len(values) / sample_rate))
 
         # Calculate last index to remove extra values
         real_size = int(np.floor(len(values) / sample_rate) * sample_rate)
-        # print('real size:', real_size)
+        print('real size:', real_size)
+
+        if real_size == 0:
+            return False
 
         # Update end_timestamp if required
         if end_timestamp > recordset.end_timestamp.timestamp():
@@ -86,12 +89,18 @@ class OpenIMUImporter(BaseImporter):
 
         self.db.commit()
 
+        return True
+
     @timing
     def import_power_to_database(self, timestamp, sensors, channels, recordset, data: list):
 
         # Get data in the form of array
         values = np.array(data, dtype=np.float32)
-        # print("Values shape: ", values.shape)
+        print("Values shape: ", values.shape)
+
+        if len(values) == 0:
+            return False
+
         # print(values[:, 0])
         # print(values[:, 1])
 
@@ -111,14 +120,19 @@ class OpenIMUImporter(BaseImporter):
 
         self.db.commit()
 
+        return True
+
     @timing
     def import_gps_to_database(self, timestamp, sensors, channels, recordset, data: list):
 
         # Get data in the form of array
         values = np.array(data, dtype=np.float32)
-        # print("Values shape: ", values.shape)
+        print("Values shape: ", values.shape)
         # print(values[:, 0])
         # print(values[:, 1])
+
+        if len(values) == 0:
+            return False
 
         end_timestamp = timestamp + len(values)
 
@@ -147,11 +161,16 @@ class OpenIMUImporter(BaseImporter):
         # Commit to file
         self.db.commit()
 
+        return True
+
     @timing
     def import_baro_to_database(self,  timestamp, sensors, channels, recordset, data: list):
         # Get data in the form of array
         values = np.array(data, dtype=np.float32)
         print("Values shape: ", values.shape)
+
+        if len(values) == 0:
+            return False
 
         end_timestamp = timestamp + len(values)
 
@@ -162,6 +181,11 @@ class OpenIMUImporter(BaseImporter):
         self.add_sensor_data_to_db(recordset, sensors['baro'], channels['baro'],
                                    datetime.datetime.fromtimestamp(timestamp),
                                    datetime.datetime.fromtimestamp(end_timestamp), values[:, 1])
+
+        # Commit to file
+        self.db.commit()
+
+        return True
 
     def create_sensor_and_channels(self, sample_rate):
         # Baro
@@ -285,23 +309,32 @@ class OpenIMUImporter(BaseImporter):
 
             if result[timestamp].__contains__('imu'):
                 # print('contains imu')
-                self.import_imu_to_database(timestamp, sample_rate, sensors, channels, recordset, result[timestamp]['imu'])
+                if not self.import_imu_to_database(timestamp, sample_rate, sensors,
+                                                   channels, recordset, result[timestamp]['imu']):
+                    print('IMU import error')
             if result[timestamp].__contains__('power'):
                 # print('contains power')
-                self.import_power_to_database(timestamp, sensors, channels, recordset, result[timestamp]['power'])
+                if not self.import_power_to_database(timestamp, sensors, channels, recordset,
+                                                     result[timestamp]['power']):
+                    print('Power import error')
             if result[timestamp].__contains__('gps'):
                 # print('contains gps')
-                self.import_gps_to_database(timestamp, sensors, channels, recordset, result[timestamp]['gps'])
+                if not self.import_gps_to_database(timestamp, sensors, channels, recordset,
+                                                   result[timestamp]['gps']):
+                    print('GPS import error')
             if result[timestamp].__contains__('baro'):
                 # print('contains baro')
-                self.import_baro_to_database(timestamp, sensors, channels, recordset, result[timestamp]['baro'])
+                if not self.import_baro_to_database(timestamp, sensors, channels, recordset,
+                                                    result[timestamp]['baro']):
+                    print('Baro import error')
+
+        # Make sure everything is commited to DB
+        self.db.commit()
 
     def processImuChunk(self, chunk, debug=False):
         data = struct.unpack("9f", chunk)
-
         if debug:
             print("IMU: ", data)
-
         return data
 
     def processTimestampChunk(self, chunk, debug=False):
@@ -346,11 +379,11 @@ class OpenIMUImporter(BaseImporter):
 
             if headChar[0] == b'h':
                 n = n + 1
-                print("New log stream")
+                print("New log stream detected")
             elif headChar[0] == b't':
                 n = n + 1
                 chunk = file.read(struct.calcsize("i"))
-                current_timestamp = self.processTimestampChunk(chunk)
+                current_timestamp = self.processTimestampChunk(chunk, debug)
 
                 if timestamp is None:
                     timestamp = current_timestamp
@@ -370,28 +403,30 @@ class OpenIMUImporter(BaseImporter):
             elif headChar[0] == b'i':
                 n = n + 1
                 chunk = file.read(struct.calcsize("9f"))
-                data = self.processImuChunk(chunk)
+                data = self.processImuChunk(chunk, debug)
                 if timestamp is not None:
                     results[timestamp]['imu'].append(data)
+                else:
+                    print('IMU None timestamp')
 
             elif headChar[0] == b'g':
                 n = n + 1
                 chunk = file.read(struct.calcsize("?3f"))
-                data = self.processGPSChunk(chunk)
+                data = self.processGPSChunk(chunk, debug)
                 if timestamp is not None:
                     results[timestamp]['gps'].append(data)
 
             elif headChar[0] == b'p':
                 n = n + 1
                 chunk = file.read(struct.calcsize("2f"))
-                data = self.processPowerChunk(chunk)
+                data = self.processPowerChunk(chunk, debug)
                 if timestamp is not None:
                     results[timestamp]['power'].append(data)
 
             elif headChar[0] == b'b':
                 n = n + 1
                 chunk = file.read(struct.calcsize("2f"))
-                data = self.processBarometerChunk(chunk)
+                data = self.processBarometerChunk(chunk, debug)
                 if timestamp is not None:
                     results[timestamp]['baro'].append(data)
 
