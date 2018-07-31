@@ -7,13 +7,16 @@
     <x>0</x>
     <y>0</y>
     <width>814</width>
-    <height>264</height>
+    <height>228</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Gestionnaire d'importation</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="topMargin">
+    <number>9</number>
+   </property>
    <item>
     <layout class="QFormLayout" name="formLayout">
      <property name="sizeConstraint">
@@ -22,16 +25,28 @@
      <property name="fieldGrowthPolicy">
       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
      </property>
+     <property name="formAlignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
      <item row="0" column="0">
       <widget class="QLabel" name="lblFileName">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>30</height>
+        </size>
+       </property>
        <property name="text">
-        <string>Fichier à importer:</string>
+        <string>Données à importer:</string>
        </property>
       </widget>
      </item>
@@ -55,6 +70,12 @@
            <height>40</height>
           </size>
          </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>40</height>
+          </size>
+         </property>
          <property name="cursor">
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
@@ -70,8 +91,14 @@
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="lblFileType">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
-        <string>Type de fichier:</string>
+        <string>Type de données:</string>
        </property>
       </widget>
      </item>
@@ -145,6 +172,12 @@
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="lblParticipant">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Code participant:</string>
        </property>
@@ -152,6 +185,12 @@
      </item>
      <item row="3" column="0">
       <widget class="QLabel" name="lblGroup">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Groupe participant</string>
        </property>
@@ -159,6 +198,12 @@
      </item>
      <item row="3" column="1">
       <widget class="QLabel" name="lblGroupName">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="font">
         <font>
          <weight>75</weight>

@@ -16,6 +16,10 @@
   <property name="windowTitle">
    <string>OpenIMU</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../core.qrc">
+    <normaloff>:/OpenIMU/icons/OpenIMU.png</normaloff>:/OpenIMU/icons/OpenIMU.png</iconset>
+  </property>
   <property name="styleSheet">
    <string notr="true">QWidget#MainWindow,QWidget#ImportBrowser,QWidget#ImportManager,QWidget#frmParticipant,QWidget#ExportCSV,QWidget#ImportDialog,QWidget#StartDialog,QWidget#dlgProcessSelect{background-image:url(:/OpenIMU/background/dark_metal.jpg);border-radius:0px;}
 

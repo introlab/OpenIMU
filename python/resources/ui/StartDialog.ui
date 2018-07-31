@@ -16,6 +16,10 @@
   <property name="windowTitle">
    <string>OpenIMU - Démarrage</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../core.qrc">
+    <normaloff>:/OpenIMU/icons/OpenIMU.png</normaloff>:/OpenIMU/icons/OpenIMU.png</iconset>
+  </property>
   <property name="styleSheet">
    <string notr="true"/>
   </property>

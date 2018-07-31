@@ -14,6 +14,7 @@ from libopenimu.importers.OpenIMUImporter import OpenIMUImporter
 from libopenimu.importers.AppleWatchImporter import AppleWatchImporter
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog
 
+import glob
 
 class ImportBrowser(QDialog):
     dbMan = None
@@ -27,8 +28,8 @@ class ImportBrowser(QDialog):
         self.UI.btnOK.clicked.connect(self.ok_clicked)
         self.UI.btnAddFile.clicked.connect(self.add_clicked)
         self.UI.btnDelFile.clicked.connect(self.del_clicked)
+        self.UI.btnAddDir.clicked.connect(self.add_dir_clicked)
         self.dbMan = dataManager
-
 
     @pyqtSlot()
     def ok_clicked(self):
@@ -76,7 +77,7 @@ class ImportBrowser(QDialog):
                 # results = data_importer.load(file_name)
                 # data_importer.import_to_database(results)
             else:
-                #TODO: Error message
+                # TODO: Error message
                 self.reject()
 
         # Run in background all importers (in sequence)
@@ -94,6 +95,30 @@ class ImportBrowser(QDialog):
 
         self.accept()
 
+    def addFileToList(self,filename,filetype,filetype_id,participant):
+        table = self.UI.tableFiles
+
+        row = table.rowCount()
+        table.setRowCount(row + 1)
+        cell = QTableWidgetItem()
+        cell.setText(filename)
+        table.setItem(row, 3, cell)
+        cell = QTableWidgetItem()
+        cell.setText(filetype)
+        cell.setData(Qt.UserRole, filetype_id)
+        table.setItem(row, 2, cell)
+        cell = QTableWidgetItem()
+        group = ""
+        if participant.group is not None:
+            group = participant.group.name
+        cell.setText(group)
+        table.setItem(row, 0, cell)
+        cell = QTableWidgetItem()
+        cell.setText(participant.name)
+        cell.setData(Qt.UserRole, participant)
+        table.setItem(row, 1, cell)
+
+        table.resizeColumnsToContents()
     @pyqtSlot()
     def cancel_clicked(self):
         self.reject()
@@ -108,30 +133,22 @@ class ImportBrowser(QDialog):
         importman.setStyleSheet(self.styleSheet())
 
         if importman.exec() == QDialog.Accepted:
+            files = importman.filename.split(";")
             # Add file to list
-            table = self.UI.tableFiles
+            for file in files:
+                self.addFileToList(file, importman.filetype, importman.filetype_id, importman.participant)
 
-            row = table.rowCount()
-            table.setRowCount(row + 1)
-            cell = QTableWidgetItem()
-            cell.setText(importman.filename)
-            table.setItem(row, 3, cell)
-            cell = QTableWidgetItem()
-            cell.setText(importman.filetype)
-            cell.setData(Qt.UserRole, importman.filetype_id)
-            table.setItem(row, 2, cell)
-            cell = QTableWidgetItem()
-            group = ""
-            if importman.participant.group is not None:
-                group = importman.participant.group.name
-            cell.setText(group)
-            table.setItem(row, 0, cell)
-            cell = QTableWidgetItem()
-            cell.setText(importman.participant.name)
-            cell.setData(Qt.UserRole,importman.participant)
-            table.setItem(row, 1, cell)
+    @pyqtSlot()
+    def add_dir_clicked(self):
+        importman = ImportManager(dbManager=self.dbMan)
+        importman.setStyleSheet(self.styleSheet())
+        importman.import_dirs = True
 
-            table.resizeColumnsToContents()
+        if importman.exec() == QDialog.Accepted:
+            # Add file to list
+            files = glob.glob(importman.filename + "/**/*")
+            for file in files:
+                self.addFileToList(file, importman.filetype, importman.filetype_id, importman.participant)
 
     @pyqtSlot()
     def del_clicked(self):

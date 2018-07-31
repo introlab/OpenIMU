@@ -71,8 +71,7 @@ class MainWindow(QMainWindow):
 
         if startWindow.exec() == QDialog.Rejected:
             # User closed the dialog - exits!
-            exit(0)
-            return
+            sys.exit(0)
 
         # Init database manager
         self.currentFileName = startWindow.fileName

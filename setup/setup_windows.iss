@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OpenIMU"
-#define MyAppVersion "0.1.0"
+#define MyAppVersion "0.1.1"
 #define MyAppPublisher "IntroLab - CDRV"
 #define MyAppURL "http://www.cdrv.ca"
 #define MyAppExeName "OpenIMUApp.exe"
@@ -39,7 +39,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 ; Application files
-Source: "..\python\dist\OpenIMUApp\*"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\python\dist\OpenIMUApp\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 
 [Icons]
 Name: "{commonprograms}\OpenIMU\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

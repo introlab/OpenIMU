@@ -63,7 +63,7 @@ class AppleWatchImporter(BaseImporter):
     def load_zip(self, filename):
         results = {}
         with zipfile.ZipFile(filename) as myzip:
-            print('zip opened')
+            #print('zip opened')
             namelist = myzip.namelist()
 
             # print('zip contains : ', namelist)
@@ -349,7 +349,7 @@ class AppleWatchImporter(BaseImporter):
         # Commit to DB
         self.db.commit()
 
-    def readDataFile(self, file, debug=True):
+    def readDataFile(self, file, debug=False):
         '''
         All binary files have a similar header
         • Two bytes for file identifier (based on Wimu format): 0xEA, 0xEA

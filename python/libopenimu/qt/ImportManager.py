@@ -17,6 +17,7 @@ class ImportManager(QDialog):
     participant = ""
     group = ""
     dbMan = None
+    import_dirs = False
 
     def __init__(self, dbManager, parent=None):
         super(QDialog, self).__init__(parent=parent)
@@ -89,10 +90,17 @@ class ImportManager(QDialog):
 
     @pyqtSlot()
     def browse_clicked(self):
-        file = QFileDialog().getOpenFileName(caption="Sélectionnez le fichier à importer")
+        if not self.import_dirs:
+            file = QFileDialog().getOpenFileNames(caption="Sélectionnez le(s) fichier(s) à importer")
+        else:
+            file = QFileDialog().getExistingDirectory(caption="Sélectionnez le répertoire à importer")
 
         if file[0]:
-            self.UI.txtFileName.setText(file[0])
+            if not self.import_dirs:
+                sep = ";"
+                self.UI.txtFileName.setText(sep.join(file[0]))
+            else:
+                self.UI.txtFileName.setText(file)
 
     @pyqtSlot()
     def new_participant_requested(self):
