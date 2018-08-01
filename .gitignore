@@ -8,3 +8,6 @@ python/build/
 __pycache__/
 python/resources/python/
 CMakeLists.txt.user
+/python/resources/ui/python
+.idea
+/setup/*.exe

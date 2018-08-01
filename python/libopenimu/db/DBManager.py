@@ -115,6 +115,7 @@ class DBManager:
 
         # Check if we have orphan items dandling around
         self.clean_db()
+        self.engine.execute("VACUUM")
 
     def get_group(self, id_group):
         query = self.session.query(Group).filter(Group.id_group == id_group)
@@ -173,8 +174,22 @@ class DBManager:
         # Check if we have orphan items dandling around
         self.clean_db()
 
+        self.engine.execute("VACUUM")
+
     #####################
     def add_sensor(self, _id_sensor_type, _name, _hw_name, _location, _sampling_rate, _data_rate):
+        # Check if that sensor is already present in the database
+        query = self.session.query(Sensor).filter((Sensor.id_sensor_type == _id_sensor_type) &
+                                                  (Sensor.location == _location) &
+                                                  (Sensor.name == _name) &
+                                                  (Sensor.hw_name == _hw_name) &
+                                                  (Sensor.sampling_rate == _sampling_rate) &
+                                                  (Sensor.data_rate) == _data_rate)
+
+        if query.first():
+            #print("Sensor " + _name + " already present in DB!")
+            return query.first();
+
         # Create object
         sensor = Sensor(
                         id_sensor_type=_id_sensor_type,
@@ -183,7 +198,6 @@ class DBManager:
                         location=_location,
                         sampling_rate=_sampling_rate,
                         data_rate=_data_rate)
-
         self.session.add(sensor)
         self.commit()
         return sensor
@@ -202,7 +216,31 @@ class DBManager:
             return query.all()
 
     #####################
-    def add_recordset(self, participant: Participant, name, start_timestamp, end_timestamp):
+    def add_recordset(self, participant: Participant, name, start_timestamp, end_timestamp, force=False):
+
+        if not force: # Check if we already have a recordset for that period
+            '''
+            query = self.session.query(Recordset)\
+                            .filter(Recordset.participant == participant &
+                                    ((Recordset.start_timestamp <= start_timestamp & Recordset.end_timestamp >= start_timestamp) |
+                                     (Recordset.start_timestamp <= end_timestamp & Recordset.end_timestamp >= end_timestamp) |
+                                     (Recordset.start_timestamp >= start_timestamp & Recordset.end_timestamp <= end_timestamp)))
+            '''
+            query = self.session.query(Recordset).filter((Recordset.participant == participant) & (Recordset.name == name))
+            if query.first():
+                # Update start and end times, if needed.
+                current_record = query.first()
+                print("Recordset found: " + current_record.name)
+                new_starttime = current_record.start_timestamp
+                if start_timestamp < new_starttime:
+                    new_starttime = start_timestamp
+                new_endtime = current_record.end_timestamp
+                if end_timestamp > new_endtime:
+                    new_endtime = end_timestamp
+                current_record.start_timestamp = new_starttime
+                current_record.end_timestamp = new_endtime
+                self.commit()
+                return current_record
 
         # Create object
         record = Recordset(participant=participant, name=name, start_timestamp=start_timestamp,
@@ -274,6 +312,16 @@ class DBManager:
 
     #####################
     def add_channel(self, sensor, id_sensor_unit, id_data_format, label):
+        # Check if that sensor is already present in the database
+        query = self.session.query(Channel).filter((Channel.sensor == sensor) &
+                                                  (Channel.id_sensor_unit == id_sensor_unit) &
+                                                  (Channel.id_data_format == id_data_format) &
+                                                  (Channel.label == label))
+
+        if query.first():
+            #print("Channel " + label + " already present in DB!")
+            return query.first()
+
         # Create object
         channel = Channel(sensor=sensor, id_sensor_unit=id_sensor_unit,
                           id_data_format=id_data_format, label=label)

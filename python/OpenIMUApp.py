@@ -13,6 +13,7 @@ from libopenimu.models.Base import Base
 
 import numpy as np
 import libopenimu.jupyter.Jupyter as Jupyter
+import gc
 
 from enum import Enum
 
@@ -94,8 +95,9 @@ class MainWindow(QMainWindow):
         self.add_to_log("Données chargées!", LogTypes.LOGTYPE_DONE)
 
         # If we need to import data, show the import dialog
-        if startWindow.importing :
+        if startWindow.importing:
             self.importRequested()
+            gc.collect()
 
     def setup_signals(self):
         self.UI.treeDataSet.itemClicked.connect(self.tree_item_clicked)
@@ -212,6 +214,7 @@ class MainWindow(QMainWindow):
         importer.setStyleSheet(self.styleSheet())
         if importer.exec() == QDialog.Accepted:
             self.load_data_from_dataset()
+            gc.collect()
 
     @pyqtSlot()
     def exportCSVRequested(self):

@@ -27,7 +27,7 @@ QFrame#frameTitle{background-color:rgba(130,130,130,50%);}
 QFrame#frameInfos{background-color:rgba(50,50,50,50%);}
 QFrame#frameTools{background-color:rgba(250,250,250,50%);}
 
-QWidget{border-radius:10px;}
+QWidget{border-radius:5px;}
 
 QWidget#dockWidgetTreeContents, QWidget#dockWidgetLogContents{background-color:rgba(0,0,0,0%);}
 QWidget#line,QWidget#line_2{background-color:rgba(100,100,100,100%);}
@@ -337,7 +337,7 @@ QTableWidget{background-color:rgba(200,200,200,70%);}</string>
    </property>
    <property name="minimumSize">
     <size>
-     <width>829</width>
+     <width>834</width>
      <height>50</height>
     </size>
    </property>

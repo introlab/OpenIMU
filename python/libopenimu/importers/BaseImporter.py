@@ -21,7 +21,7 @@ def load_worker(importer, filename):
 
 class BaseImporter:
     def __init__(self, manager: DBManager, participant: Participant):
-        print('BaseImporter')
+       # print('BaseImporter')
 
         # This is the manager that will be used for importation, externally created
         self.db = manager

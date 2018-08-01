@@ -15,6 +15,7 @@ from libopenimu.importers.AppleWatchImporter import AppleWatchImporter
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog
 
 import glob
+import gc
 
 class ImportBrowser(QDialog):
     dbMan = None
@@ -93,6 +94,7 @@ class ImportBrowser(QDialog):
         # Show progress dialog
         dialog.exec()
 
+        gc.collect()
         self.accept()
 
     def addFileToList(self,filename,filetype,filetype_id,participant):
@@ -132,6 +134,12 @@ class ImportBrowser(QDialog):
         importman = ImportManager(dbManager=self.dbMan)
         importman.setStyleSheet(self.styleSheet())
 
+        if self.UI.tableFiles.rowCount() > 0:
+            # Copy informations into the dialog
+            last_row = self.UI.tableFiles.rowCount()-1
+            importman.set_participant(self.UI.tableFiles.item(last_row,1).text())
+            importman.set_filetype(self.UI.tableFiles.item(last_row,2).text())
+
         if importman.exec() == QDialog.Accepted:
             files = importman.filename.split(";")
             # Add file to list
@@ -144,9 +152,19 @@ class ImportBrowser(QDialog):
         importman.setStyleSheet(self.styleSheet())
         importman.import_dirs = True
 
+        if self.UI.tableFiles.rowCount() > 0:
+            # Copy informations into the dialog
+            last_row = self.UI.tableFiles.rowCount()-1
+            importman.set_participant(self.UI.tableFiles.item(last_row,1).text())
+            importman.set_filetype(self.UI.tableFiles.item(last_row,2).text())
+
         if importman.exec() == QDialog.Accepted:
             # Add file to list
-            files = glob.glob(importman.filename + "/**/*")
+            files = glob.glob(importman.filename + "/*.*") # Files in base folder
+            for file in files:
+                self.addFileToList(file, importman.filetype, importman.filetype_id, importman.participant)
+
+            files = glob.glob(importman.filename + "/**/*.*") # Files in sub folders
             for file in files:
                 self.addFileToList(file, importman.filetype, importman.filetype_id, importman.participant)
 

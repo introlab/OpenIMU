@@ -74,6 +74,12 @@ class ImportManager(QDialog):
 
         return rval
 
+    def set_participant(self, name):
+        self.UI.cmbParticipant.setCurrentText(name);
+
+    def set_filetype(self, format_text):
+        self.UI.cmbFileType.setCurrentText(format_text)
+
     @pyqtSlot()
     def ok_clicked(self):
         # Validate items

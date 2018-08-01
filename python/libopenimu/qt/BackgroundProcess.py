@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QThread, QCoreApplication, QTime, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QProgressDialog, QLabel
 import numpy as np
-
+import gc
 
 class ProgressDialog(QProgressDialog):
     def __init__(self, count, parent=None):
@@ -21,6 +21,7 @@ class ProgressDialog(QProgressDialog):
     def trigger(self):
         self.count = self.count + 1
         self.setValue(self.count)
+        gc.collect()
 
     def timerEvent(self, a0: 'QTimerEvent'):
         self.setLabelText('Temps : ' + str(np.floor(self.time.elapsed() / 1000)) + ' secondes')

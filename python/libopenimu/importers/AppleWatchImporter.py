@@ -29,9 +29,7 @@ import os
 import zipfile
 import struct
 
-
 class AppleWatchImporter(BaseImporter):
-
     HEADER = 0xEAEA
     BATTERY_ID = 0x01
     SENSORIA_ID = 0x02
@@ -57,13 +55,13 @@ class AppleWatchImporter(BaseImporter):
                 print('Loading File: ', filename)
                 results = self.readDataFile(file)
 
-        print('results len', len(results))
+        #print('results len', len(results))
         return results
 
     def load_zip(self, filename):
         results = {}
         with zipfile.ZipFile(filename) as myzip:
-            #print('zip opened')
+            # print('zip opened')
             namelist = myzip.namelist()
 
             # print('zip contains : ', namelist)
@@ -112,7 +110,15 @@ class AppleWatchImporter(BaseImporter):
         return results
 
     def get_recordset(self, timestamp):
-        my_time = datetime.datetime.fromtimestamp(timestamp)
+        try:
+            my_time = datetime.datetime.fromtimestamp(timestamp)
+        except:
+            return
+
+        # Validate timestamp
+        if my_time > datetime.datetime.now() or my_time < datetime.datetime(2018,1,1):
+            print("Invalid timestamp: " + str(timestamp));
+            return
 
         # Find a record the same day
         for record in self.recordsets:
@@ -312,9 +318,15 @@ class AppleWatchImporter(BaseImporter):
                     'heartrate': heartrate_channel,
                     'coordinates': coordinates_channel}
 
+        if result is None:
+            return
+
         for timestamp in result:
             # Change recordset each day
             recordset = self.get_recordset(timestamp)
+
+            if recordset is None:
+                continue
 
             if result[timestamp].__contains__('battery'):
                 # print('battery')
@@ -402,7 +414,7 @@ class AppleWatchImporter(BaseImporter):
 
                 if debug:
                     print('TIMESTAMP (MS): ', timestamp_ms)
-                    print('time: ',  datetime.datetime.fromtimestamp(timestamp_sec))
+                    print('time: ', datetime.datetime.fromtimestamp(timestamp_sec))
 
                 # Initialize data structure at this timestamp if required
                 if not results.__contains__(timestamp_sec):
@@ -473,7 +485,7 @@ class AppleWatchImporter(BaseImporter):
         :param chunk:
         :return:
         """
-        assert(len(chunk) == 2)
+        assert (len(chunk) == 2)
         data = struct.unpack("BB", chunk)
         if debug:
             print('BATTERY: ', data)
@@ -493,7 +505,7 @@ class AppleWatchImporter(BaseImporter):
         ◦ magnetometer (x,y,z)
 
         """
-        assert(len(chunk) == 20)
+        assert (len(chunk) == 20)
 
         data = struct.unpack("<20B", chunk)
 
@@ -564,10 +576,3 @@ class AppleWatchImporter(BaseImporter):
         if debug:
             print('COORDINATES: ', data)
         return data
-
-
-
-
-
-
-
