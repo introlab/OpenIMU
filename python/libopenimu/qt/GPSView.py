@@ -20,7 +20,8 @@ class GPSView(QWebEngineView):
         self.marker_position = []
         self.positions = {}
 
-        self.setFixedHeight(300)
+        #self.setFixedHeight(300)
+        #self.setMinimumHeight(500)
 
         self.reftime = datetime.datetime.now()
         self.pageReady = False

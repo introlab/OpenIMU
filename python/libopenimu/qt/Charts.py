@@ -28,7 +28,7 @@ class IMUChartView(QChartView):
         super(QChartView, self).__init__(parent=parent)
 
         #self.setFixedHeight(400)
-        self.setMinimumHeight(500)
+        #self.setMinimumHeight(500)
         """self.setMaximumHeight(700)
         self.setFixedHeight(700)
         self.setMinimumWidth(1500)
@@ -62,13 +62,14 @@ class IMUChartView(QChartView):
         # Top Widgets
         newWidget = QWidget(self)
         newLayout = QHBoxLayout()
+        newLayout.setContentsMargins(0,0,0,0)
         newWidget.setLayout(newLayout)
-        labelx = QLabel(self)
-        labelx.setText('X:')
-        self.labelXValue = QLabel(self)
-        labely = QLabel(self)
-        labely.setText('Y:')
-        self.labelYValue = QLabel(self)
+        #labelx = QLabel(self)
+        #labelx.setText('X:')
+        #self.labelXValue = QLabel(self)
+        #labely = QLabel(self)
+        #labely.setText('Y:')
+        #self.labelYValue = QLabel(self)
 
         # Test buttons
         #newLayout.addWidget(QToolButton(self))
@@ -79,7 +80,7 @@ class IMUChartView(QChartView):
         #newLayout.addItem(QSpacerItem(10, 10, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
         # Labels
-        newLayout.addWidget(labelx)
+        """newLayout.addWidget(labelx)
         newLayout.addWidget(self.labelXValue)
         self.labelXValue.setMinimumWidth(200)
         self.labelXValue.setMaximumWidth(200)
@@ -87,10 +88,11 @@ class IMUChartView(QChartView):
         newLayout.addWidget(self.labelYValue)
         self.labelYValue.setMinimumWidth(200)
         self.labelYValue.setMaximumWidth(200)
+        """
 
         """if parent is not None:
             parent.layout().setMenuBar(newWidget)
-"""
+        """
         # self.layout()
 
         self.build_style()
@@ -232,7 +234,7 @@ class IMUChartView(QChartView):
         pen.setWidthF(1.5)
         curve.setPen(pen)
 
-        curve.setUseOpenGL(True)
+        #curve.setUseOpenGL(True)
 
         # Decimate
         xdecimated, ydecimated = self.decimate(xdata, ydata)
@@ -263,7 +265,8 @@ class IMUChartView(QChartView):
 
     def set_title(self, title):
         # print('Setting title: ', title)
-        self.chart.setTitle(title)
+        #self.chart.setTitle(title)
+        pass
 
     def series_to_polyline(self, xdata, ydata):
         """Convert series data to QPolygon(F) polyline
@@ -343,8 +346,8 @@ class IMUChartView(QChartView):
         xmap = self.chart.mapToValue(QPointF(pos,0)).x()
         ymap = self.chart.mapToValue(QPointF(pos,0)).y()
 
-        self.labelXValue.setText(str(datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp())))
-        self.labelYValue.setText(str(ymap))
+        #self.labelXValue.setText(str(datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp())))
+        #self.labelYValue.setText(str(ymap))
 
         if emit_signal:
             self.cursorMoved.emit(datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp()))

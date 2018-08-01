@@ -84,6 +84,7 @@ class RecordsetWindow(QWidget):
             self.draw_timebar()
             self.time_pixmap = True
 
+
     def load_sensors(self):
         self.UI.lstSensors.clear()
         self.sensors = {}
@@ -92,9 +93,9 @@ class RecordsetWindow(QWidget):
         # Create sensor colors
         used_colors = []
         # colors = QColor.colorNames()
-        colors = ['darkblue', 'darkcyan', 'darkgreen', 'darkkhaki', 'darkmagenta',
-                  'darkolivegreen', 'darkorange', 'darkorchid', 'darkred', 'darksalmon', 'darkseagreen',
-                  'darkslateblue', 'darkslategray', 'darkslategrey', 'darkturquoise', 'darkviolet']
+        colors = ['darkblue', 'darkviolet', 'darkgreen', 'darkorange', 'darkred','darkslategray', 'darkturquoise',
+                  'darkolivegreen','darkseagreen','darkmagenta', 'darkkhaki' ,
+                  'darkslateblue', 'darksalmon', 'darkorchid',  'darkcyan']
 
         # Filter "bad" colors for sensors
         """colors.remove("white")
@@ -218,7 +219,10 @@ class RecordsetWindow(QWidget):
             start_pos = self.get_relative_timeview_pos(record.start_timestamp)
             end_pos = self.get_relative_timeview_pos(record.end_timestamp)
             span = end_pos - start_pos
+            #print (str(span))
             self.timeScene.addRect(start_pos, 0, span, self.UI.graphTimeline.height(), transPen, greenBrush)
+
+        self.UI.graphTimeline.update()
 
     def draw_sensors(self):
         if len(self.sensors) == 0:
@@ -274,7 +278,8 @@ class RecordsetWindow(QWidget):
                     or sensor.id_sensor_type == SensorType.HEARTRATE \
                     or sensor.id_sensor_type == SensorType.ORIENTATION:
 
-                graph = IMUChartView(self.UI.displayContents)
+                #graph = IMUChartView(self.UI.displayContents)
+                graph = IMUChartView(self.UI.mdiArea)
                 # graph.add_test_data()
                 # Add series
                 for series in timeseries:
@@ -282,13 +287,14 @@ class RecordsetWindow(QWidget):
 
                 graph.set_title(item.text())
 
-            # self.tile_graphs_vertically()
+
 
             if sensor.id_sensor_type == SensorType.GPS:
                 # graph = GPSView(self.UI.mdiArea)
-                base_widget = QWidget(self.UI.displayContents)
+                """base_widget = QWidget(self.UI.displayContents)
                 base_widget.setFixedHeight(400)
-                base_widget.setMaximumHeight(400)
+                base_widget.setMaximumHeight(400)"""
+                base_widget = self.UI.mdiArea
                 graph = GPSView(base_widget)
 
                 for data in channel_data:
@@ -300,28 +306,31 @@ class RecordsetWindow(QWidget):
                     # print (gps)
 
             if graph is not None:
-                # self.UI.mdiArea.addSubWindow(graph).setWindowTitle(item.text())
+                self.UI.mdiArea.addSubWindow(graph).setWindowTitle(item.text())
                 self.sensors_graphs[sensor.id_sensor] = graph
-                self.UI.displayContents.layout().insertWidget(0,graph)
-                #self.UI.displayContents.layout().addWidget(graph)
+                #self.UI.displayContents.layout().insertWidget(0,graph)
+
                 graph.show()
                 QApplication.instance().processEvents()
 
                 graph.aboutToClose.connect(self.graph_was_closed)
                 graph.cursorMoved.connect(self.graph_cursor_changed)
 
-                self.UI.displayArea.ensureWidgetVisible(graph)
+                #self.UI.displayArea.ensureWidgetVisible(graph)
                 # self.UI.displayArea.verticalScrollBar().setSliderPosition(self.UI.displayArea.verticalScrollBar().maximum())
-
+                # self.tile_graphs_vertically()
+                self.UI.mdiArea.tileSubWindows()
 
         else:
             # Remove from display
             if self.sensors_graphs[sensor.id_sensor] is not None:
-                # self.UI.mdiArea.removeSubWindow(self.sensors_graphs[sensor.id_sensor].parent())
+                self.UI.mdiArea.removeSubWindow(self.sensors_graphs[sensor.id_sensor].parent())
 
-                self.UI.displayContents.layout().removeWidget(self.sensors_graphs[sensor.id_sensor])
+                #self.UI.displayContents.layout().removeWidget(self.sensors_graphs[sensor.id_sensor])
                 self.sensors_graphs[sensor.id_sensor].hide()
                 self.sensors_graphs[sensor.id_sensor] = None
+                #self.tile_graphs_vertically()
+                self.UI.mdiArea.tileSubWindows()
 
     @pyqtSlot(QObject)
     def graph_was_closed(self, graph):
@@ -331,7 +340,8 @@ class RecordsetWindow(QWidget):
                 self.sensors_items[sensor_id].setCheckState(Qt.Unchecked)
                 break
 
-        # self.tile_graphs_vertically()
+        #self.tile_graphs_vertically()
+        self.UI.mdiArea.tileSubWindows()
 
     @pyqtSlot(datetime)
     def graph_cursor_changed(self, timestamp):
@@ -398,7 +408,6 @@ class RecordsetWindow(QWidget):
             self.dataUpdateRequest.emit("result", window.processed_data)
             self.dataDisplayRequest.emit("result", window.processed_data.id_processed_data)
 
-"""
     def tile_graphs_horizontally(self):
 
         if self.UI.mdiArea.subWindowList() is None:
@@ -425,4 +434,4 @@ class RecordsetWindow(QWidget):
             window.move(position)
             position.setY(position.y() + window.height())
 
-"""
+

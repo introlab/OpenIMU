@@ -307,7 +307,7 @@ class DBManager:
             return query.all()
     #####################
     def get_sensors(self, recordset):
-        query = self.session.query(Sensor).join(SensorData).filter(SensorData.id_recordset == recordset.id_recordset).group_by(Sensor.id_sensor)
+        query = self.session.query(Sensor).join(SensorData).filter(SensorData.id_recordset == recordset.id_recordset).group_by(Sensor.id_sensor).order_by(asc(Sensor.name))
         return query.all()
 
     #####################

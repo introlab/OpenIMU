@@ -50,14 +50,15 @@ QTreeWidget, QListWidget{background-color:rgba(200,200,200,70%);}
 
 QLineEdit,QPlainTextEdit,QComboBox{background-color:rgba(226, 226, 226,90%);border-radius:5px;}
 
-QTableWidget{background-color:rgba(200,200,200,70%);}</string>
+QListWidget#lstSensors,QTableWidget{background-color:rgba(200,200,200,70%);}
+</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QFrame" name="frmMain">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -100,6 +101,12 @@ QTableWidget{background-color:rgba(200,200,200,70%);}</string>
      </property>
      <item>
       <widget class="Treedatawidget" name="treeDataSet">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="editTriggers">
         <set>QAbstractItemView::NoEditTriggers</set>
        </property>

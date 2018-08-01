@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1181</width>
+    <width>1092</width>
     <height>874</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -65,6 +71,9 @@ QWidget#displayContents,QFrame#frmSensors,QScrollArea{background-color:rgba(0,0,
    </item>
    <item>
     <widget class="QFrame" name="frameInfos">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <property name="spacing">
        <number>5</number>
@@ -312,7 +321,7 @@ QWidget#displayContents,QFrame#frmSensors,QScrollArea{background-color:rgba(0,0,
    <item>
     <widget class="TimeView" name="graphTimeline">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -449,7 +458,7 @@ QWidget#displayContents,QFrame#frmSensors,QScrollArea{background-color:rgba(0,0,
    <item>
     <widget class="QFrame" name="frmSensors">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -484,7 +493,7 @@ QWidget#displayContents,QFrame#frmSensors,QScrollArea{background-color:rgba(0,0,
         <item>
          <widget class="QListWidget" name="lstSensors">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -510,38 +519,37 @@ QWidget#displayContents,QFrame#frmSensors,QScrollArea{background-color:rgba(0,0,
          </widget>
         </item>
         <item>
-         <widget class="QScrollArea" name="displayArea">
+         <widget class="QMdiArea" name="mdiArea">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAsNeeded</enum>
+          </property>
           <property name="horizontalScrollBarPolicy">
-           <enum>Qt::ScrollBarAlwaysOff</enum>
+           <enum>Qt::ScrollBarAsNeeded</enum>
           </property>
-          <property name="sizeAdjustPolicy">
-           <enum>QAbstractScrollArea::AdjustIgnored</enum>
+          <property name="viewMode">
+           <enum>QMdiArea::SubWindowView</enum>
           </property>
-          <property name="widgetResizable">
-           <bool>true</bool>
+          <property name="documentMode">
+           <bool>false</bool>
           </property>
-          <widget class="QWidget" name="displayContents">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_4">
-            <property name="spacing">
-             <number>1</number>
-            </property>
-            <property name="sizeConstraint">
-             <enum>QLayout::SetDefaultConstraint</enum>
-            </property>
-           </layout>
-          </widget>
+          <property name="tabsClosable">
+           <bool>false</bool>
+          </property>
+          <property name="tabsMovable">
+           <bool>false</bool>
+          </property>
          </widget>
         </item>
        </layout>
