@@ -42,6 +42,7 @@ class BackgroundProcess(QThread):
         for f in self.functions:
             f()
             self.trigger.emit()
+            del(f)
         print('Run Done!')
 
 

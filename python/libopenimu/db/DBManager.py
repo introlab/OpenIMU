@@ -115,7 +115,7 @@ class DBManager:
 
         # Check if we have orphan items dandling around
         self.clean_db()
-        self.engine.execute("VACUUM")
+        #self.engine.execute("VACUUM")
 
     def get_group(self, id_group):
         query = self.session.query(Group).filter(Group.id_group == id_group)
@@ -174,7 +174,7 @@ class DBManager:
         # Check if we have orphan items dandling around
         self.clean_db()
 
-        self.engine.execute("VACUUM")
+        #self.engine.execute("VACUUM")
 
     #####################
     def add_sensor(self, _id_sensor_type, _name, _hw_name, _location, _sampling_rate, _data_rate):

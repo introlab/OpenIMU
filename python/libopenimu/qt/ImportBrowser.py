@@ -51,6 +51,8 @@ class ImportBrowser(QDialog):
                 results = self.importer.load(self.filename)
                 print('Importer saving to db')
                 self.importer.import_to_database(results)
+                if results is not None:
+                    results.clear() # Needed to clear the dict cache and let the garbage collector delete it!
                 print('Importer done!')
 
         importers = []

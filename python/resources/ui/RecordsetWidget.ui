@@ -23,7 +23,8 @@
    <string notr="true">QLabel#lblCursorTime{color:cyan;}
 
 QWidget#displayContents,QFrame#frmSensors,QScrollArea{background-color:rgba(0,0,0,0%);}
-</string>
+
+QMdiArea{background-color:rgba(250,250,250,0%);}</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">

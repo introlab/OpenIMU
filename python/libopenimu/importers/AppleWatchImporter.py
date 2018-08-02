@@ -330,7 +330,8 @@ class AppleWatchImporter(BaseImporter):
 
             if result[timestamp].__contains__('battery'):
                 # print('battery')
-                self.import_battery_to_database(1, timestamp, recordset, sensors, channels,
+                if result[timestamp]['battery']:
+                    self.import_battery_to_database(1, timestamp, recordset, sensors, channels,
                                                 result[timestamp]['battery'])
 
             if result[timestamp].__contains__('beacons'):
@@ -345,21 +346,25 @@ class AppleWatchImporter(BaseImporter):
 
             if result[timestamp].__contains__('heartrate'):
                 # print('heartrate')
-                self.import_heartrate_to_database(1, timestamp, recordset, sensors, channels,
+                if result[timestamp]['heartrate']:
+                    self.import_heartrate_to_database(1, timestamp, recordset, sensors, channels,
                                                   result[timestamp]['heartrate'])
 
             if result[timestamp].__contains__('motion'):
                 # print('motion')
-                self.import_motion_to_database(sample_rate, timestamp, recordset, sensors, channels,
+                if result[timestamp]['motion']:
+                    self.import_motion_to_database(sample_rate, timestamp, recordset, sensors, channels,
                                                result[timestamp]['motion'])
 
             if result[timestamp].__contains__('coordinates'):
                 # print('coordinates')
-                self.import_coordinates_to_database(1, timestamp, recordset, sensors, channels,
+                if result[timestamp]['coordinates']:
+                    self.import_coordinates_to_database(1, timestamp, recordset, sensors, channels,
                                                     result[timestamp]['coordinates'])
 
         # Commit to DB
         self.db.commit()
+
 
     def readDataFile(self, file, debug=False):
         '''
@@ -402,7 +407,7 @@ class AppleWatchImporter(BaseImporter):
                 [timestamp_ms] = struct.unpack("<Q", file.read(8))
                 timestamp_sec = int(np.round(timestamp_ms / 1000))
 
-                if sensor_id == self.MOTION_ID:
+                """if sensor_id == self.MOTION_ID:
                     if last_timestamp is None:
                         last_timestamp = timestamp_sec
                     else:
@@ -411,7 +416,7 @@ class AppleWatchImporter(BaseImporter):
                         if timestamp_sec > last_timestamp + 3600:
                             # print('One hour, changing timestamp')
                             last_timestamp = timestamp_sec
-
+                """
                 if debug:
                     print('TIMESTAMP (MS): ', timestamp_ms)
                     print('time: ', datetime.datetime.fromtimestamp(timestamp_sec))
@@ -448,12 +453,7 @@ class AppleWatchImporter(BaseImporter):
                     data = self.read_motion_data(file.read(52), debug)
                     results[last_timestamp]['motion'].append(data)
 
-                # elif sensor_id == self.LOCATION_ID:
-                #    # Location data
-                #    # ????
-                #    data = self.read_location_data(file.read(0), debug)
-                #    results[timestamp_ms]['location'].append(data)
-
+             
                 elif sensor_id == self.BEACONS_ID:
                     # Beacons data
                     data = self.read_beacons_data(file.read(5), debug)
