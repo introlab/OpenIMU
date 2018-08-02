@@ -407,7 +407,7 @@ class AppleWatchImporter(BaseImporter):
                 [timestamp_ms] = struct.unpack("<Q", file.read(8))
                 timestamp_sec = int(np.round(timestamp_ms / 1000))
 
-                """if sensor_id == self.MOTION_ID:
+                if sensor_id == self.MOTION_ID:
                     if last_timestamp is None:
                         last_timestamp = timestamp_sec
                     else:
@@ -416,7 +416,7 @@ class AppleWatchImporter(BaseImporter):
                         if timestamp_sec > last_timestamp + 3600:
                             # print('One hour, changing timestamp')
                             last_timestamp = timestamp_sec
-                """
+
                 if debug:
                     print('TIMESTAMP (MS): ', timestamp_ms)
                     print('time: ', datetime.datetime.fromtimestamp(timestamp_sec))
