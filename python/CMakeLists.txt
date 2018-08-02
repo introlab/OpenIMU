@@ -110,6 +110,7 @@ set (installer_args
     # --paths ${PYTHON_ENV_DIRECTORY}/lib/python${PYTHON_VERSION}/site-packages/PyQt5
     --hidden-import scipy._lib.messagestream
     --hidden-import sqlalchemy.ext.baked
+    --hidden-import PyQt5.sip
     # --clean
     -y
     --windowed
