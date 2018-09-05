@@ -114,7 +114,7 @@ set (installer_args
     # --clean
     -y
     --windowed
-    --icon ${APP_ICON}
+    --icon ${APP_ICON} 
 )
 
 add_custom_target(python_package
