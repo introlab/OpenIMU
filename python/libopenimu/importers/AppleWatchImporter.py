@@ -250,6 +250,55 @@ class AppleWatchImporter(BaseImporter):
 
         self.db.commit()
 
+    def import_sensoria_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
+        # print('import_sensoria_to_database')
+        # print('data', data, len(data))
+
+        # Ignore tick (useless for now)
+        fsr_values = np.array([val[1:4] for val in data], dtype=np.int16)
+        motion_values = np.array([val[4:] for val in data], dtype=np.float32)
+
+        # print("Values shape: ", values.shape)
+        end_timestamp = timestamp + int(np.floor(len(motion_values) / sample_rate))
+        # print("timestamps, ", timestamp, end_timestamp)
+
+        # Calculate last index to remove extra values
+        real_size = int(np.floor(len(motion_values) / sample_rate) * sample_rate)
+        # print('real size:', real_size)
+
+        # Update end_timestamp if required
+        if end_timestamp > recordset.end_timestamp.timestamp():
+            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
+
+        if real_size > 0:
+            # Acc
+            for i in range(len(channels['sensoria_acc'])):
+                self.add_sensor_data_to_db(recordset, sensors['sensoria_acc'], channels['sensoria_acc'][i],
+                                           datetime.datetime.fromtimestamp(timestamp),
+                                           datetime.datetime.fromtimestamp(end_timestamp), motion_values[0:real_size, i])
+
+            # Gyro
+            for i in range(len(channels['sensoria_gyro'])):
+                self.add_sensor_data_to_db(recordset, sensors['sensoria_gyro'], channels['sensoria_gyro'][i],
+                                           datetime.datetime.fromtimestamp(timestamp),
+                                           datetime.datetime.fromtimestamp(end_timestamp), motion_values[0:real_size, i + 3])
+
+            # Magneto
+            for i in range(len(channels['sensoria_mag'])):
+                self.add_sensor_data_to_db(recordset, sensors['sensoria_mag'], channels['sensoria_mag'][i],
+                                           datetime.datetime.fromtimestamp(timestamp),
+                                           datetime.datetime.fromtimestamp(end_timestamp),
+                                           motion_values[0:real_size, i + 6])
+
+            # FSR
+            for i in range(len(channels['sensoria_fsr'])):
+                self.add_sensor_data_to_db(recordset, sensors['sensoria_fsr'], channels['sensoria_fsr'][i],
+                                           datetime.datetime.fromtimestamp(timestamp),
+                                           datetime.datetime.fromtimestamp(end_timestamp),
+                                           fsr_values[0:real_size, i])
+
+        self.db.commit()
+
     def import_to_database(self, result):
         print('AppleWatchImporter.import_to_database')
 
@@ -305,18 +354,70 @@ class AppleWatchImporter(BaseImporter):
 
         coordinates_channel = self.add_channel_to_db(coordinates_sensor, Units.NONE, DataFormat.UINT8, 'Coordinates')
 
+        # Sensoria
+        sensoria_acc_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer', 'Sensoria', 'Foot',
+                                                    sample_rate, 1)
+
+        sensoria_acc_channels = list()
+        sensoria_acc_channels.append(self.add_channel_to_db(sensoria_acc_sensor, Units.GRAVITY_G,
+                                                             DataFormat.FLOAT32, 'Accelerometer_X'))
+        sensoria_acc_channels.append(self.add_channel_to_db(sensoria_acc_sensor, Units.GRAVITY_G,
+                                                             DataFormat.FLOAT32, 'Accelerometer_Y'))
+        sensoria_acc_channels.append(self.add_channel_to_db(sensoria_acc_sensor, Units.GRAVITY_G,
+                                                             DataFormat.FLOAT32, 'Accelerometer_Z'))
+
+        sensoria_gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyrometer', 'Sensoria', 'Foot',
+                                                    sample_rate, 1)
+        sensoria_gyro_channels = list()
+        sensoria_gyro_channels.append(self.add_channel_to_db(sensoria_gyro_sensor, Units.DEG_PER_SEC,
+                                                    DataFormat.FLOAT32, 'Gyro_X'))
+        sensoria_gyro_channels.append(self.add_channel_to_db(sensoria_gyro_sensor, Units.DEG_PER_SEC,
+                                                    DataFormat.FLOAT32, 'Gyro_Y'))
+        sensoria_gyro_channels.append(self.add_channel_to_db(sensoria_gyro_sensor, Units.DEG_PER_SEC,
+                                                    DataFormat.FLOAT32, 'Gyro_Z'))
+
+        sensoria_mag_sensor = self.add_sensor_to_db(SensorType.MAGNETOMETER, 'Magnetometer', 'Sensoria', 'Foot',
+                                                     sample_rate, 1)
+        sensoria_mag_channels = list()
+        sensoria_mag_channels.append(self.add_channel_to_db(sensoria_mag_sensor, Units.GAUSS,
+                                                             DataFormat.FLOAT32, 'Mag_X'))
+        sensoria_mag_channels.append(self.add_channel_to_db(sensoria_mag_sensor, Units.GAUSS,
+                                                             DataFormat.FLOAT32, 'Mag_Y'))
+        sensoria_mag_channels.append(self.add_channel_to_db(sensoria_mag_sensor, Units.GAUSS,
+                                                             DataFormat.FLOAT32, 'Mag_Z'))
+
+        sensoria_fsr_sensor = self.add_sensor_to_db(SensorType.FSR, 'FSR', 'Sensoria', 'Foot',
+                                                     sample_rate, 1)
+        sensoria_fsr_channels = list()
+        sensoria_fsr_channels.append(self.add_channel_to_db(sensoria_fsr_sensor, Units.NONE,
+                                                            DataFormat.SINT16, 'META-1'))
+        sensoria_fsr_channels.append(self.add_channel_to_db(sensoria_fsr_sensor, Units.NONE,
+                                                            DataFormat.SINT16, 'META-5'))
+        sensoria_fsr_channels.append(self.add_channel_to_db(sensoria_fsr_sensor, Units.NONE,
+                                                            DataFormat.SINT16, 'HEEL'))
+
+
         # Create sensor and channels dict
         sensors = {'acc': accelerometer_sensor,
                    'gyro': gyro_sensor,
                    'batt': battery_sensor,
                    'heartrate': heartrate_sensor,
-                   'coordinates': coordinates_sensor}
+                   'coordinates': coordinates_sensor,
+                   'sensoria_acc': sensoria_acc_sensor,
+                   'sensoria_gyro': sensoria_gyro_sensor,
+                   'sensoria_mag': sensoria_mag_sensor,
+                   'sensoria_fsr': sensoria_fsr_sensor}
 
         channels = {'acc': accelerometer_channels,
                     'gyro': gyro_channels,
                     'batt': battery_channel,
                     'heartrate': heartrate_channel,
-                    'coordinates': coordinates_channel}
+                    'coordinates': coordinates_channel,
+                    'sensoria_acc': sensoria_acc_channels,
+                    'sensoria_gyro': sensoria_gyro_channels,
+                    'sensoria_mag': sensoria_mag_channels,
+                    'sensoria_fsr': sensoria_fsr_channels
+                    }
 
         if result is None:
             return
@@ -341,7 +442,9 @@ class AppleWatchImporter(BaseImporter):
 
             if result[timestamp].__contains__('sensoria'):
                 # print('sensoria')
-                # Don't know what to do with that yet
+                if result[timestamp]['sensoria']:
+                    self.import_sensoria_to_database(sample_rate, timestamp, recordset, sensors, channels,
+                                                     result[timestamp]['sensoria'])
                 pass
 
             if result[timestamp].__contains__('heartrate'):
@@ -440,7 +543,7 @@ class AppleWatchImporter(BaseImporter):
 
                 elif sensor_id == self.SENSORIA_ID:
                     # Sensoria data
-                    data = self.read_sensoria_data(file.read(20), debug)
+                    data = self.read_sensoria_data(file.read(46), debug)
                     results[timestamp_sec]['sensoria'].append(data)
 
                 elif sensor_id == self.HEARTRATE_ID:
@@ -453,7 +556,6 @@ class AppleWatchImporter(BaseImporter):
                     data = self.read_motion_data(file.read(52), debug)
                     results[last_timestamp]['motion'].append(data)
 
-             
                 elif sensor_id == self.BEACONS_ID:
                     # Beacons data
                     data = self.read_beacons_data(file.read(5), debug)
@@ -493,11 +595,12 @@ class AppleWatchImporter(BaseImporter):
 
     def read_sensoria_data(self, chunk, debug=False):
         """
-        42 bytes of received frame (will require further processing)
+        46 bytes of received frame (will require further processing)
         This assumes that all socks we have use the F20 streaming protocol, as defined in
         SensoriaCoreData. As of now, the app ignores all other protocol to not pollute the files. In the
         future, it would be the best to deserialize these frames directly upon importation into OpenIMU.
         As this will be more cumbersome, for now the deserialization is made directly on reception.
+        * Tick (Int32)
         • 3 Int16 for the 3 channels (pressure sensors)
         • 9 Float32 for inertial sensors
         ◦ accelerometer (x,y,z)
@@ -505,12 +608,8 @@ class AppleWatchImporter(BaseImporter):
         ◦ magnetometer (x,y,z)
 
         """
-        assert (len(chunk) == 20)
-
-        data = struct.unpack("<20B", chunk)
-
-        # assert(len(chunk) == 42)
-        # data = struct.unpack("<3h9f", chunk)
+        assert(len(chunk) == 46)
+        data = struct.unpack("<1i3h9f", chunk)
         if debug:
             print('SENSORIA: ', data)
         return data

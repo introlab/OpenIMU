@@ -118,6 +118,7 @@ class RecordsetWindow(QWidget):
                 item = QListWidgetItem(sensor.location)
                 item.setFlags(Qt.NoItemFlags)
                 item.setForeground(QBrush(Qt.black))
+
                 self.UI.lstSensors.addItem(item)
             else:
                 index = self.UI.lstSensors.indexFromItem(location_item[0]).row()
@@ -168,8 +169,11 @@ class RecordsetWindow(QWidget):
         start_time = self.recordsets[0].start_timestamp
         end_time = self.recordsets[len(self.recordsets) - 1].end_timestamp
         time_span = (end_time - start_time).total_seconds()  # Total number of seconds in recordsets
-        return (((current_time - self.recordsets[
-            0].start_timestamp).total_seconds()) / time_span) * self.UI.graphTimeline.width()
+        if time_span>0:
+            return (((current_time - self.recordsets[
+                0].start_timestamp).total_seconds()) / time_span) * self.UI.graphTimeline.width()
+        else:
+            return 0
 
     def draw_dates(self):
         if len(self.recordsets) == 0:
@@ -276,7 +280,8 @@ class RecordsetWindow(QWidget):
                     or sensor.id_sensor_type == SensorType.MAGNETOMETER \
                     or sensor.id_sensor_type == SensorType.TEMPERATURE \
                     or sensor.id_sensor_type == SensorType.HEARTRATE \
-                    or sensor.id_sensor_type == SensorType.ORIENTATION:
+                    or sensor.id_sensor_type == SensorType.ORIENTATION \
+                    or sensor.id_sensor_type == SensorType.FSR:
 
                 #graph = IMUChartView(self.UI.displayContents)
                 graph = IMUChartView(self.UI.mdiArea)

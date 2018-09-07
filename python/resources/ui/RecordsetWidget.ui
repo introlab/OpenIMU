@@ -506,13 +506,19 @@ QMdiArea{background-color:rgba(250,250,250,0%);}</string>
            </size>
           </property>
           <property name="dragDropMode">
-           <enum>QAbstractItemView::DragDrop</enum>
+           <enum>QAbstractItemView::DragOnly</enum>
+          </property>
+          <property name="movement">
+           <enum>QListView::Snap</enum>
           </property>
           <property name="isWrapping" stdset="0">
            <bool>true</bool>
           </property>
           <property name="viewMode">
-           <enum>QListView::IconMode</enum>
+           <enum>QListView::ListMode</enum>
+          </property>
+          <property name="uniformItemSizes">
+           <bool>false</bool>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
