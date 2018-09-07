@@ -162,7 +162,7 @@ class AppleWatchImporter(BaseImporter):
                                            datetime.datetime.fromtimestamp(timestamp),
                                            datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i + 6])
 
-        self.db.commit()
+        #self.db.commit()
 
     def import_battery_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
 
@@ -188,7 +188,7 @@ class AppleWatchImporter(BaseImporter):
                                        datetime.datetime.fromtimestamp(timestamp),
                                        datetime.datetime.fromtimestamp(end_timestamp), values[0, 0])
 
-        self.db.commit()
+        #self.db.commit()
 
     def import_heartrate_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
 
@@ -215,7 +215,7 @@ class AppleWatchImporter(BaseImporter):
                                        datetime.datetime.fromtimestamp(timestamp),
                                        datetime.datetime.fromtimestamp(end_timestamp), values[0, 0])
 
-        self.db.commit()
+        #self.db.commit()
 
     def import_coordinates_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
 
@@ -248,7 +248,7 @@ class AppleWatchImporter(BaseImporter):
                                        datetime.datetime.fromtimestamp(timestamp),
                                        datetime.datetime.fromtimestamp(end_timestamp), geo)
 
-        self.db.commit()
+        #self.db.commit()
 
     def import_sensoria_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
         # print('import_sensoria_to_database')
@@ -297,7 +297,12 @@ class AppleWatchImporter(BaseImporter):
                                            datetime.datetime.fromtimestamp(end_timestamp),
                                            fsr_values[0:real_size, i])
 
-        self.db.commit()
+        #self.db.commit()
+
+    def import_beacons_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
+        namespaces = [val[0:10] for val in data]
+        namespaces = [[str(format(x, 'x')).rjust(2, '0') for x in tup] for tup in namespaces]
+        print(namespaces)
 
     def import_to_database(self, result):
         print('AppleWatchImporter.import_to_database')
@@ -396,6 +401,9 @@ class AppleWatchImporter(BaseImporter):
         sensoria_fsr_channels.append(self.add_channel_to_db(sensoria_fsr_sensor, Units.NONE,
                                                             DataFormat.SINT16, 'HEEL'))
 
+        #Beacons
+        beacons_sensor = self.add_sensor_to_db(SensorType.BEACON, 'Beacons', 'Kontact', 'Environment', 1, 1)
+
 
         # Create sensor and channels dict
         sensors = {'acc': accelerometer_sensor,
@@ -406,7 +414,8 @@ class AppleWatchImporter(BaseImporter):
                    'sensoria_acc': sensoria_acc_sensor,
                    'sensoria_gyro': sensoria_gyro_sensor,
                    'sensoria_mag': sensoria_mag_sensor,
-                   'sensoria_fsr': sensoria_fsr_sensor}
+                   'sensoria_fsr': sensoria_fsr_sensor,
+                   'beacons_sensor': beacons_sensor}
 
         channels = {'acc': accelerometer_channels,
                     'gyro': gyro_channels,
@@ -437,7 +446,9 @@ class AppleWatchImporter(BaseImporter):
 
             if result[timestamp].__contains__('beacons'):
                 # print('beacons')
-                # Don't know what to do with that yet.
+                if result[timestamp]['beacons']:
+                    self.import_beacons_to_database(sample_rate, timestamp, recordset, sensors, channels,
+                                                     result[timestamp]['beacons'])
                 pass
 
             if result[timestamp].__contains__('sensoria'):
@@ -558,7 +569,7 @@ class AppleWatchImporter(BaseImporter):
 
                 elif sensor_id == self.BEACONS_ID:
                     # Beacons data
-                    data = self.read_beacons_data(file.read(5), debug)
+                    data = self.read_beacons_data(file.read(18), debug)
                     results[timestamp_sec]['beacons'].append(data)
 
                 elif sensor_id == self.COORDINATES_ID:
@@ -647,13 +658,15 @@ class AppleWatchImporter(BaseImporter):
 
     def read_beacons_data(self, chunk, debug=False):
         """
-        4 Bytes Char for beacon name, with XXXX defining unnamed beacon
-        • signed byte integer for rssi, between -128 and 127
+        10 Bytes Char for namespace
+        6 Bytes Char for instance ID
+        1 Int8 for TxPower
+        1 Int8 for RSSI
         :param chunk:
         :return:
         """
-        assert (len(chunk) == 5)
-        data = struct.unpack("<4Bb", chunk)
+        assert (len(chunk) == 18)
+        data = struct.unpack("<16B2b", chunk)
         if debug:
             print('BEACONS: ', data)
         return data

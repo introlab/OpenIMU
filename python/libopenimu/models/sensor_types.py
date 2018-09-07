@@ -19,6 +19,7 @@ class SensorType:
     BAROMETER = 10
     TEMPERATURE = 11
     FSR = 12
+    BEACON = 13
 
     # All values in a dictionary
     value_dict = {ACCELEROMETER: 'ACCELEROMETER',
