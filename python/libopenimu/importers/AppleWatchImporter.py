@@ -34,10 +34,11 @@ class AppleWatchImporter(BaseImporter):
     BATTERY_ID = 0x01
     SENSORIA_ID = 0x02
     HEARTRATE_ID = 0x03
-    MOTION_ID = 0x04
+    PROCESSED_MOTION_ID = 0x04
     # LOCATION_ID = 0x05
     BEACONS_ID = 0x06
     COORDINATES_ID = 0x7
+    RAW_MOTION_ID = 0x8
 
     def __init__(self, manager: DBManager, participant: Participant):
         super().__init__(manager, participant)
@@ -537,7 +538,7 @@ class AppleWatchImporter(BaseImporter):
                 [timestamp_ms] = struct.unpack("<Q", file.read(8))
                 timestamp_sec = int(np.round(timestamp_ms / 1000))
 
-                if sensor_id == self.MOTION_ID:
+                if sensor_id == self.PROCESSED_MOTION_ID:
                     if last_timestamp is None:
                         last_timestamp = timestamp_sec
                     else:
@@ -578,7 +579,7 @@ class AppleWatchImporter(BaseImporter):
                     data = self.read_heartrate_data(file.read(1), debug)
                     results[timestamp_sec]['heartrate'].append(data)
 
-                elif sensor_id == self.MOTION_ID:
+                elif sensor_id == self.PROCESSED_MOTION_ID:
                     # Motion data
                     data = self.read_motion_data(file.read(52), debug)
                     results[last_timestamp]['motion'].append(data)
@@ -669,7 +670,7 @@ class AppleWatchImporter(BaseImporter):
         return data
 
     def read_location_data(self, chunk, debug=False):
-        # TODO
+        # This is not a log file type
         return []
 
     def read_beacons_data(self, chunk, debug=False):
