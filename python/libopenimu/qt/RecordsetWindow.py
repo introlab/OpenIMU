@@ -328,14 +328,17 @@ class RecordsetWindow(QWidget):
 
         else:
             # Remove from display
-            if self.sensors_graphs[sensor.id_sensor] is not None:
-                self.UI.mdiArea.removeSubWindow(self.sensors_graphs[sensor.id_sensor].parent())
+            try:
+                if self.sensors_graphs[sensor.id_sensor] is not None:
+                    self.UI.mdiArea.removeSubWindow(self.sensors_graphs[sensor.id_sensor].parent())
 
-                #self.UI.displayContents.layout().removeWidget(self.sensors_graphs[sensor.id_sensor])
-                self.sensors_graphs[sensor.id_sensor].hide()
-                self.sensors_graphs[sensor.id_sensor] = None
-                #self.tile_graphs_vertically()
-                self.UI.mdiArea.tileSubWindows()
+                    #self.UI.displayContents.layout().removeWidget(self.sensors_graphs[sensor.id_sensor])
+                    self.sensors_graphs[sensor.id_sensor].hide()
+                    self.sensors_graphs[sensor.id_sensor] = None
+                    #self.tile_graphs_vertically()
+                    self.UI.mdiArea.tileSubWindows()
+            except KeyError:
+                pass
 
     @pyqtSlot(QObject)
     def graph_was_closed(self, graph):

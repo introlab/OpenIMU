@@ -15,6 +15,7 @@ from libopenimu.tools.timing import timing
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.Participant import Participant
 from libopenimu.importers.wimu import GPSGeodetic
+from libopenimu.importers.importer_types import BeaconData
 
 import numpy as np
 import math
@@ -28,6 +29,8 @@ import string
 import os
 import zipfile
 import struct
+
+from collections import defaultdict
 
 class AppleWatchImporter(BaseImporter):
     HEADER = 0xEAEA
@@ -300,9 +303,51 @@ class AppleWatchImporter(BaseImporter):
         #self.db.commit()
 
     def import_beacons_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
-        namespaces = [val[0:10] for val in data]
+        """end_timestamp = timestamp + int(np.floor(len(data) / sample_rate))
+
+        # Update end_timestamp if required
+        if end_timestamp > recordset.end_timestamp.timestamp():
+            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)"""
+
+        # Creates list of unique beacons ids (built from namespace and instance id)
+        namespaces = [val[0:16] for val in data]
+        txs = [val[16] for val in data]
+        rssi = [val[17] for val in data]
         namespaces = [[str(format(x, 'x')).rjust(2, '0') for x in tup] for tup in namespaces]
-        print(namespaces)
+        #names = []
+        beacons = defaultdict(list)
+        index = 0
+        for name in namespaces:
+            beacon_id = ''.join(name[0:10])+ '_' + ''.join(name[10:])
+            beacon_channel = [x for x in channels['beacons'] if x.label == beacon_id]
+            if not beacon_channel: #Must add a new channel
+                beacon_channel = [self.add_channel_to_db(sensors['beacons'], Units.NONE,
+                                           DataFormat.SINT8, beacon_id)]
+                channels['beacons'].append(beacon_channel[0])
+
+            beacon_data = BeaconData()
+            beacon_data.tx_power = np.int8(txs[index])
+            beacon_data.rssi = np.int8(rssi[index])
+
+            beacons[beacon_id].append(beacon_data)
+            index+=1
+
+        for beacon_id in beacons.keys():
+            beacon_channel = [x for x in channels['beacons'] if x.label == beacon_id]
+            beacon_data = np.array(beacons[beacon_id])
+
+            end_timestamp = timestamp + int(np.floor(len(beacon_data.tobytes()) / sample_rate / 8))
+
+            # Update end_timestamp if required
+            if end_timestamp > recordset.end_timestamp.timestamp():
+                recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
+            #TODO: Serialize and save more than one sample
+            #for beacon_data in beacons[beacon_id]:
+            self.add_sensor_data_to_db(recordset, sensors['beacons'], beacon_channel[0],
+                                       datetime.datetime.fromtimestamp(timestamp),
+                                       datetime.datetime.fromtimestamp(end_timestamp), beacon_data)
+
+
 
     def import_to_database(self, result):
         print('AppleWatchImporter.import_to_database')
@@ -403,7 +448,7 @@ class AppleWatchImporter(BaseImporter):
 
         #Beacons
         beacons_sensor = self.add_sensor_to_db(SensorType.BEACON, 'Beacons', 'Kontact', 'Environment', 1, 1)
-
+        beacons_channels = list()
 
         # Create sensor and channels dict
         sensors = {'acc': accelerometer_sensor,
@@ -415,7 +460,7 @@ class AppleWatchImporter(BaseImporter):
                    'sensoria_gyro': sensoria_gyro_sensor,
                    'sensoria_mag': sensoria_mag_sensor,
                    'sensoria_fsr': sensoria_fsr_sensor,
-                   'beacons_sensor': beacons_sensor}
+                   'beacons': beacons_sensor}
 
         channels = {'acc': accelerometer_channels,
                     'gyro': gyro_channels,
@@ -425,7 +470,8 @@ class AppleWatchImporter(BaseImporter):
                     'sensoria_acc': sensoria_acc_channels,
                     'sensoria_gyro': sensoria_gyro_channels,
                     'sensoria_mag': sensoria_mag_channels,
-                    'sensoria_fsr': sensoria_fsr_channels
+                    'sensoria_fsr': sensoria_fsr_channels,
+                    'beacons': beacons_channels
                     }
 
         if result is None:
@@ -447,7 +493,7 @@ class AppleWatchImporter(BaseImporter):
             if result[timestamp].__contains__('beacons'):
                 # print('beacons')
                 if result[timestamp]['beacons']:
-                    self.import_beacons_to_database(sample_rate, timestamp, recordset, sensors, channels,
+                    self.import_beacons_to_database(1, timestamp, recordset, sensors, channels,
                                                      result[timestamp]['beacons'])
                 pass
 
