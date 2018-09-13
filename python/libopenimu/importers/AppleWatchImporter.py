@@ -499,18 +499,13 @@ class AppleWatchImporter(BaseImporter):
 
         results = {}
 
-        [id, version] = struct.unpack("<HB", file.read(2 + 1))
+        [file_header_id, version, participant_id, sensor_id] = struct.unpack("<HBIB", file.read(2 + 1 + 4 + 1))
 
-        if id != self.HEADER:
+        if file_header_id != self.HEADER:
             return None
 
         if debug:
-            print('reading header : ', hex(id), hex(version))
-
-        # Read sensor ID
-        [participant_id, sensor_id] = struct.unpack("<IB", file.read(4 + 1))
-
-        if debug:
+            print('reading header : ', hex(file_header_id), hex(version))
             print('participant_id : ', participant_id)
             print('sensor_id : ', hex(sensor_id))
 
@@ -519,12 +514,12 @@ class AppleWatchImporter(BaseImporter):
         if version == 2:
             [json_data_size] = struct.unpack("<I", file.read(4))
             [json_data] = struct.unpack("<{}s".format(json_data_size), file.read(json_data_size))
-            json_str = json_data.decode("utf-8")
-            print(json_str)
+            settings_json_str = json_data.decode("utf-8")
             if debug:
-                print(json_str)
-            [end_header] = struct.unpack("<H", file.read(2))
-            if end_header != self.HEADER:
+                print('setting_json : ', settings_json_str)
+
+            [end_header_id] = struct.unpack("<H", file.read(2))
+            if end_header_id != self.HEADER:
                 if debug:
                     print('Error unpacking file, header not ending with 0xEAEA')
                 return None
