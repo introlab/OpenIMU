@@ -37,10 +37,11 @@ class AppleWatchImporter(BaseImporter):
     BATTERY_ID = 0x01
     SENSORIA_ID = 0x02
     HEARTRATE_ID = 0x03
-    MOTION_ID = 0x04
+    PROCESSED_MOTION_ID = 0x04
     # LOCATION_ID = 0x05
     BEACONS_ID = 0x06
     COORDINATES_ID = 0x7
+    RAW_MOTION_ID = 0x8
 
     def __init__(self, manager: DBManager, participant: Participant):
         super().__init__(manager, participant)
@@ -544,19 +545,30 @@ class AppleWatchImporter(BaseImporter):
 
         results = {}
 
-        [id, version, participant_id] = struct.unpack("<HBI", file.read(2 + 1 + 4))
+        [file_header_id, version, participant_id, sensor_id] = struct.unpack("<HBIB", file.read(2 + 1 + 4 + 1))
 
-        if id != self.HEADER:
+        if file_header_id != self.HEADER:
             return None
 
         if debug:
-            print('reading header : ', hex(id), hex(version), participant_id)
-
-        # Read sensor ID
-        [sensor_id] = struct.unpack("<B", file.read(1))
-
-        if debug:
+            print('reading header : ', hex(file_header_id), hex(version))
+            print('participant_id : ', participant_id)
             print('sensor_id : ', hex(sensor_id))
+
+        # if version == 1: Nothing more to do
+
+        if version == 2:
+            [json_data_size] = struct.unpack("<I", file.read(4))
+            [json_data] = struct.unpack("<{}s".format(json_data_size), file.read(json_data_size))
+            settings_json_str = json_data.decode("utf-8")
+            if debug:
+                print('setting_json : ', settings_json_str)
+
+            [end_header_id] = struct.unpack("<H", file.read(2))
+            if end_header_id != self.HEADER:
+                if debug:
+                    print('Error unpacking file, header not ending with 0xEAEA')
+                return None
 
         try:
 
@@ -567,7 +579,7 @@ class AppleWatchImporter(BaseImporter):
                 [timestamp_ms] = struct.unpack("<Q", file.read(8))
                 timestamp_sec = int(np.round(timestamp_ms / 1000))
 
-                if sensor_id == self.MOTION_ID:
+                if sensor_id == self.PROCESSED_MOTION_ID:
                     if last_timestamp is None:
                         last_timestamp = timestamp_sec
                     else:
@@ -608,7 +620,7 @@ class AppleWatchImporter(BaseImporter):
                     data = self.read_heartrate_data(file.read(1), debug)
                     results[timestamp_sec]['heartrate'].append(data)
 
-                elif sensor_id == self.MOTION_ID:
+                elif sensor_id == self.PROCESSED_MOTION_ID:
                     # Motion data
                     data = self.read_motion_data(file.read(52), debug)
                     results[last_timestamp]['motion'].append(data)
@@ -699,7 +711,7 @@ class AppleWatchImporter(BaseImporter):
         return data
 
     def read_location_data(self, chunk, debug=False):
-        # TODO
+        # This is not a log file type
         return []
 
     def read_beacons_data(self, chunk, debug=False):
