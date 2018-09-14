@@ -21,9 +21,18 @@ if(WIN32)
         PyQtChart
         PyQt3D
         pypiwin32
-        # PyInstaller
+        PyInstaller
         # Warning, development version for now to fix OSX package
-        https://github.com/pyinstaller/pyinstaller/tarball/develop
+        #https://github.com/pyinstaller/pyinstaller/tarball/develop
+    )
+
+    set (conda_packages
+        PyInstaller
+        cython
+        numpy
+        scipy
+        jupyter
+        sqlalchemy
     )
 else(WIN32)
     set (pip_packages
@@ -34,16 +43,17 @@ else(WIN32)
         # Warning, development version for now to fix OSX package
         https://github.com/pyinstaller/pyinstaller/tarball/develop
     )
+    set (conda_packages
+        # PyInstaller
+        cython
+        numpy
+        scipy
+        jupyter
+        sqlalchemy
+    )
 endif(WIN32)
 
-set (conda_packages
-    # PyInstaller
-    cython
-    numpy
-    scipy
-    jupyter
-    sqlalchemy
-)
+
 
 if(WIN32)
     # Create environment, will produce python executable

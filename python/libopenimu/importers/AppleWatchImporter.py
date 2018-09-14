@@ -629,7 +629,8 @@ class AppleWatchImporter(BaseImporter):
 
     def get_sampling_rate_from_header(self, sensor_id, header): #header = string of json
         sample_rate = 0
-        json_settings = json.loads(header) # converts to json
+        if header != "":
+            json_settings = json.loads(header) # converts to json
 
         if sensor_id == self.BATTERY_ID:
             sample_rate = 1 / 3  # Default value (if file version = 1)
