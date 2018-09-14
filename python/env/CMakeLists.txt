@@ -21,20 +21,26 @@ if(WIN32)
         PyQtChart
         PyQt3D
         pypiwin32
+        # PyInstaller
+        # Warning, development version for now to fix OSX package
+        https://github.com/pyinstaller/pyinstaller/tarball/develop
     )
 else(WIN32)
     set (pip_packages
         PyQt5
         PyQtChart
         PyQt3D
+        # PyInstaller
+        # Warning, development version for now to fix OSX package
+        https://github.com/pyinstaller/pyinstaller/tarball/develop
     )
 endif(WIN32)
 
 set (conda_packages
+    # PyInstaller
     cython
     numpy
     scipy
-    PyInstaller
     jupyter
     sqlalchemy
 )
@@ -70,7 +76,7 @@ else(WIN32)
     # TODO - INSTALL WITH CONDA ?
     add_custom_target(
         python-env
-        COMMAND ${ENV_PATH}/bin/pip install ${pip_packages}
+        COMMAND ${ENV_PATH}/bin/pip install --upgrade ${pip_packages}
         WORKING_DIRECTORY ${ENV_PATH}
         DEPENDS ${ENV_PATH}/bin/python
     )

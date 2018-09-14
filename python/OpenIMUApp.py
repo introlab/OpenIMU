@@ -1,6 +1,9 @@
 from PyQt5.QtWidgets import QMainWindow, QWidget, QHBoxLayout
 from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QTreeWidget, QTreeWidgetItem, QMessageBox
 from PyQt5.QtGui import QIcon, QFont, QDragEnterEvent
+import PyQt5
+from PyQt5.QtCore import QLibraryInfo
+from pprint import pprint
 
 # from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineSettings
 from PyQt5.QtQuickWidgets import QQuickWidget
@@ -718,6 +721,10 @@ class Treedatawidget(QTreeWidget):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setAttribute(Qt.AA_EnableHighDpiScaling)
+
+    print(PyQt5.__file__)
+    paths = [x for x in dir(QLibraryInfo) if x.endswith('Path')]
+    pprint({x: QLibraryInfo.location(getattr(QLibraryInfo, x)) for x in paths})
 
     # WebEngine settings
     # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.PluginsEnabled, True)
