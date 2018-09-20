@@ -101,7 +101,7 @@ class ImportManager(QDialog):
         else:
             file = QFileDialog().getExistingDirectory(caption="Sélectionnez le répertoire à importer")
 
-        if file[0]:
+        if len(file) > 0:
             if not self.import_dirs:
                 sep = ";"
                 self.UI.txtFileName.setText(sep.join(file[0]))
