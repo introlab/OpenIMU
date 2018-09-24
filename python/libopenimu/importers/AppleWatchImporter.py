@@ -585,32 +585,50 @@ class AppleWatchImporter(BaseImporter):
                 if result[timestamp]['battery']:
                     self.import_battery_to_database(result['sampling_rate'][self.BATTERY_ID], timestamp, recordset, sensors, channels,
                                                 result[timestamp]['battery'])
+                    if len(result[timestamp]['battery']) != result['sampling_rate'][self.BATTERY_ID]:
+                        print(timestamp, ' WARNING Battery does not fit sampling rate : ',
+                              len(result[timestamp]['battery']), ' != ',
+                              result['sampling_rate'][self.BATTERY_ID])
 
             if result[timestamp].__contains__('beacons'):
                 # print('beacons')
                 if result[timestamp]['beacons']:
                     self.import_beacons_to_database(result['sampling_rate'][self.BEACONS_ID], timestamp, recordset, sensors, channels,
                                                     result[timestamp]['beacons'])
-                pass
+                    if len(result[timestamp]['beacons']) != result['sampling_rate'][self.BEACONS_ID]:
+                        print(timestamp, ' WARNING Beacons does not fit sampling rate : ',
+                              len(result[timestamp]['beacons']), ' != ',
+                              result['sampling_rate'][self.BEACONS_ID])
 
             if result[timestamp].__contains__('sensoria'):
                 # print('sensoria')
                 if result[timestamp]['sensoria']:
                     self.import_sensoria_to_database(result['sampling_rate'][self.SENSORIA_ID], timestamp, recordset, sensors, channels,
                                                      result[timestamp]['sensoria'])
-                pass
+                    if len(result[timestamp]['sensoria']) != result['sampling_rate'][self.SENSORIA_ID]:
+                        print(timestamp, ' WARNING Sensoria does not fit sampling rate : ',
+                              len(result[timestamp]['sensoria']), ' != ',
+                              result['sampling_rate'][self.SENSORIA_ID])
 
             if result[timestamp].__contains__('heartrate'):
                 # print('heartrate')
                 if result[timestamp]['heartrate']:
                     self.import_heartrate_to_database(result['sampling_rate'][self.HEARTRATE_ID], timestamp, recordset, sensors, channels,
                                                       result[timestamp]['heartrate'])
+                    if len(result[timestamp]['heartrate']) != result['sampling_rate'][self.HEARTRATE_ID]:
+                        print(timestamp, ' WARNING Heartrate does not fit sampling rate : ',
+                              len(result[timestamp]['heartrate']), ' != ',
+                              result['sampling_rate'][self.HEARTRATE_ID])
 
             if result[timestamp].__contains__('motion'):
                 # print('motion')
                 if result[timestamp]['motion']:
                     self.import_motion_to_database(result['sampling_rate'][self.PROCESSED_MOTION_ID], timestamp, recordset, sensors, channels,
                                                    result[timestamp]['motion'])
+                    if len(result[timestamp]['motion']) != result['sampling_rate'][self.PROCESSED_MOTION_ID]:
+                        print(timestamp, ' WARNING Processed motion does not fit sampling rate : ',
+                              len(result[timestamp]['motion']), ' != ',
+                              result['sampling_rate'][self.PROCESSED_MOTION_ID])
 
             if result[timestamp].__contains__('coordinates'):
                 # print('coordinates')
@@ -618,11 +636,21 @@ class AppleWatchImporter(BaseImporter):
                     self.import_coordinates_to_database(result['sampling_rate'][self.COORDINATES_ID], timestamp, recordset, sensors, channels,
                                                         result[timestamp]['coordinates'])
 
+                    if len(result[timestamp]['coordinates']) != result['sampling_rate'][self.COORDINATES_ID]:
+                        print(timestamp, ' WARNING Coordinates does not fit sampling rate : ',
+                              len(result[timestamp]['coordinates']), ' != ',
+                              result['sampling_rate'][self.COORDINATES_ID])
+
             if result[timestamp].__contains__('raw_motion'):
                 # print('coordinates')
                 if result[timestamp]['raw_motion']:
                     self.import_raw_motion_to_database(result['sampling_rate'][self.RAW_MOTION_ID], timestamp, recordset, sensors, channels,
                                                        result[timestamp]['raw_motion'])
+
+                    if len(result[timestamp]['raw_motion']) != result['sampling_rate'][self.RAW_MOTION_ID]:
+                        print(timestamp, ' WARNING Raw motion does not fit sampling rate : ',
+                              len(result[timestamp]['raw_motion']), ' != ',
+                              result['raw_motion'][self.RAW_MOTION_ID])
 
         # Commit to DB
         self.db.commit()
@@ -719,6 +747,7 @@ class AppleWatchImporter(BaseImporter):
 
         # Get correct sample_rate for data
         results['sampling_rate'][sensor_id] = self.get_sampling_rate_from_header(sensor_id, settings_json_str)
+        print('sampling rate for sensor_id', sensor_id, ' : ', results['sampling_rate'][sensor_id])
 
         try:
 
@@ -774,7 +803,8 @@ class AppleWatchImporter(BaseImporter):
                 elif sensor_id == self.PROCESSED_MOTION_ID:
                     # Motion data
                     data = self.read_motion_data(file.read(52), debug)
-                    results[last_timestamp]['motion'].append(data)
+                    results[timestamp_sec]['motion'].append(data)
+                    # print(last_timestamp, 'motion is now of size', len(results[last_timestamp]['motion']))
 
                 elif sensor_id == self.BEACONS_ID:
                     # Beacons data
