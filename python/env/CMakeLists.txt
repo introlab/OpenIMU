@@ -14,44 +14,41 @@ set (ENV_PATH ${CMAKE_CURRENT_SOURCE_DIR}/python-${PYTHON_VERSION})
 
 file(MAKE_DIRECTORY ${ENV_PATH})
 
-# Define packages to install
+# Default packages.
+set (pip_packages
+    PyQt5
+    PyQtChart
+    PyQt3D
+)
+
+set (conda_packages
+    cython
+    numpy
+    scipy
+    # Not used for now
+    # jupyter
+    sqlalchemy
+)
+
+
+# Define custom packages to install
 if(WIN32)
     set (pip_packages
-        PyQt5
-        PyQtChart
-        PyQt3D
+        ${pip_packages}
         pypiwin32
         PyInstaller
-        # Warning, development version for now to fix OSX package
-        #https://github.com/pyinstaller/pyinstaller/tarball/develop
     )
 
     set (conda_packages
+        ${conda_packages}
         PyInstaller
-        cython
-        numpy
-        scipy
-        # Not used for now
-        # jupyter
-        sqlalchemy
     )
 else(WIN32)
     set (pip_packages
-        PyQt5
-        PyQtChart
-        PyQt3D
+        ${pip_packages}
         # PyInstaller
         # Warning, development version for now to fix OSX package
         https://github.com/pyinstaller/pyinstaller/tarball/develop
-    )
-    set (conda_packages
-        # PyInstaller
-        cython
-        numpy
-        scipy
-        # Not used for now
-        # jupyter
-        sqlalchemy
     )
 endif(WIN32)
 
@@ -78,9 +75,9 @@ else(WIN32)
 
     # Create environment, will produce python executable
     add_custom_command(
-        OUTPUT ${ENV_PATH}/bin/python3
+        OUTPUT ${ENV_PATH}/bin/python${PYTHON_VERSION}
         COMMAND ${CONDA_PATH} install -m -c anaconda -c conda-forge -y -p ${ENV_PATH} python=${PYTHON_VERSION} ${conda_packages}
-        WORKING_DIRECTORY ${ENV_PATH}/bin
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
     # Will always be considered out of date...
@@ -88,8 +85,8 @@ else(WIN32)
     # TODO - INSTALL WITH CONDA ?
     add_custom_target(
         python-env
-        COMMAND ${ENV_PATH}/bin/python3 -m pip install ${pip_packages}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        DEPENDS ${ENV_PATH}/bin/python3
+        COMMAND ${ENV_PATH}/bin/python${PYTHON_VERSION} -m pip install ${pip_packages}
+        WORKING_DIRECTORY ${ENV_PATH}/bin
+        DEPENDS ${ENV_PATH}/bin/python${PYTHON_VERSION}
     )
 endif(WIN32)
