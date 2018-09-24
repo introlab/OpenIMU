@@ -77,7 +77,14 @@ else(WIN32)
     add_custom_command(
         OUTPUT ${ENV_PATH}/bin/python${PYTHON_VERSION}
         COMMAND ${CONDA_PATH} install -m -c anaconda -c conda-forge -y -p ${ENV_PATH} python=${PYTHON_VERSION} ${conda_packages}
+        COMMAND ${CMAKE_COMMAND} -E create_symlink ${ENV_PATH}/bin/python${PYTHON_VERSION} ${ENV_PATH}/bin/python
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+
+    add_custom_target(python_symlink
+        COMMAND ${CMAKE_COMMAND} -E create_symlink ${ENV_PATH}/bin/python${PYTHON_VERSION} ${ENV_PATH}/bin/python
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        DEPENDS ${ENV_PATH}/bin/python${PYTHON_VERSION}
     )
 
     # Will always be considered out of date...
@@ -87,6 +94,6 @@ else(WIN32)
         python-env
         COMMAND ${ENV_PATH}/bin/python${PYTHON_VERSION} -m pip install ${pip_packages}
         WORKING_DIRECTORY ${ENV_PATH}/bin
-        DEPENDS ${ENV_PATH}/bin/python${PYTHON_VERSION}
+        DEPENDS python_symlink
     )
 endif(WIN32)
