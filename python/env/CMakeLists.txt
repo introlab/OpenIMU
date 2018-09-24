@@ -31,7 +31,8 @@ if(WIN32)
         cython
         numpy
         scipy
-        jupyter
+        # Not used for now
+        # jupyter
         sqlalchemy
     )
 else(WIN32)
@@ -48,7 +49,8 @@ else(WIN32)
         cython
         numpy
         scipy
-        jupyter
+        # Not used for now
+        # jupyter
         sqlalchemy
     )
 endif(WIN32)
@@ -76,9 +78,9 @@ else(WIN32)
 
     # Create environment, will produce python executable
     add_custom_command(
-        OUTPUT ${ENV_PATH}/bin/python
+        OUTPUT ${ENV_PATH}/bin/python3
         COMMAND ${CONDA_PATH} install -m -c anaconda -c conda-forge -y -p ${ENV_PATH} python=${PYTHON_VERSION} ${conda_packages}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        WORKING_DIRECTORY ${ENV_PATH}/bin
     )
 
     # Will always be considered out of date...
@@ -86,8 +88,8 @@ else(WIN32)
     # TODO - INSTALL WITH CONDA ?
     add_custom_target(
         python-env
-        COMMAND ${ENV_PATH}/bin/pip install --upgrade ${pip_packages}
-        WORKING_DIRECTORY ${ENV_PATH}
-        DEPENDS ${ENV_PATH}/bin/python
+        COMMAND ${ENV_PATH}/bin/python3 -m pip install ${pip_packages}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        DEPENDS ${ENV_PATH}/bin/python3
     )
 endif(WIN32)
