@@ -698,8 +698,8 @@ class Treedatawidget(QTreeWidget):
                 # Clear source and set to no group
                 self.participants[source_id].group = None
                 self.participants[source_id].id_group = None
-                #new_item = source_item.clone()
-                #self.addTopLevelItem(new_item)
+                # new_item = source_item.clone()
+                # self.addTopLevelItem(new_item)
                 self.participantDragged.emit(self.participants[source_id])
                 event.accept()
                 return
@@ -708,8 +708,8 @@ class Treedatawidget(QTreeWidget):
                 if target_type == "group":
                     self.participants[source_id].group = self.groups[target_id]
                     self.participants[source_id].id_group = self.groups[target_id].id_group
-                    #new_item = source_item.clone()
-                    #target_item.addChild(new_item)
+                    # new_item = source_item.clone()
+                    # target_item.addChild(new_item)
                     self.participantDragged.emit(self.participants[source_id])
                     event.accept()
                     return

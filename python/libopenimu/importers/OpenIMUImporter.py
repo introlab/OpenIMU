@@ -384,6 +384,8 @@ class OpenIMUImporter(BaseImporter):
                 n = n + 1
                 chunk = file.read(struct.calcsize("i"))
                 current_timestamp = self.processTimestampChunk(chunk, debug)
+                if current_timestamp < 0:
+                    continue
 
                 if timestamp is None:
                     timestamp = current_timestamp
@@ -406,8 +408,6 @@ class OpenIMUImporter(BaseImporter):
                 data = self.processImuChunk(chunk, debug)
                 if timestamp is not None:
                     results[timestamp]['imu'].append(data)
-                else:
-                    print('IMU None timestamp')
 
             elif headChar[0] == b'g':
                 n = n + 1
