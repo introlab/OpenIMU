@@ -42,7 +42,9 @@ class AppleWatchImporter(BaseImporter):
     # LOCATION_ID = 0x05
     BEACONS_ID = 0x06
     COORDINATES_ID = 0x7
-    RAW_MOTION_ID = 0x8
+    RAW_MOTION_ID = 0x111
+    RAW_ACCELERO_ID = 0x08
+    RAW_GYRO_ID = 0x09
 
     def __init__(self, manager: DBManager, participant: Participant):
         super().__init__(manager, participant)
@@ -166,6 +168,7 @@ class AppleWatchImporter(BaseImporter):
 
         #self.db.commit()
 
+
     def import_raw_motion_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
 
         # print('import_motion_to_database')
@@ -196,6 +199,58 @@ class AppleWatchImporter(BaseImporter):
                 self.add_sensor_data_to_db(recordset, sensors['raw_gyro'], channels['raw_gyro'][i],
                                            datetime.datetime.fromtimestamp(timestamp),
                                            datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i + 3])
+
+    def import_raw_accelerometer_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
+
+        # print('import_motion_to_database')
+        # print('data', data, len(data))
+
+        values = np.array(data, dtype=np.float32)
+        # print("Values shape: ", values.shape)
+        end_timestamp = timestamp + int(np.floor(len(values) / sample_rate))
+        # print("timestamps, ", timestamp, end_timestamp)
+
+        # Calculate last index to remove extra values
+        real_size = int(np.floor(len(values) / sample_rate) * sample_rate)
+        # print('real size:', real_size)
+
+        # Update end_timestamp if required
+        if end_timestamp > recordset.end_timestamp.timestamp():
+            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
+
+        if real_size > 0:
+            # Acc
+            for i in range(len(channels['raw_acc'])):
+                self.add_sensor_data_to_db(recordset, sensors['raw_acc'], channels['raw_acc'][i],
+                                           datetime.datetime.fromtimestamp(timestamp),
+                                           datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i])
+
+        #self.db.commit()
+
+    def import_raw_gyro_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
+
+        # print('import_motion_to_database')
+        # print('data', data, len(data))
+
+        values = np.array(data, dtype=np.float32)
+        # print("Values shape: ", values.shape)
+        end_timestamp = timestamp + int(np.floor(len(values) / sample_rate))
+        # print("timestamps, ", timestamp, end_timestamp)
+
+        # Calculate last index to remove extra values
+        real_size = int(np.floor(len(values) / sample_rate) * sample_rate)
+        # print('real size:', real_size)
+
+        # Update end_timestamp if required
+        if end_timestamp > recordset.end_timestamp.timestamp():
+            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
+
+        if real_size > 0:
+            # Gyro
+            for i in range(len(channels['raw_gyro'])):
+                self.add_sensor_data_to_db(recordset, sensors['raw_gyro'], channels['raw_gyro'][i],
+                                           datetime.datetime.fromtimestamp(timestamp),
+                                           datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i])
 
         #self.db.commit()
 
@@ -544,6 +599,48 @@ class AppleWatchImporter(BaseImporter):
             channels['raw_acc'] = raw_accelerometer_channels
             channels['raw_gyro'] = raw_gyro_channels
 
+        if result['sampling_rate'].__contains__(self.RAW_ACCELERO_ID):
+
+            raw_accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Raw Accelerometer',
+                                                             'AppleWatch',
+                                                             'Unknown', result['sampling_rate'][self.RAW_ACCELERO_ID], 1)
+
+            raw_accelerometer_channels = list()
+
+            # Create channels
+            raw_accelerometer_channels.append(self.add_channel_to_db(raw_accelerometer_sensor, Units.GRAVITY_G,
+                                                                     DataFormat.FLOAT32, 'Accelerometer_X'))
+
+            raw_accelerometer_channels.append(self.add_channel_to_db(raw_accelerometer_sensor, Units.GRAVITY_G,
+                                                                     DataFormat.FLOAT32, 'Accelerometer_Y'))
+
+            raw_accelerometer_channels.append(self.add_channel_to_db(raw_accelerometer_sensor, Units.GRAVITY_G,
+                                                                     DataFormat.FLOAT32, 'Accelerometer_Z'))
+
+            sensors['raw_acc'] = raw_accelerometer_sensor
+            channels['raw_acc'] = raw_accelerometer_channels
+
+        if result['sampling_rate'].__contains__(self.RAW_GYRO_ID):
+            # Create sensor
+            raw_gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Raw Gyro',
+                                                 'AppleWatch',
+                                                 'Unknown', result['sampling_rate'][self.RAW_GYRO_ID], 1)
+
+            raw_gyro_channels = list()
+
+            # Create channels
+            raw_gyro_channels.append(self.add_channel_to_db(raw_gyro_sensor, Units.DEG_PER_SEC,
+                                                         DataFormat.FLOAT32, 'Gyro_X'))
+
+            raw_gyro_channels.append(self.add_channel_to_db(raw_gyro_sensor, Units.DEG_PER_SEC,
+                                                         DataFormat.FLOAT32, 'Gyro_Y'))
+
+            raw_gyro_channels.append(self.add_channel_to_db(raw_gyro_sensor, Units.DEG_PER_SEC,
+                                                                 DataFormat.FLOAT32, 'Gyro_Z'))
+
+            sensors['raw_gyro'] = raw_gyro_sensor
+            channels['raw_gyro'] = raw_gyro_channels
+
         # Create sensor and channels dict
         """sensors = {'acc': accelerometer_sensor,
                    'gyro': gyro_sensor,
@@ -619,10 +716,19 @@ class AppleWatchImporter(BaseImporter):
                                                         result[timestamp]['coordinates'])
 
             if result[timestamp].__contains__('raw_motion'):
-                # print('coordinates')
                 if result[timestamp]['raw_motion']:
                     self.import_raw_motion_to_database(result['sampling_rate'][self.RAW_MOTION_ID], timestamp, recordset, sensors, channels,
                                                        result[timestamp]['raw_motion'])
+
+            if result[timestamp].__contains__('raw_accelero'):
+                if result[timestamp]['raw_accelero']:
+                    self.import_raw_accelerometer_to_database(result['sampling_rate'][self.RAW_ACCELERO_ID], timestamp, recordset, sensors, channels,
+                                                       result[timestamp]['raw_accelero'])
+
+            if result[timestamp].__contains__('raw_gyro'):
+                if result[timestamp]['raw_gyro']:
+                    self.import_raw_gyro_to_database(result['sampling_rate'][self.RAW_GYRO_ID], timestamp, recordset, sensors, channels,
+                                                       result[timestamp]['raw_gyro'])
 
         # Commit to DB
         self.db.commit()
@@ -648,12 +754,11 @@ class AppleWatchImporter(BaseImporter):
                 if interval:
                     sample_rate = 1 / interval
 
-        if sensor_id == self.RAW_MOTION_ID or sensor_id == self.PROCESSED_MOTION_ID:
+        if sensor_id in [self.RAW_MOTION_ID, self.PROCESSED_MOTION_ID, self.RAW_ACCELERO_ID, self.RAW_GYRO_ID]:
             sample_rate = 50
-            if header != "":
-                interval = json_settings.get('frequency')
-                if interval:
-                    sample_rate = interval
+            interval = json_settings.get('frequency')
+            if interval:
+                sample_rate = interval
 
         if sensor_id == self.HEARTRATE_ID:
             sample_rate = 1 / 3  # Default value (if file version = 1)
@@ -667,7 +772,7 @@ class AppleWatchImporter(BaseImporter):
             sample_rate = 1 #No sampling rate in beacons config
 
         if sensor_id == self.SENSORIA_ID:
-            sample_rate = 32 #TODO: check header config for sensoria
+            sample_rate = json_settings.get('frequency')
 
         return sample_rate
 
@@ -720,85 +825,88 @@ class AppleWatchImporter(BaseImporter):
         # Get correct sample_rate for data
         results['sampling_rate'][sensor_id] = self.get_sampling_rate_from_header(sensor_id, settings_json_str)
 
+        # list of (timestamp, data)
+        results_ms = []
+
+        # prepare for loop by finding right sensor info
+        read_data_func = None
+        dict_name = ""
+        if sensor_id == self.BATTERY_ID:
+            read_data_func = self.read_battery_data
+            dict_name = "battery"
+        elif sensor_id == self.SENSORIA_ID:
+            read_data_func = self.read_sensoria_data
+            dict_name = 'sensoria'
+        elif sensor_id == self.HEARTRATE_ID:
+            read_data_func = self.read_heartrate_data
+            dict_name = 'heartrate'
+        elif sensor_id == self.PROCESSED_MOTION_ID:
+            read_data_func = self.read_motion_data
+            dict_name = 'motion'
+        elif sensor_id == self.BEACONS_ID:
+            read_data_func = self.read_beacons_data
+            dict_name = 'beacons'
+        elif sensor_id == self.COORDINATES_ID:
+            read_data_func = self.read_coordinates_data
+            dict_name = 'coordinates'
+        # deprecated
+        elif sensor_id == self.RAW_MOTION_ID:
+            read_data_func = self.read_raw_motion_data
+            dict_name = 'raw_motion'
+        elif sensor_id == self.RAW_ACCELERO_ID:
+            read_data_func = self.read_raw_accelerometer_data
+            dict_name = 'raw_accelero'
+        elif sensor_id == self.RAW_GYRO_ID:
+            read_data_func = self.read_raw_gyro_data
+            dict_name = 'raw_gyro'
+        else:
+            print("unknown sensor_id: ", hex(sensor_id))
+            return None
+
+        # read the whole file
         try:
-
-            last_timestamp = None
-
             while file.readable():
                 # Read timestamp
                 [timestamp_ms] = struct.unpack("<Q", file.read(8))
-                timestamp_sec = int(np.round(timestamp_ms / 1000))
 
-                if sensor_id == self.PROCESSED_MOTION_ID:
-                    if last_timestamp is None:
-                        last_timestamp = timestamp_sec
-                    else:
-                        if timestamp_sec < last_timestamp:
-                            print('error backward timestamp')
-                        if timestamp_sec > last_timestamp + 3600:
-                            # print('One hour, changing timestamp')
-                            last_timestamp = timestamp_sec
-
-                if debug:
-                    print('TIMESTAMP (MS): ', timestamp_ms)
-                    print('time: ', datetime.datetime.fromtimestamp(timestamp_sec))
-
-                # Initialize data structure at this timestamp if required
-                if not results.__contains__(timestamp_sec):
-                    # print("init timestamp = ", timestamp_ms)
-                    results[timestamp_sec] = {}
-                    results[timestamp_sec]['battery'] = []
-                    results[timestamp_sec]['sensoria'] = []
-                    results[timestamp_sec]['heartrate'] = []
-                    results[timestamp_sec]['motion'] = []
-                    results[timestamp_sec]['location'] = []
-                    results[timestamp_sec]['beacons'] = []
-                    results[timestamp_sec]['coordinates'] = []
-                    results[timestamp_sec]['raw_motion'] = []
-
-                if sensor_id == self.BATTERY_ID:
-                    # Battery data
-                    data = self.read_battery_data(file.read(2), debug)
-                    results[timestamp_sec]['battery'].append(data)
-
-                elif sensor_id == self.SENSORIA_ID:
-                    # Sensoria data
-                    data = self.read_sensoria_data(file.read(46), debug)
-                    results[timestamp_sec]['sensoria'].append(data)
-
-                elif sensor_id == self.HEARTRATE_ID:
-                    # Heartrate data
-                    data = self.read_heartrate_data(file.read(1), debug)
-                    results[timestamp_sec]['heartrate'].append(data)
-
-                elif sensor_id == self.PROCESSED_MOTION_ID:
-                    # Motion data
-                    data = self.read_motion_data(file.read(52), debug)
-                    results[last_timestamp]['motion'].append(data)
-
-                elif sensor_id == self.BEACONS_ID:
-                    # Beacons data
-                    data = self.read_beacons_data(file.read(18), debug)
-                    results[timestamp_sec]['beacons'].append(data)
-
-                elif sensor_id == self.COORDINATES_ID:
-                    # Coordinates data
-                    data = self.read_coordinates_data(file.read(28), debug)
-                    results[timestamp_sec]['coordinates'].append(data)
-
-                elif sensor_id == self.RAW_MOTION_ID:
-                    data = self.read_raw_motion_data(file.read(24), debug)
-                    results[timestamp_sec]['raw_motion'].append(data)
-                else:
-                    print("unknown sensor_id: ", hex(sensor_id))
-                    return None
+                data = read_data_func(file, debug)
+                results_ms.append((timestamp_ms, data))
 
         except:
+            # let's hope it's only eof...
             pass
+
+        # insertion sort on almost sorted data tends to O(n)
+        for i in range(1, len(results_ms)):
+            curr = results_ms[i]
+            curr_ms = curr[0]
+            j = i - 1
+            # compare timestamps
+            while j >= 0 and curr_ms < results_ms[j][0]:
+                # drift up and continue looking
+                results_ms[j+1] = results_ms[j]
+                j -= 1
+            # only replace if needed
+            if j != i - 1:
+                results_ms[j+1] = curr
+
+        # Cut the data into second long lists (is this really necessary?)
+        for i in range(1, len(results_ms)):
+            if results_ms[i][0] < results_ms[i-1][0]:
+                print('uh uh............')
+            timestamp_sec = int(results_ms[i][0] / 1000)
+            data = results_ms[i][1]
+
+            # This is probably slow on huge data sets
+            if not results.__contains__(timestamp_sec):
+                results[timestamp_sec] = {}
+                results[timestamp_sec][dict_name] = []
+
+            results[timestamp_sec][dict_name].append(data)
 
         return results
 
-    def read_battery_data(self, chunk, debug=False):
+    def read_battery_data(self, file, debug=False):
         """
         • Byte integer for battery level between 0 and 100 (percent)
         ◦ 0 meaning invalid level (eg. where state is .unknown)
@@ -807,16 +915,15 @@ class AppleWatchImporter(BaseImporter):
         ◦ unplugged: 1
         ◦ charging: 2
         ◦ full: 3
-        :param chunk:
         :return:
         """
-        assert (len(chunk) == 2)
+        chunk = file.read(2)
         data = struct.unpack("BB", chunk)
         if debug:
             print('BATTERY: ', data)
         return data
 
-    def read_sensoria_data(self, chunk, debug=False):
+    def read_sensoria_data(self, file, debug=False):
         """
         46 bytes of received frame (will require further processing)
         This assumes that all socks we have use the F20 streaming protocol, as defined in
@@ -831,26 +938,26 @@ class AppleWatchImporter(BaseImporter):
         ◦ magnetometer (x,y,z)
 
         """
-        assert(len(chunk) == 46)
+        chunk = file.read(46)
         data = struct.unpack("<1i3h9f", chunk)
         if debug:
             print('SENSORIA: ', data)
         return data
 
-    def read_heartrate_data(self, chunk, debug=False):
+    def read_heartrate_data(self, file, debug=False):
         """
         unsigned integer as single Byte for bpm
         ** assumes that bpm cannot go above 255, hence values above are clamped to 255
         :param chunk:
         :return:
         """
-        assert (len(chunk) == 1)
+        chunk = file.read(1)
         data = struct.unpack("<B", chunk)
         if debug:
             print('HEARTRATE: ', data)
         return data
 
-    def read_motion_data(self, chunk, debug=False):
+    def read_motion_data(self, file, debug=False):
         """
          13 Float32 values, hence 52 bytes, with following fields
         • acceleration (x,y,z)
@@ -858,17 +965,13 @@ class AppleWatchImporter(BaseImporter):
         • gyroscope (x,y,z)
         • attitude quaternion (w,x,y,z)
             """
-        assert (len(chunk) == 52)
+        chunk = file.read(52)
         data = struct.unpack("<13f", chunk)
         if debug:
             print('MOTION: ', data)
         return data
 
-    def read_location_data(self, chunk, debug=False):
-        # This is not a log file type
-        return []
-
-    def read_beacons_data(self, chunk, debug=False):
+    def read_beacons_data(self, file, debug=False):
         """
         10 Bytes Char for namespace
         6 Bytes Char for instance ID
@@ -877,13 +980,13 @@ class AppleWatchImporter(BaseImporter):
         :param chunk:
         :return:
         """
-        assert (len(chunk) == 18)
+        chunk = file.read(18)
         data = struct.unpack("<16B2b", chunk)
         if debug:
             print('BEACONS: ', data)
         return data
 
-    def read_coordinates_data(self, chunk, debug=False):
+    def read_coordinates_data(self, file, debug=False):
         """
           7 Float32 values, hence 28 bytes
         • latitude
@@ -895,20 +998,43 @@ class AppleWatchImporter(BaseImporter):
         • course (degrees relative to true north)
         :return:
         """
-        assert (len(chunk) == 28)
+        chunk = file.read(28)
         data = struct.unpack("<7f", chunk)
         if debug:
             print('COORDINATES: ', data)
         return data
 
-    def read_raw_motion_data(self, chunk, debug=False):
+    # deprecated, not used anymore, separated into two files
+    def read_raw_motion_data(self, file, debug=False):
         """
          6 Float32 values, hence 24 bytes, with following fields
             acceleration (x,y,z)
             gyroscope (x,y,z)
         """
-        assert (len(chunk) == 24)
+        chunk = file.read(24)
         data = struct.unpack("<6f", chunk)
         if debug:
             print('RAW MOTION: ', data)
+        return data
+
+    def read_raw_accelerometer_data(self, file, debug=False):
+        """
+         3 Float32 values, hence 12 bytes, with following fields
+            acceleration (x,y,z)
+        """
+        chunk = file.read(12)
+        data = struct.unpack("<3f", chunk)
+        if debug:
+            print('RAW ACCELERO: ', data)
+        return data
+
+    def read_raw_gyro_data(self, file, debug=False):
+        """
+         3 Float32 values, hence 12 bytes, with following fields
+            gyroscope (x,y,z)
+        """
+        chunk = file.read(12)
+        data = struct.unpack("<3f", chunk)
+        if debug:
+            print('RAW GYRO: ', data)
         return data
