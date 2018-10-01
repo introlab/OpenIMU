@@ -30,6 +30,7 @@ import os
 import zipfile
 import struct
 import json # For file header config
+import gc
 
 from collections import defaultdict
 
@@ -825,8 +826,6 @@ class AppleWatchImporter(BaseImporter):
         # Get correct sample_rate for data
         results['sampling_rate'][sensor_id] = self.get_sampling_rate_from_header(sensor_id, settings_json_str)
 
-        # list of (timestamp, data)
-        results_ms = []
 
         # prepare for loop by finding right sensor info
         read_data_func = None
@@ -863,46 +862,72 @@ class AppleWatchImporter(BaseImporter):
             print("unknown sensor_id: ", hex(sensor_id))
             return None
 
+        # lists of codependant timestamp(ms) and data
+        results_ms_ts = []
+        results_ms_data = []
+
         # read the whole file
         try:
             while file.readable():
                 # Read timestamp
                 [timestamp_ms] = struct.unpack("<Q", file.read(8))
 
-                data = read_data_func(file, debug)
-                results_ms.append((timestamp_ms, data))
+                results_ms_ts.append(timestamp_ms)
+                results_ms_data.append(read_data_func(file, debug))
 
         except:
             # let's hope it's only eof...
             pass
 
-        # insertion sort on almost sorted data tends to O(n)
-        for i in range(1, len(results_ms)):
-            curr = results_ms[i]
-            curr_ms = curr[0]
+        # insertion sort on almost sorted timestamps, tends to O(n)
+        for i in range(1, len(results_ms_ts)):
+            curr_ts = results_ms_ts[i]
+            curr_data = results_ms_data[i]
             j = i - 1
             # compare timestamps
-            while j >= 0 and curr_ms < results_ms[j][0]:
+            while j >= 0 and curr_ts < results_ms_ts[j]:
                 # drift up and continue looking
-                results_ms[j+1] = results_ms[j]
+                results_ms_ts[j+1] = results_ms_ts[j]
+                results_ms_data[j+1] = results_ms_data[j]
                 j -= 1
             # only replace if needed
             if j != i - 1:
-                results_ms[j+1] = curr
+                results_ms_ts[j+1] = curr_ts
+                results_ms_data[j+1] = curr_data
 
-        # Cut the data into second long lists (is this really necessary?)
-        for i in range(1, len(results_ms)):
-            if results_ms[i][0] < results_ms[i-1][0]:
-                print('uh uh............')
-            timestamp_sec = int(results_ms[i][0] / 1000)
-            data = results_ms[i][1]
+        if sensor_id in [self.PROCESSED_MOTION_ID, self.RAW_MOTION_ID, self.RAW_GYRO_ID, self.RAW_ACCELERO_ID]:
+            # cut the data into hour long splits
+            split_begin_index = 0
+            split_begin_timestamp = results_ms_ts[0]
 
-            # This is probably slow on huge data sets
-            if not results.__contains__(timestamp_sec):
-                results[timestamp_sec] = {}
-                results[timestamp_sec][dict_name] = []
+            for i in range(1, len(results_ms_ts)):
+                # current is more than an hour later?
+                if split_begin_timestamp + 3600*1000 < results_ms_ts[i]:
+                    timestamp_sec = split_begin_timestamp / 1000
+                    results[timestamp_sec] = {}
+                    results[timestamp_sec][dict_name] = results_ms_data[split_begin_index:i-1]
+                    # start next split
+                    split_begin_index = i
+                    split_begin_timestamp = results_ms_ts[i]
+            # don't forget last split
+            timestamp_sec = split_begin_timestamp / 1000
+            results[timestamp_sec] = {}
+            results[timestamp_sec][dict_name] = results_ms_data[split_begin_index:]
+        else:
+            # cut the data into seconds
+            for i in range(1, len(results_ms_ts)):
+                timestamp_sec = int(results_ms_ts[i] / 1000)
 
-            results[timestamp_sec][dict_name].append(data)
+                if not results.__contains__(timestamp_sec):
+                    results[timestamp_sec] = {}
+                    results[timestamp_sec][dict_name] = []
+
+                results[timestamp_sec][dict_name].append(results_ms_data[i])
+
+        # force the gc to clear temporary lists
+        results_ms_ts.clear()
+        results_ms_data.clear()
+        gc.collect()
 
         return results
 
