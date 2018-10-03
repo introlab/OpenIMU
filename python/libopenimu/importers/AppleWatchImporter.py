@@ -45,7 +45,7 @@ class AppleWatchImporter(BaseImporter):
     COORDINATES_ID = 0x7
     RAW_MOTION_ID = 0x8
     RAW_ACCELERO_ID = 0x9
-    RAW_GYRO_ID = 0x10
+    RAW_GYRO_ID = 0xa
 
     def __init__(self, manager: DBManager, participant: Participant):
         super().__init__(manager, participant)
