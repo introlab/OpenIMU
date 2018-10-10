@@ -17,7 +17,7 @@ from sqlalchemy import Column, Integer, Sequence, ForeignKey, TIMESTAMP, Interva
 from sqlalchemy.orm import relationship
 
 import numpy as np
-
+import datetime
 
 class SensorTimestamps(Base):
     __tablename__ = 'tabSensorsTimestamps'
@@ -30,6 +30,11 @@ class SensorTimestamps(Base):
 
     # Timestamps will be stored in as floating point (double) deltas from starting timestamp
     timestamps = Column(BLOB, nullable=False)
+
+    def update_timestamps(self):
+        if len(self.timestamps) > 0:
+            self.start_timestamp = datetime.datetime.utcfromtimestamp(self.timestamps[0])
+            self.end_timestamp = datetime.datetime.utcfromtimestamp(self.timestamps[-1])
 
     def to_ndarray(self):
         return np.frombuffer(buffer=self.timestamps, dtype=np.float64)

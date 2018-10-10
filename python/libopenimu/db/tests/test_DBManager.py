@@ -14,6 +14,7 @@ from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.units import Units
 from libopenimu.models.data_formats import DataFormat
 from libopenimu.models.Sensor import Sensor
+from libopenimu.models.SensorTimestamps import SensorTimestamps
 from libopenimu.models.Group import Group
 from libopenimu.models.Participant import Participant
 from libopenimu.models.Channel import Channel
@@ -28,16 +29,17 @@ class DBManagerTest(unittest.TestCase):
     TESTDB_NAME = 'openimu.db'
 
     def setUp(self):
-        pass
-
-    def tearDown(self):
-
 
         # Cleanup database
         if True:
             if os.path.isfile(DBManagerTest.TESTDB_NAME):
                 print('Removing database : ', DBManagerTest.TESTDB_NAME)
                 os.remove(DBManagerTest.TESTDB_NAME)
+
+    def tearDown(self):
+
+        pass
+
 
     def test_add_group(self):
         manager = DBManager(filename=DBManagerTest.TESTDB_NAME, overwrite=True)
@@ -92,7 +94,8 @@ class DBManagerTest(unittest.TestCase):
         sensors = []
 
         for i in range(0, count):
-            sensors.append(manager.add_sensor(id_sensor_type, name, hw_name, location, sampling_rate, data_rate))
+            # Make sure sensor name changes...
+            sensors.append(manager.add_sensor(id_sensor_type, name + str(i), hw_name, location, sampling_rate, data_rate))
 
         all_sensors = manager.get_all_sensors()
         self.assertEqual(len(all_sensors), len(sensors))
@@ -200,9 +203,9 @@ class DBManagerTest(unittest.TestCase):
             time1 = datetime.datetime.now()
             time2 = datetime.datetime.now()
 
-            recordsets1.append(manager.add_recordset(participant1, 'Record Name', time1,
+            recordsets1.append(manager.add_recordset(participant1, 'Record Name' + str(i), time1,
                                                      time2))
-            recordsets2.append(manager.add_recordset(participant2, 'Record Name', time1,
+            recordsets2.append(manager.add_recordset(participant2, 'Record Name' + str(i), time1,
                                                      time2))
 
         # Compare size
@@ -264,12 +267,17 @@ class DBManagerTest(unittest.TestCase):
 
         sensor = manager.add_sensor(SensorType.ACCELEROMETER, 'Sensor Name', 'Hardware Name', 'Wrist', 30.0, 1)
         channel = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_X')
-        time1 = datetime.datetime.now()
-        time2 = datetime.datetime.now()
-        recordset = manager.add_recordset(participant, 'My Record', time1, time2)
+
+        timestamps = SensorTimestamps()
+        timestamps.timestamps = np.zeros(40, dtype=np.float64)
+        # will set start and end
+        timestamps.update_timestamps()
+
+        recordset = manager.add_recordset(participant, 'My Record', timestamps.start_timestamp, timestamps.end_timestamp)
 
         data = np.zeros(40, dtype=np.float32)
-        sensordata = manager.add_sensor_data(recordset, sensor, channel, time1, time1, data)
+
+        sensordata = manager.add_sensor_data(recordset, sensor, channel, timestamps, data)
         manager.commit()
 
         sensordata2 = manager.get_sensor_data(sensordata.id_sensor_data)
@@ -288,13 +296,18 @@ class DBManagerTest(unittest.TestCase):
         sensor2 = manager.add_sensor(SensorType.GYROMETER, 'Sensor Name', 'Hardware Name', 'Wrist', 30.0, 1)
         channel1 = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_X')
         channel2 = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_Y')
-        time1 = datetime.datetime.now()
-        time2 = datetime.datetime.now()
-        recordset = manager.add_recordset(participant, 'My Record', time1, time2)
+
+
+        timestamps = SensorTimestamps()
+        timestamps.timestamps = np.zeros(40, dtype=np.float64)
+        # will set start and end
+        timestamps.update_timestamps()
+
+        recordset = manager.add_recordset(participant, 'My Record', timestamps.start_timestamp, timestamps.end_timestamp)
 
         data = np.zeros(40, dtype=np.float32)
-        sensordata = manager.add_sensor_data(recordset, sensor, channel1, time1, time1, data)
-        sensordata = manager.add_sensor_data(recordset, sensor, channel2, time1, time1, data)
+        sensordata = manager.add_sensor_data(recordset, sensor, channel1, timestamps, data)
+        sensordata = manager.add_sensor_data(recordset, sensor, channel2, timestamps, data)
         manager.commit()
 
         # Test with no args, return everything in the recordset
