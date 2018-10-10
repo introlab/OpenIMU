@@ -58,8 +58,11 @@ class SensorDataTest(unittest.TestCase):
         sensordata.sensor = sensor
         channel = Channel()
         sensordata.channel = channel
-        sensordata.start_timestamp = datetime.datetime.fromtimestamp(0)
-        sensordata.stop_timestamp = datetime.datetime.fromtimestamp(0)
+        sensordata.start_timestamp = datetime.datetime.fromtimestamp(datetime.datetime.now().timestamp())
+        sensordata.stop_timestamp = datetime.datetime.fromtimestamp(datetime.datetime.now().timestamp())
+
+        sensordata.start_timestamp.timestamp()
+
         sensordata.data = np.array([1, 2, 3, 4, 5], dtype=float)
         print(sensordata.to_time_series())
         print(sensordata)
