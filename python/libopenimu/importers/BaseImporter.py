@@ -59,6 +59,7 @@ class BaseImporter:
         channel = self.db.add_channel(sensor, unit, data_format, label)
         return channel
 
-    def add_sensor_data_to_db(self, recordset, sensor, channel, start_timestamp, end_timestamp, data):
-        sensor_data = self.db.add_sensor_data(recordset, sensor, channel, start_timestamp, end_timestamp, data)
+    # DL Oct 16 2018, new interface
+    def add_sensor_data_to_db(self, recordset, sensor, channel, timestamps, data):
+        sensor_data = self.db.add_sensor_data(recordset, sensor, channel, timestamps, data)
         return sensor_data

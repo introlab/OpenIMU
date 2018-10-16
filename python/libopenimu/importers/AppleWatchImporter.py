@@ -8,6 +8,7 @@
 
 from libopenimu.importers.BaseImporter import BaseImporter
 from libopenimu.models.sensor_types import SensorType
+from libopenimu.models.SensorTimestamps import SensorTimestamps
 from libopenimu.models.units import Units
 from libopenimu.models.Recordset import Recordset
 from libopenimu.models.data_formats import DataFormat
@@ -135,6 +136,48 @@ class AppleWatchImporter(BaseImporter):
         recordset = self.db.add_recordset(self.participant, str(my_time.date()), my_time, my_time)
         self.recordsets.append(recordset)
         return recordset
+
+    def import_motion_to_database_v2(self, recordset, times: list, values: list, sensors: list, channels: list):
+        # Create time array as float64
+        timesarray = np.asarray(times, dtype=np.float64)
+
+        if len(timesarray) is 0:
+            print('Empty data, returning')
+            return
+
+        # Other values are float32
+        valuesarray = np.asarray(values, dtype=np.float32)
+
+        # Motion contains in this order
+        # acceleration(x, y, z)
+        # gravity vector(x, y, z)
+        # gyroscope(x, y, z)
+        # attitude quaternion(w, x, y, z)
+
+        # Create sensor timestamps first
+        sensor_timestamps = SensorTimestamps()
+        sensor_timestamps.timestamps = timesarray
+        sensor_timestamps.update_timestamps()
+
+        # Update timestamps in recordset
+        # This should not happen, recordset is initialized at the beginning of the hour
+        if sensor_timestamps.start_timestamp < recordset.start_timestamp:
+            recordset.start_timestamp = sensor_timestamps.start_timestamp
+        # This can occur though
+        if sensor_timestamps.end_timestamp > recordset.end_timestamp:
+            recordset.end_timestamp = sensor_timestamps.end_timestamp
+
+        # Acc
+        for i in range(len(channels['acc'])):
+            self.add_sensor_data_to_db(recordset, sensors['acc'], channels['acc'][i],
+                                       sensor_timestamps, valuesarray[:, i])
+
+        # Gyro
+        for i in range(len(channels['gyro'])):
+            self.add_sensor_data_to_db(recordset, sensors['gyro'], channels['gyro'][i],
+                                       sensor_timestamps, valuesarray[:, i + 6])
+
+        # self.db.commit()
 
     def import_motion_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
 
@@ -430,9 +473,78 @@ class AppleWatchImporter(BaseImporter):
                                        datetime.datetime.fromtimestamp(timestamp),
                                        datetime.datetime.fromtimestamp(end_timestamp), beacon_data)
 
+    def import_to_database(self, results):
+        # Oct. 16 2018, New import to database
+        print('new import')
+        sensors = {}
+        channels = {}
+
+        if results.__contains__('motion'):
+            sampling_rate = results['motion']['sampling_rate']
+
+            if results['motion']['timestamps']:
+                # Create channels and sensors
+                accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer',
+                                                             'AppleWatch',
+                                                             'Wrist',
+                                                             sampling_rate, 1)
+
+                accelerometer_channels = list()
+
+                # Create channels
+                accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
+                                                                     DataFormat.FLOAT32, 'Accelerometer_X'))
+
+                accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
+                                                                     DataFormat.FLOAT32, 'Accelerometer_Y'))
+
+                accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
+                                                                     DataFormat.FLOAT32, 'Accelerometer_Z'))
+
+                # Create sensor
+                gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyro',
+                                                    'AppleWatch',
+                                                    'Wrist', sampling_rate, 1)
+
+                gyro_channels = list()
+
+                # Create channels
+                gyro_channels.append(self.add_channel_to_db(gyro_sensor, Units.DEG_PER_SEC,
+                                                            DataFormat.FLOAT32, 'Gyro_X'))
+
+                gyro_channels.append(self.add_channel_to_db(gyro_sensor, Units.DEG_PER_SEC,
+                                                            DataFormat.FLOAT32, 'Gyro_Y'))
+
+                gyro_channels.append(self.add_channel_to_db(gyro_sensor, Units.DEG_PER_SEC,
+                                                            DataFormat.FLOAT32, 'Gyro_Z'))
+
+                sensors['acc'] = accelerometer_sensor
+                sensors['gyro'] = gyro_sensor
+                channels['acc'] = accelerometer_channels
+                channels['gyro'] = gyro_channels
+
+                # Data is already hour-aligned iterate through hours
+                for timestamp in results['motion']['timestamps']:
+                    print(timestamp, len(results['motion']['timestamps'][timestamp]['times']),
+                          len(results['motion']['timestamps'][timestamp]['values']))
+                    # Calculate recordset
+                    recordset = self.get_recordset(timestamp.timestamp())
+
+                    # Add motion data to database
+                    # def import_motion_to_database_v2(self, recordset, times: list,
+                    # values: list, sensors: list, channels: list):
+                    self.import_motion_to_database_v2(recordset,
+                                                      results['motion']['timestamps'][timestamp]['times'],
+                                                      results['motion']['timestamps'][timestamp]['values'],
+                                                      sensors, channels)
+
+        # TODO other types...
+
+        # Commit DB
+        self.db.commit()
 
 
-    def import_to_database(self, result):
+    def import_to_database_old(self, result):
         print('AppleWatchImporter.import_to_database')
         sensors = {}
         channels = {}
@@ -817,7 +929,8 @@ class AppleWatchImporter(BaseImporter):
         """
 
         results = {}
-        results['sampling_rate'] = {}
+
+        # results['sampling_rate'] = {}
 
         settings_json_str = ""
 
@@ -847,12 +960,10 @@ class AppleWatchImporter(BaseImporter):
                 return None
 
         # Get correct sample_rate for data
-        results['sampling_rate'][sensor_id] = self.get_sampling_rate_from_header(sensor_id, settings_json_str)
-        print('sampling rate for sensor_id', sensor_id, ' : ', results['sampling_rate'][sensor_id])
-
+        # results['sampling_rate'][sensor_id] = self.get_sampling_rate_from_header(sensor_id, settings_json_str)
+        # print('sampling rate for sensor_id', sensor_id, ' : ', results['sampling_rate'][sensor_id])
 
         # prepare for loop by finding right sensor info
-        read_data_func = None
         dict_name = ""
         if sensor_id == self.BATTERY_ID:
             read_data_func = self.read_battery_data
@@ -886,7 +997,15 @@ class AppleWatchImporter(BaseImporter):
             print("unknown sensor_id: ", hex(sensor_id))
             return None
 
-        # lists of codependant timestamp(ms) and data
+        # DL 16 oct. 2018. New format for results. Will keep all timestamps and group them by hour
+        results[dict_name] = {}
+
+        results[dict_name]['timestamps'] = {}
+
+        # Insert sampling rate information
+        results[dict_name]['sampling_rate'] = self.get_sampling_rate_from_header(sensor_id, settings_json_str)
+
+        # lists of co-dependant timestamp(ms) and data
         results_ms_ts = []
         results_ms_data = []
 
@@ -919,34 +1038,22 @@ class AppleWatchImporter(BaseImporter):
                 results_ms_ts[j+1] = curr_ts
                 results_ms_data[j+1] = curr_data
 
-        if sensor_id in [self.PROCESSED_MOTION_ID, self.RAW_MOTION_ID, self.RAW_GYRO_ID, self.RAW_ACCELERO_ID]:
-            # cut the data into hour long splits
-            split_begin_index = 0
-            split_begin_timestamp = results_ms_ts[0]
+        # Create hour-aligned separated data
+        for i in range(0, len(results_ms_ts)):
+            hour_lower_limit_sec = np.floor(results_ms_ts[i] / 3600000) * 3600
+            mydate = datetime.datetime.utcfromtimestamp(hour_lower_limit_sec)
 
-            for i in range(1, len(results_ms_ts)):
-                # current is more than an hour later?
-                if split_begin_timestamp + 3600*1000 < results_ms_ts[i]:
-                    timestamp_sec = split_begin_timestamp / 1000
-                    results[timestamp_sec] = {}
-                    results[timestamp_sec][dict_name] = results_ms_data[split_begin_index:i-1]
-                    # start next split
-                    split_begin_index = i
-                    split_begin_timestamp = results_ms_ts[i]
-            # don't forget last split
-            timestamp_sec = split_begin_timestamp / 1000
-            results[timestamp_sec] = {}
-            results[timestamp_sec][dict_name] = results_ms_data[split_begin_index:]
-        else:
-            # cut the data into seconds
-            for i in range(1, len(results_ms_ts)):
-                timestamp_sec = int(results_ms_ts[i] / 1000)
+            # Create hour entry if it does not exist
+            if not results[dict_name]['timestamps'].__contains__(mydate):
+                results[dict_name]['timestamps'][mydate] = {'times': [], 'values': []}
 
-                if not results.__contains__(timestamp_sec):
-                    results[timestamp_sec] = {}
-                    results[timestamp_sec][dict_name] = []
+            # Append data (slow?)
+            # ms time to secs
+            results[dict_name]['timestamps'][mydate]['times'].append(results_ms_ts[i] / 1000.0)
+            # data
+            results[dict_name]['timestamps'][mydate]['values'].append(results_ms_data[i])
 
-                results[timestamp_sec][dict_name].append(results_ms_data[i])
+        print('done processing: ', dict_name)
 
         # force the gc to clear temporary lists
         results_ms_ts.clear()
