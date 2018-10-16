@@ -65,7 +65,7 @@ class AppleWatchImporter(BaseImporter):
                 print('Loading File: ', filename)
                 results = self.readDataFile(file)
 
-        #print('results len', len(results))
+        print('results len', len(results))
         return results
 
     def load_zip(self, filename):
@@ -86,29 +86,9 @@ class AppleWatchImporter(BaseImporter):
                     my_file = myzip.open(file)
                     values = self.readDataFile(my_file, False)
 
-                    # Add to global results
+                    # Merge data
                     if values is not None:
-                        for timestamp in values:
-                            if not results.__contains__(timestamp):
-                                results[timestamp] = values[timestamp]
-                            else:
-                                if len(values[timestamp]['battery']) > 0:
-                                    results[timestamp]['battery'] = values[timestamp]['battery']
-
-                                if len(values[timestamp]['beacons']) > 0:
-                                    results[timestamp]['beacons'] = values[timestamp]['beacons']
-
-                                if len(values[timestamp]['sensoria']) > 0:
-                                    results[timestamp]['sensoria'] = values[timestamp]['sensoria']
-
-                                if len(values[timestamp]['heartrate']) > 0:
-                                    results[timestamp]['heartrate'] = values[timestamp]['heartrate']
-
-                                if len(values[timestamp]['motion']) > 0:
-                                    results[timestamp]['motion'] = values[timestamp]['motion']
-
-                                if len(values[timestamp]['coordinates']) > 0:
-                                    results[timestamp]['coordinates'] = values[timestamp]['coordinates']
+                        results.update(values)
                 else:
                     pass
                     # print('Unknown file : ', file)
@@ -137,7 +117,7 @@ class AppleWatchImporter(BaseImporter):
         self.recordsets.append(recordset)
         return recordset
 
-    def import_motion_to_database_v2(self, recordset, times: list, values: list, sensors: list, channels: list):
+    def import_motion_to_database(self, recordset, times: list, values: list, sensors: dict, channels: dict):
         # Create time array as float64
         timesarray = np.asarray(times, dtype=np.float64)
 
@@ -178,40 +158,6 @@ class AppleWatchImporter(BaseImporter):
                                        sensor_timestamps, valuesarray[:, i + 6])
 
         # self.db.commit()
-
-    def import_motion_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
-
-        # print('import_motion_to_database')
-        # print('data', data, len(data))
-
-        values = np.array(data, dtype=np.float32)
-        # print("Values shape: ", values.shape)
-        end_timestamp = timestamp + int(np.floor(len(values) / sample_rate))
-        # print("timestamps, ", timestamp, end_timestamp)
-
-        # Calculate last index to remove extra values
-        real_size = int(np.floor(len(values) / sample_rate) * sample_rate)
-        # print('real size:', real_size)
-
-        # Update end_timestamp if required
-        if end_timestamp > recordset.end_timestamp.timestamp():
-            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
-
-        if real_size > 0:
-            # Acc
-            for i in range(len(channels['acc'])):
-                self.add_sensor_data_to_db(recordset, sensors['acc'], channels['acc'][i],
-                                           datetime.datetime.fromtimestamp(timestamp),
-                                           datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i])
-
-            # Gyro
-            for i in range(len(channels['gyro'])):
-                self.add_sensor_data_to_db(recordset, sensors['gyro'], channels['gyro'][i],
-                                           datetime.datetime.fromtimestamp(timestamp),
-                                           datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i + 3])
-
-        #self.db.commit()
-
 
     def import_raw_motion_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
 
@@ -533,7 +479,7 @@ class AppleWatchImporter(BaseImporter):
                     # Add motion data to database
                     # def import_motion_to_database_v2(self, recordset, times: list,
                     # values: list, sensors: list, channels: list):
-                    self.import_motion_to_database_v2(recordset,
+                    self.import_motion_to_database(recordset,
                                                       results['motion']['timestamps'][timestamp]['times'],
                                                       results['motion']['timestamps'][timestamp]['values'],
                                                       sensors, channels)
@@ -873,6 +819,8 @@ class AppleWatchImporter(BaseImporter):
         sample_rate = 0
         if header != "":
             json_settings = json.loads(header) # converts to json
+        else:
+            return sample_rate
 
         if sensor_id == self.BATTERY_ID:
             sample_rate = 1 / 3  # Default value (if file version = 1)
@@ -969,8 +917,12 @@ class AppleWatchImporter(BaseImporter):
             read_data_func = self.read_battery_data
             dict_name = "battery"
         elif sensor_id == self.SENSORIA_ID:
-            read_data_func = self.read_sensoria_data
+            # Sensoria format changed from v1 to v2...
             dict_name = 'sensoria'
+            if version == 2:
+                read_data_func = self.read_sensoria_data
+            else:
+                read_data_func = None
         elif sensor_id == self.HEARTRATE_ID:
             read_data_func = self.read_heartrate_data
             dict_name = 'heartrate'
@@ -1011,7 +963,7 @@ class AppleWatchImporter(BaseImporter):
 
         # read the whole file
         try:
-            while file.readable():
+            while file.readable() and read_data_func is not None:
                 # Read timestamp
                 [timestamp_ms] = struct.unpack("<Q", file.read(8))
 
@@ -1020,7 +972,11 @@ class AppleWatchImporter(BaseImporter):
 
         except:
             # let's hope it's only eof...
-            pass
+            # Make sure data vectors are of the same size
+            min_size = min(len(results_ms_ts), len(results_ms_data))
+            results_ms_ts = results_ms_ts[0:min_size]
+            results_ms_data = results_ms_data[0:min_size]
+
 
         # insertion sort on almost sorted timestamps, tends to O(n)
         for i in range(1, len(results_ms_ts)):

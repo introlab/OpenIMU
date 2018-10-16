@@ -30,7 +30,7 @@ class AppleWatchImporterTest(unittest.TestCase):
     def test_load_zip_file(self):
         # Testing
 
-        manager = DBManager('applewatch.db', overwrite=True)
+        manager = DBManager('applewatch.oi', overwrite=True)
         participant = Participant(name='My Participant', description='Participant Description')
         manager.update_participant(participant)
         importer = AppleWatchImporter(manager, participant)
