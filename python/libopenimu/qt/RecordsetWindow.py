@@ -241,8 +241,8 @@ class RecordsetWindow(QWidget):
             for record in self.recordsets:
                 datas = self.dbMan.get_all_sensor_data(sensor=sensor, recordset=record, channel=sensor.channels[0])
                 for data in datas:
-                    start_pos = self.get_relative_timeview_pos(data.start_timestamp)
-                    end_pos = self.get_relative_timeview_pos(data.end_timestamp)
+                    start_pos = self.get_relative_timeview_pos(data.timestamps.start_timestamp)
+                    end_pos = self.get_relative_timeview_pos(data.timestamps.end_timestamp)
                     span = max(end_pos - start_pos, 1)
                     self.timeScene.addRect(start_pos, i * bar_height + (self.UI.graphTimeline.height() / 4), span,
                                            bar_height, sensorPen, sensorBrush)
