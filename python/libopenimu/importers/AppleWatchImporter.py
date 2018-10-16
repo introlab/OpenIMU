@@ -353,8 +353,6 @@ class AppleWatchImporter(BaseImporter):
 
     def import_motion_to_database(self, sampling_rate, motion: dict):
         # DL Oct. 16 2018, New import to database
-        sensors = {}
-        channels = {}
 
         # Create channels and sensors
         accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer',
@@ -390,11 +388,6 @@ class AppleWatchImporter(BaseImporter):
 
         gyro_channels.append(self.add_channel_to_db(gyro_sensor, Units.DEG_PER_SEC,
                                                     DataFormat.FLOAT32, 'Gyro_Z'))
-
-        sensors['acc'] = accelerometer_sensor
-        sensors['gyro'] = gyro_sensor
-        channels['acc'] = accelerometer_channels
-        channels['gyro'] = gyro_channels
 
         # Data is already hour-aligned iterate through hours
         for timestamp in motion:
@@ -436,12 +429,12 @@ class AppleWatchImporter(BaseImporter):
                 recordset.end_timestamp = sensor_timestamps.end_timestamp
 
             # Acc
-            for i in range(len(channels['acc'])):
+            for i in range(len(accelerometer_channels)):
                 self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[i],
                                            sensor_timestamps, valuesarray[:, i])
 
             # Gyro
-            for i in range(len(channels['gyro'])):
+            for i in range(len(gyro_channels)):
                 self.add_sensor_data_to_db(recordset, gyro_sensor, gyro_channels[i],
                                            sensor_timestamps, valuesarray[:, i + 6])
 
