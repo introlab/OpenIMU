@@ -117,48 +117,6 @@ class AppleWatchImporter(BaseImporter):
         self.recordsets.append(recordset)
         return recordset
 
-    def import_motion_to_database(self, recordset, times: list, values: list, sensors: dict, channels: dict):
-        # Create time array as float64
-        timesarray = np.asarray(times, dtype=np.float64)
-
-        if len(timesarray) is 0:
-            print('Empty data, returning')
-            return
-
-        # Other values are float32
-        valuesarray = np.asarray(values, dtype=np.float32)
-
-        # Motion contains in this order
-        # acceleration(x, y, z)
-        # gravity vector(x, y, z)
-        # gyroscope(x, y, z)
-        # attitude quaternion(w, x, y, z)
-
-        # Create sensor timestamps first
-        sensor_timestamps = SensorTimestamps()
-        sensor_timestamps.timestamps = timesarray
-        sensor_timestamps.update_timestamps()
-
-        # Update timestamps in recordset
-        # This should not happen, recordset is initialized at the beginning of the hour
-        if sensor_timestamps.start_timestamp < recordset.start_timestamp:
-            recordset.start_timestamp = sensor_timestamps.start_timestamp
-        # This can occur though
-        if sensor_timestamps.end_timestamp > recordset.end_timestamp:
-            recordset.end_timestamp = sensor_timestamps.end_timestamp
-
-        # Acc
-        for i in range(len(channels['acc'])):
-            self.add_sensor_data_to_db(recordset, sensors['acc'], channels['acc'][i],
-                                       sensor_timestamps, valuesarray[:, i])
-
-        # Gyro
-        for i in range(len(channels['gyro'])):
-            self.add_sensor_data_to_db(recordset, sensors['gyro'], channels['gyro'][i],
-                                       sensor_timestamps, valuesarray[:, i + 6])
-
-        # self.db.commit()
-
     def import_raw_motion_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
 
         # print('import_motion_to_database')
@@ -241,32 +199,6 @@ class AppleWatchImporter(BaseImporter):
                 self.add_sensor_data_to_db(recordset, sensors['raw_gyro'], channels['raw_gyro'][i],
                                            datetime.datetime.fromtimestamp(timestamp),
                                            datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i])
-
-        #self.db.commit()
-
-    def import_battery_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
-
-        # print('import_motion_to_database')
-        # print('data', data, len(data))
-
-        values = np.array(data, dtype=np.float32)
-        # print("Values shape: ", values.shape)
-        end_timestamp = timestamp + 1
-        # print("timestamps, ", timestamp, end_timestamp)
-
-        # Calculate last index to remove extra values
-        real_size = int(np.floor(len(values) / sample_rate) * sample_rate)
-        # print('real size:', real_size)
-
-        # Update end_timestamp if required
-        if end_timestamp > recordset.end_timestamp.timestamp():
-            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
-
-        if real_size > 0:
-            # Batt
-            self.add_sensor_data_to_db(recordset, sensors['batt'], channels['batt'],
-                                       datetime.datetime.fromtimestamp(timestamp),
-                                       datetime.datetime.fromtimestamp(end_timestamp), values[0, 0])
 
         #self.db.commit()
 
@@ -419,72 +351,197 @@ class AppleWatchImporter(BaseImporter):
                                        datetime.datetime.fromtimestamp(timestamp),
                                        datetime.datetime.fromtimestamp(end_timestamp), beacon_data)
 
-    def import_to_database(self, results):
-        # Oct. 16 2018, New import to database
-        print('new import')
+    def import_motion_to_database(self, sampling_rate, motion: dict):
+        # DL Oct. 16 2018, New import to database
         sensors = {}
         channels = {}
 
+        # Create channels and sensors
+        accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer',
+                                                     'AppleWatch',
+                                                     'Wrist',
+                                                     sampling_rate, 1)
+
+        accelerometer_channels = list()
+
+        # Create channels
+        accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
+                                                             DataFormat.FLOAT32, 'Accelerometer_X'))
+
+        accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
+                                                             DataFormat.FLOAT32, 'Accelerometer_Y'))
+
+        accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
+                                                             DataFormat.FLOAT32, 'Accelerometer_Z'))
+
+        # Create sensor
+        gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyro',
+                                            'AppleWatch',
+                                            'Wrist', sampling_rate, 1)
+
+        gyro_channels = list()
+
+        # Create channels
+        gyro_channels.append(self.add_channel_to_db(gyro_sensor, Units.DEG_PER_SEC,
+                                                    DataFormat.FLOAT32, 'Gyro_X'))
+
+        gyro_channels.append(self.add_channel_to_db(gyro_sensor, Units.DEG_PER_SEC,
+                                                    DataFormat.FLOAT32, 'Gyro_Y'))
+
+        gyro_channels.append(self.add_channel_to_db(gyro_sensor, Units.DEG_PER_SEC,
+                                                    DataFormat.FLOAT32, 'Gyro_Z'))
+
+        sensors['acc'] = accelerometer_sensor
+        sensors['gyro'] = gyro_sensor
+        channels['acc'] = accelerometer_channels
+        channels['gyro'] = gyro_channels
+
+        # Data is already hour-aligned iterate through hours
+        for timestamp in motion:
+            print('motion', timestamp, len(motion[timestamp]['times']),
+                  len(motion[timestamp]['values']))
+
+            # Calculate recordset
+            recordset = self.get_recordset(timestamp.timestamp())
+
+            # Add motion data to database
+
+            # Create time array as float64
+            timesarray = np.asarray(motion[timestamp]['times'], dtype=np.float64)
+
+            if len(timesarray) is 0:
+                print('Empty data, returning')
+                return
+
+            # Other values are float32
+            valuesarray = np.asarray(motion[timestamp]['values'], dtype=np.float32)
+
+            # Motion contains in this order
+            # acceleration(x, y, z)
+            # gravity vector(x, y, z)
+            # gyroscope(x, y, z)
+            # attitude quaternion(w, x, y, z)
+
+            # Create sensor timestamps first
+            sensor_timestamps = SensorTimestamps()
+            sensor_timestamps.timestamps = timesarray
+            sensor_timestamps.update_timestamps()
+
+            # Update timestamps in recordset
+            # This should not happen, recordset is initialized at the beginning of the hour
+            if sensor_timestamps.start_timestamp < recordset.start_timestamp:
+                recordset.start_timestamp = sensor_timestamps.start_timestamp
+            # This can occur though
+            if sensor_timestamps.end_timestamp > recordset.end_timestamp:
+                recordset.end_timestamp = sensor_timestamps.end_timestamp
+
+            # Acc
+            for i in range(len(channels['acc'])):
+                self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[i],
+                                           sensor_timestamps, valuesarray[:, i])
+
+            # Gyro
+            for i in range(len(channels['gyro'])):
+                self.add_sensor_data_to_db(recordset, gyro_sensor, gyro_channels[i],
+                                           sensor_timestamps, valuesarray[:, i + 6])
+
+    def import_battery_to_database(self, sampling_rate, battery: dict):
+        # DL Oct. 16 2018, New import to database
+        battery_sensor = self.add_sensor_to_db(SensorType.BATTERY, 'Battery', 'AppleWatch', 'Wrist',
+                                               sampling_rate, 1)
+
+        battery_channel = self.add_channel_to_db(battery_sensor, Units.VOLTS, DataFormat.FLOAT32, 'Battery Percentage')
+
+        # Data is already hour-aligned iterate through hours
+        for timestamp in battery:
+            print('battery', timestamp, len(battery[timestamp]['times']),
+                  len(battery[timestamp]['values']))
+
+            # Calculate recordset
+            recordset = self.get_recordset(timestamp.timestamp())
+
+            # Import to database
+            # Create time array as float64
+            timesarray = np.asarray(battery[timestamp]['times'], dtype=np.float64)
+
+            if len(timesarray) is 0:
+                print('Empty data, returning')
+                return
+
+            # Other values are float32
+            valuesarray = np.asarray(battery[timestamp]['values'], dtype=np.float32)
+
+            # Create sensor timestamps first
+            sensor_timestamps = SensorTimestamps()
+            sensor_timestamps.timestamps = timesarray
+            sensor_timestamps.update_timestamps()
+
+            # Update timestamps in recordset
+            # This should not happen, recordset is initialized at the beginning of the hour
+            if sensor_timestamps.start_timestamp < recordset.start_timestamp:
+                recordset.start_timestamp = sensor_timestamps.start_timestamp
+            # This can occur though
+            if sensor_timestamps.end_timestamp > recordset.end_timestamp:
+                recordset.end_timestamp = sensor_timestamps.end_timestamp
+
+            self.add_sensor_data_to_db(recordset, battery_sensor, battery_channel, sensor_timestamps,
+                                       valuesarray[:, 0])
+
+    def import_to_database(self, results):
+        # DL Oct. 16 2018, New import to database
+        print('new import')
+
         if results.__contains__('motion'):
             sampling_rate = results['motion']['sampling_rate']
-
             if results['motion']['timestamps']:
-                # Create channels and sensors
-                accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer',
-                                                             'AppleWatch',
-                                                             'Wrist',
-                                                             sampling_rate, 1)
+                self.import_motion_to_database(sampling_rate, results['motion']['timestamps'])
 
-                accelerometer_channels = list()
+        if results.__contains__('battery'):
+            sampling_rate = results['battery']['sampling_rate']
+            if results['battery']['timestamps']:
+                self.import_battery_to_database(sampling_rate, results['battery']['timestamps'])
 
-                # Create channels
-                accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
-                                                                     DataFormat.FLOAT32, 'Accelerometer_X'))
+        if results.__contains__('sensoria'):
+            sampling_rate = results['sensoria']['sampling_rate']
+            if results['sensoria']['timestamps']:
+                # TODO
+                pass
 
-                accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
-                                                                     DataFormat.FLOAT32, 'Accelerometer_Y'))
+        if results.__contains__('heartrate'):
+            sampling_rate = results['heartrate']['sampling_rate']
+            if results['heartrate']['timestamps']:
+                # TODO
+                pass
 
-                accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
-                                                                     DataFormat.FLOAT32, 'Accelerometer_Z'))
+        if results.__contains__('beacons'):
+            sampling_rate = results['beacons']['sampling_rate']
+            if results['beacons']['timestamps']:
+                # TODO
+                pass
 
-                # Create sensor
-                gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyro',
-                                                    'AppleWatch',
-                                                    'Wrist', sampling_rate, 1)
+        if results.__contains__('coordinates'):
+            sampling_rate = results['coordinates']['sampling_rate']
+            if results['coordinates']['timestamps']:
+                # TODO
+                pass
 
-                gyro_channels = list()
+        if results.__contains__('raw_motion'):
+            sampling_rate = results['raw_motion']['sampling_rate']
+            if results['raw_motion']['timestamps']:
+                # TODO
+                pass
 
-                # Create channels
-                gyro_channels.append(self.add_channel_to_db(gyro_sensor, Units.DEG_PER_SEC,
-                                                            DataFormat.FLOAT32, 'Gyro_X'))
+        if results.__contains__('raw_accelero'):
+            sampling_rate = results['raw_accelero']['sampling_rate']
+            if results['raw_accelero']['timestamps']:
+                # TODO
+                pass
 
-                gyro_channels.append(self.add_channel_to_db(gyro_sensor, Units.DEG_PER_SEC,
-                                                            DataFormat.FLOAT32, 'Gyro_Y'))
-
-                gyro_channels.append(self.add_channel_to_db(gyro_sensor, Units.DEG_PER_SEC,
-                                                            DataFormat.FLOAT32, 'Gyro_Z'))
-
-                sensors['acc'] = accelerometer_sensor
-                sensors['gyro'] = gyro_sensor
-                channels['acc'] = accelerometer_channels
-                channels['gyro'] = gyro_channels
-
-                # Data is already hour-aligned iterate through hours
-                for timestamp in results['motion']['timestamps']:
-                    print(timestamp, len(results['motion']['timestamps'][timestamp]['times']),
-                          len(results['motion']['timestamps'][timestamp]['values']))
-                    # Calculate recordset
-                    recordset = self.get_recordset(timestamp.timestamp())
-
-                    # Add motion data to database
-                    # def import_motion_to_database_v2(self, recordset, times: list,
-                    # values: list, sensors: list, channels: list):
-                    self.import_motion_to_database(recordset,
-                                                      results['motion']['timestamps'][timestamp]['times'],
-                                                      results['motion']['timestamps'][timestamp]['values'],
-                                                      sensors, channels)
-
-        # TODO other types...
+        if results.__contains__('raw_gyro'):
+            sampling_rate = results['raw_gyro']['sampling_rate']
+            if results['raw_gyro']['timestamps']:
+                # TODO
+                pass
 
         # Commit DB
         self.db.commit()
@@ -976,7 +1033,6 @@ class AppleWatchImporter(BaseImporter):
             min_size = min(len(results_ms_ts), len(results_ms_data))
             results_ms_ts = results_ms_ts[0:min_size]
             results_ms_data = results_ms_data[0:min_size]
-
 
         # insertion sort on almost sorted timestamps, tends to O(n)
         for i in range(1, len(results_ms_ts)):
