@@ -46,7 +46,7 @@ class AppleWatchImporter(BaseImporter):
     COORDINATES_ID = 0x7
     RAW_MOTION_ID = 0x8
     RAW_ACCELERO_ID = 0x9
-    RAW_GYRO_ID = 0x10
+    RAW_GYRO_ID = 0x0A
 
     def __init__(self, manager: DBManager, participant: Participant):
         super().__init__(manager, participant)
@@ -102,7 +102,7 @@ class AppleWatchImporter(BaseImporter):
             return
 
         # Validate timestamp
-        if my_time > datetime.datetime.now() or my_time < datetime.datetime(2018,1,1):
+        if my_time > datetime.datetime.now() or my_time < datetime.datetime(2018, 1, 1):
             print("Invalid timestamp: " + str(timestamp));
             return
 
@@ -311,45 +311,74 @@ class AppleWatchImporter(BaseImporter):
 
         #self.db.commit()
 
-    def import_beacons_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
+    def import_beacons_to_database(self, sample_rate, beacons: dict):
+        # DL Oct. 17 2018, New import to database
+        beacons_sensor = self.add_sensor_to_db(SensorType.BEACON, 'Beacons', 'Kontact', 'Environment',
+                                               sample_rate, 1)
+        channel_values = dict()
 
-        # Creates list of unique beacons ids (built from namespace and instance id)
-        namespaces = [val[0:16] for val in data]
-        txs = [val[16] for val in data]
-        rssi = [val[17] for val in data]
-        namespaces = [[str(format(x, 'x')).rjust(2, '0') for x in tup] for tup in namespaces]
+        # Data is already hour-aligned iterate through hours
+        for timestamp in beacons:
+            print('beacons', timestamp, len(beacons[timestamp]['times']),
+                  len(beacons[timestamp]['values']))
 
-        beacons = defaultdict(list)
-        index = 0
-        for name in namespaces:
-            beacon_id = ''.join(name[0:10])+ '_' + ''.join(name[10:])
-            beacon_channel = [x for x in channels['beacons'] if x.label == beacon_id]
-            if not beacon_channel: #Must add a new channel
-                beacon_channel = [self.add_channel_to_db(sensors['beacons'], Units.NONE,
-                                           DataFormat.SINT8, beacon_id)]
-                channels['beacons'].append(beacon_channel[0])
+            # Create time array as float64
+            timesarray = np.asarray(beacons[timestamp]['times'], dtype=np.float64)
 
-            beacon_data = BeaconData()
-            beacon_data.tx_power = np.int8(txs[index])
-            beacon_data.rssi = np.int8(rssi[index])
+            if len(timesarray) is 0:
+                print('Empty data, returning')
+                return
 
-            beacons[beacon_id].append(beacon_data)
-            index += 1
+            # Other values are int8
+            valuesarray = np.asarray(beacons[timestamp]['values'], dtype=np.int8)
 
-        for beacon_id in beacons.keys():
-            beacon_channel = [x for x in channels['beacons'] if x.label == beacon_id]
-            beacon_data = np.array(beacons[beacon_id])
+            # Iterate through each entry to generate data for each beacon_id
+            for i in range(0, len(timesarray)):
+                name = [str(format(x, 'x')).rjust(2, '0') for x in beacons[timestamp]['values'][i][0:16]]
+                beacon_id = ''.join(name[0:10]) + '_' + ''.join(name[10:])
 
-            # TODO: Should be more precise and use "real" timestamps...
-            end_timestamp = timestamp + 1 #int(np.floor(len(beacon_data.tobytes()) / sample_rate / 8))
+                # Create channel if it does not exist
+                if not channel_values.__contains__(beacon_id):
+                    channel_values[beacon_id] = []
 
-            # Update end_timestamp if required
-            if end_timestamp > recordset.end_timestamp.timestamp():
-                recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
+                channel_values[beacon_id].append((timesarray[i], valuesarray[i][14], valuesarray[i][15]))
 
-            self.add_sensor_data_to_db(recordset, sensors['beacons'], beacon_channel[0],
-                                       datetime.datetime.fromtimestamp(timestamp),
-                                       datetime.datetime.fromtimestamp(end_timestamp), beacon_data)
+            # Store each beacon_id in separate channels
+            for key in channel_values:
+                timevect = np.asarray([x[0] for x in channel_values[key]], dtype=np.float64)
+
+                # Create sensor timestamps first
+                sensor_timestamps = SensorTimestamps()
+                sensor_timestamps.timestamps = timevect
+                sensor_timestamps.update_timestamps()
+
+                # Calculate recordset
+                recordset = self.get_recordset(sensor_timestamps.start_timestamp.timestamp())
+
+                # Update timestamps in recordset
+                # This should not happen, recordset is initialized at the beginning of the hour
+                if sensor_timestamps.start_timestamp < recordset.start_timestamp:
+                    recordset.start_timestamp = sensor_timestamps.start_timestamp
+                # This can occur though
+                if sensor_timestamps.end_timestamp > recordset.end_timestamp:
+                    recordset.end_timestamp = sensor_timestamps.end_timestamp
+
+                # Create channel
+                channel_txPower = self.add_channel_to_db(beacons_sensor, Units.NONE,
+                                                 DataFormat.SINT8, key + '_TxPower')
+
+                channel_RSSI = self.add_channel_to_db(beacons_sensor, Units.NONE,
+                                                         DataFormat.SINT8, key + '_RSSI')
+
+                tx_power_vect = np.asarray([x[1] for x in channel_values[key]], dtype=np.int8)
+                rssi_vect = np.asarray([x[2] for x in channel_values[key]], dtype=np.int8)
+
+                # Add data
+                self.add_sensor_data_to_db(recordset, beacons_sensor, channel_txPower,
+                                           sensor_timestamps, tx_power_vect)
+
+                self.add_sensor_data_to_db(recordset, beacons_sensor, channel_RSSI,
+                                           sensor_timestamps, rssi_vect)
 
     def import_motion_to_database(self, sampling_rate, motion: dict):
         # DL Oct. 16 2018, New import to database
@@ -482,7 +511,6 @@ class AppleWatchImporter(BaseImporter):
 
     def import_to_database(self, results):
         # DL Oct. 16 2018, New import to database
-        print('new import')
 
         if results.__contains__('motion'):
             sampling_rate = results['motion']['sampling_rate']
@@ -509,8 +537,7 @@ class AppleWatchImporter(BaseImporter):
         if results.__contains__('beacons'):
             sampling_rate = results['beacons']['sampling_rate']
             if results['beacons']['timestamps']:
-                # TODO
-                pass
+                self.import_beacons_to_database(sampling_rate, results['beacons']['timestamps'])
 
         if results.__contains__('coordinates'):
             sampling_rate = results['coordinates']['sampling_rate']
@@ -538,7 +565,6 @@ class AppleWatchImporter(BaseImporter):
 
         # Commit DB
         self.db.commit()
-
 
     def import_to_database_old(self, result):
         print('AppleWatchImporter.import_to_database')
@@ -616,31 +642,31 @@ class AppleWatchImporter(BaseImporter):
 
             sensoria_acc_channels = list()
             sensoria_acc_channels.append(self.add_channel_to_db(sensoria_acc_sensor, Units.GRAVITY_G,
-                                                                 DataFormat.FLOAT32, 'Accelerometer_X'))
+                                                                DataFormat.FLOAT32, 'Accelerometer_X'))
             sensoria_acc_channels.append(self.add_channel_to_db(sensoria_acc_sensor, Units.GRAVITY_G,
-                                                                 DataFormat.FLOAT32, 'Accelerometer_Y'))
+                                                                DataFormat.FLOAT32, 'Accelerometer_Y'))
             sensoria_acc_channels.append(self.add_channel_to_db(sensoria_acc_sensor, Units.GRAVITY_G,
-                                                                 DataFormat.FLOAT32, 'Accelerometer_Z'))
+                                                                DataFormat.FLOAT32, 'Accelerometer_Z'))
 
             sensoria_gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyrometer', 'Sensoria', 'Foot',
                                                          result['sampling_rate'][self.SENSORIA_ID], 1)
             sensoria_gyro_channels = list()
             sensoria_gyro_channels.append(self.add_channel_to_db(sensoria_gyro_sensor, Units.DEG_PER_SEC,
-                                                        DataFormat.FLOAT32, 'Gyro_X'))
+                                                                 DataFormat.FLOAT32, 'Gyro_X'))
             sensoria_gyro_channels.append(self.add_channel_to_db(sensoria_gyro_sensor, Units.DEG_PER_SEC,
-                                                        DataFormat.FLOAT32, 'Gyro_Y'))
+                                                                 DataFormat.FLOAT32, 'Gyro_Y'))
             sensoria_gyro_channels.append(self.add_channel_to_db(sensoria_gyro_sensor, Units.DEG_PER_SEC,
-                                                        DataFormat.FLOAT32, 'Gyro_Z'))
+                                                                 DataFormat.FLOAT32, 'Gyro_Z'))
 
             sensoria_mag_sensor = self.add_sensor_to_db(SensorType.MAGNETOMETER, 'Magnetometer', 'Sensoria', 'Foot',
                                                         result['sampling_rate'][self.SENSORIA_ID], 1)
             sensoria_mag_channels = list()
             sensoria_mag_channels.append(self.add_channel_to_db(sensoria_mag_sensor, Units.GAUSS,
-                                                                 DataFormat.FLOAT32, 'Mag_X'))
+                                                                DataFormat.FLOAT32, 'Mag_X'))
             sensoria_mag_channels.append(self.add_channel_to_db(sensoria_mag_sensor, Units.GAUSS,
-                                                                 DataFormat.FLOAT32, 'Mag_Y'))
+                                                                DataFormat.FLOAT32, 'Mag_Y'))
             sensoria_mag_channels.append(self.add_channel_to_db(sensoria_mag_sensor, Units.GAUSS,
-                                                                 DataFormat.FLOAT32, 'Mag_Z'))
+                                                                DataFormat.FLOAT32, 'Mag_Z'))
 
             sensoria_fsr_sensor = self.add_sensor_to_db(SensorType.FSR, 'FSR', 'Sensoria', 'Foot',
                                                         result['sampling_rate'][self.SENSORIA_ID], 1)
@@ -695,13 +721,13 @@ class AppleWatchImporter(BaseImporter):
 
             # Create channels
             raw_gyro_channels.append(self.add_channel_to_db(raw_gyro_sensor, Units.DEG_PER_SEC,
-                                                        DataFormat.FLOAT32, 'Gyro_X'))
+                                                            DataFormat.FLOAT32, 'Gyro_X'))
 
             raw_gyro_channels.append(self.add_channel_to_db(raw_gyro_sensor, Units.DEG_PER_SEC,
-                                                        DataFormat.FLOAT32, 'Gyro_Y'))
+                                                            DataFormat.FLOAT32, 'Gyro_Y'))
 
             raw_gyro_channels.append(self.add_channel_to_db(raw_gyro_sensor, Units.DEG_PER_SEC,
-                                                        DataFormat.FLOAT32, 'Gyro_Z'))
+                                                            DataFormat.FLOAT32, 'Gyro_Z'))
 
             sensors['raw_acc'] = raw_accelerometer_sensor
             sensors['raw_gyro'] = raw_gyro_sensor
