@@ -204,7 +204,6 @@ class AppleWatchImporter(BaseImporter):
 
     def import_heartrate_to_database(self, sample_rate, heartrate: dict):
         # DL Oct. 17 2018, New import to database
-
         heartrate_sensor = self.add_sensor_to_db(SensorType.HEARTRATE, 'Heartrate', 'AppleWatch', 'Wrist',
                                                  sample_rate, 1)
 
@@ -243,33 +242,6 @@ class AppleWatchImporter(BaseImporter):
             # Store data
             self.add_sensor_data_to_db(recordset, heartrate_sensor, heartrate_channel,
                                        sensor_timestamps, valuesarray[:, 0])
-
-    def import_heartrate_to_database_old(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
-
-        # print('import_motion_to_database')
-        # print('data', data, len(data))
-
-        values = np.array(data, dtype=np.float32)
-        # print("Values shape: ", values.shape)
-        end_timestamp = timestamp + 1
-        # print("timestamps, ", timestamp, end_timestamp)
-
-        # Calculate last index to remove extra values
-        real_size = int(np.floor(len(values) / sample_rate) * sample_rate)
-        # print('real size:', real_size)
-
-        # Update end_timestamp if required
-        if end_timestamp > recordset.end_timestamp.timestamp():
-            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
-
-        if real_size > 0:
-            # print('heartrate size:', real_size)
-            # Heartrate
-            self.add_sensor_data_to_db(recordset, sensors['heartrate'], channels['heartrate'],
-                                       datetime.datetime.fromtimestamp(timestamp),
-                                       datetime.datetime.fromtimestamp(end_timestamp), values[0, 0])
-
-        #self.db.commit()
 
     def import_coordinates_to_database(self, sample_rate, coordinates: dict):
         # DL Oct. 17 2018, New import to database
