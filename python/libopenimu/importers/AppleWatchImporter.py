@@ -117,36 +117,88 @@ class AppleWatchImporter(BaseImporter):
         self.recordsets.append(recordset)
         return recordset
 
-    def import_raw_motion_to_database_old(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
+    def import_raw_motion_to_database(self, sample_rate, raw_motion: dict):
+        # DL Oct. 17 2018, New import to database
+        # Deprecated ?
+        raw_accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Raw Accelerometer',
+                                                         'AppleWatch',
+                                                         'Wrist', sample_rate, 1)
 
-        # print('import_motion_to_database')
-        # print('data', data, len(data))
+        raw_accelerometer_channels = list()
 
-        values = np.array(data, dtype=np.float32)
-        # print("Values shape: ", values.shape)
-        end_timestamp = timestamp + int(np.floor(len(values) / sample_rate))
-        # print("timestamps, ", timestamp, end_timestamp)
+        # Create channels
+        raw_accelerometer_channels.append(self.add_channel_to_db(raw_accelerometer_sensor, Units.GRAVITY_G,
+                                                                 DataFormat.FLOAT32, 'Accelerometer_X'))
 
-        # Calculate last index to remove extra values
-        real_size = int(np.floor(len(values) / sample_rate) * sample_rate)
-        # print('real size:', real_size)
+        raw_accelerometer_channels.append(self.add_channel_to_db(raw_accelerometer_sensor, Units.GRAVITY_G,
+                                                                 DataFormat.FLOAT32, 'Accelerometer_Y'))
 
-        # Update end_timestamp if required
-        if end_timestamp > recordset.end_timestamp.timestamp():
-            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
+        raw_accelerometer_channels.append(self.add_channel_to_db(raw_accelerometer_sensor, Units.GRAVITY_G,
+                                                                 DataFormat.FLOAT32, 'Accelerometer_Z'))
 
-        if real_size > 0:
+        # Create sensor
+        raw_gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Raw Gyro',
+                                                'AppleWatch',
+                                                'Wrist', sample_rate, 1)
+
+        raw_gyro_channels = list()
+
+        # Create channels
+        raw_gyro_channels.append(self.add_channel_to_db(raw_gyro_sensor, Units.DEG_PER_SEC,
+                                                        DataFormat.FLOAT32, 'Gyro_X'))
+
+        raw_gyro_channels.append(self.add_channel_to_db(raw_gyro_sensor, Units.DEG_PER_SEC,
+                                                        DataFormat.FLOAT32, 'Gyro_Y'))
+
+        raw_gyro_channels.append(self.add_channel_to_db(raw_gyro_sensor, Units.DEG_PER_SEC,
+                                                        DataFormat.FLOAT32, 'Gyro_Z'))
+
+        # Data is already hour-aligned iterate through hours
+        for timestamp in raw_motion:
+            print('raw_motion', timestamp, len(raw_motion[timestamp]['times']),
+                  len(raw_motion[timestamp]['values']))
+
+            # Calculate recordset
+            recordset = self.get_recordset(timestamp.timestamp())
+
+            # Add motion data to database
+
+            # Create time array as float64
+            timesarray = np.asarray(raw_motion[timestamp]['times'], dtype=np.float64)
+
+            if len(timesarray) is 0:
+                print('Empty data, returning')
+                return
+
+            # Other values are float32
+            valuesarray = np.asarray(raw_motion[timestamp]['values'], dtype=np.float32)
+
+            # raw_motion contains in this order
+            # acceleration(x, y, z)
+            # gyro(x,y,z)
+
+            # Create sensor timestamps first
+            sensor_timestamps = SensorTimestamps()
+            sensor_timestamps.timestamps = timesarray
+            sensor_timestamps.update_timestamps()
+
+            # Update timestamps in recordset
+            # This should not happen, recordset is initialized at the beginning of the hour
+            if sensor_timestamps.start_timestamp < recordset.start_timestamp:
+                recordset.start_timestamp = sensor_timestamps.start_timestamp
+            # This can occur though
+            if sensor_timestamps.end_timestamp > recordset.end_timestamp:
+                recordset.end_timestamp = sensor_timestamps.end_timestamp
+
             # Acc
-            for i in range(len(channels['raw_acc'])):
-                self.add_sensor_data_to_db(recordset, sensors['raw_acc'], channels['raw_acc'][i],
-                                           datetime.datetime.fromtimestamp(timestamp),
-                                           datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i])
+            for i in range(len(raw_accelerometer_channels)):
+                self.add_sensor_data_to_db(recordset, raw_accelerometer_sensor, raw_accelerometer_channels[i],
+                                           sensor_timestamps, valuesarray[:, i])
 
             # Gyro
-            for i in range(len(channels['raw_gyro'])):
-                self.add_sensor_data_to_db(recordset, sensors['raw_gyro'], channels['raw_gyro'][i],
-                                           datetime.datetime.fromtimestamp(timestamp),
-                                           datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i + 3])
+            for i in range(len(raw_gyro_channels)):
+                self.add_sensor_data_to_db(recordset, raw_gyro_sensor, raw_gyro_channels[i],
+                                           sensor_timestamps, valuesarray[:, i + 3])
 
     def import_raw_accelerometer_to_database(self, sample_rate, raw_accelero: dict):
         # DL Oct. 17 2018, New import to database
@@ -261,7 +313,7 @@ class AppleWatchImporter(BaseImporter):
             if sensor_timestamps.end_timestamp > recordset.end_timestamp:
                 recordset.end_timestamp = sensor_timestamps.end_timestamp
 
-            # Acc
+            # Gyro
             for i in range(len(raw_gyro_channels)):
                 self.add_sensor_data_to_db(recordset, raw_gyro_sensor, raw_gyro_channels[i],
                                            sensor_timestamps, valuesarray[:, i])
@@ -684,8 +736,7 @@ class AppleWatchImporter(BaseImporter):
         if results.__contains__('raw_motion'):
             sampling_rate = results['raw_motion']['sampling_rate']
             if results['raw_motion']['timestamps']:
-                # TODO
-                pass
+                self.import_raw_motion_to_database(sampling_rate, results['raw_motion']['timestamps'])
 
         if results.__contains__('raw_accelero'):
             sampling_rate = results['raw_accelero']['sampling_rate']
@@ -698,331 +749,6 @@ class AppleWatchImporter(BaseImporter):
                 self.import_raw_gyro_to_database(sampling_rate, results['raw_gyro']['timestamps'])
 
         # Commit DB
-        self.db.commit()
-
-    def import_to_database_old(self, result):
-        print('AppleWatchImporter.import_to_database')
-        sensors = {}
-        channels = {}
-
-        if result is None:
-            return
-
-        # Create sensors
-        if result['sampling_rate'].__contains__(self.PROCESSED_MOTION_ID):
-            accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer',
-                                                         'AppleWatch',
-                                                         'Unknown', result['sampling_rate'][self.PROCESSED_MOTION_ID], 1)
-
-            accelerometer_channels = list()
-
-            # Create channels
-            accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
-                                                                 DataFormat.FLOAT32, 'Accelerometer_X'))
-
-            accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
-                                                                 DataFormat.FLOAT32, 'Accelerometer_Y'))
-
-            accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
-                                                                 DataFormat.FLOAT32, 'Accelerometer_Z'))
-
-            # Create sensor
-            gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyro',
-                                                'AppleWatch',
-                                                'Unknown', result['sampling_rate'][self.PROCESSED_MOTION_ID], 1)
-
-            gyro_channels = list()
-
-            # Create channels
-            gyro_channels.append(self.add_channel_to_db(gyro_sensor, Units.DEG_PER_SEC,
-                                                        DataFormat.FLOAT32, 'Gyro_X'))
-
-            gyro_channels.append(self.add_channel_to_db(gyro_sensor, Units.DEG_PER_SEC,
-                                                        DataFormat.FLOAT32, 'Gyro_Y'))
-
-            gyro_channels.append(self.add_channel_to_db(gyro_sensor, Units.DEG_PER_SEC,
-                                                        DataFormat.FLOAT32, 'Gyro_Z'))
-
-            sensors['acc'] = accelerometer_sensor
-            sensors['gyro'] = gyro_sensor
-            channels['acc'] = accelerometer_channels
-            channels['gyro'] = gyro_channels
-
-        # Battery
-        if result['sampling_rate'].__contains__(self.BATTERY_ID):
-            battery_sensor = self.add_sensor_to_db(SensorType.BATTERY, 'Battery', 'AppleWatch', 'Unknown', result['sampling_rate'][self.BATTERY_ID], 1)
-            battery_channel = self.add_channel_to_db(battery_sensor, Units.VOLTS, DataFormat.FLOAT32, 'Battery Percentage')
-            sensors['batt'] = battery_sensor
-            channels['batt'] = battery_channel
-
-        # Heartrate
-        if result['sampling_rate'].__contains__(self.HEARTRATE_ID):
-            heartrate_sensor = self.add_sensor_to_db(SensorType.HEARTRATE, 'Heartrate', 'AppleWatch', 'Unknown', result['sampling_rate'][self.HEARTRATE_ID], 1)
-            heartrate_channel = self.add_channel_to_db(heartrate_sensor, Units.BPM, DataFormat.FLOAT32, 'Heartrate')
-            sensors['heartrate'] = heartrate_sensor
-            channels['heartrate'] = heartrate_channel
-
-        # Coordinates
-        if result['sampling_rate'].__contains__(self.COORDINATES_ID):
-            coordinates_sensor = self.add_sensor_to_db(SensorType.GPS, 'Coordinates', 'AppleWatch', 'Unknown', result['sampling_rate'][self.COORDINATES_ID], 1)
-            coordinates_channel = self.add_channel_to_db(coordinates_sensor, Units.NONE, DataFormat.UINT8, 'Coordinates')
-            sensors['coordinates'] = coordinates_sensor
-            channels['coordinates'] = coordinates_channel
-
-        # Sensoria
-        if result['sampling_rate'].__contains__(self.SENSORIA_ID):
-            sensoria_acc_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer', 'Sensoria', 'Foot',
-                                                        result['sampling_rate'][self.SENSORIA_ID], 1)
-
-            sensoria_acc_channels = list()
-            sensoria_acc_channels.append(self.add_channel_to_db(sensoria_acc_sensor, Units.GRAVITY_G,
-                                                                DataFormat.FLOAT32, 'Accelerometer_X'))
-            sensoria_acc_channels.append(self.add_channel_to_db(sensoria_acc_sensor, Units.GRAVITY_G,
-                                                                DataFormat.FLOAT32, 'Accelerometer_Y'))
-            sensoria_acc_channels.append(self.add_channel_to_db(sensoria_acc_sensor, Units.GRAVITY_G,
-                                                                DataFormat.FLOAT32, 'Accelerometer_Z'))
-
-            sensoria_gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyrometer', 'Sensoria', 'Foot',
-                                                         result['sampling_rate'][self.SENSORIA_ID], 1)
-            sensoria_gyro_channels = list()
-            sensoria_gyro_channels.append(self.add_channel_to_db(sensoria_gyro_sensor, Units.DEG_PER_SEC,
-                                                                 DataFormat.FLOAT32, 'Gyro_X'))
-            sensoria_gyro_channels.append(self.add_channel_to_db(sensoria_gyro_sensor, Units.DEG_PER_SEC,
-                                                                 DataFormat.FLOAT32, 'Gyro_Y'))
-            sensoria_gyro_channels.append(self.add_channel_to_db(sensoria_gyro_sensor, Units.DEG_PER_SEC,
-                                                                 DataFormat.FLOAT32, 'Gyro_Z'))
-
-            sensoria_mag_sensor = self.add_sensor_to_db(SensorType.MAGNETOMETER, 'Magnetometer', 'Sensoria', 'Foot',
-                                                        result['sampling_rate'][self.SENSORIA_ID], 1)
-            sensoria_mag_channels = list()
-            sensoria_mag_channels.append(self.add_channel_to_db(sensoria_mag_sensor, Units.GAUSS,
-                                                                DataFormat.FLOAT32, 'Mag_X'))
-            sensoria_mag_channels.append(self.add_channel_to_db(sensoria_mag_sensor, Units.GAUSS,
-                                                                DataFormat.FLOAT32, 'Mag_Y'))
-            sensoria_mag_channels.append(self.add_channel_to_db(sensoria_mag_sensor, Units.GAUSS,
-                                                                DataFormat.FLOAT32, 'Mag_Z'))
-
-            sensoria_fsr_sensor = self.add_sensor_to_db(SensorType.FSR, 'FSR', 'Sensoria', 'Foot',
-                                                        result['sampling_rate'][self.SENSORIA_ID], 1)
-            sensoria_fsr_channels = list()
-            sensoria_fsr_channels.append(self.add_channel_to_db(sensoria_fsr_sensor, Units.NONE,
-                                                                DataFormat.SINT16, 'META-1'))
-            sensoria_fsr_channels.append(self.add_channel_to_db(sensoria_fsr_sensor, Units.NONE,
-                                                                DataFormat.SINT16, 'META-5'))
-            sensoria_fsr_channels.append(self.add_channel_to_db(sensoria_fsr_sensor, Units.NONE,
-                                                                DataFormat.SINT16, 'HEEL'))
-
-            sensors['sensoria_acc'] = sensoria_acc_sensor
-            sensors['sensoria_gyro'] = sensoria_gyro_sensor
-            sensors['sensoria_mag'] = sensoria_mag_sensor
-            sensors['sensoria_fsr'] = sensoria_fsr_sensor
-            channels['sensoria_acc'] = sensoria_acc_channels
-            channels['sensoria_gyro'] = sensoria_gyro_channels
-            channels['sensoria_mag'] = sensoria_mag_channels
-            channels['sensoria_fsr'] = sensoria_fsr_channels
-
-        #Beacons
-        if result['sampling_rate'].__contains__(self.BEACONS_ID):
-            beacons_sensor = self.add_sensor_to_db(SensorType.BEACON, 'Beacons', 'Kontact', 'Environment', result['sampling_rate'][self.BEACONS_ID], 1)
-            beacons_channels = list()
-            sensors['beacons'] = beacons_sensor
-            channels['beacons'] = beacons_channels
-
-        # Raw Motion
-        if result['sampling_rate'].__contains__(self.RAW_MOTION_ID):
-            raw_accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Raw Accelerometer',
-                                                             'AppleWatch',
-                                                             'Unknown', result['sampling_rate'][self.RAW_MOTION_ID], 1)
-
-            raw_accelerometer_channels = list()
-
-            # Create channels
-            raw_accelerometer_channels.append(self.add_channel_to_db(raw_accelerometer_sensor, Units.GRAVITY_G,
-                                                                     DataFormat.FLOAT32, 'Accelerometer_X'))
-
-            raw_accelerometer_channels.append(self.add_channel_to_db(raw_accelerometer_sensor, Units.GRAVITY_G,
-                                                                     DataFormat.FLOAT32, 'Accelerometer_Y'))
-
-            raw_accelerometer_channels.append(self.add_channel_to_db(raw_accelerometer_sensor, Units.GRAVITY_G,
-                                                                     DataFormat.FLOAT32, 'Accelerometer_Z'))
-
-            # Create sensor
-            raw_gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Raw Gyro',
-                                                    'AppleWatch',
-                                                    'Unknown', result['sampling_rate'][self.RAW_MOTION_ID], 1)
-
-            raw_gyro_channels = list()
-
-            # Create channels
-            raw_gyro_channels.append(self.add_channel_to_db(raw_gyro_sensor, Units.DEG_PER_SEC,
-                                                            DataFormat.FLOAT32, 'Gyro_X'))
-
-            raw_gyro_channels.append(self.add_channel_to_db(raw_gyro_sensor, Units.DEG_PER_SEC,
-                                                            DataFormat.FLOAT32, 'Gyro_Y'))
-
-            raw_gyro_channels.append(self.add_channel_to_db(raw_gyro_sensor, Units.DEG_PER_SEC,
-                                                            DataFormat.FLOAT32, 'Gyro_Z'))
-
-            sensors['raw_acc'] = raw_accelerometer_sensor
-            sensors['raw_gyro'] = raw_gyro_sensor
-            channels['raw_acc'] = raw_accelerometer_channels
-            channels['raw_gyro'] = raw_gyro_channels
-
-        if result['sampling_rate'].__contains__(self.RAW_ACCELERO_ID):
-
-            raw_accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Raw Accelerometer',
-                                                             'AppleWatch',
-                                                             'Unknown', result['sampling_rate'][self.RAW_ACCELERO_ID], 1)
-
-            raw_accelerometer_channels = list()
-
-            # Create channels
-            raw_accelerometer_channels.append(self.add_channel_to_db(raw_accelerometer_sensor, Units.GRAVITY_G,
-                                                                     DataFormat.FLOAT32, 'Accelerometer_X'))
-
-            raw_accelerometer_channels.append(self.add_channel_to_db(raw_accelerometer_sensor, Units.GRAVITY_G,
-                                                                     DataFormat.FLOAT32, 'Accelerometer_Y'))
-
-            raw_accelerometer_channels.append(self.add_channel_to_db(raw_accelerometer_sensor, Units.GRAVITY_G,
-                                                                     DataFormat.FLOAT32, 'Accelerometer_Z'))
-
-            sensors['raw_acc'] = raw_accelerometer_sensor
-            channels['raw_acc'] = raw_accelerometer_channels
-
-        if result['sampling_rate'].__contains__(self.RAW_GYRO_ID):
-            # Create sensor
-            raw_gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Raw Gyro',
-                                                 'AppleWatch',
-                                                 'Unknown', result['sampling_rate'][self.RAW_GYRO_ID], 1)
-
-            raw_gyro_channels = list()
-
-            # Create channels
-            raw_gyro_channels.append(self.add_channel_to_db(raw_gyro_sensor, Units.DEG_PER_SEC,
-                                                         DataFormat.FLOAT32, 'Gyro_X'))
-
-            raw_gyro_channels.append(self.add_channel_to_db(raw_gyro_sensor, Units.DEG_PER_SEC,
-                                                         DataFormat.FLOAT32, 'Gyro_Y'))
-
-            raw_gyro_channels.append(self.add_channel_to_db(raw_gyro_sensor, Units.DEG_PER_SEC,
-                                                                 DataFormat.FLOAT32, 'Gyro_Z'))
-
-            sensors['raw_gyro'] = raw_gyro_sensor
-            channels['raw_gyro'] = raw_gyro_channels
-
-        # Create sensor and channels dict
-        """sensors = {'acc': accelerometer_sensor,
-                   'gyro': gyro_sensor,
-                   'batt': battery_sensor,
-                   'heartrate': heartrate_sensor,
-                   'coordinates': coordinates_sensor,
-                   'sensoria_acc': sensoria_acc_sensor,
-                   'sensoria_gyro': sensoria_gyro_sensor,
-                   'sensoria_mag': sensoria_mag_sensor,
-                   'sensoria_fsr': sensoria_fsr_sensor,
-                   'beacons': beacons_sensor,
-                   'raw_acc': raw_accelerometer_sensor,
-                   'raw_gyro': raw_gyro_sensor
-                   }
-
-        channels = {'acc': accelerometer_channels,
-                    'gyro': gyro_channels,
-                    'batt': battery_channel,
-                    'heartrate': heartrate_channel,
-                    'coordinates': coordinates_channel,
-                    'sensoria_acc': sensoria_acc_channels,
-                    'sensoria_gyro': sensoria_gyro_channels,
-                    'sensoria_mag': sensoria_mag_channels,
-                    'sensoria_fsr': sensoria_fsr_channels,
-                    'beacons': beacons_channels,
-                    'raw_acc': raw_accelerometer_channels,
-                    'raw_gyro': raw_gyro_channels
-                    }
-        """
-        for timestamp in result:
-            # Change recordset each day
-            recordset = self.get_recordset(timestamp)
-
-            if recordset is None:
-                continue
-
-            if result[timestamp].__contains__('battery'):
-                # print('battery')
-                if result[timestamp]['battery']:
-                    self.import_battery_to_database(result['sampling_rate'][self.BATTERY_ID], timestamp, recordset, sensors, channels,
-                                                result[timestamp]['battery'])
-                    if len(result[timestamp]['battery']) != result['sampling_rate'][self.BATTERY_ID]:
-                        print(timestamp, ' WARNING Battery does not fit sampling rate : ',
-                              len(result[timestamp]['battery']), ' != ',
-                              result['sampling_rate'][self.BATTERY_ID])
-
-            if result[timestamp].__contains__('beacons'):
-                # print('beacons')
-                if result[timestamp]['beacons']:
-                    self.import_beacons_to_database(result['sampling_rate'][self.BEACONS_ID], timestamp, recordset, sensors, channels,
-                                                    result[timestamp]['beacons'])
-                    if len(result[timestamp]['beacons']) != result['sampling_rate'][self.BEACONS_ID]:
-                        print(timestamp, ' WARNING Beacons does not fit sampling rate : ',
-                              len(result[timestamp]['beacons']), ' != ',
-                              result['sampling_rate'][self.BEACONS_ID])
-
-            if result[timestamp].__contains__('sensoria'):
-                # print('sensoria')
-                if result[timestamp]['sensoria']:
-                    self.import_sensoria_to_database(result['sampling_rate'][self.SENSORIA_ID], timestamp, recordset, sensors, channels,
-                                                     result[timestamp]['sensoria'])
-                    if len(result[timestamp]['sensoria']) != result['sampling_rate'][self.SENSORIA_ID]:
-                        print(timestamp, ' WARNING Sensoria does not fit sampling rate : ',
-                              len(result[timestamp]['sensoria']), ' != ',
-                              result['sampling_rate'][self.SENSORIA_ID])
-
-            if result[timestamp].__contains__('heartrate'):
-                # print('heartrate')
-                if result[timestamp]['heartrate']:
-                    self.import_heartrate_to_database(result['sampling_rate'][self.HEARTRATE_ID], timestamp, recordset, sensors, channels,
-                                                      result[timestamp]['heartrate'])
-                    if len(result[timestamp]['heartrate']) != result['sampling_rate'][self.HEARTRATE_ID]:
-                        print(timestamp, ' WARNING Heartrate does not fit sampling rate : ',
-                              len(result[timestamp]['heartrate']), ' != ',
-                              result['sampling_rate'][self.HEARTRATE_ID])
-
-            if result[timestamp].__contains__('motion'):
-                # print('motion')
-                if result[timestamp]['motion']:
-                    self.import_motion_to_database(result['sampling_rate'][self.PROCESSED_MOTION_ID], timestamp, recordset, sensors, channels,
-                                                   result[timestamp]['motion'])
-                    if len(result[timestamp]['motion']) != result['sampling_rate'][self.PROCESSED_MOTION_ID]:
-                        print(timestamp, ' WARNING Processed motion does not fit sampling rate : ',
-                              len(result[timestamp]['motion']), ' != ',
-                              result['sampling_rate'][self.PROCESSED_MOTION_ID])
-
-            if result[timestamp].__contains__('coordinates'):
-                # print('coordinates')
-                if result[timestamp]['coordinates']:
-                    self.import_coordinates_to_database(result['sampling_rate'][self.COORDINATES_ID], timestamp, recordset, sensors, channels,
-                                                        result[timestamp]['coordinates'])
-
-                    if len(result[timestamp]['coordinates']) != result['sampling_rate'][self.COORDINATES_ID]:
-                        print(timestamp, ' WARNING Coordinates does not fit sampling rate : ',
-                              len(result[timestamp]['coordinates']), ' != ',
-                              result['sampling_rate'][self.COORDINATES_ID])
-
-            if result[timestamp].__contains__('raw_motion'):
-                if result[timestamp]['raw_motion']:
-                    self.import_raw_motion_to_database(result['sampling_rate'][self.RAW_MOTION_ID], timestamp, recordset, sensors, channels,
-                                                       result[timestamp]['raw_motion'])
-
-            if result[timestamp].__contains__('raw_accelero'):
-                if result[timestamp]['raw_accelero']:
-                    self.import_raw_accelerometer_to_database(result['sampling_rate'][self.RAW_ACCELERO_ID], timestamp, recordset, sensors, channels,
-                                                       result[timestamp]['raw_accelero'])
-
-            if result[timestamp].__contains__('raw_gyro'):
-                if result[timestamp]['raw_gyro']:
-                    self.import_raw_gyro_to_database(result['sampling_rate'][self.RAW_GYRO_ID], timestamp, recordset, sensors, channels,
-                                                       result[timestamp]['raw_gyro'])
-
-        # Commit to DB
         self.db.commit()
 
     def get_sampling_rate_from_header(self, sensor_id, header): #header = string of json
