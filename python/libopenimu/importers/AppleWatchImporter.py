@@ -202,7 +202,49 @@ class AppleWatchImporter(BaseImporter):
 
         #self.db.commit()
 
-    def import_heartrate_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
+    def import_heartrate_to_database(self, sample_rate, heartrate: dict):
+        # DL Oct. 17 2018, New import to database
+
+        heartrate_sensor = self.add_sensor_to_db(SensorType.HEARTRATE, 'Heartrate', 'AppleWatch', 'Wrist',
+                                                 sample_rate, 1)
+
+        heartrate_channel = self.add_channel_to_db(heartrate_sensor, Units.BPM, DataFormat.UINT8, 'Heartrate')
+
+        for timestamp in heartrate:
+            print('heartrate', timestamp, len(heartrate[timestamp]['times']),
+                  len(heartrate[timestamp]['values']))
+
+            # Calculate recordset
+            recordset = self.get_recordset(timestamp.timestamp())
+
+            # Create time array as float64
+            timesarray = np.asarray(heartrate[timestamp]['times'], dtype=np.float64)
+
+            if len(timesarray) is 0:
+                print('Empty data, returning')
+                return
+
+            # Other values are float32
+            valuesarray = np.asarray(heartrate[timestamp]['values'], dtype=np.uint8)
+
+            # Create sensor timestamps first
+            sensor_timestamps = SensorTimestamps()
+            sensor_timestamps.timestamps = timesarray
+            sensor_timestamps.update_timestamps()
+
+            # Update timestamps in recordset
+            # This should not happen, recordset is initialized at the beginning of the hour
+            if sensor_timestamps.start_timestamp < recordset.start_timestamp:
+                recordset.start_timestamp = sensor_timestamps.start_timestamp
+            # This can occur though
+            if sensor_timestamps.end_timestamp > recordset.end_timestamp:
+                recordset.end_timestamp = sensor_timestamps.end_timestamp
+
+            # Store data
+            self.add_sensor_data_to_db(recordset, heartrate_sensor, heartrate_channel,
+                                       sensor_timestamps, valuesarray[:, 0])
+
+    def import_heartrate_to_database_old(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
 
         # print('import_motion_to_database')
         # print('data', data, len(data))
@@ -230,7 +272,6 @@ class AppleWatchImporter(BaseImporter):
         #self.db.commit()
 
     def import_coordinates_to_database(self, sample_rate, coordinates: dict):
-
         # DL Oct. 17 2018, New import to database
         coordinates_sensor = self.add_sensor_to_db(SensorType.GPS, 'Coordinates', 'AppleWatch', 'Wrist',
                                                    sample_rate, 1)
@@ -277,39 +318,6 @@ class AppleWatchImporter(BaseImporter):
                 # Store
                 self.add_sensor_data_to_db(recordset, coordinates_sensor, coordinates_channel,
                                            sensor_timestamps, geo)
-
-    def import_coordinates_to_database_old(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
-
-        # print('import_motion_to_database')
-        # print('data', data, len(data))
-
-        values = np.array(data, dtype=np.float32)
-        # print("Values shape: ", values.shape)
-        end_timestamp = timestamp + 1
-        # print("timestamps, ", timestamp, end_timestamp)
-
-        # Calculate last index to remove extra values
-        real_size = int(np.floor(len(values) / sample_rate) * sample_rate)
-        # print('real size:', real_size)
-
-        # Update end_timestamp if required
-        if end_timestamp > recordset.end_timestamp.timestamp():
-            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
-
-        if real_size > 0:
-            # Coordinates
-
-            # Build gps data
-            geo = GPSGeodetic()
-            geo.latitude = values[0][0] * 1e7
-            geo.longitude = values[0][1] * 1e7
-
-            # Store
-            self.add_sensor_data_to_db(recordset, sensors['coordinates'], channels['coordinates'],
-                                       datetime.datetime.fromtimestamp(timestamp),
-                                       datetime.datetime.fromtimestamp(end_timestamp), geo)
-
-        #self.db.commit()
 
     def import_sensoria_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
         # print('import_sensoria_to_database')
@@ -580,8 +588,7 @@ class AppleWatchImporter(BaseImporter):
         if results.__contains__('heartrate'):
             sampling_rate = results['heartrate']['sampling_rate']
             if results['heartrate']['timestamps']:
-                # TODO
-                pass
+                self.import_heartrate_to_database(sampling_rate, results['heartrate']['timestamps'])
 
         if results.__contains__('beacons'):
             sampling_rate = results['beacons']['sampling_rate']
