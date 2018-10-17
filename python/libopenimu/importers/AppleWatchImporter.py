@@ -291,54 +291,101 @@ class AppleWatchImporter(BaseImporter):
                 self.add_sensor_data_to_db(recordset, coordinates_sensor, coordinates_channel,
                                            sensor_timestamps, geo)
 
-    def import_sensoria_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
-        # print('import_sensoria_to_database')
-        # print('data', data, len(data))
+    def import_sensoria_to_database(self, sample_rate, sensoria: dict):
+        # DL Oct. 17 2018, New import to database
+        sensoria_acc_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer', 'Sensoria', 'Foot',
+                                                    sample_rate, 1)
 
-        # Ignore tick (useless for now)
-        fsr_values = np.array([val[1:4] for val in data], dtype=np.int16)
-        motion_values = np.array([val[4:] for val in data], dtype=np.float32)
+        sensoria_acc_channels = list()
+        sensoria_acc_channels.append(self.add_channel_to_db(sensoria_acc_sensor, Units.GRAVITY_G,
+                                                            DataFormat.FLOAT32, 'Accelerometer_X'))
+        sensoria_acc_channels.append(self.add_channel_to_db(sensoria_acc_sensor, Units.GRAVITY_G,
+                                                            DataFormat.FLOAT32, 'Accelerometer_Y'))
+        sensoria_acc_channels.append(self.add_channel_to_db(sensoria_acc_sensor, Units.GRAVITY_G,
+                                                            DataFormat.FLOAT32, 'Accelerometer_Z'))
 
-        # print("Values shape: ", values.shape)
-        end_timestamp = timestamp + int(np.floor(len(motion_values) / sample_rate))
-        # print("timestamps, ", timestamp, end_timestamp)
+        sensoria_gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyrometer', 'Sensoria', 'Foot',
+                                                     sample_rate, 1)
+        sensoria_gyro_channels = list()
+        sensoria_gyro_channels.append(self.add_channel_to_db(sensoria_gyro_sensor, Units.DEG_PER_SEC,
+                                                             DataFormat.FLOAT32, 'Gyro_X'))
+        sensoria_gyro_channels.append(self.add_channel_to_db(sensoria_gyro_sensor, Units.DEG_PER_SEC,
+                                                             DataFormat.FLOAT32, 'Gyro_Y'))
+        sensoria_gyro_channels.append(self.add_channel_to_db(sensoria_gyro_sensor, Units.DEG_PER_SEC,
+                                                             DataFormat.FLOAT32, 'Gyro_Z'))
 
-        # Calculate last index to remove extra values
-        real_size = int(np.floor(len(motion_values) / sample_rate) * sample_rate)
-        # print('real size:', real_size)
+        sensoria_mag_sensor = self.add_sensor_to_db(SensorType.MAGNETOMETER, 'Magnetometer', 'Sensoria', 'Foot',
+                                                    sample_rate, 1)
+        sensoria_mag_channels = list()
+        sensoria_mag_channels.append(self.add_channel_to_db(sensoria_mag_sensor, Units.GAUSS,
+                                                            DataFormat.FLOAT32, 'Mag_X'))
+        sensoria_mag_channels.append(self.add_channel_to_db(sensoria_mag_sensor, Units.GAUSS,
+                                                            DataFormat.FLOAT32, 'Mag_Y'))
+        sensoria_mag_channels.append(self.add_channel_to_db(sensoria_mag_sensor, Units.GAUSS,
+                                                            DataFormat.FLOAT32, 'Mag_Z'))
 
-        # Update end_timestamp if required
-        if end_timestamp > recordset.end_timestamp.timestamp():
-            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
+        sensoria_fsr_sensor = self.add_sensor_to_db(SensorType.FSR, 'FSR', 'Sensoria', 'Foot',
+                                                    sample_rate, 1)
+        sensoria_fsr_channels = list()
+        sensoria_fsr_channels.append(self.add_channel_to_db(sensoria_fsr_sensor, Units.NONE,
+                                                            DataFormat.FLOAT32, 'META-1'))
+        sensoria_fsr_channels.append(self.add_channel_to_db(sensoria_fsr_sensor, Units.NONE,
+                                                            DataFormat.FLOAT32, 'META-5'))
+        sensoria_fsr_channels.append(self.add_channel_to_db(sensoria_fsr_sensor, Units.NONE,
+                                                            DataFormat.FLOAT32, 'HEEL'))
+        for timestamp in sensoria:
+            print('sensoria', timestamp, len(sensoria[timestamp]['times']),
+                  len(sensoria[timestamp]['values']))
 
-        if real_size > 0:
-            # Acc
-            for i in range(len(channels['sensoria_acc'])):
-                self.add_sensor_data_to_db(recordset, sensors['sensoria_acc'], channels['sensoria_acc'][i],
-                                           datetime.datetime.fromtimestamp(timestamp),
-                                           datetime.datetime.fromtimestamp(end_timestamp), motion_values[0:real_size, i])
+            # Calculate recordset
+            recordset = self.get_recordset(timestamp.timestamp())
 
-            # Gyro
-            for i in range(len(channels['sensoria_gyro'])):
-                self.add_sensor_data_to_db(recordset, sensors['sensoria_gyro'], channels['sensoria_gyro'][i],
-                                           datetime.datetime.fromtimestamp(timestamp),
-                                           datetime.datetime.fromtimestamp(end_timestamp), motion_values[0:real_size, i + 3])
+            # Create time array as float64
+            timesarray = np.asarray(sensoria[timestamp]['times'], dtype=np.float64)
+
+            if len(timesarray) is 0:
+                print('Empty data, returning')
+                return
+
+            # Other values are float32
+            valuesarray = np.asarray(sensoria[timestamp]['values'], dtype=np.float32)
+
+            # Create sensor timestamps first
+            sensor_timestamps = SensorTimestamps()
+            sensor_timestamps.timestamps = timesarray
+            sensor_timestamps.update_timestamps()
+
+            # Update timestamps in recordset
+            # This should not happen, recordset is initialized at the beginning of the hour
+            if sensor_timestamps.start_timestamp < recordset.start_timestamp:
+                recordset.start_timestamp = sensor_timestamps.start_timestamp
+            # This can occur though
+            if sensor_timestamps.end_timestamp > recordset.end_timestamp:
+                recordset.end_timestamp = sensor_timestamps.end_timestamp
+
+            # Store FSR
+            for i in range(len(sensoria_fsr_channels)):
+                self.add_sensor_data_to_db(recordset, sensoria_fsr_sensor, sensoria_fsr_channels[i],
+                                           sensor_timestamps,
+                                           valuesarray[:, i + 1])
+
+            # Store Acc
+            for i in range(len(sensoria_acc_channels)):
+                self.add_sensor_data_to_db(recordset, sensoria_acc_sensor, sensoria_acc_channels[i],
+                                           sensor_timestamps,
+                                           valuesarray[:, i + 4])
+
+            # Store Gyro
+            for i in range(len(sensoria_gyro_channels)):
+                self.add_sensor_data_to_db(recordset, sensoria_gyro_sensor, sensoria_gyro_channels[i],
+                                           sensor_timestamps,
+                                           valuesarray[:, i + 7])
 
             # Magneto
-            for i in range(len(channels['sensoria_mag'])):
-                self.add_sensor_data_to_db(recordset, sensors['sensoria_mag'], channels['sensoria_mag'][i],
-                                           datetime.datetime.fromtimestamp(timestamp),
-                                           datetime.datetime.fromtimestamp(end_timestamp),
-                                           motion_values[0:real_size, i + 6])
-
-            # FSR
-            for i in range(len(channels['sensoria_fsr'])):
-                self.add_sensor_data_to_db(recordset, sensors['sensoria_fsr'], channels['sensoria_fsr'][i],
-                                           datetime.datetime.fromtimestamp(timestamp),
-                                           datetime.datetime.fromtimestamp(end_timestamp),
-                                           fsr_values[0:real_size, i])
-
-        #self.db.commit()
+            for i in range(len(sensoria_mag_channels)):
+                self.add_sensor_data_to_db(recordset, sensoria_mag_sensor, sensoria_mag_channels[i],
+                                           sensor_timestamps,
+                                           valuesarray[:, i + 10])
 
     def import_beacons_to_database(self, sample_rate, beacons: dict):
         # DL Oct. 17 2018, New import to database
@@ -540,7 +587,6 @@ class AppleWatchImporter(BaseImporter):
 
     def import_to_database(self, results):
         # DL Oct. 16 2018, New import to database
-
         if results.__contains__('motion'):
             sampling_rate = results['motion']['sampling_rate']
             if results['motion']['timestamps']:
@@ -554,8 +600,7 @@ class AppleWatchImporter(BaseImporter):
         if results.__contains__('sensoria'):
             sampling_rate = results['sensoria']['sampling_rate']
             if results['sensoria']['timestamps']:
-                # TODO
-                pass
+                self.import_sensoria_to_database(sampling_rate, results['sensoria']['timestamps'])
 
         if results.__contains__('heartrate'):
             sampling_rate = results['heartrate']['sampling_rate']
