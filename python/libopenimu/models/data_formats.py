@@ -73,7 +73,6 @@ class DataFormat:
         else:
             return None
 
-
     @staticmethod
     def get_num_bytes(id_data_format):
         assert (DataFormat.is_valid(id_data_format))

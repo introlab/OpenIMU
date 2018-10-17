@@ -53,7 +53,8 @@ class SensorData(Base):
         time = self.timestamps.to_ndarray()
 
         # Very important...
-        assert(len(values) == len(time))
+        # TODO this is causing problems for data structures len(struct) != len(time)
+        # assert(len(values) == len(time))
 
         return {'time': time, 'values': values}
 

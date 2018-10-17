@@ -292,8 +292,6 @@ class RecordsetWindow(QWidget):
 
                 graph.set_title(item.text())
 
-
-
             if sensor.id_sensor_type == SensorType.GPS:
                 # graph = GPSView(self.UI.mdiArea)
                 """base_widget = QWidget(self.UI.displayContents)
@@ -306,8 +304,8 @@ class RecordsetWindow(QWidget):
                     gps = GPSGeodetic()
                     gps.from_bytes(data.data)
                     if gps.latitude != 0 and gps.longitude != 0:
-                        graph.addPosition(data.start_timestamp, gps.latitude / 1e7, gps.longitude / 1e7)
-                        graph.setCursorPositionFromTime(data.start_timestamp)
+                        graph.addPosition(data.timestamps.start_timestamp, gps.latitude / 1e7, gps.longitude / 1e7)
+                        graph.setCursorPositionFromTime(data.timestamps.start_timestamp)
                     # print (gps)
 
             if graph is not None:

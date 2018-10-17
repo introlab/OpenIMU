@@ -229,7 +229,56 @@ class AppleWatchImporter(BaseImporter):
 
         #self.db.commit()
 
-    def import_coordinates_to_database(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
+    def import_coordinates_to_database(self, sample_rate, coordinates: dict):
+
+        # DL Oct. 17 2018, New import to database
+        coordinates_sensor = self.add_sensor_to_db(SensorType.GPS, 'Coordinates', 'AppleWatch', 'Wrist',
+                                                   sample_rate, 1)
+        coordinates_channel = self.add_channel_to_db(coordinates_sensor, Units.NONE, DataFormat.UINT8, 'Coordinates')
+
+        for timestamp in coordinates:
+            print('coordinates', timestamp, len(coordinates[timestamp]['times']),
+                  len(coordinates[timestamp]['values']))
+
+            # Create time array as float64
+            timesarray = np.asarray(coordinates[timestamp]['times'], dtype=np.float64)
+
+            if len(timesarray) is 0:
+                print('Empty data, returning')
+                return
+
+            # Other values are float32
+            valuesarray = np.asarray(coordinates[timestamp]['values'], dtype=np.float32)
+
+            # Create one entry per timestamp ?
+            # Could we store a vector instead ?
+            for i in range(0, len(valuesarray)):
+                # Build gps data
+                geo = GPSGeodetic()
+                geo.latitude = valuesarray[i][0] * 1e7
+                geo.longitude = valuesarray[i][1] * 1e7
+
+                # Create sensor timestamps first
+                sensor_timestamps = SensorTimestamps()
+                sensor_timestamps.timestamps = timesarray[i:i+1]
+                sensor_timestamps.update_timestamps()
+
+                # Calculate recordset
+                recordset = self.get_recordset(sensor_timestamps.start_timestamp.timestamp())
+
+                # Update timestamps in recordset
+                # This should not happen, recordset is initialized at the beginning of the hour
+                if sensor_timestamps.start_timestamp < recordset.start_timestamp:
+                    recordset.start_timestamp = sensor_timestamps.start_timestamp
+                # This can occur though
+                if sensor_timestamps.end_timestamp > recordset.end_timestamp:
+                    recordset.end_timestamp = sensor_timestamps.end_timestamp
+
+                # Store
+                self.add_sensor_data_to_db(recordset, coordinates_sensor, coordinates_channel,
+                                           sensor_timestamps, geo)
+
+    def import_coordinates_to_database_old(self, sample_rate, timestamp, recordset, sensors, channels, data: list):
 
         # print('import_motion_to_database')
         # print('data', data, len(data))
@@ -542,8 +591,7 @@ class AppleWatchImporter(BaseImporter):
         if results.__contains__('coordinates'):
             sampling_rate = results['coordinates']['sampling_rate']
             if results['coordinates']['timestamps']:
-                # TODO
-                pass
+                self.import_coordinates_to_database(sampling_rate, results['coordinates']['timestamps'])
 
         if results.__contains__('raw_motion'):
             sampling_rate = results['raw_motion']['sampling_rate']
