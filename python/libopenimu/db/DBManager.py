@@ -294,10 +294,19 @@ class DBManager:
                 synchronize_session=False)
             self.commit()
 
+    def delete_orphan_sensors_timestamps(self):
+        query = self.session.query(SensorTimestamps.id_sensor_timestamps).outerjoin(SensorData).filter(SensorData.id_sensor_data == None)
+        orphan = query.all()
+        if len(orphan) > 0:
+            query = self.session.query(SensorTimestamps.id_sensor_timestamps).filter(SensorTimestamps.id_sensor_timestamps.in_(query)).delete(
+                synchronize_session=False)
+            self.commit()
+
     def clean_db(self):
         self.delete_orphan_channels()
         self.delete_orphan_sensors()
         self.delete_orphan_processed_data()
+        self.delete_orphan_sensors_timestamps()
         self.engine.execute("VACUUM")
 
     def get_all_recordsets(self, participant=Participant()):
@@ -408,7 +417,7 @@ class DBManager:
         # Make sure data is ordered by timestamps
         # query = query.order_by(SensorData.timestamps.asc())
 
-        print('TODO ORDERY BY TIMESTAMPS NEEDS TO BE IMPLEMENTED')
+        # print('TODO ORDERY BY TIMESTAMPS NEEDS TO BE IMPLEMENTED')
 
         # And then per channel
         # query = query.order_by(SensorData.channel.asc())

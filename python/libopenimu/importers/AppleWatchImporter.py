@@ -65,7 +65,7 @@ class AppleWatchImporter(BaseImporter):
                 print('Loading File: ', filename)
                 results = self.readDataFile(file)
 
-        print('results len', len(results))
+        # print('results len', len(results))
         return results
 
     def load_zip(self, filename):
@@ -702,6 +702,9 @@ class AppleWatchImporter(BaseImporter):
                                        valuesarray[:, 0])
 
     def import_to_database(self, results):
+        if results is None:
+            return
+
         # DL Oct. 16 2018, New import to database
         if results.__contains__('motion'):
             sampling_rate = results['motion']['sampling_rate']
