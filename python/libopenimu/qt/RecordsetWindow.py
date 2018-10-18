@@ -84,7 +84,6 @@ class RecordsetWindow(QWidget):
             self.draw_timebar()
             self.time_pixmap = True
 
-
     def load_sensors(self):
         self.UI.lstSensors.clear()
         self.sensors = {}
