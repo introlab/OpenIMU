@@ -56,18 +56,18 @@ endif(WIN32)
 
 if(WIN32)
     # Create environment, will produce python executable
-    add_custom_command(
-        OUTPUT ${ENV_PATH}/python.exe
-        COMMAND ${CONDA_PATH} install -m -c anaconda -c conda-forge -y -p ${ENV_PATH} python=${PYTHON_VERSION} ${conda_packages}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    )
+    #add_custom_command(
+    #    OUTPUT ${ENV_PATH}/python.exe
+    #    COMMAND ${CONDA_PATH} install -m -c anaconda -c conda-forge -y -p ${ENV_PATH} python=${PYTHON_VERSION} ${conda_packages}
+    #    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    #)
 
     # Will always be considered out of date...
     # Always proceed...
     # TODO - INSTALL WITH CONDA ?
     add_custom_target(
         python-env
-        COMMAND ${ENV_PATH}/Scripts/pip.exe install ${pip_packages}
+        #COMMAND ${ENV_PATH}/Scripts/pip.exe install ${pip_packages}
         WORKING_DIRECTORY ${ENV_PATH}
         DEPENDS ${ENV_PATH}/python.exe
     )

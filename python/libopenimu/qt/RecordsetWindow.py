@@ -84,7 +84,6 @@ class RecordsetWindow(QWidget):
             self.draw_timebar()
             self.time_pixmap = True
 
-
     def load_sensors(self):
         self.UI.lstSensors.clear()
         self.sensors = {}
@@ -241,8 +240,8 @@ class RecordsetWindow(QWidget):
             for record in self.recordsets:
                 datas = self.dbMan.get_all_sensor_data(sensor=sensor, recordset=record, channel=sensor.channels[0])
                 for data in datas:
-                    start_pos = self.get_relative_timeview_pos(data.start_timestamp)
-                    end_pos = self.get_relative_timeview_pos(data.end_timestamp)
+                    start_pos = self.get_relative_timeview_pos(data.timestamps.start_timestamp)
+                    end_pos = self.get_relative_timeview_pos(data.timestamps.end_timestamp)
                     span = max(end_pos - start_pos, 1)
                     self.timeScene.addRect(start_pos, i * bar_height + (self.UI.graphTimeline.height() / 4), span,
                                            bar_height, sensorPen, sensorBrush)
@@ -292,8 +291,6 @@ class RecordsetWindow(QWidget):
 
                 graph.set_title(item.text())
 
-
-
             if sensor.id_sensor_type == SensorType.GPS:
                 # graph = GPSView(self.UI.mdiArea)
                 """base_widget = QWidget(self.UI.displayContents)
@@ -306,8 +303,8 @@ class RecordsetWindow(QWidget):
                     gps = GPSGeodetic()
                     gps.from_bytes(data.data)
                     if gps.latitude != 0 and gps.longitude != 0:
-                        graph.addPosition(data.start_timestamp, gps.latitude / 1e7, gps.longitude / 1e7)
-                        graph.setCursorPositionFromTime(data.start_timestamp)
+                        graph.addPosition(data.timestamps.start_timestamp, gps.latitude / 1e7, gps.longitude / 1e7)
+                        graph.setCursorPositionFromTime(data.timestamps.start_timestamp)
                     # print (gps)
 
             if graph is not None:

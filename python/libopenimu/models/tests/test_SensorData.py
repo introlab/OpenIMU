@@ -9,6 +9,7 @@
 
 import unittest
 from libopenimu.models.SensorData import SensorData
+from libopenimu.models.SensorTimestamps import SensorTimestamps
 from libopenimu.models.Channel import Channel
 from libopenimu.models.Sensor import Sensor
 from libopenimu.models.Recordset import Recordset
@@ -58,8 +59,12 @@ class SensorDataTest(unittest.TestCase):
         sensordata.sensor = sensor
         channel = Channel()
         sensordata.channel = channel
-        sensordata.start_timestamp = datetime.datetime.fromtimestamp(0)
-        sensordata.stop_timestamp = datetime.datetime.fromtimestamp(0)
+
         sensordata.data = np.array([1, 2, 3, 4, 5], dtype=float)
+
+        sensordata.timestamps = SensorTimestamps()
+        sensordata.timestamps.timestamps = np.array([0, 1, 2, 3, 4], dtype=np.float64)
+        sensordata.timestamps.update_timestamps()
+
         print(sensordata.to_time_series())
         print(sensordata)
