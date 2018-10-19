@@ -65,7 +65,9 @@ class MainWindow(QMainWindow):
         self.UI = Ui_MainWindow()
         self.UI.setupUi(self)
         self.UI.dockToolBar.setTitleBarWidget(QWidget())
-        self.UI.dockDataset.setTitleBarWidget(QWidget())
+        #self.UI.dockDataset.setTitleBarWidget(QWidget())
+        self.splitDockWidget(self.UI.dockTabbedTools, self.UI.dockDataset,Qt.Horizontal)
+        self.UI.dockTabbedTools.hide()
         self.UI.dockLog.hide()
 
         self.add_to_log("OpenIMU - Prêt à travailler.", LogTypes.LOGTYPE_INFO)
@@ -111,6 +113,8 @@ class MainWindow(QMainWindow):
         self.UI.btnDelete.clicked.connect(self.delete_requested)
         self.UI.btnImport.clicked.connect(self.importRequested)
         self.UI.btnExportCSV.clicked.connect(self.exportCSVRequested)
+        self.UI.dockDataset.visibilityChanged.connect(self.dockdataset_visibility)
+        self.UI.btnShowDataset.clicked.connect(self.UI.dockDataset.show)
 
     def load_data_from_dataset(self):
         self.UI.treeDataSet.clear()
@@ -207,6 +211,10 @@ class MainWindow(QMainWindow):
         return self.UI.frmMain.layout().itemAt(0).widget().data_type
 
     ######################
+    @pyqtSlot(bool)
+    def dockdataset_visibility(self, visibility):
+        self.UI.dockTabbedTools.setVisible(not visibility)
+
     @pyqtSlot(QUrl)
     def urlChanged(self, url):
         print('url: ', url)

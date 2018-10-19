@@ -25,14 +25,13 @@
 
 QFrame#frameTitle{background-color:rgba(130,130,130,50%);}
 QFrame#frameInfos{background-color:rgba(50,50,50,50%);}
-QFrame#frameTools{background-color:rgba(250,250,250,50%);}
 
 QWidget{border-radius:5px;}
 
-QWidget#dockWidgetTreeContents, QWidget#dockWidgetLogContents{background-color:rgba(0,0,0,0%);}
-QWidget#line,QWidget#line_2{background-color:rgba(100,100,100,100%);}
+QWidget#dockWidgetLogContents{background-color:rgba(0,0,0,0%);}
+QWidget#dockWidgetTreeContents,QWidget#dockWidgetToolsContents,QWidget#dockTabbedToolsContents{background-color:rgba(50,50,50,50%);  border-radius:5px;}
 
-QWidget#dockWidgetToolsContents{background-color:rgba(220,220,220,70%); border-radius:5px;}
+QWidget#line,QWidget#line_2{background-color:rgba(100,100,100,100%);}
 
 QFrame#frameButtons{background-color:rgba(220,220,220,30%); border-radius:5px;}
 
@@ -44,14 +43,35 @@ QPushButton:!enabled,QToolButton:!enabled{color: rgb(168, 168, 168);}
 
 QLabel{color:white;}
 
-QDockWidget::title{text-align:left;margin-left:10px;background-color:transparent; }
-
 QTreeWidget, QListWidget{background-color:rgba(200,200,200,70%);}
 
 QLineEdit,QPlainTextEdit,QComboBox{background-color:rgba(226, 226, 226,90%);border-radius:5px;}
 
 QListWidget#lstSensors,QTableWidget{background-color:rgba(200,200,200,70%);}
+
+QDockWidget{color:white;}
+QDockWidget::title{
+background-color:grey;
+text-align: center;
+}
+QMainWindow::separator {
+    background: grey;
+    width: 5px; /* when vertical */
+    height: 5px; /* when horizontal */
+}
 </string>
+  </property>
+  <property name="documentMode">
+   <bool>false</bool>
+  </property>
+  <property name="dockNestingEnabled">
+   <bool>false</bool>
+  </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AnimatedDocks</set>
+  </property>
+  <property name="unifiedTitleAndToolBarOnMac">
+   <bool>false</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -76,14 +96,29 @@ QListWidget#lstSensors,QTableWidget{background-color:rgba(200,200,200,70%);}
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dockDataset">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>274</width>
+     <height>174</height>
+    </size>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
    <property name="features">
-    <set>QDockWidget::NoDockWidgetFeatures</set>
+    <set>QDockWidget::DockWidgetClosable</set>
    </property>
    <property name="allowedAreas">
     <set>Qt::LeftDockWidgetArea</set>
    </property>
    <property name="windowTitle">
-    <string/>
+    <string>Structure des données</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -156,7 +191,7 @@ QListWidget#lstSensors,QTableWidget{background-color:rgba(200,200,200,70%);}
      <item>
       <widget class="QFrame" name="frameButtons">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Maximum">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -252,9 +287,12 @@ QListWidget#lstSensors,QTableWidget{background-color:rgba(200,200,200,70%);}
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::MinimumExpanding</enum>
+          </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
+            <width>10</width>
             <height>20</height>
            </size>
           </property>
@@ -344,7 +382,7 @@ QListWidget#lstSensors,QTableWidget{background-color:rgba(200,200,200,70%);}
    </property>
    <property name="minimumSize">
     <size>
-     <width>834</width>
+     <width>842</width>
      <height>50</height>
     </size>
    </property>
@@ -365,6 +403,9 @@ QListWidget#lstSensors,QTableWidget{background-color:rgba(200,200,200,70%);}
    </property>
    <property name="allowedAreas">
     <set>Qt::TopDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string/>
    </property>
    <attribute name="dockWidgetArea">
     <number>4</number>
@@ -596,6 +637,111 @@ QListWidget#lstSensors,QTableWidget{background-color:rgba(200,200,200,70%);}
         <size>
          <width>40</width>
          <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockTabbedTools">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>40</width>
+     <height>84</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>40</width>
+     <height>524287</height>
+    </size>
+   </property>
+   <property name="features">
+    <set>QDockWidget::NoDockWidgetFeatures</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea</set>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockTabbedToolsContents">
+    <layout class="QVBoxLayout" name="verticalLayout_4">
+     <property name="leftMargin">
+      <number>2</number>
+     </property>
+     <property name="topMargin">
+      <number>5</number>
+     </property>
+     <property name="rightMargin">
+      <number>2</number>
+     </property>
+     <property name="bottomMargin">
+      <number>5</number>
+     </property>
+     <item>
+      <widget class="QToolButton" name="btnShowDataset">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="toolTip">
+        <string>Structure des données</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../core.qrc">
+         <normaloff>:/OpenIMU/icons/newdataset.png</normaloff>:/OpenIMU/icons/newdataset.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonIconOnly</enum>
+       </property>
+       <property name="arrowType">
+        <enum>Qt::NoArrow</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
         </size>
        </property>
       </spacer>

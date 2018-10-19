@@ -41,6 +41,7 @@ class RecordsetWindow(QWidget):
 
         #TODO
         self.UI.grpSubRecord.hide()
+        self.UI.frameTools.hide()
 
         self.sensors = {}
         self.sensors_items = {}
