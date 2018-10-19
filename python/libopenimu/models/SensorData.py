@@ -26,25 +26,19 @@ class SensorData(Base):
     id_recordset = Column(Integer, ForeignKey('tabRecordsets.id_recordset', ondelete="CASCADE"), nullable=False)
     id_sensor = Column(Integer, ForeignKey('tabSensors.id_sensor', ondelete="CASCADE"), nullable=False)
     id_channel = Column(Integer, ForeignKey('tabChannels.id_channel', ondelete="CASCADE"), nullable=False)
-
-    # TODO, timestamps are optional for now...
+    # TODO, timestamps CASCADE?
     id_timestamps = Column(Integer, ForeignKey('tabSensorsTimestamps.id_sensor_timestamps', ondelete="CASCADE"),
-                           nullable=True)
+                           nullable=False)
 
-    '''
-    A type for datetime.timedelta() objects.
-    The Interval type deals with datetime.timedelta objects. In PostgreSQL, the native INTERVAL type is used; 
-    for others, the value is stored as a date which is relative to the “epoch” (Jan. 1, 1970).
-    '''
-    start_timestamp = Column(TIMESTAMP, nullable=False)
-    end_timestamp = Column(TIMESTAMP, nullable=False)
+    # Store the data
     data = Column(BLOB, nullable=False)
 
     # Relationships
     recordset = relationship("Recordset", cascade="all,delete")
     sensor = relationship("Sensor", cascade="all,delete")
     channel = relationship("Channel", cascade="all,delete")
-    timestamps = relationship("SensorTimestamps", cascade="all,delete")
+    # TODO look for orphan timestamps
+    timestamps = relationship("SensorTimestamps", order_by="SensorTimestamps.start_timestamp")
 
     def to_ndarray(self):
         if type(self.data) is bytes:
@@ -53,28 +47,21 @@ class SensorData(Base):
             return self.data
 
     def to_time_series(self):
-        if self.sensor.sampling_rate > 0:
-            values = self.to_ndarray()
+        # Values
+        values = self.to_ndarray()
+        # Time
+        time = self.timestamps.to_ndarray()
 
-            time = np.linspace(self.start_timestamp.timestamp(),
-                               num=len(values),
-                               stop=self.start_timestamp.timestamp() + len(values) / self.sensor.sampling_rate,
-                               dtype=np.float64, endpoint=False)
+        # Very important...
+        # TODO this is causing problems for data structures len(struct) != len(time)
+        # assert(len(values) == len(time))
 
-            # np.set_printoptions(suppress=True)
-            # if len(time) > 0:
-            # print('time', self.data_timestamp)
-
-            return {'time': time, 'values': values}
-        else:
-            values = self.to_ndarray()
-            assert(len(values) == 1)
-            return {'time': [self.start_timestamp.timestamp()], 'values': values}
+        return {'time': time, 'values': values}
 
     # Database rep (optional)
     def __repr__(self):
         return "<SensorData(id_recordset='%s', id_sensor='%s', id_channel='%s', start_timestamp='%s', end_timestamp='%s', data_size='%s'" % \
-               (str(self.id_recordset), str(self.id_sensor), str(self.id_channel), str(self.start_timestamp), str(self.end_timestamp),
+               (str(self.id_recordset), str(self.id_sensor), str(self.id_channel), str(self.timestamps.start_timestamp), str(self.timestamps.end_timestamp),
                 str(len(self.data)))
 
 

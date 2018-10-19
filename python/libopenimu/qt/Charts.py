@@ -246,7 +246,7 @@ class IMUChartView(QChartView):
             x = xdecimated[i] - xdecimated[0]
             curve.append(QPointF(x, ydecimated[i]))
 
-        self.reftime = datetime.datetime.fromtimestamp(xdecimated[0])
+        self.reftime = datetime.datetime.utcfromtimestamp(xdecimated[0])
 
         if legend_text is not None:
             curve.setName(legend_text)

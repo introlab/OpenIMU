@@ -31,6 +31,7 @@ from libopenimu.models.Participant import Participant
 from libopenimu.models.Recordset import Recordset
 from libopenimu.models.Channel import Channel
 from libopenimu.models.SensorData import SensorData
+from libopenimu.models.SensorTimestamps import SensorTimestamps
 from libopenimu.models.DataSet import DataSet
 from libopenimu.models.ProcessedData import ProcessedData
 from libopenimu.models.ProcessedDataRef import ProcessedDataRef
@@ -72,6 +73,9 @@ class DBManager:
         cursor = dbapi_connection.cursor()
         cursor.execute("PRAGMA foreign_keys=ON")
         cursor.close()
+
+    def close(self):
+        self.session.close()
 
     def commit(self):
         self.session.commit()
@@ -290,10 +294,19 @@ class DBManager:
                 synchronize_session=False)
             self.commit()
 
+    def delete_orphan_sensors_timestamps(self):
+        query = self.session.query(SensorTimestamps.id_sensor_timestamps).outerjoin(SensorData).filter(SensorData.id_sensor_data == None)
+        orphan = query.all()
+        if len(orphan) > 0:
+            query = self.session.query(SensorTimestamps.id_sensor_timestamps).filter(SensorTimestamps.id_sensor_timestamps.in_(query)).delete(
+                synchronize_session=False)
+            self.commit()
+
     def clean_db(self):
         self.delete_orphan_channels()
         self.delete_orphan_sensors()
         self.delete_orphan_processed_data()
+        self.delete_orphan_sensors_timestamps()
         self.engine.execute("VACUUM")
 
     def get_all_recordsets(self, participant=Participant()):
@@ -346,11 +359,11 @@ class DBManager:
         # Return all channels
         return query.all()
 
-    def add_sensor_data(self, recordset: Recordset, sensor: Sensor, channel: Channel, start_timestamp, end_timestamp, data):
+    def add_sensor_data(self, recordset: Recordset, sensor: Sensor, channel: Channel, timestamps: SensorTimestamps, data):
 
         # Create object
         sensordata = SensorData(recordset=recordset, sensor=sensor,
-                                channel=channel, start_timestamp=start_timestamp, end_timestamp=end_timestamp,
+                                channel=channel, timestamps=timestamps,
                                 data=data.tobytes())
 
         # Custom SQL code
@@ -402,7 +415,9 @@ class DBManager:
 
         # print(query)
         # Make sure data is ordered by timestamps
-        query = query.order_by(SensorData.start_timestamp.asc())
+        # query = query.order_by(SensorData.timestamps.asc())
+
+        # print('TODO ORDERY BY TIMESTAMPS NEEDS TO BE IMPLEMENTED')
 
         # And then per channel
         # query = query.order_by(SensorData.channel.asc())
