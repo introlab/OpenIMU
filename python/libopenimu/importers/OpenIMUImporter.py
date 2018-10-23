@@ -61,7 +61,7 @@ class OpenIMUImporter(BaseImporter):
             return False
 
         # print("Values shape: ", values.shape)
-        end_timestamp = np.floor(data['end_time'] + 1)
+        end_timestamp = np.floor(data['end_time'])
 
         # Update end_timestamp if required
         if end_timestamp > recordset.end_timestamp.timestamp():
@@ -101,7 +101,7 @@ class OpenIMUImporter(BaseImporter):
             return False
 
         # print("Values shape: ", values.shape)
-        end_timestamp = np.floor(data['end_time'] + 1)
+        end_timestamp = np.floor(data['end_time'])
 
         # Update end_timestamp if required
         if end_timestamp > recordset.end_timestamp.timestamp():
@@ -132,7 +132,7 @@ class OpenIMUImporter(BaseImporter):
             return False
 
         # print("Values shape: ", values.shape)
-        end_timestamp = np.floor(data['end_time'] + 1)
+        end_timestamp = np.floor(data['end_time'])
 
         # Update end_timestamp if required
         if end_timestamp > recordset.end_timestamp.timestamp():
@@ -175,7 +175,7 @@ class OpenIMUImporter(BaseImporter):
             return False
 
         # print("Values shape: ", values.shape)
-        end_timestamp = np.floor(data['end_time'] + 1)
+        end_timestamp = np.floor(data['end_time'])
 
         # Update end_timestamp if required
         if end_timestamp > recordset.end_timestamp.timestamp():
@@ -310,28 +310,29 @@ class OpenIMUImporter(BaseImporter):
         # First create all sensors and channels
         sensors, channels = self.create_sensor_and_channels(sample_rate)
 
+        # Timestamps are hour aligned
         for timestamp in result:
-
-            # Timestamps are hour aligned
-            recordset = self.get_recordset(timestamp)
-
             if result[timestamp].__contains__('imu'):
                 # print('contains imu')
+                recordset = self.get_recordset(result[timestamp]['imu']['start_time'])
                 if not self.import_imu_to_database(timestamp, sample_rate, sensors,
                                                    channels, recordset, result[timestamp]['imu']):
                     print('IMU import error')
             if result[timestamp].__contains__('power'):
                 # print('contains power')
+                recordset = self.get_recordset(result[timestamp]['power']['start_time'])
                 if not self.import_power_to_database(timestamp, sensors, channels, recordset,
                                                      result[timestamp]['power']):
                     print('Power import error')
             if result[timestamp].__contains__('gps'):
                 # print('contains gps')
+                recordset = self.get_recordset(result[timestamp]['gps']['start_time'])
                 if not self.import_gps_to_database(timestamp, sensors, channels, recordset,
                                                    result[timestamp]['gps']):
                     print('GPS import error')
             if result[timestamp].__contains__('baro'):
                 # print('contains baro')
+                recordset = self.get_recordset(result[timestamp]['baro']['start_time'])
                 if not self.import_baro_to_database(timestamp, sensors, channels, recordset,
                                                     result[timestamp]['baro']):
                     print('Baro import error')
@@ -400,13 +401,20 @@ class OpenIMUImporter(BaseImporter):
                     # print("init timestamp = ", timestamp)
                     results[timestamp_hour] = {}
                     results[timestamp_hour]['gps'] = {'times': [], 'values': [],
-                                                      'start_time': current_timestamp, 'end_time': current_timestamp}
+                                                      'start_time': current_timestamp,
+                                                      'end_time': current_timestamp + 1}
+
                     results[timestamp_hour]['power'] = {'times': [], 'values': [],
-                                                        'start_time': current_timestamp, 'end_time': current_timestamp}
+                                                        'start_time': current_timestamp,
+                                                        'end_time': current_timestamp + 1}
+
                     results[timestamp_hour]['imu'] = {'times': [], 'values': [],
-                                                      'start_time': current_timestamp, 'end_time': current_timestamp}
+                                                      'start_time': current_timestamp,
+                                                      'end_time': current_timestamp + 1}
+
                     results[timestamp_hour]['baro'] = {'times': [], 'values': [],
-                                                       'start_time': current_timestamp, 'end_time': current_timestamp}
+                                                       'start_time': current_timestamp,
+                                                       'end_time': current_timestamp + 1}
 
             elif headChar[0] == b'i':
                 n = n + 1
@@ -414,7 +422,7 @@ class OpenIMUImporter(BaseImporter):
                 data = self.processImuChunk(chunk, debug)
                 if timestamp_hour is not None:
                     results[timestamp_hour]['imu']['values'].append(data)
-                    results[timestamp_hour]['imu']['end_time'] = current_timestamp
+                    results[timestamp_hour]['imu']['end_time'] = current_timestamp + 1
 
             elif headChar[0] == b'g':
                 n = n + 1
@@ -422,7 +430,7 @@ class OpenIMUImporter(BaseImporter):
                 data = self.processGPSChunk(chunk, debug)
                 if timestamp_hour is not None:
                     results[timestamp_hour]['gps']['values'].append(data)
-                    results[timestamp_hour]['gps']['end_time'] = current_timestamp
+                    results[timestamp_hour]['gps']['end_time'] = current_timestamp + 1
 
             elif headChar[0] == b'p':
                 n = n + 1
@@ -430,7 +438,7 @@ class OpenIMUImporter(BaseImporter):
                 data = self.processPowerChunk(chunk, debug)
                 if timestamp_hour is not None:
                     results[timestamp_hour]['power']['values'].append(data)
-                    results[timestamp_hour]['power']['end_time'] = current_timestamp
+                    results[timestamp_hour]['power']['end_time'] = current_timestamp + 1
 
             elif headChar[0] == b'b':
                 n = n + 1
@@ -438,7 +446,7 @@ class OpenIMUImporter(BaseImporter):
                 data = self.processBarometerChunk(chunk, debug)
                 if timestamp_hour is not None:
                     results[timestamp_hour]['baro']['values'].append(data)
-                    results[timestamp_hour]['baro']['end_time'] = current_timestamp
+                    results[timestamp_hour]['baro']['end_time'] = current_timestamp + 1
 
             else:
                 print("Unrecognised chunk :", headChar[0])
@@ -450,7 +458,7 @@ class OpenIMUImporter(BaseImporter):
             for key in results[timestamp]:
                 # Generate time values
                 timevect = np.linspace(results[timestamp][key]['start_time'],
-                                       results[timestamp][key]['end_time'] + 1,
+                                       results[timestamp][key]['end_time'],
                                        num=len(results[timestamp][key]['values']),
                                        endpoint=False, dtype=np.float64)
 
