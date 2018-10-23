@@ -27,17 +27,23 @@ class OpenIMUImporter(BaseImporter):
         # No recordsets when starting
         self.recordsets = []
 
-    def get_recordset(self, timestamp):
-        my_time = datetime.datetime.fromtimestamp(timestamp)
+    def get_recordset(self, start_timestamp, end_timestamp):
+        my_start_time = datetime.datetime.fromtimestamp(start_timestamp)
+        my_end_time = datetime.datetime.fromtimestamp(end_timestamp)
 
         # Find a record the same day
         for record in self.recordsets:
             # Same date return this record
-            if record.start_timestamp.date() == my_time.date():
+            if record.start_timestamp.date() == my_start_time.date():
+                # Update start and stop
+                if my_start_time < record.start_timestamp:
+                    record.start_timestamp = my_start_time
+                if my_end_time > record.end_timestamp:
+                    record.end_timestamp = my_end_time
                 return record
 
         # Return new record
-        recordset = self.db.add_recordset(self.participant, str(my_time.date()), my_time, my_time)
+        recordset = self.db.add_recordset(self.participant, str(my_start_time.date()), my_start_time, my_end_time)
         self.recordsets.append(recordset)
         return recordset
 
@@ -100,13 +106,6 @@ class OpenIMUImporter(BaseImporter):
         if len(values) == 0:
             return False
 
-        # print("Values shape: ", values.shape)
-        end_timestamp = np.floor(data['end_time'])
-
-        # Update end_timestamp if required
-        if end_timestamp > recordset.end_timestamp.timestamp():
-            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
-
         # Create sensor timestamps first
         sensor_timestamps = SensorTimestamps()
         sensor_timestamps.timestamps = data['times']
@@ -130,13 +129,6 @@ class OpenIMUImporter(BaseImporter):
 
         if len(values) == 0:
             return False
-
-        # print("Values shape: ", values.shape)
-        end_timestamp = np.floor(data['end_time'])
-
-        # Update end_timestamp if required
-        if end_timestamp > recordset.end_timestamp.timestamp():
-            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
 
         # Regenerate GPS data to be stored in the DB as SIRF data
         # TODO Better GPS solution?
@@ -173,13 +165,6 @@ class OpenIMUImporter(BaseImporter):
 
         if len(values) == 0:
             return False
-
-        # print("Values shape: ", values.shape)
-        end_timestamp = np.floor(data['end_time'])
-
-        # Update end_timestamp if required
-        if end_timestamp > recordset.end_timestamp.timestamp():
-            recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
 
         # Create sensor timestamps first
         sensor_timestamps = SensorTimestamps()
@@ -314,25 +299,33 @@ class OpenIMUImporter(BaseImporter):
         for timestamp in result:
             if result[timestamp].__contains__('imu'):
                 # print('contains imu')
-                recordset = self.get_recordset(result[timestamp]['imu']['start_time'])
+                recordset = self.get_recordset(result[timestamp]['imu']['start_time'],
+                                               result[timestamp]['imu']['end_time'])
+
                 if not self.import_imu_to_database(timestamp, sample_rate, sensors,
                                                    channels, recordset, result[timestamp]['imu']):
                     print('IMU import error')
             if result[timestamp].__contains__('power'):
                 # print('contains power')
-                recordset = self.get_recordset(result[timestamp]['power']['start_time'])
+                recordset = self.get_recordset(result[timestamp]['power']['start_time'],
+                                               result[timestamp]['power']['start_time'])
+
                 if not self.import_power_to_database(timestamp, sensors, channels, recordset,
                                                      result[timestamp]['power']):
                     print('Power import error')
             if result[timestamp].__contains__('gps'):
                 # print('contains gps')
-                recordset = self.get_recordset(result[timestamp]['gps']['start_time'])
+                recordset = self.get_recordset(result[timestamp]['gps']['start_time'],
+                                               result[timestamp]['gps']['start_time'])
+
                 if not self.import_gps_to_database(timestamp, sensors, channels, recordset,
                                                    result[timestamp]['gps']):
                     print('GPS import error')
             if result[timestamp].__contains__('baro'):
                 # print('contains baro')
-                recordset = self.get_recordset(result[timestamp]['baro']['start_time'])
+                recordset = self.get_recordset(result[timestamp]['baro']['start_time'],
+                                               result[timestamp]['baro']['start_time'])
+
                 if not self.import_baro_to_database(timestamp, sensors, channels, recordset,
                                                     result[timestamp]['baro']):
                     print('Baro import error')

@@ -473,7 +473,6 @@ class Treedatawidget(QTreeWidget):
         self.recordsets[recordset.id_recordset] = None
         self.items_recordsets[recordset.id_recordset] = None
 
-
     def remove_result(self, result):
         item = self.items_results.get(result.id_processed_data, None)
         for i in range(0, item.parent().childCount()):
