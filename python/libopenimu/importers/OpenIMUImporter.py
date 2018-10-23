@@ -2,6 +2,7 @@ from libopenimu.importers.BaseImporter import BaseImporter
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.units import Units
 from libopenimu.models.Recordset import Recordset
+from libopenimu.models.SensorTimestamps import SensorTimestamps
 from libopenimu.models.data_formats import DataFormat
 from libopenimu.tools.timing import timing
 from libopenimu.db.DBManager import DBManager
@@ -52,95 +53,91 @@ class OpenIMUImporter(BaseImporter):
         return results
 
     @timing
-    def import_imu_to_database(self, timestamp, sample_rate, sensors, channels, recordset, data: list):
+    def import_imu_to_database(self, timestamp, sample_rate, sensors, channels, recordset, data: dict):
         # print('import_imu_to_database')
-        values = np.array(data, dtype=np.float32)
-        print("Values shape: ", values.shape)
-        end_timestamp = timestamp + int(np.floor(len(values) / sample_rate))
+        values = np.array(data['values'], dtype=np.float32)
 
-        # Calculate last index to remove extra values
-        real_size = int(np.floor(len(values) / sample_rate) * sample_rate)
-        print('real size:', real_size)
-
-        if real_size == 0:
+        if len(values) == 0:
             return False
+
+        # print("Values shape: ", values.shape)
+        end_timestamp = np.floor(data['end_time'] + 1)
 
         # Update end_timestamp if required
         if end_timestamp > recordset.end_timestamp.timestamp():
             recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
+
+        # Create sensor timestamps first
+        sensor_timestamps = SensorTimestamps()
+        sensor_timestamps.timestamps = data['times']
+        sensor_timestamps.update_timestamps()
 
         # Acc
         for i in range(len(channels['acc'])):
             self.add_sensor_data_to_db(recordset, sensors['acc'], channels['acc'][i],
-                                       datetime.datetime.fromtimestamp(timestamp),
-                                       datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i])
+                                       sensor_timestamps, values[:, i])
 
         # Gyro
         for i in range(len(channels['gyro'])):
             self.add_sensor_data_to_db(recordset, sensors['gyro'], channels['gyro'][i],
-                                       datetime.datetime.fromtimestamp(timestamp),
-                                       datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i + 3])
+                                       sensor_timestamps, values[:, i + 3])
 
         # Magnetometer
         for i in range(len(channels['mag'])):
             self.add_sensor_data_to_db(recordset, sensors['mag'], channels['mag'][i],
-                                       datetime.datetime.fromtimestamp(timestamp),
-                                       datetime.datetime.fromtimestamp(end_timestamp), values[0:real_size, i + 6])
+                                       sensor_timestamps, values[:, i + 6])
 
         self.db.commit()
 
         return True
 
     @timing
-    def import_power_to_database(self, timestamp, sensors, channels, recordset, data: list):
+    def import_power_to_database(self, timestamp, sensors, channels, recordset, data: dict):
 
-        # Get data in the form of array
-        values = np.array(data, dtype=np.float32)
-        print("Values shape: ", values.shape)
+        # print('import_imu_to_database')
+        values = np.array(data['values'], dtype=np.float32)
 
         if len(values) == 0:
             return False
 
-        # print(values[:, 0])
-        # print(values[:, 1])
-
-        end_timestamp = timestamp + len(values)
+        # print("Values shape: ", values.shape)
+        end_timestamp = np.floor(data['end_time'] + 1)
 
         # Update end_timestamp if required
         if end_timestamp > recordset.end_timestamp.timestamp():
             recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
+
+        # Create sensor timestamps first
+        sensor_timestamps = SensorTimestamps()
+        sensor_timestamps.timestamps = data['times']
+        sensor_timestamps.update_timestamps()
 
         self.add_sensor_data_to_db(recordset, sensors['battery'], channels['battery'],
-                                   datetime.datetime.fromtimestamp(timestamp),
-                                   datetime.datetime.fromtimestamp(end_timestamp), values[:, 0])
+                                   sensor_timestamps, values[:, 0])
 
         self.add_sensor_data_to_db(recordset, sensors['current'], channels['current'],
-                                   datetime.datetime.fromtimestamp(timestamp),
-                                   datetime.datetime.fromtimestamp(end_timestamp), values[:, 1])
+                                   sensor_timestamps, values[:, 1])
 
         self.db.commit()
 
         return True
 
     @timing
-    def import_gps_to_database(self, timestamp, sensors, channels, recordset, data: list):
+    def import_gps_to_database(self, timestamp, sensors, channels, recordset, data: dict):
 
-        # Get data in the form of array
-        values = np.array(data, dtype=np.float32)
-        print("Values shape: ", values.shape)
-        # print(values[:, 0])
-        # print(values[:, 1])
+        # print('import_imu_to_database')
+        values = np.array(data['values'], dtype=np.float32)
 
         if len(values) == 0:
             return False
 
-        end_timestamp = timestamp + len(values)
+        # print("Values shape: ", values.shape)
+        end_timestamp = np.floor(data['end_time'] + 1)
 
         # Update end_timestamp if required
         if end_timestamp > recordset.end_timestamp.timestamp():
             recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
 
-        # print('GPS DATA ', values)
         # Regenerate GPS data to be stored in the DB as SIRF data
         # TODO Better GPS solution?
 
@@ -151,12 +148,18 @@ class OpenIMUImporter(BaseImporter):
             # Discard invalid data
             if math.isnan(val[1]) or math.isnan(val[2]):
                 continue
+
             geo.latitude = val[1] * 1e7
             geo.longitude = val[2] * 1e7
             # altitude = val[3] * 1e7
+
+            # Create sensor timestamps first
+            sensor_timestamps = SensorTimestamps()
+            sensor_timestamps.timestamps = data['times'][i:i+1]
+            sensor_timestamps.update_timestamps()
+
             self.add_sensor_data_to_db(recordset, sensors['gps'], channels['gps'],
-                                       datetime.datetime.fromtimestamp(timestamp + i),
-                                       datetime.datetime.fromtimestamp(timestamp + i), geo)
+                                       sensor_timestamps, geo)
 
         # Commit to file
         self.db.commit()
@@ -165,22 +168,26 @@ class OpenIMUImporter(BaseImporter):
 
     @timing
     def import_baro_to_database(self,  timestamp, sensors, channels, recordset, data: list):
-        # Get data in the form of array
-        values = np.array(data, dtype=np.float32)
-        print("Values shape: ", values.shape)
+        # print('import_imu_to_database')
+        values = np.array(data['values'], dtype=np.float32)
 
         if len(values) == 0:
             return False
 
-        end_timestamp = timestamp + len(values)
+        # print("Values shape: ", values.shape)
+        end_timestamp = np.floor(data['end_time'] + 1)
 
         # Update end_timestamp if required
         if end_timestamp > recordset.end_timestamp.timestamp():
             recordset.end_timestamp = datetime.datetime.fromtimestamp(end_timestamp)
 
+        # Create sensor timestamps first
+        sensor_timestamps = SensorTimestamps()
+        sensor_timestamps.timestamps = data['times']
+        sensor_timestamps.update_timestamps()
+
         self.add_sensor_data_to_db(recordset, sensors['baro'], channels['baro'],
-                                   datetime.datetime.fromtimestamp(timestamp),
-                                   datetime.datetime.fromtimestamp(end_timestamp), values[:, 1])
+                                   sensor_timestamps, values[:, 1])
 
         # Commit to file
         self.db.commit()
@@ -305,6 +312,7 @@ class OpenIMUImporter(BaseImporter):
 
         for timestamp in result:
 
+            # Timestamps are hour aligned
             recordset = self.get_recordset(timestamp)
 
             if result[timestamp].__contains__('imu'):
@@ -364,7 +372,7 @@ class OpenIMUImporter(BaseImporter):
     def readDataFile(self, file, debug=False):
         n = 0
         results = {}
-        timestamp = None
+        timestamp_hour = None
 
         # Todo better than while 1?
         while file.readable():
@@ -384,54 +392,70 @@ class OpenIMUImporter(BaseImporter):
                 n = n + 1
                 chunk = file.read(struct.calcsize("i"))
                 current_timestamp = self.processTimestampChunk(chunk, debug)
-                if current_timestamp < 0:
-                    continue
 
-                if timestamp is None:
-                    timestamp = current_timestamp
-                else:
-                    if current_timestamp >= timestamp + 3600:  # Max 1 hour of data per timestamp
-                        timestamp = current_timestamp
+                timestamp_hour = np.floor(current_timestamp / 3600) * 3600
 
                 # Initialize data structure at this timestamp
-                if not results.__contains__(timestamp):
-                    print("init timestamp = ", timestamp)
-                    results[timestamp] = {}
-                    results[timestamp]['gps'] = []
-                    results[timestamp]['power'] = []
-                    results[timestamp]['imu'] = []
-                    results[timestamp]['baro'] = []
+                if not results.__contains__(timestamp_hour):
+                    # print("init timestamp = ", timestamp)
+                    results[timestamp_hour] = {}
+                    results[timestamp_hour]['gps'] = {'times': [], 'values': [],
+                                                      'start_time': current_timestamp, 'end_time': current_timestamp}
+                    results[timestamp_hour]['power'] = {'times': [], 'values': [],
+                                                        'start_time': current_timestamp, 'end_time': current_timestamp}
+                    results[timestamp_hour]['imu'] = {'times': [], 'values': [],
+                                                      'start_time': current_timestamp, 'end_time': current_timestamp}
+                    results[timestamp_hour]['baro'] = {'times': [], 'values': [],
+                                                       'start_time': current_timestamp, 'end_time': current_timestamp}
 
             elif headChar[0] == b'i':
                 n = n + 1
                 chunk = file.read(struct.calcsize("9f"))
                 data = self.processImuChunk(chunk, debug)
-                if timestamp is not None:
-                    results[timestamp]['imu'].append(data)
+                if timestamp_hour is not None:
+                    results[timestamp_hour]['imu']['values'].append(data)
+                    results[timestamp_hour]['imu']['end_time'] = current_timestamp
 
             elif headChar[0] == b'g':
                 n = n + 1
                 chunk = file.read(struct.calcsize("?3f"))
                 data = self.processGPSChunk(chunk, debug)
-                if timestamp is not None:
-                    results[timestamp]['gps'].append(data)
+                if timestamp_hour is not None:
+                    results[timestamp_hour]['gps']['values'].append(data)
+                    results[timestamp_hour]['gps']['end_time'] = current_timestamp
 
             elif headChar[0] == b'p':
                 n = n + 1
                 chunk = file.read(struct.calcsize("2f"))
                 data = self.processPowerChunk(chunk, debug)
-                if timestamp is not None:
-                    results[timestamp]['power'].append(data)
+                if timestamp_hour is not None:
+                    results[timestamp_hour]['power']['values'].append(data)
+                    results[timestamp_hour]['power']['end_time'] = current_timestamp
 
             elif headChar[0] == b'b':
                 n = n + 1
                 chunk = file.read(struct.calcsize("2f"))
                 data = self.processBarometerChunk(chunk, debug)
-                if timestamp is not None:
-                    results[timestamp]['baro'].append(data)
+                if timestamp_hour is not None:
+                    results[timestamp_hour]['baro']['values'].append(data)
+                    results[timestamp_hour]['baro']['end_time'] = current_timestamp
 
             else:
                 print("Unrecognised chunk :", headChar[0])
                 break
+
+        # File is read.
+        # Generate time according to number of samples per timestamp
+        for timestamp in results:
+            for key in results[timestamp]:
+                # Generate time values
+                timevect = np.linspace(results[timestamp][key]['start_time'],
+                                       results[timestamp][key]['end_time'] + 1,
+                                       num=len(results[timestamp][key]['values']),
+                                       endpoint=False, dtype=np.float64)
+
+                # print('key', key, len(results[timestamp][key]['values']), len(timevect))
+                results[timestamp][key]['times'] = timevect
+            # print('timestamp: ', timestamp)
 
         return results

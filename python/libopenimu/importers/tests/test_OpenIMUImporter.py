@@ -25,7 +25,7 @@ class OpenIMUImporterTest(unittest.TestCase):
         pass
 
     def test_load(self):
-        manager = DBManager('test.db', overwrite=True)
+        manager = DBManager('openimu.oi', overwrite=True)
         participant = Participant(name='My Participant', description='Participant Description')
         manager.update_participant(participant)
 
