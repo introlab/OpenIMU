@@ -158,12 +158,13 @@ class RecordsetWindow(QWidget):
         end_time = self.recordsets[len(self.recordsets) - 1].end_timestamp
 
         # Coverage
-        self.UI.lblTotalValue.setText(str(start_time) + " @ " + str(end_time))
+        self.UI.lblTotalValue.setText(start_time.strftime('%d-%m-%Y %H:%M:%S') + " @ " + end_time.strftime(
+                                                                                                '%d-%m-%Y %H:%M:%S'))
 
         # Duration
         self.UI.lblDurationValue.setText(str(end_time - start_time))
 
-        self.UI.lblCursorTime.setText(str(start_time))
+        self.UI.lblCursorTime.setText(start_time.strftime('%d-%m-%Y %H:%M:%S'))
 
     def get_relative_timeview_pos(self, current_time):
         start_time = self.recordsets[0].start_timestamp
@@ -357,7 +358,7 @@ class RecordsetWindow(QWidget):
 
         pos = self.get_relative_timeview_pos(timestamp)
         self.time_bar.setPos(pos,0)
-        self.UI.lblCursorTime.setText(str(timestamp))
+        self.UI.lblCursorTime.setText(timestamp.strftime('%d-%m-%Y %H:%M:%S'))
 
     @pyqtSlot(int)
     def timeview_clicked(self, x):
@@ -367,7 +368,7 @@ class RecordsetWindow(QWidget):
         timestamp = (x / self.timeScene.width()) * (
                     self.recordsets[len(self.recordsets) - 1].end_timestamp - self.recordsets[0].start_timestamp) + \
                     self.recordsets[0].start_timestamp
-        self.UI.lblCursorTime.setText(str(timestamp))
+        self.UI.lblCursorTime.setText(timestamp.strftime('%d-%m-%Y %H:%M:%S'))
 
         for graph in self.sensors_graphs.values():
             if graph is not None:

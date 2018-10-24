@@ -24,6 +24,8 @@ class IMUChartView(QChartView):
     aboutToClose = pyqtSignal(QObject)
     cursorMoved = pyqtSignal(datetime.datetime)
 
+    xvalues = {}
+
     def __init__(self, parent=None):
         super(QChartView, self).__init__(parent=parent)
 
@@ -71,7 +73,10 @@ class IMUChartView(QChartView):
         labely.setText('Y:')
         self.labelYValue = QLabel(self)"""
         self.labelValue = QLabel(self)
-        self.labelValue.setStyleSheet("background-color: rgba(255,255,255,50%); color: black;")
+        self.labelValue.setStyleSheet("background-color: rgba(255,255,255,75%); color: black;")
+        self.labelValue.setAlignment(Qt.AlignCenter)
+        self.labelValue.setMargin(5)
+        self.labelValue.setVisible(False)
 
         # Test buttons
         #newLayout.addWidget(QToolButton(self))
@@ -235,26 +240,31 @@ class IMUChartView(QChartView):
             pen.setColor(color)
         pen.setWidthF(1.5)
         curve.setPen(pen)
-
-        #curve.setUseOpenGL(True)
+        # curve.setPointsVisible(True)
+        # curve.setUseOpenGL(True)
 
         # Decimate
         xdecimated, ydecimated = self.decimate(xdata, ydata)
 
         # Data must be in ms since epoch
         # curve.append(self.series_to_polyline(xdecimated * 1000.0, ydecimated))
+        self.reftime = datetime.datetime.fromtimestamp(xdecimated[0])
+
+        if len(xdecimated) > 0:
+            xdecimated = xdecimated - xdecimated[0]
+
         for i in range(len(xdecimated)):
             # TODO hack
-            x = xdecimated[i] - xdecimated[0]
-            curve.append(QPointF(x, ydecimated[i]))
-
-        self.reftime = datetime.datetime.fromtimestamp(xdecimated[0])
+            # x = xdecimated[i] - xdecimated[0]
+            curve.append(QPointF(xdecimated[i], ydecimated[i]))
 
         if legend_text is not None:
             curve.setName(legend_text)
 
         # Needed for mouse events on series
         self.chart.setAcceptHoverEvents(True)
+
+        self.xvalues[self.ncurves] = np.array(xdecimated)
 
         # connect signals / slots
         # curve.clicked.connect(self.lineseries_clicked)
@@ -345,13 +355,29 @@ class IMUChartView(QChartView):
         self.cursor.show()
 
         xmap = self.chart.mapToValue(QPointF(pos,0)).x()
-        # ymap = self.chart.series(0).at(10)
-        # ymap = self.chart.mapToValue(QPointF(pos,0)).y()
+        display = ''
+        # '<i>' + (datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp())).strftime('%d-%m-%Y %H:%M:%S') +
+        # '</i><br />'
+        ypos = 10
+        last_val = None
+        for i in range(self.ncurves):
+            # Find nearest point
+            idx = (np.abs(self.xvalues[i] - xmap)).argmin()
+            ymap = self.chart.series()[i].at(idx).y()
 
-        # self.labelXValue.setText(str(datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp())))
-        # self.labelYValue.setText(str(ymap))
-        # self.labelValue.setText(str(ymap))
-        self.labelValue.setGeometry(pos, 10, 100, 100)
+            # Compute where to display label
+            if last_val is None or ymap > last_val:
+                last_val = ymap
+                ypos = self.chart.mapToPosition(QPointF(xmap, ymap)).y()
+            if display != '':
+                display += '<br />'
+                
+            display += self.chart.series()[i].name() + ': <b>' + '%.3f' % ymap + '</b>'
+
+        self.labelValue.setText(display)
+        self.labelValue.setGeometry(pos, ypos, 100, 100)
+        self.labelValue.adjustSize()
+        self.labelValue.setVisible(True)
 
         if emit_signal:
             self.cursorMoved.emit(datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp()))
