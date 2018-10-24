@@ -29,7 +29,9 @@ class ImportManager(QDialog):
         # Load supported importers
         importers = ImporterTypes()
         for i in range(0, len(importers.value_types)):
-            self.UI.cmbFileType.addItem(importers.value_names[i], importers.value_types[i])
+            # Ignore WIMU for now as Importer hasn't been updated and no planned project with it.
+            if importers.value_names[i] != 'WIMU':
+                self.UI.cmbFileType.addItem(importers.value_names[i], importers.value_types[i])
         self.UI.cmbFileType.setCurrentIndex(-1)
 
         # Signals / Slots connections

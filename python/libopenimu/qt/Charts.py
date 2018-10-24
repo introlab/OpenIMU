@@ -50,11 +50,11 @@ class IMUChartView(QChartView):
         self.setRubberBand(QChartView.HorizontalRubberBand)
 
         # X, Y label on bottom
-        # self.xTextItem = QGraphicsSimpleTextItem(self.chart)
-        # self.xTextItem.setText('X: ')
-        # self.yTextItem = QGraphicsSimpleTextItem(self.chart)
-        # self.yTextItem.setText('Y: ')
-        # self.update_x_y_coords()
+        """self.xTextItem = QGraphicsSimpleTextItem(self.chart)
+        self.xTextItem.setText('X: ')
+        self.yTextItem = QGraphicsSimpleTextItem(self.chart)
+        self.yTextItem.setText('Y: ')
+        self.update_x_y_coords()"""
 
         # Track mouse
         self.setMouseTracking(True)
@@ -64,12 +64,14 @@ class IMUChartView(QChartView):
         newLayout = QHBoxLayout()
         newLayout.setContentsMargins(0,0,0,0)
         newWidget.setLayout(newLayout)
-        #labelx = QLabel(self)
-        #labelx.setText('X:')
-        #self.labelXValue = QLabel(self)
-        #labely = QLabel(self)
-        #labely.setText('Y:')
-        #self.labelYValue = QLabel(self)
+        """labelx = QLabel(self)
+        labelx.setText('X:')
+        self.labelXValue = QLabel(self)
+        labely = QLabel(self)
+        labely.setText('Y:')
+        self.labelYValue = QLabel(self)"""
+        self.labelValue = QLabel(self)
+        self.labelValue.setStyleSheet("background-color: rgba(255,255,255,50%); color: black;")
 
         # Test buttons
         #newLayout.addWidget(QToolButton(self))
@@ -100,7 +102,7 @@ class IMUChartView(QChartView):
 
     def build_style(self):
         self.setStyleSheet("QLabel{color:blue;}")
-
+        self.chart.setTheme(QChart.ChartThemeBlueCerulean)
         self.setBackgroundBrush(QBrush(Qt.darkGray))
         self.chart.setPlotAreaBackgroundBrush(QBrush(Qt.black))
         self.chart.setPlotAreaBackgroundVisible(True)
@@ -135,6 +137,8 @@ class IMUChartView(QChartView):
         pass
         # self.xTextItem.setPos(self.chart.size().width() / 2 - 100, self.chart.size().height() - 40)
         # self.yTextItem.setPos(self.chart.size().width() / 2 + 100, self.chart.size().height() - 40)
+        # self.xTextItem.setPos(self.chart.size().width() - 200, self.chart.size().height() - 40)
+        # self.yTextItem.setPos(self.chart.size().width() - 100, self.chart.size().height() - 40)
 
     def decimate(self, xdata, ydata):
         assert(len(xdata) == len(ydata))
@@ -191,7 +195,6 @@ class IMUChartView(QChartView):
         self.chart.addAxis(axisX, Qt.AlignBottom)
         # axisX.rangeChanged.connect(self.axis_range_changed)
 
-
         # Create axis Y
         axisY = QValueAxis()
         axisY.setTickCount(5)
@@ -225,7 +228,6 @@ class IMUChartView(QChartView):
         axisX.applyNiceNumbers()
         # axisY.applyNiceNumbers()
 
-
     def add_data(self, xdata, ydata, color=None, legend_text=None):
         curve = QLineSeries()
         pen = curve.pen()
@@ -246,7 +248,7 @@ class IMUChartView(QChartView):
             x = xdecimated[i] - xdecimated[0]
             curve.append(QPointF(x, ydecimated[i]))
 
-        self.reftime = datetime.datetime.utcfromtimestamp(xdecimated[0])
+        self.reftime = datetime.datetime.fromtimestamp(xdecimated[0])
 
         if legend_text is not None:
             curve.setName(legend_text)
@@ -303,19 +305,18 @@ class IMUChartView(QChartView):
                           % (self.ncurves, npoints))
 
     def mouseMoveEvent(self, e: QMouseEvent):
-        # Handling rubberbands
-        super().mouseMoveEvent(e)
 
         # Go back to seconds (instead of ms)
-        """xmap = self.chart.mapToValue(e.pos()).x()
-        ymap = self.chart.mapToValue(e.pos()).y()
+        # xmap = self.chart.mapToValue(e.pos()).x()
+        # ymap = self.chart.mapToValue(e.pos()).y()
 
-        self.labelXValue.setText(str(datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp())))
-        self.labelYValue.setText(str(ymap))"""
-
+        # self.labelXValue.setText(str(datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp())))
+        # self.labelYValue.setText(str(ymap))
 
         # self.xTextItem.setText('X: ' + str(datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp())))
         # self.yTextItem.setText('Y: ' + str(ymap))
+        # Handling rubberbands
+        super().mouseMoveEvent(e)
 
     def mousePressEvent(self, e: QMouseEvent):
         # Handling rubberbands
@@ -344,10 +345,13 @@ class IMUChartView(QChartView):
         self.cursor.show()
 
         xmap = self.chart.mapToValue(QPointF(pos,0)).x()
-        ymap = self.chart.mapToValue(QPointF(pos,0)).y()
+        # ymap = self.chart.series(0).at(10)
+        # ymap = self.chart.mapToValue(QPointF(pos,0)).y()
 
-        #self.labelXValue.setText(str(datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp())))
-        #self.labelYValue.setText(str(ymap))
+        # self.labelXValue.setText(str(datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp())))
+        # self.labelYValue.setText(str(ymap))
+        # self.labelValue.setText(str(ymap))
+        self.labelValue.setGeometry(pos, 10, 100, 100)
 
         if emit_signal:
             self.cursorMoved.emit(datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp()))

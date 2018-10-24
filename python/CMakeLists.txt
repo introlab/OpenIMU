@@ -111,7 +111,7 @@ set (installer_args
     --hidden-import scipy._lib.messagestream
     --hidden-import sqlalchemy.ext.baked
     --hidden-import PyQt5.sip
-    # --clean
+    --clean
     -y
     --windowed
     #--debug

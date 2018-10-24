@@ -30,10 +30,11 @@ import string
 import os
 import zipfile
 import struct
-import json # For file header config
+import json  # For file header config
 import gc
 
 from collections import defaultdict
+
 
 class AppleWatchImporter(BaseImporter):
     HEADER = 0xEAEA
@@ -286,7 +287,6 @@ class AppleWatchImporter(BaseImporter):
             # Calculate recordset
             recordset = self.get_recordset(timestamp.timestamp())
 
-
             # Create time array as float64
             timesarray = np.asarray(raw_gyro[timestamp]['times'], dtype=np.float64)
 
@@ -389,7 +389,7 @@ class AppleWatchImporter(BaseImporter):
 
                 # Create sensor timestamps first
                 sensor_timestamps = SensorTimestamps()
-                sensor_timestamps.timestamps = timesarray[i:i+1]
+                sensor_timestamps.timestamps = timesarray[i:i + 1]
                 sensor_timestamps.update_timestamps()
 
                 # Calculate recordset
@@ -557,10 +557,10 @@ class AppleWatchImporter(BaseImporter):
 
                 # Create channel
                 channel_txPower = self.add_channel_to_db(beacons_sensor, Units.NONE,
-                                                 DataFormat.SINT8, key + '_TxPower')
+                                                         DataFormat.SINT8, key + '_TxPower')
 
                 channel_RSSI = self.add_channel_to_db(beacons_sensor, Units.NONE,
-                                                         DataFormat.SINT8, key + '_RSSI')
+                                                      DataFormat.SINT8, key + '_RSSI')
 
                 tx_power_vect = np.asarray([x[1] for x in channel_values[key]], dtype=np.int8)
                 rssi_vect = np.asarray([x[2] for x in channel_values[key]], dtype=np.int8)
@@ -754,10 +754,10 @@ class AppleWatchImporter(BaseImporter):
         # Commit DB
         self.db.commit()
 
-    def get_sampling_rate_from_header(self, sensor_id, header): #header = string of json
+    def get_sampling_rate_from_header(self, sensor_id, header):  # header = string of json
         sample_rate = 0
         if header != "":
-            json_settings = json.loads(header) # converts to json
+            json_settings = json.loads(header)  # converts to json
         else:
             return sample_rate
 
@@ -792,7 +792,7 @@ class AppleWatchImporter(BaseImporter):
                     sample_rate = 1 / interval
 
         if sensor_id == self.BEACONS_ID:
-            sample_rate = 1 #No sampling rate in beacons config
+            sample_rate = 1  # No sampling rate in beacons config
 
         if sensor_id == self.SENSORIA_ID:
             sample_rate = json_settings.get('frequency')
@@ -905,10 +905,11 @@ class AppleWatchImporter(BaseImporter):
             while file.readable() and read_data_func is not None:
                 # Read timestamp
                 [timestamp_ms] = struct.unpack("<Q", file.read(8))
-
-                results_ms_ts.append(timestamp_ms)
+                # TODO: Use timezone info from watch
+                local_ms_ts = (datetime.datetime.fromtimestamp(timestamp_ms / 1000).timestamp()) * 1000 + (
+                            timestamp_ms % 1000)
+                results_ms_ts.append(int(local_ms_ts))
                 results_ms_data.append(read_data_func(file, debug))
-
         except:
             # let's hope it's only eof...
             # Make sure data vectors are of the same size
@@ -924,18 +925,18 @@ class AppleWatchImporter(BaseImporter):
             # compare timestamps
             while j >= 0 and curr_ts < results_ms_ts[j]:
                 # drift up and continue looking
-                results_ms_ts[j+1] = results_ms_ts[j]
-                results_ms_data[j+1] = results_ms_data[j]
+                results_ms_ts[j + 1] = results_ms_ts[j]
+                results_ms_data[j + 1] = results_ms_data[j]
                 j -= 1
             # only replace if needed
             if j != i - 1:
-                results_ms_ts[j+1] = curr_ts
-                results_ms_data[j+1] = curr_data
+                results_ms_ts[j + 1] = curr_ts
+                results_ms_data[j + 1] = curr_data
 
         # Create hour-aligned separated data
         for i in range(0, len(results_ms_ts)):
             hour_lower_limit_sec = np.floor(results_ms_ts[i] / 3600000) * 3600
-            mydate = datetime.datetime.utcfromtimestamp(hour_lower_limit_sec)
+            mydate = datetime.datetime.fromtimestamp(hour_lower_limit_sec)
 
             # Create hour entry if it does not exist
             if not results[dict_name]['timestamps'].__contains__(mydate):

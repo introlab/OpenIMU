@@ -33,8 +33,8 @@ class SensorTimestamps(Base):
 
     def update_timestamps(self):
         if len(self.timestamps) > 0:
-            self.start_timestamp = datetime.datetime.utcfromtimestamp(self.timestamps[0])
-            self.end_timestamp = datetime.datetime.utcfromtimestamp(self.timestamps[-1])
+            self.start_timestamp = datetime.datetime.fromtimestamp(self.timestamps[0])
+            self.end_timestamp = datetime.datetime.fromtimestamp(self.timestamps[-1])
 
     def to_ndarray(self):
         return np.frombuffer(buffer=self.timestamps, dtype=np.float64)
