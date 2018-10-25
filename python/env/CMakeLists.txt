@@ -46,9 +46,9 @@ if(WIN32)
 else(WIN32)
     set (pip_packages
         ${pip_packages}
-        # PyInstaller
+        PyInstaller
         # Warning, development version for now to fix OSX package
-        https://github.com/pyinstaller/pyinstaller/tarball/develop
+        # https://github.com/pyinstaller/pyinstaller/tarball/develop
     )
 endif(WIN32)
 

@@ -3,7 +3,13 @@ from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QTreeWidget, QTr
 from PyQt5.QtGui import QIcon, QFont, QDragEnterEvent
 import PyQt5
 from PyQt5.QtCore import QLibraryInfo
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5 import QtCore
 from pprint import pprint
+from PyQt5.QtCore import qInstallMessageHandler, QMessageLogContext, QDir
+from PyQt5.Qt import QtMsgType
+from PyQt5.QtWidgets import QTextEdit
+
 
 # from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineSettings
 from PyQt5.QtQuickWidgets import QQuickWidget
@@ -724,10 +730,40 @@ class Treedatawidget(QTreeWidget):
             event.ignore()
 
 
+def qt_message_handler(mode, context, message):
+    if mode == QtCore.QtInfoMsg:
+        mode = 'INFO'
+    elif mode == QtCore.QtWarningMsg:
+        mode = 'WARNING'
+    elif mode == QtCore.QtCriticalMsg:
+        mode = 'CRITICAL'
+    elif mode == QtCore.QtFatalMsg:
+        mode = 'FATAL'
+    else:
+        mode = 'DEBUG'
+    print('qt_message_handler: line: %d, func: %s(), file: %s' % (
+          context.line, context.function, context.file))
+    print('  %s: %s\n' % (mode, message))
+
+    dialog = QDialog()
+    box = QTextEdit(dialog)
+
+    box.setText('qt_message_handler: line: %d, func: %s(), file: %s message: %s' % (
+          context.line, context.function, context.file, message))
+    dialog.resize(640, 480)
+    dialog.exec()
+
+
 # Main
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+
     app.setAttribute(Qt.AA_EnableHighDpiScaling)
+
+    # qInstallMessageHandler(qt_message_handler)
+
+    # Set current directory to home path
+    QDir.setCurrent(QDir.homePath())
 
     print(PyQt5.__file__)
     paths = [x for x in dir(QLibraryInfo) if x.endswith('Path')]
@@ -741,4 +777,7 @@ if __name__ == '__main__':
     # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.AllowRunningInsecureContent, True)
 
     window = MainWindow()
+
+    # Never executed (exec already in main)...
+
     sys.exit(app.exec_())
