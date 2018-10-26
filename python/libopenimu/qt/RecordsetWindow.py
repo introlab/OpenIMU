@@ -39,10 +39,6 @@ class RecordsetWindow(QWidget):
         self.UI = Ui_frmRecordsets()
         self.UI.setupUi(self)
 
-        #TODO
-        self.UI.grpSubRecord.hide()
-        self.UI.frameTools.hide()
-
         self.sensors = {}
         self.sensors_items = {}
         self.sensors_graphs = {}
@@ -73,9 +69,6 @@ class RecordsetWindow(QWidget):
         self.load_sensors()
 
         self.UI.lstSensors.itemChanged.connect(self.sensor_current_changed)
-
-        # Connect process button
-        self.UI.btnProcess.clicked.connect(self.on_process_recordset)
 
     def paintEvent(self, QPaintEvent):
         if not self.time_pixmap:
@@ -167,12 +160,14 @@ class RecordsetWindow(QWidget):
         self.UI.lblCursorTime.setText(start_time.strftime('%d-%m-%Y %H:%M:%S'))
 
     def get_relative_timeview_pos(self, current_time):
-        start_time = self.recordsets[0].start_timestamp
-        end_time = self.recordsets[len(self.recordsets) - 1].end_timestamp
-        time_span = (end_time - start_time).total_seconds()  # Total number of seconds in recordsets
-        if time_span>0:
-            return (((current_time - self.recordsets[
-                0].start_timestamp).total_seconds()) / time_span) * self.UI.graphTimeline.width()
+        start_time = self.recordsets[0].start_timestamp.timestamp()
+        end_time = self.recordsets[len(self.recordsets) - 1].end_timestamp.timestamp()
+        time_span = (end_time - start_time)  # Total number of seconds in recordsets
+        if type(current_time) is datetime:
+            current_time = current_time.timestamp()
+
+        if time_span > 0:
+            return ((current_time - start_time) / time_span) * self.UI.graphTimeline.width()
         else:
             return 0
 
@@ -350,24 +345,23 @@ class RecordsetWindow(QWidget):
         #self.tile_graphs_vertically()
         self.UI.mdiArea.tileSubWindows()
 
-    @pyqtSlot(datetime)
+    @pyqtSlot(float)
     def graph_cursor_changed(self, timestamp):
         for graph in self.sensors_graphs.values():
             if graph is not None:
-                graph.setCursorPositionFromTime(timestamp, False)
+                graph.setCursorPositionFromTime(timestamp/1000, False)
 
-        pos = self.get_relative_timeview_pos(timestamp)
+        pos = self.get_relative_timeview_pos(timestamp/1000)
         self.time_bar.setPos(pos,0)
-        self.UI.lblCursorTime.setText(timestamp.strftime('%d-%m-%Y %H:%M:%S'))
+
+        self.UI.lblCursorTime.setText(datetime.fromtimestamp(timestamp/1000).strftime('%d-%m-%Y %H:%M:%S'))
 
     @pyqtSlot(int)
     def timeview_clicked(self, x):
         self.time_bar.setPos(x, 0)
 
         # Find time corresponding to that position
-        timestamp = (x / self.timeScene.width()) * (
-                    self.recordsets[len(self.recordsets) - 1].end_timestamp - self.recordsets[0].start_timestamp) + \
-                    self.recordsets[0].start_timestamp
+        timestamp = (x / self.UI.graphTimeline.width()) * (self.recordsets[len(self.recordsets) - 1].end_timestamp - self.recordsets[0].start_timestamp) + self.recordsets[0].start_timestamp
         self.UI.lblCursorTime.setText(timestamp.strftime('%d-%m-%Y %H:%M:%S'))
 
         for graph in self.sensors_graphs.values():

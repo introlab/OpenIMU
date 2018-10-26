@@ -22,9 +22,7 @@ import datetime, time
 class IMUChartView(QChartView):
 
     aboutToClose = pyqtSignal(QObject)
-    cursorMoved = pyqtSignal(datetime.datetime)
-
-    xvalues = {}
+    cursorMoved = pyqtSignal(float)
 
     def __init__(self, parent=None):
         super(QChartView, self).__init__(parent=parent)
@@ -36,10 +34,12 @@ class IMUChartView(QChartView):
         self.setMinimumWidth(1500)
         self.setSizePolicy(QSizePolicy.Fixed,QSizePolicy.Fixed)"""
 
-        self.reftime = datetime.datetime.now()
+        # self.reftime = datetime.datetime.now()
         self.cursor = QGraphicsLineItem()
         self.scene().addItem(self.cursor)
         self.decim_factor = 1
+
+        self.xvalues = {}
 
         # self.setScene(QGraphicsScene())
         self.chart = QChart()
@@ -186,18 +186,18 @@ class IMUChartView(QChartView):
 
         # Create new axes
         # Create axis X
-        # axisX = QDateTimeAxis()
-        # axisX.setTickCount(5)
-        # axisX.setFormat("dd MMM yyyy")
-        # axisX.setTitleText("Date")
-        # self.chart.addAxis(axisX, Qt.AlignBottom)
+        axisx = QDateTimeAxis()
+        axisx.setTickCount(5)
+        axisx.setFormat("dd MMM yyyy hh:mm:ss")
+        axisx.setTitleText("Date")
+        self.chart.addAxis(axisx, Qt.AlignBottom)
         # axisX.rangeChanged.connect(self.axis_range_changed)
 
-        axisX = QValueAxis()
+        """axisX = QValueAxis()
         axisX.setTickCount(10)
         axisX.setLabelFormat("%li")
         axisX.setTitleText("Seconds")
-        self.chart.addAxis(axisX, Qt.AlignBottom)
+        self.chart.addAxis(axisX, Qt.AlignBottom)"""
         # axisX.rangeChanged.connect(self.axis_range_changed)
 
         # Create axis Y
@@ -213,7 +213,7 @@ class IMUChartView(QChartView):
 
         # Attach axes to series, find min-max
         for series in self.chart.series():
-            series.attachAxis(axisX)
+            series.attachAxis(axisx)
             series.attachAxis(axisY)
             vect = series.pointsVector()
             for i in range(len(vect)):
@@ -230,7 +230,7 @@ class IMUChartView(QChartView):
             axisY.setRange(ymin, ymax)
 
         # Make the X,Y axis more readable
-        axisX.applyNiceNumbers()
+        # axisx.applyNiceNumbers()
         # axisY.applyNiceNumbers()
 
     def add_data(self, xdata, ydata, color=None, legend_text=None):
@@ -248,11 +248,12 @@ class IMUChartView(QChartView):
 
         # Data must be in ms since epoch
         # curve.append(self.series_to_polyline(xdecimated * 1000.0, ydecimated))
-        self.reftime = datetime.datetime.fromtimestamp(xdecimated[0])
+        # self.reftime = datetime.datetime.fromtimestamp(xdecimated[0])
 
-        if len(xdecimated) > 0:
-            xdecimated = xdecimated - xdecimated[0]
+        # if len(xdecimated) > 0:
+        #    xdecimated = xdecimated - xdecimated[0]
 
+        xdecimated *= 1000  # No decimal expected
         for i in range(len(xdecimated)):
             # TODO hack
             # x = xdecimated[i] - xdecimated[0]
@@ -371,7 +372,7 @@ class IMUChartView(QChartView):
                 ypos = self.chart.mapToPosition(QPointF(xmap, ymap)).y()
             if display != '':
                 display += '<br />'
-                
+
             display += self.chart.series()[i].name() + ': <b>' + '%.3f' % ymap + '</b>'
 
         self.labelValue.setText(display)
@@ -380,13 +381,30 @@ class IMUChartView(QChartView):
         self.labelValue.setVisible(True)
 
         if emit_signal:
-            self.cursorMoved.emit(datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp()))
+            #self.cursorMoved.emit(datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp()))
+            self.cursorMoved.emit(xmap)
 
         self.update()
 
     def setCursorPositionFromTime(self, timestamp, emit_signal=False):
         # Converts timestamp to x value
-        pos = self.chart.mapToPosition(QPointF((timestamp-self.reftime).total_seconds(),0)).x()
+        #pos = self.chart.mapToPosition(QPointF((timestamp-self.reftime).total_seconds(),0)).x()
+        # Find nearest point
+        if type(timestamp) is datetime.datetime:
+            timestamp = timestamp.timestamp();
+        px = timestamp
+        idx1 = (np.abs(self.xvalues[0] - px)).argmin()
+        x1 = self.chart.series()[0].at(idx1).x()
+        pos1 = self.chart.mapToPosition(QPointF(x1, 0)).x()
+        idx2 = idx1 + 1
+        if idx2 < len(self.chart.series()[0]):
+            x2 = self.chart.series()[0].at(idx2).x()
+            pos2 = self.chart.mapToPosition(QPointF(x2, 0)).x()
+            x2 /= 1000
+            x1 /= 1000
+            pos = (((px-x1)/(x2-x1)) * (pos2-pos1)) + pos1
+        else:
+            pos = pos1;
         self.setCursorPosition(pos, emit_signal)
 
     def mouseReleaseEvent(self, e: QMouseEvent):
