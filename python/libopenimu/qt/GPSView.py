@@ -1,9 +1,10 @@
 import sys
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 from PyQt5.QtCore import QUrl, pyqtSlot, pyqtSignal, Qt, QObject, QDateTime, QPointF
-from PyQt5.QtWidgets import QSizePolicy
 
+import numpy as np
 import datetime
+import collections
 
 # This will automatically load qrc
 import core_rc
@@ -11,19 +12,19 @@ import core_rc
 class GPSView(QWebEngineView):
 
     aboutToClose = pyqtSignal(QObject)
-    cursorMoved = pyqtSignal(datetime.datetime)
+    cursorMoved = pyqtSignal(float)
 
     def __init__(self, parent):
 
         super(QWebEngineView, self).__init__(parent)
         self.path = []
         self.marker_position = []
-        self.positions = {}
+        self.positions = collections.OrderedDict()
 
         #self.setFixedHeight(300)
         #self.setMinimumHeight(500)
 
-        self.reftime = datetime.datetime.now()
+        #self.reftime = datetime.datetime.now()
         self.pageReady = False
 
         # Settings
@@ -42,10 +43,13 @@ class GPSView(QWebEngineView):
         self.aboutToClose.emit(self)
 
     def addPosition(self, timestamp, latitude, longitude):
-        if timestamp < self.reftime:
-            self.reftime = timestamp
+        # if timestamp < self.reftime:
+        #    self.reftime = timestamp
+        if type(timestamp) is datetime.datetime:
+            timestamp = timestamp.timestamp()
 
         self.positions[timestamp] = QPointF(latitude, longitude)
+
         if self.pageReady is True:
             self.page().runJavaScript('addPosition(' + str(latitude) + ',' + str(longitude) + ');')
         else:
@@ -54,24 +58,35 @@ class GPSView(QWebEngineView):
 
     def setCursorPositionFromTime(self, timestamp, emit_signal=False):
 
-        timestamp -= datetime.timedelta(microseconds=timestamp.microsecond)
+        # timestamp -= datetime.timedelta(microseconds=timestamp.microsecond)
         position = None
 
         try:
-            position = self.positions[timestamp]
+            position = self.positions[timestamp] # Right on the value!
         except KeyError:
             # Find the closest best position
-            if timestamp < self.reftime:
-                timestamp = self.reftime
+            # if timestamp < self.reftime:
+            #    timestamp = self.reftime
+            # start_timestamp = next(iter(self.positions))
 
-            while timestamp >= self.reftime:
+            if type(timestamp) is datetime.datetime:
+                timestamp = timestamp.timestamp()
+
+            # Find nearest point
+            idx = (np.abs(np.asarray(list(self.positions.keys())) - timestamp)).argmin()
+            position = list(self.positions.values())[idx]
+
+            """if timestamp < start_timestamp:
+                timestamp = start_timestamp
+
+            while timestamp >= start_timestamp:
                 timestamp = timestamp - datetime.timedelta(seconds=1)
                 try:
                     position = self.positions[timestamp]
                     break
                 except KeyError:
                     continue
-
+            """
         if position is not None:
             self.marker_position = [position.x(), position.y()]
             if self.pageReady:

@@ -112,7 +112,6 @@ class IMUChartView(QChartView):
         self.chart.setPlotAreaBackgroundBrush(QBrush(Qt.black))
         self.chart.setPlotAreaBackgroundVisible(True)
 
-
     def save_as_png(self, file_path):
         pixmap = self.grab()
 
@@ -153,7 +152,7 @@ class IMUChartView(QChartView):
 
         if decimate_factor > 1.0:
             decimate_factor = int(np.floor(decimate_factor))
-            #print('decimate factor', decimate_factor)
+            # print('decimate factor', decimate_factor)
             # x = decimate(xdata, decimate_factor)
             # y = decimate(ydata, decimate_factor)
             self.decim_factor = decimate_factor
@@ -174,7 +173,7 @@ class IMUChartView(QChartView):
 
     @pyqtSlot(float, float)
     def axis_range_changed(self, min, max):
-        #print('axis_range_changed', min, max)
+        # print('axis_range_changed', min, max)
         for axis in self.chart.axes():
             axis.applyNiceNumbers()
 
