@@ -58,7 +58,7 @@ if(WIN32)
     # Create environment, will produce python executable
     #add_custom_command(
     #    OUTPUT ${ENV_PATH}/python.exe
-    #    COMMAND ${CONDA_PATH} install -m -c anaconda -c conda-forge -y -p ${ENV_PATH} python=${PYTHON_VERSION} ${conda_packages}
+    #    COMMAND ${CONDA_PATH} install -m -c defaults -c conda-forge -y -p ${ENV_PATH} python=${PYTHON_VERSION} ${conda_packages}
     #    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     #)
 
@@ -76,7 +76,7 @@ else(WIN32)
     # Create environment, will produce python executable
     add_custom_command(
         OUTPUT ${ENV_PATH}/bin/python${PYTHON_VERSION}
-        COMMAND ${CONDA_PATH} install -m -c anaconda -c conda-forge -y -p ${ENV_PATH} python=${PYTHON_VERSION} ${conda_packages}
+        COMMAND ${CONDA_PATH} install -m -c defaults -c conda-forge -y -p ${ENV_PATH} python=${PYTHON_VERSION} ${conda_packages}
         COMMAND ${CMAKE_COMMAND} -E create_symlink ${ENV_PATH}/bin/python${PYTHON_VERSION} ${ENV_PATH}/bin/python
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
