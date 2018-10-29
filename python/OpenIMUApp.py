@@ -1,10 +1,11 @@
-from PyQt5.QtWidgets import QMainWindow, QWidget, QHBoxLayout
+from PyQt5.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QVBoxLayout
 from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QTreeWidget, QTreeWidgetItem, QMessageBox
 from PyQt5.QtGui import QIcon, QFont, QDragEnterEvent
 import PyQt5
 from PyQt5.QtCore import QLibraryInfo
+import PyQt5.QtCore
+
 from PyQt5.QtWidgets import QMessageBox
-from PyQt5 import QtCore
 from pprint import pprint
 from PyQt5.QtCore import qInstallMessageHandler, QMessageLogContext, QDir
 from PyQt5.Qt import QtMsgType
@@ -79,7 +80,7 @@ class MainWindow(QMainWindow):
         self.add_to_log("OpenIMU - Prêt à travailler.", LogTypes.LOGTYPE_INFO)
 
         startWindow = StartWindow()
-        startWindow.setStyleSheet(self.styleSheet())
+        startWindow.setStyleSheet(self.styleSheet() + startWindow.styleSheet())
 
         if startWindow.exec() == QDialog.Rejected:
             # User closed the dialog - exits!
@@ -300,7 +301,7 @@ class MainWindow(QMainWindow):
                 records = [self.UI.treeDataSet.recordsets[item_id]]
 
             recordsWidget = RecordsetWindow(manager=self.dbMan, recordset=records)
-            recordsWidget.setStyleSheet(recordsWidget.styleSheet() + self.styleSheet())
+            recordsWidget.setStyleSheet(self.styleSheet() + recordsWidget.styleSheet())
             self.UI.frmMain.layout().addWidget(recordsWidget)
             recordsWidget.dataDisplayRequest.connect(self.UI.treeDataSet.select_item)
             recordsWidget.dataUpdateRequest.connect(self.UI.treeDataSet.update_item)
@@ -642,7 +643,7 @@ class Treedatawidget(QTreeWidget):
 
     @pyqtSlot(str, int)
     def select_item(self, item_type, item_id):
-        #print ("Selecting " + item_type + ", ID " + str(item_id))
+        # print ("Selecting " + item_type + ", ID " + str(item_id))
         item = None
         if item_type == "group":
             item = self.items_groups.get(item_id, None)
@@ -675,8 +676,6 @@ class Treedatawidget(QTreeWidget):
 
         if item_type == "result":
             self.update_result(data)
-
-
 
     def clear(self):
 
@@ -729,7 +728,7 @@ class Treedatawidget(QTreeWidget):
 
             event.ignore()
 
-
+"""
 def qt_message_handler(mode, context, message):
     if mode == QtCore.QtInfoMsg:
         mode = 'INFO'
@@ -753,7 +752,7 @@ def qt_message_handler(mode, context, message):
     dialog.resize(640, 480)
     dialog.exec()
 
-
+"""
 # Main
 if __name__ == '__main__':
     app = QApplication(sys.argv)

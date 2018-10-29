@@ -1,15 +1,9 @@
-from PyQt5.QtWidgets import QLineEdit, QWidget, QPushButton, QListWidget, QListWidgetItem, QGraphicsScene, QLayout, \
-    QGraphicsRectItem, QGraphicsItem, QGraphicsView, QGraphicsTextItem, QMdiArea, QVBoxLayout, QScrollArea, QApplication
+from PyQt5.QtWidgets import QWidget, QListWidgetItem, QGraphicsScene, QApplication, QFrame
 from PyQt5.QtWidgets import QDialog
-from PyQt5.QtGui import QIcon, QBrush, QPen, QColor, QPixmap
-from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal, QModelIndex, QPoint, QRect, QObject, QDateTime
+from PyQt5.QtGui import QIcon, QBrush, QPen, QColor
+from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QPoint, QRect, QObject
 
 from resources.ui.python.RecordsetWidget_ui import Ui_frmRecordsets
-
-from libopenimu.models.Recordset import Recordset
-from libopenimu.db.DBManager import DBManager
-
-from libopenimu.qt.TimeView import TimeView
 
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.Base import Base
@@ -21,11 +15,10 @@ from libopenimu.qt.ProcessSelectWindow import ProcessSelectWindow
 
 
 from libopenimu.tools.timing import timing
-import os
 import numpy as np
 
 from datetime import datetime, timedelta
-from random import shuffle
+
 
 class RecordsetWindow(QWidget):
 
@@ -34,7 +27,7 @@ class RecordsetWindow(QWidget):
 
     # sensorsColor = ['e0c31e', '14148c', '006325', '6400aa', '14aaff', 'ae32a0', '80c342', '868482']
 
-    def __init__(self, manager, recordset : list, parent=None):
+    def __init__(self, manager, recordset: list, parent=None):
         super(QWidget, self).__init__(parent=parent)
         self.UI = Ui_frmRecordsets()
         self.UI.setupUi(self)
@@ -56,12 +49,6 @@ class RecordsetWindow(QWidget):
         self.UI.graphTimeline.fitInView(self.timeScene.sceneRect(), Qt.KeepAspectRatio)
         self.UI.graphTimeline.time_clicked.connect(self.timeview_clicked)
 
-        # Init graph viewer
-        #layout = QVBoxLayout()
-        #layout.setSizeConstraint(QLayout.SetFixedSize)
-        #self.UI.displayContents.setLayout(layout)
-        #self.UI.displayContents.setMinimumWidth(self.UI.displayArea.width())
-
         # Update general informations about recordsets
         self.update_recordset_infos()
 
@@ -70,7 +57,9 @@ class RecordsetWindow(QWidget):
 
         self.UI.lstSensors.itemChanged.connect(self.sensor_current_changed)
 
-    def paintEvent(self, QPaintEvent):
+        # self.UI.frmSensors.setFixedHeight(self.height()-50)
+
+    def paintEvent(self, paint_event):
         if not self.time_pixmap:
             self.draw_recordsets()
             self.draw_sensors()
@@ -78,16 +67,22 @@ class RecordsetWindow(QWidget):
             self.draw_timebar()
             self.time_pixmap = True
 
+    def resizeEvent(self, resize_event):
+
+        self.draw_recordsets()
+        self.draw_sensors()
+        self.draw_dates()
+        self.draw_timebar()
+
     def load_sensors(self):
         self.UI.lstSensors.clear()
         self.sensors = {}
         self.sensors_items = {}
 
         # Create sensor colors
-        used_colors = []
         # colors = QColor.colorNames()
-        colors = ['darkblue', 'darkviolet', 'darkgreen', 'darkorange', 'darkred','darkslategray', 'darkturquoise',
-                  'darkolivegreen','darkseagreen','darkmagenta', 'darkkhaki' ,
+        colors = ['darkblue', 'darkviolet', 'darkgreen', 'darkorange', 'darkred', 'darkslategray', 'darkturquoise',
+                  'darkolivegreen', 'darkseagreen', 'darkmagenta', 'darkkhaki',
                   'darkslateblue', 'darksalmon', 'darkorchid',  'darkcyan']
 
         # Filter "bad" colors for sensors
@@ -178,7 +173,7 @@ class RecordsetWindow(QWidget):
         # Computations
         start_time = self.recordsets[0].start_timestamp
         end_time = self.recordsets[len(self.recordsets) - 1].end_timestamp
-        time_span = (end_time - start_time).total_seconds()  # Total number of seconds in recordsets
+        # time_span = (end_time - start_time).total_seconds()  # Total number of seconds in recordsets
         current_time = (datetime(start_time.year, start_time.month, start_time.day, 0, 0, 0) + timedelta(days=1))
 
         # Drawing tools
@@ -212,14 +207,14 @@ class RecordsetWindow(QWidget):
         # Empty rectangle (background)
         self.timeScene.addRect(0, 0, self.UI.graphTimeline.width(), self.UI.graphTimeline.height(), transPen,
                                QBrush(Qt.red))
-        self.timeScene.setBackgroundBrush(QBrush(Qt.red))
+        self.timeScene.setBackgroundBrush(QBrush(Qt.black))
 
         # Recording length
         for record in self.recordsets:
             start_pos = self.get_relative_timeview_pos(record.start_timestamp)
             end_pos = self.get_relative_timeview_pos(record.end_timestamp)
             span = end_pos - start_pos
-            #print (str(span))
+            # print (str(span))
             self.timeScene.addRect(start_pos, 0, span, self.UI.graphTimeline.height(), transPen, greenBrush)
 
         self.UI.graphTimeline.update()
@@ -325,11 +320,9 @@ class RecordsetWindow(QWidget):
             try:
                 if self.sensors_graphs[sensor.id_sensor] is not None:
                     self.UI.mdiArea.removeSubWindow(self.sensors_graphs[sensor.id_sensor].parent())
-
-                    #self.UI.displayContents.layout().removeWidget(self.sensors_graphs[sensor.id_sensor])
                     self.sensors_graphs[sensor.id_sensor].hide()
                     self.sensors_graphs[sensor.id_sensor] = None
-                    #self.tile_graphs_vertically()
+                    # self.tile_graphs_vertically()
                     self.UI.mdiArea.tileSubWindows()
             except KeyError:
                 pass
@@ -342,7 +335,7 @@ class RecordsetWindow(QWidget):
                 self.sensors_items[sensor_id].setCheckState(Qt.Unchecked)
                 break
 
-        #self.tile_graphs_vertically()
+        # self.tile_graphs_vertically()
         self.UI.mdiArea.tileSubWindows()
 
     @pyqtSlot(float)
