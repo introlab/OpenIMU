@@ -307,7 +307,7 @@ class DBManager:
         self.delete_orphan_sensors()
         self.delete_orphan_processed_data()
         self.delete_orphan_sensors_timestamps()
-        self.engine.execute("VACUUM")
+        # self.engine.execute("VACUUM")
 
     def get_all_recordsets(self, participant=Participant()):
 

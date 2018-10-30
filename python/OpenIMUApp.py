@@ -1,15 +1,13 @@
-from PyQt5.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QVBoxLayout
-from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QTreeWidget, QTreeWidgetItem, QMessageBox
-from PyQt5.QtGui import QIcon, QFont, QDragEnterEvent
+from PyQt5.QtWidgets import QMainWindow, QWidget, QToolButton
+from PyQt5.QtWidgets import QApplication, QDialog, QTreeWidget, QTreeWidgetItem, QMessageBox
+from PyQt5.QtGui import QIcon, QFont
 import PyQt5
 from PyQt5.QtCore import QLibraryInfo
-import PyQt5.QtCore
 
 from PyQt5.QtWidgets import QMessageBox
 from pprint import pprint
-from PyQt5.QtCore import qInstallMessageHandler, QMessageLogContext, QDir
-from PyQt5.Qt import QtMsgType
-from PyQt5.QtWidgets import QTextEdit
+from PyQt5.QtCore import  QDir
+
 
 
 # from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineSettings
@@ -72,9 +70,10 @@ class MainWindow(QMainWindow):
         self.UI = Ui_MainWindow()
         self.UI.setupUi(self)
         self.UI.dockToolBar.setTitleBarWidget(QWidget())
-        #self.UI.dockDataset.setTitleBarWidget(QWidget())
-        self.splitDockWidget(self.UI.dockTabbedTools, self.UI.dockDataset,Qt.Horizontal)
-        self.UI.dockTabbedTools.hide()
+        # self.UI.dockDataset.setTitleBarWidget(QWidget())
+        # self.UI.dockTabbedTools.setTitleBarWidget(QWidget())
+        # self.splitDockWidget(self.UI.dockTabbedTools, self.UI.dockDataset, Qt.Vertical)
+        # self.UI.dockTabbedTools.hide()
         self.UI.dockLog.hide()
 
         self.add_to_log("OpenIMU - Prêt à travailler.", LogTypes.LOGTYPE_INFO)
@@ -111,6 +110,11 @@ class MainWindow(QMainWindow):
             self.importRequested()
             gc.collect()
 
+    def __del__(self):
+        # Restore sys.stdout
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
+
     def setup_signals(self):
         self.UI.treeDataSet.itemClicked.connect(self.tree_item_clicked)
         self.UI.btnDataSetInfos.clicked.connect(self.infosRequested)
@@ -120,8 +124,16 @@ class MainWindow(QMainWindow):
         self.UI.btnDelete.clicked.connect(self.delete_requested)
         self.UI.btnImport.clicked.connect(self.importRequested)
         self.UI.btnExportCSV.clicked.connect(self.exportCSVRequested)
-        self.UI.dockDataset.visibilityChanged.connect(self.dockdataset_visibility)
-        self.UI.btnShowDataset.clicked.connect(self.UI.dockDataset.show)
+        self.UI.dockDataset.visibilityChanged.connect(self.UI.btnShowDataset.setChecked)
+        self.UI.dockLog.visibilityChanged.connect(self.toggle_log)
+        self.UI.btnShowDataset.clicked.connect(self.toggle_dataset)
+        self.UI.btnShowLog.clicked.connect(self.toggle_log)
+
+    def console_log_normal(self, text):
+        self.add_to_log(text, LogTypes.LOGTYPE_DEBUG)
+
+    def console_log_error(self, text):
+        self.add_to_log(text, LogTypes.LOGTYPE_ERROR)
 
     def load_data_from_dataset(self):
         self.UI.treeDataSet.clear()
@@ -197,6 +209,9 @@ class MainWindow(QMainWindow):
         partWidget.dataCancelled.connect(self.dataWasCancelled)
 
     def add_to_log(self, text, log_type):
+        if text == ' ' or text == '\n':
+            return
+
         format = ""
         if log_type == LogTypes.LOGTYPE_INFO:
             format = "<span style='color:black'>"
@@ -212,6 +227,7 @@ class MainWindow(QMainWindow):
         self.UI.txtLog.append("<span style='color:grey'>" + datetime.now().strftime(
             "%H:%M:%S.%f") + " </span>" + format + text + "</span>")
         self.UI.txtLog.ensureCursorVisible();
+        QApplication.processEvents()
 
     def get_current_widget_data_type(self):
         # TODO: checks!
@@ -219,8 +235,20 @@ class MainWindow(QMainWindow):
 
     ######################
     @pyqtSlot(bool)
-    def dockdataset_visibility(self, visibility):
-        self.UI.dockTabbedTools.setVisible(not visibility)
+    def toggle_dataset(self, visibility):
+        self.UI.dockDataset.setVisible(visibility)
+
+    @pyqtSlot(bool)
+    def toggle_log(self, visibility):
+        self.UI.dockLog.setVisible(visibility)
+        self.UI.btnShowLog.setChecked(visibility)
+
+        if visibility:
+            sys.stdout = EmittingStream(textWritten=self.console_log_normal)
+            sys.stderr = EmittingStream(textWritten=self.console_log_error)
+        else:
+            sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
 
     @pyqtSlot(QUrl)
     def urlChanged(self, url):
@@ -753,6 +781,19 @@ def qt_message_handler(mode, context, message):
     dialog.exec()
 
 """
+
+
+class EmittingStream(PyQt5.QtCore.QObject):
+
+    textWritten = PyQt5.QtCore.pyqtSignal(str)
+    flushRequest = PyQt5.QtCore.pyqtSignal()
+
+    def write(self, text):
+        self.textWritten.emit(str(text))
+
+    def flush(self):
+        pass
+
 # Main
 if __name__ == '__main__':
     app = QApplication(sys.argv)
@@ -780,3 +821,4 @@ if __name__ == '__main__':
     # Never executed (exec already in main)...
 
     sys.exit(app.exec_())
+

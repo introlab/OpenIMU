@@ -35,9 +35,9 @@ QFrame#frameInfos{background-color:rgba(50,50,50,50%);}
 QWidget{border-radius:5px;}
 
 QWidget#dockWidgetLogContents{background-color:rgba(0,0,0,0%);}
-QWidget#dockWidgetTreeContents,QWidget#dockWidgetToolsContents,QWidget#dockTabbedToolsContents{background-color:rgba(50,50,50,50%);  border-radius:5px;}
+QWidget#dockWidgetTreeContents,QWidget#dockWidgetToolsContents,QWidget#dockTabbedToolsContents{background-color:rgba(0,0,0,70%);  border-radius:5px;}
 
-QWidget#line,QWidget#line_2{background-color:rgba(100,100,100,100%);}
+QWidget#line,QWidget#line_2,QWidget#line_3{background-color:rgba(100,100,100,100%);}
 
 QFrame#frameButtons{background-color:rgba(220,220,220,30%); border-radius:5px;}
 
@@ -66,7 +66,10 @@ QMainWindow::separator {
     height: 5px; /* when horizontal */
 }
 
-QLabel#lblVersion{color:black;}</string>
+QLabel#lblVersion{color:black;}
+
+QToolButton#btnShowDataset,QToolButton#btnShowLog{background-color:transparent;background-image:url();}
+QToolButton#btnShowDataset:checked,QToolButton#btnShowLog:checked{background-color:darkgreen;background-image:url();}</string>
   </property>
   <property name="documentMode">
    <bool>false</bool>
@@ -358,7 +361,7 @@ QLabel#lblVersion{color:black;}</string>
    </property>
    <property name="minimumSize">
     <size>
-     <width>92</width>
+     <width>102</width>
      <height>107</height>
     </size>
    </property>
@@ -404,7 +407,7 @@ QLabel#lblVersion{color:black;}</string>
    </property>
    <property name="minimumSize">
     <size>
-     <width>842</width>
+     <width>925</width>
      <height>50</height>
     </size>
    </property>
@@ -452,6 +455,119 @@ QLabel#lblVersion{color:black;}</string>
      <property name="bottomMargin">
       <number>0</number>
      </property>
+     <item>
+      <widget class="QToolButton" name="btnShowDataset">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>45</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="toolTip">
+        <string>Structure des données</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../core.qrc">
+         <normaloff>:/OpenIMU/icons/tree.png</normaloff>:/OpenIMU/icons/tree.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonIconOnly</enum>
+       </property>
+       <property name="autoRaise">
+        <bool>false</bool>
+       </property>
+       <property name="arrowType">
+        <enum>Qt::NoArrow</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="btnShowLog">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>45</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="toolTip">
+        <string>Journal</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../core.qrc">
+         <normaloff>:/OpenIMU/icons/log.png</normaloff>:/OpenIMU/icons/log.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line_3">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QToolButton" name="btnOpen">
        <property name="minimumSize">
@@ -666,116 +782,12 @@ QLabel#lblVersion{color:black;}</string>
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockTabbedTools">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>40</width>
-     <height>84</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>40</width>
-     <height>524287</height>
-    </size>
-   </property>
-   <property name="features">
-    <set>QDockWidget::NoDockWidgetFeatures</set>
-   </property>
-   <property name="allowedAreas">
-    <set>Qt::LeftDockWidgetArea</set>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>1</number>
-   </attribute>
-   <widget class="QWidget" name="dockTabbedToolsContents">
-    <layout class="QVBoxLayout" name="verticalLayout_4">
-     <property name="leftMargin">
-      <number>2</number>
-     </property>
-     <property name="topMargin">
-      <number>5</number>
-     </property>
-     <property name="rightMargin">
-      <number>2</number>
-     </property>
-     <property name="bottomMargin">
-      <number>5</number>
-     </property>
-     <item>
-      <widget class="QToolButton" name="btnShowDataset">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>40</height>
-        </size>
-       </property>
-       <property name="cursor">
-        <cursorShape>PointingHandCursor</cursorShape>
-       </property>
-       <property name="toolTip">
-        <string>Structure des données</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../core.qrc">
-         <normaloff>:/OpenIMU/icons/newdataset.png</normaloff>:/OpenIMU/icons/newdataset.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>32</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="checkable">
-        <bool>false</bool>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonIconOnly</enum>
-       </property>
-       <property name="arrowType">
-        <enum>Qt::NoArrow</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </widget>
-  </widget>
   <action name="actionQuit">
    <property name="text">
     <string>Quit</string>
    </property>
   </action>
+  <zorder>dockToolBar</zorder>
  </widget>
  <customwidgets>
   <customwidget>

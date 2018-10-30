@@ -72,10 +72,10 @@ class AppleWatchImporter(BaseImporter):
     def load_zip(self, filename):
         results = {}
         with zipfile.ZipFile(filename) as myzip:
-            # print('zip opened')
+            print('zip opened')
             namelist = myzip.namelist()
 
-            # print('zip contains : ', namelist)
+            print('zip contains : ', namelist)
 
             # TODO
             # First find SETTINGS file
@@ -156,8 +156,8 @@ class AppleWatchImporter(BaseImporter):
 
         # Data is already hour-aligned iterate through hours
         for timestamp in raw_motion:
-            print('raw_motion', timestamp, len(raw_motion[timestamp]['times']),
-                  len(raw_motion[timestamp]['values']))
+            # print('raw_motion', timestamp, len(raw_motion[timestamp]['times']),
+            #      len(raw_motion[timestamp]['values']))
 
             # Calculate recordset
             recordset = self.get_recordset(timestamp.timestamp())
@@ -221,8 +221,8 @@ class AppleWatchImporter(BaseImporter):
 
         # Data is already hour-aligned iterate through hours
         for timestamp in raw_accelero:
-            print('raw_accelero', timestamp, len(raw_accelero[timestamp]['times']),
-                  len(raw_accelero[timestamp]['values']))
+            # print('raw_accelero', timestamp, len(raw_accelero[timestamp]['times']),
+            #      len(raw_accelero[timestamp]['values']))
 
             # Calculate recordset
             recordset = self.get_recordset(timestamp.timestamp())
@@ -281,8 +281,8 @@ class AppleWatchImporter(BaseImporter):
 
         # Data is already hour-aligned iterate through hours
         for timestamp in raw_gyro:
-            print('raw_gyro', timestamp, len(raw_gyro[timestamp]['times']),
-                  len(raw_gyro[timestamp]['values']))
+            # print('raw_gyro', timestamp, len(raw_gyro[timestamp]['times']),
+            #       len(raw_gyro[timestamp]['values']))
 
             # Calculate recordset
             recordset = self.get_recordset(timestamp.timestamp())
@@ -326,8 +326,8 @@ class AppleWatchImporter(BaseImporter):
         heartrate_channel = self.add_channel_to_db(heartrate_sensor, Units.BPM, DataFormat.UINT8, 'Heartrate')
 
         for timestamp in heartrate:
-            print('heartrate', timestamp, len(heartrate[timestamp]['times']),
-                  len(heartrate[timestamp]['values']))
+            # print('heartrate', timestamp, len(heartrate[timestamp]['times']),
+            #       len(heartrate[timestamp]['values']))
 
             # Calculate recordset
             recordset = self.get_recordset(timestamp.timestamp())
@@ -366,8 +366,8 @@ class AppleWatchImporter(BaseImporter):
         coordinates_channel = self.add_channel_to_db(coordinates_sensor, Units.NONE, DataFormat.UINT8, 'Coordinates')
 
         for timestamp in coordinates:
-            print('coordinates', timestamp, len(coordinates[timestamp]['times']),
-                  len(coordinates[timestamp]['values']))
+            # print('coordinates', timestamp, len(coordinates[timestamp]['times']),
+            #      len(coordinates[timestamp]['values']))
 
             # Create time array as float64
             timesarray = np.asarray(coordinates[timestamp]['times'], dtype=np.float64)
@@ -450,8 +450,8 @@ class AppleWatchImporter(BaseImporter):
         sensoria_fsr_channels.append(self.add_channel_to_db(sensoria_fsr_sensor, Units.NONE,
                                                             DataFormat.FLOAT32, 'HEEL'))
         for timestamp in sensoria:
-            print('sensoria', timestamp, len(sensoria[timestamp]['times']),
-                  len(sensoria[timestamp]['values']))
+            # print('sensoria', timestamp, len(sensoria[timestamp]['times']),
+            #      len(sensoria[timestamp]['values']))
 
             # Calculate recordset
             recordset = self.get_recordset(timestamp.timestamp())
@@ -511,8 +511,8 @@ class AppleWatchImporter(BaseImporter):
 
         # Data is already hour-aligned iterate through hours
         for timestamp in beacons:
-            print('beacons', timestamp, len(beacons[timestamp]['times']),
-                  len(beacons[timestamp]['values']))
+            # print('beacons', timestamp, len(beacons[timestamp]['times']),
+            #      len(beacons[timestamp]['values']))
 
             # Create time array as float64
             timesarray = np.asarray(beacons[timestamp]['times'], dtype=np.float64)
@@ -612,8 +612,8 @@ class AppleWatchImporter(BaseImporter):
 
         # Data is already hour-aligned iterate through hours
         for timestamp in motion:
-            print('motion', timestamp, len(motion[timestamp]['times']),
-                  len(motion[timestamp]['values']))
+            # print('motion', timestamp, len(motion[timestamp]['times']),
+            #     len(motion[timestamp]['values']))
 
             # Calculate recordset
             recordset = self.get_recordset(timestamp.timestamp())
@@ -668,8 +668,8 @@ class AppleWatchImporter(BaseImporter):
 
         # Data is already hour-aligned iterate through hours
         for timestamp in battery:
-            print('battery', timestamp, len(battery[timestamp]['times']),
-                  len(battery[timestamp]['values']))
+            # print('battery', timestamp, len(battery[timestamp]['times']),
+            #      len(battery[timestamp]['values']))
 
             # Calculate recordset
             recordset = self.get_recordset(timestamp.timestamp())
