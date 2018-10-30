@@ -59,7 +59,7 @@ if(WIN32)
     add_custom_command(
         OUTPUT ${ENV_PATH}/python.exe
         COMMAND ${CONDA_PATH} install -m -c defaults -c conda-forge -y -p ${ENV_PATH} python=${PYTHON_VERSION} ${conda_packages}
-       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
     # Will always be considered out of date...
