@@ -17,7 +17,7 @@ if(WIN32)
     set(APP_ICON ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/OpenIMU.ico)
 
 else(WIN32)
-    set(PYTHON_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/python)
+    set(PYTHON_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/python${PYTHON_VERSION})
     set(PYTHON_PIP_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pip)
     set(PYTHON_INSTALLER_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pyinstaller)
     #PyQt5 Ui wrapper
@@ -111,7 +111,7 @@ set (installer_args
     --hidden-import scipy._lib.messagestream
     --hidden-import sqlalchemy.ext.baked
     --hidden-import PyQt5.sip
-    # --clean
+    --clean
     -y
     --windowed
     #--debug

@@ -1,9 +1,14 @@
-from PyQt5.QtWidgets import QMainWindow, QWidget, QHBoxLayout
-from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QTreeWidget, QTreeWidgetItem, QMessageBox
-from PyQt5.QtGui import QIcon, QFont, QDragEnterEvent
+from PyQt5.QtWidgets import QMainWindow, QWidget, QToolButton
+from PyQt5.QtWidgets import QApplication, QDialog, QTreeWidget, QTreeWidgetItem, QMessageBox
+from PyQt5.QtGui import QIcon, QFont
 import PyQt5
 from PyQt5.QtCore import QLibraryInfo
+
+from PyQt5.QtWidgets import QMessageBox
 from pprint import pprint
+from PyQt5.QtCore import  QDir
+
+
 
 # from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineSettings
 from PyQt5.QtQuickWidgets import QQuickWidget
@@ -65,13 +70,16 @@ class MainWindow(QMainWindow):
         self.UI = Ui_MainWindow()
         self.UI.setupUi(self)
         self.UI.dockToolBar.setTitleBarWidget(QWidget())
-        self.UI.dockDataset.setTitleBarWidget(QWidget())
+        # self.UI.dockDataset.setTitleBarWidget(QWidget())
+        # self.UI.dockTabbedTools.setTitleBarWidget(QWidget())
+        # self.splitDockWidget(self.UI.dockTabbedTools, self.UI.dockDataset, Qt.Vertical)
+        # self.UI.dockTabbedTools.hide()
         self.UI.dockLog.hide()
 
         self.add_to_log("OpenIMU - Prêt à travailler.", LogTypes.LOGTYPE_INFO)
 
         startWindow = StartWindow()
-        startWindow.setStyleSheet(self.styleSheet())
+        startWindow.setStyleSheet(self.styleSheet() + startWindow.styleSheet())
 
         if startWindow.exec() == QDialog.Rejected:
             # User closed the dialog - exits!
@@ -102,6 +110,11 @@ class MainWindow(QMainWindow):
             self.importRequested()
             gc.collect()
 
+    def __del__(self):
+        # Restore sys.stdout
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
+
     def setup_signals(self):
         self.UI.treeDataSet.itemClicked.connect(self.tree_item_clicked)
         self.UI.btnDataSetInfos.clicked.connect(self.infosRequested)
@@ -111,6 +124,16 @@ class MainWindow(QMainWindow):
         self.UI.btnDelete.clicked.connect(self.delete_requested)
         self.UI.btnImport.clicked.connect(self.importRequested)
         self.UI.btnExportCSV.clicked.connect(self.exportCSVRequested)
+        self.UI.dockDataset.visibilityChanged.connect(self.UI.btnShowDataset.setChecked)
+        self.UI.dockLog.visibilityChanged.connect(self.toggle_log)
+        self.UI.btnShowDataset.clicked.connect(self.toggle_dataset)
+        self.UI.btnShowLog.clicked.connect(self.toggle_log)
+
+    def console_log_normal(self, text):
+        self.add_to_log(text, LogTypes.LOGTYPE_DEBUG)
+
+    def console_log_error(self, text):
+        self.add_to_log(text, LogTypes.LOGTYPE_ERROR)
 
     def load_data_from_dataset(self):
         self.UI.treeDataSet.clear()
@@ -186,6 +209,9 @@ class MainWindow(QMainWindow):
         partWidget.dataCancelled.connect(self.dataWasCancelled)
 
     def add_to_log(self, text, log_type):
+        if text == ' ' or text == '\n':
+            return
+
         format = ""
         if log_type == LogTypes.LOGTYPE_INFO:
             format = "<span style='color:black'>"
@@ -201,12 +227,29 @@ class MainWindow(QMainWindow):
         self.UI.txtLog.append("<span style='color:grey'>" + datetime.now().strftime(
             "%H:%M:%S.%f") + " </span>" + format + text + "</span>")
         self.UI.txtLog.ensureCursorVisible();
+        QApplication.processEvents()
 
     def get_current_widget_data_type(self):
         # TODO: checks!
         return self.UI.frmMain.layout().itemAt(0).widget().data_type
 
     ######################
+    @pyqtSlot(bool)
+    def toggle_dataset(self, visibility):
+        self.UI.dockDataset.setVisible(visibility)
+
+    @pyqtSlot(bool)
+    def toggle_log(self, visibility):
+        self.UI.dockLog.setVisible(visibility)
+        self.UI.btnShowLog.setChecked(visibility)
+
+        if visibility:
+            sys.stdout = EmittingStream(textWritten=self.console_log_normal)
+            sys.stderr = EmittingStream(textWritten=self.console_log_error)
+        else:
+            sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
+
     @pyqtSlot(QUrl)
     def urlChanged(self, url):
         print('url: ', url)
@@ -286,7 +329,7 @@ class MainWindow(QMainWindow):
                 records = [self.UI.treeDataSet.recordsets[item_id]]
 
             recordsWidget = RecordsetWindow(manager=self.dbMan, recordset=records)
-            recordsWidget.setStyleSheet(recordsWidget.styleSheet() + self.styleSheet())
+            recordsWidget.setStyleSheet(self.styleSheet() + recordsWidget.styleSheet())
             self.UI.frmMain.layout().addWidget(recordsWidget)
             recordsWidget.dataDisplayRequest.connect(self.UI.treeDataSet.select_item)
             recordsWidget.dataUpdateRequest.connect(self.UI.treeDataSet.update_item)
@@ -473,7 +516,6 @@ class Treedatawidget(QTreeWidget):
         self.recordsets[recordset.id_recordset] = None
         self.items_recordsets[recordset.id_recordset] = None
 
-
     def remove_result(self, result):
         item = self.items_results.get(result.id_processed_data, None)
         for i in range(0, item.parent().childCount()):
@@ -629,7 +671,7 @@ class Treedatawidget(QTreeWidget):
 
     @pyqtSlot(str, int)
     def select_item(self, item_type, item_id):
-        #print ("Selecting " + item_type + ", ID " + str(item_id))
+        # print ("Selecting " + item_type + ", ID " + str(item_id))
         item = None
         if item_type == "group":
             item = self.items_groups.get(item_id, None)
@@ -662,8 +704,6 @@ class Treedatawidget(QTreeWidget):
 
         if item_type == "result":
             self.update_result(data)
-
-
 
     def clear(self):
 
@@ -698,8 +738,8 @@ class Treedatawidget(QTreeWidget):
                 # Clear source and set to no group
                 self.participants[source_id].group = None
                 self.participants[source_id].id_group = None
-                #new_item = source_item.clone()
-                #self.addTopLevelItem(new_item)
+                # new_item = source_item.clone()
+                # self.addTopLevelItem(new_item)
                 self.participantDragged.emit(self.participants[source_id])
                 event.accept()
                 return
@@ -708,19 +748,62 @@ class Treedatawidget(QTreeWidget):
                 if target_type == "group":
                     self.participants[source_id].group = self.groups[target_id]
                     self.participants[source_id].id_group = self.groups[target_id].id_group
-                    #new_item = source_item.clone()
-                    #target_item.addChild(new_item)
+                    # new_item = source_item.clone()
+                    # target_item.addChild(new_item)
                     self.participantDragged.emit(self.participants[source_id])
                     event.accept()
                     return
 
             event.ignore()
 
+"""
+def qt_message_handler(mode, context, message):
+    if mode == QtCore.QtInfoMsg:
+        mode = 'INFO'
+    elif mode == QtCore.QtWarningMsg:
+        mode = 'WARNING'
+    elif mode == QtCore.QtCriticalMsg:
+        mode = 'CRITICAL'
+    elif mode == QtCore.QtFatalMsg:
+        mode = 'FATAL'
+    else:
+        mode = 'DEBUG'
+    print('qt_message_handler: line: %d, func: %s(), file: %s' % (
+          context.line, context.function, context.file))
+    print('  %s: %s\n' % (mode, message))
+
+    dialog = QDialog()
+    box = QTextEdit(dialog)
+
+    box.setText('qt_message_handler: line: %d, func: %s(), file: %s message: %s' % (
+          context.line, context.function, context.file, message))
+    dialog.resize(640, 480)
+    dialog.exec()
+
+"""
+
+
+class EmittingStream(PyQt5.QtCore.QObject):
+
+    textWritten = PyQt5.QtCore.pyqtSignal(str)
+    flushRequest = PyQt5.QtCore.pyqtSignal()
+
+    def write(self, text):
+        self.textWritten.emit(str(text))
+
+    def flush(self):
+        pass
 
 # Main
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+
     app.setAttribute(Qt.AA_EnableHighDpiScaling)
+
+    # qInstallMessageHandler(qt_message_handler)
+
+    # Set current directory to home path
+    QDir.setCurrent(QDir.homePath())
 
     print(PyQt5.__file__)
     paths = [x for x in dir(QLibraryInfo) if x.endswith('Path')]
@@ -734,4 +817,8 @@ if __name__ == '__main__':
     # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.AllowRunningInsecureContent, True)
 
     window = MainWindow()
+
+    # Never executed (exec already in main)...
+
     sys.exit(app.exec_())
+

@@ -3,7 +3,7 @@
 
 if(WIN32)
     message(STATUS "env $ENV{HOMEPATH}")
-    set(CONDA_PATH "$ENV{HOMEPATH}/Miniconda3/Scripts/conda.exe")
+    set(CONDA_PATH "$ENV{SYSTEMDRIVE}$ENV{HOMEPATH}/Miniconda3/Scripts/conda.exe")
 else(WIN32)
     set(CONDA_PATH "$ENV{HOME}/miniconda3/bin/conda")
 endif(WIN32)
@@ -14,42 +14,41 @@ set (ENV_PATH ${CMAKE_CURRENT_SOURCE_DIR}/python-${PYTHON_VERSION})
 
 file(MAKE_DIRECTORY ${ENV_PATH})
 
-# Define packages to install
+# Default packages.
+set (pip_packages
+    PyQt5
+    PyQtChart
+    PyQt3D
+)
+
+set (conda_packages
+    cython
+    numpy
+    scipy
+    # Not used for now
+    # jupyter
+    sqlalchemy
+)
+
+
+# Define custom packages to install
 if(WIN32)
     set (pip_packages
-        PyQt5
-        PyQtChart
-        PyQt3D
+        ${pip_packages}
         pypiwin32
         PyInstaller
-        # Warning, development version for now to fix OSX package
-        #https://github.com/pyinstaller/pyinstaller/tarball/develop
     )
 
     set (conda_packages
+        ${conda_packages}
         PyInstaller
-        cython
-        numpy
-        scipy
-        jupyter
-        sqlalchemy
     )
 else(WIN32)
     set (pip_packages
-        PyQt5
-        PyQtChart
-        PyQt3D
-        # PyInstaller
+        ${pip_packages}
+        PyInstaller
         # Warning, development version for now to fix OSX package
-        https://github.com/pyinstaller/pyinstaller/tarball/develop
-    )
-    set (conda_packages
-        # PyInstaller
-        cython
-        numpy
-        scipy
-        jupyter
-        sqlalchemy
+        # https://github.com/pyinstaller/pyinstaller/tarball/develop
     )
 endif(WIN32)
 
@@ -76,9 +75,16 @@ else(WIN32)
 
     # Create environment, will produce python executable
     add_custom_command(
-        OUTPUT ${ENV_PATH}/bin/python
+        OUTPUT ${ENV_PATH}/bin/python${PYTHON_VERSION}
         COMMAND ${CONDA_PATH} install -m -c defaults -c conda-forge -y -p ${ENV_PATH} python=${PYTHON_VERSION} ${conda_packages}
+        COMMAND ${CMAKE_COMMAND} -E create_symlink ${ENV_PATH}/bin/python${PYTHON_VERSION} ${ENV_PATH}/bin/python
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+
+    add_custom_target(python_symlink
+        COMMAND ${CMAKE_COMMAND} -E create_symlink ${ENV_PATH}/bin/python${PYTHON_VERSION} ${ENV_PATH}/bin/python
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        DEPENDS ${ENV_PATH}/bin/python${PYTHON_VERSION}
     )
 
     # Will always be considered out of date...
@@ -86,8 +92,8 @@ else(WIN32)
     # TODO - INSTALL WITH CONDA ?
     add_custom_target(
         python-env
-        COMMAND ${ENV_PATH}/bin/pip install --upgrade ${pip_packages}
-        WORKING_DIRECTORY ${ENV_PATH}
-        DEPENDS ${ENV_PATH}/bin/python
+        COMMAND ${ENV_PATH}/bin/python${PYTHON_VERSION} -m pip install ${pip_packages}
+        WORKING_DIRECTORY ${ENV_PATH}/bin
+        DEPENDS python_symlink
     )
 endif(WIN32)

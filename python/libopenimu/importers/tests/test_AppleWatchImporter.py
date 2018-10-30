@@ -30,11 +30,23 @@ class AppleWatchImporterTest(unittest.TestCase):
     def test_load_zip_file(self):
         # Testing
 
-        manager = DBManager('applewatch.db', overwrite=True)
+        manager = DBManager('applewatch.oi', overwrite=True)
         participant = Participant(name='My Participant', description='Participant Description')
         manager.update_participant(participant)
         importer = AppleWatchImporter(manager, participant)
 
-        results = importer.load('../../../resources/samples/AppleWatch.zip')
+        results = importer.load('/Users/dominic/WA/OpenIMU.git/python/applewatch_data.zip')
+        # print('results', results)
+        importer.import_to_database(results)
+
+    def test_load_data_file(self):
+        # Testing
+
+        manager = DBManager('applewatch.oi', overwrite=True)
+        participant = Participant(name='My Participant', description='Participant Description')
+        manager.update_participant(participant)
+        importer = AppleWatchImporter(manager, participant)
+
+        results = importer.load('/Users/dominic/Documents/working_area/OpenIMU.git/python/watch_ProcessedMotion.data')
         # print('results', results)
         importer.import_to_database(results)

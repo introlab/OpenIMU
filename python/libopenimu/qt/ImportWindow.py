@@ -2,7 +2,7 @@ from libopenimu.qt.ImportManager import ImportManager
 from resources.ui.python.ImportDialog_ui import Ui_ImportDialog
 
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QPushButton, QPlainTextEdit, QFileDialog
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QPushButton, QPlainTextEdit, QFileDialog, QMessageBox
 
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.DataSet import DataSet
@@ -30,6 +30,10 @@ class ImportWindow(QDialog):
         self.fileName = filename
         self.showImport = showImport
         self.update_data()
+
+        # Set default path
+
+
 
         # Signals / Slots connections
         self.UI.btnCancel.clicked.connect(self.cancel_clicked)
@@ -93,28 +97,36 @@ class ImportWindow(QDialog):
     def ok_clicked(self):
         # Only create file if validate
         if self.validate():
-            # Create and save file
-            db = DBManager(filename=self.UI.txtFileName.text())
 
-            if self.dataSet is None:
-                self.dataSet = DataSet()
-                self.dataSet.creation_date = datetime.now()
+            try:
+                # Create and save file
+                db = DBManager(filename=self.UI.txtFileName.text())
 
-            self.dataSet.name = self.UI.txtName.text()
-            self.dataSet.description = self.UI.txtDesc.toPlainText()
-            self.dataSet.author = self.UI.txtAuthor.text()
+                if self.dataSet is None:
+                    self.dataSet = DataSet()
+                    self.dataSet.creation_date = datetime.now()
 
-            self.dataSet.upload_date = self.UI.calendarUploadDate.selectedDate().toPyDate()
+                self.dataSet.name = self.UI.txtName.text()
+                self.dataSet.description = self.UI.txtDesc.toPlainText()
+                self.dataSet.author = self.UI.txtAuthor.text()
 
-            db.set_dataset_infos(name=self.dataSet.name,
-                                 desc=self.dataSet.description,
-                                 author=self.dataSet.author,
-                                 creation_date=self.dataSet.creation_date,
-                                 upload_date=self.dataSet.upload_date)
+                self.dataSet.upload_date = self.UI.calendarUploadDate.selectedDate().toPyDate()
 
-            self.fileName = self.UI.txtFileName.text()
+                db.set_dataset_infos(name=self.dataSet.name,
+                                     desc=self.dataSet.description,
+                                     author=self.dataSet.author,
+                                     creation_date=self.dataSet.creation_date,
+                                     upload_date=self.dataSet.upload_date)
 
-            self.accept()
+                self.fileName = self.UI.txtFileName.text()
+
+                self.accept()
+
+            except:
+                print('Error!')
+                box = QMessageBox()
+                box.setText('Erreur de création de DB, s.v.p. choisir une répertoire valide')
+                box.exec()
 
     @pyqtSlot()
     def cancel_clicked(self):

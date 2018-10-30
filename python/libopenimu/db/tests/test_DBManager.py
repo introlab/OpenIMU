@@ -14,6 +14,7 @@ from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.units import Units
 from libopenimu.models.data_formats import DataFormat
 from libopenimu.models.Sensor import Sensor
+from libopenimu.models.SensorTimestamps import SensorTimestamps
 from libopenimu.models.Group import Group
 from libopenimu.models.Participant import Participant
 from libopenimu.models.Channel import Channel
@@ -28,14 +29,17 @@ class DBManagerTest(unittest.TestCase):
     TESTDB_NAME = 'openimu.db'
 
     def setUp(self):
-        pass
 
-    def tearDown(self):
         # Cleanup database
         if True:
             if os.path.isfile(DBManagerTest.TESTDB_NAME):
                 print('Removing database : ', DBManagerTest.TESTDB_NAME)
                 os.remove(DBManagerTest.TESTDB_NAME)
+
+    def tearDown(self):
+
+        pass
+
 
     def test_add_group(self):
         manager = DBManager(filename=DBManagerTest.TESTDB_NAME, overwrite=True)
@@ -47,6 +51,8 @@ class DBManagerTest(unittest.TestCase):
         group2 = manager.get_group(group.id_group)
         self.assertEqual(group.id_group, group2.id_group)
         self.assertEqual(group.name, group2.name)
+
+        manager.close()
 
     def test_add_sensor(self):
         manager = DBManager(filename='openimu.db', overwrite=True)
@@ -70,6 +76,8 @@ class DBManagerTest(unittest.TestCase):
         self.assertEqual(sensor.sampling_rate, sensor2.sampling_rate)
         self.assertEqual(sensor.data_rate, sensor2.data_rate)
 
+        manager.close()
+
     def test_get_all_sensors(self):
 
         manager = DBManager(filename='openimu.db', overwrite=True)
@@ -86,7 +94,8 @@ class DBManagerTest(unittest.TestCase):
         sensors = []
 
         for i in range(0, count):
-            sensors.append(manager.add_sensor(id_sensor_type, name, hw_name, location, sampling_rate, data_rate))
+            # Make sure sensor name changes...
+            sensors.append(manager.add_sensor(id_sensor_type, name + str(i), hw_name, location, sampling_rate, data_rate))
 
         all_sensors = manager.get_all_sensors()
         self.assertEqual(len(all_sensors), len(sensors))
@@ -97,6 +106,8 @@ class DBManagerTest(unittest.TestCase):
         # Compare content
         for i in range(0, count):
             self.assertEqual(sensors[i], all_sensors[i])
+
+        manager.close()
 
     def test_add_participant(self):
         manager = DBManager(filename='openimu.db', overwrite=True)
@@ -118,6 +129,8 @@ class DBManagerTest(unittest.TestCase):
         self.assertEqual(participant.description, participant_description)
         self.assertGreater(participant.id_participant, 0)
         self.assertEqual(participant, participant2)
+
+        manager.close()
 
     def test_get_all_participants(self):
         manager = DBManager(filename='openimu.db', overwrite=True)
@@ -145,6 +158,8 @@ class DBManagerTest(unittest.TestCase):
         for i in range(0, len(participants)):
             self.assertEqual(participants[i], all_participants[i])
 
+        manager.close()
+
     def test_add_recordset(self):
         manager = DBManager(filename='openimu.db', overwrite=True, echo=False)
 
@@ -154,8 +169,8 @@ class DBManagerTest(unittest.TestCase):
         description = 'Participant Description'
         participant = manager.update_participant(Participant(name=name, description=description, group=group))
         # This gives datetime from seconds from epoch
-        time1 = datetime.datetime.fromtimestamp(0)
-        time2 = datetime.datetime.fromtimestamp(1)
+        time1 = datetime.datetime.fromtimestamp(datetime.datetime.now().timestamp())
+        time2 = datetime.datetime.fromtimestamp(datetime.datetime.now().timestamp() + 1)
         recordset = manager.add_recordset(participant, 'Record Name', time1, time2)
         recordset2 = manager.get_recordset(recordset.id_recordset)
 
@@ -165,6 +180,8 @@ class DBManagerTest(unittest.TestCase):
         self.assertEqual(recordset.start_timestamp, time1)
         self.assertEqual(recordset.end_timestamp, time2)
         self.assertEqual(recordset, recordset2)
+
+        manager.close()
 
     def test_get_all_recordsets(self):
         manager = DBManager(filename='openimu.db', overwrite=True)
@@ -186,9 +203,9 @@ class DBManagerTest(unittest.TestCase):
             time1 = datetime.datetime.now()
             time2 = datetime.datetime.now()
 
-            recordsets1.append(manager.add_recordset(participant1, 'Record Name', time1,
+            recordsets1.append(manager.add_recordset(participant1, 'Record Name' + str(i), time1,
                                                      time2))
-            recordsets2.append(manager.add_recordset(participant2, 'Record Name', time1,
+            recordsets2.append(manager.add_recordset(participant2, 'Record Name' + str(i), time1,
                                                      time2))
 
         # Compare size
@@ -204,6 +221,8 @@ class DBManagerTest(unittest.TestCase):
             self.assertEqual(recordsets1[i], all_from_participant_1[i])
             self.assertEqual(recordsets2[i], all_from_participant_2[i])
 
+        manager.close()
+
     def test_add_channel(self):
         manager = DBManager(filename='openimu.db', overwrite=True)
 
@@ -212,6 +231,8 @@ class DBManagerTest(unittest.TestCase):
         channel = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_X')
         channel2 = manager.get_channel(channel.id_channel)
         self.assertEqual(channel, channel2)
+
+        manager.close()
 
     def test_get_all_channels(self):
         manager = DBManager(filename='openimu.db', overwrite=True)
@@ -234,6 +255,8 @@ class DBManagerTest(unittest.TestCase):
         channels = manager.get_all_channels(sensor=Sensor())
         self.assertEqual(len(channels), 0)
 
+        manager.close()
+
     def test_add_sensor_data(self):
         manager = DBManager(filename='openimu.db', overwrite=True)
 
@@ -244,16 +267,23 @@ class DBManagerTest(unittest.TestCase):
 
         sensor = manager.add_sensor(SensorType.ACCELEROMETER, 'Sensor Name', 'Hardware Name', 'Wrist', 30.0, 1)
         channel = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_X')
-        time1 = datetime.datetime.now()
-        time2 = datetime.datetime.now()
-        recordset = manager.add_recordset(participant, 'My Record', time1, time2)
+
+        timestamps = SensorTimestamps()
+        timestamps.timestamps = np.zeros(40, dtype=np.float64)
+        # will set start and end
+        timestamps.update_timestamps()
+
+        recordset = manager.add_recordset(participant, 'My Record', timestamps.start_timestamp, timestamps.end_timestamp)
 
         data = np.zeros(40, dtype=np.float32)
-        sensordata = manager.add_sensor_data(recordset, sensor, channel, time1, time1, data)
+
+        sensordata = manager.add_sensor_data(recordset, sensor, channel, timestamps, data)
         manager.commit()
 
         sensordata2 = manager.get_sensor_data(sensordata.id_sensor_data)
         self.assertEqual(sensordata, sensordata2)
+
+        manager.close()
 
     def test_get_all_sensor_data_with_args(self):
         manager = DBManager(filename='openimu.db', overwrite=True, echo=False)
@@ -266,13 +296,18 @@ class DBManagerTest(unittest.TestCase):
         sensor2 = manager.add_sensor(SensorType.GYROMETER, 'Sensor Name', 'Hardware Name', 'Wrist', 30.0, 1)
         channel1 = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_X')
         channel2 = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_Y')
-        time1 = datetime.datetime.now()
-        time2 = datetime.datetime.now()
-        recordset = manager.add_recordset(participant, 'My Record', time1, time2)
+
+
+        timestamps = SensorTimestamps()
+        timestamps.timestamps = np.zeros(40, dtype=np.float64)
+        # will set start and end
+        timestamps.update_timestamps()
+
+        recordset = manager.add_recordset(participant, 'My Record', timestamps.start_timestamp, timestamps.end_timestamp)
 
         data = np.zeros(40, dtype=np.float32)
-        sensordata = manager.add_sensor_data(recordset, sensor, channel1, time1, time1, data)
-        sensordata = manager.add_sensor_data(recordset, sensor, channel2, time1, time1, data)
+        sensordata = manager.add_sensor_data(recordset, sensor, channel1, timestamps, data)
+        sensordata = manager.add_sensor_data(recordset, sensor, channel2, timestamps, data)
         manager.commit()
 
         # Test with no args, return everything in the recordset
@@ -310,3 +345,5 @@ class DBManagerTest(unittest.TestCase):
         # Testing with invalid channel
         sensordata_res = manager.get_all_sensor_data(recordset=recordset, convert=True, channel=Channel())
         self.assertEqual(len(sensordata_res), 0)
+
+        manager.close()

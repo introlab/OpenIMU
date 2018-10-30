@@ -25,5 +25,7 @@
         <file>background/beton.jpg</file>
         <file>background/metal-texture.jpg</file>
         <file>icons/OpenIMU.png</file>
+        <file>icons/tree.png</file>
+        <file>icons/log.png</file>
     </qresource>
 </RCC>
