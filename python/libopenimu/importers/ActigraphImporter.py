@@ -179,11 +179,16 @@ class ActigraphImporter(BaseImporter):
 
                 recordset = self.get_recordset(epoch[0])
 
+                timevect = np.linspace(epoch[0], epoch[0] + 1,
+                                       num=1, endpoint=False, dtype=np.float64)
+                sensor_timestamps.timestamps = timevect
+                sensor_timestamps.update_timestamps()
+
                 # Update end_timestamp if required
                 if epoch[0] > recordset.end_timestamp.timestamp():
                     recordset.end_timestamp = timestamp
 
-                self.add_sensor_data_to_db(recordset, volt_sensor, volt_channel, timestamp, datetime.datetime.fromtimestamp(epoch[0]+1), value)
+                self.add_sensor_data_to_db(recordset, volt_sensor, volt_channel, sensor_timestamps, value)
 
             # Flush to DB (ram)
             self.db.flush()
