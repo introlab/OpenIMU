@@ -17,6 +17,7 @@ from libopenimu.models.units import Units
 from libopenimu.models.data_formats import DataFormat
 from libopenimu.tools.timing import datetime_from_dotnet_ticks as ticksconverter
 from libopenimu.tools.timing import timing
+from libopenimu.models.SensorTimestamps import SensorTimestamps
 
 import numpy as np
 import datetime
@@ -66,9 +67,7 @@ class ActigraphImporter(BaseImporter):
         start_timestamp = ticksconverter(start)
         end_timestamp = ticksconverter(stop)
 
-
         # all_counts = [0, 0, 0]
-
         if data.__contains__('activity'):
 
             print('activity found')
@@ -138,6 +137,16 @@ class ActigraphImporter(BaseImporter):
                     # print('inserting values :', len(value_dict[timestamp][index]))
                     # print('vector: ', len(vector), vector.shape, vector.dtype)
 
+                    # Create sensor timestamps first
+                    sensor_timestamps = SensorTimestamps()
+
+                    # Create time vector
+                    # TODO Share time vector for all accelerometers?
+                    timevect = np.linspace(timestamp, timestamp + len(value_dict[timestamp][index]),
+                                           num=len(vector), endpoint=False, dtype=np.float64)
+                    sensor_timestamps.timestamps = timevect
+                    sensor_timestamps.update_timestamps()
+
                     recordset = self.get_recordset(timestamp)
 
                     # Update end_timestamp if required
@@ -147,7 +156,7 @@ class ActigraphImporter(BaseImporter):
                     counters[index] += len(vector)
                     if len(vector) > 0:
                         self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[index],
-                                                   datetime.datetime.fromtimestamp(timestamp), datetime.datetime.fromtimestamp(timestamp+len(value_dict[timestamp][index])), vector)
+                                                   sensor_timestamps, vector)
 
             print('total samples inserted:', counters)
             print('total timestamps processed:', len(all_timestamps))
@@ -170,11 +179,17 @@ class ActigraphImporter(BaseImporter):
 
                 recordset = self.get_recordset(epoch[0])
 
+                timevect = np.linspace(epoch[0], epoch[0] + 1, num=1, endpoint=False, dtype=np.float64)
+                # Create sensor timestamps first
+                sensor_timestamps = SensorTimestamps()
+                sensor_timestamps.timestamps = timevect
+                sensor_timestamps.update_timestamps()
+
                 # Update end_timestamp if required
                 if epoch[0] > recordset.end_timestamp.timestamp():
                     recordset.end_timestamp = timestamp
 
-                self.add_sensor_data_to_db(recordset, volt_sensor, volt_channel, timestamp, datetime.datetime.fromtimestamp(epoch[0]+1), value)
+                self.add_sensor_data_to_db(recordset, volt_sensor, volt_channel, sensor_timestamps, value)
 
             # Flush to DB (ram)
             self.db.flush()
@@ -182,7 +197,7 @@ class ActigraphImporter(BaseImporter):
         if data.__contains__('lux'):
             print('lux found')
             # Create sensor
-            lux_sensor = self.add_sensor_to_db(SensorType.LUX, 'Lux', info['Device Type'], 'Unknown', 1, 1)
+            lux_sensor = self.add_sensor_to_db(SensorType.LUX, 'Lux', info['Device Type'], 'Unknown', 0, 1)
 
             # Create channel
             lux_channel = self.add_channel_to_db(lux_sensor, Units.LUX, DataFormat.FLOAT32, 'Lux')
@@ -193,11 +208,17 @@ class ActigraphImporter(BaseImporter):
 
                 recordset = self.get_recordset(epoch[0])
 
+                timevect = np.linspace(epoch[0], epoch[0] + 1, num=1, endpoint=False, dtype=np.float64)
+                # Create sensor timestamps first
+                sensor_timestamps = SensorTimestamps()
+                sensor_timestamps.timestamps = timevect
+                sensor_timestamps.update_timestamps()
+
                 # Update end_timestamp if required
                 if epoch[0] > recordset.end_timestamp.timestamp():
                     recordset.end_timestamp = timestamp
 
-                self.add_sensor_data_to_db(recordset, lux_sensor, lux_channel, timestamp, datetime.datetime.fromtimestamp(epoch[0]+1), value)
+                self.add_sensor_data_to_db(recordset, lux_sensor, lux_channel, sensor_timestamps, value)
 
             # Flush to DB (ram)
             self.db.flush()

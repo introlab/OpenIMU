@@ -30,7 +30,7 @@ class ActigraphImporterTest(unittest.TestCase):
 
     def test_loading(self):
 
-        manager = DBManager('test.db', overwrite=True)
+        manager = DBManager('test.oi', overwrite=True)
         participant = Participant(name='My Participant', description='Participant Description')
         manager.update_participant(participant)
 
@@ -46,9 +46,8 @@ class ActigraphImporterTest(unittest.TestCase):
 
         importer.import_to_database(results)
 
-
         # Reload from database
-        manager = DBManager('test.db')
+        manager = DBManager('test.oi')
 
         recordsets = manager.get_all_recordsets()
         self.assertGreater(len(recordsets), 0)
@@ -78,7 +77,7 @@ class ActigraphImporterTest(unittest.TestCase):
 
     def test_async_loading(self):
 
-        manager = DBManager('test.db', overwrite=True)
+        manager = DBManager('test.oi', overwrite=True)
         participant = Participant(name='My Participant', description='Participant Description')
         manager.update_participant(participant)
 

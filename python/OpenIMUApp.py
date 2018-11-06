@@ -794,6 +794,7 @@ class EmittingStream(PyQt5.QtCore.QObject):
     def flush(self):
         pass
 
+
 # Main
 if __name__ == '__main__':
     app = QApplication(sys.argv)
