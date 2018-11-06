@@ -29,8 +29,8 @@ class ImportManager(QDialog):
         # Load supported importers
         importers = ImporterTypes()
         for i in range(0, len(importers.value_types)):
-            # Ignore WIMU and Actigraph for now as Importers hasn't been updated yet.
-            if importers.value_names[i] != 'WIMU' and importers.value_names[i] != 'Actigraph':
+            # Ignore WIMU for now as Importers hasn't been updated yet.
+            if importers.value_names[i] != 'WIMU':
                 self.UI.cmbFileType.addItem(importers.value_names[i], importers.value_types[i])
         self.UI.cmbFileType.setCurrentIndex(-1)
 
