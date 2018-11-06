@@ -180,6 +180,8 @@ class ActigraphImporter(BaseImporter):
                 recordset = self.get_recordset(epoch[0])
 
                 timevect = np.linspace(epoch[0], epoch[0] + 1, num=1, endpoint=False, dtype=np.float64)
+                # Create sensor timestamps first
+                sensor_timestamps = SensorTimestamps()
                 sensor_timestamps.timestamps = timevect
                 sensor_timestamps.update_timestamps()
 
@@ -195,7 +197,7 @@ class ActigraphImporter(BaseImporter):
         if data.__contains__('lux'):
             print('lux found')
             # Create sensor
-            lux_sensor = self.add_sensor_to_db(SensorType.LUX, 'Lux', info['Device Type'], 'Unknown', 1, 1)
+            lux_sensor = self.add_sensor_to_db(SensorType.LUX, 'Lux', info['Device Type'], 'Unknown', 0, 1)
 
             # Create channel
             lux_channel = self.add_channel_to_db(lux_sensor, Units.LUX, DataFormat.FLOAT32, 'Lux')
@@ -207,6 +209,8 @@ class ActigraphImporter(BaseImporter):
                 recordset = self.get_recordset(epoch[0])
 
                 timevect = np.linspace(epoch[0], epoch[0] + 1, num=1, endpoint=False, dtype=np.float64)
+                # Create sensor timestamps first
+                sensor_timestamps = SensorTimestamps()
                 sensor_timestamps.timestamps = timevect
                 sensor_timestamps.update_timestamps()
 
