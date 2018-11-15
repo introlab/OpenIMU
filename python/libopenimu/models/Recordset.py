@@ -4,10 +4,9 @@
  @date 05/04/2018
 """
 from libopenimu.models.Base import Base
-from libopenimu.models.Participant import Participant
 from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, TIMESTAMP
 from sqlalchemy.orm import relationship
-
+import datetime
 
 class Recordset(Base):
     __tablename__ = 'tabRecordsets'

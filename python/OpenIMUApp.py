@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QMainWindow, QWidget, QToolButton
-from PyQt5.QtWidgets import QApplication, QDialog, QTreeWidget, QTreeWidgetItem, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QWidget
+from PyQt5.QtWidgets import QApplication, QDialog, QTreeWidget, QTreeWidgetItem
 from PyQt5.QtGui import QIcon, QFont
 import PyQt5
 from PyQt5.QtCore import QLibraryInfo
@@ -8,26 +8,18 @@ from PyQt5.QtWidgets import QMessageBox
 from pprint import pprint
 from PyQt5.QtCore import  QDir
 
-
-
-# from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineSettings
-from PyQt5.QtQuickWidgets import QQuickWidget
-
 from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal
 from libopenimu.qt.Charts import IMUChartView
 
 from libopenimu.models.ProcessedData import ProcessedData
 from libopenimu.models.Base import Base
 
-import numpy as np
-import libopenimu.jupyter.Jupyter as Jupyter
 import gc
 
 from enum import Enum
 
 # UI
 from resources.ui.python.MainWindow_ui import Ui_MainWindow
-from resources.ui.python.StartDialog_ui import Ui_StartDialog
 from libopenimu.qt.ImportWindow import ImportWindow
 from libopenimu.qt.GroupWindow import GroupWindow
 from libopenimu.qt.ParticipantWindow import ParticipantWindow
@@ -38,19 +30,15 @@ from libopenimu.qt.ImportBrowser import ImportBrowser
 from libopenimu.qt.ExportWindow import ExportWindow
 
 # Models
-from libopenimu.models.Group import Group
 from libopenimu.models.Participant import Participant
 from libopenimu.models.DataSet import DataSet
 
 # Database
 from libopenimu.db.DBManager import DBManager
 
-
 # Python
 import sys
 from datetime import datetime
-import locale
-
 
 class LogTypes(Enum):
     LOGTYPE_INFO = 0
@@ -66,7 +54,7 @@ class MainWindow(QMainWindow):
     currentDataSet = DataSet()
 
     def __init__(self, parent=None):
-        super(QMainWindow, self).__init__(parent=parent)
+        super(MainWindow, self).__init__(parent=parent)
         self.UI = Ui_MainWindow()
         self.UI.setupUi(self)
         self.UI.dockToolBar.setTitleBarWidget(QWidget())
@@ -159,7 +147,8 @@ class MainWindow(QMainWindow):
             self.UI.treeDataSet.update_result(result)
 
 
-    """def create_subrecord_item(self, name, id):
+    """
+    def create_subrecord_item(self, name, id):
         item = QTreeWidgetItem()
         item.setText(0, name)
         item.setIcon(0, QIcon(':/OpenIMU/icons/subrecord.png'))
@@ -176,8 +165,7 @@ class MainWindow(QMainWindow):
         item.setData(1, Qt.UserRole, 'sensor')
         item.setFont(0, QFont('Helvetica', 12))
         return item
-
-  """
+    """
     def update_group(self, group):
         item = self.UI.treeDataSet.update_group(group)
         self.UI.treeDataSet.setCurrentItem(item)
@@ -212,20 +200,20 @@ class MainWindow(QMainWindow):
         if text == ' ' or text == '\n':
             return
 
-        format = ""
+        log_format = ""
         if log_type == LogTypes.LOGTYPE_INFO:
-            format = "<span style='color:black'>"
+            log_format = "<span style='color:black'>"
         if log_type == LogTypes.LOGTYPE_WARNING:
-            format = "<span style='color:orange;font-style:italic'>"
+            log_format = "<span style='color:orange;font-style:italic'>"
         if log_type == LogTypes.LOGTYPE_ERROR:
-            format = "<span style='color:red;font-weight:bold'>"
+            log_format = "<span style='color:red;font-weight:bold'>"
         if log_type == LogTypes.LOGTYPE_DEBUG:
-            format = "<span style='color:grey;font-style:italic'>"
+            log_format = "<span style='color:grey;font-style:italic'>"
         if log_type == LogTypes.LOGTYPE_DONE:
-            format = "<span style='color:green;font-weight:bold'>"
+            log_format = "<span style='color:green;font-weight:bold'>"
 
         self.UI.txtLog.append("<span style='color:grey'>" + datetime.now().strftime(
-            "%H:%M:%S.%f") + " </span>" + format + text + "</span>")
+            "%H:%M:%S.%f") + " </span>" + log_format + text + "</span>")
         self.UI.txtLog.ensureCursorVisible();
         QApplication.processEvents()
 
@@ -250,10 +238,10 @@ class MainWindow(QMainWindow):
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
 
-    @pyqtSlot(QUrl)
+    """@pyqtSlot(QUrl)
     def urlChanged(self, url):
         print('url: ', url)
-
+    """
     @pyqtSlot()
     def importRequested(self):
         importer = ImportBrowser(dataManager=self.dbMan)
@@ -419,17 +407,7 @@ class MainWindow(QMainWindow):
             self.clear_main_widgets()
 
     def closeEvent(self, event):
-        pass
-        # print('closeEvent')
-
-        """self.jupyter.stop()
-        del self.jupyter
-        self.jupyter = None
-        """
-
-    def __del__(self):
-        # print('Done!')
-        pass
+        return
 
     def create_chart_view(self, test_data=False):
         chart_view = IMUChartView(self)
@@ -455,7 +433,7 @@ class Treedatawidget(QTreeWidget):
     owner = None
 
     def __init__(self, parent=None):
-        super(QTreeWidget, self).__init__(parent=parent)
+        super(Treedatawidget, self).__init__(parent=parent)
 
     def remove_group(self,group):
         item = self.items_groups.get(group.id_group, None)
@@ -657,12 +635,14 @@ class Treedatawidget(QTreeWidget):
 
         return item
 
+    @classmethod
     def get_item_type(self,item):
         if item is not None:
             return item.data(1, Qt.UserRole)
         else:
             return ""
 
+    @classmethod
     def get_item_id(self,item):
         if item is not None:
             return item.data(0, Qt.UserRole)
@@ -692,7 +672,7 @@ class Treedatawidget(QTreeWidget):
     @pyqtSlot(str, Base)
     def update_item(self, item_type, data):
         # print ("Selecting " + item_type + ", ID " + str(item_id))
-        item = None
+        # item = None
         if item_type == "group":
             self.update_group(data)
 

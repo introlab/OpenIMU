@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1245</width>
-    <height>1122</height>
+    <width>925</width>
+    <height>587</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -85,7 +85,7 @@ QToolButton#btnShowDataset:checked,QToolButton#btnShowLog:checked{background-col
   </property>
   <widget class="QWidget" name="frmMain">
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>

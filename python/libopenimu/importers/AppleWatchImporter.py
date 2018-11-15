@@ -10,30 +10,28 @@ from libopenimu.importers.BaseImporter import BaseImporter
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.SensorTimestamps import SensorTimestamps
 from libopenimu.models.units import Units
-from libopenimu.models.Recordset import Recordset
+# from libopenimu.models.Recordset import Recordset
 from libopenimu.models.data_formats import DataFormat
-from libopenimu.tools.timing import timing
+# from libopenimu.tools.timing import timing
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.Participant import Participant
 from libopenimu.importers.wimu import GPSGeodetic
-from libopenimu.importers.importer_types import BeaconData
+# from libopenimu.importers.importer_types import BeaconData
 
 import numpy as np
-import math
-import datetime
+# import math
 
-import struct
-import sys
-import binascii
+# import sys
+# import binascii
 import datetime
-import string
-import os
+# import string
+# import os
 import zipfile
 import struct
 import json  # For file header config
 import gc
 
-from collections import defaultdict
+# from collections import defaultdict
 
 
 class AppleWatchImporter(BaseImporter):

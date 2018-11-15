@@ -6,9 +6,8 @@
 """
 
 import sqlalchemy
-from sqlalchemy import create_engine, asc, desc
-from sqlalchemy.orm import sessionmaker,query, session
-from sqlalchemy.sql import table, insert, text
+from sqlalchemy import create_engine, asc
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
 
@@ -19,9 +18,7 @@ import numpy as np
 import pickle
 
 # Basic definitions
-from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.data_formats import DataFormat
-from libopenimu.models.units import Units
 
 # All the models
 from libopenimu.models.Base import Base
@@ -35,14 +32,6 @@ from libopenimu.models.SensorTimestamps import SensorTimestamps
 from libopenimu.models.DataSet import DataSet
 from libopenimu.models.ProcessedData import ProcessedData
 from libopenimu.models.ProcessedDataRef import ProcessedDataRef
-
-"""
-TODO This might be optimized?
-
-Offering the same interface as DBManagerOld
-
-"""
-
 
 
 class DBManager:
@@ -66,7 +55,6 @@ class DBManager:
 
         # Session instance
         self.session = self.SessionMaker()
-
 
     @event.listens_for(Engine, "connect")
     def set_sqlite_pragma(dbapi_connection, connection_record):
@@ -316,14 +304,15 @@ class DBManager:
             # print (query)
             return query.all()
         else:
-            query = self.session.query(Recordset).filter(Recordset.id_participant == participant.id_participant).order_by(asc(Recordset.start_timestamp))
+            query = self.session.query(Recordset).filter(Recordset.id_participant == participant.id_participant)\
+                    .order_by(asc(Recordset.start_timestamp))
             return query.all()
-    #####################
+
     def get_sensors(self, recordset):
-        query = self.session.query(Sensor).join(SensorData).filter(SensorData.id_recordset == recordset.id_recordset).group_by(Sensor.id_sensor).order_by(asc(Sensor.name))
+        query = self.session.query(Sensor).join(SensorData).filter(SensorData.id_recordset == recordset.id_recordset)\
+                .group_by(Sensor.id_sensor).order_by(asc(Sensor.location)).order_by(asc(Sensor.name))
         return query.all()
 
-    #####################
     def add_channel(self, sensor, id_sensor_unit, id_data_format, label):
         # Check if that sensor is already present in the database
         query = self.session.query(Channel).filter((Channel.sensor == sensor) &
@@ -332,7 +321,7 @@ class DBManager:
                                                   (Channel.label == label))
 
         if query.first():
-            #print("Channel " + label + " already present in DB!")
+            # print("Channel " + label + " already present in DB!")
             return query.first()
 
         # Create object
