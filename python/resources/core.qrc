@@ -27,5 +27,11 @@
         <file>icons/OpenIMU.png</file>
         <file>icons/tree.png</file>
         <file>icons/log.png</file>
+        <file>icons/zoom_in.png</file>
+        <file>icons/zoom_out.png</file>
+        <file>icons/zoom_reset.png</file>
+        <file>icons/zoom_selection.png</file>
+        <file>icons/selection_clear.png</file>
+        <file>icons/show_hide.png</file>
     </qresource>
 </RCC>

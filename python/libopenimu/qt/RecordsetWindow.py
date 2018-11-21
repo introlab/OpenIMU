@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QListWidgetItem, QGraphicsScene, QApplication
+from PyQt5.QtWidgets import QWidget, QListWidgetItem
+from PyQt5.QtWidgets import QGraphicsScene, QApplication, QGraphicsRectItem, QGraphicsLineItem, QGraphicsItem
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtGui import QIcon, QBrush, QPen, QColor, QFont
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QPoint, QRect, QObject
@@ -34,10 +35,13 @@ class RecordsetWindow(QWidget):
         self.sensors = {}
         self.sensors_items = {}
         self.sensors_graphs = {}
+        self.sensors_location = []
 
         self.time_pixmap = False
 
-        self.time_bar = None
+        self.time_bar = QGraphicsLineItem()
+        self.selection_rec = QGraphicsRectItem()
+        self.zoom_level = 1
 
         self.dbMan = manager
         self.recordsets = recordset
@@ -45,8 +49,10 @@ class RecordsetWindow(QWidget):
         # Init temporal browser
         self.timeScene = QGraphicsScene()
         self.UI.graphTimeline.setScene(self.timeScene)
-        self.UI.graphTimeline.fitInView(self.timeScene.sceneRect(), Qt.KeepAspectRatio)
+        self.UI.graphTimeline.fitInView(self.timeScene.sceneRect())
         self.UI.graphTimeline.time_clicked.connect(self.timeview_clicked)
+        self.UI.graphTimeline.time_selected.connect(self.timeview_selected)
+        self.UI.scrollTimeline.valueChanged.connect(self.timeview_scroll)
 
         # Init temporal sensor list
         self.timeSensorsScene = QGraphicsScene()
@@ -60,6 +66,13 @@ class RecordsetWindow(QWidget):
         self.load_sensors()
 
         self.UI.lstSensors.itemChanged.connect(self.sensor_current_changed)
+        self.UI.btnClearSelection.clicked.connect(self.on_timeview_clear_selection_requested)
+        self.UI.btnTimeZoomSelection.clicked.connect(self.on_timeview_zoom_selection_requested)
+        self.UI.btnZoomReset.clicked.connect(self.on_timeview_zoom_reset_requested)
+        self.UI.btnDisplayTimeline.clicked.connect(self.on_timeview_show_hide_requested)
+        self.UI.btnZoomReset.setEnabled(False)
+        self.UI.btnTimeZoomSelection.setEnabled(False)
+        self.UI.btnClearSelection.setEnabled(False)
 
         # self.UI.frmSensors.setFixedHeight(self.height()-50)
 
@@ -69,7 +82,8 @@ class RecordsetWindow(QWidget):
             self.time_pixmap = True
 
     def resizeEvent(self, resize_event):
-        self.refresh_timeview()
+        # self.refresh_timeview()
+        return
 
     def refresh_timeview(self):
         # Computes required timescene size
@@ -92,27 +106,54 @@ class RecordsetWindow(QWidget):
 
         # Update display
         self.draw_dates()
+        self.draw_sensors_names()
         self.draw_recordsets()
         self.draw_sensors()
         self.draw_grid()
         self.draw_timebar()
 
         # Adjust splitter sizes
-        self.timeScene.setSceneRect(self.timeScene.itemsBoundingRect())
-        self.timeSensorsScene.setSceneRect(self.timeSensorsScene.itemsBoundingRect())
-        # self.UI.graphTimeline.setMaximumHeight(self.timeScene.itemsBoundingRect().height())
-        # self.UI.graphSensorsTimeline.setMaximumHeight(self.timeScene.itemsBoundingRect().height())
-        self.UI.frameTimeline.setMaximumHeight(self.timeSensorsScene.height() + self.UI.frameCursor.height() +
-                                               self.UI.frameInfos.height() + 10)
-
-        min_height = self.UI.frameTimeline.maximumHeight();
-        self.UI.mainSplitter.setSizes([min_height, 1])
+        self.adjust_timeview_size()
         # self.UI.frmSensors.hide()
+
+    def adjust_timeview_size(self):
+        self.UI.frameScrollSpacer.setFixedWidth(self.UI.graphTimeline.pos().x())
+        if self.timeScene.itemsBoundingRect().width() * self.zoom_level > self.UI.graphTimeline.width():
+            self.UI.scrollTimeline.setVisible(True)
+            # self.UI.scrollTimeline.setMinimum(self.UI.graphTimeline.width()/2)
+            self.UI.scrollTimeline.setMinimum(0)
+            self.UI.scrollTimeline.setMaximum(self.timeScene.itemsBoundingRect().width() * self.zoom_level)
+            self.UI.scrollTimeline.setPageStep(self.UI.graphTimeline.width()/2)
+            self.UI.scrollTimeline.setSingleStep(self.UI.graphTimeline.width()/5)
+        else:
+            self.UI.scrollTimeline.setVisible(False)
+
+        # self.timeScene.setSceneRect(self.timeScene.itemsBoundingRect())
+        # self.timeSensorsScene.setSceneRect(self.timeSensorsScene.itemsBoundingRect())
+
+        # Compute size based on items
+        """ max_size = 20 # Date
+        max_size += len(self.sensors)*20 + len(self.sensors_location)*15
+
+        if self.UI.graphTimeline.horizontalScrollBar().isVisible():
+            max_size += 20  # Scrollbar, if needed
+        self.UI.graphTimeline.setFixedHeight(max_size)
+        self.UI.graphSensorsTimeline.setFixedHeight(max_size)
+        """
+        # min_height = self.timeScene.itemsBoundingRect().height()
+        # self.UI.graphTimeline.setFixedHeight(min_height)
+        # self.UI.graphSensorsTimeline.setFixedHeight(min_height)
+        # self.UI.frameTimeline.setMaximumHeight(self.timeSensorsScene.height() + self.UI.frameCursor.height() +
+        #                                       self.UI.frameInfos.height())
+
+        # min_height = self.timeScene.height() # self.UI.frameTimeline.maximumHeight()
+        # self.UI.mainSplitter.setSizes([min_height, -1])
 
     def load_sensors(self):
         self.UI.lstSensors.clear()
         self.sensors = {}
         self.sensors_items = {}
+        self.sensors_location = []
 
         # Create sensor colors
         # colors = QColor.colorNames()
@@ -132,8 +173,12 @@ class RecordsetWindow(QWidget):
 
         if len(self.recordsets) > 0:
             # TODO: Use sensors from all recordsets
-            for sensor in self.dbMan.get_sensors(self.recordsets[0]):
-                self.sensors[sensor.id_sensor] = sensor
+            for recordset in self.recordsets:
+                for sensor in self.dbMan.get_sensors(recordset):
+                    if sensor.id_sensor not in self.sensors:
+                        self.sensors[sensor.id_sensor] = sensor
+                    if sensor.location not in self.sensors_location:
+                        self.sensors_location.append(sensor.location)
 
         for sensor in self.sensors.values():
             index = -1
@@ -240,13 +285,14 @@ class RecordsetWindow(QWidget):
         blue_brush = QBrush(Qt.darkBlue)
 
         # Date background
-        self.timeScene.addRect(0, 0, self.timeScene.width(), 20, black_pen, blue_brush);
-        self.timeSensorsScene.addRect(0, 0, self.timeSensorsScene.width(), 20, black_pen, blue_brush);
+        self.timeScene.addRect(0, 0, self.timeScene.width(), 20, black_pen, blue_brush)
+        self.timeSensorsScene.addRect(0, 0, self.timeSensorsScene.width(), 20, black_pen, blue_brush)
 
         # First date
         date_text = self.timeScene.addText(start_time.strftime("%d-%m-%Y"))
         date_text.setPos(0, 0)  # -5
         date_text.setDefaultTextColor(Qt.white)
+        date_text.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
 
         # Date separators
         while current_time <= end_time:
@@ -254,6 +300,7 @@ class RecordsetWindow(QWidget):
             date_text = self.timeScene.addText(current_time.strftime("%d-%m-%Y"))
             date_text.setPos(pos, 0)  # -5
             date_text.setDefaultTextColor(Qt.white)
+            date_text.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
             current_time += timedelta(days=1)
 
         # self.UI.graphTimeline.fitInView(self.timeScene.sceneRect(), Qt.KeepAspectRatio)
@@ -268,9 +315,9 @@ class RecordsetWindow(QWidget):
         # time_span = (end_time - start_time).total_seconds()  # Total number of seconds in recordsets
         current_time = (datetime(start_time.year, start_time.month, start_time.day, 0, 0, 0) + timedelta(days=1))
 
-
         vgrid_pen = QPen(Qt.gray)
         hgrid_pen = QPen(Qt.black)
+        vgrid_pen.setCosmetic(True)
 
         # Horizontal lines
         pos = 20
@@ -311,20 +358,41 @@ class RecordsetWindow(QWidget):
             end_pos = self.get_relative_timeview_pos(record.end_timestamp)
             span = end_pos - start_pos
             # print (str(span))
-            self.timeScene.addRect(start_pos, 21, span, self.timeScene.height()-21, recordset_pen, recordset_brush)
+            self.timeScene.addRect(start_pos, 21, span, self.timeSensorsScene.height()-21, recordset_pen,
+                                   recordset_brush)
 
         # self.UI.graphTimeline.update()
         return
 
-    def draw_sensors(self):
+    def draw_sensors_names(self):
         if len(self.sensors) == 0:
             return
 
-        sensor_brush = QBrush(Qt.darkGreen)
-        sensor_pen = QPen(Qt.transparent)
         sensor_location_brush = QBrush(Qt.black)
         sensor_location_pen = QPen(Qt.transparent)
 
+        # Sensor names
+        pos = 20
+        last_location = ""
+        for sensor in self.sensors.values():
+            # Sensor location
+            if sensor.location != last_location:
+                # Must create a new location space for later
+                pos += 15
+                last_location = sensor.location
+
+            # Sensor names
+            label = self.timeSensorsScene.addText(sensor.name)
+            label.setPos(0, pos)
+            label.setDefaultTextColor(Qt.black)
+            # label.setFont(QFont("Times", 10, QFont.Bold))
+            pos += 20
+
+        # Adjust size appropriately
+        self.timeSensorsScene.setSceneRect(self.timeSensorsScene.itemsBoundingRect())
+        self.UI.graphSensorsTimeline.setMaximumWidth(self.timeSensorsScene.itemsBoundingRect().width())
+
+        # Sensor location background
         pos = 20
         last_location = ""
         for sensor in self.sensors.values():
@@ -339,12 +407,23 @@ class RecordsetWindow(QWidget):
                 label.setFont(QFont("Times", 7))
                 pos += 15
                 last_location = sensor.location
+            pos += 20
 
-            # Sensor names
-            label = self.timeSensorsScene.addText(sensor.name)
-            label.setPos(0, pos)
-            label.setDefaultTextColor(Qt.black)
-            # label.setFont(QFont("Times", 10, QFont.Bold))
+    def draw_sensors(self):
+        if len(self.sensors) == 0:
+            return
+
+        sensor_brush = QBrush(Qt.darkGreen)
+        sensor_pen = QPen(Qt.transparent)
+
+        pos = 20
+        last_location = ""
+        for sensor in self.sensors.values():
+            # Sensor location
+            if sensor.location != last_location:
+                # Must skips a space for sensor location
+                pos += 15
+                last_location = sensor.location
 
             # Sensor data
             for record in self.recordsets:
@@ -365,6 +444,7 @@ class RecordsetWindow(QWidget):
         line_pen = QPen(Qt.cyan)
         line_pen.setWidth(2)
         self.time_bar = self.timeScene.addLine(0, 1, 0, self.timeScene.height(), line_pen)
+        self.time_bar.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
 
     @pyqtSlot(QListWidgetItem)
     def sensor_current_changed(self, item):
@@ -426,7 +506,7 @@ class RecordsetWindow(QWidget):
             if graph is not None:
                 self.UI.mdiArea.addSubWindow(graph).setWindowTitle(item.text())
                 self.sensors_graphs[sensor.id_sensor] = graph
-                #self.UI.displayContents.layout().insertWidget(0,graph)
+                # self.UI.displayContents.layout().insertWidget(0,graph)
 
                 graph.show()
                 QApplication.instance().processEvents()
@@ -474,9 +554,12 @@ class RecordsetWindow(QWidget):
         self.UI.lblCursorTime.setText(datetime.fromtimestamp(timestamp/1000).strftime('%d-%m-%Y %H:%M:%S'))
 
     @pyqtSlot(int)
+    def timeview_scroll(self, pos):
+        self.UI.graphTimeline.centerOn(pos / self.zoom_level, 0)
+
+    @pyqtSlot(float)
     def timeview_clicked(self, x):
         self.time_bar.setPos(x, 0)
-
         # Find time corresponding to that position
         timestamp = self.get_time_from_timeview_pos(x)
         self.UI.lblCursorTime.setText(timestamp.strftime('%d-%m-%Y %H:%M:%S'))
@@ -488,9 +571,55 @@ class RecordsetWindow(QWidget):
             # except AttributeError:
             #    continue
 
+    @pyqtSlot(float, float)
+    def timeview_selected(self, start_x, end_x):
+        selection_brush = QBrush(QColor(153, 204, 255, 128))
+        selection_pen = QPen(Qt.transparent)
+        self.timeScene.removeItem(self.selection_rec)
+        self.selection_rec = self.timeScene.addRect(start_x, 20, end_x-start_x, self.timeScene.height()-20,
+                                                    selection_pen, selection_brush)
+
+        self.UI.btnClearSelection.setEnabled(True)
+        self.UI.btnTimeZoomSelection.setEnabled(True)
+
+    @pyqtSlot()
+    def on_timeview_clear_selection_requested(self):
+        self.timeScene.removeItem(self.selection_rec)
+        self.UI.btnClearSelection.setEnabled(False)
+        self.UI.btnTimeZoomSelection.setEnabled(False)
+
+    @pyqtSlot()
+    def on_timeview_zoom_selection_requested(self):
+        self.UI.graphTimeline.scale(1 / self.zoom_level, 1)
+        # zoom_value = (self.timeScene.width() / (self.selection_rec.rect().width()))
+        zoom_value = (self.UI.graphTimeline.width() / (self.selection_rec.rect().width()))
+        self.zoom_level = zoom_value
+        self.UI.graphTimeline.scale(zoom_value, 1)
+        self.UI.btnZoomReset.setEnabled(True)
+        self.adjust_timeview_size()
+        # self.UI.graphTimeline.ensureVisible(self.selection_rec.rect(), 0, 0)
+        # self.UI.graphTimeline.centerOn(self.selection_rec.rect().x() + self.selection_rec.rect().width() / 2, 0)
+        self.UI.scrollTimeline.setValue((self.selection_rec.rect().x() + self.selection_rec.rect().width() / 2)
+                                        * self.zoom_level)
+        self.on_timeview_clear_selection_requested()
+
+    @pyqtSlot()
+    def on_timeview_zoom_reset_requested(self):
+        self.UI.graphTimeline.scale(1 / self.zoom_level, 1)
+        self.zoom_level = 1
+        self.UI.btnZoomReset.setEnabled(False)
+        self.adjust_timeview_size()
+        self.UI.scrollTimeline.setValue(0)
+
+    @pyqtSlot()
+    def on_timeview_show_hide_requested(self):
+        visible = not self.UI.frameTimeline.isVisible()
+        self.UI.frameTimeline.setVisible(visible)
+        self.UI.frameTimelineControls.setVisible(visible)
+        # self.UI.lblCursorTime.setVisible(visible)
+
     @timing
     def create_data_timeseries(self, sensor_data_list: list):
-
         time_values = []
         data_values = []
 
