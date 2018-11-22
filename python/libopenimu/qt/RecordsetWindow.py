@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QListWidgetItem
 from PyQt5.QtWidgets import QGraphicsScene, QApplication, QGraphicsRectItem, QGraphicsLineItem, QGraphicsItem
-from PyQt5.QtWidgets import QDialog
-from PyQt5.QtGui import QIcon, QBrush, QPen, QColor, QFont
+from PyQt5.QtWidgets import QDialog, QMenu, QAction
+from PyQt5.QtGui import QBrush, QPen, QColor, QFont
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QPoint, QRect, QObject
 
 from resources.ui.python.RecordsetWidget_ui import Ui_frmRecordsets
@@ -32,17 +32,23 @@ class RecordsetWindow(QWidget):
         self.UI = Ui_frmRecordsets()
         self.UI.setupUi(self)
 
-        self.sensors = {}
-        self.sensors_items = {}
-        self.sensors_graphs = {}
-        self.sensors_location = []
+        # Internal lists
+        self.sensors = {}           # List of sensors objects
+        self.sensors_items = {}     # List of QAction corresponding to each sensors
+        self.sensors_graphs = {}    # List of graph corresponding to each sensor graph
+        self.sensors_location = []  # List of sensors location in this recordset
 
-        self.time_pixmap = False
+        # Variables
+        self.time_pixmap = False    # Flag used to check if we need to repaint the timeline or not
+        self.zoom_level = 1         # Current timeview zoom level
 
-        self.time_bar = QGraphicsLineItem()
-        self.selection_rec = QGraphicsRectItem()
-        self.zoom_level = 1
+        # Manually created UI objects
+        self.time_bar = QGraphicsLineItem()         # Currently selected timestamp bar
+        self.selection_rec = QGraphicsRectItem()    # Section rectangle
+        self.sensors_menu = QMenu(self.UI.btnNewGraph)
+        self.UI.btnNewGraph.setMenu(self.sensors_menu)
 
+        # Data access informations
         self.dbMan = manager
         self.recordsets = recordset
 
@@ -65,16 +71,20 @@ class RecordsetWindow(QWidget):
         # Load sensors for that recordset
         self.load_sensors()
 
-        self.UI.lstSensors.itemChanged.connect(self.sensor_current_changed)
+        # Connect signals to slots
         self.UI.btnClearSelection.clicked.connect(self.on_timeview_clear_selection_requested)
         self.UI.btnTimeZoomSelection.clicked.connect(self.on_timeview_zoom_selection_requested)
         self.UI.btnZoomReset.clicked.connect(self.on_timeview_zoom_reset_requested)
         self.UI.btnDisplayTimeline.clicked.connect(self.on_timeview_show_hide_requested)
+        self.UI.btnTileHorizontal.clicked.connect(self.tile_graphs_horizontally)
+        self.UI.btnTileVertical.clicked.connect(self.tile_graphs_vertically)
+        self.UI.btnTileAuto.clicked.connect(self.tile_graphs_auto)
+        self.sensors_menu.triggered.connect(self.sensor_graph_selected)
+
+        # Initial UI state
         self.UI.btnZoomReset.setEnabled(False)
         self.UI.btnTimeZoomSelection.setEnabled(False)
         self.UI.btnClearSelection.setEnabled(False)
-
-        # self.UI.frmSensors.setFixedHeight(self.height()-50)
 
     def paintEvent(self, paint_event):
         if not self.time_pixmap:
@@ -82,7 +92,11 @@ class RecordsetWindow(QWidget):
             self.time_pixmap = True
 
     def resizeEvent(self, resize_event):
-        # self.refresh_timeview()
+        self.refresh_timeview()
+        # print(self.height())
+        # print(self.UI.frameTop.minimumSizeHint().height())
+        # self.UI.frmSensors.setMaximumWidth(self.UI.frameTop.width())
+        # self.UI.frmSensors.setMaximumHeight(self.height() - self.UI.frameTop.minimumSizeHint().height() - 100)
         return
 
     def refresh_timeview(self):
@@ -128,94 +142,27 @@ class RecordsetWindow(QWidget):
         else:
             self.UI.scrollTimeline.setVisible(False)
 
-        # self.timeScene.setSceneRect(self.timeScene.itemsBoundingRect())
-        # self.timeSensorsScene.setSceneRect(self.timeSensorsScene.itemsBoundingRect())
-
-        # Compute size based on items
-        """ max_size = 20 # Date
-        max_size += len(self.sensors)*20 + len(self.sensors_location)*15
-
-        if self.UI.graphTimeline.horizontalScrollBar().isVisible():
-            max_size += 20  # Scrollbar, if needed
-        self.UI.graphTimeline.setFixedHeight(max_size)
-        self.UI.graphSensorsTimeline.setFixedHeight(max_size)
-        """
-        # min_height = self.timeScene.itemsBoundingRect().height()
-        # self.UI.graphTimeline.setFixedHeight(min_height)
-        # self.UI.graphSensorsTimeline.setFixedHeight(min_height)
-        # self.UI.frameTimeline.setMaximumHeight(self.timeSensorsScene.height() + self.UI.frameCursor.height() +
-        #                                       self.UI.frameInfos.height())
-
-        # min_height = self.timeScene.height() # self.UI.frameTimeline.maximumHeight()
-        # self.UI.mainSplitter.setSizes([min_height, -1])
-
     def load_sensors(self):
-        self.UI.lstSensors.clear()
+
+        # self.UI.lstSensors.clear()
         self.sensors = {}
         self.sensors_items = {}
         self.sensors_location = []
-
-        # Create sensor colors
-        # colors = QColor.colorNames()
-        colors = ['darkblue', 'darkviolet', 'darkgreen', 'darkorange', 'darkred', 'darkslategray', 'darkturquoise',
-                  'darkolivegreen', 'darkseagreen', 'darkmagenta', 'darkkhaki',
-                  'darkslateblue', 'darksalmon', 'darkorchid',  'darkcyan']
-
-        # Filter "bad" colors for sensors
-        """colors.remove("white")
-        colors.remove("black")
-        colors.remove("transparent")
-        colors.remove("red")
-        colors.remove("green")"""
-
-        # shuffle(colors)
-        color_index = 0
+        self.sensors_menu.clear()
 
         if len(self.recordsets) > 0:
-            # TODO: Use sensors from all recordsets
             for recordset in self.recordsets:
                 for sensor in self.dbMan.get_sensors(recordset):
-                    if sensor.id_sensor not in self.sensors:
-                        self.sensors[sensor.id_sensor] = sensor
                     if sensor.location not in self.sensors_location:
                         self.sensors_location.append(sensor.location)
-
-        for sensor in self.sensors.values():
-            index = -1
-            location_item = self.UI.lstSensors.findItems(sensor.location, Qt.MatchExactly)
-            if len(location_item) == 0:
-                item = QListWidgetItem(sensor.location)
-                item.setFlags(Qt.NoItemFlags)
-                item.setForeground(QBrush(Qt.black))
-
-                self.UI.lstSensors.addItem(item)
-            else:
-                index = self.UI.lstSensors.indexFromItem(location_item[0]).row()
-
-            # Check if sensor is already there under that location item
-            sensor_name = sensor.name + " (" + sensor.hw_name + ")"
-            present = False
-            if index != -1:
-                for i in range(index, self.UI.lstSensors.count()):
-                    if self.UI.lstSensors.item(i).text() == sensor_name:
-                        present = True
-                        break
-
-            if not present:
-                item = QListWidgetItem(QIcon(':/OpenIMU/icons/sensor.png'), sensor_name)
-                item.setCheckState(Qt.Unchecked)
-                item.setForeground(QColor(colors[color_index]))
-                item.setData(Qt.UserRole, sensor.id_sensor)
-                # self.sensors_colors.append(colors[color_index])
-                self.sensors_items[sensor.id_sensor] = item
-                color_index += 1
-                if color_index >= len(colors):
-                    color_index = 0
-
-                if index == -1:
-                    self.UI.lstSensors.addItem(item)
-                else:
-                    self.UI.lstSensors.insertItem(index + 2, item)
+                        self.sensors_menu.addSection(sensor.location)
+                    if sensor.id_sensor not in self.sensors:
+                        self.sensors[sensor.id_sensor] = sensor
+                        sensor_item = QAction(sensor.name)
+                        sensor_item.setCheckable(True)
+                        sensor_item.setProperty("sensor_id", sensor.id_sensor)
+                        self.sensors_items[sensor.id_sensor] = sensor_item
+                        self.sensors_menu.addAction(sensor_item)
 
     def update_recordset_infos(self):
         if len(self.recordsets) == 0:
@@ -446,14 +393,15 @@ class RecordsetWindow(QWidget):
         self.time_bar = self.timeScene.addLine(0, 1, 0, self.timeScene.height(), line_pen)
         self.time_bar.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
 
-    @pyqtSlot(QListWidgetItem)
-    def sensor_current_changed(self, item):
-        sensor = self.sensors[item.data(Qt.UserRole)]
+    @pyqtSlot(QAction)
+    def sensor_graph_selected(self, sensor_item):
+        sensor_id = sensor_item.property("sensor_id")
+        sensor = self.sensors[sensor_id]
         timeseries = []
-        # Color map
-        colors = [Qt.red, Qt.green, Qt.yellow, Qt.cyan]
+        # Color map for curves
+        colors = [Qt.blue, Qt.green, Qt.yellow, Qt.red]
 
-        if item.checkState() == Qt.Checked:
+        if sensor_item.isChecked():
             # Choose the correct display for each sensor
             graph = None
             channels = self.dbMan.get_all_channels(sensor=sensor)
@@ -478,20 +426,17 @@ class RecordsetWindow(QWidget):
                     or sensor.id_sensor_type == SensorType.ORIENTATION \
                     or sensor.id_sensor_type == SensorType.FSR:
 
-                #graph = IMUChartView(self.UI.displayContents)
+                # graph = IMUChartView(self.UI.displayContents)
                 graph = IMUChartView(self.UI.mdiArea)
                 # graph.add_test_data()
                 # Add series
                 for series in timeseries:
                     graph.add_data(series['x'], series['y'], color=colors.pop(), legend_text=series['label'])
 
-                graph.set_title(item.text())
+                graph.set_title(sensor.name + " (" + sensor.location + ")")
 
             if sensor.id_sensor_type == SensorType.GPS:
                 # graph = GPSView(self.UI.mdiArea)
-                """base_widget = QWidget(self.UI.displayContents)
-                base_widget.setFixedHeight(400)
-                base_widget.setMaximumHeight(400)"""
                 base_widget = self.UI.mdiArea
                 graph = GPSView(base_widget)
 
@@ -504,7 +449,7 @@ class RecordsetWindow(QWidget):
                     # print (gps)
 
             if graph is not None:
-                self.UI.mdiArea.addSubWindow(graph).setWindowTitle(item.text())
+                self.UI.mdiArea.addSubWindow(graph).setWindowTitle(sensor.name + " (" + sensor.location + ")")
                 self.sensors_graphs[sensor.id_sensor] = graph
                 # self.UI.displayContents.layout().insertWidget(0,graph)
 
@@ -514,7 +459,7 @@ class RecordsetWindow(QWidget):
                 graph.aboutToClose.connect(self.graph_was_closed)
                 graph.cursorMoved.connect(self.graph_cursor_changed)
 
-                #self.UI.displayArea.ensureWidgetVisible(graph)
+                # self.UI.displayArea.ensureWidgetVisible(graph)
                 # self.UI.displayArea.verticalScrollBar().setSliderPosition(self.UI.displayArea.verticalScrollBar().maximum())
                 # self.tile_graphs_vertically()
                 self.UI.mdiArea.tileSubWindows()
@@ -526,20 +471,18 @@ class RecordsetWindow(QWidget):
                     self.UI.mdiArea.removeSubWindow(self.sensors_graphs[sensor.id_sensor].parent())
                     self.sensors_graphs[sensor.id_sensor].hide()
                     self.sensors_graphs[sensor.id_sensor] = None
-                    # self.tile_graphs_vertically()
                     self.UI.mdiArea.tileSubWindows()
             except KeyError:
                 pass
-
+    
     @pyqtSlot(QObject)
     def graph_was_closed(self, graph):
         for sensor_id, sensor_graph in self.sensors_graphs.items():
             if sensor_graph == graph:
                 self.sensors_graphs[sensor_id] = None
-                self.sensors_items[sensor_id].setCheckState(Qt.Unchecked)
+                self.sensors_items[sensor_id].setChecked(False)
                 break
 
-        # self.tile_graphs_vertically()
         self.UI.mdiArea.tileSubWindows()
 
     @pyqtSlot(float)
@@ -655,6 +598,7 @@ class RecordsetWindow(QWidget):
             self.dataUpdateRequest.emit("result", window.processed_data)
             self.dataDisplayRequest.emit("result", window.processed_data.id_processed_data)
 
+    @pyqtSlot()
     def tile_graphs_horizontally(self):
 
         if self.UI.mdiArea.subWindowList() is None:
@@ -668,6 +612,7 @@ class RecordsetWindow(QWidget):
             window.move(position)
             position.setX(position.x() + window.width())
 
+    @pyqtSlot()
     def tile_graphs_vertically(self):
 
         if self.UI.mdiArea.subWindowList() is None:
@@ -682,3 +627,6 @@ class RecordsetWindow(QWidget):
             position.setY(position.y() + window.height())
 
 
+    @pyqtSlot()
+    def tile_graphs_auto(self):
+        self.UI.mdiArea.tileSubWindows()

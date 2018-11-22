@@ -85,7 +85,7 @@ QToolButton#btnShowDataset:checked,QToolButton#btnShowLog:checked{background-col
   </property>
   <widget class="QWidget" name="frmMain">
    <property name="sizePolicy">
-    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
