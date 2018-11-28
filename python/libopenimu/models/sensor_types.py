@@ -63,7 +63,8 @@ class SensorType:
 
     @staticmethod
     def sensor_type_validation(id_sensor_type):
-        assert(SensorType.is_valid_type(id_sensor_type) is True), "SensorType not in valid range"
+        # assert(SensorType.is_valid_type(id_sensor_type) is True), "SensorType not in valid range"
+        return
 
 
 # Not used...

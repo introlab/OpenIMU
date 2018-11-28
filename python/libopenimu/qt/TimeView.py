@@ -37,7 +37,7 @@ class TimeView(QGraphicsView):
 
     def mouseMoveEvent(self, event):
         if self.selecting:
-            current_pos =event.pos()
+            current_pos = event.pos()
             if current_pos.x() < self.initialClick.x():
                 start_x = current_pos.x()
                 width = self.initialClick.x() - start_x

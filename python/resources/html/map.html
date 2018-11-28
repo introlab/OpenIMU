@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>WIMU Studio 2</title>
+    <title>OpenIMU - GPS Map</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
     <style>
@@ -45,7 +45,13 @@ function initMap() {
 		strokeOpacity: 0.8,
 		strokeWeight: 2
 	});
+	selected_track = new google.maps.Polyline({
+		strokeColor: '#00ff00',
+		strokeOpacity: 0.8,
+		strokeWeight: 2
+	});
 	track.setMap(map);
+	selected_track.setMap(map);
 }
 
 function addPosition(lat, lng){
@@ -55,6 +61,19 @@ function addPosition(lat, lng){
   // Because path is an MVCArray, we can simply append a new coordinate
   // and it will automatically appear.
   path.push(myLatLng);
+}
+
+function addSelectedPosition(lat, lng){
+  var path = selected_track.getPath();
+  
+  myLatLng = new google.maps.LatLng(lat, lng);
+  // Because path is an MVCArray, we can simply append a new coordinate
+  // and it will automatically appear.
+  path.push(myLatLng);
+}
+
+function clearSelectedPath(){
+	selected_track.getPath().clear();
 }
 
 function setCurrentPosition(lat, lng) {
@@ -80,6 +99,18 @@ function setMarkerPosition(lat, lng){
 function clearMap() {
 	path.clear();
 	marker.clear();
+}
+function zoomIn(){
+	map.setZoom(map.zoom+1);
+}
+function zoomOut(){
+	map.setZoom(map.zoom-1);
+}
+function resetZoom(){
+	map.setZoom(15);
+}
+function isZoomed(){
+	return map.zoom == 15;
 }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDzwyGnWwge77qFtkOYHBQ0D76JIrLRic8&callback=initMap"

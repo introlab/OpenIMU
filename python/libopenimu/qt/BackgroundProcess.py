@@ -11,7 +11,7 @@ class ProgressDialog(QProgressDialog):
         self.setMinimum(0)
         self.setMaximum(self.total_count)
         self.time = QTime.currentTime()
-        self.time.start()
+        start()
         self.startTimer(1000)
         self.setCancelButton(None)
 

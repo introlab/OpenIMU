@@ -1,9 +1,12 @@
-import os, time, sys, subprocess, signal, platform, threading
+import os
+import sys
+import signal
+import platform
 
 from threading import Thread
 
 
-class JupyterNotebook2():
+class JupyterNotebook2:
     def __init__(self):
         self.thread = None
         self.start_thread()
@@ -19,8 +22,9 @@ class JupyterNotebook2():
     def wait_thread(self):
         pass
 
-    def notebook_thread(self):
-        from jupyter_console.app import launch_new_instance
+    @staticmethod
+    def notebook_thread():
+        # from jupyter_console.app import launch_new_instance
         # from IPython.terminal.ipapp import launch_new_instance
         # from IPython.lib import passwd
         from socket import gethostname
@@ -32,10 +36,10 @@ class JupyterNotebook2():
         sys.argv.append("--NotebookApp.ip=" + gethostname())
         sys.argv.append("--NotebookApp.open_browser=False")
         # sys.argv.append("--NotebookApp.password=" + passwd())
-        launch_new_instance()
+        # launch_new_instance()
 
 
-class JupyterNotebook():
+class JupyterNotebook:
     def __init__(self):
         self.notebooks_directory = os.getcwd() + '/../../notebooks'
         print('OS Name:', platform.system())
@@ -55,15 +59,6 @@ class JupyterNotebook():
     def __del__(self):
         self.stop()
 
-    def start(self):
-        self.jupyter_pid = subprocess.Popen([self.jupyter_executable, 'notebook'
-                               , "--NotebookApp.token=''"
-                               , '--notebook-dir=' + self.notebooks_directory
-                               , '--no-browser', '--port=8888'], cwd=self.working_directory).pid
-
-        print('Jupyter Notebook started with pid: ', self.jupyter_pid)
-        return self.jupyter_pid
-
     def stop(self):
         if self.jupyter_pid is not None:
             print('Stopping Jupyter Notebook process ... pid:', self.jupyter_pid)
@@ -71,8 +66,19 @@ class JupyterNotebook():
             self.jupyter_pid = None
 
 
+def start():
+    """ self.jupyter_pid = subprocess.Popen([self.jupyter_executable, 'notebook'
+                           , "--NotebookApp.token=''"
+                           , '--notebook-dir=' + self.notebooks_directory
+                           , '--no-browser', '--port=8888'], cwd=self.working_directory).pid
+
+    print('Jupyter Notebook started with pid: ', self.jupyter_pid)
+    return self.jupyter_pid
+    """
+    return -1
+
 if __name__ == '__main__':
-    from jupyter_core.application import JupyterApp
+    # from jupyter_core.application import JupyterApp
     # from IPython.terminal.ipapp import launch_new_instance
     # from IPython.lib import passwd
     from socket import gethostname
@@ -86,5 +92,5 @@ if __name__ == '__main__':
     # sys.argv.append("--NotebookApp.password=" + passwd())
     # launch_new_instance()
 
-    app = JupyterApp()
-    app.launch_instance()
+    # app = JupyterApp()
+    # app.launch_instance()

@@ -38,5 +38,8 @@
         <file>icons/tile_vertical.png</file>
         <file>icons/graph.png</file>
         <file>icons/tile_auto.png</file>
+        <file>icons/info.png</file>
+        <file>icons/move.png</file>
+        <file>icons/select.png</file>
     </qresource>
 </RCC>

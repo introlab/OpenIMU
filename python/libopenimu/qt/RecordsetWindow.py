@@ -5,13 +5,12 @@ from PyQt5.QtGui import QBrush, QPen, QColor, QFont
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QPoint, QRect, QObject
 
 from resources.ui.python.RecordsetWidget_ui import Ui_frmRecordsets
+from libopenimu.qt.GraphWindow import GraphType, GraphWindow
 
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.Base import Base
 from libopenimu.importers.wimu import GPSGeodetic
 
-from libopenimu.qt.Charts import IMUChartView
-from libopenimu.qt.GPSView import GPSView
 from libopenimu.qt.ProcessSelectWindow import ProcessSelectWindow
 
 from libopenimu.tools.timing import timing
@@ -85,6 +84,7 @@ class RecordsetWindow(QWidget):
         self.UI.btnZoomReset.setEnabled(False)
         self.UI.btnTimeZoomSelection.setEnabled(False)
         self.UI.btnClearSelection.setEnabled(False)
+        self.update_tile_buttons_state()
 
     def paintEvent(self, paint_event):
         if not self.time_pixmap:
@@ -390,20 +390,22 @@ class RecordsetWindow(QWidget):
     def draw_timebar(self):
         line_pen = QPen(Qt.cyan)
         line_pen.setWidth(2)
-        self.time_bar = self.timeScene.addLine(0, 1, 0, self.timeScene.height(), line_pen)
+        self.time_bar = self.timeScene.addLine(0, 21, 0, self.timeScene.height()-1, line_pen)
+        # self.time_bar = self.timeScene.addLine(0, 1, 0, self.timeScene.height() - 1, line_pen)
         self.time_bar.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
 
     @pyqtSlot(QAction)
     def sensor_graph_selected(self, sensor_item):
         sensor_id = sensor_item.property("sensor_id")
         sensor = self.sensors[sensor_id]
+        sensor_label = sensor.name + " (" + sensor.location + ")"
         timeseries = []
         # Color map for curves
         colors = [Qt.blue, Qt.green, Qt.yellow, Qt.red]
 
         if sensor_item.isChecked():
             # Choose the correct display for each sensor
-            graph = None
+            graph_window = None
             channels = self.dbMan.get_all_channels(sensor=sensor)
             for channel in channels:
                 # Will get all data (converted to floats)
@@ -426,42 +428,41 @@ class RecordsetWindow(QWidget):
                     or sensor.id_sensor_type == SensorType.ORIENTATION \
                     or sensor.id_sensor_type == SensorType.FSR:
 
-                # graph = IMUChartView(self.UI.displayContents)
-                graph = IMUChartView(self.UI.mdiArea)
+                graph_window = GraphWindow(GraphType.LINECHART, self.UI.mdiArea)
+
+                # graph = IMUChartView(self.UI.mdiArea)
                 # graph.add_test_data()
                 # Add series
                 for series in timeseries:
-                    graph.add_data(series['x'], series['y'], color=colors.pop(), legend_text=series['label'])
+                    graph_window.graph.add_data(series['x'], series['y'], color=colors.pop(), legend_text=series['label'])
 
-                graph.set_title(sensor.name + " (" + sensor.location + ")")
+                graph_window.graph.set_title(sensor_label)
 
             if sensor.id_sensor_type == SensorType.GPS:
                 # graph = GPSView(self.UI.mdiArea)
-                base_widget = self.UI.mdiArea
-                graph = GPSView(base_widget)
+                graph_window = GraphWindow(GraphType.MAP, self.UI.mdiArea)
 
                 for data in channel_data:
                     gps = GPSGeodetic()
                     gps.from_bytes(data.data)
                     if gps.latitude != 0 and gps.longitude != 0:
-                        graph.addPosition(data.timestamps.start_timestamp, gps.latitude / 1e7, gps.longitude / 1e7)
-                        graph.setCursorPositionFromTime(data.timestamps.start_timestamp)
-                    # print (gps)
+                        graph_window.graph.addPosition(data.timestamps.start_timestamp, gps.latitude / 1e7,
+                                                       gps.longitude / 1e7)
+                        graph_window.setCursorPositionFromTime(data.timestamps.start_timestamp)
 
-            if graph is not None:
-                self.UI.mdiArea.addSubWindow(graph).setWindowTitle(sensor.name + " (" + sensor.location + ")")
-                self.sensors_graphs[sensor.id_sensor] = graph
+            if graph_window is not None:
+                self.UI.mdiArea.addSubWindow(graph_window).setWindowTitle(sensor_label)
+                self.sensors_graphs[sensor.id_sensor] = graph_window
                 # self.UI.displayContents.layout().insertWidget(0,graph)
 
-                graph.show()
+                graph_window.show()
                 QApplication.instance().processEvents()
 
-                graph.aboutToClose.connect(self.graph_was_closed)
-                graph.cursorMoved.connect(self.graph_cursor_changed)
+                graph_window.aboutToClose.connect(self.graph_was_closed)
+                graph_window.graph.cursorMoved.connect(self.graph_cursor_changed)
+                graph_window.graph.selectedAreaChanged.connect(self.graph_selected_area_changed)
+                graph_window.graph.clearedSelectionArea.connect(self.on_timeview_clear_selection_requested)
 
-                # self.UI.displayArea.ensureWidgetVisible(graph)
-                # self.UI.displayArea.verticalScrollBar().setSliderPosition(self.UI.displayArea.verticalScrollBar().maximum())
-                # self.tile_graphs_vertically()
                 self.UI.mdiArea.tileSubWindows()
 
         else:
@@ -470,31 +471,73 @@ class RecordsetWindow(QWidget):
                 if self.sensors_graphs[sensor.id_sensor] is not None:
                     self.UI.mdiArea.removeSubWindow(self.sensors_graphs[sensor.id_sensor].parent())
                     self.sensors_graphs[sensor.id_sensor].hide()
-                    self.sensors_graphs[sensor.id_sensor] = None
+                    del self.sensors_graphs[sensor.id_sensor]
                     self.UI.mdiArea.tileSubWindows()
             except KeyError:
                 pass
-    
+        self.update_tile_buttons_state()
+
+    def update_tile_buttons_state(self):
+        if self.sensors_graphs.keys().__len__() > 1:
+            self.UI.btnTileAuto.setEnabled(True)
+            self.UI.btnTileHorizontal.setEnabled(True)
+            self.UI.btnTileVertical.setEnabled(True)
+        else:
+            self.UI.btnTileAuto.setEnabled(False)
+            self.UI.btnTileHorizontal.setEnabled(False)
+            self.UI.btnTileVertical.setEnabled(False)
+
     @pyqtSlot(QObject)
     def graph_was_closed(self, graph):
         for sensor_id, sensor_graph in self.sensors_graphs.items():
             if sensor_graph == graph:
-                self.sensors_graphs[sensor_id] = None
+                # self.sensors_graphs[sensor_id] = None
+                del self.sensors_graphs[sensor_id]
                 self.sensors_items[sensor_id].setChecked(False)
                 break
 
         self.UI.mdiArea.tileSubWindows()
+        self.update_tile_buttons_state()
 
     @pyqtSlot(float)
     def graph_cursor_changed(self, timestamp):
+        current_time = timestamp / 1000
         for graph in self.sensors_graphs.values():
             if graph is not None:
-                graph.setCursorPositionFromTime(timestamp/1000, False)
+                graph.setCursorPositionFromTime(current_time, False)
 
-        pos = self.get_relative_timeview_pos(timestamp/1000)
+        pos = self.get_relative_timeview_pos(current_time)
         self.time_bar.setPos(pos,0)
 
-        self.UI.lblCursorTime.setText(datetime.fromtimestamp(timestamp/1000).strftime('%d-%m-%Y %H:%M:%S'))
+        # Ensure time bar is visible if scrollable
+        if self.UI.scrollTimeline.isVisible():
+            max_visible_x = self.UI.graphTimeline.mapToScene(self.UI.graphTimeline.rect()).boundingRect().x() \
+                            + self.UI.graphTimeline.mapToScene(self.UI.graphTimeline.rect()).boundingRect().width()
+            min_visible_x = self.UI.graphTimeline.mapToScene(self.UI.graphTimeline.rect()).boundingRect().x()
+            if pos < min_visible_x or pos > max_visible_x:
+                self.UI.scrollTimeline.setValue(pos)
+
+        self.UI.lblCursorTime.setText(datetime.fromtimestamp(current_time).strftime('%d-%m-%Y %H:%M:%S'))
+
+    @pyqtSlot(float, float)
+    def graph_selected_area_changed(self, start_timestamp, end_timestamp):
+        # Update timeview selection area
+        start_pos = self.get_relative_timeview_pos(start_timestamp / 1000)
+        end_pos = self.get_relative_timeview_pos(end_timestamp / 1000)
+        self.timeview_selected(start_pos, end_pos)
+
+        # Ensure time bar is visible if scrollable
+        if self.UI.scrollTimeline.isVisible():
+            max_visible_x = self.UI.graphTimeline.mapToScene(self.UI.graphTimeline.rect()).boundingRect().x() \
+                            + self.UI.graphTimeline.mapToScene(self.UI.graphTimeline.rect()).boundingRect().width()
+            min_visible_x = self.UI.graphTimeline.mapToScene(self.UI.graphTimeline.rect()).boundingRect().x()
+            if start_pos < min_visible_x or start_pos > max_visible_x:
+                self.UI.scrollTimeline.setValue(start_pos)
+
+        # Update selection for each graph
+        for graph in self.sensors_graphs.values():
+            if graph is not None:
+                graph.setSelectionAreaFromTime(start_timestamp, end_timestamp)
 
     @pyqtSlot(int)
     def timeview_scroll(self, pos):
@@ -525,11 +568,21 @@ class RecordsetWindow(QWidget):
         self.UI.btnClearSelection.setEnabled(True)
         self.UI.btnTimeZoomSelection.setEnabled(True)
 
+        # Update selection for each graph
+        for graph in self.sensors_graphs.values():
+            if graph is not None:
+                graph.setSelectionAreaFromTime(self.get_time_from_timeview_pos(start_x),
+                                               self.get_time_from_timeview_pos(end_x))
+
     @pyqtSlot()
     def on_timeview_clear_selection_requested(self):
         self.timeScene.removeItem(self.selection_rec)
         self.UI.btnClearSelection.setEnabled(False)
         self.UI.btnTimeZoomSelection.setEnabled(False)
+
+        # Clear all selected areas in graphs
+        for graph in self.sensors_graphs.values():
+            graph.clearSelectionArea()
 
     @pyqtSlot()
     def on_timeview_zoom_selection_requested(self):

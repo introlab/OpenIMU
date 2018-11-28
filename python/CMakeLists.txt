@@ -43,6 +43,7 @@ SET(uis
     resources/ui/ImportBrowser.ui
     resources/ui/ExportCSV.ui
     resources/ui/ProcessSelectDialog.ui
+    resources/ui/GraphWidget.ui
 )
 
 SET(qrcs

@@ -39,13 +39,13 @@ QWidget#dockWidgetTreeContents,QWidget#dockWidgetToolsContents,QWidget#dockTabbe
 
 QWidget#line,QWidget#line_2,QWidget#line_3{background-color:rgba(100,100,100,100%);}
 
-QFrame#frameButtons{background-color:rgba(220,220,220,30%); border-radius:5px;}
+QFrame#frameButtons,QFrame#frameTools,QFrame#frameCursor{background-color:rgba(0,0,0,70%);  border-radius:5px;}
 
-QPushButton#btnAddGroup,QPushButton#btnAddParticipant,QPushButton#btnDelete{background:none;background-color:rgb(230,230,230);}
-
-QPushButton:hover,QToolButton:hover{color:white;background-image:url(:/OpenIMU/background/gray_texture.jpg)}
-QPushButton,QToolButton{color:white;background-image:url(:/OpenIMU/background/light_metal.jpg);}
-QPushButton:!enabled,QToolButton:!enabled{color: rgb(168, 168, 168);}
+QPushButton:hover,QToolButton:hover{color:black;background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 white, stop: 0.6  rgb(200,200, 200), stop:1 black);}
+QPushButton,QToolButton{color:black; background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 black, stop: 0.6  rgb(200,200, 200), stop:1 white);}
+QPushButton:!enabled,QToolButton:!enabled{color: rgb(168, 168, 168); background-color: rgba(200,200,200,10%);}
+QPushButton:checked,QToolButton:checked{color:black;border: 3px solid green;background-color:darkgreen;}
+QPushButton[checkable=true]:!checked,QToolButton[checkable=true]:!checked{color:red;background-color:rgba(180,0,0,50%);}
 
 QLabel{color:white;}
 
@@ -67,9 +67,7 @@ QMainWindow::separator {
 }
 
 QLabel#lblVersion{color:black;}
-
-QToolButton#btnShowDataset,QToolButton#btnShowLog{background-color:transparent;background-image:url();}
-QToolButton#btnShowDataset:checked,QToolButton#btnShowLog:checked{background-color:darkgreen;background-image:url();}</string>
+</string>
   </property>
   <property name="documentMode">
    <bool>false</bool>
@@ -585,6 +583,11 @@ QToolButton#btnShowDataset:checked,QToolButton#btnShowLog:checked{background-col
          <height>16777215</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="cursor">
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
@@ -613,6 +616,11 @@ QToolButton#btnShowDataset:checked,QToolButton#btnShowLog:checked{background-col
          <width>100</width>
          <height>32</height>
         </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
        </property>
        <property name="cursor">
         <cursorShape>PointingHandCursor</cursorShape>
@@ -661,6 +669,11 @@ QToolButton#btnShowDataset:checked,QToolButton#btnShowLog:checked{background-col
          <width>100</width>
          <height>32</height>
         </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
        </property>
        <property name="cursor">
         <cursorShape>PointingHandCursor</cursorShape>
@@ -768,7 +781,7 @@ QToolButton#btnShowDataset:checked,QToolButton#btnShowLog:checked{background-col
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
-         <normaloff>:/OpenIMU/icons/newdataset.png</normaloff>:/OpenIMU/icons/newdataset.png</iconset>
+         <normaloff>:/OpenIMU/icons/info.png</normaloff>:/OpenIMU/icons/info.png</iconset>
        </property>
        <property name="iconSize">
         <size>
