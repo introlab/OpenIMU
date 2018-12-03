@@ -6,7 +6,7 @@
 """
 
 import sqlalchemy
-from sqlalchemy import create_engine, asc
+from sqlalchemy import create_engine, asc, or_, and_
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
@@ -77,7 +77,7 @@ class DBManager:
     def session_add(self, store):
         self.session.add_all(store)
 
-    ######## GROUPS
+    # GROUPS
     def update_group(self, group):
         try:
             if group.id_group is None:
@@ -119,7 +119,7 @@ class DBManager:
         # print('all groups', query.all())
         return query.all()
 
-    ######## PARTICIPANTS
+    # PARTICIPANTS
     def update_participant(self, participant):
         try:
             if participant.id_participant is None:
@@ -167,7 +167,7 @@ class DBManager:
         self.clean_db()
         # self.engine.execute("VACUUM")
 
-    #####################
+    #
     def add_sensor(self, _id_sensor_type, _name, _hw_name, _location, _sampling_rate, _data_rate):
         # Check if that sensor is already present in the database
         query = self.session.query(Sensor).filter((Sensor.id_sensor_type == _id_sensor_type) &
@@ -206,7 +206,7 @@ class DBManager:
             query = self.session.query(Sensor).filter(Sensor.id_sensor_type == id_sensor_type)
             return query.all()
 
-    #####################
+    #
     def add_recordset(self, participant: Participant, name, start_timestamp, end_timestamp, force=False):
 
         if not force: # Check if we already have a recordset for that period
@@ -387,6 +387,8 @@ class DBManager:
         sensor = kwargs.get('sensor', None)
         channel = kwargs.get('channel', None)
         recordset = kwargs.get('recordset', None)
+        start_time = kwargs.get('start_time', None)
+        end_time = kwargs.get('end_time', None)
 
         # Get all sensor data
         query = self.session.query(SensorData)
@@ -402,14 +404,17 @@ class DBManager:
             # print('Should filter channel', channel.id_channel)
             query = query.filter(SensorData.id_channel == channel.id_channel)
 
+        if start_time is not None:
+            query = query.filter(or_(SensorData.timestamps.has(SensorTimestamps.start_timestamp >= start_time),
+                                     and_(SensorData.timestamps.has(SensorTimestamps.start_timestamp <= start_time),
+                                          SensorData.timestamps.has(SensorTimestamps.end_timestamp >= start_time))))
+
+        if end_time is not None:
+            query = query.filter(or_(SensorData.timestamps.has(SensorTimestamps.end_timestamp <= end_time),
+                                     and_(SensorData.timestamps.has(SensorTimestamps.start_timestamp <= end_time),
+                                          SensorData.timestamps.has(SensorTimestamps.end_timestamp >= end_time))))
+
         # print(query)
-        # Make sure data is ordered by timestamps
-        # query = query.order_by(SensorData.timestamps.asc())
-
-        # print('TODO ORDERY BY TIMESTAMPS NEEDS TO BE IMPLEMENTED')
-
-        # And then per channel
-        # query = query.order_by(SensorData.channel.asc())
 
         if not convert:
             return query.all()

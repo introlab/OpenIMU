@@ -8,6 +8,7 @@ from resources.ui.python.RecordsetWidget_ui import Ui_frmRecordsets
 from libopenimu.qt.GraphWindow import GraphType, GraphWindow
 
 from libopenimu.models.sensor_types import SensorType
+from libopenimu.models.Sensor import Sensor
 from libopenimu.models.Base import Base
 from libopenimu.importers.wimu import GPSGeodetic
 
@@ -394,54 +395,88 @@ class RecordsetWindow(QWidget):
         # self.time_bar = self.timeScene.addLine(0, 1, 0, self.timeScene.height() - 1, line_pen)
         self.time_bar.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
 
+    def get_sensor_data(self, sensor, start_time=None, end_time=None):
+        timeseries = []
+        channels = self.dbMan.get_all_channels(sensor=sensor)
+        for channel in channels:
+            # Will get all data (converted to floats)
+            channel_data = []
+            for record in self.recordsets:
+                channel_data += self.dbMan.get_all_sensor_data(recordset=record, convert=True, sensor=sensor,
+                                                               channel=channel, start_time=start_time,
+                                                               end_time=end_time)
+            if len(channel_data) > 0:
+                timeseries.append(self.create_data_timeseries(channel_data))
+            timeseries[-1]['label'] = channel.label
+        return timeseries, channel_data
+
+    @staticmethod
+    def get_sensor_graph_type(sensor):
+        if sensor.id_sensor_type == SensorType.ACCELEROMETER \
+                or sensor.id_sensor_type == SensorType.GYROMETER \
+                or sensor.id_sensor_type == SensorType.BATTERY \
+                or sensor.id_sensor_type == SensorType.LUX \
+                or sensor.id_sensor_type == SensorType.CURRENT \
+                or sensor.id_sensor_type == SensorType.BAROMETER \
+                or sensor.id_sensor_type == SensorType.MAGNETOMETER \
+                or sensor.id_sensor_type == SensorType.TEMPERATURE \
+                or sensor.id_sensor_type == SensorType.HEARTRATE \
+                or sensor.id_sensor_type == SensorType.ORIENTATION \
+                or sensor.id_sensor_type == SensorType.FSR:
+            return GraphType.LINECHART
+
+        if sensor.id_sensor_type == SensorType.GPS:
+            return GraphType.MAP
+
+        return GraphType.UNKNOWN
+
+    @pyqtSlot(Sensor, datetime, datetime)
+    def query_sensor_data(self, sensor: Sensor, start_time: datetime, end_time: datetime):
+        timeseries, channel_data = self.get_sensor_data(sensor, start_time, end_time)
+
+        if self.sensors_graphs[sensor.id_sensor]:
+            graph_type = self.get_sensor_graph_type(sensor)
+            graph_window = self.sensors_graphs[sensor.id_sensor]
+            if graph_type == GraphType.LINECHART:
+                series_id = 0
+                for series in timeseries:
+                    # Filter times that don't fit in the range
+                    y_range = series['y']
+                    x_range = series['x']
+                    y_range = y_range[x_range >= start_time.timestamp()]
+                    x_range = x_range[x_range >= start_time.timestamp()]
+                    y_range = y_range[x_range <= end_time.timestamp()]
+                    x_range = x_range[x_range <= end_time.timestamp()]
+                    if len(x_range)>0 and len(y_range)>0:
+                        graph_window.graph.update_data(x_range, y_range, series_id)
+                    series_id += 1
+        return
+
     @pyqtSlot(QAction)
     def sensor_graph_selected(self, sensor_item):
         sensor_id = sensor_item.property("sensor_id")
         sensor = self.sensors[sensor_id]
         sensor_label = sensor.name + " (" + sensor.location + ")"
-        timeseries = []
+
         # Color map for curves
         colors = [Qt.blue, Qt.green, Qt.yellow, Qt.red]
 
         if sensor_item.isChecked():
             # Choose the correct display for each sensor
             graph_window = None
-            channels = self.dbMan.get_all_channels(sensor=sensor)
-            for channel in channels:
-                # Will get all data (converted to floats)
-                channel_data = []
-                for record in self.recordsets:
-                    channel_data += self.dbMan.get_all_sensor_data(recordset=record, convert=True, sensor=sensor,
-                                                                   channel=channel)
-                timeseries.append(self.create_data_timeseries(channel_data))
-                timeseries[-1]['label'] = channel.label
+            timeseries, channel_data = self.get_sensor_data(sensor)  # Fetch all sensor data
+            graph_type = self.get_sensor_graph_type(sensor)
 
-            if sensor.id_sensor_type == SensorType.ACCELEROMETER \
-                    or sensor.id_sensor_type == SensorType.GYROMETER \
-                    or sensor.id_sensor_type == SensorType.BATTERY \
-                    or sensor.id_sensor_type == SensorType.LUX \
-                    or sensor.id_sensor_type == SensorType.CURRENT \
-                    or sensor.id_sensor_type == SensorType.BAROMETER \
-                    or sensor.id_sensor_type == SensorType.MAGNETOMETER \
-                    or sensor.id_sensor_type == SensorType.TEMPERATURE \
-                    or sensor.id_sensor_type == SensorType.HEARTRATE \
-                    or sensor.id_sensor_type == SensorType.ORIENTATION \
-                    or sensor.id_sensor_type == SensorType.FSR:
+            graph_window = GraphWindow(graph_type, sensor, self.UI.mdiArea)
 
-                graph_window = GraphWindow(GraphType.LINECHART, self.UI.mdiArea)
-
-                # graph = IMUChartView(self.UI.mdiArea)
-                # graph.add_test_data()
+            if graph_type == GraphType.LINECHART:
                 # Add series
                 for series in timeseries:
                     graph_window.graph.add_data(series['x'], series['y'], color=colors.pop(), legend_text=series['label'])
 
                 graph_window.graph.set_title(sensor_label)
 
-            if sensor.id_sensor_type == SensorType.GPS:
-                # graph = GPSView(self.UI.mdiArea)
-                graph_window = GraphWindow(GraphType.MAP, self.UI.mdiArea)
-
+            if graph_type == GraphType.MAP:
                 for data in channel_data:
                     gps = GPSGeodetic()
                     gps.from_bytes(data.data)
@@ -459,6 +494,7 @@ class RecordsetWindow(QWidget):
                 QApplication.instance().processEvents()
 
                 graph_window.aboutToClose.connect(self.graph_was_closed)
+                graph_window.requestData.connect(self.query_sensor_data)
                 graph_window.graph.cursorMoved.connect(self.graph_cursor_changed)
                 graph_window.graph.selectedAreaChanged.connect(self.graph_selected_area_changed)
                 graph_window.graph.clearedSelectionArea.connect(self.on_timeview_clear_selection_requested)

@@ -2,7 +2,7 @@ from PyQt5.QtGui import QPolygonF, QPainter, QMouseEvent, QResizeEvent, QBrush, 
 from PyQt5.QtChart import QChart, QChartView, QLineSeries, QBarSeries, QBarSet
 from PyQt5.QtChart import QDateTimeAxis, QValueAxis, QBarCategoryAxis
 from PyQt5.QtWidgets import QGraphicsLineItem, QLabel, QOpenGLWidget, QRubberBand
-from PyQt5.QtCore import Qt, pyqtSlot, QPointF, QRect, QPoint
+from PyQt5.QtCore import Qt, pyqtSlot, QPointF, QRect, QPoint, QRectF
 
 from libopenimu.qt.BaseGraph import BaseGraph, GraphInteractionMode
 
@@ -18,7 +18,6 @@ class IMUChartView(QChartView, BaseGraph):
 
         self.cursor = QGraphicsLineItem()
         self.scene().addItem(self.cursor)
-        self.decim_factor = 1
 
         self.xvalues = {}
 
@@ -70,18 +69,18 @@ class IMUChartView(QChartView, BaseGraph):
     #  def closeEvent(self, event):
     #     self.aboutToClose.emit(self)
 
-    def decimate(self, xdata, ydata):
+    @staticmethod
+    def decimate(xdata, ydata):
         # assert(len(xdata) == len(ydata))
 
         # Decimate only if we have too much data
         decimate_factor = len(xdata) / 100000.0
+        # decimate_factor = 1.0
 
         if decimate_factor > 1.0:
             decimate_factor = int(np.floor(decimate_factor))
             # print('decimate factor', decimate_factor)
-            # x = decimate(xdata, decimate_factor)
-            # y = decimate(ydata, decimate_factor)
-            self.decim_factor = decimate_factor
+
             x = np.ndarray(int(len(xdata) / decimate_factor), dtype=np.float64)
             y = np.ndarray(int(len(ydata) / decimate_factor), dtype=np.float64)
             for i in range(len(x)):
@@ -177,17 +176,20 @@ class IMUChartView(QChartView, BaseGraph):
         #    xdecimated = xdecimated - xdecimated[0]
 
         xdecimated *= 1000  # No decimal expected
+        points = []
         for i in range(len(xdecimated)):
             # TODO hack
-            # x = xdecimated[i] - xdecimated[0]
-            curve.append(QPointF(xdecimated[i], ydecimated[i]))
+            # curve.append(QPointF(xdecimated[i], ydecimated[i]))
+            points.append(QPointF(xdecimated[i], ydecimated[i]))
+
+        curve.replace(points)
+        points.clear()
 
         if legend_text is not None:
             curve.setName(legend_text)
 
         # Needed for mouse events on series
         self.chart.setAcceptHoverEvents(True)
-
         self.xvalues[self.ncurves] = np.array(xdecimated)
 
         # connect signals / slots
@@ -199,9 +201,69 @@ class IMUChartView(QChartView, BaseGraph):
         self.ncurves += 1
         self.update_axes()
 
+    def update_data(self, xdata, ydata, series_id):
+        if series_id < len(self.chart.series()):
+            # Find start time to replace data
+            current_series = self.chart.series()[series_id]
+            current_points = current_series.pointsVector()
+
+            # Find start and end indexes
+            start_index = -1
+            try:
+                start_index = current_points.index(QPointF(xdata[0]*1000, ydata[0]))  # Right on the value!
+                # print("update_data: start_index found exact match.")
+            except ValueError:
+                # print("update_data: start_index no exact match - scanning deeper...")
+                for i in range(len(current_points)):
+                    # print(str(current_points[i].x()) + " == " + str(xdata[0]*1000))
+                    if current_points[i].x() == xdata[0]*1000 or (i > 0 and current_points[i - 1].x() < xdata[0]*1000
+                                                             < current_points[i].x()):
+                        start_index = i
+                        # print("update_data: start_index found approximative match.")
+                        break
+
+            end_index = -1
+            try:
+                end_index = current_points.index(QPointF(xdata[len(xdata)-1] * 1000, ydata[len(ydata)-1]))  # Right on!
+                # print("update_data: start_index found exact match.")
+            except ValueError:
+                # print("update_data: start_index no exact match - scanning deeper...")
+                for i in range(len(current_points)):
+                    # print(str(current_points[i].x()) + " == " + str(xdata[0]*1000))
+                    if current_points[i].x() == xdata[len(xdata)-1] * 1000 or (
+                            i > 0 and current_points[i - 1].x() < xdata[len(xdata)-1] * 1000
+                            < current_points[i].x()):
+                        end_index = i
+                        # print("update_data: start_index found approximative match.")
+                        break
+
+            if start_index < 0 or end_index < 0:
+                return
+
+            # Decimate, if needed
+            xdata, ydata = self.decimate(xdata, ydata)
+
+            # Check if we have the same number of points for that range. If not, remove and replace!
+            target_points = current_points[start_index:end_index]
+            if len(target_points) != len(xdata):
+                points = []
+                for i in range(len(xdata)):
+                    # TODO improve
+                    points.append(QPointF(xdata[i]*1000, ydata[i]))
+
+                new_points = current_points[0:start_index] + points[0:len(points)-1] +\
+                             current_points[end_index:len(current_points)-1]
+
+                current_series.replace(new_points)
+                new_points.clear()
+
+                # self.xvalues[series_id] = np.array(xdata)
+
+        return
+
     def set_title(self, title):
         # print('Setting title: ', title)
-        #self.chart.setTitle(title)
+        # self.chart.setTitle(title)
         return
 
     @staticmethod
@@ -235,9 +297,8 @@ class IMUChartView(QChartView, BaseGraph):
         self.add_data(xdata, np.sin(xdata), color=Qt.red, legend_text='Acc. X')
         # self.add_data(xdata, np.cos(xdata), color=Qt.green, legend_text='Acc. Y')
         # self.add_data(xdata, np.cos(2 * xdata), color=Qt.blue, legend_text='Acc. Z')
-        self.set_title("Simple example with %d curves of %d points " \
-                          "(OpenGL Accelerated Series)" \
-                          % (self.ncurves, npoints))
+        self.set_title("Simple example with %d curves of %d points (OpenGL Accelerated Series)"
+                        % (self.ncurves, npoints))
 
     def mouseMoveEvent(self, e: QMouseEvent):
         if self.selecting:
@@ -307,8 +368,6 @@ class IMUChartView(QChartView, BaseGraph):
             self.selectedAreaChanged.emit(self.chart.mapToValue(QPointF(start_pos, 0)).x(),
                                           self.chart.mapToValue(QPointF(end_pos, 0)).x())
 
-        return
-
     def setSelectionAreaFromTime(self, start_time, end_time, emit_signal = False):
         # Convert times to x values
         if type(start_time) is datetime.datetime:
@@ -320,7 +379,6 @@ class IMUChartView(QChartView, BaseGraph):
         end_pos = self.chart.mapToPosition(QPointF(end_time, 0)).x()
 
         self.setSelectionArea(start_pos, end_pos)
-        return
 
     def setCursorPosition(self, pos, emit_signal=False):
         # print (pos)
@@ -350,6 +408,10 @@ class IMUChartView(QChartView, BaseGraph):
             # Find nearest point
             idx = (np.abs(self.xvalues[i] - xmap)).argmin()
             ymap = self.chart.series()[i].at(idx).y()
+            xmap = self.chart.series()[i].at(idx).x()
+            if i == 0:
+                display += "<i>" + (datetime.datetime.fromtimestamp(xmap/1000)).strftime('%d-%m-%Y %H:%M:%S:%f') + \
+                           "</i>"
 
             # Compute where to display label
             if last_val is None or ymap > last_val:
@@ -371,11 +433,13 @@ class IMUChartView(QChartView, BaseGraph):
         self.update()
 
     def setCursorPositionFromTime(self, timestamp, emit_signal=False):
-        # Converts timestamp to x value
-
         # Find nearest point
         if type(timestamp) is datetime.datetime:
             timestamp = timestamp.timestamp()
+        pos = self.get_pos_from_time(timestamp)
+        self.setCursorPosition(pos, emit_signal)
+
+    def get_pos_from_time(self, timestamp):
         px = timestamp
         idx1 = (np.abs(self.xvalues[0] - px)).argmin()
         x1 = self.chart.series()[0].at(idx1).x()
@@ -386,10 +450,10 @@ class IMUChartView(QChartView, BaseGraph):
             pos2 = self.chart.mapToPosition(QPointF(x2, 0)).x()
             x2 /= 1000
             x1 /= 1000
-            pos = (((px-x1)/(x2-x1)) * (pos2-pos1)) + pos1
+            pos = (((px - x1) / (x2 - x1)) * (pos2 - pos1)) + pos1
         else:
-            pos = pos1;
-        self.setCursorPosition(pos, emit_signal)
+            pos = pos1
+        return pos
 
     def resizeEvent(self, e: QResizeEvent):
         super().resizeEvent(e)
@@ -415,6 +479,17 @@ class IMUChartView(QChartView, BaseGraph):
 
     def zoom_reset(self):
         self.chart.zoomReset()
+
+    def get_displayed_start_time(self):
+        min_x = self.chart.mapToScene(self.chart.plotArea()).boundingRect().x()
+        xmap = self.chart.mapToValue(QPointF(min_x, 0)).x()
+        return datetime.datetime.fromtimestamp(xmap/1000)
+
+    def get_displayed_end_time(self):
+        max_x = self.chart.mapToScene(self.chart.plotArea()).boundingRect().x()
+        max_x += self.chart.mapToScene(self.chart.plotArea()).boundingRect().width()
+        xmap = self.chart.mapToValue(QPointF(max_x, 0)).x()
+        return datetime.datetime.fromtimestamp(xmap / 1000)
 
     @property
     def is_zoomed(self):

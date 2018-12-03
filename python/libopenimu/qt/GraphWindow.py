@@ -5,8 +5,13 @@ from resources.ui.python.GraphWidget_ui import Ui_frmGraphWidget
 from libopenimu.qt.Charts import IMUChartView
 from libopenimu.qt.GPSView import GPSView
 from libopenimu.qt.BaseGraph import GraphInteractionMode
+from libopenimu.models.Sensor import Sensor
+
+import datetime
+
 
 class GraphType:
+    UNKNOWN = -1
     LINECHART = 0
     MAP = 1
     BARCHART = 2
@@ -15,13 +20,16 @@ class GraphType:
 class GraphWindow(QWidget):
 
     aboutToClose = pyqtSignal(QObject)
+    requestData = pyqtSignal(Sensor, datetime.datetime, datetime.datetime)
 
-    def __init__(self, graph_type: GraphType, parent=None):
+    def __init__(self, graph_type: GraphType, sensor: Sensor, parent=None):
         super(QWidget, self).__init__(parent=parent)
         self.UI = Ui_frmGraphWidget()
         self.UI.setupUi(self)
 
         self.UI.frameTools.hide()
+
+        self.sensor = sensor
 
         # Create correct graph
         self.graph = None
@@ -55,6 +63,8 @@ class GraphWindow(QWidget):
         self.mode_buttons_group.buttonClicked.connect(self.graph_interaction_mode_changed)
         self.graph.selectedAreaChanged.connect(self.graph_selection_changed)
         self.graph.clearedSelectionArea.connect(self.graph_selection_changed)
+
+        self.UI.btnMove.setChecked(True)
 
     def event(self, e):
         if e.type() == QEvent.Enter:
@@ -97,18 +107,23 @@ class GraphWindow(QWidget):
     def zoomAreaRequest(self):
         if self.graph:
             self.graph.zoom_area()
+            self.requestData.emit(self.sensor, self.graph.get_displayed_start_time(), self.graph.get_displayed_end_time())
         self.update_zoom_buttons_state()
 
     @pyqtSlot()
     def zoomOutRequest(self):
         if self.graph:
             self.graph.zoom_out()
+            self.requestData.emit(self.sensor, self.graph.get_displayed_start_time(),
+                                  self.graph.get_displayed_end_time())
         self.update_zoom_buttons_state()
 
     @pyqtSlot()
     def zoomInRequest(self):
         if self.graph:
             self.graph.zoom_in()
+            self.requestData.emit(self.sensor, self.graph.get_displayed_start_time(),
+                                  self.graph.get_displayed_end_time())
         self.update_zoom_buttons_state()
 
     @pyqtSlot()

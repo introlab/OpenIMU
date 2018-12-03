@@ -45,6 +45,12 @@ class BaseGraph:
     def set_interaction_mode(self, mode = GraphInteractionMode ):
         self.interaction_mode = mode
 
+    def get_displayed_start_time(self):
+        return None
+
+    def get_displayed_end_time(self):
+        return None
+
     @property
     def is_zoomed(self):
         return False

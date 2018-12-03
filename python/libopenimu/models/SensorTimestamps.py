@@ -19,6 +19,7 @@ from sqlalchemy.orm import relationship
 import numpy as np
 import datetime
 
+
 class SensorTimestamps(Base):
     __tablename__ = 'tabSensorsTimestamps'
     id_sensor_timestamps = Column(Integer, Sequence('id_sensor_timestamps_sequence'),
