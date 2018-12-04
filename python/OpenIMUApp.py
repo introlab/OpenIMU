@@ -40,6 +40,7 @@ from libopenimu.db.DBManager import DBManager
 import sys
 from datetime import datetime
 
+
 class LogTypes(Enum):
     LOGTYPE_INFO = 0
     LOGTYPE_WARNING = 1

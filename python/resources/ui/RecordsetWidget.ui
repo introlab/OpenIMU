@@ -559,7 +559,7 @@ QGraphicsView{background-color:transparent;}
             </font>
            </property>
            <property name="text">
-            <string>Date/Heure du curseur</string>
+            <string>Date / Heure Inconnues</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

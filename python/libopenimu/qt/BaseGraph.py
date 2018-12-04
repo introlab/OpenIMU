@@ -14,6 +14,7 @@ class BaseGraph:
     def __init__(self, parent=None):
         self.selection_rec = None
         self.interaction_mode = GraphInteractionMode.SELECT
+        self.total_samples = 0
 
     def setCursorPosition(self, pos, emit_signal=False):
         return
@@ -45,9 +46,11 @@ class BaseGraph:
     def set_interaction_mode(self, mode = GraphInteractionMode ):
         self.interaction_mode = mode
 
+    @classmethod
     def get_displayed_start_time(self):
         return None
 
+    @classmethod
     def get_displayed_end_time(self):
         return None
 

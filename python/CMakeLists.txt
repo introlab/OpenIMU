@@ -44,6 +44,7 @@ SET(uis
     resources/ui/ExportCSV.ui
     resources/ui/ProcessSelectDialog.ui
     resources/ui/GraphWidget.ui
+    resources/ui/DataInfosWidget.ui
 )
 
 SET(qrcs

@@ -44,6 +44,11 @@ class ImportManager(QDialog):
         # Load participants
         self.load_participants()
 
+        self.part_diag = QDialog()
+        # self.part_diag.setStyleSheet("QDialog{background-image:url(:/OpenIMU/background/dark_metal.jpg);}")
+        self.part_diag.setStyleSheet("QDialog{background:qlineargradient(spread:pad, x1:0.483, y1:0, x2:0.511045, y2:1,"
+                                     " stop:0 rgba(50, 50, 50, 255), stop:1 rgba(203, 203, 203, 255));"
+                                     "border-radius:0px;}")
 
     def load_participants(self):
         participants = self.dbMan.get_all_participants()
@@ -112,15 +117,14 @@ class ImportManager(QDialog):
 
     @pyqtSlot()
     def new_participant_requested(self):
-        self.part_diag = QDialog()
-        self.part_diag.setStyleSheet("QDialog{background-image:url(:/OpenIMU/background/dark_metal.jpg);}")
+
         layout = QHBoxLayout(self.part_diag)
         self.part_diag.setMinimumWidth(600)
 
         self.part_widget = ParticipantWindow(dbManager=self.dbMan)
         self.part_widget.setStyleSheet(self.styleSheet())
 
-        #print(self.styleSheet())
+        # print(self.styleSheet())
         layout.addWidget(self.part_widget )
 
         self.part_widget.dataCancelled.connect(self.participant_cancelled)

@@ -2,7 +2,7 @@ from PyQt5.QtGui import QPolygonF, QPainter, QMouseEvent, QResizeEvent, QBrush, 
 from PyQt5.QtChart import QChart, QChartView, QLineSeries, QBarSeries, QBarSet
 from PyQt5.QtChart import QDateTimeAxis, QValueAxis, QBarCategoryAxis
 from PyQt5.QtWidgets import QGraphicsLineItem, QLabel, QOpenGLWidget, QRubberBand
-from PyQt5.QtCore import Qt, pyqtSlot, QPointF, QRect, QPoint, QRectF
+from PyQt5.QtCore import Qt, pyqtSlot, QPointF, QRect, QPoint
 
 from libopenimu.qt.BaseGraph import BaseGraph, GraphInteractionMode
 
@@ -164,6 +164,7 @@ class IMUChartView(QChartView, BaseGraph):
         curve.setPen(pen)
         # curve.setPointsVisible(True)
         # curve.setUseOpenGL(True)
+        self.total_samples = max(self.total_samples, len(xdata))
 
         # Decimate
         xdecimated, ydecimated = self.decimate(xdata, ydata)
@@ -214,7 +215,7 @@ class IMUChartView(QChartView, BaseGraph):
                 # print("update_data: start_index found exact match.")
             except ValueError:
                 # print("update_data: start_index no exact match - scanning deeper...")
-                for i in range(len(current_points)):
+                for i, value in enumerate(current_points):
                     # print(str(current_points[i].x()) + " == " + str(xdata[0]*1000))
                     if current_points[i].x() == xdata[0]*1000 or (i > 0 and current_points[i - 1].x() < xdata[0]*1000
                                                              < current_points[i].x()):
@@ -228,7 +229,7 @@ class IMUChartView(QChartView, BaseGraph):
                 # print("update_data: start_index found exact match.")
             except ValueError:
                 # print("update_data: start_index no exact match - scanning deeper...")
-                for i in range(len(current_points)):
+                for i, value in enumerate(current_points):
                     # print(str(current_points[i].x()) + " == " + str(xdata[0]*1000))
                     if current_points[i].x() == xdata[len(xdata)-1] * 1000 or (
                             i > 0 and current_points[i - 1].x() < xdata[len(xdata)-1] * 1000
@@ -247,11 +248,11 @@ class IMUChartView(QChartView, BaseGraph):
             target_points = current_points[start_index:end_index]
             if len(target_points) != len(xdata):
                 points = []
-                for i in range(len(xdata)):
+                for i, value in enumerate(xdata):
                     # TODO improve
-                    points.append(QPointF(xdata[i]*1000, ydata[i]))
+                    points.append(QPointF(value*1000, ydata[i]))
 
-                new_points = current_points[0:start_index] + points[0:len(points)-1] +\
+                new_points = current_points[0:start_index] + points[0:len(points)-1] + \
                              current_points[end_index:len(current_points)-1]
 
                 current_series.replace(new_points)

@@ -103,11 +103,12 @@ class RecordsetWindow(QWidget):
     def refresh_timeview(self):
         # Computes required timescene size
         min_width = self.UI.graphTimeline.width() - 5
-        num_days = (self.get_recordset_end_day_date() - self.get_recordset_start_day_date()).days
+        if len(self.recordsets)>0:
+            num_days = (self.get_recordset_end_day_date() - self.get_recordset_start_day_date()).days
 
-        # Minimum size for days
-        if num_days * 75 > min_width:
-            min_width = num_days * 75 - 5
+            # Minimum size for days
+            if num_days * 75 > min_width:
+                min_width = num_days * 75 - 5
 
         # Resize timeScene correctly
         self.timeScene.clear()
@@ -164,6 +165,8 @@ class RecordsetWindow(QWidget):
                         sensor_item.setProperty("sensor_id", sensor.id_sensor)
                         self.sensors_items[sensor.id_sensor] = sensor_item
                         self.sensors_menu.addAction(sensor_item)
+        else:
+            self.UI.btnNewGraph.setEnabled(False)
 
     def update_recordset_infos(self):
         if len(self.recordsets) == 0:
@@ -185,11 +188,15 @@ class RecordsetWindow(QWidget):
         self.UI.lblCursorTime.setText(start_time.strftime('%d-%m-%Y %H:%M:%S'))
 
     def get_recordset_start_day_date(self):
+        if len(self.recordsets) == 0:
+            return None
         start_time = self.recordsets[0].start_timestamp
         start_time = (datetime(start_time.year, start_time.month, start_time.day, 0, 0, 0))
         return start_time
 
     def get_recordset_end_day_date(self):
+        if len(self.recordsets) == 0:
+            return None
         end_time = self.recordsets[len(self.recordsets) - 1].end_timestamp
         end_time = (datetime(end_time.year, end_time.month, end_time.day, 0, 0, 0) + timedelta(days=1))
         return end_time
@@ -210,6 +217,9 @@ class RecordsetWindow(QWidget):
             return 0
 
     def get_time_from_timeview_pos(self, pos):
+        if len(self.recordsets) == 0:
+            return None;
+
         start_time = self.get_recordset_start_day_date().timestamp()
         end_time = self.get_recordset_end_day_date().timestamp()
 
@@ -269,10 +279,20 @@ class RecordsetWindow(QWidget):
 
         # Horizontal lines
         pos = 20
-        last_location = ""
+        # last_location = ""
         sensor_location_brush = QBrush(Qt.black)
         sensor_location_pen = QPen(Qt.transparent)
-        for sensor in self.sensors.values():
+        for location in self.sensors_location:
+            # Must create a new location line
+            self.timeScene.addRect(0, pos, self.timeScene.width() - 1, 15, sensor_location_pen, sensor_location_brush)
+            pos += 15
+            sensors = self.get_sensors_for_location(location)
+            for sensor_id in sensors:
+                self.timeScene.addLine(0, pos, self.timeScene.width() - 1, pos, hgrid_pen)
+                self.timeSensorsScene.addLine(0, pos, self.timeSensorsScene.width(), pos, hgrid_pen)
+                pos += 20
+
+        """for sensor in self.sensors.values():
             if sensor.location != last_location:
                 # Must create a new location line
                 self.timeScene.addRect(0, pos, self.timeScene.width()-1, 15, sensor_location_pen, sensor_location_brush)
@@ -282,7 +302,7 @@ class RecordsetWindow(QWidget):
             self.timeScene.addLine(0, pos, self.timeScene.width()-1, pos, hgrid_pen)
             self.timeSensorsScene.addLine(0, pos, self.timeSensorsScene.width(), pos, hgrid_pen)
             pos += 20
-
+        """
         # Final line
         self.timeScene.addLine(0, pos, self.timeScene.width() - 1, pos, hgrid_pen)
         self.timeSensorsScene.addLine(0, pos, self.timeSensorsScene.width() - 1, pos, hgrid_pen)
@@ -321,8 +341,21 @@ class RecordsetWindow(QWidget):
 
         # Sensor names
         pos = 20
-        last_location = ""
-        for sensor in self.sensors.values():
+
+        for location in self.sensors_location:
+            # Must create a new location space for later
+            pos += 15
+            sensors = self.get_sensors_for_location(location)
+            for sensor_id in sensors:
+                sensor = self.sensors[sensor_id]
+                # Sensor names
+                label = self.timeSensorsScene.addText(sensor.name)
+                label.setPos(0, pos)
+                label.setDefaultTextColor(Qt.black)
+                # label.setFont(QFont("Times", 10, QFont.Bold))
+                pos += 20
+
+        """for sensor in self.sensors.values():
             # Sensor location
             if sensor.location != last_location:
                 # Must create a new location space for later
@@ -335,15 +368,27 @@ class RecordsetWindow(QWidget):
             label.setDefaultTextColor(Qt.black)
             # label.setFont(QFont("Times", 10, QFont.Bold))
             pos += 20
-
+        """
         # Adjust size appropriately
         self.timeSensorsScene.setSceneRect(self.timeSensorsScene.itemsBoundingRect())
         self.UI.graphSensorsTimeline.setMaximumWidth(self.timeSensorsScene.itemsBoundingRect().width())
 
         # Sensor location background
         pos = 20
-        last_location = ""
-        for sensor in self.sensors.values():
+        for location in self.sensors_location:
+            # Must create a new location line
+            self.timeSensorsScene.addRect(0, pos, self.timeSensorsScene.width(), 15, sensor_location_pen,
+                                          sensor_location_brush)
+            label = self.timeSensorsScene.addText(location)
+            label.setPos(0, pos)
+            label.setDefaultTextColor(Qt.white)
+            label.setFont(QFont("Times", 7))
+            pos += 15
+            sensors = self.get_sensors_for_location(location)
+            for sensor_id in sensors:
+                pos += 20
+
+        """for sensor in self.sensors.values():
             # Sensor location
             if sensor.location != last_location:
                 # Must create a new location line
@@ -356,6 +401,7 @@ class RecordsetWindow(QWidget):
                 pos += 15
                 last_location = sensor.location
             pos += 20
+        """
 
     def draw_sensors(self):
         if len(self.sensors) == 0:
@@ -365,8 +411,23 @@ class RecordsetWindow(QWidget):
         sensor_pen = QPen(Qt.transparent)
 
         pos = 20
-        last_location = ""
-        for sensor in self.sensors.values():
+
+        for location in self.sensors_location:
+            # Must create a new location space for later
+            pos += 15
+            sensors = self.get_sensors_for_location(location)
+            for sensor_id in sensors:
+                sensor = self.sensors[sensor_id]
+                for record in self.recordsets:
+                    datas = self.dbMan.get_all_sensor_data(sensor=sensor, recordset=record, channel=sensor.channels[0])
+                    for data in datas:
+                        start_pos = self.get_relative_timeview_pos(data.timestamps.start_timestamp)
+                        end_pos = self.get_relative_timeview_pos(data.timestamps.end_timestamp)
+                        span = max(end_pos - start_pos, 1)
+                        self.timeScene.addRect(start_pos, pos + 3, span, 14, sensor_pen, sensor_brush)
+                pos += 20
+
+        """for sensor in self.sensors.values():
             # Sensor location
             if sensor.location != last_location:
                 # Must skips a space for sensor location
@@ -382,7 +443,7 @@ class RecordsetWindow(QWidget):
                     span = max(end_pos - start_pos, 1)
                     self.timeScene.addRect(start_pos, pos + 3, span, 14, sensor_pen, sensor_brush)
             pos += 20
-
+        """
         # Adjust size appropriately
         self.timeSensorsScene.setSceneRect(self.timeSensorsScene.itemsBoundingRect())
         self.UI.graphSensorsTimeline.setMaximumWidth(self.timeSensorsScene.itemsBoundingRect().width())
@@ -394,6 +455,15 @@ class RecordsetWindow(QWidget):
         self.time_bar = self.timeScene.addLine(0, 21, 0, self.timeScene.height()-1, line_pen)
         # self.time_bar = self.timeScene.addLine(0, 1, 0, self.timeScene.height() - 1, line_pen)
         self.time_bar.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
+
+    def get_sensors_for_location(self, location):
+        sensors_id = []
+        for sensor in self.sensors.values():
+            if sensor.location == location:
+                sensors_id.append(sensor.id_sensor)
+
+        return sensors_id
+
 
     def get_sensor_data(self, sensor, start_time=None, end_time=None):
         timeseries = []
@@ -432,7 +502,7 @@ class RecordsetWindow(QWidget):
 
     @pyqtSlot(Sensor, datetime, datetime)
     def query_sensor_data(self, sensor: Sensor, start_time: datetime, end_time: datetime):
-        timeseries, channel_data = self.get_sensor_data(sensor, start_time, end_time)
+        timeseries = self.get_sensor_data(sensor, start_time, end_time)[0]
 
         if self.sensors_graphs[sensor.id_sensor]:
             graph_type = self.get_sensor_graph_type(sensor)
@@ -468,6 +538,7 @@ class RecordsetWindow(QWidget):
             graph_type = self.get_sensor_graph_type(sensor)
 
             graph_window = GraphWindow(graph_type, sensor, self.UI.mdiArea)
+            graph_window.setStyleSheet(self.styleSheet() + graph_window.styleSheet())
 
             if graph_type == GraphType.LINECHART:
                 # Add series
@@ -582,6 +653,9 @@ class RecordsetWindow(QWidget):
     @pyqtSlot(float)
     def timeview_clicked(self, x):
         self.time_bar.setPos(x, 0)
+        if len(self.recordsets)==0:
+            return
+
         # Find time corresponding to that position
         timestamp = self.get_time_from_timeview_pos(x)
         self.UI.lblCursorTime.setText(timestamp.strftime('%d-%m-%Y %H:%M:%S'))
@@ -589,7 +663,7 @@ class RecordsetWindow(QWidget):
         for graph in self.sensors_graphs.values():
             if graph is not None:
                 # try:
-                graph.setCursorPositionFromTime(timestamp, True)
+                graph.setCursorPositionFromTime(timestamp, False)
             # except AttributeError:
             #    continue
 

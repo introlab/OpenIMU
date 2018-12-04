@@ -74,7 +74,6 @@ class ParticipantWindow(DataEditor):
             self.UI.txtDesc.setPlainText("")
             self.UI.cmbGroups.setCurrentIndex(0)
 
-
     def enable_buttons(self, enable):
         self.UI.btnCancel.setEnabled(enable or self.participant is None)
         self.UI.btnSave.setEnabled(enable)

@@ -27,7 +27,7 @@
     <normaloff>:/OpenIMU/icons/OpenIMU.png</normaloff>:/OpenIMU/icons/OpenIMU.png</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget#MainWindow,QWidget#ImportBrowser,QWidget#ImportManager,QWidget#frmParticipant,QWidget#ExportCSV,QWidget#ImportDialog,QWidget#StartDialog,QWidget#dlgProcessSelect{background:qlineargradient(spread:pad, x1:0.483, y1:0, x2:0.511045, y2:1, stop:0 rgba(50, 50, 50, 255), stop:1 rgba(203, 203, 203, 255));border-radius:0px;}
+   <string notr="true">QWidget#MainWindow,QWidget#ImportBrowser,QWidget#ImportManager,QWidget#frmParticipant,QWidget#ExportCSV,QWidget#ImportDialog,QWidget#StartDialog,QWidget#dlgProcessSelect, QWidget#DataInfosWidget,QDialog{background:qlineargradient(spread:pad, x1:0.483, y1:0, x2:0.511045, y2:1, stop:0 rgba(50, 50, 50, 255), stop:1 rgba(203, 203, 203, 255));border-radius:0px;}
 
 QFrame#frameTitle{background-color:rgba(130,130,130,50%);}
 QFrame#frameInfos{background-color:rgba(50,50,50,50%);}

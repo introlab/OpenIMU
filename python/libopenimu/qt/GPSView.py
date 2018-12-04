@@ -45,6 +45,7 @@ class GPSView(QWebEngineView, BaseGraph):
             timestamp = timestamp.timestamp()
 
         self.positions[timestamp] = QPointF(latitude, longitude)
+        self.total_samples += 1
 
         if self.pageReady is True:
             self.page().runJavaScript('addPosition(' + str(latitude) + ',' + str(longitude) + ');')

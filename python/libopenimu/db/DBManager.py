@@ -206,17 +206,9 @@ class DBManager:
             query = self.session.query(Sensor).filter(Sensor.id_sensor_type == id_sensor_type)
             return query.all()
 
-    #
     def add_recordset(self, participant: Participant, name, start_timestamp, end_timestamp, force=False):
 
         if not force: # Check if we already have a recordset for that period
-            '''
-            query = self.session.query(Recordset)\
-                            .filter(Recordset.participant == participant &
-                                    ((Recordset.start_timestamp <= start_timestamp & Recordset.end_timestamp >= start_timestamp) |
-                                     (Recordset.start_timestamp <= end_timestamp & Recordset.end_timestamp >= end_timestamp) |
-                                     (Recordset.start_timestamp >= start_timestamp & Recordset.end_timestamp <= end_timestamp)))
-            '''
             query = self.session.query(Recordset).filter((Recordset.participant == participant) & (Recordset.name == name))
             if query.first():
                 # Update start and end times, if needed.
@@ -246,7 +238,7 @@ class DBManager:
         return query.first()
 
     def delete_recordset(self, recordset):
-        id = recordset.id_recordset
+        # id = recordset.id_recordset
         try:
             self.session.delete(recordset)
             self.commit()
@@ -354,15 +346,6 @@ class DBManager:
         sensordata = SensorData(recordset=recordset, sensor=sensor,
                                 channel=channel, timestamps=timestamps,
                                 data=data.tobytes())
-
-        # Custom SQL code
-        """
-        self.session.execute("INSERT INTO tabSensorsData (id_recordset, id_sensor, id_channel, data_timestamp, data) "
-                             "VALUES (:id_recordset, :id_sensor, :id_channel, :data_timestamp, :data)",
-                             {'id_recordset': recordset.id_recordset, 'id_sensor': sensor.id_sensor,
-                              'id_channel': channel.id_channel, 'data_timestamp': timestamp, 'data': data.tobytes()})
-
-        """
 
         self.session.add(sensordata)
 

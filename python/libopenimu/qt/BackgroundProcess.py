@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QProgressDialog, QLabel
 import numpy as np
 import gc
 
+
 class ProgressDialog(QProgressDialog):
     def __init__(self, count, parent=None):
         super(QProgressDialog, self).__init__(parent)
@@ -11,11 +12,10 @@ class ProgressDialog(QProgressDialog):
         self.setMinimum(0)
         self.setMaximum(self.total_count)
         self.time = QTime.currentTime()
-        start()
         self.startTimer(1000)
         self.setCancelButton(None)
 
-        self.setStyleSheet("QProgressDialog{background-image:url(:/OpenIMU/background/dark_metal.jpg); border-radius:0px;}")
+        # self.setStyleSheet("QProgressDialog{background-image:url(:/OpenIMU/background/dark_metal.jpg); border-radius:0px;}")
 
     @pyqtSlot()
     def trigger(self):

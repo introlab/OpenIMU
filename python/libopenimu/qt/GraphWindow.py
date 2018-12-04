@@ -6,6 +6,7 @@ from libopenimu.qt.Charts import IMUChartView
 from libopenimu.qt.GPSView import GPSView
 from libopenimu.qt.BaseGraph import GraphInteractionMode
 from libopenimu.models.Sensor import Sensor
+from libopenimu.qt.DataInfosWidget import DataInfosWidget
 
 import datetime
 
@@ -26,8 +27,6 @@ class GraphWindow(QWidget):
         super(QWidget, self).__init__(parent=parent)
         self.UI = Ui_frmGraphWidget()
         self.UI.setupUi(self)
-
-        self.UI.frameTools.hide()
 
         self.sensor = sensor
 
@@ -69,11 +68,13 @@ class GraphWindow(QWidget):
     def event(self, e):
         if e.type() == QEvent.Enter:
             # Over the widget - show toolbar
-            self.UI.frameTools.show()
+            # self.UI.frameTools.show()
+            pass
 
         if e.type() == QEvent.Leave:
             # Not over the widget - hide toolbar
-            self.UI.frameTools.hide()
+            # self.UI.frameTools.hide()
+            pass
 
         if e.type() == QEvent.Close:
             self.aboutToClose.emit(self)
@@ -134,7 +135,9 @@ class GraphWindow(QWidget):
 
     @pyqtSlot()
     def dataInfosRequest(self):
-        return
+        infos = DataInfosWidget(self.sensor, self.graph.total_samples)
+        infos.setStyleSheet(self.styleSheet())
+        infos.exec()
 
     @pyqtSlot()
     def graph_selection_changed(self):

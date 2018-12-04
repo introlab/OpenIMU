@@ -31,10 +31,6 @@ class ImportWindow(QDialog):
         self.showImport = showImport
         self.update_data()
 
-        # Set default path
-
-
-
         # Signals / Slots connections
         self.UI.btnCancel.clicked.connect(self.cancel_clicked)
         self.UI.btnOK.clicked.connect(self.ok_clicked)
