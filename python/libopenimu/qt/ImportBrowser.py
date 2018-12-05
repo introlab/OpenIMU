@@ -1,8 +1,5 @@
-from PyQt5.QtCore import pyqtSlot, Qt
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QLabel, QTableWidget, QPushButton, QPlainTextEdit
-
-from libopenimu.db.DBManager import DBManager
-from libopenimu.models.DataSet import DataSet
+from PyQt5.QtCore import pyqtSlot, Qt, pyqtSignal
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem
 
 from resources.ui.python.ImportBrowser_ui import Ui_ImportBrowser
 from libopenimu.qt.ImportManager import ImportManager
@@ -12,16 +9,17 @@ from libopenimu.importers.WIMUImporter import WIMUImporter
 from libopenimu.importers.ActigraphImporter import ActigraphImporter
 from libopenimu.importers.OpenIMUImporter import OpenIMUImporter
 from libopenimu.importers.AppleWatchImporter import AppleWatchImporter
-from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog
+from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog, WorkerTask
 
 import glob
 import gc
+
 
 class ImportBrowser(QDialog):
     dbMan = None
 
     def __init__(self, dataManager, parent=None):
-        super(QDialog, self).__init__(parent=parent)
+        super(ImportBrowser, self).__init__(parent=parent)
         self.UI = Ui_ImportBrowser()
         self.UI.setupUi(self)
 
@@ -37,14 +35,13 @@ class ImportBrowser(QDialog):
         # Do the importation
         table = self.UI.tableFiles
 
-        # Create progress dialog
-        dialog = ProgressDialog(table.rowCount(), self)
-        dialog.setWindowTitle('Importation...')
+        class Importer(WorkerTask):
 
-        class Importer:
-            def __init__(self, filename, importer):
+            def __init__(self, filename, task_size, file_importer):
+                super().__init__(filename, task_size)
                 self.filename = filename
-                self.importer = importer
+                self.importer = file_importer
+                self.importer.update_progress.connect(self.update_progress)
 
             def process(self):
                 print('Importer loading', self.filename)
@@ -52,7 +49,7 @@ class ImportBrowser(QDialog):
                 print('Importer saving to db')
                 self.importer.import_to_database(results)
                 if results is not None:
-                    results.clear() # Needed to clear the dict cache and let the garbage collector delete it!
+                    results.clear()  # Needed to clear the dict cache and let the garbage collector delete it!
                 print('Importer done!')
 
         importers = []
@@ -75,7 +72,8 @@ class ImportBrowser(QDialog):
                 data_importer = AppleWatchImporter(manager=self.dbMan, participant=part)
 
             if data_importer is not None:
-                importers.append(Importer(file_name, data_importer))
+                # importers.append(Importer(file_name, os.stat(file_name).st_size, data_importer))
+                importers.append(Importer(file_name, 100, data_importer))
 
                 # results = data_importer.load(file_name)
                 # data_importer.import_to_database(results)
@@ -84,16 +82,19 @@ class ImportBrowser(QDialog):
                 self.reject()
 
         # Run in background all importers (in sequence)
-        all_functions = []
+        all_tasks = []
         for importer in importers:
-            all_functions.append(importer.process)
+            all_tasks.append(importer)
 
-        process = BackgroundProcess(all_functions)
-        process.finished.connect(dialog.accept)
-        process.trigger.connect(dialog.trigger)
+        process = BackgroundProcess(all_tasks)
+        # Create progress dialog
+        dialog = ProgressDialog(process, 'Importation des données', self)
+
+        # Start tasks
         process.start()
 
         # Show progress dialog
+        self.showMinimized()
         dialog.exec()
 
         gc.collect()
@@ -123,10 +124,12 @@ class ImportBrowser(QDialog):
         table.setItem(row, 1, cell)
 
         table.resizeColumnsToContents()
+
     @pyqtSlot()
     def cancel_clicked(self):
         self.reject()
 
+    @classmethod
     @pyqtSlot()
     def thread_finished(self):
         print('Thread Finished')
@@ -142,11 +145,13 @@ class ImportBrowser(QDialog):
             importman.set_participant(self.UI.tableFiles.item(last_row,1).text())
             importman.set_filetype(self.UI.tableFiles.item(last_row,2).text())
 
+        self.showMinimized()
         if importman.exec() == QDialog.Accepted:
             files = importman.filename.split(";")
             # Add file to list
             for file in files:
                 self.addFileToList(file, importman.filetype, importman.filetype_id, importman.participant)
+        self.showNormal()
 
     @pyqtSlot()
     def add_dir_clicked(self):
@@ -160,6 +165,7 @@ class ImportBrowser(QDialog):
             importman.set_participant(self.UI.tableFiles.item(last_row,1).text())
             importman.set_filetype(self.UI.tableFiles.item(last_row,2).text())
 
+        self.showMinimized()
         if importman.exec() == QDialog.Accepted:
             # Add file to list
             files = glob.glob(importman.filename + "/*.*") # Files in base folder
@@ -169,6 +175,7 @@ class ImportBrowser(QDialog):
             files = glob.glob(importman.filename + "/**/*.*") # Files in sub folders
             for file in files:
                 self.addFileToList(file, importman.filetype, importman.filetype_id, importman.participant)
+        self.showNormal()
 
     @pyqtSlot()
     def del_clicked(self):

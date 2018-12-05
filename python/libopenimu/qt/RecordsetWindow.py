@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import QWidget, QListWidgetItem
+from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QGraphicsScene, QApplication, QGraphicsRectItem, QGraphicsLineItem, QGraphicsItem
 from PyQt5.QtWidgets import QDialog, QMenu, QAction
 from PyQt5.QtGui import QBrush, QPen, QColor, QFont
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QPoint, QRect, QObject
+from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QPoint, QRect, QObject, QRectF
 
 from resources.ui.python.RecordsetWidget_ui import Ui_frmRecordsets
 from libopenimu.qt.GraphWindow import GraphType, GraphWindow
@@ -100,6 +100,7 @@ class RecordsetWindow(QWidget):
         # self.UI.frmSensors.setMaximumHeight(self.height() - self.UI.frameTop.minimumSizeHint().height() - 100)
         return
 
+    @timing
     def refresh_timeview(self):
         # Computes required timescene size
         min_width = self.UI.graphTimeline.width() - 5
@@ -292,17 +293,6 @@ class RecordsetWindow(QWidget):
                 self.timeSensorsScene.addLine(0, pos, self.timeSensorsScene.width(), pos, hgrid_pen)
                 pos += 20
 
-        """for sensor in self.sensors.values():
-            if sensor.location != last_location:
-                # Must create a new location line
-                self.timeScene.addRect(0, pos, self.timeScene.width()-1, 15, sensor_location_pen, sensor_location_brush)
-                pos += 15
-                last_location = sensor.location
-
-            self.timeScene.addLine(0, pos, self.timeScene.width()-1, pos, hgrid_pen)
-            self.timeSensorsScene.addLine(0, pos, self.timeSensorsScene.width(), pos, hgrid_pen)
-            pos += 20
-        """
         # Final line
         self.timeScene.addLine(0, pos, self.timeScene.width() - 1, pos, hgrid_pen)
         self.timeSensorsScene.addLine(0, pos, self.timeSensorsScene.width() - 1, pos, hgrid_pen)
@@ -355,20 +345,6 @@ class RecordsetWindow(QWidget):
                 # label.setFont(QFont("Times", 10, QFont.Bold))
                 pos += 20
 
-        """for sensor in self.sensors.values():
-            # Sensor location
-            if sensor.location != last_location:
-                # Must create a new location space for later
-                pos += 15
-                last_location = sensor.location
-
-            # Sensor names
-            label = self.timeSensorsScene.addText(sensor.name)
-            label.setPos(0, pos)
-            label.setDefaultTextColor(Qt.black)
-            # label.setFont(QFont("Times", 10, QFont.Bold))
-            pos += 20
-        """
         # Adjust size appropriately
         self.timeSensorsScene.setSceneRect(self.timeSensorsScene.itemsBoundingRect())
         self.UI.graphSensorsTimeline.setMaximumWidth(self.timeSensorsScene.itemsBoundingRect().width())
@@ -388,27 +364,25 @@ class RecordsetWindow(QWidget):
             for sensor_id in sensors:
                 pos += 20
 
-        """for sensor in self.sensors.values():
-            # Sensor location
-            if sensor.location != last_location:
-                # Must create a new location line
-                self.timeSensorsScene.addRect(0, pos, self.timeSensorsScene.width(), 15, sensor_location_pen,
-                                              sensor_location_brush)
-                label = self.timeSensorsScene.addText(sensor.location)
-                label.setPos(0, pos)
-                label.setDefaultTextColor(Qt.white)
-                label.setFont(QFont("Times", 7))
-                pos += 15
-                last_location = sensor.location
-            pos += 20
-        """
-
+    @timing
     def draw_sensors(self):
         if len(self.sensors) == 0:
             return
 
         sensor_brush = QBrush(Qt.darkGreen)
         sensor_pen = QPen(Qt.transparent)
+
+        sensors_rects = self.create_sensors_rects()
+        for index, rect in enumerate(sensors_rects):
+            self.timeScene.addRect(rect, sensor_pen, sensor_brush)
+
+        # Adjust size appropriately
+        self.timeSensorsScene.setSceneRect(self.timeSensorsScene.itemsBoundingRect())
+        self.UI.graphSensorsTimeline.setMaximumWidth(self.timeSensorsScene.itemsBoundingRect().width())
+        # self.UI.graphSensorsTimeline.setMaximumHeight(self.timeSensorsScene.itemsBoundingRect().height())
+
+    def create_sensors_rects(self):
+        rects = []
 
         pos = 20
 
@@ -424,35 +398,16 @@ class RecordsetWindow(QWidget):
                         start_pos = self.get_relative_timeview_pos(data.timestamps.start_timestamp)
                         end_pos = self.get_relative_timeview_pos(data.timestamps.end_timestamp)
                         span = max(end_pos - start_pos, 1)
-                        self.timeScene.addRect(start_pos, pos + 3, span, 14, sensor_pen, sensor_brush)
+                        # self.timeScene.addRect(start_pos, pos + 3, span, 14, sensor_pen, sensor_brush)
+                        rects.append(QRectF(start_pos, pos + 3, span, 14))
                 pos += 20
 
-        """for sensor in self.sensors.values():
-            # Sensor location
-            if sensor.location != last_location:
-                # Must skips a space for sensor location
-                pos += 15
-                last_location = sensor.location
-
-            # Sensor data
-            for record in self.recordsets:
-                datas = self.dbMan.get_all_sensor_data(sensor=sensor, recordset=record, channel=sensor.channels[0])
-                for data in datas:
-                    start_pos = self.get_relative_timeview_pos(data.timestamps.start_timestamp)
-                    end_pos = self.get_relative_timeview_pos(data.timestamps.end_timestamp)
-                    span = max(end_pos - start_pos, 1)
-                    self.timeScene.addRect(start_pos, pos + 3, span, 14, sensor_pen, sensor_brush)
-            pos += 20
-        """
-        # Adjust size appropriately
-        self.timeSensorsScene.setSceneRect(self.timeSensorsScene.itemsBoundingRect())
-        self.UI.graphSensorsTimeline.setMaximumWidth(self.timeSensorsScene.itemsBoundingRect().width())
-        # self.UI.graphSensorsTimeline.setMaximumHeight(self.timeSensorsScene.itemsBoundingRect().height())
+        return rects
 
     def draw_timebar(self):
         line_pen = QPen(Qt.cyan)
         line_pen.setWidth(2)
-        self.time_bar = self.timeScene.addLine(0, 21, 0, self.timeScene.height()-1, line_pen)
+        self.time_bar = self.timeScene.addLine(1, 21, 1, self.timeScene.height()-1, line_pen)
         # self.time_bar = self.timeScene.addLine(0, 1, 0, self.timeScene.height() - 1, line_pen)
         self.time_bar.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
 
@@ -463,7 +418,6 @@ class RecordsetWindow(QWidget):
                 sensors_id.append(sensor.id_sensor)
 
         return sensors_id
-
 
     def get_sensor_data(self, sensor, start_time=None, end_time=None):
         timeseries = []

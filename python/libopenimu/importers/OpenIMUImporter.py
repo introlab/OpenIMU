@@ -11,13 +11,10 @@ from libopenimu.importers.wimu import GPSGeodetic
 
 import numpy as np
 import math
-import datetime
+import os
 
 import struct
-import sys
-import binascii
 import datetime
-import string
 
 
 class OpenIMUImporter(BaseImporter):
@@ -26,6 +23,7 @@ class OpenIMUImporter(BaseImporter):
         # print('OpenIMU Importer')
         # No recordsets when starting
         self.recordsets = []
+        self.current_file_size = 0
 
     def get_recordset(self, start_timestamp, end_timestamp):
         my_start_time = datetime.datetime.fromtimestamp(start_timestamp)
@@ -53,6 +51,7 @@ class OpenIMUImporter(BaseImporter):
         results = {}
         with open(filename, "rb") as file:
             print('Loading File: ', filename)
+            self.current_file_size = os.stat(filename).st_size
             results = self.readDataFile(file, False)
 
         print('Done!')
@@ -296,6 +295,7 @@ class OpenIMUImporter(BaseImporter):
         sensors, channels = self.create_sensor_and_channels(sample_rate)
 
         # Timestamps are hour aligned
+        count = 0
         for timestamp in result:
             if result[timestamp].__contains__('imu'):
                 # print('contains imu')
@@ -329,6 +329,9 @@ class OpenIMUImporter(BaseImporter):
                 if not self.import_baro_to_database(timestamp, sensors, channels, recordset,
                                                     result[timestamp]['baro']):
                     print('Baro import error')
+
+            count += 1
+            self.update_progress.emit(50 + np.floor(count / len(result) / 2 * 100))
 
         # Make sure everything is commited to DB
         self.db.commit()
@@ -369,6 +372,7 @@ class OpenIMUImporter(BaseImporter):
         timestamp_hour = None
 
         # Todo better than while 1?
+        progress = 0
         while file.readable():
 
             chunk = file.read(1)
@@ -440,6 +444,11 @@ class OpenIMUImporter(BaseImporter):
                 if timestamp_hour is not None:
                     results[timestamp_hour]['baro']['values'].append(data)
                     results[timestamp_hour]['baro']['end_time'] = current_timestamp + 1
+
+            new_progress = np.floor((file.tell() / self.current_file_size) * 100 / 2)
+            if new_progress != progress:  # Only send update if % was increased
+                progress = new_progress
+                self.update_progress.emit(progress)
 
             else:
                 print("Unrecognised chunk :", headChar[0])

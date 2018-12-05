@@ -11,6 +11,9 @@ from libopenimu.tools.timing import timing
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.Participant import Participant
 
+from PyQt5.QtCore import QObject, pyqtSignal
+
+
 @timing
 def load_worker(importer, filename):
     print('load_worker starting')
@@ -19,9 +22,12 @@ def load_worker(importer, filename):
     print('load worker done')
 
 
-class BaseImporter:
-    def __init__(self, manager: DBManager, participant: Participant):
-       # print('BaseImporter')
+class BaseImporter(QObject):
+
+    update_progress = pyqtSignal(int)
+
+    def __init__(self, manager: DBManager, participant: Participant, parent=None):
+        super().__init__(parent)
 
         # This is the manager that will be used for importation, externally created
         self.db = manager
@@ -35,13 +41,13 @@ class BaseImporter:
         t.start()
         return t
 
-    def load(self, filename):
+    @classmethod
+    def load(cls, filename):
         print('Nothing to do in BaseImporter.load')
-        pass
 
-    def import_to_database(self, result):
+    @classmethod
+    def import_to_database(cls, result):
         print('Nothing to do in BaseImporter.import_to_database')
-        pass
 
     def loaded_callback(self, result):
         print('loaded callback result len', len(result))

@@ -8,7 +8,7 @@ from resources.ui.python.DataInfosWidget_ui import Ui_DataInfosWidget
 class DataInfosWidget(QDialog):
 
     def __init__(self, sensor=Sensor, sample_num=int, parent=None):
-        super(QDialog, self).__init__(parent=parent)
+        super(DataInfosWidget, self).__init__(parent=parent)
         self.UI = Ui_DataInfosWidget()
         self.UI.setupUi(self)
 

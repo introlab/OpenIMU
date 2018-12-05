@@ -21,6 +21,7 @@ from libopenimu.models.SensorTimestamps import SensorTimestamps
 
 import numpy as np
 import datetime
+import os
 
 
 class ActigraphImporter(BaseImporter):
@@ -36,6 +37,7 @@ class ActigraphImporter(BaseImporter):
     def load(self, filename):
         print('ActigraphImporter loading:', filename)
         result = actigraph.gt3x_importer(filename)
+        self.update_progress.emit(50)
         return result
 
     def get_recordset(self, timestamp):
@@ -51,7 +53,6 @@ class ActigraphImporter(BaseImporter):
         recordset = self.db.add_recordset(self.participant, str(my_time.date()), my_time, my_time)
         self.recordsets.append(recordset)
         return recordset
-
 
     @timing
     def import_to_database(self, result):
@@ -225,3 +226,5 @@ class ActigraphImporter(BaseImporter):
 
         # Write data to file
         self.db.commit()
+
+        self.update_progress.emit(100)

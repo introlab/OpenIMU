@@ -45,6 +45,7 @@ SET(uis
     resources/ui/ProcessSelectDialog.ui
     resources/ui/GraphWidget.ui
     resources/ui/DataInfosWidget.ui
+    resources/ui/ProgressDialog.ui
 )
 
 SET(qrcs
