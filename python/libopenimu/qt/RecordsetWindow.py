@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QGraphicsScene, QApplication, QGraphicsRectItem, QGraphicsLineItem, QGraphicsItem
 from PyQt5.QtWidgets import QDialog, QMenu, QAction
-from PyQt5.QtGui import QBrush, QPen, QColor, QFont
+from PyQt5.QtGui import QBrush, QPen, QColor, QFont, QGuiApplication
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QPoint, QRect, QObject, QRectF
 
 from resources.ui.python.RecordsetWidget_ui import Ui_frmRecordsets
@@ -11,13 +11,79 @@ from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.Sensor import Sensor
 from libopenimu.models.Base import Base
 from libopenimu.importers.wimu import GPSGeodetic
+from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog, WorkerTask
+from libopenimu.db.DBManager import DBManager
 
 from libopenimu.qt.ProcessSelectWindow import ProcessSelectWindow
 
 from libopenimu.tools.timing import timing
 import numpy as np
+import string
 
 from datetime import datetime, timedelta
+
+
+# This class is a worker task that queries the database for specific sensor data for all current recordsets
+# Used from "get_sensor_data"
+class DBSensorDataTask(WorkerTask):
+    def __init__(self, title: string, db_manager: DBManager, task_sensor: Sensor, task_start_time: int,
+                 task_end_time: int, recordsets: list, parent=None):
+        super().__init__(title, 0, parent)
+
+        self.dbMan = db_manager
+        self.start_time = task_start_time
+        self.end_time = task_end_time
+        self.sensor = task_sensor
+        self.recordsets = recordsets
+        self.size = 0
+
+        self.results = {}
+
+    def create_data_timeseries(self, sensor_data_list: list):
+        time_values = []
+        data_values = []
+
+        for sensor_data in sensor_data_list:
+            # print('sensor_data', sensor_data)
+            # Will get a dict with keys:  time, values
+            vals = sensor_data.to_time_series()
+            # print('vals is length', len(vals))
+            time_values.append(vals['time'])
+            data_values.append(vals['values'])
+
+        # print('time_values length', len(time_values))
+        # print('data_values length', len(data_values))
+
+        # Concat vectors
+        time_array = np.concatenate(time_values)
+        data_array = np.concatenate(data_values)
+
+        # Test, remove first time
+        # time_array = time_array - time_array[0]
+
+        # print('time_array_shape, data_array_shape', time_array.shape, data_array.shape)
+        # return data
+        return {'x': time_array, 'y': data_array}
+
+    def process(self):
+        timeseries = []
+        channels = self.dbMan.get_all_channels(sensor=self.sensor)
+        self.size = len(channels)*len(self.recordsets)
+        count = 0
+        for channel in channels:
+            # Will get all data (converted to floats)
+            channel_data = []
+            for record in self.recordsets:
+                channel_data += self.dbMan.get_all_sensor_data(recordset=record, convert=True, sensor=self.sensor,
+                                                               channel=channel, start_time=self.start_time,
+                                                               end_time=self.end_time)
+                count += 1
+                self.update_progress.emit(count)
+
+            if len(channel_data) > 0:
+                timeseries.append(self.create_data_timeseries(channel_data))
+                timeseries[-1]['label'] = channel.label
+        self.results = {'sensor': self.sensor, 'timeseries': timeseries, 'channel_data': channel_data}
 
 
 class RecordsetWindow(QWidget):
@@ -93,15 +159,12 @@ class RecordsetWindow(QWidget):
             self.time_pixmap = True
 
     def resizeEvent(self, resize_event):
-        self.refresh_timeview()
-        # print(self.height())
-        # print(self.UI.frameTop.minimumSizeHint().height())
-        # self.UI.frmSensors.setMaximumWidth(self.UI.frameTop.width())
-        # self.UI.frmSensors.setMaximumHeight(self.height() - self.UI.frameTop.minimumSizeHint().height() - 100)
-        return
+        if self.time_pixmap:
+            self.refresh_timeview()
 
-    @timing
     def refresh_timeview(self):
+        QGuiApplication.setOverrideCursor(Qt.BusyCursor)
+
         # Computes required timescene size
         min_width = self.UI.graphTimeline.width() - 5
         if len(self.recordsets)>0:
@@ -132,6 +195,8 @@ class RecordsetWindow(QWidget):
         # Adjust splitter sizes
         self.adjust_timeview_size()
         # self.UI.frmSensors.hide()
+
+        QGuiApplication.restoreOverrideCursor()
 
     def adjust_timeview_size(self):
         self.UI.frameScrollSpacer.setFixedWidth(self.UI.graphTimeline.pos().x())
@@ -364,7 +429,6 @@ class RecordsetWindow(QWidget):
             for sensor_id in sensors:
                 pos += 20
 
-    @timing
     def draw_sensors(self):
         if len(self.sensors) == 0:
             return
@@ -383,9 +447,7 @@ class RecordsetWindow(QWidget):
 
     def create_sensors_rects(self):
         rects = []
-
         pos = 20
-
         for location in self.sensors_location:
             # Must create a new location space for later
             pos += 15
@@ -418,21 +480,6 @@ class RecordsetWindow(QWidget):
                 sensors_id.append(sensor.id_sensor)
 
         return sensors_id
-
-    def get_sensor_data(self, sensor, start_time=None, end_time=None):
-        timeseries = []
-        channels = self.dbMan.get_all_channels(sensor=sensor)
-        for channel in channels:
-            # Will get all data (converted to floats)
-            channel_data = []
-            for record in self.recordsets:
-                channel_data += self.dbMan.get_all_sensor_data(recordset=record, convert=True, sensor=sensor,
-                                                               channel=channel, start_time=start_time,
-                                                               end_time=end_time)
-            if len(channel_data) > 0:
-                timeseries.append(self.create_data_timeseries(channel_data))
-            timeseries[-1]['label'] = channel.label
-        return timeseries, channel_data
 
     @staticmethod
     def get_sensor_graph_type(sensor):
@@ -477,27 +524,29 @@ class RecordsetWindow(QWidget):
         return
 
     @pyqtSlot(QAction)
+    @timing
     def sensor_graph_selected(self, sensor_item):
         sensor_id = sensor_item.property("sensor_id")
         sensor = self.sensors[sensor_id]
         sensor_label = sensor.name + " (" + sensor.location + ")"
 
-        # Color map for curves
-        colors = [Qt.blue, Qt.green, Qt.yellow, Qt.red]
-
         if sensor_item.isChecked():
             # Choose the correct display for each sensor
             graph_window = None
             timeseries, channel_data = self.get_sensor_data(sensor)  # Fetch all sensor data
-            graph_type = self.get_sensor_graph_type(sensor)
 
+            # Color map for curves
+            colors = [Qt.blue, Qt.green, Qt.yellow, Qt.red]
+
+            graph_type = self.get_sensor_graph_type(sensor)
             graph_window = GraphWindow(graph_type, sensor, self.UI.mdiArea)
             graph_window.setStyleSheet(self.styleSheet() + graph_window.styleSheet())
 
             if graph_type == GraphType.LINECHART:
                 # Add series
                 for series in timeseries:
-                    graph_window.graph.add_data(series['x'], series['y'], color=colors.pop(), legend_text=series['label'])
+                    graph_window.graph.add_data(series['x'], series['y'], color=colors.pop(),
+                                                legend_text=series['label'])
 
                 graph_window.graph.set_title(sensor_label)
 
@@ -525,7 +574,6 @@ class RecordsetWindow(QWidget):
                 graph_window.graph.clearedSelectionArea.connect(self.on_timeview_clear_selection_requested)
 
                 self.UI.mdiArea.tileSubWindows()
-
         else:
             # Remove from display
             try:
@@ -537,6 +585,20 @@ class RecordsetWindow(QWidget):
             except KeyError:
                 pass
         self.update_tile_buttons_state()
+
+    @timing
+    def get_sensor_data(self, sensor, start_time=None, end_time=None):
+        QGuiApplication.setOverrideCursor(Qt.BusyCursor)
+        task = DBSensorDataTask("Chargement des données...", self.dbMan, sensor, start_time, end_time, self.recordsets)
+
+        process = BackgroundProcess([task])
+        dialog = ProgressDialog(process, "Traitement")
+
+        process.start()
+        dialog.exec()
+        QGuiApplication.restoreOverrideCursor()
+
+        return task.results['timeseries'], task.results['channel_data']
 
     def update_tile_buttons_state(self):
         if self.sensors_graphs.keys().__len__() > 1:
@@ -677,33 +739,6 @@ class RecordsetWindow(QWidget):
         self.UI.frameTimeline.setVisible(visible)
         self.UI.frameTimelineControls.setVisible(visible)
         # self.UI.lblCursorTime.setVisible(visible)
-
-    @timing
-    def create_data_timeseries(self, sensor_data_list: list):
-        time_values = []
-        data_values = []
-
-        for sensor_data in sensor_data_list:
-            # print('sensor_data', sensor_data)
-            # Will get a dict with keys:  time, values
-            vals = sensor_data.to_time_series()
-            # print('vals is length', len(vals))
-            time_values.append(vals['time'])
-            data_values.append(vals['values'])
-
-        # print('time_values length', len(time_values))
-        # print('data_values length', len(data_values))
-
-        # Concat vectors
-        time_array = np.concatenate(time_values)
-        data_array = np.concatenate(data_values)
-
-        # Test, remove first time
-        # time_array = time_array - time_array[0]
-
-        # print('time_array_shape, data_array_shape', time_array.shape, data_array.shape)
-        # return data
-        return {'x': time_array, 'y': data_array}
 
     @pyqtSlot()
     def on_process_recordset(self):

@@ -1,6 +1,7 @@
 from PyQt5.QtCore import QThread, QCoreApplication, QTime, pyqtSignal, pyqtSlot, Qt, QObject
 from PyQt5.QtWidgets import QDialog, QApplication
-from PyQt5.QtGui import QMovie, QDesktopServices
+from PyQt5.QtGui import QMovie
+from libopenimu.db.DBManager import DBManager
 from resources.ui.python.ProgressDialog_ui import Ui_ProgressDialog
 
 import numpy as np
@@ -11,26 +12,36 @@ import string
 class WorkerTask(QObject):
 
     update_progress = pyqtSignal(int)  # Current progress in %
+    size_updated = pyqtSignal()
 
     def __init__(self, title: string, size: int, parent=None):
         super().__init__(parent)
         self.title = title
-        self.size = size
+        self._size = size
 
-    @staticmethod
+    @property
+    def size(self):
+        return self._size
+
+    @size.setter
+    def size(self, value):
+        self._size = value
+        self.size_updated.emit()
+
     def process(self):
-        print("Empty task - nothing to process!")
+        print("Empty task - " + self.title + " - nothing to process!")
 
 
-class SimpleTask(QObject):  # A simple worker task without any progress reporting
+class SimpleTask(WorkerTask):  # A simple worker task without any progress reporting
 
-    def __init__(self, title: string, task_func, parent=None):
-        super().__init(title, 0, parent)
+    def __init__(self, title: string, task_func, *func_args, parent=None):
+        super().__init__(title, 0, parent)
 
         self.task_process = task_func
+        self.task_parameters = func_args
 
     def process(self):
-        self.task_process()
+        self.task_process(self.task_parameters)
 
 
 class BackgroundProcess(QThread):
@@ -44,13 +55,13 @@ class BackgroundProcess(QThread):
         self.tasks = tasks
 
     def run(self):
-        print('Run Starting!')
+        # print('Run Starting!')
         for task in self.tasks:
             task.update_progress.connect(self.update_current_task_progress)
             task.process()
             self.task_completed.emit()
             del task
-        print('Run Done!')
+        # print('Run Done!')
 
 
 class ProgressDialog(QDialog):
@@ -62,15 +73,17 @@ class ProgressDialog(QDialog):
         self.setWindowFlags(Qt.SplashScreen)
 
         self.tasks = bg_process.tasks
-        self.count = 0
         self.UI.prgTotal.setMinimum(0)
         self.UI.prgTotal.setMaximum(len(self.tasks))
+        self.count = -1
+        self.next_task()
+
         self.time = QTime.currentTime()
         self.startTimer(1000)
         # self.setCancelButton(None)
         self.set_job_title(job_title)
 
-        self.total_work_load = sum(t.size for t in self.tasks)
+        self.total_work_load = self.compute_workload()
         self.total_work_done = 0
         self.work_speed_estimates = []
 
@@ -78,6 +91,10 @@ class ProgressDialog(QDialog):
         icon = QMovie(":/OpenIMU/icons/loading.gif")
         self.UI.icoWorking.setMovie(icon)
         icon.start()
+
+        if len(self.tasks) < 2:
+            self.UI.prgTotal.hide()
+            self.UI.lblCurrentTask.hide()
 
         # Center dialog on screen
         screen_geometry =  QApplication.desktop().screenGeometry()
@@ -87,7 +104,7 @@ class ProgressDialog(QDialog):
 
         # Connect signals
         bg_process.finished.connect(self.accept)
-        bg_process.task_completed.connect(self.next_job)
+        bg_process.task_completed.connect(self.next_task)
         bg_process.update_current_task_progress.connect(self.update_current_task_progress)
 
     def showEvent(self, event):
@@ -97,18 +114,34 @@ class ProgressDialog(QDialog):
         if self.count < len(self.tasks):
             self.UI.lblCurrentTaskValue.setText(self.tasks[self.count].title)
 
+    def compute_workload(self):
+        return sum(t.size for t in self.tasks)
+
     def set_job_title(self, title):
         self.setWindowTitle(title)
         self.UI.lblTitle.setText(title)
 
     @pyqtSlot()
-    def next_job(self):
+    def current_task_size_updated(self):
+        new_size = self.tasks[self.count].size
+        if new_size < self.UI.prgTask.value():
+            self.UI.prgTask.setValue(new_size)
+
+        self.UI.prgTask.setMaximum(new_size)
+
+        self.total_work_load = self.compute_workload()
+        if self.total_work_done > self.total_work_load:
+            self.total_work_done = self.total_work_load
+
+    @pyqtSlot()
+    def next_task(self):
         self.count = self.count + 1
         if self.count < len(self.tasks):
             self.display_current_task()
             self.UI.prgTotal.setValue(self.count)
             self.UI.prgTask.setValue(0)
             self.UI.prgTask.setMaximum(self.tasks[self.count].size)
+            self.tasks[self.count].size_updated.connect(self.current_task_size_updated)
 
         gc.collect()
 
