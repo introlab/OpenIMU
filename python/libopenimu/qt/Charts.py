@@ -399,7 +399,7 @@ class IMUChartView(QChartView, BaseGraph):
         self.cursor.setLine(x, y1, x, y2)
         self.cursor.show()
 
-        xmap = self.chart.mapToValue(QPointF(pos, 0)).x()
+        xmap_initial = self.chart.mapToValue(QPointF(pos, 0)).x()
         display = ''
         # '<i>' + (datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp())).strftime('%d-%m-%Y %H:%M:%S') +
         # '</i><br />'
@@ -407,11 +407,11 @@ class IMUChartView(QChartView, BaseGraph):
         last_val = None
         for i in range(self.ncurves):
             # Find nearest point
-            idx = (np.abs(self.xvalues[i] - xmap)).argmin()
+            idx = (np.abs(self.xvalues[i] - xmap_initial)).argmin()
             ymap = self.chart.series()[i].at(idx).y()
             xmap = self.chart.series()[i].at(idx).x()
             if i == 0:
-                display += "<i>" + (datetime.datetime.fromtimestamp(xmap/1000)).strftime('%d-%m-%Y %H:%M:%S:%f') + \
+                display += "<i>" + (datetime.datetime.fromtimestamp(xmap_initial/1000)).strftime('%d-%m-%Y %H:%M:%S:%f') + \
                            "</i>"
 
             # Compute where to display label
@@ -429,7 +429,7 @@ class IMUChartView(QChartView, BaseGraph):
         self.labelValue.setVisible(True)
 
         if emit_signal:
-            self.cursorMoved.emit(xmap)
+            self.cursorMoved.emit(xmap_initial)
 
         self.update()
 

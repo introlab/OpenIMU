@@ -22,6 +22,8 @@ class GraphWindow(QWidget):
 
     aboutToClose = pyqtSignal(QObject)
     requestData = pyqtSignal(Sensor, datetime.datetime, datetime.datetime)
+    zoomAreaRequested = pyqtSignal(datetime.datetime, datetime.datetime)
+    zoomResetRequested = pyqtSignal()
 
     def __init__(self, graph_type: GraphType, sensor: Sensor, parent=None):
         super(QWidget, self).__init__(parent=parent)
@@ -88,11 +90,13 @@ class GraphWindow(QWidget):
     def setSelectionAreaFromTime(self, start_time, end_time, emit_signal=False):
         if self.graph is not None:
             self.graph.setSelectionAreaFromTime(start_time, end_time, emit_signal)
+            self.update_zoom_buttons_state()
 
     def clearSelectionArea(self):
         if self.graph is not None:
             self.graph.clearSelectionArea(False)
             self.UI.btnClearSelection.setEnabled(False)
+            self.update_zoom_buttons_state()
 
     def update_zoom_buttons_state(self):
         self.UI.btnZoomArea.setEnabled(self.graph.selection_rec is not None)
@@ -109,7 +113,13 @@ class GraphWindow(QWidget):
         if self.graph:
             self.graph.zoom_area()
             self.requestData.emit(self.sensor, self.graph.get_displayed_start_time(), self.graph.get_displayed_end_time())
+            self.zoomAreaRequested.emit(self.graph.get_displayed_start_time(), self.graph.get_displayed_end_time())
         self.update_zoom_buttons_state()
+
+    def zoomAreaRequestTime(self, start_time: float, end_time: float, emit_signal=False):
+        if self.graph:
+            self.graph.setSelectionAreaFromTime(start_time, end_time, emit_signal)
+            self.graph.zoom_area()
 
     @pyqtSlot()
     def zoomOutRequest(self):
@@ -117,6 +127,7 @@ class GraphWindow(QWidget):
             self.graph.zoom_out()
             self.requestData.emit(self.sensor, self.graph.get_displayed_start_time(),
                                   self.graph.get_displayed_end_time())
+            self.zoomAreaRequested.emit(self.graph.get_displayed_start_time(), self.graph.get_displayed_end_time())
         self.update_zoom_buttons_state()
 
     @pyqtSlot()
@@ -125,12 +136,15 @@ class GraphWindow(QWidget):
             self.graph.zoom_in()
             self.requestData.emit(self.sensor, self.graph.get_displayed_start_time(),
                                   self.graph.get_displayed_end_time())
+            self.zoomAreaRequested.emit(self.graph.get_displayed_start_time(), self.graph.get_displayed_end_time())
         self.update_zoom_buttons_state()
 
     @pyqtSlot()
-    def zoomResetRequest(self):
+    def zoomResetRequest(self, emit_signal=True):
         if self.graph:
             self.graph.zoom_reset()
+            if emit_signal:
+                self.zoomResetRequested.emit()
         self.update_zoom_buttons_state()
 
     @pyqtSlot()

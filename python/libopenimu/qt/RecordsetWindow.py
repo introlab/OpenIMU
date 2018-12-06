@@ -572,6 +572,8 @@ class RecordsetWindow(QWidget):
                 graph_window.graph.cursorMoved.connect(self.graph_cursor_changed)
                 graph_window.graph.selectedAreaChanged.connect(self.graph_selected_area_changed)
                 graph_window.graph.clearedSelectionArea.connect(self.on_timeview_clear_selection_requested)
+                graph_window.zoomAreaRequested.connect(self.graph_zoom_area)
+                graph_window.zoomResetRequested.connect(self.graph_zoom_reset)
 
                 self.UI.mdiArea.tileSubWindows()
         else:
@@ -641,6 +643,18 @@ class RecordsetWindow(QWidget):
                 self.UI.scrollTimeline.setValue(pos)
 
         self.UI.lblCursorTime.setText(datetime.fromtimestamp(current_time).strftime('%d-%m-%Y %H:%M:%S'))
+
+    @pyqtSlot(datetime, datetime)
+    def graph_zoom_area(self, start_time, end_time):
+        for graph in self.sensors_graphs.values():
+            if graph is not None:
+                graph.zoomAreaRequestTime(start_time, end_time)
+
+    @pyqtSlot()
+    def graph_zoom_reset(self):
+        for graph in self.sensors_graphs.values():
+            if graph is not None:
+                graph.zoomResetRequest(False)
 
     @pyqtSlot(float, float)
     def graph_selected_area_changed(self, start_timestamp, end_timestamp):
