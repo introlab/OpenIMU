@@ -1,4 +1,3 @@
-from libopenimu.qt.ImportManager import ImportManager
 from resources.ui.python.ImportDialog_ui import Ui_ImportDialog
 
 from PyQt5.QtCore import pyqtSlot
@@ -6,6 +5,8 @@ from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox
 
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.DataSet import DataSet
+
+from sqlalchemy.exc import DBAPIError, DatabaseError, DataError
 
 from datetime import datetime
 
@@ -21,7 +22,7 @@ class ImportWindow(QDialog):
     dataSet = None
 
     def __init__(self, dataset=None, parent=None, filename = None, showImport = False):
-        super(QDialog, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.UI = Ui_ImportDialog()
         self.UI.setupUi(self)
 
@@ -118,7 +119,7 @@ class ImportWindow(QDialog):
 
                 self.accept()
 
-            except:
+            except (DBAPIError, DataError, DatabaseError):
                 print('Error!')
                 box = QMessageBox()
                 box.setText('Erreur de création de DB, s.v.p. choisir une répertoire valide')
@@ -127,44 +128,3 @@ class ImportWindow(QDialog):
     @pyqtSlot()
     def cancel_clicked(self):
         self.reject()
-"""
-    @pyqtSlot()
-    def addFile_clicked(self):
-        importman = ImportManager()
-        importman.setParticipants(self.participants)
-        importman.setGroups(self.groups)
-
-        if (importman.exec() == QDialog.Accepted):
-            #Add file to list
-            table = self.UI.tableFiles
-
-            row = table.rowCount()
-            table.setRowCount(row+1)
-            cell = QTableWidgetItem()
-            cell.setText(importman.filename)
-            table.setItem(row,0,cell)
-            cell = QTableWidgetItem()
-            cell.setText(importman.filetype)
-            table.setItem(row, 1, cell)
-            cell = QTableWidgetItem()
-            cell.setText(importman.group)
-            table.setItem(row, 2, cell)
-            cell = QTableWidgetItem()
-            cell.setText(importman.participant)
-            table.setItem(row, 3, cell)
-
-            if importman.participant not in self.participants:
-                self.participants.append(importman.participant)
-
-            if importman.group not in self.groups:
-                self.groups.append(importman.group)
-
-
-    @pyqtSlot()
-    def removeFile_clicked(self):
-
-        if self.UI.tableFiles.selectedItems():
-            #print(self.UI.tableFiles.selectedItems()[0].row())
-
-            self.UI.tableFiles.removeRow(self.UI.tableFiles.selectedItems()[0].row())
-"""

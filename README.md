@@ -19,7 +19,7 @@ Please follow those steps to setup your development environment.
   c. Windows: Visual Studio C++ 2017
 
 2.  Install [CMake](https://cmake.org/download/)
- 
+
 3.  Install [Qt + QtCreator](https://www.qt.io/)
   a. Install the latest Desktop distribution fitting your compiling environment (will not be needed in the future)
    

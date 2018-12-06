@@ -16,42 +16,51 @@ class BaseGraph:
         self.interaction_mode = GraphInteractionMode.SELECT
         self.total_samples = 0
 
-    def setCursorPosition(self, pos, emit_signal=False):
+    @classmethod
+    def setCursorPosition(cls, pos, emit_signal=False):
         return
 
-    def setCursorPositionFromTime(self, timestamp, emit_signal=False):
+    @classmethod
+    def setCursorPositionFromTime(cls, timestamp, emit_signal=False):
         return
 
-    def setSelectionArea(self, start_pos, end_pos, emit_signal=False):
+    @classmethod
+    def setSelectionArea(cls, start_pos, end_pos, emit_signal=False):
         return
 
-    def setSelectionAreaFromTime(self, start_time, end_time, emit_signal=False):
+    @classmethod
+    def setSelectionAreaFromTime(cls, start_time, end_time, emit_signal=False):
         return
 
-    def clearSelectionArea(self, emit_signal=False):
+    @classmethod
+    def clearSelectionArea(cls, emit_signal=False):
         return
 
-    def zoom_in(self):
+    @classmethod
+    def zoom_in(cls):
         return
 
-    def zoom_out(self):
+    @classmethod
+    def zoom_out(cls):
         return
 
-    def zoom_reset(self):
+    @classmethod
+    def zoom_reset(cls):
         return
 
-    def zoom_area(self):
+    @classmethod
+    def zoom_area(cls):
         return
 
     def set_interaction_mode(self, mode = GraphInteractionMode ):
         self.interaction_mode = mode
 
     @classmethod
-    def get_displayed_start_time(self):
+    def get_displayed_start_time(cls):
         return None
 
     @classmethod
-    def get_displayed_end_time(self):
+    def get_displayed_end_time(cls):
         return None
 
     @property

@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
-from PyQt5.QtCore import QUrl, pyqtSlot, pyqtSignal, Qt, QPointF
+from PyQt5.QtCore import QUrl, pyqtSlot, pyqtSignal, QPointF
 
 from libopenimu.qt.BaseGraph import BaseGraph
 
@@ -15,9 +15,7 @@ class GPSView(QWebEngineView, BaseGraph):
     cursorMoved = pyqtSignal(float)
 
     def __init__(self, parent):
-
-        super(QWebEngineView, self).__init__(parent=parent)
-        super(BaseGraph, self).__init__()
+        super().__init__(parent=parent)
         self.path = []
         self.marker_position = []
         self.positions = collections.OrderedDict()
@@ -41,7 +39,7 @@ class GPSView(QWebEngineView, BaseGraph):
     def addPosition(self, timestamp, latitude, longitude):
         # if timestamp < self.reftime:
         #    self.reftime = timestamp
-        if type(timestamp) is datetime.datetime:
+        if isinstance(timestamp, datetime.datetime):
             timestamp = timestamp.timestamp()
 
         self.positions[timestamp] = QPointF(latitude, longitude)
@@ -107,7 +105,7 @@ class GPSView(QWebEngineView, BaseGraph):
             #    timestamp = self.reftime
             # start_timestamp = next(iter(self.positions))
 
-            if type(start_time) is datetime.datetime:
+            if isinstance(start_time, datetime.datetime):
                 start_time = start_time.timestamp()
 
             # Find nearest point
@@ -121,7 +119,7 @@ class GPSView(QWebEngineView, BaseGraph):
             #    timestamp = self.reftime
             # start_timestamp = next(iter(self.positions))
 
-            if type(end_time) is datetime.datetime:
+            if isinstance(end_time, datetime.datetime):
                 end_time = end_time.timestamp()
 
             # Find nearest point
@@ -147,12 +145,12 @@ class GPSView(QWebEngineView, BaseGraph):
             if self.marker_position != []:
                 self.page().runJavaScript('setMarkerPosition(' + str(self.marker_position[0]) + ',' + str(self.marker_position[1]) + ');')
 
+
 # Testing app
 if __name__ == '__main__':
 
     from PyQt5.QtWidgets import QApplication
-    from PyQt5.QtWidgets import QMainWindow, QPushButton
-    from PyQt5.QtCore import Qt
+    from PyQt5.QtWidgets import QMainWindow
 
     app = QApplication(sys.argv)
 

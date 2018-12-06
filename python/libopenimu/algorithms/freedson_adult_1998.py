@@ -36,9 +36,8 @@ epoch = 60 seconds
 
 """
 
-from libopenimu.models.SensorData import SensorData
 import numpy as np
-from scipy.signal import butter, sosfilt, sosfreqz
+from scipy.signal import butter, sosfilt
 from libopenimu.tools.timing import timing
 
 
@@ -108,7 +107,8 @@ def generate_60s_epoch(timeseries, sampling_rate):
     time = timeseries['time']
     values = timeseries['values']
 
-    for i in range(0, len(time)):
+    # for i in range(0, len(time)):
+    for i, _ in enumerate(time):
         if len(epochs[-1][0]) >= nb_samples:
             epochs.append([list(), list()])
 
@@ -142,7 +142,7 @@ def freedson_adult_1998(samples: list, sampling_rate):
 
         for epoch in epochs:
             # print('len epoch 0,1', len(epoch[0]), len(epoch[1]))
-            assert(len(epoch[0]) == len(epoch[1]))
+            # assert(len(epoch[0]) == len(epoch[1]))
 
             # Do not process empty epochs
             if len(epoch[0]) == 0:
@@ -155,10 +155,10 @@ def freedson_adult_1998(samples: list, sampling_rate):
 
             # Convert and scale to compare to reference cutpoints
             # Factor 128 is calculated since 2g = 256 (max 8 bit values)
-            sum = int(128.0 * np.sum(np.abs(epoch[1])) * complete_factor)
+            result_sum = int(128.0 * np.sum(np.abs(epoch[1])) * complete_factor)
 
             # Classify
-            results[CutPoints.classify(sum, scale)] += 1
+            results[CutPoints.classify(result_sum, scale)] += 1
 
     # print('results', results)
     return results
@@ -172,22 +172,21 @@ if __name__ == '__main__':
 
     import os
 
-
     db_filename = 'freedson.db'
 
     def import_data():
 
-        manager = DBManager(db_filename)
+        db_manager = DBManager(db_filename)
 
         # Create participant
-        participant = manager.update_participant(Participant(name='Participant', description='No description'))
+        participant = db_manager.update_participant(Participant(name='Participant', description='No description'))
 
         # Create importer
-        importer = ActigraphImporter(manager, participant)
+        importer = ActigraphImporter(db_manager, participant)
 
         # Load content of the file to the database
-        results = importer.load('../../resources/samples/test.gt3x')
-        importer.import_to_database(results)
+        data_results = importer.load('../../resources/samples/test.gt3x')
+        importer.import_to_database(data_results)
 
 
     if not os.path.isfile(db_filename):

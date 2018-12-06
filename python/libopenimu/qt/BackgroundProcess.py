@@ -1,7 +1,6 @@
 from PyQt5.QtCore import QThread, QCoreApplication, QTime, pyqtSignal, pyqtSlot, Qt, QObject
 from PyQt5.QtWidgets import QDialog, QApplication
 from PyQt5.QtGui import QMovie
-from libopenimu.db.DBManager import DBManager
 from resources.ui.python.ProgressDialog_ui import Ui_ProgressDialog
 
 import numpy as np

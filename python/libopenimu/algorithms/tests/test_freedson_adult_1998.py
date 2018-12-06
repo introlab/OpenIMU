@@ -8,7 +8,6 @@
 
 
 import unittest
-import numpy as np
 import libopenimu.algorithms.freedson_adult_1998 as freedson1998
 
 

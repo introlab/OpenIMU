@@ -18,14 +18,5 @@ class DataSet(Base):
 
     # Database rep (optional)
     def __repr__(self):
-        return "<Dataset(name='%s', description='%s', author='%s', creation_date='%s', upload_date='%s')>" % (
-        self.name, self.description, self.author, str(self.creation_date), str(self.upload_date))
-
-    """ def __init__(self):
-        self.name = None
-        self.description = None
-        self.creation_date = None
-        self.upload_date = None
-        self.author = None
-        self.recordSets = []
-"""
+        return "<Dataset(name='%s', description='%s', author='%s', creation_date='%s', upload_date='%s')>" % \
+               (self.name, self.description, self.author, str(self.creation_date), str(self.upload_date))

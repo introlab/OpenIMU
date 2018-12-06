@@ -1,12 +1,9 @@
-from PyQt5.QtWidgets import QDialog, QComboBox, QLineEdit, QFileDialog, QHBoxLayout, QListWidgetItem, QMainWindow
-from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal
+from PyQt5.QtWidgets import QDialog, QListWidgetItem
+from PyQt5.QtCore import pyqtSlot
 from resources.ui.python.ProcessSelectDialog_ui import Ui_dlgProcessSelect
 from libopenimu.db.DBManager import DBManager
 from libopenimu.algorithms.BaseAlgorithm import BaseAlgorithmFactory
-from libopenimu.qt.ResultWindow import ResultWindow
 
-from libopenimu.models.ProcessedData import ProcessedData
-from libopenimu.models.Recordset import Recordset
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog
 
 
@@ -14,7 +11,7 @@ class ProcessSelectWindow(QDialog):
     processed_data = None
 
     def __init__(self, dataManager : DBManager, recordsets : list, parent=None):
-        super(QDialog, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.UI = Ui_dlgProcessSelect()
         self.UI.setupUi(self)
         self.dbMan = dataManager
@@ -85,7 +82,6 @@ class ProcessSelectWindow(QDialog):
                     print('getting results')
                     return self.results
 
-
             # For testing, should display a configuration GUI first
             params = {}
             algo = self.factory.create(params)
@@ -108,13 +104,15 @@ class ProcessSelectWindow(QDialog):
 
             # results = algo.calculate(self.dbMan, self.recordsets)
             print('Algo results', results)
-            """window = QMainWindow(self)
+            """
+            window = QMainWindow(self)
             window.setWindowTitle('Results: ' + self.factory.info()['name'])
             widget = ResultWindow(self)
             widget.display_freedson_1998(results, self.recordsets)
             window.setCentralWidget(widget)
             window.resize(800, 600)
-            window.show()"""
+            window.show()
+            """
 
             # Save to database
             name = self.factory.info()['name'] + " - " + self.recordsets[0].name

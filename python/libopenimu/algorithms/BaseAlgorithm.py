@@ -7,7 +7,6 @@
 """
 
 from abc import abstractmethod
-from libopenimu.models.Recordset import Recordset
 from libopenimu.db.DBManager import DBManager
 
 from PyQt5.QtWidgets import QWidget
@@ -57,9 +56,9 @@ class BaseAlgorithmFactory:
         return None
 
     @staticmethod
-    def get_factory_with_id(id):
+    def get_factory_with_id(f_id):
         for factory in BaseAlgorithmFactory.factories:
-            if factory.unique_id() == id:
+            if factory.unique_id() == f_id:
                 return factory
         return None
 

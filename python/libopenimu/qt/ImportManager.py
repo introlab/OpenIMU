@@ -1,10 +1,9 @@
-from PyQt5.QtWidgets import QDialog, QComboBox, QLineEdit, QFileDialog, QHBoxLayout
-from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal
+from PyQt5.QtWidgets import QDialog, QFileDialog, QHBoxLayout
+from PyQt5.QtCore import pyqtSlot
 
 from resources.ui.python.ImportManager_ui import Ui_ImportManager
 
 from libopenimu.importers.importer_types import ImporterTypes
-from libopenimu.db.DBManager import DBManager
 
 from libopenimu.qt.ParticipantWindow import ParticipantWindow
 
@@ -20,7 +19,7 @@ class ImportManager(QDialog):
     import_dirs = False
 
     def __init__(self, dbManager, parent=None):
-        super(QDialog, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.UI = Ui_ImportManager()
         self.UI.setupUi(self)
 

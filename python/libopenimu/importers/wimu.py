@@ -4,7 +4,6 @@ import os
 import zipfile
 import struct
 import numpy as np
-import datetime
 from io import BytesIO
 
 
@@ -218,7 +217,7 @@ class WIMUSettings:
 
             self.crc = struct.unpack_from('<I', data, offset=42)
         else:
-            assert(len(data) == 50)
+            # assert(len(data) == 50)
             self.version_major = 2
             self.version_minor = 0
             self.version_rev = 0
@@ -487,7 +486,7 @@ class WIMUConfig:
             [self.enabled_modules] = struct.unpack_from('<H', data, offset=0)
 
             # Empty buf16
-            [buf16] == struct.unpack_from('<H', data, offset=2)
+            [buf16] = struct.unpack_from('<H', data, offset=2)
 
             # Unsigned char, CPU Options
             [buf8] = struct.unpack_from('<B', data, offset=4)
@@ -703,12 +702,12 @@ def wimu_load_acc(time_data, acc_data, config: WIMUConfig):
                                   offset=i * epoch_size + 4 + 2 * len(x_raw) + 2 * len(y_raw))
 
             # Conversion to g
-            range_max = np.float32(AccOptions.range_max(config.acc.range, config.settings.hw_id))
+            # range_max = np.float32(AccOptions.range_max(config.acc.range, config.settings.hw_id))
             x_conv = config.acc.conversion_to_g(config.acc.range, x_raw, config.settings.hw_id)
             y_conv = config.acc.conversion_to_g(config.acc.range, y_raw, config.settings.hw_id)
             z_conv = config.acc.conversion_to_g(config.acc.range, z_raw, config.settings.hw_id)
-            """y_conv = (y_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
-            z_conv = (z_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max"""
+            # y_conv = (y_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
+            # z_conv = (z_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
 
             # Accumulate vectors (use last known
             acc_x[timestamps[-1]].append(x_conv)
@@ -801,12 +800,6 @@ def wimu_load_gyro(time_data, gyro_data, config: WIMUConfig):
                                   offset=i * epoch_size + 4 + 2 * len(x_raw) + 2 * len(y_raw))
 
             # Conversion to deg/sec
-            """
-            range_max = np.float32(GyroOptions.range_max(config.gyro.range, config.settings.hw_id))
-            x_conv = (x_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
-            y_conv = (y_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
-            z_conv = (z_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
-            """
             x_conv = config.gyro.conversion_to_deg_per_sec(config.gyro.range, x_raw, config.settings.hw_id)
             y_conv = config.gyro.conversion_to_deg_per_sec(config.gyro.range, y_raw, config.settings.hw_id)
             z_conv = config.gyro.conversion_to_deg_per_sec(config.gyro.range, z_raw, config.settings.hw_id)

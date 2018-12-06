@@ -86,8 +86,8 @@ class ActigraphImporterTest(unittest.TestCase):
         print('Starting threads...')
         # Start threads
         threads = []
-        for i in range(0, 1):
-            threads.append(importer.async_load('../../../resources/samples/test.gt3x'))
+        threads.append(importer.async_load('../../../resources/samples/test.gt3x'))
+        threads.append(importer.async_load('../../../resources/samples/test.gt3x'))
 
         print('Waiting for threads...')
         # Wait for threads

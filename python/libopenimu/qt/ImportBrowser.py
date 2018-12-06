@@ -1,4 +1,4 @@
-from PyQt5.QtCore import pyqtSlot, Qt, pyqtSignal
+from PyQt5.QtCore import pyqtSlot, Qt
 from PyQt5.QtWidgets import QDialog, QTableWidgetItem
 
 from resources.ui.python.ImportBrowser_ui import Ui_ImportBrowser

@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QMessageBox
 from pprint import pprint
 from PyQt5.QtCore import  QDir
 
-from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from libopenimu.qt.Charts import IMUChartView
 
 from libopenimu.models.ProcessedData import ProcessedData
@@ -147,26 +147,6 @@ class MainWindow(QMainWindow):
         for result in results:
             self.UI.treeDataSet.update_result(result)
 
-
-    """
-    def create_subrecord_item(self, name, id):
-        item = QTreeWidgetItem()
-        item.setText(0, name)
-        item.setIcon(0, QIcon(':/OpenIMU/icons/subrecord.png'))
-        item.setData(0, Qt.UserRole, id)
-        item.setData(1, Qt.UserRole, 'subrecord')
-        item.setFont(0, QFont('Helvetica', 12, QFont.Bold))
-        return item
-
-    def create_sensor_item(self, name, id):
-        item = QTreeWidgetItem()
-        item.setText(0, name)
-        item.setIcon(0, QIcon(':/OpenIMU/icons/sensor.png'))
-        item.setData(0, Qt.UserRole, id)
-        item.setData(1, Qt.UserRole, 'sensor')
-        item.setFont(0, QFont('Helvetica', 12))
-        return item
-    """
     def update_group(self, group):
         item = self.UI.treeDataSet.update_group(group)
         self.UI.treeDataSet.setCurrentItem(item)
@@ -407,8 +387,8 @@ class MainWindow(QMainWindow):
             self.add_to_log(item_name + " a été supprimé.", LogTypes.LOGTYPE_DONE)
             self.clear_main_widgets()
 
-    def closeEvent(self, event):
-        return
+#    def closeEvent(self, event):
+#        return
 
     def create_chart_view(self, test_data=False):
         chart_view = IMUChartView(self)

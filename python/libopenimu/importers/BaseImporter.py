@@ -11,6 +11,8 @@ from libopenimu.tools.timing import timing
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.Participant import Participant
 
+import datetime
+
 from PyQt5.QtCore import QObject, pyqtSignal
 
 
@@ -35,19 +37,42 @@ class BaseImporter(QObject):
         # This is the participant
         self.participant = participant
 
+        # No recordsets when starting
+        self.recordsets = []
+
+    def get_recordset(self, timestamp):
+        try:
+            my_time = datetime.datetime.fromtimestamp(timestamp)
+        except ValueError:
+            return
+
+        # Validate timestamp
+        if my_time > datetime.datetime.now() or my_time < datetime.datetime(2018, 1, 1):
+            print("Invalid timestamp: " + str(timestamp))
+            return
+
+        # Find a record the same day
+        for record in self.recordsets:
+            # Same date return this record
+            if record.start_timestamp.date() == my_time.date():
+                return record
+
+        # Return new record
+        recordset = self.db.add_recordset(self.participant, str(my_time.date()), my_time, my_time)
+        self.recordsets.append(recordset)
+        return recordset
+
     def async_load(self, filename):
         print('will call load on importer with filename: ', filename)
         t = threading.Thread(target=load_worker, args=[self, filename])
         t.start()
         return t
 
-    @classmethod
-    def load(cls, filename):
-        print('Nothing to do in BaseImporter.load')
+    def load(self, filename):
+        print('Nothing to do in ' + type(self) + ".load")
 
-    @classmethod
-    def import_to_database(cls, result):
-        print('Nothing to do in BaseImporter.import_to_database')
+    def import_to_database(self, results):
+        print('Nothing to do in ' + type(self) + " import to database.")
 
     def loaded_callback(self, result):
         print('loaded callback result len', len(result))

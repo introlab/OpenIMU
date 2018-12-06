@@ -1,7 +1,6 @@
 from libopenimu.importers.BaseImporter import BaseImporter
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.units import Units
-from libopenimu.models.Recordset import Recordset
 from libopenimu.models.SensorTimestamps import SensorTimestamps
 from libopenimu.models.data_formats import DataFormat
 from libopenimu.tools.timing import timing
@@ -21,8 +20,7 @@ class OpenIMUImporter(BaseImporter):
     def __init__(self, manager: DBManager, participant: Participant):
         super().__init__(manager, participant)
         # print('OpenIMU Importer')
-        # No recordsets when starting
-        self.recordsets = []
+
         self.current_file_size = 0
 
     def get_recordset(self, start_timestamp, end_timestamp):
@@ -133,8 +131,7 @@ class OpenIMUImporter(BaseImporter):
         # TODO Better GPS solution?
 
         # We have one sample per second of GPS data
-        for i in range(len(values)):
-            val = values[i]
+        for i, val in enumerate(values):
             geo = GPSGeodetic()
             # Discard invalid data
             if math.isnan(val[1]) or math.isnan(val[2]):
@@ -336,31 +333,36 @@ class OpenIMUImporter(BaseImporter):
         # Make sure everything is commited to DB
         self.db.commit()
 
-    def processImuChunk(self, chunk, debug=False):
+    @staticmethod
+    def processImuChunk(chunk, debug=False):
         data = struct.unpack("9f", chunk)
         if debug:
             print("IMU: ", data)
         return data
 
-    def processTimestampChunk(self, chunk, debug=False):
+    @staticmethod
+    def processTimestampChunk(chunk, debug=False):
         [timestamp] = struct.unpack("i", chunk)
         if debug:
             print(datetime.datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S'))
         return timestamp
 
-    def processGPSChunk(self, chunk, debug=False):
+    @staticmethod
+    def processGPSChunk(chunk, debug=False):
         data = struct.unpack("?3f", chunk)
         if debug:
             print("GPS: ", data)
         return data
 
-    def processBarometerChunk(self, chunk, debug=False):
+    @staticmethod
+    def processBarometerChunk(chunk, debug=False):
         data = struct.unpack("2f", chunk)
         if debug:
             print("BARO: ", data[0], data[1])
         return data
 
-    def processPowerChunk(self, chunk, debug=False):
+    @staticmethod
+    def processPowerChunk(chunk, debug=False):
         data = struct.unpack("2f", chunk)
         if debug:
             print("POWER: ", data[0], data[1])
@@ -445,14 +447,13 @@ class OpenIMUImporter(BaseImporter):
                     results[timestamp_hour]['baro']['values'].append(data)
                     results[timestamp_hour]['baro']['end_time'] = current_timestamp + 1
 
+            else:
+                print("Unrecognised chunk :", headChar[0])
+                break
             new_progress = np.floor((file.tell() / self.current_file_size) * 100 / 2)
             if new_progress != progress:  # Only send update if % was increased
                 progress = new_progress
                 self.update_progress.emit(progress)
-
-            else:
-                print("Unrecognised chunk :", headChar[0])
-                break
 
         # File is read.
         # Generate time according to number of samples per timestamp

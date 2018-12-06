@@ -13,8 +13,7 @@ import datetime
 class IMUChartView(QChartView, BaseGraph):
 
     def __init__(self, parent=None):
-        super(QChartView, self).__init__(parent=parent)
-        super(BaseGraph, self).__init__()
+        super().__init__(parent=parent)
 
         self.cursor = QGraphicsLineItem()
         self.scene().addItem(self.cursor)
@@ -83,7 +82,8 @@ class IMUChartView(QChartView, BaseGraph):
 
             x = np.ndarray(int(len(xdata) / decimate_factor), dtype=np.float64)
             y = np.ndarray(int(len(ydata) / decimate_factor), dtype=np.float64)
-            for i in range(len(x)):
+            # for i in range(len(x)):
+            for i, _ in enumerate(x):
                 index = i * decimate_factor
                 # assert(index < len(xdata))
                 x[i] = xdata[index]
@@ -95,7 +95,7 @@ class IMUChartView(QChartView, BaseGraph):
             return xdata, ydata
 
     @pyqtSlot(float, float)
-    def axis_range_changed(self, min, max):
+    def axis_range_changed(self, min_value, max_value):
         # print('axis_range_changed', min, max)
         for axis in self.chart.axes():
             axis.applyNiceNumbers()
@@ -113,14 +113,6 @@ class IMUChartView(QChartView, BaseGraph):
         axisx.setFormat("dd MMM yyyy hh:mm:ss")
         axisx.setTitleText("Date")
         self.chart.addAxis(axisx, Qt.AlignBottom)
-        # axisX.rangeChanged.connect(self.axis_range_changed)
-
-        """axisX = QValueAxis()
-        axisX.setTickCount(10)
-        axisX.setLabelFormat("%li")
-        axisX.setTitleText("Seconds")
-        self.chart.addAxis(axisX, Qt.AlignBottom)"""
-        # axisX.rangeChanged.connect(self.axis_range_changed)
 
         # Create axis Y
         axisY = QValueAxis()
@@ -138,7 +130,8 @@ class IMUChartView(QChartView, BaseGraph):
             series.attachAxis(axisx)
             series.attachAxis(axisY)
             vect = series.pointsVector()
-            for i in range(len(vect)):
+            # for i in range(len(vect)):
+            for i, _ in enumerate(vect):
                 if ymin is None:
                     ymin = vect[i].y()
                     ymax = vect[i].y()
@@ -178,7 +171,7 @@ class IMUChartView(QChartView, BaseGraph):
 
         xdecimated *= 1000  # No decimal expected
         points = []
-        for i in range(len(xdecimated)):
+        for i, _ in enumerate(xdecimated):
             # TODO hack
             # curve.append(QPointF(xdecimated[i], ydecimated[i]))
             points.append(QPointF(xdecimated[i], ydecimated[i]))
@@ -262,7 +255,8 @@ class IMUChartView(QChartView, BaseGraph):
 
         return
 
-    def set_title(self, title):
+    @classmethod
+    def set_title(cls, title):
         # print('Setting title: ', title)
         # self.chart.setTitle(title)
         return
@@ -278,8 +272,10 @@ class IMUChartView(QChartView, BaseGraph):
         size = len(xdata)
         polyline = QPolygonF(size)
 
-        for i in range(0, len(xdata)):
-            polyline[i] = QPointF(xdata[i] - xdata[0], ydata[i])
+        # for i in range(0, len(xdata)):
+        #   polyline[i] = QPointF(xdata[i] - xdata[0], ydata[i])
+        for i, data in enumerate(xdata):
+            polyline[i] = QPointF(data - xdata[0], ydata[i])
 
         # pointer = polyline.data()
         # dtype, tinfo = np.float, np.finfo  # integers: = np.int, np.iinfo
@@ -371,9 +367,9 @@ class IMUChartView(QChartView, BaseGraph):
 
     def setSelectionAreaFromTime(self, start_time, end_time, emit_signal = False):
         # Convert times to x values
-        if type(start_time) is datetime.datetime:
+        if isinstance(start_time, datetime.datetime):
             start_time = start_time.timestamp()*1000
-        if type(end_time) is datetime.datetime:
+        if isinstance(end_time, datetime.datetime):
             end_time = end_time.timestamp()*1000
 
         start_pos = self.chart.mapToPosition(QPointF(start_time, 0)).x()
@@ -435,7 +431,7 @@ class IMUChartView(QChartView, BaseGraph):
 
     def setCursorPositionFromTime(self, timestamp, emit_signal=False):
         # Find nearest point
-        if type(timestamp) is datetime.datetime:
+        if isinstance(timestamp, datetime.datetime):
             timestamp = timestamp.timestamp()
         pos = self.get_pos_from_time(timestamp)
         self.setCursorPosition(pos, emit_signal)
@@ -543,8 +539,8 @@ if __name__ == '__main__':
     import sys
 
     from PyQt5.QtWidgets import QApplication
-    from PyQt5.QtWidgets import QMainWindow, QPushButton
-    from PyQt5.QtCore import Qt
+    from PyQt5.QtWidgets import QMainWindow
+    # from PyQt5.QtCore import Qt
 
     app = QApplication(sys.argv)
 

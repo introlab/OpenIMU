@@ -26,7 +26,7 @@ class GraphWindow(QWidget):
     zoomResetRequested = pyqtSignal()
 
     def __init__(self, graph_type: GraphType, sensor: Sensor, parent=None):
-        super(QWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.UI = Ui_frmGraphWidget()
         self.UI.setupUi(self)
 
@@ -81,7 +81,7 @@ class GraphWindow(QWidget):
         if e.type() == QEvent.Close:
             self.aboutToClose.emit(self)
 
-        return super(QWidget, self).event(e)
+        return super().event(e)
 
     def setCursorPositionFromTime(self, timestamp, emit_signal=False):
         if self.graph is not None:

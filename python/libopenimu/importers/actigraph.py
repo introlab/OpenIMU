@@ -461,8 +461,10 @@ def gt3x_calculate_checksum(separator, record_type, timestamp, record_size, reco
     checksum ^= (record_size & 0xFF)
     checksum ^= ((record_size >> 8) & 0xFF)
 
-    for i in range(0, len(record_data)):
-        checksum ^= record_data[i]
+    # for i in range(0, len(record_data)):
+    #    checksum ^= record_data[i]
+    for record in enumerate(record_data):
+        checksum ^= record
 
     checksum = ~checksum
 

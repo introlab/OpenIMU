@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QLineEdit, QWidget, QPushButton
-from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal
+from PyQt5.QtWidgets import QWidget
+from PyQt5.QtCore import pyqtSlot
 
 from resources.ui.python.GroupWidget_ui import Ui_frmGroup
 
@@ -12,7 +12,7 @@ class GroupWindow(DataEditor):
     dbMan = None
 
     def __init__(self, dbManager, group=None, parent=None):
-        super(QWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.UI = Ui_frmGroup()
         self.UI.setupUi(self)
 

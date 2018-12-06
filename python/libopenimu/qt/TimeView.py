@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QGraphicsView, QRubberBand
-from PyQt5.QtCore import pyqtSignal, QPoint, QRect, QSize
+from PyQt5.QtCore import pyqtSignal, QPoint, QRect
 
 
 class TimeView(QGraphicsView):
@@ -8,13 +8,10 @@ class TimeView(QGraphicsView):
     time_selected = pyqtSignal(float, float)
 
     def __init__(self, parent=None):
-        super(QGraphicsView, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.initialClick = QPoint()
         self.selectionBand = QRubberBand(QRubberBand.Rectangle, self)
         self.selecting = False
-
-    def wheelEvent(self, event):
-        return
 
     def mouseReleaseEvent(self, event):
         clicked_x = self.mapToScene(event.pos()).x()

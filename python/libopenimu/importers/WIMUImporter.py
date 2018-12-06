@@ -2,16 +2,13 @@ from libopenimu.importers.BaseImporter import BaseImporter
 
 import libopenimu.importers.wimu as wimu
 
-
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.units import Units
-from libopenimu.models.Recordset import Recordset
 from libopenimu.models.data_formats import DataFormat
 from libopenimu.tools.timing import timing
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.Participant import Participant
 
-import numpy as np
 import datetime
 
 
@@ -19,8 +16,6 @@ class WIMUImporter(BaseImporter):
     def __init__(self, manager: DBManager, participant: Participant):
         super().__init__(manager, participant)
         print('WIMU Importer')
-        # No recordsets when starting
-        self.recordsets = []
 
     @timing
     def load(self, filename):
@@ -28,35 +23,21 @@ class WIMUImporter(BaseImporter):
         result = wimu.wimu_importer(filename)
         return result
 
-    def get_recordset(self, timestamp):
-        my_time = datetime.datetime.fromtimestamp(timestamp)
-
-        # Find a record the same day
-        for record in self.recordsets:
-            # Same date return this record
-            if record.start_timestamp.date() == my_time.date():
-                return record
-
-        # Return new record
-        recordset = self.db.add_recordset(self.participant, str(my_time.date()), my_time, my_time)
-        self.recordsets.append(recordset)
-        return recordset
-
     @timing
     def import_to_database(self, result):
 
-        config = result['config']
+        # config = result['config']
 
-        # TODO Update those values
-        start_timestamp = datetime.datetime.now()
-        end_timestamp = datetime.datetime.now()
+        # TODO UPDATE THIS IMPORTER FOR THE NEW TIMESTAMP FORMAT IN DATABASE!
+        # start_timestamp = datetime.datetime.now()
+        # end_timestamp = datetime.datetime.now()
 
         # recordset = self.add_recordset_to_db('unknown', start_timestamp, end_timestamp)
 
         if result.__contains__('acc'):
 
             # Create sensor
-            accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer',
+            """accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer',
                                                          'WIMUGPS',
                                                          'Unknown', config.general.sampling_rate, 1)
 
@@ -108,11 +89,11 @@ class WIMUImporter(BaseImporter):
                                                    datetime.datetime.fromtimestamp(timestamp),
                                                    datetime.datetime.fromtimestamp(end_timestamp), acc_z)
 
-                self.db.flush()
+                self.db.flush()"""
 
         if result.__contains__('gyr'):
             # Create sensor
-            gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyro',
+            """gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyro',
                                                 'WIMUGPS',
                                                 'Unknown', config.general.sampling_rate, 1)
 
@@ -146,16 +127,16 @@ class WIMUImporter(BaseImporter):
                     if len(gyro_x) > 0:
                         data_len = len(gyro_x) / config.general.sampling_rate
                         end_timestamp = timestamp + data_len
-                        self.add_sensor_data_to_db(recordset, gyro_sensor, gyro_channels[0],
-                                                   datetime.datetime.fromtimestamp(timestamp),
-                                                   datetime.datetime.fromtimestamp(end_timestamp), gyro_x)
+                        # self.add_sensor_data_to_db(recordset, gyro_sensor, gyro_channels[0],
+                        #                           datetime.datetime.fromtimestamp(timestamp),
+                        #                           datetime.datetime.fromtimestamp(end_timestamp), gyro_x)
 
                     if len(gyro_y) > 0:
                         data_len = len(gyro_y) / config.general.sampling_rate
                         end_timestamp = timestamp + data_len
-                        self.add_sensor_data_to_db(recordset, gyro_sensor, gyro_channels[1],
-                                                   datetime.datetime.fromtimestamp(timestamp),
-                                                   datetime.datetime.fromtimestamp(end_timestamp), gyro_y)
+                        # self.add_sensor_data_to_db(recordset, gyro_sensor, gyro_channels[1],
+                        #                          datetime.datetime.fromtimestamp(timestamp),
+                        #                           datetime.datetime.fromtimestamp(end_timestamp), gyro_y)
 
                     if len(gyro_z) > 0:
                         data_len = len(gyro_z) / config.general.sampling_rate
@@ -164,11 +145,11 @@ class WIMUImporter(BaseImporter):
                                                    datetime.datetime.fromtimestamp(timestamp),
                                                    datetime.datetime.fromtimestamp(end_timestamp), gyro_z)
 
-                self.db.flush()
+                self.db.flush()"""
 
             if result.__contains__('mag'):
                 # Create sensor
-                mag_sensor = self.add_sensor_to_db(SensorType.MAGNETOMETER, 'Magneto',
+                """mag_sensor = self.add_sensor_to_db(SensorType.MAGNETOMETER, 'Magneto',
                                                     'WIMUGPS',
                                                     'Unknown', config.general.sampling_rate, 1)
 
@@ -220,12 +201,12 @@ class WIMUImporter(BaseImporter):
                                                        datetime.datetime.fromtimestamp(timestamp),
                                                        datetime.datetime.fromtimestamp(end_timestamp), mag_z)
 
-                    self.db.flush()
+                    self.db.flush()"""
 
             if result.__contains__('imu'):
 
                 # Create sensor
-                imu_sensor = self.add_sensor_to_db(SensorType.ORIENTATION, 'Orientation',
+                """imu_sensor = self.add_sensor_to_db(SensorType.ORIENTATION, 'Orientation',
                                                              'WIMUGPS',
                                                              'Unknown', config.general.sampling_rate, 1)
 
@@ -281,10 +262,10 @@ class WIMUImporter(BaseImporter):
                                                        datetime.datetime.fromtimestamp(timestamp),
                                                        datetime.datetime.fromtimestamp(end_timestamp), q3)
 
-                    self.db.flush()
+                    self.db.flush()"""
 
             if result.__contains__('pow'):
-                temp_sensor = self.add_sensor_to_db(SensorType.TEMPERATURE, 'Temperature', 'WIMUGPS', 'Unknown', 1.0, 1)
+                """temp_sensor = self.add_sensor_to_db(SensorType.TEMPERATURE, 'Temperature', 'WIMUGPS', 'Unknown', 1.0, 1)
                 temp_channel = self.add_channel_to_db(temp_sensor, Units.CELCIUS, DataFormat.FLOAT32, 'Temperature')
 
                 batt_sensor = self.add_sensor_to_db(SensorType.BATTERY, 'Battery', 'WIMUGPS', 'Unknown', 1.0, 1)
@@ -314,11 +295,11 @@ class WIMUImporter(BaseImporter):
                                                    datetime.datetime.fromtimestamp(timestamp + len(battery)),
                                                    battery)
 
-                    self.db.flush()
+                    self.db.flush()"""
 
             if result.__contains__('gps'):
 
-                gps_sensor = self.add_sensor_to_db(SensorType.GPS, 'GPS',
+                """gps_sensor = self.add_sensor_to_db(SensorType.GPS, 'GPS',
                                                    'WIMUGPS',
                                                    'Unknown', 1.0, 1)
 
@@ -336,7 +317,7 @@ class WIMUImporter(BaseImporter):
                                                    datetime.datetime.fromtimestamp(timestamp),
                                                    datetime.datetime.fromtimestamp(timestamp), item[key])
 
-                self.db.flush()
+                self.db.flush()"""
 
         # Write data to file
         self.db.commit()

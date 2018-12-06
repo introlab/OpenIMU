@@ -37,8 +37,8 @@ class DataFormat:
     @staticmethod
     def from_bytes(buffer, id_data_format):
         # Verify if valid
-        assert(DataFormat.is_valid(id_data_format))
-        assert(len(buffer) > 0)
+        # assert(DataFormat.is_valid(id_data_format))
+        # assert(len(buffer) > 0)
 
         if id_data_format is DataFormat.UINT8:
             return np.frombuffer(buffer=buffer, dtype=np.uint8)

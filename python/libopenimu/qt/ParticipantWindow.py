@@ -1,12 +1,10 @@
-from PyQt5.QtWidgets import QLineEdit, QWidget, QPushButton, QComboBox
-from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal
+from PyQt5.QtWidgets import QWidget
+from PyQt5.QtCore import Qt, pyqtSlot
 
 from resources.ui.python.ParticipantWidget_ui import Ui_frmParticipant
 from libopenimu.models.Participant import Participant
 from libopenimu.qt.DataEditor import DataEditor
-from libopenimu.models.Group import Group
 
-from libopenimu.db.DBManager import DBManager
 
 class ParticipantWindow(DataEditor):
 
@@ -14,7 +12,7 @@ class ParticipantWindow(DataEditor):
     dbMan = None
 
     def __init__(self, dbManager, participant=None, parent=None, default_group = None):
-        super(QWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.UI = Ui_frmParticipant()
         self.UI.setupUi(self)
 

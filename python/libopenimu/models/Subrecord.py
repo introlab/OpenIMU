@@ -1,5 +1,4 @@
 from libopenimu.models.Base import Base
-from libopenimu.models.Recordset import Recordset
 from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, TIMESTAMP
 from sqlalchemy.orm import relationship
 
@@ -9,7 +8,6 @@ class Subrecord(Base):
     id_subrecord = Column(Integer, Sequence('id_subrecord_sequence'), primary_key=True, autoincrement=True)
     id_recordset = Column(Integer, ForeignKey('tabRecordsets.id_recordset', ondelete="CASCADE"), nullable=False)
     name = Column(String, nullable=False)
-
 
     '''
     A type for datetime.timedelta() objects.
@@ -24,5 +22,5 @@ class Subrecord(Base):
 
     # Database rep (optional)
     def __repr__(self):
-        return "<SubRecord(id_subrecord='%i', id_recordset='%i', name='%s', start_timestamp='%s', end_timestamp='%s'" % \
+        return "<SubRecord(id_subrecord='%i', id_recordset='%i', name='%s', start_timestamp='%s', end_timestamp='%s'" %\
                (self.id_subrecord, self.id_recordset, self.name, str(self.start_timestamp), str(self.end_timestamp))

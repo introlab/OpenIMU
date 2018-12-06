@@ -39,7 +39,8 @@ class DBSensorDataTask(WorkerTask):
 
         self.results = {}
 
-    def create_data_timeseries(self, sensor_data_list: list):
+    @staticmethod
+    def create_data_timeseries(sensor_data_list: list):
         time_values = []
         data_values = []
 
@@ -94,7 +95,7 @@ class RecordsetWindow(QWidget):
     # sensorsColor = ['e0c31e', '14148c', '006325', '6400aa', '14aaff', 'ae32a0', '80c342', '868482']
 
     def __init__(self, manager, recordset: list, parent=None):
-        super(QWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.UI = Ui_frmRecordsets()
         self.UI.setupUi(self)
 
@@ -353,7 +354,7 @@ class RecordsetWindow(QWidget):
             self.timeScene.addRect(0, pos, self.timeScene.width() - 1, 15, sensor_location_pen, sensor_location_brush)
             pos += 15
             sensors = self.get_sensors_for_location(location)
-            for sensor_id in sensors:
+            for _ in sensors:
                 self.timeScene.addLine(0, pos, self.timeScene.width() - 1, pos, hgrid_pen)
                 self.timeSensorsScene.addLine(0, pos, self.timeSensorsScene.width(), pos, hgrid_pen)
                 pos += 20
@@ -437,7 +438,7 @@ class RecordsetWindow(QWidget):
         sensor_pen = QPen(Qt.transparent)
 
         sensors_rects = self.create_sensors_rects()
-        for index, rect in enumerate(sensors_rects):
+        for _, rect in enumerate(sensors_rects):
             self.timeScene.addRect(rect, sensor_pen, sensor_brush)
 
         # Adjust size appropriately
@@ -635,14 +636,17 @@ class RecordsetWindow(QWidget):
         self.time_bar.setPos(pos,0)
 
         # Ensure time bar is visible if scrollable
+        self.ensure_time_bar_visible(pos)
+
+        self.UI.lblCursorTime.setText(datetime.fromtimestamp(current_time).strftime('%d-%m-%Y %H:%M:%S'))
+
+    def ensure_time_bar_visible(self, pos):
         if self.UI.scrollTimeline.isVisible():
             max_visible_x = self.UI.graphTimeline.mapToScene(self.UI.graphTimeline.rect()).boundingRect().x() \
                             + self.UI.graphTimeline.mapToScene(self.UI.graphTimeline.rect()).boundingRect().width()
             min_visible_x = self.UI.graphTimeline.mapToScene(self.UI.graphTimeline.rect()).boundingRect().x()
             if pos < min_visible_x or pos > max_visible_x:
                 self.UI.scrollTimeline.setValue(pos)
-
-        self.UI.lblCursorTime.setText(datetime.fromtimestamp(current_time).strftime('%d-%m-%Y %H:%M:%S'))
 
     @pyqtSlot(datetime, datetime)
     def graph_zoom_area(self, start_time, end_time):
@@ -664,12 +668,7 @@ class RecordsetWindow(QWidget):
         self.timeview_selected(start_pos, end_pos)
 
         # Ensure time bar is visible if scrollable
-        if self.UI.scrollTimeline.isVisible():
-            max_visible_x = self.UI.graphTimeline.mapToScene(self.UI.graphTimeline.rect()).boundingRect().x() \
-                            + self.UI.graphTimeline.mapToScene(self.UI.graphTimeline.rect()).boundingRect().width()
-            min_visible_x = self.UI.graphTimeline.mapToScene(self.UI.graphTimeline.rect()).boundingRect().x()
-            if start_pos < min_visible_x or start_pos > max_visible_x:
-                self.UI.scrollTimeline.setValue(start_pos)
+        self.ensure_time_bar_visible(start_pos)
 
         # Update selection for each graph
         for graph in self.sensors_graphs.values():
@@ -766,32 +765,31 @@ class RecordsetWindow(QWidget):
 
     @pyqtSlot()
     def tile_graphs_horizontally(self):
-
-        if self.UI.mdiArea.subWindowList() is None:
-            return
-
-        position = QPoint(0,0)
-
-        for window in self.UI.mdiArea.subWindowList():
-            rect = QRect(0,0, self.UI.mdiArea.width() / len(self.UI.mdiArea.subWindowList()), self.UI.mdiArea.height())
-            window.setGeometry(rect)
-            window.move(position)
-            position.setX(position.x() + window.width())
+        self.tile_graphs(True)
 
     @pyqtSlot()
     def tile_graphs_vertically(self):
+        self.tile_graphs(False)
 
+    def tile_graphs(self, horizontal: bool):
         if self.UI.mdiArea.subWindowList() is None:
             return
 
-        position = QPoint(0,0)
+        position = QPoint(0, 0)
 
         for window in self.UI.mdiArea.subWindowList():
-            rect = QRect(0,0, self.UI.mdiArea.width(), self.UI.mdiArea.height()/ len(self.UI.mdiArea.subWindowList()))
+            if horizontal:
+                rect = QRect(0, 0, self.UI.mdiArea.width() / len(self.UI.mdiArea.subWindowList()),
+                             self.UI.mdiArea.height())
+            else:
+                rect = QRect(0, 0, self.UI.mdiArea.width(),
+                             self.UI.mdiArea.height() / len(self.UI.mdiArea.subWindowList()))
             window.setGeometry(rect)
             window.move(position)
-            position.setY(position.y() + window.height())
-
+            if horizontal:
+                position.setX(position.x() + window.width())
+            else:
+                position.setY(position.y() + window.height())
 
     @pyqtSlot()
     def tile_graphs_auto(self):

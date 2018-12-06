@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QDialog, QComboBox, QLineEdit, QFileDialog, QHBoxLayout
-from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal
+from PyQt5.QtWidgets import QDialog, QFileDialog
+from PyQt5.QtCore import pyqtSlot
 from resources.ui.python.ExportCSV_ui import Ui_ExportCSV
 from libopenimu.db.DBManager import DBManager
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog
@@ -7,7 +7,7 @@ from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog
 
 class ExportWindow(QDialog):
     def __init__(self, dataManager : DBManager, parent = None):
-        super(QDialog, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.UI = Ui_ExportCSV()
         self.UI.setupUi(self)
         self.UI.dirButton.clicked.connect(self.directory_selection_clicked)
@@ -17,7 +17,6 @@ class ExportWindow(QDialog):
         self.UI.btnOK.setEnabled(False)
 
         self.dbMan = dataManager
-
 
     @pyqtSlot()
     def directory_selection_clicked(self):
@@ -35,6 +34,7 @@ class ExportWindow(QDialog):
             self.UI.btnOK.setEnabled(True)
         else:
             self.UI.btnOK.setEnabled(False)
+
     @pyqtSlot()
     def export(self):
         directory = self.UI.lineDir.text()

@@ -9,7 +9,7 @@ from libopenimu.models.Base import Base
 # Important for relationships
 from libopenimu.models.Channel import Channel
 
-from sqlalchemy import Column, Integer, Float, String, Sequence, TIMESTAMP, BLOB, ForeignKey
+from sqlalchemy import Column, Integer, Float, String, Sequence
 from sqlalchemy.orm import relationship
 
 

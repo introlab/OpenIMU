@@ -49,8 +49,7 @@ class AppleWatchImporter(BaseImporter):
 
     def __init__(self, manager: DBManager, participant: Participant):
         super().__init__(manager, participant)
-        # No recordsets when starting
-        self.recordsets = []
+
         self.current_file_size = 0
 
     def load(self, filename):
@@ -97,31 +96,10 @@ class AppleWatchImporter(BaseImporter):
 
         return results
 
-    def get_recordset(self, timestamp):
-        try:
-            my_time = datetime.datetime.fromtimestamp(timestamp)
-        except:
-            return
-
-        # Validate timestamp
-        if my_time > datetime.datetime.now() or my_time < datetime.datetime(2018, 1, 1):
-            print("Invalid timestamp: " + str(timestamp));
-            return
-
-        # Find a record the same day
-        for record in self.recordsets:
-            # Same date return this record
-            if record.start_timestamp.date() == my_time.date():
-                return record
-
-        # Return new record
-        recordset = self.db.add_recordset(self.participant, str(my_time.date()), my_time, my_time)
-        self.recordsets.append(recordset)
-        return recordset
-
-    def import_raw_motion_to_database(self, sample_rate, raw_motion: dict):
+    # Deprecated
+    """def import_raw_motion_to_database(self, sample_rate, raw_motion: dict):
         # DL Oct. 17 2018, New import to database
-        # Deprecated ?
+        
         raw_accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Raw Accelerometer',
                                                          'AppleWatch',
                                                          'Wrist', sample_rate, 1)
@@ -194,16 +172,33 @@ class AppleWatchImporter(BaseImporter):
                 recordset.end_timestamp = sensor_timestamps.end_timestamp
 
             # Acc
-            for i in range(len(raw_accelerometer_channels)):
-                self.add_sensor_data_to_db(recordset, raw_accelerometer_sensor, raw_accelerometer_channels[i],
+            for i, raw_acc_channel in enumerate(raw_accelerometer_channels):
+                self.add_sensor_data_to_db(recordset, raw_accelerometer_sensor, raw_acc_channel,
                                            sensor_timestamps, valuesarray[:, i])
 
             # Gyro
-            for i in range(len(raw_gyro_channels)):
-                self.add_sensor_data_to_db(recordset, raw_gyro_sensor, raw_gyro_channels[i],
+            for i, raw_gyro_channel in enumerate(raw_gyro_channels):
+                self.add_sensor_data_to_db(recordset, raw_gyro_sensor, raw_gyro_channel,
                                            sensor_timestamps, valuesarray[:, i + 3])
             count += 1
-            self.update_progress.emit(50 + np.floor(count / len(raw_motion) / 2 * 100))
+            self.update_progress.emit(50 + np.floor(count / len(raw_motion) / 2 * 100))"""
+
+    @staticmethod
+    def create_sensor_timestamps(times, recordset):
+        # Create sensor timestamps first
+        sensor_timestamps = SensorTimestamps()
+        sensor_timestamps.timestamps = times
+        sensor_timestamps.update_timestamps()
+
+        # Update timestamps in recordset
+        # This should not happen, recordset is initialized at the beginning of the hour
+        if sensor_timestamps.start_timestamp < recordset.start_timestamp:
+            recordset.start_timestamp = sensor_timestamps.start_timestamp
+        # This can occur though
+        if sensor_timestamps.end_timestamp > recordset.end_timestamp:
+            recordset.end_timestamp = sensor_timestamps.end_timestamp
+
+        return sensor_timestamps
 
     def import_raw_accelerometer_to_database(self, sample_rate, raw_accelero: dict):
         # DL Oct. 17 2018, New import to database
@@ -247,18 +242,7 @@ class AppleWatchImporter(BaseImporter):
             # raw_accelero contains in this order
             # acceleration(x, y, z)
 
-            # Create sensor timestamps first
-            sensor_timestamps = SensorTimestamps()
-            sensor_timestamps.timestamps = timesarray
-            sensor_timestamps.update_timestamps()
-
-            # Update timestamps in recordset
-            # This should not happen, recordset is initialized at the beginning of the hour
-            if sensor_timestamps.start_timestamp < recordset.start_timestamp:
-                recordset.start_timestamp = sensor_timestamps.start_timestamp
-            # This can occur though
-            if sensor_timestamps.end_timestamp > recordset.end_timestamp:
-                recordset.end_timestamp = sensor_timestamps.end_timestamp
+            sensor_timestamps = self.create_sensor_timestamps(timesarray, recordset)
 
             # Acc
             for i in range(len(raw_accelerometer_channels)):
@@ -310,17 +294,7 @@ class AppleWatchImporter(BaseImporter):
             # gyro(x, y, z)
 
             # Create sensor timestamps first
-            sensor_timestamps = SensorTimestamps()
-            sensor_timestamps.timestamps = timesarray
-            sensor_timestamps.update_timestamps()
-
-            # Update timestamps in recordset
-            # This should not happen, recordset is initialized at the beginning of the hour
-            if sensor_timestamps.start_timestamp < recordset.start_timestamp:
-                recordset.start_timestamp = sensor_timestamps.start_timestamp
-            # This can occur though
-            if sensor_timestamps.end_timestamp > recordset.end_timestamp:
-                recordset.end_timestamp = sensor_timestamps.end_timestamp
+            sensor_timestamps = self.create_sensor_timestamps(timesarray, recordset)
 
             # Gyro
             for i in range(len(raw_gyro_channels)):
@@ -355,17 +329,7 @@ class AppleWatchImporter(BaseImporter):
             valuesarray = np.asarray(heartrate[timestamp]['values'], dtype=np.uint8)
 
             # Create sensor timestamps first
-            sensor_timestamps = SensorTimestamps()
-            sensor_timestamps.timestamps = timesarray
-            sensor_timestamps.update_timestamps()
-
-            # Update timestamps in recordset
-            # This should not happen, recordset is initialized at the beginning of the hour
-            if sensor_timestamps.start_timestamp < recordset.start_timestamp:
-                recordset.start_timestamp = sensor_timestamps.start_timestamp
-            # This can occur though
-            if sensor_timestamps.end_timestamp > recordset.end_timestamp:
-                recordset.end_timestamp = sensor_timestamps.end_timestamp
+            sensor_timestamps = self.create_sensor_timestamps(timesarray, recordset)
 
             # Store data
             self.add_sensor_data_to_db(recordset, heartrate_sensor, heartrate_channel,
@@ -395,11 +359,11 @@ class AppleWatchImporter(BaseImporter):
 
             # Create one entry per timestamp ?
             # Could we store a vector instead ?
-            for i in range(0, len(valuesarray)):
+            for i, value in enumerate(valuesarray):
                 # Build gps data
                 geo = GPSGeodetic()
-                geo.latitude = valuesarray[i][0] * 1e7
-                geo.longitude = valuesarray[i][1] * 1e7
+                geo.latitude = value[0] * 1e7
+                geo.longitude = value[1] * 1e7
 
                 # Create sensor timestamps first
                 sensor_timestamps = SensorTimestamps()
@@ -483,39 +447,29 @@ class AppleWatchImporter(BaseImporter):
             valuesarray = np.asarray(sensoria[timestamp]['values'], dtype=np.float32)
 
             # Create sensor timestamps first
-            sensor_timestamps = SensorTimestamps()
-            sensor_timestamps.timestamps = timesarray
-            sensor_timestamps.update_timestamps()
-
-            # Update timestamps in recordset
-            # This should not happen, recordset is initialized at the beginning of the hour
-            if sensor_timestamps.start_timestamp < recordset.start_timestamp:
-                recordset.start_timestamp = sensor_timestamps.start_timestamp
-            # This can occur though
-            if sensor_timestamps.end_timestamp > recordset.end_timestamp:
-                recordset.end_timestamp = sensor_timestamps.end_timestamp
+            sensor_timestamps = self.create_sensor_timestamps(timesarray, recordset)
 
             # Store FSR
-            for i in range(len(sensoria_fsr_channels)):
-                self.add_sensor_data_to_db(recordset, sensoria_fsr_sensor, sensoria_fsr_channels[i],
+            for i, fsr_channel in enumerate(sensoria_fsr_channels):
+                self.add_sensor_data_to_db(recordset, sensoria_fsr_sensor, fsr_channel,
                                            sensor_timestamps,
                                            valuesarray[:, i + 1])
 
             # Store Acc
-            for i in range(len(sensoria_acc_channels)):
-                self.add_sensor_data_to_db(recordset, sensoria_acc_sensor, sensoria_acc_channels[i],
+            for i, acc_channel in enumerate(sensoria_acc_channels):
+                self.add_sensor_data_to_db(recordset, sensoria_acc_sensor, acc_channel,
                                            sensor_timestamps,
                                            valuesarray[:, i + 4])
 
             # Store Gyro
-            for i in range(len(sensoria_gyro_channels)):
-                self.add_sensor_data_to_db(recordset, sensoria_gyro_sensor, sensoria_gyro_channels[i],
+            for i, gyro_channel in enumerate(sensoria_gyro_channels):
+                self.add_sensor_data_to_db(recordset, sensoria_gyro_sensor, gyro_channel,
                                            sensor_timestamps,
                                            valuesarray[:, i + 7])
 
             # Magneto
-            for i in range(len(sensoria_mag_channels)):
-                self.add_sensor_data_to_db(recordset, sensoria_mag_sensor, sensoria_mag_channels[i],
+            for i, mag_channel in enumerate(sensoria_mag_channels):
+                self.add_sensor_data_to_db(recordset, sensoria_mag_sensor, mag_channel,
                                            sensor_timestamps,
                                            valuesarray[:, i + 10])
 
@@ -544,7 +498,7 @@ class AppleWatchImporter(BaseImporter):
             valuesarray = np.asarray(beacons[timestamp]['values'], dtype=np.int8)
 
             # Iterate through each entry to generate data for each beacon_id
-            for i in range(0, len(timesarray)):
+            for i, timearray in enumerate(timesarray):
                 name = [str(format(x, 'x')).rjust(2, '0') for x in beacons[timestamp]['values'][i][0:16]]
                 beacon_id = ''.join(name[0:10]) + '_' + ''.join(name[10:])
 
@@ -552,7 +506,7 @@ class AppleWatchImporter(BaseImporter):
                 if not channel_values.__contains__(beacon_id):
                     channel_values[beacon_id] = []
 
-                channel_values[beacon_id].append((timesarray[i], valuesarray[i][14], valuesarray[i][15]))
+                channel_values[beacon_id].append((timearray, valuesarray[i][14], valuesarray[i][15]))
 
             # Store each beacon_id in separate channels
             count = 0
@@ -660,26 +614,16 @@ class AppleWatchImporter(BaseImporter):
             # attitude quaternion(w, x, y, z)
 
             # Create sensor timestamps first
-            sensor_timestamps = SensorTimestamps()
-            sensor_timestamps.timestamps = timesarray
-            sensor_timestamps.update_timestamps()
-
-            # Update timestamps in recordset
-            # This should not happen, recordset is initialized at the beginning of the hour
-            if sensor_timestamps.start_timestamp < recordset.start_timestamp:
-                recordset.start_timestamp = sensor_timestamps.start_timestamp
-            # This can occur though
-            if sensor_timestamps.end_timestamp > recordset.end_timestamp:
-                recordset.end_timestamp = sensor_timestamps.end_timestamp
+            sensor_timestamps = self.create_sensor_timestamps(timesarray, recordset)
 
             # Acc
-            for i in range(len(accelerometer_channels)):
-                self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[i],
+            for i, acc_channel in enumerate(accelerometer_channels):
+                self.add_sensor_data_to_db(recordset, accelerometer_sensor, acc_channel,
                                            sensor_timestamps, valuesarray[:, i])
 
             # Gyro
-            for i in range(len(gyro_channels)):
-                self.add_sensor_data_to_db(recordset, gyro_sensor, gyro_channels[i],
+            for i, gyro_channel in enumerate(gyro_channels):
+                self.add_sensor_data_to_db(recordset, gyro_sensor, gyro_channel,
                                            sensor_timestamps, valuesarray[:, i + 6])
 
             count += 1
@@ -713,17 +657,7 @@ class AppleWatchImporter(BaseImporter):
             valuesarray = np.asarray(battery[timestamp]['values'], dtype=np.float32)
 
             # Create sensor timestamps first
-            sensor_timestamps = SensorTimestamps()
-            sensor_timestamps.timestamps = timesarray
-            sensor_timestamps.update_timestamps()
-
-            # Update timestamps in recordset
-            # This should not happen, recordset is initialized at the beginning of the hour
-            if sensor_timestamps.start_timestamp < recordset.start_timestamp:
-                recordset.start_timestamp = sensor_timestamps.start_timestamp
-            # This can occur though
-            if sensor_timestamps.end_timestamp > recordset.end_timestamp:
-                recordset.end_timestamp = sensor_timestamps.end_timestamp
+            sensor_timestamps = self.create_sensor_timestamps(timesarray, recordset)
 
             self.add_sensor_data_to_db(recordset, battery_sensor, battery_channel, sensor_timestamps,
                                        valuesarray[:, 0])
@@ -975,17 +909,17 @@ class AppleWatchImporter(BaseImporter):
                 results_ms_data[j + 1] = curr_data
 
         # Create hour-aligned separated data
-        for i in range(0, len(results_ms_ts)):
-            hour_lower_limit_sec = np.floor(results_ms_ts[i] / 3600000) * 3600
+        for i, result in enumerate(results_ms_ts):
+            hour_lower_limit_sec = np.floor(result / 3600000) * 3600
             mydate = datetime.datetime.fromtimestamp(hour_lower_limit_sec)
 
             # Create hour entry if it does not exist
             if not results[dict_name]['timestamps'].__contains__(mydate):
                 results[dict_name]['timestamps'][mydate] = {'times': [], 'values': []}
 
-            # Append data (slow?)
+            # Append data (slow?)D:\Simon_Data\Projets_Patrick\AppleWatch\Tests_AppleWatch\Data_Oct2018\W01P5
             # ms time to secs
-            results[dict_name]['timestamps'][mydate]['times'].append(results_ms_ts[i] / 1000.0)
+            results[dict_name]['timestamps'][mydate]['times'].append(result / 1000.0)
             # data
             results[dict_name]['timestamps'][mydate]['values'].append(results_ms_data[i])
 
@@ -998,6 +932,7 @@ class AppleWatchImporter(BaseImporter):
 
         return results
 
+    @staticmethod
     def read_battery_data(self, file, debug=False):
         """
         • Byte integer for battery level between 0 and 100 (percent)
@@ -1015,7 +950,8 @@ class AppleWatchImporter(BaseImporter):
             print('BATTERY: ', data)
         return data
 
-    def read_sensoria_data(self, file, debug=False):
+    @staticmethod
+    def read_sensoria_data(file, debug=False):
         """
         46 bytes of received frame (will require further processing)
         This assumes that all socks we have use the F20 streaming protocol, as defined in
@@ -1036,7 +972,8 @@ class AppleWatchImporter(BaseImporter):
             print('SENSORIA: ', data)
         return data
 
-    def read_heartrate_data(self, file, debug=False):
+    @staticmethod
+    def read_heartrate_data(file, debug=False):
         """
         unsigned integer as single Byte for bpm
         ** assumes that bpm cannot go above 255, hence values above are clamped to 255
@@ -1049,7 +986,8 @@ class AppleWatchImporter(BaseImporter):
             print('HEARTRATE: ', data)
         return data
 
-    def read_motion_data(self, file, debug=False):
+    @staticmethod
+    def read_motion_data(file, debug=False):
         """
          13 Float32 values, hence 52 bytes, with following fields
         • acceleration (x,y,z)
@@ -1063,7 +1001,8 @@ class AppleWatchImporter(BaseImporter):
             print('MOTION: ', data)
         return data
 
-    def read_beacons_data(self, file, debug=False):
+    @staticmethod
+    def read_beacons_data(file, debug=False):
         """
         10 Bytes Char for namespace
         6 Bytes Char for instance ID
@@ -1078,7 +1017,8 @@ class AppleWatchImporter(BaseImporter):
             print('BEACONS: ', data)
         return data
 
-    def read_coordinates_data(self, file, debug=False):
+    @staticmethod
+    def read_coordinates_data(file, debug=False):
         """
           7 Float32 values, hence 28 bytes
         • latitude
@@ -1097,7 +1037,8 @@ class AppleWatchImporter(BaseImporter):
         return data
 
     # deprecated, not used anymore, separated into two files
-    def read_raw_motion_data(self, file, debug=False):
+    @staticmethod
+    def read_raw_motion_data(file, debug=False):
         """
          6 Float32 values, hence 24 bytes, with following fields
             acceleration (x,y,z)
@@ -1109,7 +1050,8 @@ class AppleWatchImporter(BaseImporter):
             print('RAW MOTION: ', data)
         return data
 
-    def read_raw_accelerometer_data(self, file, debug=False):
+    @staticmethod
+    def read_raw_accelerometer_data(file, debug=False):
         """
          3 Float32 values, hence 12 bytes, with following fields
             acceleration (x,y,z)
@@ -1120,7 +1062,8 @@ class AppleWatchImporter(BaseImporter):
             print('RAW ACCELERO: ', data)
         return data
 
-    def read_raw_gyro_data(self, file, debug=False):
+    @staticmethod
+    def read_raw_gyro_data(file, debug=False):
         """
          3 Float32 values, hence 12 bytes, with following fields
             gyroscope (x,y,z)

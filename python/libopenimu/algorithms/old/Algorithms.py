@@ -2,9 +2,6 @@ import numpy as np
 from scipy import interpolate
 from scipy import linspace
 
-"""
-"""
-
 
 def resample_data(data, rate):
     # First get start time and end time
@@ -74,9 +71,10 @@ def counts(mag, epoch=60, rate=100):
     epochs = np.split(tmpdata, len(tmpdata) / (rate * epoch))
 
     # Iterate through epochs
-    for i in range(0, len(epochs)):
-        counts = np.append(counts, np.sum(epochs[i]))
-
+    # for i in range(0, len(epochs)):
+    #   counts = np.append(counts, np.sum(epochs[i]))
+    for s_epoch in enumerate(epochs):
+       counts = np.append(counts, np.sum(s_epoch))
     # print('counts ', counts)
     # plt.show()
     return [nb_epochs, counts]

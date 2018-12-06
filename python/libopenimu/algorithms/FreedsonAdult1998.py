@@ -17,7 +17,6 @@ class FreedsonAdult1998(BaseAlgorithm):
 
     def configure(self, params: dict):
         print('FreedsonAdult1998.configure')
-        pass
 
     def calculate(self, manager: DBManager, recordsets : list):
         print('FreedsonAdult1998.calculate')
@@ -50,7 +49,7 @@ class FreedsonAdult1998(BaseAlgorithm):
 
 class FreedsonAdult1998Factory(BaseAlgorithmFactory):
     def __init__(self):
-        super(BaseAlgorithmFactory, self).__init__()
+        super().__init__()
         pass
 
     def create(self, params: dict):
@@ -121,7 +120,7 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
         layout.addWidget(view)
 
         if len(results) == len(recordsets):
-            for i in range(len(results)):
+            for i, _ in enumerate(results):
                 view.set_category_axis(results[i].keys())
                 values = []
 

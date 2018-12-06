@@ -6,6 +6,3 @@
 
 """
 
-
-import unittest
-from libopenimu.models.Calibration import Calibration
