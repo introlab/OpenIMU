@@ -83,12 +83,13 @@ class ImportWindow(QDialog):
 
     @pyqtSlot()
     def browse_clicked(self):
-        file_diag = QFileDialog.getSaveFileName(caption="Nom du fichier à enregistrer", filter=".oi")
+        file_diag = QFileDialog.getSaveFileName(caption="Nom du fichier à enregistrer", filter="*.oi")
 
         if file_diag[0] != '':
             self.UI.txtFileName.setText(file_diag[0])
-            if file_diag[0][-len(file_diag[1]):] != file_diag[1]:
-                self.UI.txtFileName.setText(self.UI.txtFileName.text() + file_diag[1])
+            ext = file_diag[1][-(len(file_diag[1]) - 1):]
+            if file_diag[0][-len(ext):] != ext:
+                self.UI.txtFileName.setText(self.UI.txtFileName.text() + ext)
 
     @pyqtSlot()
     def ok_clicked(self):
@@ -97,7 +98,7 @@ class ImportWindow(QDialog):
 
             try:
                 # Create and save file
-                db = DBManager(filename=self.UI.txtFileName.text())
+                db = DBManager(filename=self.UI.txtFileName.text(), newfile=True)
 
                 if self.dataSet is None:
                     self.dataSet = DataSet()

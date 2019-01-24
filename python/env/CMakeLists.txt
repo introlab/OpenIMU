@@ -28,6 +28,7 @@ set (conda_packages
     # Not used for now
     # jupyter
     sqlalchemy
+    alembic
 )
 
 

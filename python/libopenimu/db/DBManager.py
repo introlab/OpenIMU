@@ -33,9 +33,14 @@ from libopenimu.models.DataSet import DataSet
 from libopenimu.models.ProcessedData import ProcessedData
 from libopenimu.models.ProcessedDataRef import ProcessedDataRef
 
+from alembic.config import Config
+from alembic import command
+import inspect
+
 
 class DBManager:
-    def __init__(self, filename, overwrite=False, echo=False):
+    def __init__(self, filename, overwrite=False, echo=False, newfile=False):
+        dburl = 'sqlite:///' + filename + '?check_same_thread=False'
         # Cleanup database
         if overwrite is True:
             if os.path.isfile(filename):
@@ -45,16 +50,60 @@ class DBManager:
         print('Using sqlalchemy version: ', sqlalchemy.__version__)
 
         # Create engine (sqlite), echo will output logging information
-        self.engine = create_engine('sqlite:///' + filename + '?check_same_thread=False', echo=echo)
+        self.engine = create_engine(dburl, echo=echo)
 
         # Will create all tables
         Base.metadata.create_all(self.engine)
+
+        if newfile is False:
+            # Check if database scheme upgrade is needed
+            self.upgrade_db(dburl=dburl)
+        else:
+            # Stamp the database with the latest migration id
+            self.stamp_db(dburl=dburl)
 
         # Will create Session interface class
         self.SessionMaker = sessionmaker(bind=self.engine)
 
         # Session instance
         self.session = self.SessionMaker()
+
+    @staticmethod
+    def init_alembic(dburl):
+        this_file_directory = os.path.dirname(os.path.abspath(inspect.stack()[0][1]))
+        root_directory = os.path.join(this_file_directory, '../..')
+        alembic_directory = os.path.join(root_directory, 'alembic')
+        ini_path = os.path.join(root_directory, 'alembic.ini')
+
+        # create Alembic config and feed it with paths
+        config = Config(ini_path)
+        config.set_main_option('script_location', alembic_directory)
+        config.set_main_option('sqlalchemy.url', dburl)
+
+        return config
+
+    def upgrade_db(self, dburl):
+        config = self.init_alembic(dburl)
+
+        # prepare and run the command
+        revision = 'head'
+        sql = False
+        tag = None
+
+        # upgrade command
+        command.upgrade(config, revision, sql=sql, tag=tag)
+
+    def stamp_db(self, dburl):
+        config = self.init_alembic(dburl)
+
+        # prepare and run the command
+        revision = 'head'
+        sql = False
+        tag = None
+
+        # Stamp database
+        command.stamp(config, revision, sql, tag)
+
 
     @event.listens_for(Engine, "connect")
     def set_sqlite_pragma(dbapi_connection, connection_record):

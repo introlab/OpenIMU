@@ -495,7 +495,7 @@ class IMUChartView(QChartView, BaseGraph):
 
 class OpenIMUBarGraphView(QChartView):
     def __init__(self, parent=None):
-        super(QChartView, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.chart = QChart()
         self.setChart(self.chart)
         self.chart.legend().setVisible(True)

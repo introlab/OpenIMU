@@ -8,6 +8,7 @@ from libopenimu.models.Base import Base
 
 from sqlalchemy import Column, Integer, Sequence, ForeignKey, TIMESTAMP, Interval, BLOB, String
 
+
 class DataSet(Base):
     __tablename__ = 'tabDataSet'
     name = Column(String, nullable=False, primary_key=True)
