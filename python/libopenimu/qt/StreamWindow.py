@@ -1,7 +1,7 @@
 from resources.ui.python.StreamWindow_ui import Ui_StreamWindow
 
 from PyQt5.QtCore import pyqtSlot, Qt
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QApplication
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QProgressBar, QApplication
 from PyQt5.QtGui import QBrush
 
 from libopenimu.streamers.streamer_types import StreamerTypes
@@ -16,6 +16,7 @@ class StreamWindow(QDialog):
 
     streamer = None
     stream_path = ""
+    file_rows = {}
 
     def __init__(self, stream_type, path, parent=None):
         super().__init__(parent=parent)
@@ -80,22 +81,42 @@ class StreamWindow(QDialog):
             "%H:%M:%S.%f") + " </span>" + log_format + text + "</span>")
         self.UI.txtLog.ensureCursorVisible()
 
-    @pyqtSlot('QString', int, int)
-    def update_progress(self, text, value, max_value):
+    @pyqtSlot('QString', 'QString', int, int)
+    def update_progress(self, filename, infos, value, max_value):
         # Ne need to display the progress bar anymore
-        """"if value >= max_value:
+        if value >= max_value:
             self.UI.frameProgress.hide()
-            # QApplication.processEvents()
-            return
-            """
 
-        self.UI.lblProgress.setText(text)
+        self.UI.lblProgress.setText(filename + " " + infos)
         if max_value != self.UI.prgTotal.maximum():
             self.UI.prgTotal.setMaximum(max_value)
         self.UI.prgTotal.setValue(value)
         self.UI.frameProgress.show()
 
-        # QApplication.processEvents()
+        # Update file table
+        index = -1
+        if filename in self.file_rows:
+            index = self.file_rows[filename]
+        else:
+            self.UI.tableFiles.setRowCount(self.UI.tableFiles.rowCount()+1)
+            index = self.UI.tableFiles.rowCount()-1
+            self.file_rows[filename] = index
+            item = QTableWidgetItem(filename)
+            item.setBackground(QBrush(Qt.white))
+            self.UI.tableFiles.setItem(index, 1, item)
+            prog = QProgressBar()
+            prog.setAlignment(Qt.AlignCenter)
+            self.UI.tableFiles.setCellWidget(index, 0, prog)
+
+        if index >= 0:
+            prog = self.UI.tableFiles.cellWidget(index, 0)
+            if prog is not None:
+                prog.setMaximum(max_value)
+                prog.setValue(value)
+                self.UI.tableFiles.scrollToBottom()
+                self.UI.tableFiles.update()
+
+        QApplication.processEvents()
 
     @pyqtSlot()
     def close_requested(self):
