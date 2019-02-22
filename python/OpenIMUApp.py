@@ -34,6 +34,7 @@ from libopenimu.qt.StreamWindow import StreamWindow
 from libopenimu.models.Participant import Participant
 from libopenimu.models.DataSet import DataSet
 from libopenimu.models.LogTypes import LogTypes
+from libopenimu.streamers.streamer_types import StreamerTypes
 
 # Database
 from libopenimu.db.DBManager import DBManager
@@ -399,6 +400,18 @@ class MainWindow(QMainWindow):
         if import_man.exec() == QDialog.Accepted:
             stream_diag = StreamWindow(stream_type=import_man.filetype_id, path=import_man.filename, parent=self)
             stream_diag.exec()
+
+            # Start import process
+            import_browser = ImportBrowser(dataManager=self.dbMan, parent=self)
+
+            # Build import list
+            files = import_man.get_file_list()
+            importer_id = StreamerTypes.value_importer_types[import_man.filetype_id]
+            for file_name, file_part in files.items():
+                import_browser.add_file_to_list(file_name, import_man.filetype, importer_id, file_part)
+
+            # Do the actual import
+            import_browser.ok_clicked()
 
 
 ########################################################################################################################

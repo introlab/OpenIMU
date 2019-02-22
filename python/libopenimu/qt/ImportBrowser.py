@@ -3,7 +3,6 @@ from PyQt5.QtWidgets import QDialog, QTableWidgetItem
 
 from resources.ui.python.ImportBrowser_ui import Ui_ImportBrowser
 from libopenimu.qt.ImportManager import ImportManager
-from libopenimu.qt.ImportMatchDialog import ImportMatchDialog
 
 from libopenimu.importers.importer_types import ImporterTypes
 from libopenimu.importers.WIMUImporter import WIMUImporter
@@ -12,9 +11,7 @@ from libopenimu.importers.OpenIMUImporter import OpenIMUImporter
 from libopenimu.importers.AppleWatchImporter import AppleWatchImporter
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog, WorkerTask
 
-import glob
 import gc
-import os
 
 
 class ImportBrowser(QDialog):
@@ -168,27 +165,9 @@ class ImportBrowser(QDialog):
 
         self.showMinimized()
         if importman.exec() == QDialog.Accepted:
-            # Build file list
-            file_list = {}  # Dictionary: file and base_data_folder (data participant ID)
-
-            # Add files to list
-            files = glob.glob(importman.filename + "/**/*.*", recursive=True)  # Files in sub foldersD:\Simon_Data\Projets_Patrick\AppleWatch\Tests_AppleWatch\Data_Oct2018
-            for file in files:
-                data_name = os.path.split(file)[0].replace(importman.filename, "")
-                data_name = data_name.split(os.sep)[1]
-                if file not in file_list:
-                    file_list[file] = data_name
-
-            if not importman.participant_multi:
-                for file in file_list.keys():
-                    self.add_file_to_list(file, importman.filetype, importman.filetype_id, importman.participant)
-            else:
-                # Multiple participant - must show dialog and match.
-                matcher = ImportMatchDialog(dbmanager=self.dbMan, datas=list(set(file_list.values())), parent=self)
-                if matcher.exec() == QDialog.Accepted:
-                    for file_name, file_dataname in file_list.items():
-                        part = matcher.data_match[file_dataname]
-                        self.add_file_to_list(file_name, importman.filetype, importman.filetype_id, part)
+            files = importman.get_file_list()
+            for file_name, file_part in files.items():
+                self.add_file_to_list(file_name, importman.filetype, importman.filetype_id, file_part)
 
         self.showNormal()
 

@@ -94,7 +94,6 @@ class StreamWindow(QDialog):
         self.UI.frameProgress.show()
 
         # Update file table
-        index = -1
         if filename in self.file_rows:
             index = self.file_rows[filename]
         else:
