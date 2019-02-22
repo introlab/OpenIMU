@@ -1073,3 +1073,7 @@ class AppleWatchImporter(BaseImporter):
         if debug:
             print('RAW GYRO: ', data)
         return data
+
+    @staticmethod
+    def support_streaming():
+        return True

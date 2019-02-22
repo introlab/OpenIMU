@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Assistant - Nouvelles données</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../core.qrc">
+    <normaloff>:/OpenIMU/icons/OpenIMU.png</normaloff>:/OpenIMU/icons/OpenIMU.png</iconset>
+  </property>
   <property name="autoFillBackground">
    <bool>true</bool>
   </property>
@@ -294,6 +298,8 @@ de collecte:</string>
   <tabstop>btnCancel</tabstop>
   <tabstop>btnBrowse</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../core.qrc"/>
+ </resources>
  <connections/>
 </ui>

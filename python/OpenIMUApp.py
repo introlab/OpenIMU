@@ -6,7 +6,7 @@ from PyQt5.QtCore import QLibraryInfo
 
 from PyQt5.QtWidgets import QMessageBox
 from pprint import pprint
-from PyQt5.QtCore import  QDir
+from PyQt5.QtCore import QDir
 
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from libopenimu.qt.Charts import IMUChartView
@@ -16,7 +16,6 @@ from libopenimu.models.Base import Base
 
 import gc
 
-from enum import Enum
 
 # UI
 from resources.ui.python.MainWindow_ui import Ui_MainWindow
@@ -27,11 +26,14 @@ from libopenimu.qt.RecordsetWindow import RecordsetWindow
 from libopenimu.qt.ResultWindow import ResultWindow
 from libopenimu.qt.StartWindow import StartWindow
 from libopenimu.qt.ImportBrowser import ImportBrowser
+from libopenimu.qt.ImportManager import ImportManager
 from libopenimu.qt.ExportWindow import ExportWindow
+from libopenimu.qt.StreamWindow import StreamWindow
 
 # Models
 from libopenimu.models.Participant import Participant
 from libopenimu.models.DataSet import DataSet
+from libopenimu.models.LogTypes import LogTypes
 
 # Database
 from libopenimu.db.DBManager import DBManager
@@ -41,12 +43,6 @@ import sys
 from datetime import datetime
 
 
-class LogTypes(Enum):
-    LOGTYPE_INFO = 0
-    LOGTYPE_WARNING = 1
-    LOGTYPE_ERROR = 2
-    LOGTYPE_DEBUG = 3
-    LOGTYPE_DONE = 4
 
 
 class MainWindow(QMainWindow):
@@ -67,15 +63,15 @@ class MainWindow(QMainWindow):
 
         self.add_to_log("OpenIMU - Prêt à travailler.", LogTypes.LOGTYPE_INFO)
 
-        startWindow = StartWindow()
-        startWindow.setStyleSheet(self.styleSheet() + startWindow.styleSheet())
+        start_window = StartWindow()
+        start_window.setStyleSheet(self.styleSheet() + start_window.styleSheet())
 
-        if startWindow.exec() == QDialog.Rejected:
+        if start_window.exec() == QDialog.Rejected:
             # User closed the dialog - exits!
             sys.exit(0)
 
         # Init database manager
-        self.currentFileName = startWindow.fileName
+        self.currentFileName = start_window.fileName
         self.dbMan = DBManager(self.currentFileName)
 
         # Setup signals and slots
@@ -95,7 +91,7 @@ class MainWindow(QMainWindow):
         self.add_to_log("Données chargées!", LogTypes.LOGTYPE_DONE)
 
         # If we need to import data, show the import dialog
-        if startWindow.importing:
+        if start_window.importing:
             self.importRequested()
             gc.collect()
 
@@ -106,17 +102,18 @@ class MainWindow(QMainWindow):
 
     def setup_signals(self):
         self.UI.treeDataSet.itemClicked.connect(self.tree_item_clicked)
-        self.UI.btnDataSetInfos.clicked.connect(self.infosRequested)
-        self.UI.btnAddGroup.clicked.connect(self.newGroupRequested)
-        self.UI.btnAddParticipant.clicked.connect(self.newParticipantRequested)
+        self.UI.btnDataSetInfos.clicked.connect(self.infos_requested)
+        self.UI.btnAddGroup.clicked.connect(self.new_group_requested)
+        self.UI.btnAddParticipant.clicked.connect(self.new_participant_requested)
         self.UI.treeDataSet.participantDragged.connect(self.participant_was_dragged)
         self.UI.btnDelete.clicked.connect(self.delete_requested)
-        self.UI.btnImport.clicked.connect(self.importRequested)
-        self.UI.btnExportCSV.clicked.connect(self.exportCSVRequested)
+        self.UI.btnImport.clicked.connect(self.import_requested)
+        self.UI.btnExportCSV.clicked.connect(self.export_csv_requested)
         self.UI.dockDataset.visibilityChanged.connect(self.UI.btnShowDataset.setChecked)
         self.UI.dockLog.visibilityChanged.connect(self.toggle_log)
         self.UI.btnShowDataset.clicked.connect(self.toggle_dataset)
         self.UI.btnShowLog.clicked.connect(self.toggle_log)
+        self.UI.btnTransfer.clicked.connect(self.transfer_requested)
 
     def console_log_normal(self, text):
         self.add_to_log(text, LogTypes.LOGTYPE_DEBUG)
@@ -162,20 +159,20 @@ class MainWindow(QMainWindow):
     def show_group(self, group=None):
         self.clear_main_widgets()
 
-        groupWidget = GroupWindow(dbManager=self.dbMan, group=group)
-        self.UI.frmMain.layout().addWidget(groupWidget)
+        group_widget = GroupWindow(dbManager=self.dbMan, group=group)
+        self.UI.frmMain.layout().addWidget(group_widget)
 
-        groupWidget.dataSaved.connect(self.dataWasSaved)
-        groupWidget.dataCancelled.connect(self.dataWasCancelled)
+        group_widget.dataSaved.connect(self.dataWasSaved)
+        group_widget.dataCancelled.connect(self.dataWasCancelled)
 
     def show_participant(self, participant=None, base_group=None):
         self.clear_main_widgets()
 
-        partWidget = ParticipantWindow(dbManager=self.dbMan, participant=participant, default_group=base_group)
-        self.UI.frmMain.layout().addWidget(partWidget)
+        part_widget = ParticipantWindow(dbManager=self.dbMan, participant=participant, default_group=base_group)
+        self.UI.frmMain.layout().addWidget(part_widget)
 
-        partWidget.dataSaved.connect(self.dataWasSaved)
-        partWidget.dataCancelled.connect(self.dataWasCancelled)
+        part_widget.dataSaved.connect(self.dataWasSaved)
+        part_widget.dataCancelled.connect(self.dataWasCancelled)
 
     def add_to_log(self, text, log_type):
         if text == ' ' or text == '\n':
@@ -195,7 +192,7 @@ class MainWindow(QMainWindow):
 
         self.UI.txtLog.append("<span style='color:grey'>" + datetime.now().strftime(
             "%H:%M:%S.%f") + " </span>" + log_format + text + "</span>")
-        self.UI.txtLog.ensureCursorVisible();
+        self.UI.txtLog.ensureCursorVisible()
         QApplication.processEvents()
 
     def get_current_widget_data_type(self):
@@ -224,7 +221,7 @@ class MainWindow(QMainWindow):
         print('url: ', url)
     """
     @pyqtSlot()
-    def importRequested(self):
+    def import_requested(self):
         importer = ImportBrowser(dataManager=self.dbMan)
         importer.setStyleSheet(self.styleSheet())
         if importer.exec() == QDialog.Accepted:
@@ -232,30 +229,29 @@ class MainWindow(QMainWindow):
             gc.collect()
 
     @pyqtSlot()
-    def exportCSVRequested(self):
+    def export_csv_requested(self):
         exporter = ExportWindow(self.dbMan, self)
         exporter.setStyleSheet(self.styleSheet())
         if exporter.exec() == QDialog.Accepted:
             print("Accepted")
 
-
     @pyqtSlot()
-    def infosRequested(self):
-        infosWindow = ImportWindow(dataset=self.currentDataSet, filename=self.currentFileName)
-        infosWindow.setStyleSheet(self.styleSheet())
-        infosWindow.noImportUI = True
-        infosWindow.infosOnly = True
+    def infos_requested(self):
+        infos_window = ImportWindow(dataset=self.currentDataSet, filename=self.currentFileName)
+        infos_window.setStyleSheet(self.styleSheet())
+        infos_window.noImportUI = True
+        infos_window.infosOnly = True
 
-        if infosWindow.exec() != QDialog.Rejected:
+        if infos_window.exec() != QDialog.Rejected:
             # TODO: Save data
-            self.currentDataSet.name = infosWindow.dataSet.name
+            self.currentDataSet.name = infos_window.dataSet.name
 
     @pyqtSlot()
-    def newGroupRequested(self):
+    def new_group_requested(self):
         self.show_group()
 
     @pyqtSlot()
-    def newParticipantRequested(self):
+    def new_participant_requested(self):
         # Check if we can get a root item (group) for the current selected item or not
         item = self.UI.treeDataSet.currentItem()
         if item is not None:
@@ -311,7 +307,7 @@ class MainWindow(QMainWindow):
         self.UI.frmMain.update()
 
     @pyqtSlot()
-    def dataWasSaved(self):
+    def data_was_saved(self):
         item_type = self.get_current_widget_data_type()
 
         if item_type == "group":
@@ -326,7 +322,7 @@ class MainWindow(QMainWindow):
 
 
     @pyqtSlot()
-    def dataWasCancelled(self):
+    def data_was_cancelled(self):
         item_type = self.get_current_widget_data_type()
 
         if item_type == "group":
@@ -395,6 +391,14 @@ class MainWindow(QMainWindow):
         if test_data is True:
             chart_view.add_test_data()
         return chart_view
+
+    @pyqtSlot()
+    def transfer_requested(self):
+        import_man = ImportManager(dbmanager=self.dbMan, stream=True, parent=self)
+
+        if import_man.exec() == QDialog.Accepted:
+            stream_diag = StreamWindow(stream_type=import_man.filetype_id, path=import_man.filename, parent=self)
+            stream_diag.exec()
 
 
 ########################################################################################################################

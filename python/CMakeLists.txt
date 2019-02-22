@@ -46,6 +46,7 @@ SET(uis
     resources/ui/GraphWidget.ui
     resources/ui/DataInfosWidget.ui
     resources/ui/ProgressDialog.ui
+    resources/ui/StreamWindow.ui
 )
 
 SET(qrcs

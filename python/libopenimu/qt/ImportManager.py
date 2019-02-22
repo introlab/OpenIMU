@@ -4,8 +4,12 @@ from PyQt5.QtCore import pyqtSlot
 from resources.ui.python.ImportManager_ui import Ui_ImportManager
 
 from libopenimu.importers.importer_types import ImporterTypes
+from libopenimu.streamers.streamer_types import StreamerTypes
 
 from libopenimu.qt.ParticipantWindow import ParticipantWindow
+
+import tempfile
+import os
 
 
 class ImportManager(QDialog):
@@ -17,21 +21,41 @@ class ImportManager(QDialog):
     group = ""
     dbMan = None
     import_dirs = False
+    import_stream = False
+    part_widget = None
 
-    def __init__(self, dbManager, parent=None):
+    def __init__(self, dbmanager, dirs=False, stream=False, parent=None):
         super().__init__(parent=parent)
         self.UI = Ui_ImportManager()
         self.UI.setupUi(self)
 
-        self.dbMan = dbManager
+        self.import_dirs = dirs
+        self.import_stream = stream
+
+        self.dbMan = dbmanager
 
         # Load supported importers
-        importers = ImporterTypes()
-        for i in range(0, len(importers.value_types)):
-            # Ignore WIMU for now as Importers hasn't been updated yet.
-            if importers.value_names[i] != 'WIMU':
-                self.UI.cmbFileType.addItem(importers.value_names[i], importers.value_types[i])
-        self.UI.cmbFileType.setCurrentIndex(-1)
+        if not self.import_stream:
+            importers = ImporterTypes()
+            for i in range(0, len(importers.value_types)):
+                # Ignore WIMU for now as Importers hasn't been updated yet.
+                if importers.value_names[i] != 'WIMU':
+                    self.UI.cmbFileType.addItem(importers.value_names[i], importers.value_types[i])
+        else:
+            streamers = StreamerTypes()
+            for i in range(0, len(streamers.value_types)):
+                self.UI.cmbFileType.addItem(streamers.value_names[i], streamers.value_types[i])
+
+        if self.UI.cmbFileType.count() == 1:
+            self.UI.cmbFileType.setCurrentIndex(0)
+        else:
+            self.UI.cmbFileType.setCurrentIndex(-1)
+
+        if self.import_stream:
+            self.UI.lblFileName.setText("Destination des données")
+            self.UI.btnImport.setText("Transférer")
+            self.import_dirs = True
+            self.UI.txtFileName.setText(tempfile.gettempdir() + os.sep + "OpenIMU")
 
         # Signals / Slots connections
         self.UI.btnCancel.clicked.connect(self.cancel_clicked)

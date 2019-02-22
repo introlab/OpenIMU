@@ -42,5 +42,6 @@
         <file>icons/move.png</file>
         <file>icons/select.png</file>
         <file>icons/loading.gif</file>
+        <file>icons/transfer.png</file>
     </qresource>
 </RCC>

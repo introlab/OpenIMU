@@ -136,7 +136,7 @@ class ImportBrowser(QDialog):
 
     @pyqtSlot()
     def add_clicked(self):
-        importman = ImportManager(dbManager=self.dbMan)
+        importman = ImportManager(dbmanager=self.dbMan)
         importman.setStyleSheet(self.styleSheet())
 
         if self.UI.tableFiles.rowCount() > 0:
@@ -155,9 +155,8 @@ class ImportBrowser(QDialog):
 
     @pyqtSlot()
     def add_dir_clicked(self):
-        importman = ImportManager(dbManager=self.dbMan)
+        importman = ImportManager(dbmanager=self.dbMan, dirs=True)
         importman.setStyleSheet(self.styleSheet())
-        importman.import_dirs = True
 
         if self.UI.tableFiles.rowCount() > 0:
             # Copy informations into the dialog

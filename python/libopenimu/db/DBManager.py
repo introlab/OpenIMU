@@ -104,7 +104,7 @@ class DBManager:
         # Stamp database
         command.stamp(config, revision, sql, tag)
 
-
+    @staticmethod
     @event.listens_for(Engine, "connect")
     def set_sqlite_pragma(dbapi_connection, connection_record):
         cursor = dbapi_connection.cursor()

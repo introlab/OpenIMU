@@ -90,7 +90,11 @@ class BaseImporter(QObject):
         channel = self.db.add_channel(sensor, unit, data_format, label)
         return channel
 
-    # DL Oct 16 2018, new interface
     def add_sensor_data_to_db(self, recordset, sensor, channel, timestamps, data):
         sensor_data = self.db.add_sensor_data(recordset, sensor, channel, timestamps, data)
         return sensor_data
+
+    # Is the importer has a streaming import function?
+    @staticmethod
+    def support_streaming():
+        return False
