@@ -47,7 +47,7 @@ QPushButton:!enabled,QToolButton:!enabled{color: rgb(168, 168, 168); background-
 QPushButton:checked,QToolButton:checked{color:black;border: 3px solid green;background-color:darkgreen;}
 QPushButton[checkable=true]:!checked,QToolButton[checkable=true]:!checked{color:red;background-color:rgba(180,0,0,50%);border: 2px solid rgb(180,0,0);}
 
-QLabel{color:white;}
+QLabel,QCheckBox{color:white;}
 
 QTreeWidget, QListWidget{background-color:rgba(200,200,200,70%);}
 

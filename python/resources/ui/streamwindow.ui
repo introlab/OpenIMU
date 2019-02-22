@@ -243,7 +243,13 @@
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
-         <normaloff>:/OpenIMU/icons/selection_clear.png</normaloff>:/OpenIMU/icons/selection_clear.png</iconset>
+         <normaloff>:/OpenIMU/icons/delete.png</normaloff>:/OpenIMU/icons/delete.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
        </property>
       </widget>
      </item>

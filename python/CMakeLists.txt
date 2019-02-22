@@ -47,6 +47,7 @@ SET(uis
     resources/ui/DataInfosWidget.ui
     resources/ui/ProgressDialog.ui
     resources/ui/StreamWindow.ui
+    resources/ui/ImportMatchDialog.ui
 )
 
 SET(qrcs

@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QDialog, QFileDialog, QHBoxLayout
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, Qt
 
 from resources.ui.python.ImportManager_ui import Ui_ImportManager
 
@@ -23,9 +23,10 @@ class ImportManager(QDialog):
     import_dirs = False
     import_stream = False
     part_widget = None
+    participant_multi = False
 
-    def __init__(self, dbmanager, dirs=False, stream=False, parent=None):
-        super().__init__(parent=parent)
+    def __init__(self, dbmanager, dirs, stream=False, parent=None):
+        super(ImportManager, self).__init__(parent=parent)
         self.UI = Ui_ImportManager()
         self.UI.setupUi(self)
 
@@ -57,12 +58,15 @@ class ImportManager(QDialog):
             self.import_dirs = True
             self.UI.txtFileName.setText(tempfile.gettempdir() + os.sep + "OpenIMU")
 
+        self.UI.chkMultiParticipants.setVisible(self.import_dirs)
+
         # Signals / Slots connections
         self.UI.btnCancel.clicked.connect(self.cancel_clicked)
         self.UI.btnImport.clicked.connect(self.ok_clicked)
         self.UI.btnBrowse.clicked.connect(self.browse_clicked)
         self.UI.btnAddPart.clicked.connect(self.new_participant_requested)
         self.UI.cmbParticipant.currentIndexChanged.connect(self.current_participant_changed)
+        self.UI.chkMultiParticipants.stateChanged.connect(self.multi_participants_check)
 
         # Load participants
         self.load_participants()
@@ -96,11 +100,12 @@ class ImportManager(QDialog):
         else:
             self.UI.cmbFileType.setStyleSheet('')
 
-        if self.UI.cmbParticipant.currentText() == '':
-            self.UI.cmbParticipant.setStyleSheet('background-color: #ffcccc;')
-            rval = False
-        else:
-            self.UI.cmbParticipant.setStyleSheet('')
+        if self.UI.frameParticipant.isVisible():
+            if self.UI.cmbParticipant.currentText() == '':
+                self.UI.cmbParticipant.setStyleSheet('background-color: #ffcccc;')
+                rval = False
+            else:
+                self.UI.cmbParticipant.setStyleSheet('')
 
         return rval
 
@@ -177,3 +182,9 @@ class ImportManager(QDialog):
             self.UI.lblGroupName.setText("Aucun")
         else:
             self.UI.lblGroupName.setText(self.UI.cmbParticipant.currentData().group.name)
+
+    @pyqtSlot(int)
+    def multi_participants_check(self, check_value):
+        self.participant_multi = (check_value == Qt.Checked)
+        self.UI.frameParticipant.setVisible(not self.participant_multi)
+

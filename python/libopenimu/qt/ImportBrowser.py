@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QDialog, QTableWidgetItem
 
 from resources.ui.python.ImportBrowser_ui import Ui_ImportBrowser
 from libopenimu.qt.ImportManager import ImportManager
+from libopenimu.qt.ImportMatchDialog import ImportMatchDialog
 
 from libopenimu.importers.importer_types import ImporterTypes
 from libopenimu.importers.WIMUImporter import WIMUImporter
@@ -13,6 +14,7 @@ from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog, W
 
 import glob
 import gc
+import os
 
 
 class ImportBrowser(QDialog):
@@ -100,7 +102,7 @@ class ImportBrowser(QDialog):
         gc.collect()
         self.accept()
 
-    def addFileToList(self,filename,filetype,filetype_id,participant):
+    def add_file_to_list(self, filename, filetype, filetype_id, participant):
         table = self.UI.tableFiles
 
         row = table.rowCount()
@@ -136,21 +138,21 @@ class ImportBrowser(QDialog):
 
     @pyqtSlot()
     def add_clicked(self):
-        importman = ImportManager(dbmanager=self.dbMan)
+        importman = ImportManager(dbmanager=self.dbMan, dirs=False)
         importman.setStyleSheet(self.styleSheet())
 
         if self.UI.tableFiles.rowCount() > 0:
             # Copy informations into the dialog
-            last_row = self.UI.tableFiles.rowCount()-1
-            importman.set_participant(self.UI.tableFiles.item(last_row,1).text())
-            importman.set_filetype(self.UI.tableFiles.item(last_row,2).text())
+            last_row = self.UI.tableFiles.rowCount() - 1
+            importman.set_participant(self.UI.tableFiles.item(last_row, 1).text())
+            importman.set_filetype(self.UI.tableFiles.item(last_row, 2).text())
 
         self.showMinimized()
         if importman.exec() == QDialog.Accepted:
             files = importman.filename.split(";")
             # Add file to list
             for file in files:
-                self.addFileToList(file, importman.filetype, importman.filetype_id, importman.participant)
+                self.add_file_to_list(file, importman.filetype, importman.filetype_id, importman.participant)
         self.showNormal()
 
     @pyqtSlot()
@@ -160,20 +162,34 @@ class ImportBrowser(QDialog):
 
         if self.UI.tableFiles.rowCount() > 0:
             # Copy informations into the dialog
-            last_row = self.UI.tableFiles.rowCount()-1
-            importman.set_participant(self.UI.tableFiles.item(last_row,1).text())
-            importman.set_filetype(self.UI.tableFiles.item(last_row,2).text())
+            last_row = self.UI.tableFiles.rowCount() - 1
+            importman.set_participant(self.UI.tableFiles.item(last_row, 1).text())
+            importman.set_filetype(self.UI.tableFiles.item(last_row, 2).text())
 
         self.showMinimized()
         if importman.exec() == QDialog.Accepted:
-            # Add file to list
-            files = glob.glob(importman.filename + "/*.*") # Files in base folder
-            for file in files:
-                self.addFileToList(file, importman.filetype, importman.filetype_id, importman.participant)
+            # Build file list
+            file_list = {}  # Dictionary: file and base_data_folder (data participant ID)
 
-            files = glob.glob(importman.filename + "/**/*.*") # Files in sub folders
+            # Add files to list
+            files = glob.glob(importman.filename + "/**/*.*", recursive=True)  # Files in sub foldersD:\Simon_Data\Projets_Patrick\AppleWatch\Tests_AppleWatch\Data_Oct2018
             for file in files:
-                self.addFileToList(file, importman.filetype, importman.filetype_id, importman.participant)
+                data_name = os.path.split(file)[0].replace(importman.filename, "")
+                data_name = data_name.split(os.sep)[1]
+                if file not in file_list:
+                    file_list[file] = data_name
+
+            if not importman.participant_multi:
+                for file in file_list.keys():
+                    self.add_file_to_list(file, importman.filetype, importman.filetype_id, importman.participant)
+            else:
+                # Multiple participant - must show dialog and match.
+                matcher = ImportMatchDialog(dbmanager=self.dbMan, datas=list(set(file_list.values())), parent=self)
+                if matcher.exec() == QDialog.Accepted:
+                    for file_name, file_dataname in file_list.items():
+                        part = matcher.data_match[file_dataname]
+                        self.add_file_to_list(file_name, importman.filetype, importman.filetype_id, part)
+
         self.showNormal()
 
     @pyqtSlot()

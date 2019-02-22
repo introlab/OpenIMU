@@ -394,7 +394,7 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def transfer_requested(self):
-        import_man = ImportManager(dbmanager=self.dbMan, stream=True, parent=self)
+        import_man = ImportManager(dbmanager=self.dbMan, dirs=True, stream=True, parent=self)
 
         if import_man.exec() == QDialog.Accepted:
             stream_diag = StreamWindow(stream_type=import_man.filetype_id, path=import_man.filename, parent=self)
