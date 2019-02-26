@@ -150,6 +150,9 @@ QProgressBar#prgTask{
        <property name="text">
         <string>Inconnue</string>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
        <property name="wordWrap">
         <bool>true</bool>
        </property>

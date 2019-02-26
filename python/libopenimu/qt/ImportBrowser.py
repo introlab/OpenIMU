@@ -54,7 +54,7 @@ class ImportBrowser(QDialog):
                                                                     participant=self.importer.participant, md5=file_md5,
                                                                     db_session=self.importer.db.session):
 
-                    self.log_request.emit("Chargement du fichier: '" + self.filename + "'", LogTypes.LOGTYPE_INFO)
+                    self.log_request.emit("Chargement du fichier: '" + short_filename + "'", LogTypes.LOGTYPE_INFO)
 
                     results = self.importer.load(self.filename)
                     if results is not None:

@@ -34,11 +34,11 @@ class WorkerTask(QObject):
 
 class SimpleTask(WorkerTask):  # A simple worker task without any progress reporting
 
-    def __init__(self, title: string, task_func, *func_args, parent=None):
+    def __init__(self, title: string, task_func, func_arg, parent=None):
         super().__init__(title, 0, parent)
 
         self.task_process = task_func
-        self.task_parameters = func_args
+        self.task_parameters = func_arg
 
     def process(self):
         self.task_process(self.task_parameters)

@@ -267,7 +267,7 @@ class DBManager:
             if query.first():
                 # Update start and end times, if needed.
                 current_record = query.first()
-                print("Recordset found: " + current_record.name)
+                # print("Recordset found: " + current_record.name)
                 new_starttime = current_record.start_timestamp
                 if start_timestamp < new_starttime:
                     new_starttime = start_timestamp

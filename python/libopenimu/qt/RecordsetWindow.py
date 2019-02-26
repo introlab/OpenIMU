@@ -16,7 +16,7 @@ from libopenimu.db.DBManager import DBManager
 
 from libopenimu.qt.ProcessSelectWindow import ProcessSelectWindow
 
-from libopenimu.tools.timing import timing
+# from libopenimu.tools.timing import timing
 import numpy as np
 import string
 
@@ -188,7 +188,6 @@ class RecordsetWindow(QWidget):
         if self.time_pixmap:
             self.refresh_timeview()
 
-    @timing
     def refresh_timeview(self):
         QGuiApplication.setOverrideCursor(Qt.BusyCursor)
 
@@ -504,9 +503,6 @@ class RecordsetWindow(QWidget):
                     data = {"start_time": start_time, "end_time": end_time}
                     self.sensors_blocks[result['sensor_id']].append(data)
 
-
-
-    @timing
     def create_sensors_rects(self):
         rects = []
         pos = 20

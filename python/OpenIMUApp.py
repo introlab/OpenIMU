@@ -16,7 +16,6 @@ from libopenimu.models.Base import Base
 
 import gc
 
-
 # UI
 from resources.ui.python.MainWindow_ui import Ui_MainWindow
 from libopenimu.qt.ImportWindow import ImportWindow
@@ -29,7 +28,7 @@ from libopenimu.qt.ImportBrowser import ImportBrowser
 from libopenimu.qt.ImportManager import ImportManager
 from libopenimu.qt.ExportWindow import ExportWindow
 from libopenimu.qt.StreamWindow import StreamWindow
-
+from libopenimu.qt.BackgroundProcess import BackgroundProcess, SimpleTask, ProgressDialog
 # Models
 from libopenimu.models.Participant import Participant
 from libopenimu.models.DataSet import DataSet
@@ -161,8 +160,8 @@ class MainWindow(QMainWindow):
         group_widget = GroupWindow(dbManager=self.dbMan, group=group)
         self.UI.frmMain.layout().addWidget(group_widget)
 
-        group_widget.dataSaved.connect(self.dataWasSaved)
-        group_widget.dataCancelled.connect(self.dataWasCancelled)
+        group_widget.dataSaved.connect(self.data_was_saved)
+        group_widget.dataCancelled.connect(self.data_was_cancelled)
 
     def show_participant(self, participant=None, base_group=None):
         self.clear_main_widgets()
@@ -341,25 +340,31 @@ class MainWindow(QMainWindow):
         if item_type == "recordsets" or item_type == "results":
             return
 
-        msg = QMessageBox()
+        msg = QMessageBox(self)
         msg.setIcon(QMessageBox.Question)
+        msg.setStyleSheet("QPushButton{min-width: 100px; min-height: 40px;}")
 
-        msg.setText("Désirez-vous vraiment supprimer \"" + self.UI.treeDataSet.currentItem().text(0) + "\" et tous les éléments associés?")
+        msg.setText("Désirez-vous vraiment supprimer \"" + self.UI.treeDataSet.currentItem().text(0) +
+                    "\" et tous les éléments associés?")
         msg.setWindowTitle("Confirmation de suppression")
         msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
 
         rval = msg.exec()
         if rval == QMessageBox.Yes:
             item_name = self.UI.treeDataSet.currentItem().text(0)
+            tasks = []
+
             if item_type == "group":
                 group = self.UI.treeDataSet.groups[item_id]
                 self.UI.treeDataSet.remove_group(group)
-                self.dbMan.delete_group(group)
+                task = SimpleTask("Suppression de '" + group.name + "'", self.dbMan.delete_group, group)
+                tasks.append(task)
 
             if item_type == "participant":
                 part = self.UI.treeDataSet.participants[item_id]
                 self.UI.treeDataSet.remove_participant(part)
-                self.dbMan.delete_participant(part)
+                task = SimpleTask("Suppression de '" + part.name + "'", self.dbMan.delete_participant, part)
+                tasks.append(task)
 
             if item_type == "recordset":
                 # Find and remove all related results
@@ -368,17 +373,32 @@ class MainWindow(QMainWindow):
                         for ref in result.processed_data_ref:
                             if ref.recordset.id_recordset == item_id:
                                 self.UI.treeDataSet.remove_result(result)
-                                self.dbMan.delete_processed_data(result)
+                                task = SimpleTask("Suppression de '" + result.name + "'",
+                                                  self.dbMan.delete_processed_data, result)
+                                tasks.append(task)
+                                # self.dbMan.delete_processed_data(result)
                                 break
 
                 recordset = self.UI.treeDataSet.recordsets[item_id]
-                self.dbMan.delete_recordset(recordset)
+                task = SimpleTask("Suppression de '" + recordset.name + "'", self.dbMan.delete_recordset, recordset)
+                tasks.append(task)
+                # self.dbMan.delete_recordset(recordset)
                 self.UI.treeDataSet.remove_recordset(recordset)
 
             if item_type == "result":
                 result = self.UI.treeDataSet.results[item_id]
+                task = SimpleTask("Suppression de '" + result.name + "'", self.dbMan.delete_processed_data, result)
+                tasks.append(task)
                 self.UI.treeDataSet.remove_result(result)
-                self.dbMan.delete_processed_data(result)
+                # self.dbMan.delete_processed_data(result)
+
+            if tasks:
+                process = BackgroundProcess(tasks)
+                # Create progress dialog
+                dialog = ProgressDialog(process, 'Suppression', self)
+                # Start tasks
+                process.start()
+                dialog.exec()
 
             self.add_to_log(item_name + " a été supprimé.", LogTypes.LOGTYPE_DONE)
             self.clear_main_widgets()
