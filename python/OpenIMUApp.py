@@ -294,16 +294,15 @@ class MainWindow(QMainWindow):
             else:
                 records = [self.UI.treeDataSet.recordsets[item_id]]
 
-            recordsWidget = RecordsetWindow(manager=self.dbMan, recordset=records)
-            recordsWidget.setStyleSheet(self.styleSheet() + recordsWidget.styleSheet())
-            self.UI.frmMain.layout().addWidget(recordsWidget)
-            recordsWidget.dataDisplayRequest.connect(self.UI.treeDataSet.select_item)
-            recordsWidget.dataUpdateRequest.connect(self.UI.treeDataSet.update_item)
+            records_widget = RecordsetWindow(manager=self.dbMan, recordset=records, parent=self)
+            # records_widget.setStyleSheet(self.styleSheet() + records_widget.styleSheet())
+            self.UI.frmMain.layout().addWidget(records_widget)
+            records_widget.dataDisplayRequest.connect(self.UI.treeDataSet.select_item)
+            records_widget.dataUpdateRequest.connect(self.UI.treeDataSet.update_item)
 
         if item_type == "result":
-            resultWidget = ResultWindow(manager=self.dbMan, results=self.UI.treeDataSet.results[item_id])
-            self.UI.frmMain.layout().addWidget(resultWidget)
-
+            result_widget = ResultWindow(manager=self.dbMan, results=self.UI.treeDataSet.results[item_id], parent=self)
+            self.UI.frmMain.layout().addWidget(result_widget)
 
         self.UI.frmMain.update()
 

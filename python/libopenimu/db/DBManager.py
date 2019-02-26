@@ -8,6 +8,7 @@
 import sqlalchemy
 from sqlalchemy import create_engine, asc, or_, and_
 from sqlalchemy.orm import sessionmaker
+# noinspection PyProtectedMember
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
 
@@ -16,6 +17,8 @@ import datetime
 import numpy as np
 
 import pickle
+
+import warnings
 
 # Basic definitions
 from libopenimu.models.data_formats import DataFormat
@@ -40,6 +43,8 @@ import inspect
 
 class DBManager:
     def __init__(self, filename, overwrite=False, echo=False, newfile=False):
+        warnings.simplefilter(action='ignore', category=FutureWarning)
+
         dburl = 'sqlite:///' + filename + '?check_same_thread=False'
         # Cleanup database
         if overwrite is True:

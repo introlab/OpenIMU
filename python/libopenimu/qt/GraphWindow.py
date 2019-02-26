@@ -149,8 +149,8 @@ class GraphWindow(QWidget):
 
     @pyqtSlot()
     def dataInfosRequest(self):
-        infos = DataInfosWidget(self.sensor, self.graph.total_samples)
-        infos.setStyleSheet(self.styleSheet())
+        infos = DataInfosWidget(self.sensor, self.graph.total_samples, parent=self)
+        # infos.setStyleSheet(self.styleSheet())
         infos.exec()
 
     @pyqtSlot()

@@ -25,7 +25,7 @@ from datetime import datetime, timedelta
 
 # This class is a worker task that queries the database for specific sensor data for all current recordsets
 # Used from "get_sensor_data"
-class DBSensorDataTask(WorkerTask):
+class DBSensorAllDataTask(WorkerTask):
     def __init__(self, title: string, db_manager: DBManager, task_sensor: Sensor, task_start_time: int,
                  task_end_time: int, recordsets: list, parent=None):
         super().__init__(title, 0, parent)
@@ -87,12 +87,36 @@ class DBSensorDataTask(WorkerTask):
         self.results = {'sensor': self.sensor, 'timeseries': timeseries, 'channel_data': channel_data}
 
 
+# This class is a worker task that queries the database for specific sensor data for all current recordsets
+# Used from "create_sensors_rect"
+class DBSensorTimesTask(WorkerTask):
+    def __init__(self, title: string, db_manager: DBManager, sensor_id: int, recordset, parent=None):
+        super().__init__(title, 0, parent)
+
+        self.dbMan = db_manager
+        self.sensor_id = sensor_id
+        self.recordset = recordset
+        self.size = 0
+
+        self.results = {}
+
+    def process(self):
+        sensor = self.dbMan.get_sensor(self.sensor_id)
+        datas = self.dbMan.get_all_sensor_data(sensor=sensor, recordset=self.recordset, channel=sensor.channels[0])
+        times = []
+        for data in datas:
+            time = {"sensor_id": self.sensor_id,
+                    "start_time": data.timestamps.start_timestamp,
+                    "end_time": data.timestamps.end_timestamp}
+            times.append(time)
+
+        self.results = times
+
+
 class RecordsetWindow(QWidget):
 
     dataDisplayRequest = pyqtSignal(str, int)
     dataUpdateRequest = pyqtSignal(str, Base)
-
-    # sensorsColor = ['e0c31e', '14148c', '006325', '6400aa', '14aaff', 'ae32a0', '80c342', '868482']
 
     def __init__(self, manager, recordset: list, parent=None):
         super().__init__(parent=parent)
@@ -104,6 +128,7 @@ class RecordsetWindow(QWidget):
         self.sensors_items = {}     # List of QAction corresponding to each sensors
         self.sensors_graphs = {}    # List of graph corresponding to each sensor graph
         self.sensors_location = []  # List of sensors location in this recordset
+        self.sensors_blocks = {}    # Sensor blocks - each block of data for each sensor
 
         # Variables
         self.time_pixmap = False    # Flag used to check if we need to repaint the timeline or not
@@ -163,12 +188,13 @@ class RecordsetWindow(QWidget):
         if self.time_pixmap:
             self.refresh_timeview()
 
+    @timing
     def refresh_timeview(self):
         QGuiApplication.setOverrideCursor(Qt.BusyCursor)
 
         # Computes required timescene size
         min_width = self.UI.graphTimeline.width() - 5
-        if len(self.recordsets)>0:
+        if len(self.recordsets) > 0:
             num_days = (self.get_recordset_end_day_date() - self.get_recordset_start_day_date()).days
 
             # Minimum size for days
@@ -232,6 +258,9 @@ class RecordsetWindow(QWidget):
                         sensor_item.setProperty("sensor_id", sensor.id_sensor)
                         self.sensors_items[sensor.id_sensor] = sensor_item
                         self.sensors_menu.addAction(sensor_item)
+
+            # Create sensors blocks for display
+            self.load_sensors_blocks()
         else:
             self.UI.btnNewGraph.setEnabled(False)
 
@@ -446,6 +475,38 @@ class RecordsetWindow(QWidget):
         self.UI.graphSensorsTimeline.setMaximumWidth(self.timeSensorsScene.itemsBoundingRect().width())
         # self.UI.graphSensorsTimeline.setMaximumHeight(self.timeSensorsScene.itemsBoundingRect().height())
 
+    def load_sensors_blocks(self):
+        # Create request tasks
+        tasks = []
+        for location in self.sensors_location:
+            sensors = self.get_sensors_for_location(location)
+            for sensor_id in sensors:
+                for record in self.recordsets:
+                    tasks.append(DBSensorTimesTask(title="Chargement des données temporelles", db_manager=self.dbMan,
+                                                   sensor_id=sensor_id, recordset=record))
+
+        QGuiApplication.setOverrideCursor(Qt.BusyCursor)
+        process = BackgroundProcess(tasks)
+        dialog = ProgressDialog(process, "Chargement")
+
+        process.start()
+        dialog.exec()
+        QGuiApplication.restoreOverrideCursor()
+
+        # Combine tasks results
+        self.sensors_blocks = {}
+        for task in tasks:
+                for result in task.results:
+                    if result['sensor_id'] not in self.sensors_blocks:
+                        self.sensors_blocks[result['sensor_id']] = []
+                    start_time = result['start_time']
+                    end_time = result['end_time']
+                    data = {"start_time": start_time, "end_time": end_time}
+                    self.sensors_blocks[result['sensor_id']].append(data)
+
+
+
+    @timing
     def create_sensors_rects(self):
         rects = []
         pos = 20
@@ -454,15 +515,20 @@ class RecordsetWindow(QWidget):
             pos += 15
             sensors = self.get_sensors_for_location(location)
             for sensor_id in sensors:
-                sensor = self.sensors[sensor_id]
+                """sensor = self.sensors[sensor_id]
                 for record in self.recordsets:
                     datas = self.dbMan.get_all_sensor_data(sensor=sensor, recordset=record, channel=sensor.channels[0])
                     for data in datas:
                         start_pos = self.get_relative_timeview_pos(data.timestamps.start_timestamp)
                         end_pos = self.get_relative_timeview_pos(data.timestamps.end_timestamp)
                         span = max(end_pos - start_pos, 1)
-                        # self.timeScene.addRect(start_pos, pos + 3, span, 14, sensor_pen, sensor_brush)
                         rects.append(QRectF(start_pos, pos + 3, span, 14))
+                """
+                for block in self.sensors_blocks[sensor_id]:
+                    start_pos = self.get_relative_timeview_pos(block['start_time'])
+                    end_pos = self.get_relative_timeview_pos(block['end_time'])
+                    span = max(end_pos - start_pos, 1)
+                    rects.append(QRectF(start_pos, pos + 3, span, 14))
                 pos += 20
 
         return rects
@@ -592,7 +658,8 @@ class RecordsetWindow(QWidget):
     # @timing
     def get_sensor_data(self, sensor, start_time=None, end_time=None):
         QGuiApplication.setOverrideCursor(Qt.BusyCursor)
-        task = DBSensorDataTask("Chargement des données...", self.dbMan, sensor, start_time, end_time, self.recordsets)
+        task = DBSensorAllDataTask("Chargement des données...", self.dbMan, sensor, start_time, end_time,
+                                   self.recordsets)
 
         process = BackgroundProcess([task])
         dialog = ProgressDialog(process, "Traitement")
