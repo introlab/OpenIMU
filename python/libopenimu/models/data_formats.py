@@ -91,7 +91,6 @@ class DataFormat:
 
         return None
 
-
     @staticmethod
     def populate_database(conn):
         """ Will populate database with table tabDataFormat """

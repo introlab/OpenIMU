@@ -18,7 +18,7 @@ import datetime
 
 class OpenIMUImporter(BaseImporter):
     def __init__(self, manager: DBManager, participant: Participant):
-        super().__init__(manager, participant)
+        super(OpenIMUImporter, self).__init__(manager, participant)
         # print('OpenIMU Importer')
 
         self.current_file_size = 0
@@ -48,11 +48,11 @@ class OpenIMUImporter(BaseImporter):
         # print('OpenIMUImporter.load')
         results = {}
         with open(filename, "rb") as file:
-            print('Loading File: ', filename)
+            # print('Loading File: ', filename)
             self.current_file_size = os.stat(filename).st_size
             results = self.readDataFile(file, False)
 
-        print('Done!')
+        # print('Done!')
         return results
 
     @timing
@@ -283,7 +283,7 @@ class OpenIMUImporter(BaseImporter):
 
     @timing
     def import_to_database(self, result):
-        print('OpenIMUImporter.import_to_database')
+        # print('OpenIMUImporter.import_to_database')
 
         # TODO use configuration, hardcoded for now
         sample_rate = 50
@@ -301,7 +301,7 @@ class OpenIMUImporter(BaseImporter):
 
                 if not self.import_imu_to_database(timestamp, sample_rate, sensors,
                                                    channels, recordset, result[timestamp]['imu']):
-                    print('IMU import error')
+                    self.last_error = "Erreur d'importation données IMU"
             if result[timestamp].__contains__('power'):
                 # print('contains power')
                 recordset = self.get_recordset(result[timestamp]['power']['start_time'],
@@ -309,7 +309,7 @@ class OpenIMUImporter(BaseImporter):
 
                 if not self.import_power_to_database(timestamp, sensors, channels, recordset,
                                                      result[timestamp]['power']):
-                    print('Power import error')
+                    self.last_error = "Erreur d'importation données 'Power'"
             if result[timestamp].__contains__('gps'):
                 # print('contains gps')
                 recordset = self.get_recordset(result[timestamp]['gps']['start_time'],
@@ -317,7 +317,7 @@ class OpenIMUImporter(BaseImporter):
 
                 if not self.import_gps_to_database(timestamp, sensors, channels, recordset,
                                                    result[timestamp]['gps']):
-                    print('GPS import error')
+                    self.last_error = "Erreur d'importation données GPS"
             if result[timestamp].__contains__('baro'):
                 # print('contains baro')
                 recordset = self.get_recordset(result[timestamp]['baro']['start_time'],
@@ -325,7 +325,7 @@ class OpenIMUImporter(BaseImporter):
 
                 if not self.import_baro_to_database(timestamp, sensors, channels, recordset,
                                                     result[timestamp]['baro']):
-                    print('Baro import error')
+                    self.last_error = "Erreur d'importation données barométriques"
 
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(result) / 2 * 100))
@@ -379,7 +379,7 @@ class OpenIMUImporter(BaseImporter):
 
             chunk = file.read(1)
             if len(chunk) < 1:
-                print("Reached end of file")
+                # print("Reached end of file")
                 break
 
             (headChar) = struct.unpack("c", chunk)
@@ -387,7 +387,7 @@ class OpenIMUImporter(BaseImporter):
 
             if headChar[0] == b'h':
                 n = n + 1
-                print("New log stream detected")
+                # print("New log stream detected")
             elif headChar[0] == b't':
                 n = n + 1
                 chunk = file.read(struct.calcsize("i"))

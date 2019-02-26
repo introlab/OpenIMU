@@ -12,6 +12,7 @@ class WorkerTask(QObject):
 
     update_progress = pyqtSignal(int)  # Current progress in %
     size_updated = pyqtSignal()
+    log_request = pyqtSignal('QString', int)
 
     def __init__(self, title: string, size: int, parent=None):
         super().__init__(parent)

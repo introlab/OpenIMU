@@ -68,7 +68,7 @@ class SensorType:
 
 
 # Not used...
-class DBSensorType(Base):
+"""class DBSensorType(Base):
     __tablename__ = 'tabSensorTypes'
     id_sensor_type = Column(Integer, Sequence('id_sensor_type_sequence'), primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
@@ -76,3 +76,4 @@ class DBSensorType(Base):
     # Database rep (optional)
     def __repr__(self):
         return "<DBSensorType(name='%s')>" % self.name
+"""

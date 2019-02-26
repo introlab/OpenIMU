@@ -27,9 +27,10 @@ def load_worker(importer, filename):
 class BaseImporter(QObject):
 
     update_progress = pyqtSignal(int)
+    last_error = ""
 
     def __init__(self, manager: DBManager, participant: Participant, parent=None):
-        super().__init__(parent)
+        super(BaseImporter, self).__init__(parent)
 
         # This is the manager that will be used for importation, externally created
         self.db = manager
@@ -61,6 +62,9 @@ class BaseImporter(QObject):
         recordset = self.db.add_recordset(self.participant, str(my_time.date()), my_time, my_time)
         self.recordsets.append(recordset)
         return recordset
+
+    def clear_recordsets(self):
+        self.recordsets = []
 
     def async_load(self, filename):
         print('will call load on importer with filename: ', filename)
@@ -94,7 +98,6 @@ class BaseImporter(QObject):
         sensor_data = self.db.add_sensor_data(recordset, sensor, channel, timestamps, data)
         return sensor_data
 
-    # Is the importer has a streaming import function?
-    @staticmethod
-    def support_streaming():
-        return False
+    def add_datasource_to_db(self, filename, file_start_time):
+
+        pass

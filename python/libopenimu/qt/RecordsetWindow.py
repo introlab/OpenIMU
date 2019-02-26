@@ -525,7 +525,7 @@ class RecordsetWindow(QWidget):
         return
 
     @pyqtSlot(QAction)
-    @timing
+    # @timing
     def sensor_graph_selected(self, sensor_item):
         sensor_id = sensor_item.property("sensor_id")
         sensor = self.sensors[sensor_id]
@@ -589,7 +589,7 @@ class RecordsetWindow(QWidget):
                 pass
         self.update_tile_buttons_state()
 
-    @timing
+    # @timing
     def get_sensor_data(self, sensor, start_time=None, end_time=None):
         QGuiApplication.setOverrideCursor(Qt.BusyCursor)
         task = DBSensorDataTask("Chargement des données...", self.dbMan, sensor, start_time, end_time, self.recordsets)

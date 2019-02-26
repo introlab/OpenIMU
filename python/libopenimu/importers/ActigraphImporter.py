@@ -31,7 +31,7 @@ class ActigraphImporter(BaseImporter):
 
     @timing
     def load(self, filename):
-        print('ActigraphImporter loading:', filename)
+        # print('ActigraphImporter loading:', filename)
         result = actigraph.gt3x_importer(filename)
         self.update_progress.emit(50)
         return result
@@ -53,7 +53,7 @@ class ActigraphImporter(BaseImporter):
         # all_counts = [0, 0, 0]
         if data.__contains__('activity'):
 
-            print('activity found')
+            # print('activity found')
             # Create sensor
             accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer', info['Device Type'],
                                                          'Unknown', info['Sample Rate'], 1)
@@ -141,14 +141,14 @@ class ActigraphImporter(BaseImporter):
                         self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[index],
                                                    sensor_timestamps, vector)
 
-            print('total samples inserted:', counters)
-            print('total timestamps processed:', len(all_timestamps))
+            # print('total samples inserted:', counters)
+            # print('total timestamps processed:', len(all_timestamps))
 
             # Flush DB
             self.db.flush()
 
         if data.__contains__('battery'):
-            print('battery found')
+            # print('battery found')
             # Create sensor
             volt_sensor = self.add_sensor_to_db(SensorType.BATTERY, 'Battery', info['Device Type'], 'Unknown',
                                                 0, 1)
@@ -178,7 +178,7 @@ class ActigraphImporter(BaseImporter):
             self.db.flush()
 
         if data.__contains__('lux'):
-            print('lux found')
+            # print('lux found')
             # Create sensor
             lux_sensor = self.add_sensor_to_db(SensorType.LUX, 'Lux', info['Device Type'], 'Unknown', 0, 1)
 

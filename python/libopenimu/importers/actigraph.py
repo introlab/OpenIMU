@@ -10,6 +10,7 @@ import zipfile
 import struct
 import numpy as np
 import math
+import sys
 from libopenimu.tools.timing import timing
 
 
@@ -505,7 +506,7 @@ def gt3x_importer(filename):
 
         sample_rate = float(info['Sample Rate'])
         scale = float(info['Acceleration Scale'])
-        print ('info', info)
+        print('info', info)
         # print('My Sample rate:', sample_rate)
 
         # Reading log.bin

@@ -6,7 +6,6 @@
 
 
 from libopenimu.models.Base import Base
-from libopenimu.models.Group import Group
 from sqlalchemy import Column, Integer, String, Sequence, ForeignKey
 from sqlalchemy.orm import relationship
 

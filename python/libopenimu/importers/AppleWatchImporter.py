@@ -48,20 +48,19 @@ class AppleWatchImporter(BaseImporter):
     RAW_GYRO_ID = 0x0A
 
     def __init__(self, manager: DBManager, participant: Participant):
-        super().__init__(manager, participant)
+        super(AppleWatchImporter, self).__init__(manager, participant)
 
         self.current_file_size = 0
 
     def load(self, filename):
-        print('AppleWatchImporter.load')
-        results = {}
+        # print('AppleWatchImporter.load')
 
         # Removed zip loading for now,
         if 'zip' in filename:
             results = self.load_zip(filename)
         else:
             with open(filename, "rb") as file:
-                print('Loading File: ', filename)
+                # print('Loading File: ', filename)
                 self.current_file_size = os.stat(filename).st_size
                 results = self.readDataFile(file)
 
@@ -71,10 +70,10 @@ class AppleWatchImporter(BaseImporter):
     def load_zip(self, filename):
         results = {}
         with zipfile.ZipFile(filename) as myzip:
-            print('zip opened')
+            # print('zip opened')
             namelist = myzip.namelist()
 
-            print('zip contains : ', namelist)
+            # print('zip contains : ', namelist)
 
             # TODO
             # First find SETTINGS file
@@ -82,7 +81,7 @@ class AppleWatchImporter(BaseImporter):
             # Then process data files
             for file in namelist:
                 if '.data' in file:
-                    print('Reading file: ', file)
+                    # print('Reading file: ', file)
                     self.current_file_size = os.stat(file).st_size
                     my_file = myzip.open(file)
                     values = self.readDataFile(my_file, False)
@@ -95,93 +94,6 @@ class AppleWatchImporter(BaseImporter):
                     # print('Unknown file : ', file)
 
         return results
-
-    # Deprecated
-    """def import_raw_motion_to_database(self, sample_rate, raw_motion: dict):
-        # DL Oct. 17 2018, New import to database
-        
-        raw_accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Raw Accelerometer',
-                                                         'AppleWatch',
-                                                         'Wrist', sample_rate, 1)
-
-        raw_accelerometer_channels = list()
-
-        # Create channels
-        raw_accelerometer_channels.append(self.add_channel_to_db(raw_accelerometer_sensor, Units.GRAVITY_G,
-                                                                 DataFormat.FLOAT32, 'Accelerometer_X'))
-
-        raw_accelerometer_channels.append(self.add_channel_to_db(raw_accelerometer_sensor, Units.GRAVITY_G,
-                                                                 DataFormat.FLOAT32, 'Accelerometer_Y'))
-
-        raw_accelerometer_channels.append(self.add_channel_to_db(raw_accelerometer_sensor, Units.GRAVITY_G,
-                                                                 DataFormat.FLOAT32, 'Accelerometer_Z'))
-
-        # Create sensor
-        raw_gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Raw Gyro',
-                                                'AppleWatch',
-                                                'Wrist', sample_rate, 1)
-
-        raw_gyro_channels = list()
-
-        # Create channels
-        raw_gyro_channels.append(self.add_channel_to_db(raw_gyro_sensor, Units.DEG_PER_SEC,
-                                                        DataFormat.FLOAT32, 'Gyro_X'))
-
-        raw_gyro_channels.append(self.add_channel_to_db(raw_gyro_sensor, Units.DEG_PER_SEC,
-                                                        DataFormat.FLOAT32, 'Gyro_Y'))
-
-        raw_gyro_channels.append(self.add_channel_to_db(raw_gyro_sensor, Units.DEG_PER_SEC,
-                                                        DataFormat.FLOAT32, 'Gyro_Z'))
-
-        # Data is already hour-aligned iterate through hours
-        count = 0
-        for timestamp in raw_motion:
-            # print('raw_motion', timestamp, len(raw_motion[timestamp]['times']),
-            #      len(raw_motion[timestamp]['values']))
-
-            # Calculate recordset
-            recordset = self.get_recordset(timestamp.timestamp())
-
-            # Add motion data to database
-
-            # Create time array as float64
-            timesarray = np.asarray(raw_motion[timestamp]['times'], dtype=np.float64)
-
-            if len(timesarray) is 0:
-                print('Empty data, returning')
-                return
-
-            # Other values are float32
-            valuesarray = np.asarray(raw_motion[timestamp]['values'], dtype=np.float32)
-
-            # raw_motion contains in this order
-            # acceleration(x, y, z)
-            # gyro(x,y,z)
-
-            # Create sensor timestamps first
-            sensor_timestamps = SensorTimestamps()
-            sensor_timestamps.timestamps = timesarray
-            sensor_timestamps.update_timestamps()
-
-            # Update timestamps in recordset
-            # This should not happen, recordset is initialized at the beginning of the hour
-            if sensor_timestamps.start_timestamp < recordset.start_timestamp:
-                recordset.start_timestamp = sensor_timestamps.start_timestamp
-            # This can occur though
-            if sensor_timestamps.end_timestamp > recordset.end_timestamp:
-                recordset.end_timestamp = sensor_timestamps.end_timestamp
-
-            # Acc
-            for i, raw_acc_channel in enumerate(raw_accelerometer_channels):
-                self.add_sensor_data_to_db(recordset, raw_accelerometer_sensor, raw_acc_channel,
-                                           sensor_timestamps, valuesarray[:, i])
-
-            # Gyro
-            for i, raw_gyro_channel in enumerate(raw_gyro_channels):
-                self.add_sensor_data_to_db(recordset, raw_gyro_sensor, raw_gyro_channel,
-                                           sensor_timestamps, valuesarray[:, i + 3])
-            count += 1
-            self.update_progress.emit(50 + np.floor(count / len(raw_motion) / 2 * 100))"""
 
     @staticmethod
     def create_sensor_timestamps(times, recordset):
@@ -233,7 +145,7 @@ class AppleWatchImporter(BaseImporter):
             timesarray = np.asarray(raw_accelero[timestamp]['times'], dtype=np.float64)
 
             if len(timesarray) is 0:
-                print('Empty data, returning')
+                self.last_error = "Aucune données temporelles."
                 return
 
             # Other values are float32
@@ -284,7 +196,7 @@ class AppleWatchImporter(BaseImporter):
             timesarray = np.asarray(raw_gyro[timestamp]['times'], dtype=np.float64)
 
             if len(timesarray) is 0:
-                print('Empty data, returning')
+                self.last_error = "Aucune données temporelles."
                 return
 
             # Other values are float32
@@ -322,7 +234,7 @@ class AppleWatchImporter(BaseImporter):
             timesarray = np.asarray(heartrate[timestamp]['times'], dtype=np.float64)
 
             if len(timesarray) is 0:
-                print('Empty data, returning')
+                self.last_error = "Aucune données temporelles."
                 return
 
             # Other values are float32
@@ -351,7 +263,7 @@ class AppleWatchImporter(BaseImporter):
             timesarray = np.asarray(coordinates[timestamp]['times'], dtype=np.float64)
 
             if len(timesarray) is 0:
-                print('Empty data, returning')
+                self.last_error = "Aucune données temporelles."
                 return
 
             # Other values are float32
@@ -440,7 +352,7 @@ class AppleWatchImporter(BaseImporter):
             timesarray = np.asarray(sensoria[timestamp]['times'], dtype=np.float64)
 
             if len(timesarray) is 0:
-                print('Empty data, returning')
+                self.last_error = "Aucune données temporelles."
                 return
 
             # Other values are float32
@@ -491,7 +403,7 @@ class AppleWatchImporter(BaseImporter):
             timesarray = np.asarray(beacons[timestamp]['times'], dtype=np.float64)
 
             if len(timesarray) is 0:
-                print('Empty data, returning')
+                self.last_error = "Aucune données temporelles."
                 return
 
             # Other values are int8
@@ -601,7 +513,7 @@ class AppleWatchImporter(BaseImporter):
             timesarray = np.asarray(motion[timestamp]['times'], dtype=np.float64)
 
             if len(timesarray) is 0:
-                print('Empty data, returning')
+                self.last_error = "Aucune données temporelles."
                 return
 
             # Other values are float32
@@ -650,7 +562,7 @@ class AppleWatchImporter(BaseImporter):
             timesarray = np.asarray(battery[timestamp]['times'], dtype=np.float64)
 
             if len(timesarray) is 0:
-                print('Empty data, returning')
+                self.last_error = "Aucune donnée temporelle."
                 return
 
             # Other values are float32
@@ -808,6 +720,7 @@ class AppleWatchImporter(BaseImporter):
             if end_header_id != self.HEADER:
                 if debug:
                     print('Error unpacking file, header not ending with 0xEAEA')
+                self.last_error = "Format de fichier incorrect - vérifiez qu'il s'agit bien du bon type de fichier."
                 return None
 
         # Get correct sample_rate for data
@@ -849,7 +762,7 @@ class AppleWatchImporter(BaseImporter):
             read_data_func = self.read_raw_gyro_data
             dict_name = 'raw_gyro'
         else:
-            print("unknown sensor_id: ", hex(sensor_id))
+            self.last_error = "Identifiant de capteur inconnu:" + hex(sensor_id)
             return None
 
         # DL 16 oct. 2018. New format for results. Will keep all timestamps and group them by hour
@@ -923,7 +836,7 @@ class AppleWatchImporter(BaseImporter):
             # data
             results[dict_name]['timestamps'][mydate]['values'].append(results_ms_data[i])
 
-        print('done processing: ', dict_name)
+        # print('done processing: ', dict_name)
 
         # force the gc to clear temporary lists
         results_ms_ts.clear()
@@ -933,7 +846,7 @@ class AppleWatchImporter(BaseImporter):
         return results
 
     @staticmethod
-    def read_battery_data(self, file, debug=False):
+    def read_battery_data(file, debug=False):
         """
         • Byte integer for battery level between 0 and 100 (percent)
         ◦ 0 meaning invalid level (eg. where state is .unknown)
@@ -977,7 +890,8 @@ class AppleWatchImporter(BaseImporter):
         """
         unsigned integer as single Byte for bpm
         ** assumes that bpm cannot go above 255, hence values above are clamped to 255
-        :param chunk:
+        :param file:
+        :param debug:
         :return:
         """
         chunk = file.read(1)
@@ -1008,7 +922,6 @@ class AppleWatchImporter(BaseImporter):
         6 Bytes Char for instance ID
         1 Int8 for TxPower
         1 Int8 for RSSI
-        :param chunk:
         :return:
         """
         chunk = file.read(18)
@@ -1073,7 +986,3 @@ class AppleWatchImporter(BaseImporter):
         if debug:
             print('RAW GYRO: ', data)
         return data
-
-    @staticmethod
-    def support_streaming():
-        return True

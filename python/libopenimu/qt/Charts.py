@@ -507,14 +507,14 @@ class OpenIMUBarGraphView(QChartView):
         self.setMinimumWidth(400)
 
     def set_title(self, title):
-        #print('Setting title: ', title)
+        # print('Setting title: ', title)
         self.chart.setTitle(title)
 
     def set_category_axis(self, categories):
         self.categoryAxis.append(categories)
 
     def add_set(self, label, values):
-        #print('adding bar set')
+        # print('adding bar set')
         my_set = QBarSet(label, self)
         my_set.append(values)
         self.series.append(my_set)

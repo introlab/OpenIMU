@@ -44,8 +44,6 @@ import sys
 from datetime import datetime
 
 
-
-
 class MainWindow(QMainWindow):
     currentFileName = ''
     dbMan = []
@@ -172,9 +170,10 @@ class MainWindow(QMainWindow):
         part_widget = ParticipantWindow(dbManager=self.dbMan, participant=participant, default_group=base_group)
         self.UI.frmMain.layout().addWidget(part_widget)
 
-        part_widget.dataSaved.connect(self.dataWasSaved)
-        part_widget.dataCancelled.connect(self.dataWasCancelled)
+        part_widget.dataSaved.connect(self.data_was_saved)
+        part_widget.dataCancelled.connect(self.data_was_cancelled)
 
+    @pyqtSlot('QString', int)
     def add_to_log(self, text, log_type):
         if text == ' ' or text == '\n':
             return
@@ -223,7 +222,8 @@ class MainWindow(QMainWindow):
     """
     @pyqtSlot()
     def import_requested(self):
-        importer = ImportBrowser(dataManager=self.dbMan)
+        importer = ImportBrowser(data_manager=self.dbMan)
+        importer.log_request.connect(self.add_to_log)
         importer.setStyleSheet(self.styleSheet())
         if importer.exec() == QDialog.Accepted:
             self.load_data_from_dataset()
@@ -403,6 +403,7 @@ class MainWindow(QMainWindow):
 
             # Start import process
             import_browser = ImportBrowser(dataManager=self.dbMan, parent=self)
+            import_browser.log_request.connect(self.add_to_log)
 
             # Build import list
             files = import_man.get_file_list()

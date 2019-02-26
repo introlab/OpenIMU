@@ -1,4 +1,4 @@
-from PyQt5.QtCore import pyqtSlot, Qt
+from PyQt5.QtCore import pyqtSlot, Qt, pyqtSignal
 from PyQt5.QtWidgets import QDialog, QTableWidgetItem
 
 from resources.ui.python.ImportBrowser_ui import Ui_ImportBrowser
@@ -11,13 +11,17 @@ from libopenimu.importers.OpenIMUImporter import OpenIMUImporter
 from libopenimu.importers.AppleWatchImporter import AppleWatchImporter
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog, WorkerTask
 
+from libopenimu.models.DataSource import DataSource
+from libopenimu.models.LogTypes import LogTypes
+
 import gc
 
 
 class ImportBrowser(QDialog):
     dbMan = None
+    log_request = pyqtSignal('QString', int)
 
-    def __init__(self, dataManager, parent=None):
+    def __init__(self, data_manager, parent=None):
         super(ImportBrowser, self).__init__(parent=parent)
         self.UI = Ui_ImportBrowser()
         self.UI.setupUi(self)
@@ -27,7 +31,7 @@ class ImportBrowser(QDialog):
         self.UI.btnAddFile.clicked.connect(self.add_clicked)
         self.UI.btnDelFile.clicked.connect(self.del_clicked)
         self.UI.btnAddDir.clicked.connect(self.add_dir_clicked)
-        self.dbMan = dataManager
+        self.dbMan = data_manager
 
     @pyqtSlot()
     def ok_clicked(self):
@@ -43,13 +47,40 @@ class ImportBrowser(QDialog):
                 self.importer.update_progress.connect(self.update_progress)
 
             def process(self):
-                print('Importer loading', self.filename)
-                results = self.importer.load(self.filename)
-                print('Importer saving to db')
-                self.importer.import_to_database(results)
-                if results is not None:
-                    results.clear()  # Needed to clear the dict cache and let the garbage collector delete it!
-                print('Importer done!')
+                file_md5 = DataSource.compute_md5(filename=self.filename).hexdigest()
+                short_filename = DataSource.build_short_filename(self.filename)
+
+                if not DataSource.datasource_exists_for_participant(filename=short_filename,
+                                                                    participant=self.importer.participant, md5=file_md5,
+                                                                    db_session=self.importer.db.session):
+
+                    self.log_request.emit("Chargement du fichier: '" + self.filename + "'", LogTypes.LOGTYPE_INFO)
+
+                    results = self.importer.load(self.filename)
+                    if results is not None:
+                        self.log_request.emit('Importation des données...', LogTypes.LOGTYPE_INFO)
+                        self.importer.import_to_database(results)
+                        results.clear()  # Needed to clear the dict cache and let the garbage collector delete it!
+                        # Add datasources for that file
+                        for recordset in self.importer.recordsets:
+                            if not DataSource.datasource_exists_for_recordset(filename=short_filename,
+                                                                              recordset=recordset, md5=file_md5,
+                                                                              db_session=self.importer.db.session):
+                                ds = DataSource()
+                                ds.recordset = recordset
+                                ds.file_md5 = file_md5
+                                ds.file_name = short_filename
+                                ds.update_datasource(db_session=self.importer.db.session)
+
+                        self.importer.clear_recordsets()
+                        self.log_request.emit('Importation du fichier complétée!', LogTypes.LOGTYPE_DONE)
+                    else:
+                        self.log_request.emit('Erreur lors du chargement du fichier: ' + self.importer.last_error,
+                                              LogTypes.LOGTYPE_ERROR)
+                else:
+                    self.log_request.emit("Données du fichier '" + self.filename + "' déjà présentes pour '" +
+                                          self.importer.participant.name + "' - ignorées.",
+                                          LogTypes.LOGTYPE_WARNING)
 
         importers = []
 
@@ -83,6 +114,7 @@ class ImportBrowser(QDialog):
         # Run in background all importers (in sequence)
         all_tasks = []
         for importer in importers:
+            importer.log_request.connect(self.log_request)
             all_tasks.append(importer)
 
         process = BackgroundProcess(all_tasks)

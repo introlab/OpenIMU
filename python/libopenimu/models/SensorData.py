@@ -24,7 +24,6 @@ class SensorData(Base):
     id_recordset = Column(Integer, ForeignKey('tabRecordsets.id_recordset', ondelete="CASCADE"), nullable=False)
     id_sensor = Column(Integer, ForeignKey('tabSensors.id_sensor', ondelete="CASCADE"), nullable=False)
     id_channel = Column(Integer, ForeignKey('tabChannels.id_channel', ondelete="CASCADE"), nullable=False)
-    # TODO, timestamps CASCADE?
     id_timestamps = Column(Integer, ForeignKey('tabSensorsTimestamps.id_sensor_timestamps', ondelete="CASCADE"),
                            nullable=False)
 

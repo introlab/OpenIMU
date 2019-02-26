@@ -227,7 +227,7 @@ class DBManager:
                                                   (Sensor.data_rate) == _data_rate)
 
         if query.first():
-            #print("Sensor " + _name + " already present in DB!")
+            # print("Sensor " + _name + " already present in DB!")
             return query.first();
 
         # Create object
@@ -257,7 +257,7 @@ class DBManager:
 
     def add_recordset(self, participant: Participant, name, start_timestamp, end_timestamp, force=False):
 
-        if not force: # Check if we already have a recordset for that period
+        if not force:  # Check if we already have a recordset for that period
             query = self.session.query(Recordset).filter((Recordset.participant == participant) & (Recordset.name == name))
             if query.first():
                 # Update start and end times, if needed.
@@ -510,7 +510,6 @@ class DBManager:
             datas = query.all()
         else:
             query = self.session.query(ProcessedData).filter(ProcessedData.processed_data_ref.recordset.participant.id_participant == participant.id_participant)
-            #print(query)
             datas = query.all()
 
         return datas
