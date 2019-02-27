@@ -38,7 +38,7 @@ epoch = 60 seconds
 
 import numpy as np
 from scipy.signal import butter, sosfilt
-from libopenimu.tools.timing import timing
+# from libopenimu.tools.timing import timing
 
 
 class CutPoints:
@@ -121,13 +121,13 @@ def generate_60s_epoch(timeseries, sampling_rate):
     return epochs
 
 
-@timing
+# @timing
 def freedson_adult_1998(samples: list, sampling_rate):
 
     scale = sampling_rate / CutPoints.base_frequency()
     print("Scaling: ", scale)
 
-    results = CutPoints.build_dict()
+    c_results = CutPoints.build_dict()
 
     for sensor_data in samples:
         # Get time series
@@ -158,10 +158,10 @@ def freedson_adult_1998(samples: list, sampling_rate):
             result_sum = int(128.0 * np.sum(np.abs(epoch[1])) * complete_factor)
 
             # Classify
-            results[CutPoints.classify(result_sum, scale)] += 1
+            c_results[CutPoints.classify(result_sum, scale)] += 1
 
-    # print('results', results)
-    return results
+    # print('results', c_results)
+    return c_results
 
 
 if __name__ == '__main__':

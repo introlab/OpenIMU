@@ -335,11 +335,11 @@ class AppleWatchImporter(BaseImporter):
                                                     sample_rate, 1)
         sensoria_fsr_channels = list()
         sensoria_fsr_channels.append(self.add_channel_to_db(sensoria_fsr_sensor, Units.NONE,
-                                                            DataFormat.FLOAT32, 'META-1'))
+                                                            DataFormat.UINT16, 'META-1'))
         sensoria_fsr_channels.append(self.add_channel_to_db(sensoria_fsr_sensor, Units.NONE,
-                                                            DataFormat.FLOAT32, 'META-5'))
+                                                            DataFormat.UINT16, 'META-5'))
         sensoria_fsr_channels.append(self.add_channel_to_db(sensoria_fsr_sensor, Units.NONE,
-                                                            DataFormat.FLOAT32, 'HEEL'))
+                                                            DataFormat.UINT16, 'HEEL'))
         count = 0
         for timestamp in sensoria:
             # print('sensoria', timestamp, len(sensoria[timestamp]['times']),
@@ -546,7 +546,7 @@ class AppleWatchImporter(BaseImporter):
         battery_sensor = self.add_sensor_to_db(SensorType.BATTERY, 'Battery', 'AppleWatch', 'Wrist',
                                                sampling_rate, 1)
 
-        battery_channel = self.add_channel_to_db(battery_sensor, Units.VOLTS, DataFormat.FLOAT32, 'Battery Percentage')
+        battery_channel = self.add_channel_to_db(battery_sensor, Units.VOLTS, DataFormat.UINT8, 'Battery Percentage')
 
         # Data is already hour-aligned iterate through hours
         count = 0
@@ -790,9 +790,11 @@ class AppleWatchImporter(BaseImporter):
                 # Read timestamp
                 [timestamp_ms] = struct.unpack("<Q", file.read(8))
                 # TODO: Use timezone info from watch
-                local_ms_ts = (datetime.datetime.fromtimestamp(timestamp_ms / 1000).timestamp()) * 1000 + (
+                """local_ms_ts = (datetime.datetime.fromtimestamp(timestamp_ms / 1000).timestamp()) * 1000 + (
                             timestamp_ms % 1000)
                 results_ms_ts.append(int(local_ms_ts))
+                """
+                results_ms_ts.append(int(timestamp_ms))
                 results_ms_data.append(read_data_func(file, debug))
                 new_progress = np.floor((file.tell() / self.current_file_size)*100 / 2)
                 if new_progress != progress:  # Only send update if % was increased
@@ -806,7 +808,7 @@ class AppleWatchImporter(BaseImporter):
             results_ms_data = results_ms_data[0:min_size]
 
         # insertion sort on almost sorted timestamps, tends to O(n)
-        for i in range(1, len(results_ms_ts)):
+        """for i in range(1, len(results_ms_ts)):
             curr_ts = results_ms_ts[i]
             curr_data = results_ms_data[i]
             j = i - 1
@@ -820,6 +822,7 @@ class AppleWatchImporter(BaseImporter):
             if j != i - 1:
                 results_ms_ts[j + 1] = curr_ts
                 results_ms_data[j + 1] = curr_data
+            """
 
         # Create hour-aligned separated data
         for i, result in enumerate(results_ms_ts):
@@ -830,7 +833,7 @@ class AppleWatchImporter(BaseImporter):
             if not results[dict_name]['timestamps'].__contains__(mydate):
                 results[dict_name]['timestamps'][mydate] = {'times': [], 'values': []}
 
-            # Append data (slow?)D:\Simon_Data\Projets_Patrick\AppleWatch\Tests_AppleWatch\Data_Oct2018\W01P5
+            # Append data (slow?)
             # ms time to secs
             results[dict_name]['timestamps'][mydate]['times'].append(result / 1000.0)
             # data

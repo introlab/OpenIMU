@@ -34,8 +34,7 @@ QFrame#frameInfos{background-color:rgba(50,50,50,50%);}
 
 QWidget{border-radius:5px;}
 
-QWidget#dockWidgetLogContents{background-color:rgba(0,0,0,0%);}
-QWidget#dockWidgetTreeContents,QWidget#dockWidgetToolsContents,QWidget#dockTabbedToolsContents{background-color:rgba(0,0,0,70%);  border-radius:5px;}
+QWidget#dockWidgetTreeContents,QWidget#dockWidgetLogContents,QWidget#dockWidgetToolsContents,QWidget#dockTabbedToolsContents{background-color:rgba(0,0,0,70%);  border-radius:5px;}
 
 QWidget#line,QWidget#line_2,QWidget#line_3{background-color:rgba(100,100,100,100%);}
 
@@ -57,6 +56,7 @@ QListWidget#lstSensors,QTableWidget{background-color:rgba(200,200,200,70%);}
 
 QDockWidget{color:white;}
 QDockWidget::title{
+border: 2px solid darkgrey;
 background-color:grey;
 text-align: center;
 }
@@ -360,7 +360,7 @@ QLabel#lblVersion{color:black;}
    <property name="minimumSize">
     <size>
      <width>102</width>
-     <height>107</height>
+     <height>230</height>
     </size>
    </property>
    <property name="windowTitle">
@@ -386,7 +386,7 @@ QLabel#lblVersion{color:black;}
      <item>
       <widget class="QTextEdit" name="txtLog">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+        <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>

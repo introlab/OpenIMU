@@ -34,14 +34,17 @@ class WorkerTask(QObject):
 
 class SimpleTask(WorkerTask):  # A simple worker task without any progress reporting
 
-    def __init__(self, title: string, task_func, func_arg, parent=None):
-        super().__init__(title, 0, parent)
+    def __init__(self, title: string, task_func, func_arg=None, parent=None):
+        super(SimpleTask, self).__init__(title, 0, parent)
 
         self.task_process = task_func
         self.task_parameters = func_arg
 
     def process(self):
-        self.task_process(self.task_parameters)
+        if self.task_parameters:
+            self.task_process(self.task_parameters)
+        else:
+            self.task_process()
 
 
 class BackgroundProcess(QThread):

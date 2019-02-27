@@ -29,6 +29,8 @@ from libopenimu.qt.ImportManager import ImportManager
 from libopenimu.qt.ExportWindow import ExportWindow
 from libopenimu.qt.StreamWindow import StreamWindow
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, SimpleTask, ProgressDialog
+from libopenimu.qt.ProcessSelectWindow import ProcessSelectWindow
+
 # Models
 from libopenimu.models.Participant import Participant
 from libopenimu.models.DataSet import DataSet
@@ -47,22 +49,27 @@ class MainWindow(QMainWindow):
     currentFileName = ''
     dbMan = []
     currentDataSet = DataSet()
+    currentRecordsets = []
 
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent=parent)
         self.UI = Ui_MainWindow()
         self.UI.setupUi(self)
         self.UI.dockToolBar.setTitleBarWidget(QWidget())
-        # self.UI.dockDataset.setTitleBarWidget(QWidget())
-        # self.UI.dockTabbedTools.setTitleBarWidget(QWidget())
-        # self.splitDockWidget(self.UI.dockTabbedTools, self.UI.dockDataset, Qt.Vertical)
-        # self.UI.dockTabbedTools.hide()
         self.UI.dockLog.hide()
 
         self.add_to_log("OpenIMU - Prêt à travailler.", LogTypes.LOGTYPE_INFO)
 
-        start_window = StartWindow()
-        start_window.setStyleSheet(self.styleSheet() + start_window.styleSheet())
+        self.show_start_window()
+
+    def __del__(self):
+        # Restore sys.stdout
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
+
+    def show_start_window(self):
+        self.showMinimized()
+        start_window = StartWindow(self)
 
         if start_window.exec() == QDialog.Rejected:
             # User closed the dialog - exits!
@@ -93,11 +100,6 @@ class MainWindow(QMainWindow):
             self.importRequested()
             gc.collect()
 
-    def __del__(self):
-        # Restore sys.stdout
-        sys.stdout = sys.__stdout__
-        sys.stderr = sys.__stderr__
-
     def setup_signals(self):
         self.UI.treeDataSet.itemClicked.connect(self.tree_item_clicked)
         self.UI.btnDataSetInfos.clicked.connect(self.infos_requested)
@@ -112,6 +114,9 @@ class MainWindow(QMainWindow):
         self.UI.btnShowDataset.clicked.connect(self.toggle_dataset)
         self.UI.btnShowLog.clicked.connect(self.toggle_log)
         self.UI.btnTransfer.clicked.connect(self.transfer_requested)
+        self.UI.btnClose.clicked.connect(self.db_close_requested)
+        self.UI.btnCompact.clicked.connect(self.db_compact_requested)
+        self.UI.btnProcess.clicked.connect(self.process_data_requested)
 
     def console_log_normal(self, text):
         self.add_to_log(text, LogTypes.LOGTYPE_DEBUG)
@@ -247,6 +252,53 @@ class MainWindow(QMainWindow):
             self.currentDataSet.name = infos_window.dataSet.name
 
     @pyqtSlot()
+    def process_data_requested(self):
+        if self.currentRecordsets:
+
+            # Display Process Window
+            proc_window = ProcessSelectWindow(data_manager=self.dbMan, recordsets=self.currentRecordsets, parent=self)
+
+            if proc_window.exec() == QDialog.Accepted:
+                self.UI.treeDataSet.update_item("result", proc_window.processed_data)
+                self.UI.treeDataSet.select_item("result", proc_window.processed_data.id_processed_data)
+
+    @pyqtSlot()
+    def db_close_requested(self):
+        msg = QMessageBox(self)
+        msg.setIcon(QMessageBox.Question)
+        msg.setStyleSheet("QPushButton{min-width: 100px; min-height: 40px;}")
+
+        msg.setText("Cet ensemble de données sera fermé. Désirez-vous poursuivre?")
+        msg.setWindowTitle("Fermeture?")
+        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+
+        rval = msg.exec()
+        if rval == QMessageBox.Yes:
+            self.dbMan.close()
+            self.add_to_log("Fichier " + self.currentFileName + " fermé.", LogTypes.LOGTYPE_INFO)
+            self.hide()
+
+            self.show_start_window()
+
+    @pyqtSlot()
+    def db_compact_requested(self):
+        msg = QMessageBox(self)
+        msg.setIcon(QMessageBox.Question)
+        msg.setStyleSheet("QPushButton{min-width: 100px; min-height: 40px;}")
+
+        msg.setText("Le fichier de données sera nettoyé. Ceci peut prendre un certain temps. \nDésirez-vous poursuivre?")
+        msg.setWindowTitle("Compactage des données")
+        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+
+        rval = msg.exec()
+        if rval == QMessageBox.Yes:
+            task = SimpleTask("Compactage des données", self.dbMan.compact)
+            process = BackgroundProcess([task])
+            dialog = ProgressDialog(process, 'Nettoyage', self)
+            process.start()
+            dialog.exec()
+
+    @pyqtSlot()
     def new_group_requested(self):
         self.show_group()
 
@@ -277,6 +329,8 @@ class MainWindow(QMainWindow):
 
         # Clear all widgets
         self.clear_main_widgets()
+        self.UI.btnProcess.setEnabled(False)
+        self.currentRecordsets = []
 
         if item_type == "group":
             self.show_group(self.UI.treeDataSet.groups[item_id])
@@ -289,15 +343,16 @@ class MainWindow(QMainWindow):
         if item_type == "recordsets" or item_type == "recordset" or item_type == "subrecord":
             if item_type == "recordsets":
                 part = self.UI.treeDataSet.participants[self.UI.treeDataSet.get_item_id(item.parent())]
-                records = self.dbMan.get_all_recordsets(part)
+                self.currentRecordsets = self.dbMan.get_all_recordsets(part)
             else:
-                records = [self.UI.treeDataSet.recordsets[item_id]]
+                self.currentRecordsets = [self.UI.treeDataSet.recordsets[item_id]]
 
-            records_widget = RecordsetWindow(manager=self.dbMan, recordset=records, parent=self)
+            records_widget = RecordsetWindow(manager=self.dbMan, recordset=self.currentRecordsets, parent=self)
             # records_widget.setStyleSheet(self.styleSheet() + records_widget.styleSheet())
             self.UI.frmMain.layout().addWidget(records_widget)
             records_widget.dataDisplayRequest.connect(self.UI.treeDataSet.select_item)
             records_widget.dataUpdateRequest.connect(self.UI.treeDataSet.update_item)
+            self.UI.btnProcess.setEnabled(True)
 
         if item_type == "result":
             result_widget = ResultWindow(manager=self.dbMan, results=self.UI.treeDataSet.results[item_id], parent=self)
@@ -421,7 +476,7 @@ class MainWindow(QMainWindow):
             stream_diag.exec()
 
             # Start import process
-            import_browser = ImportBrowser(dataManager=self.dbMan, parent=self)
+            import_browser = ImportBrowser(data_manager=self.dbMan, parent=self)
             import_browser.log_request.connect(self.add_to_log)
 
             # Build import list
@@ -551,7 +606,7 @@ class Treedatawidget(QTreeWidget):
             item.setData(1, Qt.UserRole, 'participant')
             item.setFont(0, QFont('Helvetica', 12, QFont.Bold))
 
-            if group_item is None: #Participant without a group
+            if group_item is None: # Participant without a group
                 self.addTopLevelItem(item)
             else:
                 group_item.addChild(item)
@@ -654,14 +709,14 @@ class Treedatawidget(QTreeWidget):
         return item
 
     @classmethod
-    def get_item_type(self,item):
+    def get_item_type(cls, item):
         if item is not None:
             return item.data(1, Qt.UserRole)
         else:
             return ""
 
     @classmethod
-    def get_item_id(self,item):
+    def get_item_id(cls, item):
         if item is not None:
             return item.data(0, Qt.UserRole)
         else:
@@ -754,32 +809,6 @@ class Treedatawidget(QTreeWidget):
 
             event.ignore()
 
-"""
-def qt_message_handler(mode, context, message):
-    if mode == QtCore.QtInfoMsg:
-        mode = 'INFO'
-    elif mode == QtCore.QtWarningMsg:
-        mode = 'WARNING'
-    elif mode == QtCore.QtCriticalMsg:
-        mode = 'CRITICAL'
-    elif mode == QtCore.QtFatalMsg:
-        mode = 'FATAL'
-    else:
-        mode = 'DEBUG'
-    print('qt_message_handler: line: %d, func: %s(), file: %s' % (
-          context.line, context.function, context.file))
-    print('  %s: %s\n' % (mode, message))
-
-    dialog = QDialog()
-    box = QTextEdit(dialog)
-
-    box.setText('qt_message_handler: line: %d, func: %s(), file: %s message: %s' % (
-          context.line, context.function, context.file, message))
-    dialog.resize(640, 480)
-    dialog.exec()
-
-"""
-
 
 class EmittingStream(PyQt5.QtCore.QObject):
 
@@ -805,8 +834,8 @@ if __name__ == '__main__':
     QDir.setCurrent(QDir.homePath())
 
     print(PyQt5.__file__)
-    paths = [x for x in dir(QLibraryInfo) if x.endswith('Path')]
-    pprint({x: QLibraryInfo.location(getattr(QLibraryInfo, x)) for x in paths})
+    # paths = [x for x in dir(QLibraryInfo) if x.endswith('Path')]
+    # pprint({x: QLibraryInfo.location(getattr(QLibraryInfo, x)) for x in paths})
 
     # WebEngine settings
     # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.PluginsEnabled, True)

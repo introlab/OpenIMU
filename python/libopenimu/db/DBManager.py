@@ -131,6 +131,9 @@ class DBManager:
     def session_add(self, store):
         self.session.add_all(store)
 
+    def compact(self):
+        self.engine.execute("VACUUM")
+
     # GROUPS
     def update_group(self, group):
         try:

@@ -103,7 +103,8 @@ class ImportBrowser(QDialog):
 
             if data_importer is not None:
                 # importers.append(Importer(file_name, os.stat(file_name).st_size, data_importer))
-                importers.append(Importer(file_name, 100, data_importer))
+                short_filename = DataSource.build_short_filename(file_name)
+                importers.append(Importer(short_filename, 100, data_importer))
 
                 # results = data_importer.load(file_name)
                 # data_importer.import_to_database(results)

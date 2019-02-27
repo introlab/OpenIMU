@@ -38,7 +38,7 @@ class ResultWindow(QWidget):
         self.factory = BaseAlgorithmFactory.get_factory_with_id(self.data.id_data_processor)
 
         if self.factory is not None:
-            cdata = pickle.loads(self.data.data) # Unpacks data from blob in database
+            cdata = pickle.loads(self.data.data)  # Unpacks data from blob in database
 
             display_widget = self.factory.build_display_widget(self.UI.centralWidget, cdata, self.recordsets)
             self.UI.centralWidget.layout().addWidget(display_widget)

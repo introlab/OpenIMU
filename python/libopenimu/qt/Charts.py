@@ -444,10 +444,13 @@ class IMUChartView(QChartView, BaseGraph):
         idx2 = idx1 + 1
         if idx2 < len(self.chart.series()[0]):
             x2 = self.chart.series()[0].at(idx2).x()
-            pos2 = self.chart.mapToPosition(QPointF(x2, 0)).x()
-            x2 /= 1000
-            x1 /= 1000
-            pos = (((px - x1) / (x2 - x1)) * (pos2 - pos1)) + pos1
+            if x2 != x1:
+                pos2 = self.chart.mapToPosition(QPointF(x2, 0)).x()
+                x2 /= 1000
+                x1 /= 1000
+                pos = (((px - x1) / (x2 - x1)) * (pos2 - pos1)) + pos1
+            else:
+                pos = pos1
         else:
             pos = pos1
         return pos
@@ -462,9 +465,11 @@ class IMUChartView(QChartView, BaseGraph):
 
     def zoom_in(self):
         self.chart.zoomIn()
+        self.update_axes()
 
     def zoom_out(self):
         self.chart.zoomOut()
+        self.update_axes()
 
     def zoom_area(self):
         if self.selection_rec:
@@ -473,9 +478,11 @@ class IMUChartView(QChartView, BaseGraph):
             zoom_rec.setHeight(self.chart.plotArea().height())
             self.chart.zoomIn(zoom_rec)
             self.clearSelectionArea(True)
+            self.update_axes()
 
     def zoom_reset(self):
         self.chart.zoomReset()
+        self.update_axes()
 
     def get_displayed_start_time(self):
         min_x = self.chart.mapToScene(self.chart.plotArea()).boundingRect().x()
@@ -500,11 +507,17 @@ class OpenIMUBarGraphView(QChartView):
         self.setChart(self.chart)
         self.chart.legend().setVisible(True)
         self.chart.legend().setAlignment(Qt.AlignBottom)
-        self.chart.setAnimationOptions(QChart.SeriesAnimations)
         self.series = QBarSeries(self)
         self.categoryAxis = QBarCategoryAxis(self)
-        self.setMinimumHeight(400)
-        self.setMinimumWidth(400)
+        self.build_style()
+
+    def build_style(self):
+        self.setStyleSheet("QLabel{color:blue;}")
+        self.chart.setTheme(QChart.ChartThemeBlueCerulean)
+        self.setBackgroundBrush(QBrush(Qt.darkGray))
+        self.chart.setPlotAreaBackgroundBrush(QBrush(Qt.black))
+        self.chart.setPlotAreaBackgroundVisible(True)
+        self.chart.setAnimationOptions(QChart.SeriesAnimations)
 
     def set_title(self, title):
         # print('Setting title: ', title)

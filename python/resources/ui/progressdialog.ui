@@ -89,7 +89,7 @@ QProgressBar#prgTask{
         <string>Travail en cours...</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignCenter</set>
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
@@ -140,6 +140,12 @@ QProgressBar#prgTask{
      </item>
      <item row="0" column="1">
       <widget class="QLabel" name="lblCurrentTaskValue">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="font">
         <font>
          <pointsize>10</pointsize>
