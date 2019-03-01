@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <architect-project version="1.0" appversion="1.0.8">
  <project-name>OpenIMU_FileFormat</project-name>
- <print-settings printerName="Adobe PDF" numCopies="1" zoom="0.75" pageNumbersPrinted="false" orientation="0" paperWidth="612.0" paperHeight="792.0" leftBorder="50.00314960629921" rightBorder="50.003149606299225" topBorder="50.00314960629921" bottomBorder="50.00314960629917" />
+ <print-settings printerName="Adobe PDF" numCopies="1" zoom="0.77" pageNumbersPrinted="false" orientation="0" paperWidth="612.0" paperHeight="792.0" leftBorder="50.00314960629921" rightBorder="50.003149606299225" topBorder="50.003149606299225" bottomBorder="50.003149606299154" />
  <project-data-sources>
   <data-source id="DS0">
    <property key="Logical" value="PlayPen Database" />
@@ -438,7 +438,7 @@
   <table-pane table-ref="TAB35" x="393" y="322" bgColor="0xe6d794" fgColor="0x000000" rounded="false" dashed="false"/>
   <table-pane table-ref="TAB43" x="367" y="451" bgColor="0xe6d794" fgColor="0x000000" rounded="false" dashed="false"/>
   <table-pane table-ref="TAB50" x="93" y="446" bgColor="0xe6d794" fgColor="0x000000" rounded="false" dashed="false"/>
-  <table-pane table-ref="TAB56" x="865" y="401" bgColor="0xe6d794" fgColor="0x000000" rounded="false" dashed="false"/>
+  <table-pane table-ref="TAB56" x="657" y="381" bgColor="0xe6d794" fgColor="0x000000" rounded="false" dashed="false"/>
   <table-pane table-ref="TAB64" x="346" y="556" bgColor="0xc8b7ea" fgColor="0x000000" rounded="false" dashed="false"/>
   <table-pane table-ref="TAB72" x="359" y="21" bgColor="0xc8dccc" fgColor="0x000000" rounded="false" dashed="false"/>
   <table-pane table-ref="TAB80" x="634" y="565" bgColor="0xc8b7ea" fgColor="0x000000" rounded="false" dashed="false"/>
@@ -448,13 +448,13 @@
   <table-link relationship-ref="REL117" pkConnection="0.5352112676056338" fkConnection="0.38823529411764707" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="33"/>
   <table-link relationship-ref="REL107" pkConnection="0.4375" fkConnection="0.5714285714285714" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="72"/>
   <table-link relationship-ref="REL115" pkConnection="0.5625" fkConnection="0.4375" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="72"/>
-  <table-link relationship-ref="REL109" pkConnection="0.898989898989899" fkConnection="0.10101010101010101" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="33"/>
+  <table-link relationship-ref="REL109" pkConnection="0.797979797979798" fkConnection="0.20202020202020202" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="33"/>
   <table-link relationship-ref="REL105" pkConnection="0.49295774647887325" fkConnection="0.36363636363636365" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="18"/>
   <table-link relationship-ref="REL123" pkConnection="0.4976958525345622" fkConnection="0.4976958525345622" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="132"/>
   <table-link relationship-ref="REL103" pkConnection="0.07079646017699115" fkConnection="0.9191919191919192" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="33"/>
   <table-link relationship-ref="REL121" pkConnection="0.5151515151515151" fkConnection="0.49411764705882355" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="33"/>
   <table-link relationship-ref="REL111" pkConnection="0.6923076923076923" fkConnection="0.36220472440944884" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="132"/>
-  <table-link relationship-ref="REL119" pkConnection="0.05365853658536585" fkConnection="0.952755905511811" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="132"/>
+  <table-link relationship-ref="REL119" pkConnection="0.4975609756097561" fkConnection="0.4921259842519685" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="132"/>
   <table-link relationship-ref="REL125" pkConnection="0.49411764705882355" fkConnection="0.39823008849557523" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="18"/>
   <table-link relationship-ref="REL113" pkConnection="0.20202020202020202" fkConnection="0.7529411764705882" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="33"/>
  </play-pen>
