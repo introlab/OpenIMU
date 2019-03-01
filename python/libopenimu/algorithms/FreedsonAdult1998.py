@@ -53,7 +53,6 @@ class FreedsonAdult1998(BaseAlgorithm):
 class FreedsonAdult1998Factory(BaseAlgorithmFactory):
     def __init__(self):
         super().__init__()
-        pass
 
     def create(self, params: dict):
         # Create instance of algorithm

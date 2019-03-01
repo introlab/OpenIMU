@@ -22,7 +22,7 @@ class ImportBrowser(QDialog):
     log_request = pyqtSignal('QString', int)
 
     def __init__(self, data_manager, parent=None):
-        super(ImportBrowser, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.UI = Ui_ImportBrowser()
         self.UI.setupUi(self)
 
@@ -45,16 +45,17 @@ class ImportBrowser(QDialog):
                 self.filename = filename
                 self.importer = file_importer
                 self.importer.update_progress.connect(self.update_progress)
+                self.short_filename = DataSource.build_short_filename(self.filename)
+                self.title = self.short_filename
 
             def process(self):
                 file_md5 = DataSource.compute_md5(filename=self.filename).hexdigest()
-                short_filename = DataSource.build_short_filename(self.filename)
 
-                if not DataSource.datasource_exists_for_participant(filename=short_filename,
+                if not DataSource.datasource_exists_for_participant(filename=self.short_filename ,
                                                                     participant=self.importer.participant, md5=file_md5,
                                                                     db_session=self.importer.db.session):
 
-                    self.log_request.emit("Chargement du fichier: '" + short_filename + "'", LogTypes.LOGTYPE_INFO)
+                    self.log_request.emit("Chargement du fichier: '" + self.short_filename  + "'", LogTypes.LOGTYPE_INFO)
 
                     results = self.importer.load(self.filename)
                     if results is not None:
@@ -63,13 +64,13 @@ class ImportBrowser(QDialog):
                         results.clear()  # Needed to clear the dict cache and let the garbage collector delete it!
                         # Add datasources for that file
                         for recordset in self.importer.recordsets:
-                            if not DataSource.datasource_exists_for_recordset(filename=short_filename,
+                            if not DataSource.datasource_exists_for_recordset(filename=self.short_filename ,
                                                                               recordset=recordset, md5=file_md5,
                                                                               db_session=self.importer.db.session):
                                 ds = DataSource()
                                 ds.recordset = recordset
                                 ds.file_md5 = file_md5
-                                ds.file_name = short_filename
+                                ds.file_name = self.short_filename
                                 ds.update_datasource(db_session=self.importer.db.session)
 
                         self.importer.clear_recordsets()
@@ -103,8 +104,7 @@ class ImportBrowser(QDialog):
 
             if data_importer is not None:
                 # importers.append(Importer(file_name, os.stat(file_name).st_size, data_importer))
-                short_filename = DataSource.build_short_filename(file_name)
-                importers.append(Importer(short_filename, 100, data_importer))
+                importers.append(Importer(file_name, 100, data_importer))
 
                 # results = data_importer.load(file_name)
                 # data_importer.import_to_database(results)

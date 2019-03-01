@@ -1,4 +1,3 @@
-from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt, pyqtSlot
 
 from resources.ui.python.ParticipantWidget_ui import Ui_frmParticipant

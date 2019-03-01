@@ -197,9 +197,10 @@ class ImportManager(QDialog):
         # Add files to list
         files = glob.glob(self.filename + "/**/*.*", recursive=True)  # Files in sub folders
         for file in files:
-            file = file.replace("/", os.sep)
-            data_name = os.path.split(file)[0].replace(self.filename, "")
-            data_name = data_name.split(os.sep)[1]
+            data_name = file.replace(self.filename, "")
+            data_name = data_name.replace("/", os.sep)
+            data_name = os.path.split(data_name)[0].replace(os.sep, "")
+
             if file not in file_list:
                 file_list[file] = data_name
 

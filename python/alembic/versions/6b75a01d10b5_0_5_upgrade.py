@@ -1,7 +1,7 @@
 """0_5_upgrade
 
 Revision ID: 6b75a01d10b5
-Revises: 
+Revises:
 Create Date: 2019-01-24 13:13:30.479559
 
 """

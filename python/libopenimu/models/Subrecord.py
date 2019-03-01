@@ -11,7 +11,7 @@ class Subrecord(Base):
 
     '''
     A type for datetime.timedelta() objects.
-    The Interval type deals with datetime.timedelta objects. In PostgreSQL, the native INTERVAL type is used; 
+    The Interval type deals with datetime.timedelta objects. In PostgreSQL, the native INTERVAL type is used;
     for others, the value is stored as a date which is relative to the “epoch” (Jan. 1, 1970).
     '''
     start_timestamp = Column(TIMESTAMP, nullable=False)

@@ -66,6 +66,7 @@ class GraphWindow(QWidget):
         self.graph.clearedSelectionArea.connect(self.graph_selection_changed)
 
         self.UI.btnMove.setChecked(True)
+        self.graph.set_interaction_mode(GraphInteractionMode.MOVE)
 
     def event(self, e):
         if e.type() == QEvent.Enter:

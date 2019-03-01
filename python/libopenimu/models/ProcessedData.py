@@ -1,6 +1,6 @@
 from libopenimu.models.Base import Base
 from libopenimu.models.ProcessedDataRef import ProcessedDataRef  # Important for relationships, don't delete!
-from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, BLOB, TIMESTAMP
+from sqlalchemy import Column, Integer, String, Sequence, BLOB, TIMESTAMP
 from sqlalchemy.orm import relationship
 
 

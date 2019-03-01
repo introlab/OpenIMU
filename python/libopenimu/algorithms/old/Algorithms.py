@@ -107,9 +107,7 @@ def freedson_adult_1998(data, epoch_secs, rate):
     # Return the result
     return [nb_epochs, my_counts]
 
-"""
-Test function
-"""
+
 if __name__ == '__main__':
     np.set_printoptions(suppress=True)
     import libopenimu.importers.DataImporter as importer

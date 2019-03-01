@@ -2,14 +2,10 @@ from libopenimu.importers.BaseImporter import BaseImporter
 
 import libopenimu.importers.wimu as wimu
 
-from libopenimu.models.sensor_types import SensorType
-from libopenimu.models.units import Units
-from libopenimu.models.data_formats import DataFormat
 from libopenimu.tools.timing import timing
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.Participant import Participant
 
-import datetime
 
 
 class WIMUImporter(BaseImporter):
@@ -89,7 +85,8 @@ class WIMUImporter(BaseImporter):
                                                    datetime.datetime.fromtimestamp(timestamp),
                                                    datetime.datetime.fromtimestamp(end_timestamp), acc_z)
 
-                self.db.flush()"""
+                self.db.flush()
+                """
 
         if result.__contains__('gyr'):
             # Create sensor
@@ -145,7 +142,8 @@ class WIMUImporter(BaseImporter):
                                                    datetime.datetime.fromtimestamp(timestamp),
                                                    datetime.datetime.fromtimestamp(end_timestamp), gyro_z)
 
-                self.db.flush()"""
+                self.db.flush()
+                """
 
             if result.__contains__('mag'):
                 # Create sensor
@@ -201,7 +199,8 @@ class WIMUImporter(BaseImporter):
                                                        datetime.datetime.fromtimestamp(timestamp),
                                                        datetime.datetime.fromtimestamp(end_timestamp), mag_z)
 
-                    self.db.flush()"""
+                    self.db.flush()
+                    """
 
             if result.__contains__('imu'):
 
@@ -262,7 +261,8 @@ class WIMUImporter(BaseImporter):
                                                        datetime.datetime.fromtimestamp(timestamp),
                                                        datetime.datetime.fromtimestamp(end_timestamp), q3)
 
-                    self.db.flush()"""
+                    self.db.flush()
+                    """
 
             if result.__contains__('pow'):
                 """temp_sensor = self.add_sensor_to_db(SensorType.TEMPERATURE, 'Temperature', 'WIMUGPS', 'Unknown', 1.0, 1)
@@ -295,7 +295,8 @@ class WIMUImporter(BaseImporter):
                                                    datetime.datetime.fromtimestamp(timestamp + len(battery)),
                                                    battery)
 
-                    self.db.flush()"""
+                    self.db.flush()
+                    """
 
             if result.__contains__('gps'):
 
@@ -317,7 +318,8 @@ class WIMUImporter(BaseImporter):
                                                    datetime.datetime.fromtimestamp(timestamp),
                                                    datetime.datetime.fromtimestamp(timestamp), item[key])
 
-                self.db.flush()"""
+                self.db.flush()
+                """
 
         # Write data to file
         self.db.commit()

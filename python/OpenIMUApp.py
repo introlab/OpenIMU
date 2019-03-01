@@ -2,10 +2,8 @@ from PyQt5.QtWidgets import QMainWindow, QWidget
 from PyQt5.QtWidgets import QApplication, QDialog, QTreeWidget, QTreeWidgetItem
 from PyQt5.QtGui import QIcon, QFont
 import PyQt5
-from PyQt5.QtCore import QLibraryInfo
 
 from PyQt5.QtWidgets import QMessageBox
-from pprint import pprint
 from PyQt5.QtCore import QDir
 
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
@@ -68,6 +66,7 @@ class MainWindow(QMainWindow):
         sys.stderr = sys.__stderr__
 
     def show_start_window(self):
+        self.clear_main_widgets()
         self.showMinimized()
         start_window = StartWindow(self)
 

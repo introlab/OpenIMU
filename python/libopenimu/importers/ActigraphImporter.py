@@ -15,7 +15,6 @@ import libopenimu.importers.actigraph as actigraph
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.units import Units
 from libopenimu.models.data_formats import DataFormat
-from libopenimu.tools.timing import datetime_from_dotnet_ticks as ticksconverter
 from libopenimu.tools.timing import timing
 from libopenimu.models.SensorTimestamps import SensorTimestamps
 
@@ -40,12 +39,12 @@ class ActigraphImporter(BaseImporter):
     def import_to_database(self, result):
         [info, data] = result
 
-        print(info)
+        # print(info)
 
         # Creating recordset
         # print(info['Start Date'], info['Last Sample Time'])
-        start = int(info['Start Date'])
-        stop = int(info['Last Sample Time'])
+        # start = int(info['Start Date'])
+        # stop = int(info['Last Sample Time'])
 
         # start_timestamp = ticksconverter(start)
         # end_timestamp = ticksconverter(stop)

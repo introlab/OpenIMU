@@ -1,4 +1,3 @@
-from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import pyqtSlot
 
 from resources.ui.python.GroupWidget_ui import Ui_frmGroup

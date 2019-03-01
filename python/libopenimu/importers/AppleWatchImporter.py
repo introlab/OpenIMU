@@ -48,7 +48,7 @@ class AppleWatchImporter(BaseImporter):
     RAW_GYRO_ID = 0x0A
 
     def __init__(self, manager: DBManager, participant: Participant):
-        super(AppleWatchImporter, self).__init__(manager, participant)
+        super().__init__(manager, participant)
 
         self.current_file_size = 0
 
@@ -418,7 +418,7 @@ class AppleWatchImporter(BaseImporter):
                 if not channel_values.__contains__(beacon_id):
                     channel_values[beacon_id] = []
 
-                channel_values[beacon_id].append((timearray, valuesarray[i][14], valuesarray[i][15]))
+                channel_values[beacon_id].append((timearray, valuesarray[i][16], valuesarray[i][17]))
 
             # Store each beacon_id in separate channels
             count = 0

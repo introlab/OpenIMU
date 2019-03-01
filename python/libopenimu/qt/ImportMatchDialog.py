@@ -14,7 +14,7 @@ class ImportMatchDialog(QDialog):
     part_widget = None
 
     def __init__(self, dbmanager, datas, parent=None):
-        super(ImportMatchDialog, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.UI = Ui_ImportMatchDialog()
         self.UI.setupUi(self)
 
