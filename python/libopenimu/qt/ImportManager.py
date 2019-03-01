@@ -199,7 +199,12 @@ class ImportManager(QDialog):
         for file in files:
             data_name = file.replace(self.filename, "")
             data_name = data_name.replace("/", os.sep)
-            data_name = os.path.split(data_name)[0].replace(os.sep, "")
+            # data_name = os.path.split(data_name)[0].replace(os.sep, "")
+            data_name = data_name.split(os.sep)
+            index = 0
+            if data_name[index] == '':
+                index = 1
+            data_name = data_name[index]
 
             if file not in file_list:
                 file_list[file] = data_name

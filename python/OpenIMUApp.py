@@ -58,6 +58,9 @@ class MainWindow(QMainWindow):
 
         self.add_to_log("OpenIMU - Prêt à travailler.", LogTypes.LOGTYPE_INFO)
 
+        # Setup signals and slots
+        self.setup_signals()
+
         self.show_start_window()
 
     def __del__(self):
@@ -77,9 +80,6 @@ class MainWindow(QMainWindow):
         # Init database manager
         self.currentFileName = start_window.fileName
         self.dbMan = DBManager(self.currentFileName)
-
-        # Setup signals and slots
-        self.setup_signals()
 
         # Maximize window
         self.showMaximized()
@@ -474,18 +474,27 @@ class MainWindow(QMainWindow):
             stream_diag = StreamWindow(stream_type=import_man.filetype_id, path=import_man.filename, parent=self)
             stream_diag.exec()
 
-            # Start import process
-            import_browser = ImportBrowser(data_manager=self.dbMan, parent=self)
-            import_browser.log_request.connect(self.add_to_log)
-
-            # Build import list
-            files = import_man.get_file_list()
-            importer_id = StreamerTypes.value_importer_types[import_man.filetype_id]
-            for file_name, file_part in files.items():
-                import_browser.add_file_to_list(file_name, import_man.filetype, importer_id, file_part)
-
             # Do the actual import
-            import_browser.ok_clicked()
+            msg = QMessageBox(self)
+            msg.setIcon(QMessageBox.Question)
+            msg.setStyleSheet("QPushButton{min-width: 100px; min-height: 40px;}")
+
+            msg.setText("Procéder à l'importation des données?")
+            msg.setWindowTitle("Importer?")
+            msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+
+            rval = msg.exec()
+            if rval == QMessageBox.Yes:
+                # Start import process
+                import_browser = ImportBrowser(data_manager=self.dbMan, parent=self)
+                import_browser.log_request.connect(self.add_to_log)
+
+                # Build import list
+                files = import_man.get_file_list()
+                importer_id = StreamerTypes.value_importer_types[import_man.filetype_id]
+                for file_name, file_part in files.items():
+                    import_browser.add_file_to_list(file_name, import_man.filetype, importer_id, file_part)
+
 
 
 ########################################################################################################################

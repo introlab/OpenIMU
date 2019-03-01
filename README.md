@@ -4,10 +4,49 @@
 *   Dominic Létourneau (@doumdi) 
 *   Simon Brière (@sbriere)
 
+## Description
+OpenIMU aims to provide an open source and free generic data importer, viewer, manager, processor and exporter for Inertial Measurement Units (IMU) and actimetry data. By using a common sensor data format and structure, data from different sources can be imported and managed in the software.
+This software was developped with support from INTER (http://regroupementinter.com).
+
+## Features
+
+### Current features
+* Common file format (SQLite) managed by OpenIMU, but that can also be opened from other softwares
+* Import recorded data from sensors:
+  * Actigraph GTX3 series (https://www.actigraphcorp.com/actigraph-wgt3x-bt)
+  * OpenIMU-MiniLogger (https://github.com/introlab/OpenIMU-MiniLogger)
+  * AppleWatch SensorLogger (Open-source project available soon)
+* Transfer data directly from sensors:
+  * AppleWatch SensorLogger (Open-source project available soon)
+* Data organization
+  * By participants groups
+  * By participants
+  * By recordsets
+  * By results
+* Data viewing
+  * Temporal display of recordsets to quickly see when data was recorded
+  * Sensor graph view plotting with zoom functions
+  * GPS viewer for GPS data
+* Data processing
+  * Processing module, currently supporting:
+    * Freedson Activity Algorithm (Freedson PS1, Melanson E, Sirard J., Calibration of the Computer Science and Applications, Inc. accelerometer., Med Sci Sports Exerc. 1998 May;30(5):777-81)
+  * Processed results viewer
+* Data exporter
+  * CSV format
+
+### Planned features
+* English translation (currently only available in French)
+* Data splitting into sub-recordsets (by time, by day, manually)
+* Versatile data exporter (currently exporting all data, not possible to filter or change format)
+* Matlab API to access the OpenIMU file format (database)
+* More data processing modules
+
 ## Screenshots
-![Screenshot_1](./docs/images/Screenshot_1.png)
-![Screenshot_2](./docs/images/Screenshot_2.png)
-![Screenshot_2](./docs/images/Screenshot_3.png)
+![Screenshot_1](./docs/images/Start_Screen.png)
+![Screenshot_2](./docs/images/SensorView_Screen.png)
+![Screenshot_3](./docs/images/GPSView_Screen.png)
+![Screenshot_4](./docs/images/Analyze_Screen.png)
+![Screenshot_5](./docs/images/Results_Screen.png)
 
 ## Getting Started for Developers
 Please follow those steps to setup your development environment.

@@ -4,6 +4,7 @@ from PyQt5.QtCore import QThread, pyqtSignal
 class BaseStreamer(QThread):
     add_log = pyqtSignal('QString', int)
     update_progress = pyqtSignal('QString', 'QString', int, int)
+    file_error_occured = pyqtSignal('QString', 'QString')
 
     server_save_path = './Files'
     server = None

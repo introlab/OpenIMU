@@ -32,6 +32,7 @@ class StreamWindow(QDialog):
             self.streamer.add_log.connect(self.add_to_log)
             self.streamer.update_progress.connect(self.update_progress)
             self.streamer.finished.connect(self.streaming_server_finished)
+            self.streamer.file_error_occured.connect(self.streaming_file_error)
 
         # Initial UI state
         self.UI.frameProgress.hide()
@@ -79,7 +80,22 @@ class StreamWindow(QDialog):
 
         self.UI.txtLog.append("<span style='color:grey'>" + datetime.now().strftime(
             "%H:%M:%S.%f") + " </span>" + log_format + text + "</span>")
-        self.UI.txtLog.ensureCursorVisible()
+        self.UI.txtLog.verticalScrollBar().setValue(self.UI.txtLog.verticalScrollBar().maximum())
+        # self.UI.txtLog.ensureCursorVisible()
+
+    def add_file_progress_bar(self, filename):
+        self.UI.tableFiles.setRowCount(self.UI.tableFiles.rowCount() + 1)
+        index = self.UI.tableFiles.rowCount() - 1
+        self.file_rows[filename] = index
+        item = QTableWidgetItem(filename)
+        item.setBackground(QBrush(Qt.white))
+        self.UI.tableFiles.setItem(index, 1, item)
+        prog = QProgressBar()
+        prog.setAlignment(Qt.AlignCenter)
+
+        self.UI.tableFiles.setCellWidget(index, 0, prog)
+
+        return index
 
     @pyqtSlot('QString', 'QString', int, int)
     def update_progress(self, filename, infos, value, max_value):
@@ -97,15 +113,7 @@ class StreamWindow(QDialog):
         if filename in self.file_rows:
             index = self.file_rows[filename]
         else:
-            self.UI.tableFiles.setRowCount(self.UI.tableFiles.rowCount()+1)
-            index = self.UI.tableFiles.rowCount()-1
-            self.file_rows[filename] = index
-            item = QTableWidgetItem(filename)
-            item.setBackground(QBrush(Qt.white))
-            self.UI.tableFiles.setItem(index, 1, item)
-            prog = QProgressBar()
-            prog.setAlignment(Qt.AlignCenter)
-            self.UI.tableFiles.setCellWidget(index, 0, prog)
+            index = self.add_file_progress_bar(filename)
 
         if index >= 0:
             prog = self.UI.tableFiles.cellWidget(index, 0)
@@ -116,6 +124,20 @@ class StreamWindow(QDialog):
                 self.UI.tableFiles.update()
 
         QApplication.processEvents()
+
+    @pyqtSlot('QString', 'QString')
+    def streaming_file_error(self, filename, error_str):
+        # Update file table
+        if filename in self.file_rows:
+            index = self.file_rows[filename]
+        else:
+            index = self.add_file_progress_bar(filename)
+
+        if index >= 0:
+            prog = self.UI.tableFiles.cellWidget(index, 0)
+            if prog is not None:
+                prog.setStyleSheet("QProgressBar::chunk{background-color:qlineargradient(spread:reflect, x1:0.5, y1:0, "
+                                   "x2:0.5, y2:0.5, stop:0 rgba(117, 0, 0, 255), stop:1 rgba(255, 153, 153, 255));}")
 
     @pyqtSlot()
     def close_requested(self):

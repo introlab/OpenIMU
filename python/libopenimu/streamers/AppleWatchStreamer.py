@@ -107,6 +107,7 @@ class AppleWatchRequestHandler(BaseHTTPRequestHandler):
 
         if None in [file_type, device_type, device_name, file_path, file_name]:
             self.streamer.add_log.emit("Requête mal-formattée. Refusée.", LogTypes.LOGTYPE_ERROR)
+            self.streamer.file_error_occured.emit(file_name, "Requête mal formattée. Refusée.")
             self.send_response(400)
             self.end_headers()
             return
@@ -175,6 +176,7 @@ class AppleWatchRequestHandler(BaseHTTPRequestHandler):
             fh.close()
         else:
             self.streamer.add_log.emit("Type de fichier non-supporté: " + file_type.lower(), LogTypes.LOGTYPE_ERROR)
+            self.streamer.file_error_occured.emit(file_name, "Type de fichier non-supporté: " + file_type.lower())
             self.send_response(400)
             self.send_header('Content-type', 'file-transfer/invalid-file-type')
             self.end_headers()
@@ -184,8 +186,9 @@ class AppleWatchRequestHandler(BaseHTTPRequestHandler):
         file_infos = os.stat(destination_path)
         if file_infos.st_size < content_length:
             # Missing data?!?!
-            self.streamer.add_log.emit("Erreur de transmission:  " + str(file_infos.st_size) + " octets reçus sur " +
-                                       str(content_length), LogTypes.LOGTYPE_ERROR)
+            error = "Erreur de transmission:  " + str(file_infos.st_size) + " octets reçus sur " + str(content_length)
+            self.streamer.add_log.emit(error, LogTypes.LOGTYPE_ERROR)
+            self.streamer.file_error_occured.emit(file_name, error)
         else:
             # All is good!
             self.streamer.add_log.emit("Complété", LogTypes.LOGTYPE_DONE)
