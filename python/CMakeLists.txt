@@ -119,7 +119,7 @@ set (installer_args
     --hidden-import logging.config
     --clean
     -y
-    #--windowed
+    --windowed
     #--debug
     --icon ${APP_ICON}
 )

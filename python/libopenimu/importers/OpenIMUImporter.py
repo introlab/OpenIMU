@@ -296,8 +296,7 @@ class OpenIMUImporter(BaseImporter):
         for timestamp in results:
             if results[timestamp].__contains__('imu'):
                 # print('contains imu')
-                recordset = self.get_recordset(results[timestamp]['imu']['start_time'],
-                                               results[timestamp]['imu']['end_time'])
+                recordset = self.get_recordset(results[timestamp]['imu']['start_time'])
 
                 if not self.import_imu_to_database(timestamp, sample_rate, sensors,
                                                    channels, recordset, results[timestamp]['imu']):

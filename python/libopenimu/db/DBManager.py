@@ -75,12 +75,17 @@ class DBManager:
     def init_alembic(dburl):
         # determine if application is a script file or frozen exe
         if getattr(sys, 'frozen', False):
-            this_file_directory = os.path.dirname(sys.executable)
-        elif __file__:
-            this_file_directory = os.path.dirname(__file__)
+            # If the application is run as a bundle, the pyInstaller bootloader
+            # extends the sys module by a flag frozen=True and sets the app
+            # path into variable _MEIPASS'.
+            this_file_directory = sys._MEIPASS
+            # When frozen, file directory = executable directory
+            root_directory = this_file_directory
+        else:
+            this_file_directory = os.path.dirname(os.path.abspath(__file__))
+            root_directory = os.path.join(this_file_directory, '..' + os.sep + '..')
 
         # this_file_directory = os.path.dirname(os.path.abspath(inspect.stack()[0][1]))
-        root_directory = os.path.join(this_file_directory, '..' + os.sep + '..')
 
         alembic_directory = os.path.join(root_directory, 'alembic')
         ini_path = os.path.join(root_directory, 'alembic.ini')

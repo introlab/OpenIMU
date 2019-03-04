@@ -40,6 +40,9 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 ; Application files
 Source: "..\python\dist\OpenIMUApp\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+; Alembic files
+Source: "..\python\alembic.ini"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\python\alembic\*"; DestDir: "{app}\alembic"; Flags: ignoreversion recursesubdirs
 
 [Icons]
 Name: "{commonprograms}\OpenIMU\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

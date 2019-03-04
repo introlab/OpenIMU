@@ -17,19 +17,27 @@ This software was developped with support from [INTER](http://regroupementinter.
 
 *   Import recorded data from sensors:
   *   [Actigraph GTX3 series](https://www.actigraphcorp.com/actigraph-wgt3x-bt)
+  
   *   [OpenIMU-MiniLogger](https://github.com/introlab/OpenIMU-MiniLogger)
+  
   *   AppleWatch SensorLogger (Open-source project available soon)
 
 *   Transfer data directly from sensors:
+
   *   AppleWatch SensorLogger (Open-source project available soon)
 
 *   Data organization
+
   *   By participants groups
+  
   *   By participants
+  
   *   By recordsets
+  
   *   By results
   
 *   Data viewing
+
   *   Temporal display of recordsets to quickly see when data was recorded
 
   *   Sensor graph view plotting with zoom functions
@@ -37,19 +45,26 @@ This software was developped with support from [INTER](http://regroupementinter.
   *   GPS viewer for GPS data
 
 *   Data processing
+
   *   Processing module, currently supporting:
+  
     *   Freedson Activity Algorithm (Freedson PS1, Melanson E, Sirard J., Calibration of the Computer Science and Applications, Inc. accelerometer., Med Sci Sports Exerc. 1998 May;30(5):777-81)
 
   *   Processed results viewer
 
 *   Data exporter
+
   *   CSV format
 
 ### Planned features
 *   English translation (currently only available in French)
+
 *   Data splitting into sub-recordsets (by time, by day, manually)
+
 *   Versatile data exporter (currently exporting all data, not possible to filter or change format)
+
 *   Matlab API to access the OpenIMU file format (database)
+
 *   More data processing modules
 
 ## Screenshots
