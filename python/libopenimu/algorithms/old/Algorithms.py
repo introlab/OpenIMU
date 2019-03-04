@@ -29,6 +29,7 @@ def resample_data(data, rate):
     print('size ', len(xint), len(yint), len(zint))
     return np.array((t, xint, yint, zint)).transpose()
 
+
 """
     Calculating magnitude
     array contains t, acc_x, acc_y, acc_z
@@ -42,6 +43,7 @@ def svm(data):
     print('mag : ', mag)
     print('mag shape ', mag.shape)
     return mag
+
 
 """
     Calculating counts

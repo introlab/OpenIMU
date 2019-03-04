@@ -791,11 +791,10 @@ class AppleWatchImporter(BaseImporter):
 
                 # Read timestamp
                 [timestamp_ms] = struct.unpack("<Q", file.read(8))
-                # TODO: Use timezone info from watch
-                """local_ms_ts = (datetime.datetime.fromtimestamp(timestamp_ms / 1000).timestamp()) * 1000 + (
-                            timestamp_ms % 1000)
-                results_ms_ts.append(int(local_ms_ts))
-                """
+                # local_ms_ts = (datetime.datetime.fromtimestamp(timestamp_ms / 1000).timestamp()) * 1000 + (
+                #             timestamp_ms % 1000)
+                # results_ms_ts.append(int(local_ms_ts))
+
                 results_ms_ts.append(int(timestamp_ms))
                 results_ms_data.append(read_data_func(file, debug))
                 new_progress = np.floor((file.tell() / self.current_file_size)*100 / 2)
@@ -810,20 +809,20 @@ class AppleWatchImporter(BaseImporter):
             results_ms_data = results_ms_data[0:min_size]
 
         # insertion sort on almost sorted timestamps, tends to O(n)
-        """for i in range(1, len(results_ms_ts)):
-            curr_ts = results_ms_ts[i]
-            curr_data = results_ms_data[i]
-            j = i - 1
-            # compare timestamps
-            while j >= 0 and curr_ts < results_ms_ts[j]:
-                # drift up and continue looking
-                results_ms_ts[j + 1] = results_ms_ts[j]
-                results_ms_data[j + 1] = results_ms_data[j]
-                j -= 1
-            # only replace if needed
-            if j != i - 1:
-                results_ms_ts[j + 1] = curr_ts
-                results_ms_data[j + 1] = curr_data"""
+        # for i in range(1, len(results_ms_ts)):
+        #     curr_ts = results_ms_ts[i]
+        #     curr_data = results_ms_data[i]
+        #     j = i - 1
+        #     # compare timestamps
+        #     while j >= 0 and curr_ts < results_ms_ts[j]:
+        #         # drift up and continue looking
+        #         results_ms_ts[j + 1] = results_ms_ts[j]
+        #         results_ms_data[j + 1] = results_ms_data[j]
+        #         j -= 1
+        #     # only replace if needed
+        #     if j != i - 1:
+        #         results_ms_ts[j + 1] = curr_ts
+        #         results_ms_data[j + 1] = curr_data
 
         # Create hour-aligned separated data
         for i, result in enumerate(results_ms_ts):

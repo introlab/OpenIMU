@@ -23,27 +23,25 @@ class OpenIMUImporter(BaseImporter):
 
         self.current_file_size = 0
 
-    """
-    def get_recordset(self, start_timestamp, end_timestamp):
-        my_start_time = datetime.datetime.fromtimestamp(start_timestamp)
-        my_end_time = datetime.datetime.fromtimestamp(end_timestamp)
-
-        # Find a record the same day
-        for record in self.recordsets:
-            # Same date return this record
-            if record.start_timestamp.date() == my_start_time.date():
-                # Update start and stop
-                if my_start_time < record.start_timestamp:
-                    record.start_timestamp = my_start_time
-                if my_end_time > record.end_timestamp:
-                    record.end_timestamp = my_end_time
-                return record
-
-        # Return new record
-        recordset = self.db.add_recordset(self.participant, str(my_start_time.date()), my_start_time, my_end_time)
-        self.recordsets.append(recordset)
-        return recordset
-    """
+# def get_recordset(self, start_timestamp, end_timestamp):
+#     my_start_time = datetime.datetime.fromtimestamp(start_timestamp)
+#     my_end_time = datetime.datetime.fromtimestamp(end_timestamp)
+#
+#     # Find a record the same day
+#     for record in self.recordsets:
+#         # Same date return this record
+#         if record.start_timestamp.date() == my_start_time.date():
+#             # Update start and stop
+#             if my_start_time < record.start_timestamp:
+#                 record.start_timestamp = my_start_time
+#             if my_end_time > record.end_timestamp:
+#                 record.end_timestamp = my_end_time
+#             return record
+#
+#     # Return new record
+#     recordset = self.db.add_recordset(self.participant, str(my_start_time.date()), my_start_time, my_end_time)
+#     self.recordsets.append(recordset)
+#     return recordset
 
     @timing
     def load(self, filename):
@@ -304,26 +302,23 @@ class OpenIMUImporter(BaseImporter):
                 if not self.import_imu_to_database(timestamp, sample_rate, sensors,
                                                    channels, recordset, results[timestamp]['imu']):
                     self.last_error = "Erreur d'importation données IMU"
-            if result[timestamp].__contains__('power'):
+            if results[timestamp].__contains__('power'):
                 # print('contains power')
-                recordset = self.get_recordset(results[timestamp]['power']['start_time'],
-                                               results[timestamp]['power']['start_time'])
+                recordset = self.get_recordset(results[timestamp]['power']['start_time'])
 
                 if not self.import_power_to_database(timestamp, sensors, channels, recordset,
                                                      results[timestamp]['power']):
                     self.last_error = "Erreur d'importation données 'Power'"
             if results[timestamp].__contains__('gps'):
                 # print('contains gps')
-                recordset = self.get_recordset(results[timestamp]['gps']['start_time'],
-                                               results[timestamp]['gps']['start_time'])
+                recordset = self.get_recordset(results[timestamp]['gps']['start_time'])
 
                 if not self.import_gps_to_database(timestamp, sensors, channels, recordset,
                                                    results[timestamp]['gps']):
                     self.last_error = "Erreur d'importation données GPS"
-            if result[timestamp].__contains__('baro'):
+            if results[timestamp].__contains__('baro'):
                 # print('contains baro')
-                recordset = self.get_recordset(results[timestamp]['baro']['start_time'],
-                                               results[timestamp]['baro']['start_time'])
+                recordset = self.get_recordset(results[timestamp]['baro']['start_time'])
 
                 if not self.import_baro_to_database(timestamp, sensors, channels, recordset,
                                                     results[timestamp]['baro']):

@@ -15,9 +15,8 @@ from sqlalchemy import event
 import os
 import datetime
 import numpy as np
-
 import pickle
-
+import sys
 import warnings
 
 # Basic definitions
@@ -38,7 +37,6 @@ from libopenimu.models.ProcessedDataRef import ProcessedDataRef
 
 from alembic.config import Config
 from alembic import command
-import inspect
 
 
 class DBManager:
@@ -75,8 +73,15 @@ class DBManager:
 
     @staticmethod
     def init_alembic(dburl):
-        this_file_directory = os.path.dirname(os.path.abspath(inspect.stack()[0][1]))
-        root_directory = os.path.join(this_file_directory, '../..')
+        # determine if application is a script file or frozen exe
+        if getattr(sys, 'frozen', False):
+            this_file_directory = os.path.dirname(sys.executable)
+        elif __file__:
+            this_file_directory = os.path.dirname(__file__)
+
+        # this_file_directory = os.path.dirname(os.path.abspath(inspect.stack()[0][1]))
+        root_directory = os.path.join(this_file_directory, '..' + os.sep + '..')
+
         alembic_directory = os.path.join(root_directory, 'alembic')
         ini_path = os.path.join(root_directory, 'alembic.ini')
 

@@ -130,16 +130,16 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
             label = result['result_name']
             view.add_set(label, values)
 
-        """if len(results) == len(recordsets):
-            for i, _ in enumerate(results):
-                view.set_category_axis(results[i].keys())
-                values = []
-
-                for key in results[i]:
-                    values.append(results[i][key])
-
-                label = recordsets[i].name
-                view.add_set(label, values)"""
+        # if len(results) == len(recordsets):
+        #     for i, _ in enumerate(results):
+        #         view.set_category_axis(results[i].keys())
+        #         values = []
+        #
+        #         for key in results[i]:
+        #             values.append(results[i][key])
+        #
+        #         label = recordsets[i].name
+        #         view.add_set(label, values)
 
         # Update view
         view.update()

@@ -512,14 +512,14 @@ class RecordsetWindow(QWidget):
             pos += 15
             sensors = self.get_sensors_for_location(location)
             for sensor_id in sensors:
-                """sensor = self.sensors[sensor_id]
-                for record in self.recordsets:
-                    datas = self.dbMan.get_all_sensor_data(sensor=sensor, recordset=record, channel=sensor.channels[0])
-                    for data in datas:
-                        start_pos = self.get_relative_timeview_pos(data.timestamps.start_timestamp)
-                        end_pos = self.get_relative_timeview_pos(data.timestamps.end_timestamp)
-                        span = max(end_pos - start_pos, 1)
-                        rects.append(QRectF(start_pos, pos + 3, span, 14))"""
+                # sensor = self.sensors[sensor_id]
+                # for record in self.recordsets:
+                #    datas = self.dbMan.get_all_sensor_data(sensor=sensor, recordset=record, channel=sensor.channels[0])
+                #     for data in datas:
+                #         start_pos = self.get_relative_timeview_pos(data.timestamps.start_timestamp)
+                #         end_pos = self.get_relative_timeview_pos(data.timestamps.end_timestamp)
+                #         span = max(end_pos - start_pos, 1)
+                #         rects.append(QRectF(start_pos, pos + 3, span, 14))
                 if sensor_id in self.sensors_blocks:
                     for block in self.sensors_blocks[sensor_id]:
                         start_pos = self.get_relative_timeview_pos(block['start_time'])

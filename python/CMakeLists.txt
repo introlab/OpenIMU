@@ -116,9 +116,10 @@ set (installer_args
     --hidden-import scipy._lib.messagestream
     --hidden-import sqlalchemy.ext.baked
     --hidden-import PyQt5.sip
+    --hidden-import logging.config
     --clean
     -y
-    --windowed
+    #--windowed
     #--debug
     --icon ${APP_ICON}
 )

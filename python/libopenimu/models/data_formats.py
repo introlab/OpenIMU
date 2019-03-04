@@ -1,6 +1,3 @@
-"""
-
-"""
 from libopenimu.models.Base import Base
 from sqlalchemy import Column, Integer, String, Sequence
 import numpy as np
@@ -93,7 +90,7 @@ class DataFormat:
 
     @staticmethod
     def populate_database(conn):
-        """ Will populate database with table tabDataFormat """
+        # Will populate database with table tabDataFormat
         try:
             for format_id in DataFormat.value_dict:
                 conn.execute("INSERT INTO tabDataFormat (id_data_format, name)"

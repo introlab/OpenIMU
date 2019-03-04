@@ -78,15 +78,15 @@ class AppleWatchRequestHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
-        self.wfile.write(bytes("""
-               <html><body>
-                   <h1> Enter following information on watch: </h1>
-                   <ul>
-                       <li>Host: %s</li>
-                       <li>Port: %s</li>
-                   </ul> 
-               </html></body>
-               """ % (local_ip, self.streamer.server_port), 'utf-8'))
+        # self.wfile.write(bytes("""
+        #        <html><body>
+        #            <h1> Enter following information on watch: </h1>
+        #            <ul>
+        #                <li>Host: %s</li>
+        #                <li>Port: %s</li>
+        #            </ul>
+        #        </html></body>
+        #        """ % (local_ip, self.streamer.server_port), 'utf-8'))
 
     def do_POST(self):
 

@@ -119,15 +119,14 @@ class ProcessSelectWindow(QDialog):
 
             # results = algo.calculate(self.dbMan, self.recordsets)
             print('Algo results', results)
-            """
-            window = QMainWindow(self)
-            window.setWindowTitle('Results: ' + self.factory.info()['name'])
-            widget = ResultWindow(self)
-            widget.display_freedson_1998(results, self.recordsets)
-            window.setCentralWidget(widget)
-            window.resize(800, 600)
-            window.show()
-            """
+
+            # window = QMainWindow(self)
+            # window.setWindowTitle('Results: ' + self.factory.info()['name'])
+            # widget = ResultWindow(self)
+            # widget.display_freedson_1998(results, self.recordsets)
+            # window.setCentralWidget(widget)
+            # window.resize(800, 600)
+            # window.show()
 
             # Save to database
             name = self.factory.info()['name'] + " - " + self.recordsets[0].name
