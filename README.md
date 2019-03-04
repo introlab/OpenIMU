@@ -48,7 +48,7 @@ This software was developped with support from [INTER](http://regroupementinter.
 
     *   Processing module, currently supporting:
     
-       *   Freedson Activity Algorithm (Freedson PS1, Melanson E, Sirard J., Calibration of the Computer Science and Applications, Inc. accelerometer., Med Sci Sports Exerc. 1998 May;30(5):777-81)
+        *   Freedson Activity Algorithm (Freedson PS1, Melanson E, Sirard J., Calibration of the Computer Science and Applications, Inc. accelerometer., Med Sci Sports Exerc. 1998 May;30(5):777-81)
 
     *   Processed results viewer
 
