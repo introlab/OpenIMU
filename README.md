@@ -16,45 +16,45 @@ This software was developped with support from [INTER](http://regroupementinter.
 *   Common file format (SQLite) managed by OpenIMU, but that can also be opened from other software
 
 *   Import recorded data from sensors:
-  *   [Actigraph GTX3 series](https://www.actigraphcorp.com/actigraph-wgt3x-bt)
+    *   [Actigraph GTX3 series](https://www.actigraphcorp.com/actigraph-wgt3x-bt)
   
-  *   [OpenIMU-MiniLogger](https://github.com/introlab/OpenIMU-MiniLogger)
+    *   [OpenIMU-MiniLogger](https://github.com/introlab/OpenIMU-MiniLogger)
   
-  *   AppleWatch SensorLogger (Open-source project available soon)
+    *   AppleWatch SensorLogger (Open-source project available soon)
 
 *   Transfer data directly from sensors:
 
-  *   AppleWatch SensorLogger (Open-source project available soon)
+    *   AppleWatch SensorLogger (Open-source project available soon)
 
 *   Data organization
 
-  *   By participants groups
+    *   By participants groups
   
-  *   By participants
+    *   By participants
   
-  *   By recordsets
+    *   By recordsets
   
-  *   By results
+    *   By results
   
 *   Data viewing
 
-  *   Temporal display of recordsets to quickly see when data was recorded
+    *   Temporal display of recordsets to quickly see when data was recorded
 
-  *   Sensor graph view plotting with zoom functions
+    *   Sensor graph view plotting with zoom functions
 
-  *   GPS viewer for GPS data
+    *   GPS viewer for GPS data
 
 *   Data processing
 
-  *   Processing module, currently supporting:
-  
-    *   Freedson Activity Algorithm (Freedson PS1, Melanson E, Sirard J., Calibration of the Computer Science and Applications, Inc. accelerometer., Med Sci Sports Exerc. 1998 May;30(5):777-81)
+    *   Processing module, currently supporting:
+    
+       *   Freedson Activity Algorithm (Freedson PS1, Melanson E, Sirard J., Calibration of the Computer Science and Applications, Inc. accelerometer., Med Sci Sports Exerc. 1998 May;30(5):777-81)
 
-  *   Processed results viewer
+    *   Processed results viewer
 
 *   Data exporter
 
-  *   CSV format
+    *   CSV format
 
 ### Planned features
 *   English translation (currently only available in French)
