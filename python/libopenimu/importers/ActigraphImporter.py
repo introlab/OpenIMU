@@ -36,8 +36,8 @@ class ActigraphImporter(BaseImporter):
         return result
 
     @timing
-    def import_to_database(self, result):
-        [info, data] = result
+    def import_to_database(self, results):
+        [info, data] = results
 
         # print(info)
 

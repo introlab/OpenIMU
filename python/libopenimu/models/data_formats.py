@@ -75,7 +75,7 @@ class DataFormat:
 
     @staticmethod
     def get_num_bytes(id_data_format):
-        assert (DataFormat.is_valid(id_data_format))
+        # assert (DataFormat.is_valid(id_data_format))
 
         if id_data_format is DataFormat.UINT8 or id_data_format is DataFormat.SINT8:
             return 1

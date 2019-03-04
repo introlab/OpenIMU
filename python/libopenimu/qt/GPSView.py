@@ -53,7 +53,7 @@ class GPSView(QWebEngineView, BaseGraph):
     def setCursorPositionFromTime(self, timestamp, emit_signal=False):
 
         # timestamp -= datetime.timedelta(microseconds=timestamp.microsecond)
-        position = None
+        # position = None
 
         try:
             position = self.positions[timestamp]  # Right on the value!
@@ -63,7 +63,8 @@ class GPSView(QWebEngineView, BaseGraph):
             #    timestamp = self.reftime
             # start_timestamp = next(iter(self.positions))
 
-            if type(timestamp) is datetime.datetime:
+            # if type(timestamp) is datetime.datetime:
+            if isinstance(timestamp, datetime.datetime):
                 timestamp = timestamp.timestamp()
 
             # Find nearest point

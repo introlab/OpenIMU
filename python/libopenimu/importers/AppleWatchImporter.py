@@ -157,8 +157,9 @@ class AppleWatchImporter(BaseImporter):
             sensor_timestamps = self.create_sensor_timestamps(timesarray, recordset)
 
             # Acc
-            for i in range(len(raw_accelerometer_channels)):
-                self.add_sensor_data_to_db(recordset, raw_accelerometer_sensor, raw_accelerometer_channels[i],
+            # for i in range(len(raw_accelerometer_channels)):
+            for i, channel in enumerate(raw_accelerometer_channels):
+                self.add_sensor_data_to_db(recordset, raw_accelerometer_sensor, channel,
                                            sensor_timestamps, valuesarray[:, i])
                 count += 1
                 self.update_progress.emit(50 + np.floor(count / (len(raw_accelero)*len(raw_accelerometer_channels)) / 2
@@ -209,8 +210,9 @@ class AppleWatchImporter(BaseImporter):
             sensor_timestamps = self.create_sensor_timestamps(timesarray, recordset)
 
             # Gyro
-            for i in range(len(raw_gyro_channels)):
-                self.add_sensor_data_to_db(recordset, raw_gyro_sensor, raw_gyro_channels[i],
+            # for i in range(len(raw_gyro_channels)):
+            for i, channel in enumerate(raw_gyro_channels):
+                self.add_sensor_data_to_db(recordset, raw_gyro_sensor, channel,
                                            sensor_timestamps, valuesarray[:, i])
 
             count += 1
@@ -566,7 +568,7 @@ class AppleWatchImporter(BaseImporter):
                 return
 
             # Other values are float32
-            valuesarray = np.asarray(battery[timestamp]['values'], dtype=np.float32)
+            valuesarray = np.asarray(battery[timestamp]['values'], dtype=np.uint8)
 
             # Create sensor timestamps first
             sensor_timestamps = self.create_sensor_timestamps(timesarray, recordset)
@@ -821,8 +823,7 @@ class AppleWatchImporter(BaseImporter):
             # only replace if needed
             if j != i - 1:
                 results_ms_ts[j + 1] = curr_ts
-                results_ms_data[j + 1] = curr_data
-            """
+                results_ms_data[j + 1] = curr_data"""
 
         # Create hour-aligned separated data
         for i, result in enumerate(results_ms_ts):

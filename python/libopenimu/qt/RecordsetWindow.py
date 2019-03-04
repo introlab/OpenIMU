@@ -302,7 +302,8 @@ class RecordsetWindow(QWidget):
         # end_time = self.recordsets[len(self.recordsets) - 1].end_timestamp.timestamp()
         end_time = self.get_recordset_end_day_date().timestamp()
         time_span = (end_time - start_time)  # Total number of seconds in recordsets
-        if type(current_time) is datetime:
+        # if type(current_time) is datetime:
+        if isinstance(current_time, datetime):
             current_time = current_time.timestamp()
 
         if time_span > 0:
@@ -518,13 +519,13 @@ class RecordsetWindow(QWidget):
                         start_pos = self.get_relative_timeview_pos(data.timestamps.start_timestamp)
                         end_pos = self.get_relative_timeview_pos(data.timestamps.end_timestamp)
                         span = max(end_pos - start_pos, 1)
+                        rects.append(QRectF(start_pos, pos + 3, span, 14))"""
+                if sensor_id in self.sensors_blocks:
+                    for block in self.sensors_blocks[sensor_id]:
+                        start_pos = self.get_relative_timeview_pos(block['start_time'])
+                        end_pos = self.get_relative_timeview_pos(block['end_time'])
+                        span = max(end_pos - start_pos, 1)
                         rects.append(QRectF(start_pos, pos + 3, span, 14))
-                """
-                for block in self.sensors_blocks[sensor_id]:
-                    start_pos = self.get_relative_timeview_pos(block['start_time'])
-                    end_pos = self.get_relative_timeview_pos(block['end_time'])
-                    span = max(end_pos - start_pos, 1)
-                    rects.append(QRectF(start_pos, pos + 3, span, 14))
                 pos += 20
 
         return rects

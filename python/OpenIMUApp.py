@@ -219,10 +219,6 @@ class MainWindow(QMainWindow):
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
 
-    """@pyqtSlot(QUrl)
-    def urlChanged(self, url):
-        print('url: ', url)
-    """
     @pyqtSlot()
     def import_requested(self):
         importer = ImportBrowser(data_manager=self.dbMan)
@@ -495,6 +491,7 @@ class MainWindow(QMainWindow):
                 for file_name, file_part in files.items():
                     import_browser.add_file_to_list(file_name, import_man.filetype, importer_id, file_part)
 
+                import_browser.ok_clicked()
 
 
 ########################################################################################################################

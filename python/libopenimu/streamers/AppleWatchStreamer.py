@@ -1,5 +1,5 @@
 from libopenimu.streamers.BaseStreamer import BaseStreamer
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.Qt import QApplication
 
 from http.server import BaseHTTPRequestHandler, HTTPServer

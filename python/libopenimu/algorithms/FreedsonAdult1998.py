@@ -139,8 +139,7 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
                     values.append(results[i][key])
 
                 label = recordsets[i].name
-                view.add_set(label, values)
-        """
+                view.add_set(label, values)"""
 
         # Update view
         view.update()

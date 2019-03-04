@@ -1,45 +1,56 @@
 # OpenIMU - Data Analyser for Inertial Measurement Units and Actimetry Data
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e2aa64a094a3435b9e76b63f5b0f0491)](https://www.codacy.com/app/SBriere/OpenIMU?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=introlab/OpenIMU&amp;utm_campaign=Badge_Grade)
+
 ## Authors
 *   Dominic Létourneau (@doumdi) 
 *   Simon Brière (@sbriere)
 
 ## Description
 OpenIMU aims to provide an open source and free generic data importer, viewer, manager, processor and exporter for Inertial Measurement Units (IMU) and actimetry data. By using a common sensor data format and structure, data from different sources can be imported and managed in the software.
-This software was developped with support from INTER (http://regroupementinter.com).
+This software was developped with support from [INTER](http://regroupementinter.com).
 
 ## Features
 
 ### Current features
-* Common file format (SQLite) managed by OpenIMU, but that can also be opened from other softwares
-* Import recorded data from sensors:
-  * Actigraph GTX3 series (https://www.actigraphcorp.com/actigraph-wgt3x-bt)
-  * OpenIMU-MiniLogger (https://github.com/introlab/OpenIMU-MiniLogger)
-  * AppleWatch SensorLogger (Open-source project available soon)
-* Transfer data directly from sensors:
-  * AppleWatch SensorLogger (Open-source project available soon)
-* Data organization
-  * By participants groups
-  * By participants
-  * By recordsets
-  * By results
-* Data viewing
-  * Temporal display of recordsets to quickly see when data was recorded
-  * Sensor graph view plotting with zoom functions
-  * GPS viewer for GPS data
-* Data processing
-  * Processing module, currently supporting:
-    * Freedson Activity Algorithm (Freedson PS1, Melanson E, Sirard J., Calibration of the Computer Science and Applications, Inc. accelerometer., Med Sci Sports Exerc. 1998 May;30(5):777-81)
-  * Processed results viewer
-* Data exporter
-  * CSV format
+*   Common file format (SQLite) managed by OpenIMU, but that can also be opened from other software
+
+*   Import recorded data from sensors:
+  *   [Actigraph GTX3 series](https://www.actigraphcorp.com/actigraph-wgt3x-bt)
+  *   [OpenIMU-MiniLogger](https://github.com/introlab/OpenIMU-MiniLogger)
+  *   AppleWatch SensorLogger (Open-source project available soon)
+
+*   Transfer data directly from sensors:
+  *   AppleWatch SensorLogger (Open-source project available soon)
+
+*   Data organization
+  *   By participants groups
+  *   By participants
+  *   By recordsets
+  *   By results
+  
+*   Data viewing
+  *   Temporal display of recordsets to quickly see when data was recorded
+
+  *   Sensor graph view plotting with zoom functions
+
+  *   GPS viewer for GPS data
+
+*   Data processing
+  *   Processing module, currently supporting:
+    *   Freedson Activity Algorithm (Freedson PS1, Melanson E, Sirard J., Calibration of the Computer Science and Applications, Inc. accelerometer., Med Sci Sports Exerc. 1998 May;30(5):777-81)
+
+  *   Processed results viewer
+
+*   Data exporter
+  *   CSV format
 
 ### Planned features
-* English translation (currently only available in French)
-* Data splitting into sub-recordsets (by time, by day, manually)
-* Versatile data exporter (currently exporting all data, not possible to filter or change format)
-* Matlab API to access the OpenIMU file format (database)
-* More data processing modules
+*   English translation (currently only available in French)
+*   Data splitting into sub-recordsets (by time, by day, manually)
+*   Versatile data exporter (currently exporting all data, not possible to filter or change format)
+*   Matlab API to access the OpenIMU file format (database)
+*   More data processing modules
 
 ## Screenshots
 ![Screenshot_1](./docs/images/Start_Screen.png)

@@ -1,8 +1,8 @@
 """
 
 """
-from libopenimu.models.Base import Base
-from sqlalchemy import Column, Integer, String, Sequence
+# from libopenimu.models.Base import Base
+# from sqlalchemy import Column, Integer, String, Sequence
 
 
 class SensorType:
@@ -75,5 +75,4 @@ class SensorType:
 
     # Database rep (optional)
     def __repr__(self):
-        return "<DBSensorType(name='%s')>" % self.name
-"""
+        return "<DBSensorType(name='%s')>" % self.name"""

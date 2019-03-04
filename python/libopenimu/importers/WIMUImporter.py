@@ -20,7 +20,7 @@ class WIMUImporter(BaseImporter):
         return result
 
     @timing
-    def import_to_database(self, result):
+    def import_to_database(self, results):
 
         # config = result['config']
 
@@ -30,7 +30,7 @@ class WIMUImporter(BaseImporter):
 
         # recordset = self.add_recordset_to_db('unknown', start_timestamp, end_timestamp)
 
-        if result.__contains__('acc'):
+        if results.__contains__('acc'):
 
             # Create sensor
             """accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer',
@@ -85,10 +85,9 @@ class WIMUImporter(BaseImporter):
                                                    datetime.datetime.fromtimestamp(timestamp),
                                                    datetime.datetime.fromtimestamp(end_timestamp), acc_z)
 
-                self.db.flush()
-                """
+                self.db.flush()"""
 
-        if result.__contains__('gyr'):
+        if results.__contains__('gyr'):
             # Create sensor
             """gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyro',
                                                 'WIMUGPS',
@@ -142,10 +141,9 @@ class WIMUImporter(BaseImporter):
                                                    datetime.datetime.fromtimestamp(timestamp),
                                                    datetime.datetime.fromtimestamp(end_timestamp), gyro_z)
 
-                self.db.flush()
-                """
+                self.db.flush()"""
 
-            if result.__contains__('mag'):
+            if results.__contains__('mag'):
                 # Create sensor
                 """mag_sensor = self.add_sensor_to_db(SensorType.MAGNETOMETER, 'Magneto',
                                                     'WIMUGPS',
@@ -199,10 +197,9 @@ class WIMUImporter(BaseImporter):
                                                        datetime.datetime.fromtimestamp(timestamp),
                                                        datetime.datetime.fromtimestamp(end_timestamp), mag_z)
 
-                    self.db.flush()
-                    """
+                    self.db.flush()"""
 
-            if result.__contains__('imu'):
+            if results.__contains__('imu'):
 
                 # Create sensor
                 """imu_sensor = self.add_sensor_to_db(SensorType.ORIENTATION, 'Orientation',
@@ -261,10 +258,9 @@ class WIMUImporter(BaseImporter):
                                                        datetime.datetime.fromtimestamp(timestamp),
                                                        datetime.datetime.fromtimestamp(end_timestamp), q3)
 
-                    self.db.flush()
-                    """
+                    self.db.flush()"""
 
-            if result.__contains__('pow'):
+            if results.__contains__('pow'):
                 """temp_sensor = self.add_sensor_to_db(SensorType.TEMPERATURE, 'Temperature', 'WIMUGPS', 'Unknown', 1.0, 1)
                 temp_channel = self.add_channel_to_db(temp_sensor, Units.CELCIUS, DataFormat.FLOAT32, 'Temperature')
 
@@ -295,10 +291,9 @@ class WIMUImporter(BaseImporter):
                                                    datetime.datetime.fromtimestamp(timestamp + len(battery)),
                                                    battery)
 
-                    self.db.flush()
-                    """
+                    self.db.flush()"""
 
-            if result.__contains__('gps'):
+            if results.__contains__('gps'):
 
                 """gps_sensor = self.add_sensor_to_db(SensorType.GPS, 'GPS',
                                                    'WIMUGPS',
@@ -318,8 +313,7 @@ class WIMUImporter(BaseImporter):
                                                    datetime.datetime.fromtimestamp(timestamp),
                                                    datetime.datetime.fromtimestamp(timestamp), item[key])
 
-                self.db.flush()
-                """
+                self.db.flush()"""
 
         # Write data to file
         self.db.commit()

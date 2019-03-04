@@ -23,6 +23,7 @@ class OpenIMUImporter(BaseImporter):
 
         self.current_file_size = 0
 
+    """
     def get_recordset(self, start_timestamp, end_timestamp):
         my_start_time = datetime.datetime.fromtimestamp(start_timestamp)
         my_end_time = datetime.datetime.fromtimestamp(end_timestamp)
@@ -42,6 +43,7 @@ class OpenIMUImporter(BaseImporter):
         recordset = self.db.add_recordset(self.participant, str(my_start_time.date()), my_start_time, my_end_time)
         self.recordsets.append(recordset)
         return recordset
+    """
 
     @timing
     def load(self, filename):
@@ -282,7 +284,7 @@ class OpenIMUImporter(BaseImporter):
         return sensors, channels
 
     @timing
-    def import_to_database(self, result):
+    def import_to_database(self, results):
         # print('OpenIMUImporter.import_to_database')
 
         # TODO use configuration, hardcoded for now
@@ -293,42 +295,42 @@ class OpenIMUImporter(BaseImporter):
 
         # Timestamps are hour aligned
         count = 0
-        for timestamp in result:
-            if result[timestamp].__contains__('imu'):
+        for timestamp in results:
+            if results[timestamp].__contains__('imu'):
                 # print('contains imu')
-                recordset = self.get_recordset(result[timestamp]['imu']['start_time'],
-                                               result[timestamp]['imu']['end_time'])
+                recordset = self.get_recordset(results[timestamp]['imu']['start_time'],
+                                               results[timestamp]['imu']['end_time'])
 
                 if not self.import_imu_to_database(timestamp, sample_rate, sensors,
-                                                   channels, recordset, result[timestamp]['imu']):
+                                                   channels, recordset, results[timestamp]['imu']):
                     self.last_error = "Erreur d'importation données IMU"
             if result[timestamp].__contains__('power'):
                 # print('contains power')
-                recordset = self.get_recordset(result[timestamp]['power']['start_time'],
-                                               result[timestamp]['power']['start_time'])
+                recordset = self.get_recordset(results[timestamp]['power']['start_time'],
+                                               results[timestamp]['power']['start_time'])
 
                 if not self.import_power_to_database(timestamp, sensors, channels, recordset,
-                                                     result[timestamp]['power']):
+                                                     results[timestamp]['power']):
                     self.last_error = "Erreur d'importation données 'Power'"
-            if result[timestamp].__contains__('gps'):
+            if results[timestamp].__contains__('gps'):
                 # print('contains gps')
-                recordset = self.get_recordset(result[timestamp]['gps']['start_time'],
-                                               result[timestamp]['gps']['start_time'])
+                recordset = self.get_recordset(results[timestamp]['gps']['start_time'],
+                                               results[timestamp]['gps']['start_time'])
 
                 if not self.import_gps_to_database(timestamp, sensors, channels, recordset,
-                                                   result[timestamp]['gps']):
+                                                   results[timestamp]['gps']):
                     self.last_error = "Erreur d'importation données GPS"
             if result[timestamp].__contains__('baro'):
                 # print('contains baro')
-                recordset = self.get_recordset(result[timestamp]['baro']['start_time'],
-                                               result[timestamp]['baro']['start_time'])
+                recordset = self.get_recordset(results[timestamp]['baro']['start_time'],
+                                               results[timestamp]['baro']['start_time'])
 
                 if not self.import_baro_to_database(timestamp, sensors, channels, recordset,
-                                                    result[timestamp]['baro']):
+                                                    results[timestamp]['baro']):
                     self.last_error = "Erreur d'importation données barométriques"
 
             count += 1
-            self.update_progress.emit(50 + np.floor(count / len(result) / 2 * 100))
+            self.update_progress.emit(50 + np.floor(count / len(results) / 2 * 100))
 
         # Make sure everything is commited to DB
         self.db.commit()

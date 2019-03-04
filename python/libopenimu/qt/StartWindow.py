@@ -1,5 +1,3 @@
-from PyQt5 import Qt
-
 from resources.ui.python.StartDialog_ui import Ui_StartDialog
 
 from libopenimu.qt.ImportWindow import ImportWindow

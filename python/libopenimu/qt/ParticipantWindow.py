@@ -63,8 +63,7 @@ class ParticipantWindow(DataEditor):
             """if self.participant.group is not None and self.participant.group.name is not None:
                 self.UI.lblGroupValue.setText(self.participant.group.name)
             else:
-                self.UI.lblGroupValue.setText("Aucun")
-            """
+                self.UI.lblGroupValue.setText("Aucun")"""
             self.UI.cmbGroups.setCurrentIndex(self.UI.cmbGroups.findData(self.participant.id_group))
         else:
             self.UI.txtName.setText("")

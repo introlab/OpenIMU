@@ -478,8 +478,8 @@ class WIMUConfig:
 
     def from_bytes(self, data, hw_id=2):
         # print('WIMUConfig.from_bytes', len(data))
-        buf16 = np.uint16(0)
-        buf8 = np.uint8(0)
+        # buf16 = np.uint16(0)
+        # buf8 = np.uint8(0)
         if hw_id == 2:
 
             # Enabled modules
