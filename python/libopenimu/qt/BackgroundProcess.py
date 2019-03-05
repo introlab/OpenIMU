@@ -99,11 +99,14 @@ class ProgressDialog(QDialog):
             self.UI.prgTotal.hide()
             self.UI.lblCurrentTask.hide()
 
+        if self.total_work_load == 0 and len(self.tasks) > 1:
+            self.UI.prgTask.hide()
+
         # Center dialog on screen
-        screen_geometry =  QApplication.desktop().screenGeometry()
+        screen_geometry = QApplication.desktop().screenGeometry()
         x = (screen_geometry.width() - self.width()) / 2
         y = (screen_geometry.height() - self.height()) / 2;
-        self.move(x, y);
+        self.move(x, y)
 
         # Connect signals
         bg_process.finished.connect(self.accept)

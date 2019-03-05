@@ -87,10 +87,10 @@ Please follow those steps to setup your development environment.
 
 3.  Install [Qt + QtCreator](https://www.qt.io/)
   a. Install the latest Desktop distribution fitting your compiling environment (will not be needed in the future)
-   
+ 
 4.  Install [MiniConda3](https://conda.io/miniconda.html)
-  b. Install Python 3.6 version for current user (in user directory)
-   
+  a. Install Python 3.6 version for current user (in user directory)
+  
 5.  Install [PyCharm Community Edition](https://www.jetbrains.com/pycharm/)
 
 ### Step 1 : Open the root CMakeLists.txt in QtCreator
