@@ -1,5 +1,4 @@
-# OpenIMU - Data Analyser for Inertial Measurement Units and Actimetry Data
-# MATLAB scripts
+# OpenIMU - Data Analyser for Inertial Measurement Units and Actimetry Data - MATLAB scripts
 
 ## Authors
 *   Antoine Guillerand
@@ -15,7 +14,6 @@ Example of use to load multiple datas is provided in the "MainOIReader.m" script
 
 ## Installation
 1.  Install JDBC driver for SQLite in Matlab (see [SQLite JDBC for Windows](https://www.mathworks.com/help/database/ug/sqlite-jdbc-windows.html) )
-
 2.  Copy the scripts and run them, making sure to change the parameters in the files for your setup (database name, driver location, date, participant id)
 
 ## Notes
