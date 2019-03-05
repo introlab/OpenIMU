@@ -1,7 +1,6 @@
 from libopenimu.importers.BaseImporter import BaseImporter
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.units import Units
-from libopenimu.models.Recordset import Recordset
 from libopenimu.models.SensorTimestamps import SensorTimestamps
 from libopenimu.models.data_formats import DataFormat
 from libopenimu.tools.timing import timing
@@ -11,51 +10,49 @@ from libopenimu.importers.wimu import GPSGeodetic
 
 import numpy as np
 import math
-import datetime
+import os
 
 import struct
-import sys
-import binascii
 import datetime
-import string
 
 
 class OpenIMUImporter(BaseImporter):
     def __init__(self, manager: DBManager, participant: Participant):
-        super().__init__(manager, participant)
+        super(OpenIMUImporter, self).__init__(manager, participant)
         # print('OpenIMU Importer')
-        # No recordsets when starting
-        self.recordsets = []
 
-    def get_recordset(self, start_timestamp, end_timestamp):
-        my_start_time = datetime.datetime.fromtimestamp(start_timestamp)
-        my_end_time = datetime.datetime.fromtimestamp(end_timestamp)
+        self.current_file_size = 0
 
-        # Find a record the same day
-        for record in self.recordsets:
-            # Same date return this record
-            if record.start_timestamp.date() == my_start_time.date():
-                # Update start and stop
-                if my_start_time < record.start_timestamp:
-                    record.start_timestamp = my_start_time
-                if my_end_time > record.end_timestamp:
-                    record.end_timestamp = my_end_time
-                return record
-
-        # Return new record
-        recordset = self.db.add_recordset(self.participant, str(my_start_time.date()), my_start_time, my_end_time)
-        self.recordsets.append(recordset)
-        return recordset
+# def get_recordset(self, start_timestamp, end_timestamp):
+#     my_start_time = datetime.datetime.fromtimestamp(start_timestamp)
+#     my_end_time = datetime.datetime.fromtimestamp(end_timestamp)
+#
+#     # Find a record the same day
+#     for record in self.recordsets:
+#         # Same date return this record
+#         if record.start_timestamp.date() == my_start_time.date():
+#             # Update start and stop
+#             if my_start_time < record.start_timestamp:
+#                 record.start_timestamp = my_start_time
+#             if my_end_time > record.end_timestamp:
+#                 record.end_timestamp = my_end_time
+#             return record
+#
+#     # Return new record
+#     recordset = self.db.add_recordset(self.participant, str(my_start_time.date()), my_start_time, my_end_time)
+#     self.recordsets.append(recordset)
+#     return recordset
 
     @timing
     def load(self, filename):
         # print('OpenIMUImporter.load')
         results = {}
         with open(filename, "rb") as file:
-            print('Loading File: ', filename)
+            # print('Loading File: ', filename)
+            self.current_file_size = os.stat(filename).st_size
             results = self.readDataFile(file, False)
 
-        print('Done!')
+        # print('Done!')
         return results
 
     @timing
@@ -134,8 +131,7 @@ class OpenIMUImporter(BaseImporter):
         # TODO Better GPS solution?
 
         # We have one sample per second of GPS data
-        for i in range(len(values)):
-            val = values[i]
+        for i, val in enumerate(values):
             geo = GPSGeodetic()
             # Discard invalid data
             if math.isnan(val[1]) or math.isnan(val[2]):
@@ -286,8 +282,8 @@ class OpenIMUImporter(BaseImporter):
         return sensors, channels
 
     @timing
-    def import_to_database(self, result):
-        print('OpenIMUImporter.import_to_database')
+    def import_to_database(self, results):
+        # print('OpenIMUImporter.import_to_database')
 
         # TODO use configuration, hardcoded for now
         sample_rate = 50
@@ -296,68 +292,73 @@ class OpenIMUImporter(BaseImporter):
         sensors, channels = self.create_sensor_and_channels(sample_rate)
 
         # Timestamps are hour aligned
-        for timestamp in result:
-            if result[timestamp].__contains__('imu'):
+        count = 0
+        for timestamp in results:
+            if results[timestamp].__contains__('imu'):
                 # print('contains imu')
-                recordset = self.get_recordset(result[timestamp]['imu']['start_time'],
-                                               result[timestamp]['imu']['end_time'])
+                recordset = self.get_recordset(results[timestamp]['imu']['start_time'])
 
                 if not self.import_imu_to_database(timestamp, sample_rate, sensors,
-                                                   channels, recordset, result[timestamp]['imu']):
-                    print('IMU import error')
-            if result[timestamp].__contains__('power'):
+                                                   channels, recordset, results[timestamp]['imu']):
+                    self.last_error = "Erreur d'importation données IMU"
+            if results[timestamp].__contains__('power'):
                 # print('contains power')
-                recordset = self.get_recordset(result[timestamp]['power']['start_time'],
-                                               result[timestamp]['power']['start_time'])
+                recordset = self.get_recordset(results[timestamp]['power']['start_time'])
 
                 if not self.import_power_to_database(timestamp, sensors, channels, recordset,
-                                                     result[timestamp]['power']):
-                    print('Power import error')
-            if result[timestamp].__contains__('gps'):
+                                                     results[timestamp]['power']):
+                    self.last_error = "Erreur d'importation données 'Power'"
+            if results[timestamp].__contains__('gps'):
                 # print('contains gps')
-                recordset = self.get_recordset(result[timestamp]['gps']['start_time'],
-                                               result[timestamp]['gps']['start_time'])
+                recordset = self.get_recordset(results[timestamp]['gps']['start_time'])
 
                 if not self.import_gps_to_database(timestamp, sensors, channels, recordset,
-                                                   result[timestamp]['gps']):
-                    print('GPS import error')
-            if result[timestamp].__contains__('baro'):
+                                                   results[timestamp]['gps']):
+                    self.last_error = "Erreur d'importation données GPS"
+            if results[timestamp].__contains__('baro'):
                 # print('contains baro')
-                recordset = self.get_recordset(result[timestamp]['baro']['start_time'],
-                                               result[timestamp]['baro']['start_time'])
+                recordset = self.get_recordset(results[timestamp]['baro']['start_time'])
 
                 if not self.import_baro_to_database(timestamp, sensors, channels, recordset,
-                                                    result[timestamp]['baro']):
-                    print('Baro import error')
+                                                    results[timestamp]['baro']):
+                    self.last_error = "Erreur d'importation données barométriques"
+
+            count += 1
+            self.update_progress.emit(50 + np.floor(count / len(results) / 2 * 100))
 
         # Make sure everything is commited to DB
         self.db.commit()
 
-    def processImuChunk(self, chunk, debug=False):
+    @staticmethod
+    def processImuChunk(chunk, debug=False):
         data = struct.unpack("9f", chunk)
         if debug:
             print("IMU: ", data)
         return data
 
-    def processTimestampChunk(self, chunk, debug=False):
+    @staticmethod
+    def processTimestampChunk(chunk, debug=False):
         [timestamp] = struct.unpack("i", chunk)
         if debug:
             print(datetime.datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S'))
         return timestamp
 
-    def processGPSChunk(self, chunk, debug=False):
+    @staticmethod
+    def processGPSChunk(chunk, debug=False):
         data = struct.unpack("?3f", chunk)
         if debug:
             print("GPS: ", data)
         return data
 
-    def processBarometerChunk(self, chunk, debug=False):
+    @staticmethod
+    def processBarometerChunk(chunk, debug=False):
         data = struct.unpack("2f", chunk)
         if debug:
             print("BARO: ", data[0], data[1])
         return data
 
-    def processPowerChunk(self, chunk, debug=False):
+    @staticmethod
+    def processPowerChunk(chunk, debug=False):
         data = struct.unpack("2f", chunk)
         if debug:
             print("POWER: ", data[0], data[1])
@@ -369,11 +370,12 @@ class OpenIMUImporter(BaseImporter):
         timestamp_hour = None
 
         # Todo better than while 1?
+        progress = 0
         while file.readable():
 
             chunk = file.read(1)
             if len(chunk) < 1:
-                print("Reached end of file")
+                # print("Reached end of file")
                 break
 
             (headChar) = struct.unpack("c", chunk)
@@ -381,7 +383,7 @@ class OpenIMUImporter(BaseImporter):
 
             if headChar[0] == b'h':
                 n = n + 1
-                print("New log stream detected")
+                # print("New log stream detected")
             elif headChar[0] == b't':
                 n = n + 1
                 chunk = file.read(struct.calcsize("i"))
@@ -444,6 +446,10 @@ class OpenIMUImporter(BaseImporter):
             else:
                 print("Unrecognised chunk :", headChar[0])
                 break
+            new_progress = np.floor((file.tell() / self.current_file_size) * 100 / 2)
+            if new_progress != progress:  # Only send update if % was increased
+                progress = new_progress
+                self.update_progress.emit(progress)
 
         # File is read.
         # Generate time according to number of samples per timestamp

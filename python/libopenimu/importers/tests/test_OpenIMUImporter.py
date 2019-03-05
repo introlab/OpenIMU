@@ -8,9 +8,6 @@
 
 
 import unittest
-import numpy as np
-import datetime
-import libopenimu.importers.wimu as wimu
 from libopenimu.importers.OpenIMUImporter import OpenIMUImporter
 from libopenimu.models.Participant import Participant
 from libopenimu.db.DBManager import DBManager
@@ -24,7 +21,8 @@ class OpenIMUImporterTest(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_load(self):
+    @staticmethod
+    def test_load():
         manager = DBManager('openimu.oi', overwrite=True)
         participant = Participant(name='My Participant', description='Participant Description')
         manager.update_participant(participant)

@@ -6,22 +6,21 @@
 """
 
 import sqlalchemy
-from sqlalchemy import create_engine, asc, desc
-from sqlalchemy.orm import sessionmaker,query, session
-from sqlalchemy.sql import table, insert, text
+from sqlalchemy import create_engine, asc, or_, and_
+from sqlalchemy.orm import sessionmaker
+# noinspection PyProtectedMember
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
 
 import os
 import datetime
 import numpy as np
-
 import pickle
+import sys
+import warnings
 
 # Basic definitions
-from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.data_formats import DataFormat
-from libopenimu.models.units import Units
 
 # All the models
 from libopenimu.models.Base import Base
@@ -36,17 +35,15 @@ from libopenimu.models.DataSet import DataSet
 from libopenimu.models.ProcessedData import ProcessedData
 from libopenimu.models.ProcessedDataRef import ProcessedDataRef
 
-"""
-TODO This might be optimized?
-
-Offering the same interface as DBManagerOld
-
-"""
-
+from alembic.config import Config
+from alembic import command
 
 
 class DBManager:
-    def __init__(self, filename, overwrite=False, echo=False):
+    def __init__(self, filename, overwrite=False, echo=False, newfile=False):
+        warnings.simplefilter(action='ignore', category=FutureWarning)
+
+        dburl = 'sqlite:///' + filename + '?check_same_thread=False'
         # Cleanup database
         if overwrite is True:
             if os.path.isfile(filename):
@@ -56,10 +53,17 @@ class DBManager:
         print('Using sqlalchemy version: ', sqlalchemy.__version__)
 
         # Create engine (sqlite), echo will output logging information
-        self.engine = create_engine('sqlite:///' + filename + '?check_same_thread=False', echo=echo)
+        self.engine = create_engine(dburl, echo=echo)
 
         # Will create all tables
         Base.metadata.create_all(self.engine)
+
+        if newfile is False:
+            # Check if database scheme upgrade is needed
+            self.upgrade_db(dburl=dburl)
+        else:
+            # Stamp the database with the latest migration id
+            self.stamp_db(dburl=dburl)
 
         # Will create Session interface class
         self.SessionMaker = sessionmaker(bind=self.engine)
@@ -67,7 +71,55 @@ class DBManager:
         # Session instance
         self.session = self.SessionMaker()
 
+    @staticmethod
+    def init_alembic(dburl):
+        # determine if application is a script file or frozen exe
+        if getattr(sys, 'frozen', False):
+            # If the application is run as a bundle, the pyInstaller bootloader
+            # extends the sys module by a flag frozen=True and sets the app
+            # path into variable _MEIPASS'.
+            this_file_directory = sys._MEIPASS
+            # When frozen, file directory = executable directory
+            root_directory = this_file_directory
+        else:
+            this_file_directory = os.path.dirname(os.path.abspath(__file__))
+            root_directory = os.path.join(this_file_directory, '..' + os.sep + '..')
 
+        # this_file_directory = os.path.dirname(os.path.abspath(inspect.stack()[0][1]))
+
+        alembic_directory = os.path.join(root_directory, 'alembic')
+        ini_path = os.path.join(root_directory, 'alembic.ini')
+
+        # create Alembic config and feed it with paths
+        config = Config(ini_path)
+        config.set_main_option('script_location', alembic_directory)
+        config.set_main_option('sqlalchemy.url', dburl)
+
+        return config
+
+    def upgrade_db(self, dburl):
+        config = self.init_alembic(dburl)
+
+        # prepare and run the command
+        revision = 'head'
+        sql = False
+        tag = None
+
+        # upgrade command
+        command.upgrade(config, revision, sql=sql, tag=tag)
+
+    def stamp_db(self, dburl):
+        config = self.init_alembic(dburl)
+
+        # prepare and run the command
+        revision = 'head'
+        sql = False
+        tag = None
+
+        # Stamp database
+        command.stamp(config, revision, sql, tag)
+
+    @staticmethod
     @event.listens_for(Engine, "connect")
     def set_sqlite_pragma(dbapi_connection, connection_record):
         cursor = dbapi_connection.cursor()
@@ -89,7 +141,10 @@ class DBManager:
     def session_add(self, store):
         self.session.add_all(store)
 
-    ######## GROUPS
+    def compact(self):
+        self.engine.execute("VACUUM")
+
+    # GROUPS
     def update_group(self, group):
         try:
             if group.id_group is None:
@@ -131,7 +186,7 @@ class DBManager:
         # print('all groups', query.all())
         return query.all()
 
-    ######## PARTICIPANTS
+    # PARTICIPANTS
     def update_participant(self, participant):
         try:
             if participant.id_participant is None:
@@ -179,7 +234,7 @@ class DBManager:
         self.clean_db()
         # self.engine.execute("VACUUM")
 
-    #####################
+    #
     def add_sensor(self, _id_sensor_type, _name, _hw_name, _location, _sampling_rate, _data_rate):
         # Check if that sensor is already present in the database
         query = self.session.query(Sensor).filter((Sensor.id_sensor_type == _id_sensor_type) &
@@ -190,7 +245,7 @@ class DBManager:
                                                   (Sensor.data_rate) == _data_rate)
 
         if query.first():
-            #print("Sensor " + _name + " already present in DB!")
+            # print("Sensor " + _name + " already present in DB!")
             return query.first();
 
         # Create object
@@ -218,22 +273,14 @@ class DBManager:
             query = self.session.query(Sensor).filter(Sensor.id_sensor_type == id_sensor_type)
             return query.all()
 
-    #####################
     def add_recordset(self, participant: Participant, name, start_timestamp, end_timestamp, force=False):
 
-        if not force: # Check if we already have a recordset for that period
-            '''
-            query = self.session.query(Recordset)\
-                            .filter(Recordset.participant == participant &
-                                    ((Recordset.start_timestamp <= start_timestamp & Recordset.end_timestamp >= start_timestamp) |
-                                     (Recordset.start_timestamp <= end_timestamp & Recordset.end_timestamp >= end_timestamp) |
-                                     (Recordset.start_timestamp >= start_timestamp & Recordset.end_timestamp <= end_timestamp)))
-            '''
+        if not force:  # Check if we already have a recordset for that period
             query = self.session.query(Recordset).filter((Recordset.participant == participant) & (Recordset.name == name))
             if query.first():
                 # Update start and end times, if needed.
                 current_record = query.first()
-                print("Recordset found: " + current_record.name)
+                # print("Recordset found: " + current_record.name)
                 new_starttime = current_record.start_timestamp
                 if start_timestamp < new_starttime:
                     new_starttime = start_timestamp
@@ -258,7 +305,7 @@ class DBManager:
         return query.first()
 
     def delete_recordset(self, recordset):
-        id = recordset.id_recordset
+        # id = recordset.id_recordset
         try:
             self.session.delete(recordset)
             self.commit()
@@ -316,14 +363,15 @@ class DBManager:
             # print (query)
             return query.all()
         else:
-            query = self.session.query(Recordset).filter(Recordset.id_participant == participant.id_participant).order_by(asc(Recordset.start_timestamp))
+            query = self.session.query(Recordset).filter(Recordset.id_participant == participant.id_participant)\
+                    .order_by(asc(Recordset.start_timestamp))
             return query.all()
-    #####################
+
     def get_sensors(self, recordset):
-        query = self.session.query(Sensor).join(SensorData).filter(SensorData.id_recordset == recordset.id_recordset).group_by(Sensor.id_sensor).order_by(asc(Sensor.name))
+        query = self.session.query(Sensor).join(SensorData).filter(SensorData.id_recordset == recordset.id_recordset)\
+                .group_by(Sensor.id_sensor).order_by(asc(Sensor.location)).order_by(asc(Sensor.name))
         return query.all()
 
-    #####################
     def add_channel(self, sensor, id_sensor_unit, id_data_format, label):
         # Check if that sensor is already present in the database
         query = self.session.query(Channel).filter((Channel.sensor == sensor) &
@@ -332,7 +380,7 @@ class DBManager:
                                                   (Channel.label == label))
 
         if query.first():
-            #print("Channel " + label + " already present in DB!")
+            # print("Channel " + label + " already present in DB!")
             return query.first()
 
         # Create object
@@ -366,15 +414,6 @@ class DBManager:
                                 channel=channel, timestamps=timestamps,
                                 data=data.tobytes())
 
-        # Custom SQL code
-        """
-        self.session.execute("INSERT INTO tabSensorsData (id_recordset, id_sensor, id_channel, data_timestamp, data) "
-                             "VALUES (:id_recordset, :id_sensor, :id_channel, :data_timestamp, :data)",
-                             {'id_recordset': recordset.id_recordset, 'id_sensor': sensor.id_sensor,
-                              'id_channel': channel.id_channel, 'data_timestamp': timestamp, 'data': data.tobytes()})
-
-        """
-
         self.session.add(sensordata)
 
         # Do not commit, too slow!
@@ -398,6 +437,8 @@ class DBManager:
         sensor = kwargs.get('sensor', None)
         channel = kwargs.get('channel', None)
         recordset = kwargs.get('recordset', None)
+        start_time = kwargs.get('start_time', None)
+        end_time = kwargs.get('end_time', None)
 
         # Get all sensor data
         query = self.session.query(SensorData)
@@ -413,14 +454,17 @@ class DBManager:
             # print('Should filter channel', channel.id_channel)
             query = query.filter(SensorData.id_channel == channel.id_channel)
 
+        if start_time is not None:
+            query = query.filter(or_(SensorData.timestamps.has(SensorTimestamps.start_timestamp >= start_time),
+                                     and_(SensorData.timestamps.has(SensorTimestamps.start_timestamp <= start_time),
+                                          SensorData.timestamps.has(SensorTimestamps.end_timestamp >= start_time))))
+
+        if end_time is not None:
+            query = query.filter(or_(SensorData.timestamps.has(SensorTimestamps.end_timestamp <= end_time),
+                                     and_(SensorData.timestamps.has(SensorTimestamps.start_timestamp <= end_time),
+                                          SensorData.timestamps.has(SensorTimestamps.end_timestamp >= end_time))))
+
         # print(query)
-        # Make sure data is ordered by timestamps
-        # query = query.order_by(SensorData.timestamps.asc())
-
-        # print('TODO ORDERY BY TIMESTAMPS NEEDS TO BE IMPLEMENTED')
-
-        # And then per channel
-        # query = query.order_by(SensorData.channel.asc())
 
         if not convert:
             return query.all()
@@ -484,7 +528,6 @@ class DBManager:
             datas = query.all()
         else:
             query = self.session.query(ProcessedData).filter(ProcessedData.processed_data_ref.recordset.participant.id_participant == participant.id_participant)
-            #print(query)
             datas = query.all()
 
         return datas

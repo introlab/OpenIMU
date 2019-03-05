@@ -10,6 +10,7 @@ import zipfile
 import struct
 import numpy as np
 import math
+import sys
 from libopenimu.tools.timing import timing
 
 
@@ -461,8 +462,10 @@ def gt3x_calculate_checksum(separator, record_type, timestamp, record_size, reco
     checksum ^= (record_size & 0xFF)
     checksum ^= ((record_size >> 8) & 0xFF)
 
-    for i in range(0, len(record_data)):
-        checksum ^= record_data[i]
+    # for i in range(0, len(record_data)):
+    #    checksum ^= record_data[i]
+    for record in enumerate(record_data):
+        checksum ^= record
 
     checksum = ~checksum
 
@@ -503,7 +506,7 @@ def gt3x_importer(filename):
 
         sample_rate = float(info['Sample Rate'])
         scale = float(info['Acceleration Scale'])
-        print ('info', info)
+        print('info', info)
         # print('My Sample rate:', sample_rate)
 
         # Reading log.bin

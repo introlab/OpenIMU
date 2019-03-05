@@ -4,6 +4,7 @@ from libopenimu.models.Subrecord import Subrecord
 from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, BLOB
 from sqlalchemy.orm import relationship
 
+
 class ProcessedDataRef(Base):
     __tablename__ = 'tabProcessedDataRef'
     id_processed_data_ref = Column(Integer, Sequence('id_processed_data_ref_sequence'), primary_key=True, autoincrement=True)
@@ -18,5 +19,7 @@ class ProcessedDataRef(Base):
 
     # Database rep (optional)
     def __repr__(self):
-        return "<ProcessedDataRef(id_processed_data_ref='%i', id_processed_data='%i', id_recordset='%i', id_subrecord='%i')>" % (self.id_processed_data_ref, self.id_processed_data, self.id_recordset, self.id_subrecord)
+        return "<ProcessedDataRef(id_processed_data_ref='%i', id_processed_data='%i', id_recordset='%i', " \
+               "id_subrecord='%i')>" % (self.id_processed_data_ref, self.id_processed_data, self.id_recordset,
+                                        self.id_subrecord)
 

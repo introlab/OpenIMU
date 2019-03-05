@@ -11,6 +11,11 @@ from libopenimu.tools.timing import timing
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.Participant import Participant
 
+import datetime
+
+from PyQt5.QtCore import QObject, pyqtSignal
+
+
 @timing
 def load_worker(importer, filename):
     print('load_worker starting')
@@ -19,15 +24,47 @@ def load_worker(importer, filename):
     print('load worker done')
 
 
-class BaseImporter:
-    def __init__(self, manager: DBManager, participant: Participant):
-       # print('BaseImporter')
+class BaseImporter(QObject):
+
+    update_progress = pyqtSignal(int)
+    last_error = ""
+
+    def __init__(self, manager: DBManager, participant: Participant, parent=None):
+        super(BaseImporter, self).__init__(parent)
 
         # This is the manager that will be used for importation, externally created
         self.db = manager
 
         # This is the participant
         self.participant = participant
+
+        # No recordsets when starting
+        self.recordsets = []
+
+    def get_recordset(self, timestamp):
+        try:
+            my_time = datetime.datetime.fromtimestamp(timestamp)
+        except ValueError:
+            return
+
+        # Validate timestamp
+        if my_time > datetime.datetime.now() or my_time < datetime.datetime(2018, 1, 1):
+            print("Invalid timestamp: " + str(timestamp))
+            return
+
+        # Find a record the same day
+        for record in self.recordsets:
+            # Same date return this record
+            if record.start_timestamp.date() == my_time.date():
+                return record
+
+        # Return new record
+        recordset = self.db.add_recordset(self.participant, str(my_time.date()), my_time, my_time)
+        self.recordsets.append(recordset)
+        return recordset
+
+    def clear_recordsets(self):
+        self.recordsets = []
 
     def async_load(self, filename):
         print('will call load on importer with filename: ', filename)
@@ -36,12 +73,10 @@ class BaseImporter:
         return t
 
     def load(self, filename):
-        print('Nothing to do in BaseImporter.load')
-        pass
+        print('Nothing to do in ' + type(self) + ".load")
 
-    def import_to_database(self, result):
-        print('Nothing to do in BaseImporter.import_to_database')
-        pass
+    def import_to_database(self, results):
+        print('Nothing to do in ' + type(self) + " import to database.")
 
     def loaded_callback(self, result):
         print('loaded callback result len', len(result))
@@ -59,7 +94,10 @@ class BaseImporter:
         channel = self.db.add_channel(sensor, unit, data_format, label)
         return channel
 
-    # DL Oct 16 2018, new interface
     def add_sensor_data_to_db(self, recordset, sensor, channel, timestamps, data):
         sensor_data = self.db.add_sensor_data(recordset, sensor, channel, timestamps, data)
         return sensor_data
+
+    def add_datasource_to_db(self, filename, file_start_time):
+
+        pass

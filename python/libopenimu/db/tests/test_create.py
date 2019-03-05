@@ -1,14 +1,8 @@
 
 import unittest
 import os
-from libopenimu.db.DBManager import DBManager
-from libopenimu.models.sensor_types import SensorType
-from libopenimu.models.units import Units
-from libopenimu.models.data_formats import DataFormat
-import numpy as np
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
 from libopenimu.models.Base import Base
 

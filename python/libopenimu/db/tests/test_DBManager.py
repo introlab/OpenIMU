@@ -37,9 +37,7 @@ class DBManagerTest(unittest.TestCase):
                 os.remove(DBManagerTest.TESTDB_NAME)
 
     def tearDown(self):
-
         pass
-
 
     def test_add_group(self):
         manager = DBManager(filename=DBManagerTest.TESTDB_NAME, overwrite=True)
@@ -155,8 +153,10 @@ class DBManagerTest(unittest.TestCase):
         self.assertEqual(len(participants), len(all_participants))
 
         # Compare content
-        for i in range(0, len(participants)):
-            self.assertEqual(participants[i], all_participants[i])
+        # for i in range(0, len(participants)):
+        #    self.assertEqual(participants[i], all_participants[i])
+        for i, participant in enumerate(participants):
+            self.assertEqual(participant, all_participants[i])
 
         manager.close()
 
@@ -239,9 +239,9 @@ class DBManagerTest(unittest.TestCase):
 
         # Create sensor in DB
         sensor = manager.add_sensor(SensorType.ACCELEROMETER, 'Sensor Name', 'Hardware Name', 'Wrist', 30.0, 1)
-        channelx = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_X')
-        channely = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_Y')
-        channelz = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_Z')
+        # channelx = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_X')
+        # channely = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_Y')
+        # channelz = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_Z')
 
         # Get all channels (from all sensor)
         channels = manager.get_all_channels()
@@ -306,8 +306,8 @@ class DBManagerTest(unittest.TestCase):
         recordset = manager.add_recordset(participant, 'My Record', timestamps.start_timestamp, timestamps.end_timestamp)
 
         data = np.zeros(40, dtype=np.float32)
-        sensordata = manager.add_sensor_data(recordset, sensor, channel1, timestamps, data)
-        sensordata = manager.add_sensor_data(recordset, sensor, channel2, timestamps, data)
+        # sensordata = manager.add_sensor_data(recordset, sensor, channel1, timestamps, data)
+        # sensordata = manager.add_sensor_data(recordset, sensor, channel2, timestamps, data)
         manager.commit()
 
         # Test with no args, return everything in the recordset

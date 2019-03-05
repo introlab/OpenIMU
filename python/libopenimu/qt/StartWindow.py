@@ -3,7 +3,7 @@ from resources.ui.python.StartDialog_ui import Ui_StartDialog
 from libopenimu.qt.ImportWindow import ImportWindow
 
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QPushButton, QPlainTextEdit, QFileDialog, QApplication
+from PyQt5.QtWidgets import QDialog, QFileDialog, QApplication
 
 
 class StartWindow(QDialog):
@@ -12,7 +12,7 @@ class StartWindow(QDialog):
     importing = False
 
     def __init__(self, parent=None):
-        super(QDialog, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.UI = Ui_StartDialog()
         self.UI.setupUi(self)
 
@@ -24,11 +24,10 @@ class StartWindow(QDialog):
 
     @pyqtSlot()
     def import_clicked(self):
-        importdialog = ImportWindow()
-        importdialog.setStyleSheet(self.styleSheet())
+        importdialog = ImportWindow(parent=self)
         importdialog.showImport = True
 
-        if (importdialog.exec() == QDialog.Accepted):
+        if importdialog.exec() == QDialog.Accepted:
             self.fileName = importdialog.fileName
             self.importing = True
             if self.isVisible():
@@ -45,15 +44,15 @@ class StartWindow(QDialog):
 
     @pyqtSlot()
     def new_clicked(self):
-        importdialog = ImportWindow()
-        importdialog.setStyleSheet(self.styleSheet())
+        importdialog = ImportWindow(parent=self)
         importdialog.showImport = False
 
-        if (importdialog.exec() == QDialog.Accepted):
+        if importdialog.exec() == QDialog.Accepted:
             self.fileName = importdialog.fileName
             if self.isVisible():
                 self.accept()
 
+    @staticmethod
     @pyqtSlot()
-    def quit_clicked(self):
+    def quit_clicked():
         QApplication.quit()

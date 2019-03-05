@@ -18,16 +18,23 @@ file(MAKE_DIRECTORY ${ENV_PATH})
 set (pip_packages
     PyQt5
     PyQtChart
-    PyQt3D
-)
-
-set (conda_packages
+    PyQtWebEngine
     cython
     numpy
     scipy
+    sqlalchemy
+    alembic
+)
+
+# SB - Moved conda packages to pip to reduce package size (numpy and scipy, mainly)
+set (conda_packages
+    #cython
+    #numpy
+    #scipy
     # Not used for now
     # jupyter
-    sqlalchemy
+    #sqlalchemy
+    #alembic
 )
 
 
@@ -58,7 +65,8 @@ if(WIN32)
     # Create environment, will produce python executable
     add_custom_command(
         OUTPUT ${ENV_PATH}/python.exe
-        COMMAND ${CONDA_PATH} install -m -c defaults -c conda-forge -y -p ${ENV_PATH} python=${PYTHON_VERSION} ${conda_packages}
+        # COMMAND ${CONDA_PATH} install -m -c defaults -c conda-forge -y -p ${ENV_PATH} python=${PYTHON_VERSION} ${conda_packages}
+        COMMAND ${CONDA_PATH} install -m -c conda-forge -y -p ${ENV_PATH} python=${PYTHON_VERSION} ${conda_packages}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
 

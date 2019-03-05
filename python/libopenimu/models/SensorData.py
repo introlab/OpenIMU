@@ -14,10 +14,8 @@ from libopenimu.models.SensorTimestamps import SensorTimestamps
 
 from libopenimu.models.data_formats import DataFormat
 
-from sqlalchemy import Column, Integer, Sequence, ForeignKey, TIMESTAMP, Interval, BLOB
+from sqlalchemy import Column, Integer, Sequence, ForeignKey, BLOB
 from sqlalchemy.orm import relationship
-
-import numpy as np
 
 
 class SensorData(Base):
@@ -26,7 +24,6 @@ class SensorData(Base):
     id_recordset = Column(Integer, ForeignKey('tabRecordsets.id_recordset', ondelete="CASCADE"), nullable=False)
     id_sensor = Column(Integer, ForeignKey('tabSensors.id_sensor', ondelete="CASCADE"), nullable=False)
     id_channel = Column(Integer, ForeignKey('tabChannels.id_channel', ondelete="CASCADE"), nullable=False)
-    # TODO, timestamps CASCADE?
     id_timestamps = Column(Integer, ForeignKey('tabSensorsTimestamps.id_sensor_timestamps', ondelete="CASCADE"),
                            nullable=False)
 
@@ -41,7 +38,7 @@ class SensorData(Base):
     timestamps = relationship("SensorTimestamps", order_by="SensorTimestamps.start_timestamp")
 
     def to_ndarray(self):
-        if type(self.data) is bytes:
+        if isinstance(self.data, bytes):
             return DataFormat.from_bytes(self.data, self.channel.id_data_format)
         else:
             return self.data

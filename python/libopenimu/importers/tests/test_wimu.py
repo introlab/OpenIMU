@@ -9,7 +9,6 @@
 
 import unittest
 import libopenimu.importers.wimu as wimu
-import numpy as np
 
 
 class WIMUTest(unittest.TestCase):

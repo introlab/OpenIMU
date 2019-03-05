@@ -1,109 +1,48 @@
-# -*- coding: utf-8 -*-
-#
-# Licensed under the terms of the MIT License
-# Copyright (c) 2015 Pierre Raybaut
-
-"""
-Simple example illustrating Qt Charts capabilities to plot curves with
-a high number of points, using OpenGL accelerated series
-"""
-from PyQt5.QtGui import QPolygonF, QPainter, QMouseEvent, QResizeEvent, QBrush
-from PyQt5.QtChart import QChart, QChartView, QLineSeries, QLegend, QBarSeries, QBarSet, QSplineSeries, QXYSeries
+from PyQt5.QtGui import QPolygonF, QPainter, QMouseEvent, QResizeEvent, QBrush, QColor, QPen, QGuiApplication
+from PyQt5.QtChart import QChart, QChartView, QLineSeries, QBarSeries, QBarSet
 from PyQt5.QtChart import QDateTimeAxis, QValueAxis, QBarCategoryAxis
-from PyQt5.QtWidgets import QGraphicsSimpleTextItem, QGraphicsLineItem, QHBoxLayout, QWidget, QLabel, QToolButton, QOpenGLWidget
-from PyQt5.QtWidgets import QSpacerItem, QSizePolicy
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QPointF, QRectF, QPoint, QDateTime, QObject
+from PyQt5.QtWidgets import QGraphicsLineItem, QLabel, QOpenGLWidget, QRubberBand
+from PyQt5.QtCore import Qt, pyqtSlot, QPointF, QRect, QPoint
+
+from libopenimu.qt.BaseGraph import BaseGraph, GraphInteractionMode
 
 import numpy as np
-from scipy.signal import decimate
-import datetime, time
+import datetime
 
 
-class IMUChartView(QChartView):
-
-    aboutToClose = pyqtSignal(QObject)
-    cursorMoved = pyqtSignal(float)
+class IMUChartView(QChartView, BaseGraph):
 
     def __init__(self, parent=None):
-        super(QChartView, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
-        #self.setFixedHeight(400)
-        #self.setMinimumHeight(500)
-        """self.setMaximumHeight(700)
-        self.setFixedHeight(700)
-        self.setMinimumWidth(1500)
-        self.setSizePolicy(QSizePolicy.Fixed,QSizePolicy.Fixed)"""
-
-        # self.reftime = datetime.datetime.now()
         self.cursor = QGraphicsLineItem()
         self.scene().addItem(self.cursor)
-        self.decim_factor = 1
 
         self.xvalues = {}
 
-        # self.setScene(QGraphicsScene())
         self.chart = QChart()
-        # self.scene().addItem(self.chart)
         self.setChart(self.chart)
         self.chart.legend().setVisible(True)
         self.chart.legend().setAlignment(Qt.AlignTop)
         self.ncurves = 0
         self.setRenderHint(QPainter.Antialiasing)
-        self.setRubberBand(QChartView.HorizontalRubberBand)
 
-        # X, Y label on bottom
-        """self.xTextItem = QGraphicsSimpleTextItem(self.chart)
-        self.xTextItem.setText('X: ')
-        self.yTextItem = QGraphicsSimpleTextItem(self.chart)
-        self.yTextItem.setText('Y: ')
-        self.update_x_y_coords()"""
+        # Selection features
+        # self.setRubberBand(QChartView.HorizontalRubberBand)
+        self.selectionBand = QRubberBand(QRubberBand.Rectangle, self)
+        self.selecting = False
+        self.initialClick = QPoint()
 
         # Track mouse
         self.setMouseTracking(True)
 
-        # Top Widgets
-        newWidget = QWidget(self)
-        newLayout = QHBoxLayout()
-        newLayout.setContentsMargins(0,0,0,0)
-        newWidget.setLayout(newLayout)
-        """labelx = QLabel(self)
-        labelx.setText('X:')
-        self.labelXValue = QLabel(self)
-        labely = QLabel(self)
-        labely.setText('Y:')
-        self.labelYValue = QLabel(self)"""
         self.labelValue = QLabel(self)
         self.labelValue.setStyleSheet("background-color: rgba(255,255,255,75%); color: black;")
         self.labelValue.setAlignment(Qt.AlignCenter)
         self.labelValue.setMargin(5)
         self.labelValue.setVisible(False)
 
-        # Test buttons
-        #newLayout.addWidget(QToolButton(self))
-        #newLayout.addWidget(QToolButton(self))
-        #newLayout.addWidget(QToolButton(self))
-
-        # Spacer
-        #newLayout.addItem(QSpacerItem(10, 10, QSizePolicy.Expanding, QSizePolicy.Minimum))
-
-        # Labels
-        """newLayout.addWidget(labelx)
-        newLayout.addWidget(self.labelXValue)
-        self.labelXValue.setMinimumWidth(200)
-        self.labelXValue.setMaximumWidth(200)
-        newLayout.addWidget(labely)
-        newLayout.addWidget(self.labelYValue)
-        self.labelYValue.setMinimumWidth(200)
-        self.labelYValue.setMaximumWidth(200)
-        """
-
-        """if parent is not None:
-            parent.layout().setMenuBar(newWidget)
-        """
-        # self.layout()
-
         self.build_style()
-
 
     def build_style(self):
         self.setStyleSheet("QLabel{color:blue;}")
@@ -126,53 +65,37 @@ class IMUChartView(QChartView):
         painter.end()
         pixmap.save(file_path, 'PNG')
 
-    def closeEvent(self, QCloseEvent):
-        self.aboutToClose.emit(self)
+    #  def closeEvent(self, event):
+    #     self.aboutToClose.emit(self)
 
-    @pyqtSlot(QPointF)
-    def lineseries_clicked(self, point):
-        print('lineseries clicked', point)
-
-    @pyqtSlot(QPointF)
-    def lineseries_hovered(self, point):
-        print('lineseries hovered', point)
-
-    def update_x_y_coords(self):
-        pass
-        # self.xTextItem.setPos(self.chart.size().width() / 2 - 100, self.chart.size().height() - 40)
-        # self.yTextItem.setPos(self.chart.size().width() / 2 + 100, self.chart.size().height() - 40)
-        # self.xTextItem.setPos(self.chart.size().width() - 200, self.chart.size().height() - 40)
-        # self.yTextItem.setPos(self.chart.size().width() - 100, self.chart.size().height() - 40)
-
-    def decimate(self, xdata, ydata):
-        assert(len(xdata) == len(ydata))
+    @staticmethod
+    def decimate(xdata, ydata):
+        # assert(len(xdata) == len(ydata))
 
         # Decimate only if we have too much data
         decimate_factor = len(xdata) / 100000.0
+        # decimate_factor = 1.0
 
         if decimate_factor > 1.0:
             decimate_factor = int(np.floor(decimate_factor))
             # print('decimate factor', decimate_factor)
-            # x = decimate(xdata, decimate_factor)
-            # y = decimate(ydata, decimate_factor)
-            self.decim_factor = decimate_factor
+
             x = np.ndarray(int(len(xdata) / decimate_factor), dtype=np.float64)
             y = np.ndarray(int(len(ydata) / decimate_factor), dtype=np.float64)
-            for i in range(len(x)):
+            # for i in range(len(x)):
+            for i, _ in enumerate(x):
                 index = i * decimate_factor
-                assert(index < len(xdata))
+                # assert(index < len(xdata))
                 x[i] = xdata[index]
                 y[i] = ydata[index]
                 if x[i] < x[0]:
                     print('timestamp error', x[i], x[0])
-
-            #print('return size', len(x), len(y), 'timestamp', x[0])
             return x, y
         else:
             return xdata, ydata
 
     @pyqtSlot(float, float)
-    def axis_range_changed(self, min, max):
+    def axis_range_changed(self, min_value, max_value):
         # print('axis_range_changed', min, max)
         for axis in self.chart.axes():
             axis.applyNiceNumbers()
@@ -190,14 +113,6 @@ class IMUChartView(QChartView):
         axisx.setFormat("dd MMM yyyy hh:mm:ss")
         axisx.setTitleText("Date")
         self.chart.addAxis(axisx, Qt.AlignBottom)
-        # axisX.rangeChanged.connect(self.axis_range_changed)
-
-        """axisX = QValueAxis()
-        axisX.setTickCount(10)
-        axisX.setLabelFormat("%li")
-        axisX.setTitleText("Seconds")
-        self.chart.addAxis(axisX, Qt.AlignBottom)"""
-        # axisX.rangeChanged.connect(self.axis_range_changed)
 
         # Create axis Y
         axisY = QValueAxis()
@@ -215,7 +130,8 @@ class IMUChartView(QChartView):
             series.attachAxis(axisx)
             series.attachAxis(axisY)
             vect = series.pointsVector()
-            for i in range(len(vect)):
+            # for i in range(len(vect)):
+            for i, _ in enumerate(vect):
                 if ymin is None:
                     ymin = vect[i].y()
                     ymax = vect[i].y()
@@ -241,6 +157,7 @@ class IMUChartView(QChartView):
         curve.setPen(pen)
         # curve.setPointsVisible(True)
         # curve.setUseOpenGL(True)
+        self.total_samples = max(self.total_samples, len(xdata))
 
         # Decimate
         xdecimated, ydecimated = self.decimate(xdata, ydata)
@@ -253,17 +170,20 @@ class IMUChartView(QChartView):
         #    xdecimated = xdecimated - xdecimated[0]
 
         xdecimated *= 1000  # No decimal expected
-        for i in range(len(xdecimated)):
+        points = []
+        for i, _ in enumerate(xdecimated):
             # TODO hack
-            # x = xdecimated[i] - xdecimated[0]
-            curve.append(QPointF(xdecimated[i], ydecimated[i]))
+            # curve.append(QPointF(xdecimated[i], ydecimated[i]))
+            points.append(QPointF(xdecimated[i], ydecimated[i]))
+
+        curve.replace(points)
+        points.clear()
 
         if legend_text is not None:
             curve.setName(legend_text)
 
         # Needed for mouse events on series
         self.chart.setAcceptHoverEvents(True)
-
         self.xvalues[self.ncurves] = np.array(xdecimated)
 
         # connect signals / slots
@@ -275,12 +195,74 @@ class IMUChartView(QChartView):
         self.ncurves += 1
         self.update_axes()
 
-    def set_title(self, title):
-        # print('Setting title: ', title)
-        #self.chart.setTitle(title)
-        pass
+    def update_data(self, xdata, ydata, series_id):
+        if series_id < len(self.chart.series()):
+            # Find start time to replace data
+            current_series = self.chart.series()[series_id]
+            current_points = current_series.pointsVector()
 
-    def series_to_polyline(self, xdata, ydata):
+            # Find start and end indexes
+            start_index = -1
+            try:
+                start_index = current_points.index(QPointF(xdata[0]*1000, ydata[0]))  # Right on the value!
+                # print("update_data: start_index found exact match.")
+            except ValueError:
+                # print("update_data: start_index no exact match - scanning deeper...")
+                for i, value in enumerate(current_points):
+                    # print(str(current_points[i].x()) + " == " + str(xdata[0]*1000))
+                    if current_points[i].x() == xdata[0]*1000 or (i > 0 and current_points[i - 1].x() < xdata[0]*1000
+                                                             < current_points[i].x()):
+                        start_index = i
+                        # print("update_data: start_index found approximative match.")
+                        break
+
+            end_index = -1
+            try:
+                end_index = current_points.index(QPointF(xdata[len(xdata)-1] * 1000, ydata[len(ydata)-1]))  # Right on!
+                # print("update_data: start_index found exact match.")
+            except ValueError:
+                # print("update_data: start_index no exact match - scanning deeper...")
+                for i, value in enumerate(current_points):
+                    # print(str(current_points[i].x()) + " == " + str(xdata[0]*1000))
+                    if current_points[i].x() == xdata[len(xdata)-1] * 1000 or (
+                            i > 0 and current_points[i - 1].x() < xdata[len(xdata)-1] * 1000
+                            < current_points[i].x()):
+                        end_index = i
+                        # print("update_data: start_index found approximative match.")
+                        break
+
+            if start_index < 0 or end_index < 0:
+                return
+
+            # Decimate, if needed
+            xdata, ydata = self.decimate(xdata, ydata)
+
+            # Check if we have the same number of points for that range. If not, remove and replace!
+            target_points = current_points[start_index:end_index]
+            if len(target_points) != len(xdata):
+                points = []
+                for i, value in enumerate(xdata):
+                    # TODO improve
+                    points.append(QPointF(value*1000, ydata[i]))
+
+                new_points = current_points[0:start_index] + points[0:len(points)-1] + \
+                             current_points[end_index:len(current_points)-1]
+
+                current_series.replace(new_points)
+                new_points.clear()
+
+                # self.xvalues[series_id] = np.array(xdata)
+
+        return
+
+    @classmethod
+    def set_title(cls, title):
+        # print('Setting title: ', title)
+        # self.chart.setTitle(title)
+        return
+
+    @staticmethod
+    def series_to_polyline(xdata, ydata):
         """Convert series data to QPolygon(F) polyline
 
         This code is derived from PythonQwt's function named
@@ -290,8 +272,10 @@ class IMUChartView(QChartView):
         size = len(xdata)
         polyline = QPolygonF(size)
 
-        for i in range(0, len(xdata)):
-            polyline[i] = QPointF(xdata[i] - xdata[0], ydata[i])
+        # for i in range(0, len(xdata)):
+        #   polyline[i] = QPointF(xdata[i] - xdata[0], ydata[i])
+        for i, data in enumerate(xdata):
+            polyline[i] = QPointF(data - xdata[0], ydata[i])
 
         # pointer = polyline.data()
         # dtype, tinfo = np.float, np.finfo  # integers: = np.int, np.iinfo
@@ -310,31 +294,88 @@ class IMUChartView(QChartView):
         self.add_data(xdata, np.sin(xdata), color=Qt.red, legend_text='Acc. X')
         # self.add_data(xdata, np.cos(xdata), color=Qt.green, legend_text='Acc. Y')
         # self.add_data(xdata, np.cos(2 * xdata), color=Qt.blue, legend_text='Acc. Z')
-        self.set_title("Simple example with %d curves of %d points " \
-                          "(OpenGL Accelerated Series)" \
-                          % (self.ncurves, npoints))
+        self.set_title("Simple example with %d curves of %d points (OpenGL Accelerated Series)"
+                        % (self.ncurves, npoints))
 
     def mouseMoveEvent(self, e: QMouseEvent):
-
-        # Go back to seconds (instead of ms)
-        # xmap = self.chart.mapToValue(e.pos()).x()
-        # ymap = self.chart.mapToValue(e.pos()).y()
-
-        # self.labelXValue.setText(str(datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp())))
-        # self.labelYValue.setText(str(ymap))
-
-        # self.xTextItem.setText('X: ' + str(datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp())))
-        # self.yTextItem.setText('Y: ' + str(ymap))
-        # Handling rubberbands
-        super().mouseMoveEvent(e)
+        if self.selecting:
+            current_pos = e.pos()
+            if self.interaction_mode == GraphInteractionMode.SELECT:
+                if current_pos.x() < self.initialClick.x():
+                    start_x = current_pos.x()
+                    width = self.initialClick.x() - start_x
+                else:
+                    start_x = self.initialClick.x()
+                    width = current_pos.x() - self.initialClick.x()
+                self.selectionBand.setGeometry(QRect(start_x, self.chart.plotArea().y(), width, self.chart.plotArea().height()))
+            if self.interaction_mode == GraphInteractionMode.MOVE:
+                new_pos = current_pos - self.initialClick
+                self.chart.scroll(-new_pos.x(), new_pos.y())
+                self.initialClick = current_pos
 
     def mousePressEvent(self, e: QMouseEvent):
         # Handling rubberbands
-        super().mousePressEvent(e)
+        # super().mousePressEvent(e)
+        self.selecting = True
+        self.initialClick = e.pos()
+        if self.interaction_mode == GraphInteractionMode.SELECT:
+            self.selectionBand.setGeometry(QRect(self.initialClick.x(), self.chart.plotArea().y(), 1,
+                                             self.chart.plotArea().height()))
+            self.selectionBand.show()
 
-        self.setCursorPosition(e.pos().x(), True)
+        if self.interaction_mode == GraphInteractionMode.MOVE:
+            QGuiApplication.setOverrideCursor(Qt.ClosedHandCursor)
+            self.labelValue.setVisible(False)
 
-        pass
+    def mouseReleaseEvent(self, e: QMouseEvent):
+        # Handling rubberbands
+        clicked_x = self.mapToScene(e.pos()).x()
+
+        if self.interaction_mode == GraphInteractionMode.SELECT:
+            self.selectionBand.hide()
+            if clicked_x == self.mapToScene(self.initialClick).x():
+                self.setCursorPosition(clicked_x, True)
+            else:
+                mapped_x = self.mapToScene(self.initialClick).x()
+                if self.initialClick.x() < clicked_x:
+                    self.setSelectionArea(mapped_x, clicked_x, True)
+                else:
+                    self.setSelectionArea(clicked_x, mapped_x, True)
+
+        if self.interaction_mode == GraphInteractionMode.MOVE:
+            QGuiApplication.restoreOverrideCursor()
+
+        self.selecting = False
+
+    def clearSelectionArea(self, emit_signal = False):
+        self.scene().removeItem(self.selection_rec)
+        self.selection_rec = None
+
+        if emit_signal:
+            self.clearedSelectionArea.emit()
+
+    def setSelectionArea(self, start_pos, end_pos, emit_signal=False):
+        selection_brush = QBrush(QColor(153, 204, 255, 128))
+        selection_pen = QPen(Qt.transparent)
+        self.scene().removeItem(self.selection_rec)
+        self.selection_rec = self.scene().addRect(start_pos, self.chart.plotArea().y(), end_pos - start_pos,
+                                                  self.chart.plotArea().height(), selection_pen,
+                                                  selection_brush)
+        if emit_signal:
+            self.selectedAreaChanged.emit(self.chart.mapToValue(QPointF(start_pos, 0)).x(),
+                                          self.chart.mapToValue(QPointF(end_pos, 0)).x())
+
+    def setSelectionAreaFromTime(self, start_time, end_time, emit_signal = False):
+        # Convert times to x values
+        if isinstance(start_time, datetime.datetime):
+            start_time = start_time.timestamp()*1000
+        if isinstance(end_time, datetime.datetime):
+            end_time = end_time.timestamp()*1000
+
+        start_pos = self.chart.mapToPosition(QPointF(start_time, 0)).x()
+        end_pos = self.chart.mapToPosition(QPointF(end_time, 0)).x()
+
+        self.setSelectionArea(start_pos, end_pos)
 
     def setCursorPosition(self, pos, emit_signal=False):
         # print (pos)
@@ -354,7 +395,7 @@ class IMUChartView(QChartView):
         self.cursor.setLine(x, y1, x, y2)
         self.cursor.show()
 
-        xmap = self.chart.mapToValue(QPointF(pos,0)).x()
+        xmap_initial = self.chart.mapToValue(QPointF(pos, 0)).x()
         display = ''
         # '<i>' + (datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp())).strftime('%d-%m-%Y %H:%M:%S') +
         # '</i><br />'
@@ -362,8 +403,12 @@ class IMUChartView(QChartView):
         last_val = None
         for i in range(self.ncurves):
             # Find nearest point
-            idx = (np.abs(self.xvalues[i] - xmap)).argmin()
+            idx = (np.abs(self.xvalues[i] - xmap_initial)).argmin()
             ymap = self.chart.series()[i].at(idx).y()
+            xmap = self.chart.series()[i].at(idx).x()
+            if i == 0:
+                display += "<i>" + (datetime.datetime.fromtimestamp(xmap_initial/1000)).strftime('%d-%m-%Y %H:%M:%S:%f') + \
+                           "</i>"
 
             # Compute where to display label
             if last_val is None or ymap > last_val:
@@ -380,17 +425,18 @@ class IMUChartView(QChartView):
         self.labelValue.setVisible(True)
 
         if emit_signal:
-            #self.cursorMoved.emit(datetime.datetime.fromtimestamp(xmap + self.reftime.timestamp()))
-            self.cursorMoved.emit(xmap)
+            self.cursorMoved.emit(xmap_initial)
 
         self.update()
 
     def setCursorPositionFromTime(self, timestamp, emit_signal=False):
-        # Converts timestamp to x value
-        #pos = self.chart.mapToPosition(QPointF((timestamp-self.reftime).total_seconds(),0)).x()
         # Find nearest point
-        if type(timestamp) is datetime.datetime:
-            timestamp = timestamp.timestamp();
+        if isinstance(timestamp, datetime.datetime):
+            timestamp = timestamp.timestamp()
+        pos = self.get_pos_from_time(timestamp)
+        self.setCursorPosition(pos, emit_signal)
+
+    def get_pos_from_time(self, timestamp):
         px = timestamp
         idx1 = (np.abs(self.xvalues[0] - px)).argmin()
         x1 = self.chart.series()[0].at(idx1).x()
@@ -398,18 +444,16 @@ class IMUChartView(QChartView):
         idx2 = idx1 + 1
         if idx2 < len(self.chart.series()[0]):
             x2 = self.chart.series()[0].at(idx2).x()
-            pos2 = self.chart.mapToPosition(QPointF(x2, 0)).x()
-            x2 /= 1000
-            x1 /= 1000
-            pos = (((px-x1)/(x2-x1)) * (pos2-pos1)) + pos1
+            if x2 != x1:
+                pos2 = self.chart.mapToPosition(QPointF(x2, 0)).x()
+                x2 /= 1000
+                x1 /= 1000
+                pos = (((px - x1) / (x2 - x1)) * (pos2 - pos1)) + pos1
+            else:
+                pos = pos1
         else:
-            pos = pos1;
-        self.setCursorPosition(pos, emit_signal)
-
-    def mouseReleaseEvent(self, e: QMouseEvent):
-        # Handling rubberbands
-        super().mouseReleaseEvent(e)
-        pass
+            pos = pos1
+        return pos
 
     def resizeEvent(self, e: QResizeEvent):
         super().resizeEvent(e)
@@ -419,33 +463,71 @@ class IMUChartView(QChartView):
         line = self.cursor.line()
         self.cursor.setLine(line.x1(), area.y(), line.x2(), area.y() + area.height())
 
-        # self.scene().setSceneRect(0, 0, e.size().width(), e.size().height())
-        # Need to reposition X,Y labels
-        self.update_x_y_coords()
+    def zoom_in(self):
+        self.chart.zoomIn()
+        self.update_axes()
+
+    def zoom_out(self):
+        self.chart.zoomOut()
+        self.update_axes()
+
+    def zoom_area(self):
+        if self.selection_rec:
+            zoom_rec = self.selection_rec.rect()
+            zoom_rec.setY(0)
+            zoom_rec.setHeight(self.chart.plotArea().height())
+            self.chart.zoomIn(zoom_rec)
+            self.clearSelectionArea(True)
+            self.update_axes()
+
+    def zoom_reset(self):
+        self.chart.zoomReset()
+        self.update_axes()
+
+    def get_displayed_start_time(self):
+        min_x = self.chart.mapToScene(self.chart.plotArea()).boundingRect().x()
+        xmap = self.chart.mapToValue(QPointF(min_x, 0)).x()
+        return datetime.datetime.fromtimestamp(xmap/1000)
+
+    def get_displayed_end_time(self):
+        max_x = self.chart.mapToScene(self.chart.plotArea()).boundingRect().x()
+        max_x += self.chart.mapToScene(self.chart.plotArea()).boundingRect().width()
+        xmap = self.chart.mapToValue(QPointF(max_x, 0)).x()
+        return datetime.datetime.fromtimestamp(xmap / 1000)
+
+    @property
+    def is_zoomed(self):
+        return self.chart.isZoomed()
 
 
 class OpenIMUBarGraphView(QChartView):
     def __init__(self, parent=None):
-        super(QChartView, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.chart = QChart()
         self.setChart(self.chart)
         self.chart.legend().setVisible(True)
         self.chart.legend().setAlignment(Qt.AlignBottom)
-        self.chart.setAnimationOptions(QChart.SeriesAnimations)
         self.series = QBarSeries(self)
         self.categoryAxis = QBarCategoryAxis(self)
-        self.setMinimumHeight(400)
-        self.setMinimumWidth(400)
+        self.build_style()
+
+    def build_style(self):
+        self.setStyleSheet("QLabel{color:blue;}")
+        self.chart.setTheme(QChart.ChartThemeBlueCerulean)
+        self.setBackgroundBrush(QBrush(Qt.darkGray))
+        self.chart.setPlotAreaBackgroundBrush(QBrush(Qt.black))
+        self.chart.setPlotAreaBackgroundVisible(True)
+        self.chart.setAnimationOptions(QChart.SeriesAnimations)
 
     def set_title(self, title):
-        #print('Setting title: ', title)
+        # print('Setting title: ', title)
         self.chart.setTitle(title)
 
     def set_category_axis(self, categories):
         self.categoryAxis.append(categories)
 
     def add_set(self, label, values):
-        #print('adding bar set')
+        # print('adding bar set')
         my_set = QBarSet(label, self)
         my_set.append(values)
         self.series.append(my_set)
@@ -470,8 +552,8 @@ if __name__ == '__main__':
     import sys
 
     from PyQt5.QtWidgets import QApplication
-    from PyQt5.QtWidgets import QMainWindow, QPushButton
-    from PyQt5.QtCore import Qt
+    from PyQt5.QtWidgets import QMainWindow
+    # from PyQt5.QtCore import Qt
 
     app = QApplication(sys.argv)
 

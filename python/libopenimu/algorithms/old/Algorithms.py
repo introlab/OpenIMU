@@ -2,9 +2,6 @@ import numpy as np
 from scipy import interpolate
 from scipy import linspace
 
-"""
-"""
-
 
 def resample_data(data, rate):
     # First get start time and end time
@@ -32,6 +29,7 @@ def resample_data(data, rate):
     print('size ', len(xint), len(yint), len(zint))
     return np.array((t, xint, yint, zint)).transpose()
 
+
 """
     Calculating magnitude
     array contains t, acc_x, acc_y, acc_z
@@ -45,6 +43,7 @@ def svm(data):
     print('mag : ', mag)
     print('mag shape ', mag.shape)
     return mag
+
 
 """
     Calculating counts
@@ -74,26 +73,26 @@ def counts(mag, epoch=60, rate=100):
     epochs = np.split(tmpdata, len(tmpdata) / (rate * epoch))
 
     # Iterate through epochs
-    for i in range(0, len(epochs)):
-        counts = np.append(counts, np.sum(epochs[i]))
-
+    # for i in range(0, len(epochs)):
+    #   counts = np.append(counts, np.sum(epochs[i]))
+    for s_epoch in enumerate(epochs):
+       counts = np.append(counts, np.sum(s_epoch))
     # print('counts ', counts)
     # plt.show()
     return [nb_epochs, counts]
-"""
-Freedson,Adult, 1998
 
- It is a uniaxial accelerometer that assesses accelerations ranging from 0.05-2.0 G and is band limited with a 
- frequency response from 0.25-2.5 Hz. 
 
- The acceleration signal is filtered by an analog bandpass filter and digitized by an 8 bit A/D converter at a sampling 
- rate of 10 samples per second.
- 
- Each digitized signal is summed over a user specified time interval (epoch), and at the end of each epoch the activity 
- count is stored internally and the accumulator is reset to zero. In the current study, a 60-s epoch was used and 
- activity counts were expressed as the average counts per minute over the 6 min of exercise.
-
-"""
+# Freedson,Adult, 1998
+#
+# It is a uniaxial accelerometer that assesses accelerations ranging from 0.05-2.0 G and is band limited with a
+# frequency response from 0.25-2.5 Hz.
+#
+# The acceleration signal is filtered by an analog bandpass filter and digitized by an 8 bit A/D converter at a sampling
+# rate of 10 samples per second.
+#
+# Each digitized signal is summed over a user specified time interval (epoch), and at the end of each epoch the activity
+# count is stored internally and the accumulator is reset to zero. In the current study, a 60-s epoch was used and
+# activity counts were expressed as the average counts per minute over the 6 min of exercise.
 
 
 def freedson_adult_1998(data, epoch_secs, rate):
@@ -109,9 +108,7 @@ def freedson_adult_1998(data, epoch_secs, rate):
     # Return the result
     return [nb_epochs, my_counts]
 
-"""
-Test function
-"""
+
 if __name__ == '__main__':
     np.set_printoptions(suppress=True)
     import libopenimu.importers.DataImporter as importer

@@ -9,7 +9,7 @@ from libopenimu.models.Base import Base
 # Important for relationships
 from libopenimu.models.Channel import Channel
 
-from sqlalchemy import Column, Integer, Float, String, Sequence, TIMESTAMP, BLOB, ForeignKey
+from sqlalchemy import Column, Integer, Float, String, Sequence
 from sqlalchemy.orm import relationship
 
 
@@ -20,6 +20,7 @@ class Sensor(Base):
     id_sensor_type = Column(Integer, nullable=False)
     name = Column(String, nullable=False)
     hw_name = Column(String, nullable=False)
+    hw_id = Column(String, nullable=True)
     location = Column(String, nullable=False)
     sampling_rate = Column(Float, nullable=False)
     data_rate = Column(Integer, nullable=False)
@@ -36,8 +37,8 @@ class Sensor(Base):
 
     # Database rep (optional)
     def __repr__(self):
-        return "<Sensor(id_sensor_type='%i', name='%s', hw_name='%s', location='%s', sampling_rate='%f'" \
-               ", data_rate='%i')>" % (self.id_sensor_type, self.name, self.hw_name, self.location, self.sampling_rate,
-                                       self.data_rate)
+        return "<Sensor(id_sensor_type='%i', name='%s', hw_name='%s', hw_id='%s', location='%s', sampling_rate='%f'" \
+               ", data_rate='%i')>" % (self.id_sensor_type, self.name, self.hw_name, self.hw_id, self.location,
+                                       self.sampling_rate, self.data_rate)
 
 

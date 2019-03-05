@@ -9,7 +9,6 @@
 import unittest
 from libopenimu.models.Recordset import Recordset
 from libopenimu.models.Participant import Participant
-from libopenimu.models.Group import Group
 
 
 class RecordsetTest(unittest.TestCase):

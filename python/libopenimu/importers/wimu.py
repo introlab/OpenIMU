@@ -4,7 +4,6 @@ import os
 import zipfile
 import struct
 import numpy as np
-import datetime
 from io import BytesIO
 
 
@@ -218,7 +217,7 @@ class WIMUSettings:
 
             self.crc = struct.unpack_from('<I', data, offset=42)
         else:
-            assert(len(data) == 50)
+            # assert(len(data) == 50)
             self.version_major = 2
             self.version_minor = 0
             self.version_rev = 0
@@ -370,7 +369,7 @@ class GyroOptions:
             adc_min = -32767
             adc_max = 32767
             s_values = [250.0, 500.0, 1000.0, 2000.0]
-            if hw_id==2:
+            if hw_id == 2:
                 adc_min = -4095
                 adc_max = 4095
                 # TODO FIXME
@@ -399,7 +398,6 @@ class GyroOptions:
 
 class MagOptions:
     range = np.uint8(0)
-
 
     @staticmethod
     def conversion_to_gauss(value_range, value, hw_id=2):
@@ -479,15 +477,16 @@ class WIMUConfig:
 
     def from_bytes(self, data, hw_id=2):
         # print('WIMUConfig.from_bytes', len(data))
-        buf16 = np.uint16(0)
-        buf8 = np.uint8(0)
+        # buf16 = np.uint16(0)
+        # buf8 = np.uint8(0)
         if hw_id == 2:
 
             # Enabled modules
             [self.enabled_modules] = struct.unpack_from('<H', data, offset=0)
 
             # Empty buf16
-            [buf16] == struct.unpack_from('<H', data, offset=2)
+            # [buf16] = struct.unpack_from('<H', data, offset=2)
+            struct.unpack_from('<H', data, offset=2)
 
             # Unsigned char, CPU Options
             [buf8] = struct.unpack_from('<B', data, offset=4)
@@ -509,10 +508,12 @@ class WIMUConfig:
             # print('ui.led_blink_time', self.ui.led_blink_time)
 
             # Unsigned char, Log filetime
-            [buf8] = struct.unpack_from('<B', data, offset=5)
+            # [buf8] = struct.unpack_from('<B', data, offset=5)
+            struct.unpack_from('<B', data, offset=5)
 
             # Unsigned char, Log reset time
-            [buf8] = struct.unpack_from('<B', data, offset=6)
+            # [buf8] = struct.unpack_from('<B', data, offset=6)
+            struct.unpack_from('<B', data, offset=6)
 
             # Unsigned char, Logger options
             [buf8] = struct.unpack_from('<B', data, offset=7)
@@ -536,13 +537,16 @@ class WIMUConfig:
             # print('self.datetime.time_offset', self.datetime.time_offset)
 
             # GPS dead time
-            [buf8] = struct.unpack_from('<B', data, offset=8)
+            # [buf8] = struct.unpack_from('<B', data, offset=8)
+            struct.unpack_from('<B', data, offset=8)
 
             # GPS Degrad time
-            [buf8] = struct.unpack_from('<B', data, offset=9)
+            # [buf8] = struct.unpack_from('<B', data, offset=9)
+            struct.unpack_from('<B', data, offset=9)
 
             # GPS Deadrec time
-            [buf8] = struct.unpack_from('<B', data, offset=10)
+            # [buf8] = struct.unpack_from('<B', data, offset=10)
+            struct.unpack_from('<B', data, offset=10)
 
             # GPS options
             [buf8] = struct.unpack_from('<B', data, offset=11)
@@ -552,10 +556,12 @@ class WIMUConfig:
             # print('self.gps.force_cold',self.gps.force_cold)
 
             # Power options
-            [buf8] = struct.unpack_from('<B', data, offset=12)
+            # [buf8] = struct.unpack_from('<B', data, offset=12)
+            struct.unpack_from('<B', data, offset=12)
 
             # Zigbee options
-            [buf8] = struct.unpack_from('<B', data, offset=13)
+            # [buf8] = struct.unpack_from('<B', data, offset=13)
+            struct.unpack_from('<B', data, offset=13)
 
             # Acc range
             [self.acc.range] = struct.unpack_from('<B', data, offset=14)
@@ -588,28 +594,28 @@ class WIMUConfig:
 
             [self.general.enable_watchdog] = struct.unpack_from('<?', data, current_offset)
 
-            #Logger
+            # Logger
             [self.logger.max_files_in_folder] = struct.unpack_from('<B', data, current_offset+1)
             [self.logger.split_by_day] = struct.unpack_from('<?', data, current_offset+2)
 
-            #GPS
+            # GPS
             [self.gps.interval] = struct.unpack_from('<B', data, current_offset+3)
             [self.gps.force_cold, self.gps.enable_scan_when_charged] = struct.unpack_from('<??', data, current_offset+4)
 
-            #Power
+            # Power
             [self.power.power_manage, self.power.enable_motion_detection, self.power.adv_power_manage] = struct.unpack_from('<???', data, current_offset+6)
 
-            #BLE
+            # BLE
             [self.ble.enable_control] = struct.unpack_from('<?', data, current_offset+9)
 
-            #Sensors
+            # Sensors
             [self.acc.range, self.gyro.range, self.magneto.range] = struct.unpack_from('<BBB', data, current_offset+10)
 
-            #Orientation
+            # Orientation
             [self.imu.beta] = struct.unpack_from('<f', data, current_offset+13)
             [self.imu.disable_magneto, self.imu.auto_calib_gyro] = struct.unpack_from('<??', data, current_offset+17)
 
-            #CRC
+            # CRC
             [self.crc] = struct.unpack_from('<I', data, current_offset+19)
 
         else:
@@ -703,12 +709,12 @@ def wimu_load_acc(time_data, acc_data, config: WIMUConfig):
                                   offset=i * epoch_size + 4 + 2 * len(x_raw) + 2 * len(y_raw))
 
             # Conversion to g
-            range_max = np.float32(AccOptions.range_max(config.acc.range, config.settings.hw_id))
+            # range_max = np.float32(AccOptions.range_max(config.acc.range, config.settings.hw_id))
             x_conv = config.acc.conversion_to_g(config.acc.range, x_raw, config.settings.hw_id)
             y_conv = config.acc.conversion_to_g(config.acc.range, y_raw, config.settings.hw_id)
             z_conv = config.acc.conversion_to_g(config.acc.range, z_raw, config.settings.hw_id)
-            """y_conv = (y_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
-            z_conv = (z_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max"""
+            # y_conv = (y_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
+            # z_conv = (z_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
 
             # Accumulate vectors (use last known
             acc_x[timestamps[-1]].append(x_conv)
@@ -801,12 +807,6 @@ def wimu_load_gyro(time_data, gyro_data, config: WIMUConfig):
                                   offset=i * epoch_size + 4 + 2 * len(x_raw) + 2 * len(y_raw))
 
             # Conversion to deg/sec
-            """
-            range_max = np.float32(GyroOptions.range_max(config.gyro.range, config.settings.hw_id))
-            x_conv = (x_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
-            y_conv = (y_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
-            z_conv = (z_raw + np.float32(32767.0)) / (2 * np.float32(32767.0)) * 2 * range_max - range_max
-            """
             x_conv = config.gyro.conversion_to_deg_per_sec(config.gyro.range, x_raw, config.settings.hw_id)
             y_conv = config.gyro.conversion_to_deg_per_sec(config.gyro.range, y_raw, config.settings.hw_id)
             z_conv = config.gyro.conversion_to_deg_per_sec(config.gyro.range, z_raw, config.settings.hw_id)

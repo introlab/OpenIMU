@@ -1,11 +1,8 @@
-'''
+"""
  Will contain data units
  @authors Simon Brière, Dominic Létourneau
  @date 20/03/2018
-'''
-
-from libopenimu.models.Base import Base
-from sqlalchemy import Column, Integer, String, Sequence
+"""
 
 
 class Units:

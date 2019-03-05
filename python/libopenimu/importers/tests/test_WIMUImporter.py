@@ -8,8 +8,6 @@
 
 
 import unittest
-import numpy as np
-import datetime
 import libopenimu.importers.wimu as wimu
 from libopenimu.importers.WIMUImporter import WIMUImporter
 from libopenimu.models.Participant import Participant

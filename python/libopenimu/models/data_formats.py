@@ -1,6 +1,3 @@
-"""
-
-"""
 from libopenimu.models.Base import Base
 from sqlalchemy import Column, Integer, String, Sequence
 import numpy as np
@@ -37,8 +34,8 @@ class DataFormat:
     @staticmethod
     def from_bytes(buffer, id_data_format):
         # Verify if valid
-        assert(DataFormat.is_valid(id_data_format))
-        assert(len(buffer) > 0)
+        # assert(DataFormat.is_valid(id_data_format))
+        # assert(len(buffer) > 0)
 
         if id_data_format is DataFormat.UINT8:
             return np.frombuffer(buffer=buffer, dtype=np.uint8)
@@ -75,7 +72,7 @@ class DataFormat:
 
     @staticmethod
     def get_num_bytes(id_data_format):
-        assert (DataFormat.is_valid(id_data_format))
+        # assert (DataFormat.is_valid(id_data_format))
 
         if id_data_format is DataFormat.UINT8 or id_data_format is DataFormat.SINT8:
             return 1
@@ -91,10 +88,9 @@ class DataFormat:
 
         return None
 
-
     @staticmethod
     def populate_database(conn):
-        """ Will populate database with table tabDataFormat """
+        # Will populate database with table tabDataFormat
         try:
             for format_id in DataFormat.value_dict:
                 conn.execute("INSERT INTO tabDataFormat (id_data_format, name)"

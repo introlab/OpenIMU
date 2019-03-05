@@ -1,46 +1,47 @@
-from PyQt5.QtWidgets import QDialog, QComboBox, QLineEdit, QFileDialog, QHBoxLayout, QListWidgetItem, QMainWindow
-from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal
+from PyQt5.QtWidgets import QDialog, QListWidgetItem
+from PyQt5.QtCore import pyqtSlot
 from resources.ui.python.ProcessSelectDialog_ui import Ui_dlgProcessSelect
 from libopenimu.db.DBManager import DBManager
 from libopenimu.algorithms.BaseAlgorithm import BaseAlgorithmFactory
-from libopenimu.qt.ResultWindow import ResultWindow
 
-from libopenimu.models.ProcessedData import ProcessedData
-from libopenimu.models.Recordset import Recordset
-from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog
+from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog, WorkerTask
 
 
 class ProcessSelectWindow(QDialog):
     processed_data = None
 
-    def __init__(self, dataManager : DBManager, recordsets : list, parent=None):
-        super(QDialog, self).__init__(parent=parent)
+    def __init__(self, data_manager: DBManager, recordsets: list, parent=None):
+        super(ProcessSelectWindow, self).__init__(parent=parent)
         self.UI = Ui_dlgProcessSelect()
         self.UI.setupUi(self)
-        self.dbMan = dataManager
+        self.dbMan = data_manager
 
         self.UI.frameInfos.hide()
 
         # print('recordsets: ', recordsets)
-        self.recordsets = recordsets
-        self.fill_algorithms_list()
-        self.factory = None
-
         self.UI.btnProcess.setEnabled(False)
+        self.recordsets = recordsets
+        self.factory = None
+        self.fill_algorithms_list()
+
         # Connect signals
         self.UI.btnProcess.clicked.connect(self.on_process_button_clicked)
 
     def fill_algorithms_list(self):
         # BaseAlgorithmFactory.print_factories()
-        for factory in  BaseAlgorithmFactory.factories:
+        for factory in BaseAlgorithmFactory.factories:
             # Add to list
             item = QListWidgetItem(factory.name())
             self.UI.listWidget.addItem(item)
             # Connect signals
             self.UI.listWidget.itemClicked.connect(self.on_list_widget_item_clicked)
 
+        if self.UI.listWidget.count() > 0:
+            self.UI.listWidget.setCurrentRow(0)
+            self.on_list_widget_item_clicked(item=self.UI.listWidget.currentItem())
+
     @pyqtSlot(QListWidgetItem)
-    def on_list_widget_item_clicked(self, item : QListWidgetItem):
+    def on_list_widget_item_clicked(self, item: QListWidgetItem):
         # print('onListWidgetItemClicked')
         # Fill info
         self.factory = BaseAlgorithmFactory.get_factory_named(item.text())
@@ -49,7 +50,7 @@ class ProcessSelectWindow(QDialog):
             self.UI.lblAuthorValue.setText(info['author'])
 
         if info.__contains__('description'):
-            self.UI.txtDesc.setPlainText(info['description'].replace('\t',"").replace("        ",""))
+            self.UI.txtDesc.setPlainText(info['description'].replace('\t', "").replace("        ",""))
 
         if info.__contains__('name'):
             self.UI.lblNameValue.setText(info['name'])
@@ -65,12 +66,12 @@ class ProcessSelectWindow(QDialog):
 
     @pyqtSlot()
     def on_process_button_clicked(self):
-        print('on_process_button_clicked')
         if self.factory is not None:
 
-            class Processor:
-                def __init__(self, algo, dbmanager, recordsets):
-                    self.algo = algo
+            class Processor(WorkerTask):
+                def __init__(self, title, algor, dbmanager, recordsets, parent=None):
+                    super(Processor, self).__init__(title, 0, parent)
+                    self.algo = algor
                     self.dbMan = dbmanager
                     self.recordsets = recordsets
                     self.results = {}
@@ -85,21 +86,31 @@ class ProcessSelectWindow(QDialog):
                     print('getting results')
                     return self.results
 
-
             # For testing, should display a configuration GUI first
             params = {}
             algo = self.factory.create(params)
 
+            # Remove recordsets that don't have the required sensors
+            required_sensors = self.factory.required_sensors()
+            for recordset in self.recordsets:
+                sensors = self.dbMan.get_sensors(recordset)
+                sensors_types = []
+                for sensor in sensors:
+                    sensors_types.append(sensor.id_sensor_type)
+                ok = all(elem in sensors_types for elem in required_sensors)
+                if not ok:
+                    self.recordsets.remove(recordset)
+
             # Create background process
-            processor = Processor(algo, self.dbMan, self.recordsets)
-            process = BackgroundProcess([processor.process])
+            processor = Processor(title=self.UI.lblNameValue.text(), algor=algo, dbmanager=self.dbMan,
+                                  recordsets=self.recordsets)
+            process = BackgroundProcess([processor])
 
             # Create progress dialog
-            dialog = ProgressDialog(1, self)
-            dialog.setWindowTitle('Traitement...')
+            dialog = ProgressDialog(process, 'Analyse des données', self)
 
-            process.finished.connect(dialog.accept)
-            process.trigger.connect(dialog.trigger)
+            # process.finished.connect(dialog.accept)
+            # process.trigger.connect(dialog.trigger)
             process.start()
 
             dialog.exec()
@@ -108,13 +119,14 @@ class ProcessSelectWindow(QDialog):
 
             # results = algo.calculate(self.dbMan, self.recordsets)
             print('Algo results', results)
-            """window = QMainWindow(self)
-            window.setWindowTitle('Results: ' + self.factory.info()['name'])
-            widget = ResultWindow(self)
-            widget.display_freedson_1998(results, self.recordsets)
-            window.setCentralWidget(widget)
-            window.resize(800, 600)
-            window.show()"""
+
+            # window = QMainWindow(self)
+            # window.setWindowTitle('Results: ' + self.factory.info()['name'])
+            # widget = ResultWindow(self)
+            # widget.display_freedson_1998(results, self.recordsets)
+            # window.setCentralWidget(widget)
+            # window.resize(800, 600)
+            # window.show()
 
             # Save to database
             name = self.factory.info()['name'] + " - " + self.recordsets[0].name

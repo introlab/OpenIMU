@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1245</width>
-    <height>1122</height>
+    <width>984</width>
+    <height>587</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -27,27 +27,26 @@
     <normaloff>:/OpenIMU/icons/OpenIMU.png</normaloff>:/OpenIMU/icons/OpenIMU.png</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget#MainWindow,QWidget#ImportBrowser,QWidget#ImportManager,QWidget#frmParticipant,QWidget#ExportCSV,QWidget#ImportDialog,QWidget#StartDialog,QWidget#dlgProcessSelect{background:qlineargradient(spread:pad, x1:0.483, y1:0, x2:0.511045, y2:1, stop:0 rgba(50, 50, 50, 255), stop:1 rgba(203, 203, 203, 255));border-radius:0px;}
+   <string notr="true">QWidget#MainWindow,QWidget#ImportBrowser,QWidget#ImportManager,QWidget#frmParticipant,QWidget#ExportCSV,QWidget#ImportDialog,QWidget#StartDialog,QWidget#dlgProcessSelect, QWidget#DataInfosWidget,QDialog{background:qlineargradient(spread:pad, x1:0.483, y1:0, x2:0.511045, y2:1, stop:0 rgb(50, 50, 50), stop:1 rgb(153, 153, 153));border-radius:0px;}
 
 QFrame#frameTitle{background-color:rgba(130,130,130,50%);}
 QFrame#frameInfos{background-color:rgba(50,50,50,50%);}
 
 QWidget{border-radius:5px;}
 
-QWidget#dockWidgetLogContents{background-color:rgba(0,0,0,0%);}
-QWidget#dockWidgetTreeContents,QWidget#dockWidgetToolsContents,QWidget#dockTabbedToolsContents{background-color:rgba(0,0,0,70%);  border-radius:5px;}
+QWidget#dockWidgetTreeContents,QWidget#dockWidgetLogContents,QWidget#dockWidgetToolsContents,QWidget#dockTabbedToolsContents{background-color:rgba(0,0,0,70%);  border-radius:5px;}
 
 QWidget#line,QWidget#line_2,QWidget#line_3{background-color:rgba(100,100,100,100%);}
 
-QFrame#frameButtons{background-color:rgba(220,220,220,30%); border-radius:5px;}
+QFrame#frameButtons,QFrame#frameTools,QFrame#frameCursor{background-color:rgba(0,0,0,70%);  border-radius:5px;}
 
-QPushButton#btnAddGroup,QPushButton#btnAddParticipant,QPushButton#btnDelete{background:none;background-color:rgb(230,230,230);}
+QPushButton:hover,QToolButton:hover{color:black;background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 grey, stop: 0.2  rgb(200,200, 200), stop:1 grey);border: 2px solid rgb(186, 186, 186);}
+QPushButton,QToolButton{color:white; background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 black, stop: 0.2  rgb(200,200, 200), stop:1 black);border: 2px solid rgb(96, 96, 96);}
+QPushButton:!enabled,QToolButton:!enabled{color: rgb(168, 168, 168); background-color: rgba(200,200,200,10%);border: 0px transparent}
+QPushButton:checked,QToolButton:checked{color:black;border: 3px solid green;background-color:darkgreen;}
+QPushButton[checkable=true]:!checked,QToolButton[checkable=true]:!checked{color:red;background-color:rgba(180,0,0,50%);border: 2px solid rgb(180,0,0);}
 
-QPushButton:hover,QToolButton:hover{color:white;background-image:url(:/OpenIMU/background/gray_texture.jpg)}
-QPushButton,QToolButton{color:white;background-image:url(:/OpenIMU/background/light_metal.jpg);}
-QPushButton:!enabled,QToolButton:!enabled{color: rgb(168, 168, 168);}
-
-QLabel{color:white;}
+QLabel,QCheckBox{color:white;}
 
 QTreeWidget, QListWidget{background-color:rgba(200,200,200,70%);}
 
@@ -57,6 +56,7 @@ QListWidget#lstSensors,QTableWidget{background-color:rgba(200,200,200,70%);}
 
 QDockWidget{color:white;}
 QDockWidget::title{
+border: 2px solid darkgrey;
 background-color:grey;
 text-align: center;
 }
@@ -67,9 +67,7 @@ QMainWindow::separator {
 }
 
 QLabel#lblVersion{color:black;}
-
-QToolButton#btnShowDataset,QToolButton#btnShowLog{background-color:transparent;background-image:url();}
-QToolButton#btnShowDataset:checked,QToolButton#btnShowLog:checked{background-color:darkgreen;background-image:url();}</string>
+</string>
   </property>
   <property name="documentMode">
    <bool>false</bool>
@@ -85,7 +83,7 @@ QToolButton#btnShowDataset:checked,QToolButton#btnShowLog:checked{background-col
   </property>
   <widget class="QWidget" name="frmMain">
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -362,7 +360,7 @@ QToolButton#btnShowDataset:checked,QToolButton#btnShowLog:checked{background-col
    <property name="minimumSize">
     <size>
      <width>102</width>
-     <height>107</height>
+     <height>230</height>
     </size>
    </property>
    <property name="windowTitle">
@@ -388,7 +386,7 @@ QToolButton#btnShowDataset:checked,QToolButton#btnShowLog:checked{background-col
      <item>
       <widget class="QTextEdit" name="txtLog">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+        <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -407,7 +405,7 @@ QToolButton#btnShowDataset:checked,QToolButton#btnShowLog:checked{background-col
    </property>
    <property name="minimumSize">
     <size>
-     <width>925</width>
+     <width>968</width>
      <height>50</height>
     </size>
    </property>
@@ -569,50 +567,17 @@ QToolButton#btnShowDataset:checked,QToolButton#btnShowLog:checked{background-col
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="btnOpen">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>100</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="cursor">
-        <cursorShape>PointingHandCursor</cursorShape>
-       </property>
-       <property name="text">
-        <string>Ouvrir</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../core.qrc">
-         <normaloff>:/OpenIMU/icons/open.png</normaloff>:/OpenIMU/icons/open.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>24</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextBesideIcon</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QToolButton" name="btnImport">
        <property name="minimumSize">
         <size>
          <width>100</width>
          <height>32</height>
         </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
        </property>
        <property name="cursor">
         <cursorShape>PointingHandCursor</cursorShape>
@@ -626,6 +591,43 @@ QToolButton#btnShowDataset:checked,QToolButton#btnShowLog:checked{background-col
        <property name="icon">
         <iconset resource="../core.qrc">
          <normaloff>:/OpenIMU/icons/import.png</normaloff>:/OpenIMU/icons/import.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="btnTransfer">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="toolTip">
+        <string>Transfère et importe les données directement à partir d'un appareil</string>
+       </property>
+       <property name="text">
+        <string>Transférer</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../core.qrc">
+         <normaloff>:/OpenIMU/icons/transfer.png</normaloff>:/OpenIMU/icons/transfer.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -662,6 +664,11 @@ QToolButton#btnShowDataset:checked,QToolButton#btnShowLog:checked{background-col
          <height>32</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="cursor">
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
@@ -669,7 +676,7 @@ QToolButton#btnShowDataset:checked,QToolButton#btnShowLog:checked{background-col
         <string>Traite les données avec différents algorithmes</string>
        </property>
        <property name="text">
-        <string>Traiter</string>
+        <string>Analyser</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
@@ -743,6 +750,40 @@ QToolButton#btnShowDataset:checked,QToolButton#btnShowLog:checked{background-col
       </widget>
      </item>
      <item>
+      <widget class="QToolButton" name="btnCompact">
+       <property name="minimumSize">
+        <size>
+         <width>110</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="text">
+        <string>Compacter</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../core.qrc">
+         <normaloff>:/OpenIMU/icons/compact.png</normaloff>:/OpenIMU/icons/compact.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QToolButton" name="btnDataSetInfos">
        <property name="minimumSize">
         <size>
@@ -768,12 +809,12 @@ QToolButton#btnShowDataset:checked,QToolButton#btnShowLog:checked{background-col
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
-         <normaloff>:/OpenIMU/icons/newdataset.png</normaloff>:/OpenIMU/icons/newdataset.png</iconset>
+         <normaloff>:/OpenIMU/icons/info.png</normaloff>:/OpenIMU/icons/info.png</iconset>
        </property>
        <property name="iconSize">
         <size>
-         <width>18</width>
-         <height>18</height>
+         <width>24</width>
+         <height>24</height>
         </size>
        </property>
        <property name="toolButtonStyle">
@@ -793,6 +834,49 @@ QToolButton#btnShowDataset:checked,QToolButton#btnShowLog:checked{background-col
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="QToolButton" name="btnClose">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="text">
+        <string>Fermer</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../core.qrc">
+         <normaloff>:/OpenIMU/icons/delete.png</normaloff>:/OpenIMU/icons/delete.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>

@@ -17,9 +17,8 @@ class FreedsonAdult1998(BaseAlgorithm):
 
     def configure(self, params: dict):
         print('FreedsonAdult1998.configure')
-        pass
 
-    def calculate(self, manager: DBManager, recordsets : list):
+    def calculate(self, manager: DBManager, recordsets: list):
         print('FreedsonAdult1998.calculate')
         print('Using recordsets', recordsets)
 
@@ -28,11 +27,10 @@ class FreedsonAdult1998(BaseAlgorithm):
         for record in recordsets:
             # Get all sensors in record
             sensors = manager.get_all_sensors(id_sensor_type=SensorType.ACCELEROMETER)
-            for sensor in sensors:
 
+            for sensor in sensors:
                 # print('Found Accelerometer')
                 channels = manager.get_all_channels(sensor=sensor)
-
                 # print('Found channels: ', channels)
                 for channel in channels:
                     if channel.label == 'Accelerometer_Y':
@@ -42,7 +40,11 @@ class FreedsonAdult1998(BaseAlgorithm):
                                                                    channel=channel)
                         if len(channel_data) > 0:
                             # Process all sensor data
-                            results.append(freedson_adult_1998(channel_data, sensor.sampling_rate))
+                            result = {'id_recordset': record.id_recordset,
+                                      'result_name': record.name + ' (' + sensor.location + '/' + sensor.name + ')',
+                                      'id_sensor': sensor.id_sensor, 'result':
+                                          freedson_adult_1998(channel_data, sensor.sampling_rate)}
+                            results.append(result)
 
         # Return an array with results for each recordset
         return results
@@ -50,8 +52,7 @@ class FreedsonAdult1998(BaseAlgorithm):
 
 class FreedsonAdult1998Factory(BaseAlgorithmFactory):
     def __init__(self):
-        super(BaseAlgorithmFactory, self).__init__()
-        pass
+        super().__init__()
 
     def create(self, params: dict):
         # Create instance of algorithm
@@ -107,34 +108,44 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
     def required_sensors(self):
         return [SensorType.ACCELEROMETER]
 
-    def build_display_widget(self, parent_widget:QWidget, results, recordsets):
+    def build_display_widget(self, parent_widget: QWidget, results, recordsets):
 
         layout = QVBoxLayout()
         # Add Scroll area
         scroll = QScrollArea(parent=parent_widget)
-        #parent_widget.layout().addWidget(scroll)
 
         scroll.setLayout(layout)
-        #layout.addWidget(scroll)
         view = OpenIMUBarGraphView(scroll)
         view.set_title('Active minutes')
         layout.addWidget(view)
 
-        if len(results) == len(recordsets):
-            for i in range(len(results)):
-                view.set_category_axis(results[i].keys())
-                values = []
+        for result in results:
+            data = result['result']
+            view.set_category_axis(data.keys())
+            values = []
 
-                for key in results[i]:
-                    values.append(results[i][key])
+            for key in data:
+                values.append(data[key])
 
-                label = recordsets[i].name
-                view.add_set(label, values)
+            label = result['result_name']
+            view.add_set(label, values)
+
+        # if len(results) == len(recordsets):
+        #     for i, _ in enumerate(results):
+        #         view.set_category_axis(results[i].keys())
+        #         values = []
+        #
+        #         for key in results[i]:
+        #             values.append(results[i][key])
+        #
+        #         label = recordsets[i].name
+        #         view.add_set(label, values)
 
         # Update view
         view.update()
 
         return scroll
+
 
 # Factory init
 def init():

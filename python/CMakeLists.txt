@@ -43,6 +43,11 @@ SET(uis
     resources/ui/ImportBrowser.ui
     resources/ui/ExportCSV.ui
     resources/ui/ProcessSelectDialog.ui
+    resources/ui/GraphWidget.ui
+    resources/ui/DataInfosWidget.ui
+    resources/ui/ProgressDialog.ui
+    resources/ui/StreamWindow.ui
+    resources/ui/ImportMatchDialog.ui
 )
 
 SET(qrcs
@@ -111,6 +116,7 @@ set (installer_args
     --hidden-import scipy._lib.messagestream
     --hidden-import sqlalchemy.ext.baked
     --hidden-import PyQt5.sip
+    --hidden-import logging.config
     --clean
     -y
     --windowed

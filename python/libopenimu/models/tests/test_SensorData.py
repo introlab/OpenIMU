@@ -14,7 +14,6 @@ from libopenimu.models.Channel import Channel
 from libopenimu.models.Sensor import Sensor
 from libopenimu.models.Recordset import Recordset
 import numpy as np
-import datetime
 
 
 class SensorDataTest(unittest.TestCase):
@@ -48,7 +47,8 @@ class SensorDataTest(unittest.TestCase):
         self.assertEqual(sensordata.data_timestamp, 10)
         self.assertEqual(sensordata.data, [1, 2, 3, 4, 5])
 
-    def test_to_time_series(self):
+    @staticmethod
+    def test_to_time_series():
         sensordata = SensorData()
         sensordata.id_sensor_data = 1
         recordset = Recordset()

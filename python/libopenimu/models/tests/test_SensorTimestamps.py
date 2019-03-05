@@ -8,7 +8,6 @@
 
 
 import unittest
-from libopenimu.models.SensorTimestamps import SensorTimestamps
 
 
 class UnitsTest(unittest.TestCase):

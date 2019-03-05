@@ -1,12 +1,9 @@
-from PyQt5.QtWidgets import QLineEdit, QWidget, QPushButton, QComboBox
-from PyQt5.QtCore import Qt, QUrl, pyqtSlot, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSlot
 
 from resources.ui.python.ParticipantWidget_ui import Ui_frmParticipant
 from libopenimu.models.Participant import Participant
 from libopenimu.qt.DataEditor import DataEditor
-from libopenimu.models.Group import Group
 
-from libopenimu.db.DBManager import DBManager
 
 class ParticipantWindow(DataEditor):
 
@@ -14,7 +11,7 @@ class ParticipantWindow(DataEditor):
     dbMan = None
 
     def __init__(self, dbManager, participant=None, parent=None, default_group = None):
-        super(QWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.UI = Ui_frmParticipant()
         self.UI.setupUi(self)
 
@@ -32,7 +29,7 @@ class ParticipantWindow(DataEditor):
         # Load groups
         groups = self.dbMan.get_all_groups()
         self.UI.cmbGroups.clear()
-        self.UI.cmbGroups.addItem("Aucun",userData=None)
+        self.UI.cmbGroups.addItem("Aucun", userData=None)
 
         for group in groups:
             self.UI.cmbGroups.addItem(group.name, userData=group.id_group)
@@ -63,17 +60,15 @@ class ParticipantWindow(DataEditor):
         if self.participant is not None:
             self.UI.txtName.setText(self.participant.name)
             self.UI.txtDesc.setPlainText(self.participant.description)
-            """if self.participant.group is not None and self.participant.group.name is not None:
-                self.UI.lblGroupValue.setText(self.participant.group.name)
-            else:
-                self.UI.lblGroupValue.setText("Aucun")
-            """
+            # if self.participant.group is not None and self.participant.group.name is not None:
+            #     self.UI.lblGroupValue.setText(self.participant.group.name)
+            # else:
+            #     self.UI.lblGroupValue.setText("Aucun")
             self.UI.cmbGroups.setCurrentIndex(self.UI.cmbGroups.findData(self.participant.id_group))
         else:
             self.UI.txtName.setText("")
             self.UI.txtDesc.setPlainText("")
             self.UI.cmbGroups.setCurrentIndex(0)
-
 
     def enable_buttons(self, enable):
         self.UI.btnCancel.setEnabled(enable or self.participant is None)

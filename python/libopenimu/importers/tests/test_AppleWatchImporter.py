@@ -5,12 +5,7 @@
     @date 30/05/2018
 
 """
-
-
 import unittest
-import numpy as np
-import datetime
-import libopenimu.importers.wimu as wimu
 from libopenimu.importers.AppleWatchImporter import AppleWatchImporter
 from libopenimu.models.Participant import Participant
 from libopenimu.db.DBManager import DBManager
@@ -27,7 +22,8 @@ class AppleWatchImporterTest(unittest.TestCase):
     def test_load_file(self):
         pass
 
-    def test_load_zip_file(self):
+    @staticmethod
+    def test_load_zip_file():
         # Testing
 
         manager = DBManager('applewatch.oi', overwrite=True)
@@ -39,7 +35,8 @@ class AppleWatchImporterTest(unittest.TestCase):
         # print('results', results)
         importer.import_to_database(results)
 
-    def test_load_data_file(self):
+    @staticmethod
+    def test_load_data_file():
         # Testing
 
         manager = DBManager('applewatch.oi', overwrite=True)

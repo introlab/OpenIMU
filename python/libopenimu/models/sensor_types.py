@@ -1,8 +1,5 @@
-"""
-
-"""
-from libopenimu.models.Base import Base
-from sqlalchemy import Column, Integer, String, Sequence
+# from libopenimu.models.Base import Base
+# from sqlalchemy import Column, Integer, String, Sequence
 
 
 class SensorType:
@@ -52,7 +49,7 @@ class SensorType:
 
     @staticmethod
     def populate_database(conn):
-        """ Will populate database with table tabSensorTypes """
+        # Will populate database with table tabSensorTypes
         try:
             for id_sensor in SensorType.value_dict:
                 conn.execute("INSERT INTO tabSensorTypes (id_sensor_type, name)"
@@ -63,15 +60,16 @@ class SensorType:
 
     @staticmethod
     def sensor_type_validation(id_sensor_type):
-        assert(SensorType.is_valid_type(id_sensor_type) is True), "SensorType not in valid range"
+        # assert(SensorType.is_valid_type(id_sensor_type) is True), "SensorType not in valid range"
+        return
 
 
 # Not used...
-class DBSensorType(Base):
-    __tablename__ = 'tabSensorTypes'
-    id_sensor_type = Column(Integer, Sequence('id_sensor_type_sequence'), primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
-
-    # Database rep (optional)
-    def __repr__(self):
-        return "<DBSensorType(name='%s')>" % self.name
+# class DBSensorType(Base):
+#     __tablename__ = 'tabSensorTypes'
+#     id_sensor_type = Column(Integer, Sequence('id_sensor_type_sequence'), primary_key=True, autoincrement=True)
+#     name = Column(String, nullable=False)
+#
+#     # Database rep (optional)
+#     def __repr__(self):
+#         return "<DBSensorType(name='%s')>" % self.name
