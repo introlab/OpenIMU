@@ -168,8 +168,7 @@ class ImportBrowser(QDialog):
 
     @pyqtSlot()
     def add_clicked(self):
-        importman = ImportManager(dbmanager=self.dbMan, dirs=False)
-        importman.setStyleSheet(self.styleSheet())
+        importman = ImportManager(dbmanager=self.dbMan, dirs=False, parent=self)
 
         if self.UI.tableFiles.rowCount() > 0:
             # Copy informations into the dialog
@@ -177,18 +176,16 @@ class ImportBrowser(QDialog):
             importman.set_participant(self.UI.tableFiles.item(last_row, 1).text())
             importman.set_filetype(self.UI.tableFiles.item(last_row, 2).text())
 
-        self.showMinimized()
+        # self.showMinimized()
         if importman.exec() == QDialog.Accepted:
             files = importman.filename.split(";")
             # Add file to list
             for file in files:
                 self.add_file_to_list(file, importman.filetype, importman.filetype_id, importman.participant)
-        self.showNormal()
 
     @pyqtSlot()
     def add_dir_clicked(self):
-        importman = ImportManager(dbmanager=self.dbMan, dirs=True)
-        importman.setStyleSheet(self.styleSheet())
+        importman = ImportManager(dbmanager=self.dbMan, dirs=True, parent=self)
 
         if self.UI.tableFiles.rowCount() > 0:
             # Copy informations into the dialog
@@ -196,13 +193,13 @@ class ImportBrowser(QDialog):
             importman.set_participant(self.UI.tableFiles.item(last_row, 1).text())
             importman.set_filetype(self.UI.tableFiles.item(last_row, 2).text())
 
-        self.showMinimized()
+        # self.showMinimized()
         if importman.exec() == QDialog.Accepted:
             files = importman.get_file_list()
             for file_name, file_part in files.items():
                 self.add_file_to_list(file_name, importman.filetype, importman.filetype_id, file_part)
 
-        self.showNormal()
+        # self.showNormal()
 
     @pyqtSlot()
     def del_clicked(self):

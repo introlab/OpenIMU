@@ -357,11 +357,11 @@ class AppleWatchImporter(BaseImporter):
                 self.last_error = "Aucune données temporelles."
                 return
 
-            # Other values are float32
-            valuesarray = np.asarray(sensoria[timestamp]['values'], dtype=np.float32)
-
             # Create sensor timestamps first
             sensor_timestamps = self.create_sensor_timestamps(timesarray, recordset)
+
+            # FSR values are uint16
+            valuesarray = np.asarray(sensoria[timestamp]['values'], dtype=np.uint16)
 
             # Store FSR
             for i, fsr_channel in enumerate(sensoria_fsr_channels):
@@ -369,6 +369,8 @@ class AppleWatchImporter(BaseImporter):
                                            sensor_timestamps,
                                            valuesarray[:, i + 1])
 
+            # Other values are float32
+            valuesarray = np.asarray(sensoria[timestamp]['values'], dtype=np.float32)
             # Store Acc
             for i, acc_channel in enumerate(sensoria_acc_channels):
                 self.add_sensor_data_to_db(recordset, sensoria_acc_sensor, acc_channel,
