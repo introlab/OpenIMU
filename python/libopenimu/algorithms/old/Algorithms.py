@@ -45,12 +45,12 @@ def svm(data):
     return mag
 
 
-"""
-    Calculating counts
-    mag[t,mag_xyz]
-    epoch in seconds
-    rate in Hz
-"""
+#
+#     Calculating counts
+#     mag[t,mag_xyz]
+#     epoch in seconds
+#     rate in Hz
+#
 
 
 def counts(mag, epoch=60, rate=100):
