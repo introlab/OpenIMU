@@ -829,9 +829,11 @@ class EmittingStream(PyQt5.QtCore.QObject):
 
 # Main
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
 
-    app.setAttribute(Qt.AA_EnableHighDpiScaling)
+    # Must be done before starting the app
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+
+    app = QApplication(sys.argv)
 
     # qInstallMessageHandler(qt_message_handler)
 

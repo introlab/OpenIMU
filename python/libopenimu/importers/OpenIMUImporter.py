@@ -371,85 +371,121 @@ class OpenIMUImporter(BaseImporter):
 
         # Todo better than while 1?
         progress = 0
-        while file.readable():
 
-            chunk = file.read(1)
-            if len(chunk) < 1:
-                # print("Reached end of file")
-                break
+        old_file_position = file.tell()
+        file.seek(0, os.SEEK_END)
+        file_size = file.tell()
+        file.seek(old_file_position, os.SEEK_SET)
 
-            (headChar) = struct.unpack("c", chunk)
-            # print('headchar ', headChar)
+        try:
+            while file.readable():
+                chunk = file.read(1)
+                if len(chunk) < 1:
+                    # print("Reached end of file")
+                    break
 
-            if headChar[0] == b'h':
-                n = n + 1
-                # print("New log stream detected")
-            elif headChar[0] == b't':
-                n = n + 1
-                chunk = file.read(struct.calcsize("i"))
-                current_timestamp = self.processTimestampChunk(chunk, debug)
+                (headChar) = struct.unpack("c", chunk)
+                # print('headchar ', headChar)
 
-                timestamp_hour = np.floor(current_timestamp / 3600) * 3600
+                if headChar[0] == b'h':
+                    n = n + 1
+                    # print("New log stream detected")
+                elif headChar[0] == b't':
+                    n = n + 1
+                    chunk = file.read(struct.calcsize("i"))
+                    # Size verification
+                    if len(chunk) != struct.calcsize("i"):
+                        print('Timestamp Read size error ', len(chunk))
+                        break
 
-                # Initialize data structure at this timestamp
-                if not results.__contains__(timestamp_hour):
-                    # print("init timestamp = ", timestamp)
-                    results[timestamp_hour] = {}
-                    results[timestamp_hour]['gps'] = {'times': [], 'values': [],
-                                                      'start_time': current_timestamp,
-                                                      'end_time': current_timestamp + 1}
+                    current_timestamp = self.processTimestampChunk(chunk, debug)
 
-                    results[timestamp_hour]['power'] = {'times': [], 'values': [],
-                                                        'start_time': current_timestamp,
-                                                        'end_time': current_timestamp + 1}
+                    timestamp_hour = np.floor(current_timestamp / 3600) * 3600
 
-                    results[timestamp_hour]['imu'] = {'times': [], 'values': [],
-                                                      'start_time': current_timestamp,
-                                                      'end_time': current_timestamp + 1}
+                    # Initialize data structure at this timestamp
+                    if not results.__contains__(timestamp_hour):
+                        # print("init timestamp = ", timestamp)
+                        results[timestamp_hour] = {}
+                        results[timestamp_hour]['gps'] = {'times': [], 'values': [],
+                                                          'start_time': current_timestamp,
+                                                          'end_time': current_timestamp + 1}
 
-                    results[timestamp_hour]['baro'] = {'times': [], 'values': [],
-                                                       'start_time': current_timestamp,
-                                                       'end_time': current_timestamp + 1}
+                        results[timestamp_hour]['power'] = {'times': [], 'values': [],
+                                                            'start_time': current_timestamp,
+                                                            'end_time': current_timestamp + 1}
 
-            elif headChar[0] == b'i':
-                n = n + 1
-                chunk = file.read(struct.calcsize("9f"))
-                data = self.processImuChunk(chunk, debug)
-                if timestamp_hour is not None:
-                    results[timestamp_hour]['imu']['values'].append(data)
-                    results[timestamp_hour]['imu']['end_time'] = current_timestamp + 1
+                        results[timestamp_hour]['imu'] = {'times': [], 'values': [],
+                                                          'start_time': current_timestamp,
+                                                          'end_time': current_timestamp + 1}
 
-            elif headChar[0] == b'g':
-                n = n + 1
-                chunk = file.read(struct.calcsize("?3f"))
-                data = self.processGPSChunk(chunk, debug)
-                if timestamp_hour is not None:
-                    results[timestamp_hour]['gps']['values'].append(data)
-                    results[timestamp_hour]['gps']['end_time'] = current_timestamp + 1
+                        results[timestamp_hour]['baro'] = {'times': [], 'values': [],
+                                                           'start_time': current_timestamp,
+                                                           'end_time': current_timestamp + 1}
 
-            elif headChar[0] == b'p':
-                n = n + 1
-                chunk = file.read(struct.calcsize("2f"))
-                data = self.processPowerChunk(chunk, debug)
-                if timestamp_hour is not None:
-                    results[timestamp_hour]['power']['values'].append(data)
-                    results[timestamp_hour]['power']['end_time'] = current_timestamp + 1
+                elif headChar[0] == b'i':
+                    n = n + 1
+                    chunk = file.read(struct.calcsize("9f"))
+                    # Size verification
+                    if len(chunk) != struct.calcsize("9f"):
+                        print('IMU Read size error ', len(chunk))
+                        break
 
-            elif headChar[0] == b'b':
-                n = n + 1
-                chunk = file.read(struct.calcsize("2f"))
-                data = self.processBarometerChunk(chunk, debug)
-                if timestamp_hour is not None:
-                    results[timestamp_hour]['baro']['values'].append(data)
-                    results[timestamp_hour]['baro']['end_time'] = current_timestamp + 1
+                    data = self.processImuChunk(chunk, debug)
+                    if timestamp_hour is not None:
+                        results[timestamp_hour]['imu']['values'].append(data)
+                        results[timestamp_hour]['imu']['end_time'] = current_timestamp + 1
 
-            else:
-                print("Unrecognised chunk :", headChar[0])
-                break
-            new_progress = np.floor((file.tell() / self.current_file_size) * 100 / 2)
-            if new_progress != progress:  # Only send update if % was increased
-                progress = new_progress
-                self.update_progress.emit(progress)
+                elif headChar[0] == b'g':
+                    n = n + 1
+                    chunk = file.read(struct.calcsize("?3f"))
+                    # Size verification
+                    if len(chunk) != struct.calcsize("?3f"):
+                        print('GPS Read size error ', len(chunk))
+                        break
+
+                    data = self.processGPSChunk(chunk, debug)
+                    if timestamp_hour is not None:
+                        results[timestamp_hour]['gps']['values'].append(data)
+                        results[timestamp_hour]['gps']['end_time'] = current_timestamp + 1
+
+                elif headChar[0] == b'p':
+                    n = n + 1
+                    chunk = file.read(struct.calcsize("2f"))
+                    # Size verification
+                    if len(chunk) != struct.calcsize("2f"):
+                        print('Pulse Read size error ', len(chunk))
+                        break
+
+                    data = self.processPowerChunk(chunk, debug)
+                    if timestamp_hour is not None:
+                        results[timestamp_hour]['power']['values'].append(data)
+                        results[timestamp_hour]['power']['end_time'] = current_timestamp + 1
+
+                elif headChar[0] == b'b':
+                    n = n + 1
+                    chunk = file.read(struct.calcsize("2f"))
+                    # Size verification
+                    if len(chunk) != struct.calcsize("2f"):
+                        print('Barometer Read size error ', len(chunk))
+                        break
+
+                    data = self.processBarometerChunk(chunk, debug)
+                    if timestamp_hour is not None:
+                        results[timestamp_hour]['baro']['values'].append(data)
+                        results[timestamp_hour]['baro']['end_time'] = current_timestamp + 1
+
+                else:
+                    print("Unrecognised chunk :", headChar[0])
+                    break
+                new_progress = np.floor((file.tell() / self.current_file_size) * 100 / 2)
+                if new_progress != progress:  # Only send update if % was increased
+                    progress = new_progress
+                    self.update_progress.emit(progress)
+
+        except IOError:
+            print('IOError while reading file')
+
+        print('File final position: ', file.tell(), '/', file_size)
 
         # File is read.
         # Generate time according to number of samples per timestamp
