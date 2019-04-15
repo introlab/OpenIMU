@@ -45,12 +45,12 @@ class BaseImporter(QObject):
         try:
             my_time = datetime.datetime.fromtimestamp(timestamp)
         except ValueError:
-            return
+            return None
 
         # Validate timestamp
         if my_time > datetime.datetime.now() or my_time < datetime.datetime(2018, 1, 1):
             print("Invalid timestamp: " + str(timestamp))
-            return
+            return None
 
         # Find a record the same day
         for record in self.recordsets:
