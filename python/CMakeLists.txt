@@ -130,4 +130,4 @@ add_custom_target(python_package
     DEPENDS python_target ${python_uis} ${python_qrcs} python-env
 )
 
-
+add_custom_target(python-all DEPENDS python_target ${python_uis} ${python_qrcs} python-env)
