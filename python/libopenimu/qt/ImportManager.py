@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QDialog, QFileDialog, QHBoxLayout
-from PyQt5.QtCore import pyqtSlot, Qt
+from PyQt5.QtCore import pyqtSlot, Qt, pyqtSignal
 
 from resources.ui.python.ImportManager_ui import Ui_ImportManager
 
@@ -26,6 +26,8 @@ class ImportManager(QDialog):
     import_stream = False
     part_widget = None
     participant_multi = False
+
+    participant_added = pyqtSignal()
 
     def __init__(self, dbmanager, dirs, stream=False, parent=None):
         super(ImportManager, self).__init__(parent=parent)
@@ -172,6 +174,8 @@ class ImportManager(QDialog):
         self.load_participants()
 
         self.UI.cmbParticipant.setCurrentText(self.part_widget.participant.name)
+
+        self.participant_added.emit()
 
     @pyqtSlot()
     def current_participant_changed(self):
