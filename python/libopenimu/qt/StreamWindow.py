@@ -22,7 +22,7 @@ class StreamWindow(QDialog):
         super().__init__(parent=parent)
         self.UI = Ui_StreamWindow()
         self.UI.setupUi(self)
-        self.setWindowFlags(Qt.WindowTitleHint)
+        # self.setWindowFlags(Qt.WindowTitleHint)
 
         self.stream_path = path
         if stream_type == StreamerTypes.APPLEWATCH:

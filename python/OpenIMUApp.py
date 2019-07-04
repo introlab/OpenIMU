@@ -123,8 +123,10 @@ class MainWindow(QMainWindow):
     def console_log_error(self, text):
         self.add_to_log(text, LogTypes.LOGTYPE_ERROR)
 
+    @pyqtSlot()
     def load_data_from_dataset(self):
         self.UI.treeDataSet.clear()
+        self.clear_main_widgets()
 
         # Groups
         groups = self.dbMan.get_all_groups()
@@ -222,6 +224,7 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def import_requested(self):
         importer = ImportBrowser(data_manager=self.dbMan)
+        importer.participant_added.connect(self.load_data_from_dataset)
         importer.log_request.connect(self.add_to_log)
         importer.setStyleSheet(self.styleSheet())
         if importer.exec() == QDialog.Accepted:
@@ -369,7 +372,6 @@ class MainWindow(QMainWindow):
             self.update_participant(part)
             self.add_to_log("Participant " + part.name + " mis à jour.", LogTypes.LOGTYPE_DONE)
 
-
     @pyqtSlot()
     def data_was_cancelled(self):
         item_type = self.get_current_widget_data_type()
@@ -465,6 +467,8 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def transfer_requested(self):
         import_man = ImportManager(dbmanager=self.dbMan, dirs=True, stream=True, parent=self)
+        # TODO: More intelligent refresh!
+        import_man.participant_added.connect(self.load_data_from_dataset)
 
         if import_man.exec() == QDialog.Accepted:
             stream_diag = StreamWindow(stream_type=import_man.filetype_id, path=import_man.filename, parent=self)
@@ -492,6 +496,7 @@ class MainWindow(QMainWindow):
                     import_browser.add_file_to_list(file_name, import_man.filetype, importer_id, file_part)
 
                 import_browser.ok_clicked()
+            self.load_data_from_dataset()
 
 
 ########################################################################################################################
@@ -829,9 +834,11 @@ class EmittingStream(PyQt5.QtCore.QObject):
 
 # Main
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
 
-    app.setAttribute(Qt.AA_EnableHighDpiScaling)
+    # Must be done before starting the app
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+
+    app = QApplication(sys.argv)
 
     # qInstallMessageHandler(qt_message_handler)
 

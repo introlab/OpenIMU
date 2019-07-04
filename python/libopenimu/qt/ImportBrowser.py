@@ -20,6 +20,7 @@ import gc
 class ImportBrowser(QDialog):
     dbMan = None
     log_request = pyqtSignal('QString', int)
+    participant_added = pyqtSignal()
 
     def __init__(self, data_manager, parent=None):
         super().__init__(parent=parent)
@@ -169,6 +170,7 @@ class ImportBrowser(QDialog):
     @pyqtSlot()
     def add_clicked(self):
         importman = ImportManager(dbmanager=self.dbMan, dirs=False, parent=self)
+        importman.participant_added.connect(self.participant_added)
 
         if self.UI.tableFiles.rowCount() > 0:
             # Copy informations into the dialog
@@ -186,6 +188,7 @@ class ImportBrowser(QDialog):
     @pyqtSlot()
     def add_dir_clicked(self):
         importman = ImportManager(dbmanager=self.dbMan, dirs=True, parent=self)
+        importman.participant_added.connect(self.participant_added)
 
         if self.UI.tableFiles.rowCount() > 0:
             # Copy informations into the dialog
