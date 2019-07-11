@@ -127,10 +127,10 @@ class ImportBrowser(QDialog):
         process.start()
 
         # Show progress dialog
-        self.showMinimized()
+        # self.showMinimized()
         dialog.exec()
 
-        gc.collect()
+        # gc.collect()
         self.accept()
 
     def add_file_to_list(self, filename, filetype, filetype_id, participant):

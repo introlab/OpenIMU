@@ -104,7 +104,7 @@ set (installer_args
     --hidden-import logging.config
     --clean
     -y
-    --windowed
+    --windowed # If windowed, no console is displayed
     #--debug
     --icon ${APP_ICON}
 )
