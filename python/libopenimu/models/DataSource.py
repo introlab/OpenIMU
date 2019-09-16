@@ -56,6 +56,11 @@ class DataSource(Base):
         return query.first() is not None
 
     @staticmethod
+    def datasource_exists(filename, md5, db_session):
+        query = db_session.query(DataSource).filter(DataSource.file_name == filename, DataSource.file_md5 == md5)
+        return query.first() is not None
+
+    @staticmethod
     def datasource_exists_for_participant(filename, participant, md5, db_session):
         query = db_session.query(DataSource).join(Recordset).join(Participant).filter(DataSource.file_name == filename,
                                                                                       Participant.id_participant ==

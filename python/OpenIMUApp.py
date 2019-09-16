@@ -496,7 +496,7 @@ class MainWindow(QMainWindow):
                     import_browser.add_file_to_list(file_name, import_man.filetype, importer_id, file_part)
 
                 import_browser.ok_clicked()
-            self.load_data_from_dataset()
+                self.load_data_from_dataset()
 
 
 ########################################################################################################################
