@@ -1,8 +1,8 @@
 from PyQt5.QtGui import QPolygonF, QPainter, QMouseEvent, QResizeEvent, QBrush, QColor, QPen, QGuiApplication
 from PyQt5.QtChart import QChart, QChartView, QLineSeries, QBarSeries, QBarSet
 from PyQt5.QtChart import QDateTimeAxis, QValueAxis, QBarCategoryAxis
-from PyQt5.QtWidgets import QGraphicsLineItem, QLabel, QOpenGLWidget, QRubberBand
-from PyQt5.QtCore import Qt, pyqtSlot, QPointF, QRect, QPoint
+from PyQt5.QtWidgets import QGraphicsLineItem, QGraphicsTextItem, QLabel, QOpenGLWidget, QRubberBand
+from PyQt5.QtCore import Qt, pyqtSlot, QPointF, QRect, QRectF, QPoint
 
 from libopenimu.qt.BaseGraph import BaseGraph, GraphInteractionMode
 
@@ -15,17 +15,24 @@ class IMUChartView(QChartView, BaseGraph):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        self.cursor = QGraphicsLineItem()
-        self.scene().addItem(self.cursor)
+        # Render on OpenGL
+        self.setViewport(QOpenGLWidget())
 
         self.xvalues = {}
 
         self.chart = QChart()
+
         self.setChart(self.chart)
         self.chart.legend().setVisible(True)
         self.chart.legend().setAlignment(Qt.AlignTop)
         self.ncurves = 0
         self.setRenderHint(QPainter.Antialiasing)
+
+        # Cursor (with chart as parent)
+        self.cursor = QGraphicsLineItem(self.chart)
+
+        self.cursor.setZValue(100.0)
+        # self.scene().addItem(self.cursor)
 
         # Selection features
         # self.setRubberBand(QChartView.HorizontalRubberBand)
@@ -154,9 +161,13 @@ class IMUChartView(QChartView, BaseGraph):
         if color is not None:
             pen.setColor(color)
         pen.setWidthF(1.5)
+
+
         curve.setPen(pen)
         # curve.setPointsVisible(True)
+
         curve.setUseOpenGL(True)
+
         self.total_samples = max(self.total_samples, len(xdata))
 
         # Decimate
@@ -317,7 +328,13 @@ class IMUChartView(QChartView, BaseGraph):
                 else:
                     start_x = self.initialClick.x()
                     width = current_pos.x() - self.initialClick.x()
-                self.selectionBand.setGeometry(QRect(start_x, self.chart.plotArea().y(), width, self.chart.plotArea().height()))
+
+                self.selectionBand.setGeometry(QRect(start_x, self.chart.plotArea().y(),
+                                                     width, self.chart.plotArea().height()))
+                if self.selection_rec:
+                    self.selection_rec.setRect(QRectF(start_x, self.chart.plotArea().y(),
+                                                     width, self.chart.plotArea().height()))
+
             if self.interaction_mode == GraphInteractionMode.MOVE:
                 new_pos = current_pos - self.initialClick
                 self.chart.scroll(-new_pos.x(), new_pos.y())
@@ -370,9 +387,10 @@ class IMUChartView(QChartView, BaseGraph):
 
         self.selecting = False
 
-    def clearSelectionArea(self, emit_signal = False):
-        self.scene().removeItem(self.selection_rec)
-        self.selection_rec = None
+    def clearSelectionArea(self, emit_signal=False):
+        if self.selection_rec:
+            self.scene().removeItem(self.selection_rec)
+            self.selection_rec = None
 
         if emit_signal:
             self.clearedSelectionArea.emit()
@@ -380,7 +398,10 @@ class IMUChartView(QChartView, BaseGraph):
     def setSelectionArea(self, start_pos, end_pos, emit_signal=False):
         selection_brush = QBrush(QColor(153, 204, 255, 128))
         selection_pen = QPen(Qt.transparent)
-        self.scene().removeItem(self.selection_rec)
+
+        if self.selection_rec:
+            self.scene().removeItem(self.selection_rec)
+
         self.selection_rec = self.scene().addRect(start_pos, self.chart.plotArea().y(), end_pos - start_pos,
                                                   self.chart.plotArea().height(), selection_pen,
                                                   selection_brush)
@@ -481,10 +502,30 @@ class IMUChartView(QChartView, BaseGraph):
     def resizeEvent(self, e: QResizeEvent):
         super().resizeEvent(e)
 
-        # Update cursor height
-        area = self.chart.plotArea()
-        line = self.cursor.line()
-        self.cursor.setLine(line.x1(), area.y(), line.x2(), area.y() + area.height())
+        oldSize = e.oldSize()
+        newSize = e.size()
+
+        if oldSize.isValid():
+
+            # Update cursor height
+            area = self.chart.plotArea()
+            line = self.cursor.line()
+
+            scale_x = newSize.width() / oldSize.width()
+            scale_y = newSize.height() / oldSize.height()
+
+            self.cursor.setLine(line.x1() * scale_x, area.y(), line.x2() * scale_x, area.y() + area.height())
+
+            # Update selection
+            if self.selection_rec:
+                coords = self.selection_rec.rect().getCoords()
+                x1 = coords[0] * scale_x
+                y1 = coords[1] * scale_y
+                x2 = coords[2] * scale_x
+                y2 = coords[3] * scale_y
+                self.selection_rec.setRect(x1, y1, x2 - x1, y2 - y1)
+
+
 
     def zoom_in(self):
         self.chart.zoomIn()
