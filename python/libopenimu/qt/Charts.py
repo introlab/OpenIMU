@@ -299,7 +299,17 @@ class IMUChartView(QChartView, BaseGraph):
 
     def mouseMoveEvent(self, e: QMouseEvent):
         if self.selecting:
-            current_pos = e.pos()
+
+            clicked_x = max(self.chart.plotArea().x(), min(self.mapToScene(e.pos()).x(),
+                                                           self.chart.plotArea().x() + self.chart.plotArea().width()))
+
+            clicked_y = max(self.chart.plotArea().y(), min(self.mapToScene(e.pos()).y(),
+                                                           self.chart.plotArea().y() + self.chart.plotArea().height()))
+
+            current_pos = QPoint(clicked_x, clicked_y)  # e.pos()
+
+            self.setCursorPosition(clicked_x, True)
+
             if self.interaction_mode == GraphInteractionMode.SELECT:
                 if current_pos.x() < self.initialClick.x():
                     start_x = current_pos.x()
