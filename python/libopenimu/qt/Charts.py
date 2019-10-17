@@ -156,7 +156,7 @@ class IMUChartView(QChartView, BaseGraph):
         pen.setWidthF(1.5)
         curve.setPen(pen)
         # curve.setPointsVisible(True)
-        # curve.setUseOpenGL(True)
+        curve.setUseOpenGL(True)
         self.total_samples = max(self.total_samples, len(xdata))
 
         # Decimate
@@ -316,11 +316,23 @@ class IMUChartView(QChartView, BaseGraph):
     def mousePressEvent(self, e: QMouseEvent):
         # Handling rubberbands
         # super().mousePressEvent(e)
+        # Verify if click is inside plot area
+        # if self.chart.plotArea().contains(e.pos()):
+
         self.selecting = True
-        self.initialClick = e.pos()
+        clicked_x = max(self.chart.plotArea().x(), min(self.mapToScene(e.pos()).x(),
+                                                       self.chart.plotArea().x() + self.chart.plotArea().width()))
+
+        clicked_y = max(self.chart.plotArea().y(), min(self.mapToScene(e.pos()).y(),
+                                                       self.chart.plotArea().y() + self.chart.plotArea().height()))
+
+        self.initialClick = QPoint(clicked_x, clicked_y)  # e.pos()
+
+        self.setCursorPosition(clicked_x, True)
+
         if self.interaction_mode == GraphInteractionMode.SELECT:
             self.selectionBand.setGeometry(QRect(self.initialClick.x(), self.chart.plotArea().y(), 1,
-                                             self.chart.plotArea().height()))
+                                                 self.chart.plotArea().height()))
             self.selectionBand.show()
 
         if self.interaction_mode == GraphInteractionMode.MOVE:
@@ -328,14 +340,15 @@ class IMUChartView(QChartView, BaseGraph):
             self.labelValue.setVisible(False)
 
     def mouseReleaseEvent(self, e: QMouseEvent):
-        # Handling rubberbands
-        clicked_x = self.mapToScene(e.pos()).x()
+
+        # Assure if click is inside plot area
+        # Handling rubberbands (with min / max x)
+        clicked_x = max(self.chart.plotArea().x(), min(self.mapToScene(e.pos()).x(),
+                                                       self.chart.plotArea().x() + self.chart.plotArea().width()))
 
         if self.interaction_mode == GraphInteractionMode.SELECT:
             self.selectionBand.hide()
-            if clicked_x == self.mapToScene(self.initialClick).x():
-                self.setCursorPosition(clicked_x, True)
-            else:
+            if clicked_x != self.mapToScene(self.initialClick).x():
                 mapped_x = self.mapToScene(self.initialClick).x()
                 if self.initialClick.x() < clicked_x:
                     self.setSelectionArea(mapped_x, clicked_x, True)
@@ -365,7 +378,7 @@ class IMUChartView(QChartView, BaseGraph):
             self.selectedAreaChanged.emit(self.chart.mapToValue(QPointF(start_pos, 0)).x(),
                                           self.chart.mapToValue(QPointF(end_pos, 0)).x())
 
-    def setSelectionAreaFromTime(self, start_time, end_time, emit_signal = False):
+    def setSelectionAreaFromTime(self, start_time, end_time, emit_signal=False):
         # Convert times to x values
         if isinstance(start_time, datetime.datetime):
             start_time = start_time.timestamp()*1000
