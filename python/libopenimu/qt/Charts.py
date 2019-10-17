@@ -166,7 +166,7 @@ class IMUChartView(QChartView, BaseGraph):
         curve.setPen(pen)
         # curve.setPointsVisible(True)
 
-        curve.setUseOpenGL(True)
+        # curve.setUseOpenGL(True)
 
         self.total_samples = max(self.total_samples, len(xdata))
 
