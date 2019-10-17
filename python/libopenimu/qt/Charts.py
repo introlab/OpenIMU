@@ -51,6 +51,10 @@ class IMUChartView(QChartView, BaseGraph):
 
         self.build_style()
 
+        self.selection_start_time = None
+        self.selection_stop_time = None
+        self.cursor_time = None
+
     def build_style(self):
         self.setStyleSheet("QLabel{color:blue;}")
         self.chart.setTheme(QChart.ChartThemeBlueCerulean)
@@ -319,6 +323,8 @@ class IMUChartView(QChartView, BaseGraph):
 
             current_pos = QPoint(clicked_x, clicked_y)  # e.pos()
 
+            self.selection_stop_time = self.chart.mapToValue(QPointF(clicked_x, 0)).x()
+
             self.setCursorPosition(clicked_x, True)
 
             if self.interaction_mode == GraphInteractionMode.SELECT:
@@ -354,6 +360,8 @@ class IMUChartView(QChartView, BaseGraph):
                                                        self.chart.plotArea().y() + self.chart.plotArea().height()))
 
         self.initialClick = QPoint(clicked_x, clicked_y)  # e.pos()
+
+        self.selection_start_time = self.chart.mapToValue(QPointF(clicked_x, 0)).x()
 
         self.setCursorPosition(clicked_x, True)
 
@@ -422,6 +430,9 @@ class IMUChartView(QChartView, BaseGraph):
         self.setSelectionArea(start_pos, end_pos)
 
     def setCursorPosition(self, pos, emit_signal=False):
+
+        self.cursor_time = self.chart.mapToValue(QPointF(pos, 0)).x()
+
         # print (pos)
         pen = self.cursor.pen()
         pen.setColor(Qt.cyan)
@@ -505,27 +516,13 @@ class IMUChartView(QChartView, BaseGraph):
         oldSize = e.oldSize()
         newSize = e.size()
 
-        if oldSize.isValid():
+        # Update cursor from time
+        if self.cursor_time:
+            self.setCursorPositionFromTime(self.cursor_time / 1000.0)
 
-            # Update cursor height
-            area = self.chart.plotArea()
-            line = self.cursor.line()
-
-            scale_x = newSize.width() / oldSize.width()
-            scale_y = newSize.height() / oldSize.height()
-
-            self.cursor.setLine(line.x1() * scale_x, area.y(), line.x2() * scale_x, area.y() + area.height())
-
-            # Update selection
-            if self.selection_rec:
-                coords = self.selection_rec.rect().getCoords()
-                x1 = coords[0] * scale_x
-                y1 = coords[1] * scale_y
-                x2 = coords[2] * scale_x
-                y2 = coords[3] * scale_y
-                self.selection_rec.setRect(x1, y1, x2 - x1, y2 - y1)
-
-
+        # Update selection
+        if self.selection_rec:
+            self.setSelectionAreaFromTime(self.selection_start_time, self.selection_stop_time)
 
     def zoom_in(self):
         self.chart.zoomIn()
