@@ -47,6 +47,8 @@ SET(uis
     resources/ui/ImportMatchDialog.ui
 )
 
+add_custom_target(uis_target SOURCES ${uis})
+
 SET(qrcs
     resources/core.qrc
 )

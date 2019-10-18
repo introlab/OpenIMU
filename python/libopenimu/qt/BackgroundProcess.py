@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QThread, QCoreApplication, QTime, pyqtSignal, pyqtSlot, Qt, QObject
+from PyQt5.QtCore import QThread, QCoreApplication, QTime, pyqtSignal, pyqtSlot, Qt, QObject, QPoint
 from PyQt5.QtWidgets import QDialog, QApplication
 from PyQt5.QtGui import QMovie
 from resources.ui.python.ProgressDialog_ui import Ui_ProgressDialog

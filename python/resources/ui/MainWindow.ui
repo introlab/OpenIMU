@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>984</width>
-    <height>587</height>
+    <width>1009</width>
+    <height>593</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,7 +23,7 @@
    <string>OpenIMU</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../core.qrc">
+   <iconset>
     <normaloff>:/OpenIMU/icons/OpenIMU.png</normaloff>:/OpenIMU/icons/OpenIMU.png</iconset>
   </property>
   <property name="styleSheet">
@@ -48,7 +48,24 @@ QPushButton[checkable=true]:!checked,QToolButton[checkable=true]:!checked{color:
 
 QLabel,QCheckBox{color:white;}
 
-QTreeWidget, QListWidget{background-color:rgba(200,200,200,70%);}
+QTreeWidget, QListWidget{background-color:rgba(150,150,150,50%);} 
+
+QTreeWidget::item:hover,QTreeWidget::item:hover:selected {
+	border:none;
+	border-radius:5px;
+	background-color:rgba(255,255,255,100);
+}
+
+QTreeWidget::item:selected {
+	border:none;
+	background-color:rgba(255,255,255,0);
+}
+
+
+
+
+
+
 
 QLineEdit,QPlainTextEdit,QComboBox{background-color:rgba(226, 226, 226,90%);border-radius:5px;}
 
@@ -115,8 +132,8 @@ QLabel#lblVersion{color:black;}
    </property>
    <property name="minimumSize">
     <size>
-     <width>274</width>
-     <height>174</height>
+     <width>280</width>
+     <height>180</height>
     </size>
    </property>
    <property name="floating">
@@ -241,7 +258,7 @@ QLabel#lblVersion{color:black;}
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../core.qrc">
+           <iconset>
             <normaloff>:/OpenIMU/icons/group.png</normaloff>:/OpenIMU/icons/group.png</iconset>
           </property>
           <property name="iconSize">
@@ -282,7 +299,7 @@ QLabel#lblVersion{color:black;}
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../core.qrc">
+           <iconset>
             <normaloff>:/OpenIMU/icons/participant.png</normaloff>:/OpenIMU/icons/participant.png</iconset>
           </property>
           <property name="iconSize">
@@ -333,7 +350,7 @@ QLabel#lblVersion{color:black;}
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../core.qrc">
+           <iconset>
             <normaloff>:/OpenIMU/icons/delete.png</normaloff>:/OpenIMU/icons/delete.png</iconset>
           </property>
           <property name="iconSize">
@@ -405,7 +422,7 @@ QLabel#lblVersion{color:black;}
    </property>
    <property name="minimumSize">
     <size>
-     <width>968</width>
+     <width>1009</width>
      <height>50</height>
     </size>
    </property>
@@ -483,7 +500,7 @@ QLabel#lblVersion{color:black;}
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../core.qrc">
+        <iconset>
          <normaloff>:/OpenIMU/icons/tree.png</normaloff>:/OpenIMU/icons/tree.png</iconset>
        </property>
        <property name="iconSize">
@@ -539,7 +556,7 @@ QLabel#lblVersion{color:black;}
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../core.qrc">
+        <iconset>
          <normaloff>:/OpenIMU/icons/log.png</normaloff>:/OpenIMU/icons/log.png</iconset>
        </property>
        <property name="iconSize">
@@ -589,7 +606,7 @@ QLabel#lblVersion{color:black;}
         <string>Importer</string>
        </property>
        <property name="icon">
-        <iconset resource="../core.qrc">
+        <iconset>
          <normaloff>:/OpenIMU/icons/import.png</normaloff>:/OpenIMU/icons/import.png</iconset>
        </property>
        <property name="iconSize">
@@ -626,7 +643,7 @@ QLabel#lblVersion{color:black;}
         <string>Transférer</string>
        </property>
        <property name="icon">
-        <iconset resource="../core.qrc">
+        <iconset>
          <normaloff>:/OpenIMU/icons/transfer.png</normaloff>:/OpenIMU/icons/transfer.png</iconset>
        </property>
        <property name="iconSize">
@@ -679,7 +696,7 @@ QLabel#lblVersion{color:black;}
         <string>Analyser</string>
        </property>
        <property name="icon">
-        <iconset resource="../core.qrc">
+        <iconset>
          <normaloff>:/OpenIMU/icons/process.png</normaloff>:/OpenIMU/icons/process.png</iconset>
        </property>
        <property name="iconSize">
@@ -722,7 +739,7 @@ QLabel#lblVersion{color:black;}
         <string>Exporter</string>
        </property>
        <property name="icon">
-        <iconset resource="../core.qrc">
+        <iconset>
          <normaloff>:/OpenIMU/icons/save.png</normaloff>:/OpenIMU/icons/save.png</iconset>
        </property>
        <property name="iconSize">
@@ -769,7 +786,7 @@ QLabel#lblVersion{color:black;}
         <string>Compacter</string>
        </property>
        <property name="icon">
-        <iconset resource="../core.qrc">
+        <iconset>
          <normaloff>:/OpenIMU/icons/compact.png</normaloff>:/OpenIMU/icons/compact.png</iconset>
        </property>
        <property name="iconSize">
@@ -808,7 +825,7 @@ QLabel#lblVersion{color:black;}
         <string>Informations</string>
        </property>
        <property name="icon">
-        <iconset resource="../core.qrc">
+        <iconset>
          <normaloff>:/OpenIMU/icons/info.png</normaloff>:/OpenIMU/icons/info.png</iconset>
        </property>
        <property name="iconSize">
@@ -864,7 +881,7 @@ QLabel#lblVersion{color:black;}
         <string>Fermer</string>
        </property>
        <property name="icon">
-        <iconset resource="../core.qrc">
+        <iconset>
          <normaloff>:/OpenIMU/icons/delete.png</normaloff>:/OpenIMU/icons/delete.png</iconset>
        </property>
        <property name="iconSize">
@@ -895,8 +912,6 @@ QLabel#lblVersion{color:black;}
    <header>OpenIMUApp</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../core.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

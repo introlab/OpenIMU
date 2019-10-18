@@ -487,7 +487,7 @@ class RecordsetWindow(QWidget):
 
         QGuiApplication.setOverrideCursor(Qt.BusyCursor)
         process = BackgroundProcess(tasks)
-        dialog = ProgressDialog(process, "Chargement")
+        dialog = ProgressDialog(process, "Chargement", self)
 
         process.start()
         dialog.exec()
@@ -659,7 +659,7 @@ class RecordsetWindow(QWidget):
                                    self.recordsets)
 
         process = BackgroundProcess([task])
-        dialog = ProgressDialog(process, "Traitement")
+        dialog = ProgressDialog(process, "Traitement", self)
 
         process.start()
         dialog.exec()

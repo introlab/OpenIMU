@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>210</height>
+    <width>640</width>
+    <height>200</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -36,7 +36,7 @@ QProgressBar#prgTask{
   <property name="modal">
    <bool>true</bool>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -63,7 +63,7 @@ QProgressBar#prgTask{
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="../core.qrc">:/OpenIMU/icons/loading.gif</pixmap>
+        <pixmap>:/OpenIMU/icons/loading.gif</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>
@@ -118,8 +118,8 @@ QProgressBar#prgTask{
     </widget>
    </item>
    <item>
-    <layout class="QFormLayout" name="formLayout">
-     <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
       <widget class="QLabel" name="lblCurrentTask">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -138,14 +138,8 @@ QProgressBar#prgTask{
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item>
       <widget class="QLabel" name="lblCurrentTaskValue">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -154,7 +148,7 @@ QProgressBar#prgTask{
         </font>
        </property>
        <property name="text">
-        <string>Inconnue</string>
+        <string>Un grand texte pour tester les fonctions</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -253,8 +247,6 @@ QProgressBar#prgTask{
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../core.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
