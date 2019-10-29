@@ -111,3 +111,11 @@ class BaseAlgorithmFactory:
         base_widget = QWidget(parent_widget)
         base_widget.setLayout(layout)
         return base_widget
+
+    # This method is used to build a table of results
+    # Returns a dictionary: "headers" -> List of headers (one per column)
+    #                       "data_names" -> List of data names (one per row)
+    #                       "data" -> List of list of data (one list per row, then one list by column)
+    @abstractmethod
+    def build_data_table(self, results):
+        return {'headers': [], 'data_names': [], 'data': []}

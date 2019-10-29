@@ -205,6 +205,25 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
 
         return scroll
 
+    def build_data_table(self, results):
+        data_table = {}
+        headers = []
+        data = []
+        data_names = []
+        # Results are stored in json, as a list of dict
+        if isinstance(results, list):
+            for result in results:
+                if isinstance(result, dict):
+                    result_data = result['result']
+                    result_name = result['result_name']
+                    headers.append(result_name)
+                    if not data_names:
+                        data_names = list(result_data.keys())
+                    data.append(list(result_data.values()))
+
+            data_table = {'headers': headers, 'data_names': data_names, 'data': data}
+
+        return data_table
 
 # Factory init
 def init():

@@ -1,5 +1,6 @@
-from PyQt5.QtWidgets import QWidget, QListWidgetItem
-from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QWidget, QListWidgetItem, QTableWidgetItem, QTableWidget, QHeaderView
+from PyQt5.QtGui import QIcon, QColor
+from PyQt5.QtCore import Qt
 
 from resources.ui.python.ResultWidget_ui import Ui_frmResult
 
@@ -25,6 +26,7 @@ class ResultWindow(QWidget):
         self.UI.lblNameValue.setText(self.data.name)
         self.UI.lblTimeValue.setText(str(self.data.processed_time.strftime("%d-%m-%Y %H:%M:%S")))
 
+        # Results sources
         self.recordsets = []
         for ref in self.data.processed_data_ref:
             #TODO: subrecords!
@@ -43,5 +45,49 @@ class ResultWindow(QWidget):
             display_widget = self.factory.build_display_widget(self.UI.centralWidget, cdata, self.recordsets)
             self.UI.centralWidget.layout().addWidget(display_widget)
 
+            # Data table
+            table_data = self.factory.build_data_table(cdata)
+            if table_data:
+                self.UI.tableData.setColumnCount(len(table_data['headers'])+1)
+                self.UI.tableData.setRowCount(len(table_data['data_names'])+1)
+                # self.UI.tableData.setHorizontalHeaderLabels(table_data['headers'])
+                # self.UI.tableData.setVerticalHeaderLabels(table_data['data_names'])
+                # self.UI.tableData.horizontalHeader().setVisible(True)
+                # self.UI.tableData.verticalHeader().setVisible(True)
+                # Headers
+                for header_index, header in enumerate(table_data['headers'], start=1):
+                    header_item = QTableWidgetItem(header)
+                    header_item.setBackground(QColor(Qt.lightGray))
+                    self.UI.tableData.setItem(0, header_index, header_item)
 
+                for header_index, header in enumerate(table_data['data_names'], start=1):
+                    header_item = QTableWidgetItem(header)
+                    header_item.setBackground(QColor(Qt.lightGray))
+                    self.UI.tableData.setItem(header_index, 0, header_item)
 
+                header_item = QTableWidgetItem('')
+                header_item.setBackground(QColor(Qt.lightGray))
+                self.UI.tableData.setItem(0, 0, header_item)
+
+                # Fill data
+                for col_index, col in enumerate(table_data['data'], start=1):
+                    for row_index, row in enumerate(col, start=1):
+                        item_data = QTableWidgetItem(str(row))
+                        item_data.setTextAlignment(Qt.AlignCenter)
+                        self.UI.tableData.setItem(row_index, col_index, item_data)
+                self.UI.tableData.horizontalHeader().resizeSections(QHeaderView.Stretch)
+                self.UI.tableData.resizeColumnsToContents()
+
+                # Parameters table
+                if self.data.params:
+                    import json
+                    params = json.loads(self.data.params)
+                    self.UI.tableParams.setColumnCount(len(params.keys()))
+                    for header_index, header in enumerate(params.keys(), start=0):
+                        header_item = QTableWidgetItem(header)
+                        header_item.setBackground(QColor(Qt.lightGray))
+                        self.UI.tableParams.setItem(0, header_index, header_item)
+                        item_data = QTableWidgetItem(str(params[header]))
+                        item_data.setTextAlignment(Qt.AlignCenter)
+                        self.UI.tableParams.setItem(1, header_index, item_data)
+                    self.UI.tableParams.resizeColumnsToContents()
