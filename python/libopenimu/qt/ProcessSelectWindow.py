@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QDialog, QListWidgetItem
+from PyQt5.QtWidgets import QDialog, QListWidgetItem, QVBoxLayout
 from PyQt5.QtCore import pyqtSlot
 from resources.ui.python.ProcessSelectDialog_ui import Ui_dlgProcessSelect
 from libopenimu.db.DBManager import DBManager
@@ -16,7 +16,7 @@ class ProcessSelectWindow(QDialog):
         self.UI.setupUi(self)
         self.dbMan = data_manager
 
-        self.UI.frameInfos.hide()
+        self.UI.tabAlgo.hide()
 
         # print('recordsets: ', recordsets)
         self.UI.btnProcess.setEnabled(False)
@@ -61,7 +61,14 @@ class ProcessSelectWindow(QDialog):
         if info.__contains__('reference'):
             self.UI.lblRefValue.setText(info['reference'])
 
-        self.UI.frameInfos.show()
+        self.UI.tabAlgo.show()
+
+        # Display params
+        param_layout = QVBoxLayout()
+        param_widget = self.factory.build_config_widget(self.UI.tabParams)
+        param_layout.addWidget(param_widget)
+        self.UI.tabParams.setLayout(param_layout)
+
         self.UI.btnProcess.setEnabled(True)
 
     @pyqtSlot()
@@ -86,8 +93,8 @@ class ProcessSelectWindow(QDialog):
                     print('getting results')
                     return self.results
 
-            # For testing, should display a configuration GUI first
-            params = {}
+            # Initialize processor
+            params = self.factory.params()
             algo = self.factory.create(params)
 
             # Remove recordsets that don't have the required sensors
@@ -134,6 +141,6 @@ class ProcessSelectWindow(QDialog):
                 name += " @ " + self.recordsets[len(self.recordsets) - 1].name
 
             self.processed_data = self.dbMan.add_processed_data(self.factory.info()['unique_id'], name, results,
-                                                                self.recordsets)
+                                                                self.recordsets, params)
 
             self.accept()

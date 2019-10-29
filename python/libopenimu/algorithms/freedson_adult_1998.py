@@ -57,10 +57,16 @@ class CutPoints:
               VIGOROUS: [5725, 9498],
               VERY_VIGOROUS: [9499, np.iinfo(np.int64).max]}
 
-    @staticmethod
-    def classify(value, scale=1.0):
-        for keys in CutPoints.values:
-            if CutPoints.values[keys][0] * scale <= value <= CutPoints.values[keys][1] * scale:
+    def set_cutoff_values(self, values: dict):
+        self.values = {CutPoints.SEDENTARY: [0, values['sedentary_cutoff']],
+                       CutPoints.LIGHT: [values['sedentary_cutoff']+1, values['light_cutoff']],
+                       CutPoints.MODERATE: [values['light_cutoff']+1, values['moderate_cutoff']],
+                       CutPoints.VIGOROUS: [values['moderate_cutoff']+1, values['vigorous_cutoff']],
+                       CutPoints.VERY_VIGOROUS: [values['vigorous_cutoff']+1, np.iinfo(np.int64).max]}
+
+    def classify(self, value, scale=1.0):
+        for keys in self.values:
+            if self.values[keys][0] * scale <= value <= self.values[keys][1] * scale:
                 return keys
         # Not found
         return CutPoints.UNKNOWN
@@ -122,12 +128,14 @@ def generate_60s_epoch(timeseries, sampling_rate):
 
 
 # @timing
-def freedson_adult_1998(samples: list, sampling_rate):
+def freedson_adult_1998(params: dict, samples: list, sampling_rate):
 
     scale = sampling_rate / CutPoints.base_frequency()
     print("Scaling: ", scale)
 
     c_results = CutPoints.build_dict()
+    cutpoints = CutPoints()
+    cutpoints.set_cutoff_values(params)
 
     for sensor_data in samples:
         # Get time series
@@ -158,7 +166,7 @@ def freedson_adult_1998(samples: list, sampling_rate):
             result_sum = int(128.0 * np.sum(np.abs(epoch[1])) * complete_factor)
 
             # Classify
-            c_results[CutPoints.classify(result_sum, scale)] += 1
+            c_results[cutpoints.classify(result_sum, scale)] += 1
 
     # print('results', c_results)
     return c_results

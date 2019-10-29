@@ -9,19 +9,21 @@
 from abc import abstractmethod
 from libopenimu.db.DBManager import DBManager
 
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel
 
 
 class BaseAlgorithm:
+    params = dict
+
     def __init__(self, params: dict):
         self.configure(params)
 
     @abstractmethod
     def configure(self, params: dict):
-        pass
+        self.params = params
 
     @abstractmethod
-    def calculate(self, manager: DBManager, recordsets : list):
+    def calculate(self, manager: DBManager, recordsets: list):
         pass
 
 
@@ -65,11 +67,10 @@ class BaseAlgorithmFactory:
     @abstractmethod
     def create(self, params: dict):
         self.configure(params)
-        return None
 
     @abstractmethod
     def params(self):
-        pass
+        return {}
 
     @abstractmethod
     def name(self):
@@ -98,5 +99,15 @@ class BaseAlgorithmFactory:
         return []
 
     @abstractmethod
-    def build_display_widget(self, parent_widget:QWidget, results, recordsets):
+    def build_display_widget(self, parent_widget: QWidget, results, recordsets):
         return QWidget()
+
+    @abstractmethod
+    def build_config_widget(self, parent_widget: QWidget, default_params: dict = None):
+        layout = QVBoxLayout()
+        label = QLabel("Aucun paramètre pour cet algorithme")
+        layout.addWidget(label)
+
+        base_widget = QWidget(parent_widget)
+        base_widget.setLayout(layout)
+        return base_widget

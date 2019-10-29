@@ -75,7 +75,7 @@ if(WIN32)
     # TODO - INSTALL WITH CONDA ?
     add_custom_target(
         python-env
-        COMMAND ${ENV_PATH}/Scripts/pip.exe install ${pip_packages}
+        COMMAND ${ENV_PATH}/Scripts/pip.exe install ${pip_packages} --upgrade
         WORKING_DIRECTORY ${ENV_PATH}
         DEPENDS ${ENV_PATH}/python.exe
     )
