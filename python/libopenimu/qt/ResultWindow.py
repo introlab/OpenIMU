@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QListWidgetItem, QTableWidgetItem, QTableWidget, QHeaderView
-from PyQt5.QtGui import QIcon, QColor
-from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon, QColor, QGuiApplication
+from PyQt5.QtCore import Qt, QItemSelectionModel
 
 from resources.ui.python.ResultWidget_ui import Ui_frmResult
 
@@ -25,6 +25,8 @@ class ResultWindow(QWidget):
         # Update display
         self.UI.lblNameValue.setText(self.data.name)
         self.UI.lblTimeValue.setText(str(self.data.processed_time.strftime("%d-%m-%Y %H:%M:%S")))
+
+        self.UI.btnCopyData.clicked.connect(self.copy_data_to_clipboard)
 
         # Results sources
         self.recordsets = []
@@ -91,3 +93,17 @@ class ResultWindow(QWidget):
                         item_data.setTextAlignment(Qt.AlignCenter)
                         self.UI.tableParams.setItem(1, header_index, item_data)
                     self.UI.tableParams.resizeColumnsToContents()
+
+    def copy_data_to_clipboard(self):
+        clipboard = QGuiApplication.clipboard()
+
+        output = ''
+        for row in range(self.UI.tableData.rowCount()):
+            for col in range(self.UI.tableData.columnCount()):
+                output += self.UI.tableData.item(row, col).text()
+                if col < self.UI.tableData.columnCount()-1:
+                    output += '\t'
+            if row < self.UI.tableData.rowCount()-1:
+                output += '\n'
+        clipboard.setText(output)
+
