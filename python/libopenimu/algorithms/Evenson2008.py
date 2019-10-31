@@ -102,9 +102,6 @@ class Evenson2008(BaseAlgorithm):
         high = highcut / nyq
         sos = butter(order, [low, high], btype='band', analog=False, output='sos')
 
-        # Process data
-        sosfilt(sos, data)
-
         return sosfilt(sos, data)
 
     @staticmethod
