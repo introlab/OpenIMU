@@ -44,5 +44,6 @@
         <file>icons/loading.gif</file>
         <file>icons/transfer.png</file>
         <file>icons/compact.png</file>
+        <file>icons/bug.png</file>
     </qresource>
 </RCC>
