@@ -118,7 +118,8 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
         # Initialize inputs
         self.config_preset_input = QComboBox()
         # self.config_preset_input.addItem('')
-        self.config_preset_input.addItem('Values from paper', [99, 1951, 5724, 9498])
+        self.config_preset_input.addItem('Valeurs originales', [99, 1951, 5724, 9498])
+        self.config_preset_input.addItem('Personnalisées', [-1, -1, -1, -1])
         # self.config_preset_input.addItem('Child', [99, 573, 1002, 0])
         self.config_preset_input.currentIndexChanged.connect(self.config_preset_changed)
 
@@ -180,10 +181,15 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
     def config_preset_changed(self):
         params = self.config_preset_input.currentData()
         if params is not None and len(params) == 4:
-            self.config_sedentary_input.setValue(params[0])
-            self.config_light_input.setValue(params[1])
-            self.config_moderate_input.setValue(params[2])
-            self.config_vigorous_input.setValue(params[3])
+            if params[0] != -1:
+                self.config_sedentary_input.setValue(params[0])
+                self.config_light_input.setValue(params[1])
+                self.config_moderate_input.setValue(params[2])
+                self.config_vigorous_input.setValue(params[3])
+            self.config_sedentary_input.setEnabled(params[0] == -1)
+            self.config_light_input.setEnabled(params[0] == -1)
+            self.config_moderate_input.setEnabled(params[0] == -1)
+            self.config_vigorous_input.setEnabled(params[0] == -1)
 
     def build_display_widget(self, parent_widget: QWidget, results, recordsets):
 
@@ -242,6 +248,7 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
             data_table = {'headers': headers, 'data_names': data_names, 'data': data}
 
         return data_table
+
 
 # Factory init
 def init():

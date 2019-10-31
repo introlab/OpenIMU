@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QDialog, QListWidgetItem, QVBoxLayout
+from PyQt5.QtWidgets import QDialog, QListWidgetItem, QVBoxLayout, QWidget
 from PyQt5.QtCore import pyqtSlot
 from resources.ui.python.ProcessSelectDialog_ui import Ui_dlgProcessSelect
 from libopenimu.db.DBManager import DBManager
@@ -64,12 +64,17 @@ class ProcessSelectWindow(QDialog):
         self.UI.tabAlgo.show()
 
         # Display params
+        if self.UI.tabParams.layout():
+            # Remove current layout by setting it to a temporary object
+            QWidget().setLayout(self.UI.tabParams.layout())
+
         param_layout = QVBoxLayout()
         param_widget = self.factory.build_config_widget(self.UI.tabParams)
         param_layout.addWidget(param_widget)
         self.UI.tabParams.setLayout(param_layout)
 
         self.UI.btnProcess.setEnabled(True)
+        self.UI.tabAlgo.setCurrentIndex(0)
 
     @pyqtSlot()
     def on_process_button_clicked(self):

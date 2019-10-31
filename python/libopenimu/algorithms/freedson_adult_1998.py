@@ -59,10 +59,10 @@ class CutPoints:
 
     def set_cutoff_values(self, values: dict):
         self.values = {CutPoints.SEDENTARY: [0, values['sedentary_cutoff']],
-                       CutPoints.LIGHT: [values['sedentary_cutoff']+1, values['light_cutoff']],
-                       CutPoints.MODERATE: [values['light_cutoff']+1, values['moderate_cutoff']],
-                       CutPoints.VIGOROUS: [values['moderate_cutoff']+1, values['vigorous_cutoff']],
-                       CutPoints.VERY_VIGOROUS: [values['vigorous_cutoff']+1, np.iinfo(np.int64).max]}
+                       CutPoints.LIGHT: [values['sedentary_cutoff']+0.001, values['light_cutoff']],
+                       CutPoints.MODERATE: [values['light_cutoff']+0.001, values['moderate_cutoff']],
+                       CutPoints.VIGOROUS: [values['moderate_cutoff']+0.001, values['vigorous_cutoff']],
+                       CutPoints.VERY_VIGOROUS: [values['vigorous_cutoff']+0.001, np.iinfo(np.int64).max]}
 
     def classify(self, value, scale=1.0):
         for keys in self.values:
