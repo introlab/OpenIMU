@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5.QtWidgets import QApplication, QDialog, QTreeWidget, QTreeWidgetItem
+from PyQt5.QtWidgets import QApplication, QDialog, QTreeWidget, QTreeWidgetItem, QStyleFactory
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QIcon, QFont
 # Models
@@ -342,6 +342,9 @@ if __name__ == '__main__':
     from PyQt5.QtCore import Qt, QDir
     from libopenimu.qt.MainWindow import MainWindow
     import PyQt5
+
+    # Set Style
+    QApplication.setStyle(QStyleFactory.create("Windows"))
 
     # Must be done before starting the app
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
