@@ -45,13 +45,14 @@ SET(uis
     resources/ui/ProgressDialog.ui
     resources/ui/StreamWindow.ui
     resources/ui/ImportMatchDialog.ui
+    resources/ui/CrashDialog.ui
 )
-
-add_custom_target(uis_target SOURCES ${uis})
 
 SET(qrcs
     resources/core.qrc
 )
+
+add_custom_target(uis_target SOURCES ${uis} ${qrcs})
 
 SET(qml
     resources/test.qml

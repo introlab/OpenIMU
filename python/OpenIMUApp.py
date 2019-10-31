@@ -330,9 +330,11 @@ class Treedatawidget(QTreeWidget):
 
 
 def except_hook(cls, exception, traceback):
-    print('------ Custom exception handler')
-    sys.__excepthook__(cls, exception, traceback)
-    # TODO: Display error dialog to user
+    # Display error dialog
+    from libopenimu.qt.CrashWindow import CrashWindow
+    crash_dlg = CrashWindow(traceback, exception)
+    crash_dlg.exec()
+    # sys.__excepthook__(cls, exception, traceback)
 
 
 # Main
