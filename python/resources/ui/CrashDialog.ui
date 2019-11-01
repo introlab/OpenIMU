@@ -19,6 +19,7 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QLabel#lblTitle{color: red;}
+QLabel#lblInfos{background-color: white;}
 
 QDialog{background:qlineargradient(spread:pad, x1:0.483, y1:0, x2:0.511045, y2:1, stop:0 rgb(50, 50, 50), stop:1 rgb(153, 153, 153));border-radius:0px;}
 
@@ -87,6 +88,18 @@ QPushButton[checkable=true]:!checked,QToolButton[checkable=true]:!checked{color:
          <string>Général</string>
         </attribute>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QLabel" name="lblInfos">
            <property name="text">
@@ -97,6 +110,9 @@ QPushButton[checkable=true]:!checked,QToolButton[checkable=true]:!checked{color:
            </property>
            <property name="wordWrap">
             <bool>true</bool>
+           </property>
+           <property name="margin">
+            <number>6</number>
            </property>
           </widget>
          </item>

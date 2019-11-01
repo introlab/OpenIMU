@@ -23,7 +23,7 @@
    <string>OpenIMU</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="../core.qrc">
     <normaloff>:/OpenIMU/icons/OpenIMU.png</normaloff>:/OpenIMU/icons/OpenIMU.png</iconset>
   </property>
   <property name="styleSheet">
@@ -37,11 +37,8 @@ QWidget#line,QWidget#line_2,QWidget#line_3{background-color:rgba(100,100,100,100
 
 QWidget#MainWindow,QWidget#ImportBrowser,QWidget#ImportManager,QWidget#frmParticipant,QWidget#ExportCSV,QWidget#ImportDialog,QWidget#StartDialog,QWidget#dlgProcessSelect, QWidget#DataInfosWidget,QDialog{background:qlineargradient(spread:pad, x1:0.483, y1:0, x2:0.511045, y2:1, stop:0 rgb(50, 50, 50), stop:1 rgb(153, 153, 153));border-radius:0px;}
 
-
-
 QFrame#frameTitle{background-color:rgba(130,130,130,50%);}
 QFrame#frameInfos{background-color:rgba(50,50,50,50%);}
-
 
 QFrame#frameButtons,QFrame#frameTools,QFrame#frameCursor{background-color:rgba(0,0,0,70%);  border-radius:5px;}
 
@@ -69,6 +66,7 @@ QTreeWidget::item:selected {
 
 
 QLineEdit,QPlainTextEdit,QComboBox{background-color:rgba(226, 226, 226,90%);border-radius:5px;min-height:24px;}
+QComboBox{selection-color:black;}
 
 QListWidget#lstSensors,QTableWidget{background-color:rgba(200,200,200,70%);}
 
@@ -127,7 +125,17 @@ QSpinBox{
 	border-radius:0px;
 	min-height:24px;
 }
-</string>
+
+/*
+    QCheckBox
+*/
+
+QCheckBox::indicator:unchecked:!enabled { background-color:rgba(128,0,0,100%);}
+QCheckBox::indicator:checked:!enabled { background-color:green;}
+QCheckBox::indicator:unchecked{ background-color:red;border-radius:3px;}
+QCheckBox::indicator:checked {background-color:rgb(0,255,0);border-radius:3px;}
+QCheckBox:checked{background-color:rgba(0,0,0,0%);}
+QCheckBox:!checked{background-color:rgba(0,0,0,0%);}</string>
   </property>
   <property name="documentMode">
    <bool>false</bool>
@@ -301,7 +309,7 @@ QSpinBox{
            <string/>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../core.qrc">
             <normaloff>:/OpenIMU/icons/group.png</normaloff>:/OpenIMU/icons/group.png</iconset>
           </property>
           <property name="iconSize">
@@ -342,7 +350,7 @@ QSpinBox{
            <string/>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../core.qrc">
             <normaloff>:/OpenIMU/icons/participant.png</normaloff>:/OpenIMU/icons/participant.png</iconset>
           </property>
           <property name="iconSize">
@@ -393,7 +401,7 @@ QSpinBox{
            <string/>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../core.qrc">
             <normaloff>:/OpenIMU/icons/delete.png</normaloff>:/OpenIMU/icons/delete.png</iconset>
           </property>
           <property name="iconSize">
@@ -543,7 +551,7 @@ QSpinBox{
         <string/>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="../core.qrc">
          <normaloff>:/OpenIMU/icons/tree.png</normaloff>:/OpenIMU/icons/tree.png</iconset>
        </property>
        <property name="iconSize">
@@ -599,7 +607,7 @@ QSpinBox{
         <string/>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="../core.qrc">
          <normaloff>:/OpenIMU/icons/log.png</normaloff>:/OpenIMU/icons/log.png</iconset>
        </property>
        <property name="iconSize">
@@ -649,7 +657,7 @@ QSpinBox{
         <string>Importer</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="../core.qrc">
          <normaloff>:/OpenIMU/icons/import.png</normaloff>:/OpenIMU/icons/import.png</iconset>
        </property>
        <property name="iconSize">
@@ -679,6 +687,9 @@ QSpinBox{
        <property name="cursor">
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
+       <property name="mouseTracking">
+        <bool>false</bool>
+       </property>
        <property name="toolTip">
         <string>Transfère et importe les données directement à partir d'un appareil</string>
        </property>
@@ -686,7 +697,7 @@ QSpinBox{
         <string>Transférer</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="../core.qrc">
          <normaloff>:/OpenIMU/icons/transfer.png</normaloff>:/OpenIMU/icons/transfer.png</iconset>
        </property>
        <property name="iconSize">
@@ -739,7 +750,7 @@ QSpinBox{
         <string>Analyser</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="../core.qrc">
          <normaloff>:/OpenIMU/icons/process.png</normaloff>:/OpenIMU/icons/process.png</iconset>
        </property>
        <property name="iconSize">
@@ -782,7 +793,7 @@ QSpinBox{
         <string>Exporter</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="../core.qrc">
          <normaloff>:/OpenIMU/icons/save.png</normaloff>:/OpenIMU/icons/save.png</iconset>
        </property>
        <property name="iconSize">
@@ -829,7 +840,7 @@ QSpinBox{
         <string>Compacter</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="../core.qrc">
          <normaloff>:/OpenIMU/icons/compact.png</normaloff>:/OpenIMU/icons/compact.png</iconset>
        </property>
        <property name="iconSize">
@@ -868,7 +879,7 @@ QSpinBox{
         <string>Informations</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="../core.qrc">
          <normaloff>:/OpenIMU/icons/info.png</normaloff>:/OpenIMU/icons/info.png</iconset>
        </property>
        <property name="iconSize">
@@ -924,7 +935,7 @@ QSpinBox{
         <string>Fermer</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="../core.qrc">
          <normaloff>:/OpenIMU/icons/delete.png</normaloff>:/OpenIMU/icons/delete.png</iconset>
        </property>
        <property name="iconSize">
@@ -955,6 +966,8 @@ QSpinBox{
    <header>OpenIMUApp</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../core.qrc"/>
+ </resources>
  <connections/>
 </ui>

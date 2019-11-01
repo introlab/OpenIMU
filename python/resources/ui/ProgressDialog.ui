@@ -29,8 +29,9 @@ QProgressBar#prgTask::chunk {
     background-color:qlineargradient(spread:reflect, x1:0.5, y1:0, x2:0.5, y2:0.5, stop:0 rgba(0, 0, 127, 255), stop:1 rgba(114, 114, 255, 255));
     width: 20px;
 }
-QProgressBar#prgTask{
-	
+QProgressBar#prgTotal::chunk{
+	background-color:qlineargradient(spread:reflect, x1:0.5, y1:0, x2:0.5, y2:0.5, stop:0 rgba(0, 127, 0, 255), stop:1 rgba(114, 255, 114, 255));
+    width: 20px;
 }</string>
   </property>
   <property name="modal">
@@ -63,7 +64,7 @@ QProgressBar#prgTask{
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>:/OpenIMU/icons/loading.gif</pixmap>
+        <pixmap resource="../core.qrc">:/OpenIMU/icons/loading.gif</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>
@@ -247,6 +248,8 @@ QProgressBar#prgTask{
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../core.qrc"/>
+ </resources>
  <connections/>
 </ui>

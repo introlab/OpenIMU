@@ -1,7 +1,7 @@
 import sys
 
-from PyQt5.QtWidgets import QApplication, QDialog, QTreeWidget, QTreeWidgetItem, QStyleFactory
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
+from PyQt5.QtWidgets import QTreeWidget, QTreeWidgetItem, QStyleFactory
+from PyQt5.QtCore import pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QIcon, QFont
 # Models
 from libopenimu.models.Participant import Participant
@@ -334,7 +334,7 @@ def except_hook(cls, exception, traceback):
     from libopenimu.qt.CrashWindow import CrashWindow
     crash_dlg = CrashWindow(traceback, exception)
     crash_dlg.exec()
-    # sys.__excepthook__(cls, exception, traceback)
+    sys.__excepthook__(cls, exception, traceback)
 
 
 # Main
