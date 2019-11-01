@@ -90,7 +90,7 @@ class MainWindow(QMainWindow):
 
         # If we need to import data, show the import dialog
         if start_window.importing:
-            self.importRequested()
+            self.import_requested()
             gc.collect()
 
     def setup_signals(self):

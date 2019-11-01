@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QWidget, QListWidgetItem, QTableWidgetItem, QTableWidget, QHeaderView
+from PyQt5.QtWidgets import QWidget, QListWidgetItem, QTableWidgetItem, QHeaderView
 from PyQt5.QtGui import QIcon, QColor, QGuiApplication
-from PyQt5.QtCore import Qt, QItemSelectionModel
+from PyQt5.QtCore import Qt
 
 from resources.ui.python.ResultWidget_ui import Ui_frmResult
 

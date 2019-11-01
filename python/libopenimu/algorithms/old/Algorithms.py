@@ -30,11 +30,11 @@ def resample_data(data, rate):
     return np.array((t, xint, yint, zint)).transpose()
 
 
-"""
-    Calculating magnitude
-    array contains t, acc_x, acc_y, acc_z
-    will return t, sqrt(acc_x^2,acc_y^2,acc_z^2)
-"""
+#
+# Calculating magnitude
+# array contains t, acc_x, acc_y, acc_z
+# will return t, sqrt(acc_x^2,acc_y^2,acc_z^2)
+#
 
 
 def svm(data):

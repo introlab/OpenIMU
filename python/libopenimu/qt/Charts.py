@@ -513,8 +513,8 @@ class IMUChartView(QChartView, BaseGraph):
     def resizeEvent(self, e: QResizeEvent):
         super().resizeEvent(e)
 
-        oldSize = e.oldSize()
-        newSize = e.size()
+        # oldSize = e.oldSize()
+        # newSize = e.size()
 
         # Update cursor from time
         if self.cursor_time:
