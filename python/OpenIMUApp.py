@@ -1,7 +1,7 @@
 import sys
 
 from PyQt5.QtWidgets import QTreeWidget, QTreeWidgetItem, QStyleFactory
-from PyQt5.QtCore import pyqtSlot, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QIcon, QFont
 # Models
 from libopenimu.models.Participant import Participant
