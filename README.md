@@ -87,24 +87,23 @@ Please follow those steps to setup your development environment.
 2.  Install [CMake](https://cmake.org/download/)
 
 3.  Install [Qt + QtCreator](https://www.qt.io/)
-    1. Install the latest Desktop distribution fitting your compiling environment (will not be needed in the future)
- 
- 
+    1.  Install the latest Desktop distribution fitting your compiling environment (will not be needed in the future)
+  
 4.  Install [MiniConda3](https://conda.io/miniconda.html)
-    1. Install Python 3.6 version for current user (in user directory)
+    1.  Install Python 3.6 version for current user (in user directory)
     
 5.  Install [PyCharm Community Edition](https://www.jetbrains.com/pycharm/)
 
 ### Step 1 : Open the root CMakeLists.txt in QtCreator
 1.  Opening the root CMakeLists.txt will allow to create and build the project
-    1. Build the project, it will automatically generate the Python environment in env/python-3.6, PyQt UI and RCC files.
-    2. All python dependencies will be automatically downloaded
-    3. Once the project is built, you will not need QtCreator until you change or add a resource file or a QtDesigner ui file.
-    4. If you change or add ui or resources files, you need to rebuild the project from QtCreator.
+    1.  Build the project, it will automatically generate the Python environment in env/python-3.6, PyQt UI and RCC files.
+    2.  All python dependencies will be automatically downloaded
+    3.  Once the project is built, you will not need QtCreator until you change or add a resource file or a QtDesigner ui file.
+    4.  If you change or add ui or resources files, you need to rebuild the project from QtCreator.
 
 ### Step 2 : Create a PyCharm project
 1.  Using PyCharm, opening the directory "{PROJECT_ROOT}/python"
-    1. Select the existing Python 3.6 environment in "{PROJECT_ROOT}/python/env/python-3.6" in the app menu: PyCharm->Preferences->Project:python->Project Interpreter
+    1.  Select the existing Python 3.6 environment in "{PROJECT_ROOT}/python/env/python-3.6" in the app menu: PyCharm->Preferences->Project:python->Project Interpreter
         
 ### Step 3 : Run the application
 1.  Run the OpenIMUApp.py application from PyCharm

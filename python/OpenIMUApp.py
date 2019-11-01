@@ -341,7 +341,7 @@ def except_hook(cls, exception, traceback):
 if __name__ == '__main__':
     sys.excepthook = except_hook
     from PyQt5.QtWidgets import QApplication
-    from PyQt5.QtCore import Qt, QDir
+    from PyQt5.QtCore import QDir
     from libopenimu.qt.MainWindow import MainWindow
     import PyQt5
 

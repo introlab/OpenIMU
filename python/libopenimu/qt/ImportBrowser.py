@@ -14,8 +14,6 @@ from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog, W
 from libopenimu.models.DataSource import DataSource
 from libopenimu.models.LogTypes import LogTypes
 
-import gc
-
 
 class ImportBrowser(QDialog):
     dbMan = None
