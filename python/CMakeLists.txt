@@ -45,11 +45,14 @@ SET(uis
     resources/ui/ProgressDialog.ui
     resources/ui/StreamWindow.ui
     resources/ui/ImportMatchDialog.ui
+    resources/ui/CrashDialog.ui
 )
 
 SET(qrcs
     resources/core.qrc
 )
+
+add_custom_target(uis_target SOURCES ${uis} ${qrcs})
 
 SET(qml
     resources/test.qml
@@ -104,7 +107,7 @@ set (installer_args
     --hidden-import logging.config
     --clean
     -y
-    --windowed
+    --windowed # If windowed, no console is displayed
     #--debug
     --icon ${APP_ICON}
 )

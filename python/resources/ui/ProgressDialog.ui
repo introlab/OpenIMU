@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>210</height>
+    <width>640</width>
+    <height>200</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,14 +29,15 @@ QProgressBar#prgTask::chunk {
     background-color:qlineargradient(spread:reflect, x1:0.5, y1:0, x2:0.5, y2:0.5, stop:0 rgba(0, 0, 127, 255), stop:1 rgba(114, 114, 255, 255));
     width: 20px;
 }
-QProgressBar#prgTask{
-	
+QProgressBar#prgTotal::chunk{
+	background-color:qlineargradient(spread:reflect, x1:0.5, y1:0, x2:0.5, y2:0.5, stop:0 rgba(0, 127, 0, 255), stop:1 rgba(114, 255, 114, 255));
+    width: 20px;
 }</string>
   </property>
   <property name="modal">
    <bool>true</bool>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -118,8 +119,8 @@ QProgressBar#prgTask{
     </widget>
    </item>
    <item>
-    <layout class="QFormLayout" name="formLayout">
-     <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
       <widget class="QLabel" name="lblCurrentTask">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -138,14 +139,8 @@ QProgressBar#prgTask{
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item>
       <widget class="QLabel" name="lblCurrentTaskValue">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -154,7 +149,7 @@ QProgressBar#prgTask{
         </font>
        </property>
        <property name="text">
-        <string>Inconnue</string>
+        <string>Un grand texte pour tester les fonctions</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>

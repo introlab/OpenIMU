@@ -3,7 +3,9 @@ from .BaseAlgorithm import BaseAlgorithm
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.db.DBManager import DBManager
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout,QScrollArea
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QGridLayout, QSpinBox, QComboBox, QFrame, QSizePolicy, \
+    QLabel
+from PyQt5.QtCore import Qt
 
 from libopenimu.qt.Charts import OpenIMUBarGraphView
 
@@ -17,10 +19,11 @@ class FreedsonAdult1998(BaseAlgorithm):
 
     def configure(self, params: dict):
         print('FreedsonAdult1998.configure')
+        super().configure(params)
 
     def calculate(self, manager: DBManager, recordsets: list):
-        print('FreedsonAdult1998.calculate')
-        print('Using recordsets', recordsets)
+        # print('FreedsonAdult1998.calculate')
+        # print('Using recordsets', recordsets)
 
         results = []
 
@@ -43,7 +46,7 @@ class FreedsonAdult1998(BaseAlgorithm):
                             result = {'id_recordset': record.id_recordset,
                                       'result_name': record.name + ' (' + sensor.location + '/' + sensor.name + ')',
                                       'id_sensor': sensor.id_sensor, 'result':
-                                          freedson_adult_1998(channel_data, sensor.sampling_rate)}
+                                          freedson_adult_1998(self.params, channel_data, sensor.sampling_rate)}
                             results.append(result)
 
         # Return an array with results for each recordset
@@ -51,6 +54,12 @@ class FreedsonAdult1998(BaseAlgorithm):
 
 
 class FreedsonAdult1998Factory(BaseAlgorithmFactory):
+    config_preset_input = QComboBox
+    config_sedentary_input = QSpinBox
+    config_light_input = QSpinBox
+    config_moderate_input = QSpinBox
+    config_vigorous_input = QSpinBox
+
     def __init__(self):
         super().__init__()
 
@@ -59,7 +68,10 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
         return FreedsonAdult1998(params)
 
     def params(self):
-        return dict()
+        return {'sedentary_cutoff': self.config_sedentary_input.value(),
+                'light_cutoff': self.config_light_input.value(),
+                'moderate_cutoff': self.config_moderate_input.value(),
+                'vigorous_cutoff': self.config_vigorous_input.value()}
 
     def name(self):
         return 'Freedson Adult 1998'
@@ -68,10 +80,7 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
         return 1
 
     def info(self):
-
-        my_info = {}
-
-        my_info['description'] = """ \
+        my_info = {'description': """ \
         It is a uniaxial accelerometer that assesses accelerations ranging from 0.05-2.0 G and is band limited with a 
         frequency response from 0.25-2.5 Hz.
                 
@@ -95,18 +104,92 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
         
         epoch = 60 seconds
                         
-        """
-        my_info['name'] = self.name()
-        my_info['author'] = 'Dominic Létourneau'
-        my_info['version'] = '0.1'
-        my_info['reference'] = ("Freedson PS1, Melanson E, Sirard J., Calibration of the Computer Science and "
-                                "Applications, Inc. accelerometer., Med Sci Sports Exerc. 1998 May;30(5):777-81")
-        my_info['unique_id'] = self.unique_id()
+        """, 'name': self.name(), 'author': 'Dominic Létourneau', 'version': '0.1',
+                   'reference': ("Freedson PS1, Melanson E, Sirard J., Calibration of the Computer Science and "
+                                 "Applications, Inc. accelerometer., Med Sci Sports Exerc. 1998 May;30(5):777-81"),
+                   'unique_id': self.unique_id()}
 
         return my_info
 
     def required_sensors(self):
         return [SensorType.ACCELEROMETER]
+
+    def build_config_widget(self, parent_widget: QWidget, default_params: dict = None):
+        # Initialize inputs
+        self.config_preset_input = QComboBox()
+        # self.config_preset_input.addItem('')
+        self.config_preset_input.addItem('Valeurs originales', [99, 1951, 5724, 9498])
+        self.config_preset_input.addItem('Personnalisées', [-1, -1, -1, -1])
+        # self.config_preset_input.addItem('Child', [99, 573, 1002, 0])
+        self.config_preset_input.currentIndexChanged.connect(self.config_preset_changed)
+
+        base_layout = QVBoxLayout()
+        preset_frame = QFrame()
+        preset_frame.setStyleSheet('QFrame{background-color: rgba(200,200,200,50%);}'
+                                   'QLabel{background-color: rgba(0,0,0,0%);}')
+        preset_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Maximum)
+        frame_layout = QGridLayout()
+        item_label = QLabel('Preset')
+        frame_layout.addWidget(item_label, 0, 0)
+        frame_layout.addWidget(self.config_preset_input, 0, 1)
+        # frame_layout.addRow('Preset', self.config_preset_input)
+        preset_frame.setLayout(frame_layout)
+        base_layout.addWidget(preset_frame)
+
+        layout = QGridLayout()
+        layout.setAlignment(Qt.AlignTop)
+        self.config_sedentary_input = QSpinBox()
+        self.config_sedentary_input.setRange(0, 15000)
+        item_label = QLabel('Cut-off Sedentary')
+        layout.addWidget(item_label, 0, 0)
+        layout.addWidget(self.config_sedentary_input, 0, 1)
+        # layout.addRow("Cut-off Sedentary", self.config_sedentary_input)
+        self.config_light_input = QSpinBox()
+        self.config_light_input.setRange(0, 15000)
+        item_label = QLabel('Cut-off Light')
+        layout.addWidget(item_label, 1, 0)
+        layout.addWidget(self.config_light_input, 1, 1)
+        # layout.addRow("Cut-off Light", self.config_light_input)
+        self.config_moderate_input = QSpinBox()
+        self.config_moderate_input.setRange(0, 15000)
+        item_label = QLabel('Cut-off Moderate')
+        layout.addWidget(item_label, 2, 0)
+        layout.addWidget(self.config_moderate_input, 2, 1)
+        # layout.addRow("Cut-off Moderate", self.config_moderate_input)
+        self.config_vigorous_input = QSpinBox()
+        self.config_vigorous_input.setRange(0, 15000)
+        item_label = QLabel('Cut-off Vigorous')
+        layout.addWidget(item_label, 3, 0)
+        layout.addWidget(self.config_vigorous_input, 3, 1)
+        # layout.addRow("Cut-off Vigorous", self.config_vigorous_input)
+        base_layout.addLayout(layout)
+
+        base_widget = QWidget(parent_widget)
+        base_widget.setLayout(base_layout)
+
+        # Set default values
+        if default_params is None:
+            self.config_preset_changed()
+        else:
+            self.config_sedentary_input = default_params['sedentary_cutoff']
+            self.config_light_input = default_params['light_cutoff']
+            self.config_moderate_input = default_params['moderate_cutoff']
+            self.config_vigorous_input = default_params['vigorous_cutoff']
+
+        return base_widget
+
+    def config_preset_changed(self):
+        params = self.config_preset_input.currentData()
+        if params is not None and len(params) == 4:
+            if params[0] != -1:
+                self.config_sedentary_input.setValue(params[0])
+                self.config_light_input.setValue(params[1])
+                self.config_moderate_input.setValue(params[2])
+                self.config_vigorous_input.setValue(params[3])
+            self.config_sedentary_input.setEnabled(params[0] == -1)
+            self.config_light_input.setEnabled(params[0] == -1)
+            self.config_moderate_input.setEnabled(params[0] == -1)
+            self.config_vigorous_input.setEnabled(params[0] == -1)
 
     def build_display_widget(self, parent_widget: QWidget, results, recordsets):
 
@@ -145,6 +228,26 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
         view.update()
 
         return scroll
+
+    def build_data_table(self, results):
+        data_table = {}
+        headers = []
+        data = []
+        data_names = []
+        # Results are stored in json, as a list of dict
+        if isinstance(results, list):
+            for result in results:
+                if isinstance(result, dict):
+                    result_data = result['result']
+                    result_name = result['result_name']
+                    headers.append(result_name)
+                    if not data_names:
+                        data_names = list(result_data.keys())
+                    data.append(list(result_data.values()))
+
+            data_table = {'headers': headers, 'data_names': data_names, 'data': data}
+
+        return data_table
 
 
 # Factory init

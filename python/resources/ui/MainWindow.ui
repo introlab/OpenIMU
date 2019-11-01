@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>984</width>
-    <height>587</height>
+    <width>1009</width>
+    <height>593</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -27,16 +27,18 @@
     <normaloff>:/OpenIMU/icons/OpenIMU.png</normaloff>:/OpenIMU/icons/OpenIMU.png</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget#MainWindow,QWidget#ImportBrowser,QWidget#ImportManager,QWidget#frmParticipant,QWidget#ExportCSV,QWidget#ImportDialog,QWidget#StartDialog,QWidget#dlgProcessSelect, QWidget#DataInfosWidget,QDialog{background:qlineargradient(spread:pad, x1:0.483, y1:0, x2:0.511045, y2:1, stop:0 rgb(50, 50, 50), stop:1 rgb(153, 153, 153));border-radius:0px;}
+   <string notr="true">QWidget{border-radius:5px;}
 
-QFrame#frameTitle{background-color:rgba(130,130,130,50%);}
-QFrame#frameInfos{background-color:rgba(50,50,50,50%);}
-
-QWidget{border-radius:5px;}
 
 QWidget#dockWidgetTreeContents,QWidget#dockWidgetLogContents,QWidget#dockWidgetToolsContents,QWidget#dockTabbedToolsContents{background-color:rgba(0,0,0,70%);  border-radius:5px;}
 
 QWidget#line,QWidget#line_2,QWidget#line_3{background-color:rgba(100,100,100,100%);}
+
+
+QWidget#MainWindow,QWidget#ImportBrowser,QWidget#ImportManager,QWidget#frmParticipant,QWidget#ExportCSV,QWidget#ImportDialog,QWidget#StartDialog,QWidget#dlgProcessSelect, QWidget#DataInfosWidget,QDialog{background:qlineargradient(spread:pad, x1:0.483, y1:0, x2:0.511045, y2:1, stop:0 rgb(50, 50, 50), stop:1 rgb(153, 153, 153));border-radius:0px;}
+
+QFrame#frameTitle{background-color:rgba(130,130,130,50%);}
+QFrame#frameInfos{background-color:rgba(50,50,50,50%);}
 
 QFrame#frameButtons,QFrame#frameTools,QFrame#frameCursor{background-color:rgba(0,0,0,70%);  border-radius:5px;}
 
@@ -48,9 +50,23 @@ QPushButton[checkable=true]:!checked,QToolButton[checkable=true]:!checked{color:
 
 QLabel,QCheckBox{color:white;}
 
-QTreeWidget, QListWidget{background-color:rgba(200,200,200,70%);}
+QListWidget{background-color:rgba(150,150,150,50%);}
+QTreeWidget{background-color:rgba(200,200,200,75%);} 
 
-QLineEdit,QPlainTextEdit,QComboBox{background-color:rgba(226, 226, 226,90%);border-radius:5px;}
+QTreeWidget::item:hover,QTreeWidget::item:hover:selected {
+	border:none;
+	border-radius:5px;
+	background-color:rgba(255,255,255,100);
+}
+
+QTreeWidget::item:selected {
+	border:none;
+	background-color:rgba(255,255,255,0);
+}
+
+
+QLineEdit,QPlainTextEdit,QComboBox{background-color:rgba(226, 226, 226,90%);border-radius:5px;min-height:24px;}
+QComboBox{selection-color:black;}
 
 QListWidget#lstSensors,QTableWidget{background-color:rgba(200,200,200,70%);}
 
@@ -60,14 +76,66 @@ border: 2px solid darkgrey;
 background-color:grey;
 text-align: center;
 }
+
+QTabWidget::pane {
+    background-color: rgba(50,50,50,50%);
+    border-radius: 5px;
+    border: 2px solid rgba(128,128,140,50%);
+}
+
+QTabWidget::tab-bar {
+    left: 0px;
+}
+
+QTabBar::tab,QTableWidget::tab,QHeaderView::section {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0  rgba(128,128,140,50%),  stop: 1.0  rgba(128,128,140,25%));
+    border: 2px solid  rgba(128,128,140,50%);
+    border-bottom: 0px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    padding: 2px;
+    min-height:25px;
+	color: white;
+}
+
+QTabBar::tab:selected, QTabBar::tab:hover {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0  rgba(128,128,140,70%),  stop: 1.0  rgba(128,128,140,50%));
+}
+
+QTabBar::tab:selected {
+    border-color:rgba(128,128,140,60%);
+    border-bottom-color:rgba(128,128,140,60%);
+}
+
+QTabBar::tab:!selected {
+    margin-top: 2px;
+}
+
 QMainWindow::separator {
     background: grey;
-    width: 5px; /* when vertical */
-    height: 5px; /* when horizontal */
+    width: 5px; 
+    height: 5px; 
 }
 
 QLabel#lblVersion{color:black;}
-</string>
+
+
+QSpinBox{
+	background-color:rgba(226, 226, 226,90%);
+	border-radius:0px;
+	min-height:24px;
+}
+
+/*
+    QCheckBox
+*/
+
+QCheckBox::indicator:unchecked:!enabled { background-color:rgba(128,0,0,100%);}
+QCheckBox::indicator:checked:!enabled { background-color:green;}
+QCheckBox::indicator:unchecked{ background-color:red;border-radius:3px;}
+QCheckBox::indicator:checked {background-color:rgb(0,255,0);border-radius:3px;}
+QCheckBox:checked{background-color:rgba(0,0,0,0%);}
+QCheckBox:!checked{background-color:rgba(0,0,0,0%);}</string>
   </property>
   <property name="documentMode">
    <bool>false</bool>
@@ -115,8 +183,8 @@ QLabel#lblVersion{color:black;}
    </property>
    <property name="minimumSize">
     <size>
-     <width>274</width>
-     <height>174</height>
+     <width>442</width>
+     <height>180</height>
     </size>
    </property>
    <property name="floating">
@@ -405,7 +473,7 @@ QLabel#lblVersion{color:black;}
    </property>
    <property name="minimumSize">
     <size>
-     <width>968</width>
+     <width>1009</width>
      <height>50</height>
     </size>
    </property>
@@ -618,6 +686,9 @@ QLabel#lblVersion{color:black;}
        </property>
        <property name="cursor">
         <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="mouseTracking">
+        <bool>false</bool>
        </property>
        <property name="toolTip">
         <string>Transfère et importe les données directement à partir d'un appareil</string>

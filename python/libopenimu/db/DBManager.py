@@ -499,13 +499,15 @@ class DBManager:
         return query.first()
 
     #####################
-    def add_processed_data(self, data_processor_id: int, name: str, results, recordsets):
+    def add_processed_data(self, data_processor_id: int, name: str, results, recordsets, params: dict):
+        import json
         # Add results
         data = ProcessedData()
         data.id_data_processor = data_processor_id
         data.data = pickle.dumps(results)
         data.name = name
         data.processed_time = datetime.datetime.now()
+        data.params = json.dumps(params)
 
         self.session.add(data)
         self.commit()
