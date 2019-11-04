@@ -1,7 +1,7 @@
 import sys
 
 from PyQt5.QtWidgets import QTreeWidget, QTreeWidgetItem, QStyleFactory
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QLibraryInfo
 from PyQt5.QtGui import QIcon, QFont
 # Models
 from libopenimu.models.Participant import Participant
@@ -359,8 +359,9 @@ if __name__ == '__main__':
     QDir.setCurrent(QDir.homePath())
 
     print(PyQt5.__file__)
-    # paths = [x for x in dir(QLibraryInfo) if x.endswith('Path')]
-    # pprint({x: QLibraryInfo.location(getattr(QLibraryInfo, x)) for x in paths})
+    from pprint import pprint
+    paths = [x for x in dir(QLibraryInfo) if x.endswith('Path')]
+    pprint({x: QLibraryInfo.location(getattr(QLibraryInfo, x)) for x in paths})
 
     # WebEngine settings
     # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.PluginsEnabled, True)
