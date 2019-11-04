@@ -115,6 +115,8 @@ set (installer_args
 # Build this target to make a package
 add_custom_target(python_package
     COMMAND ${PYTHON_INSTALLER_EXECUTABLE} ${installer_args} ${CMAKE_CURRENT_SOURCE_DIR}/OpenIMUApp.py
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/alembic.ini ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMUApp
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/alembic ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMUApp/alembic
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS python_target ${python_uis} ${python_qrcs} python-env
 )
