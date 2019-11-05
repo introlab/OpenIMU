@@ -54,15 +54,16 @@ class AppleWatchImporter(BaseImporter):
 
     def load(self, filename):
         # print('AppleWatchImporter.load')
-
+        results = {}
         # Removed zip loading for now,
         if 'zip' in filename:
             results = self.load_zip(filename)
         else:
-            with open(filename, "rb") as file:
-                # print('Loading File: ', filename)
-                self.current_file_size = os.stat(filename).st_size
-                results = self.readDataFile(file)
+            if '.data' in filename:
+                with open(filename, "rb") as file:
+                    # print('Loading File: ', filename)
+                    self.current_file_size = os.stat(filename).st_size
+                    results = self.readDataFile(file)
 
         # print('results len', len(results))
         return results
