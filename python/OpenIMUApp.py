@@ -358,10 +358,10 @@ if __name__ == '__main__':
     # Set current directory to home path
     QDir.setCurrent(QDir.homePath())
 
-    print(PyQt5.__file__)
-    from pprint import pprint
-    paths = [x for x in dir(QLibraryInfo) if x.endswith('Path')]
-    pprint({x: QLibraryInfo.location(getattr(QLibraryInfo, x)) for x in paths})
+    # print(PyQt5.__file__)
+    # from pprint import pprint
+    # paths = [x for x in dir(QLibraryInfo) if x.endswith('Path')]
+    # pprint({x: QLibraryInfo.location(getattr(QLibraryInfo, x)) for x in paths})
 
     # WebEngine settings
     # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.PluginsEnabled, True)

@@ -201,6 +201,7 @@ class ImportManager(QDialog):
         # Add files to list
         files = glob.glob(self.filename + "/**/*.*", recursive=True)  # Files in sub folders
         for file in files:
+            file_name = file.replace("/", os.sep)
             data_name = file.replace(self.filename, "")
             data_name = data_name.replace("/", os.sep)
             # data_name = os.path.split(data_name)[0].replace(os.sep, "")
@@ -210,8 +211,8 @@ class ImportManager(QDialog):
                 index = 1
             data_name = data_name[index]
 
-            if file not in file_list:
-                file_list[file] = data_name
+            if file_name not in file_list:
+                file_list[file_name] = data_name
 
         file_match = {}  # Dictionary - filename and participant
         if not self.participant_multi:

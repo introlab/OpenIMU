@@ -63,7 +63,8 @@ class AppleWatchImporter(BaseImporter):
                 with open(filename, "rb") as file:
                     # print('Loading File: ', filename)
                     self.current_file_size = os.stat(filename).st_size
-                    results = self.readDataFile(file)
+                    if '.data' in file:
+                        results = self.readDataFile(file)
 
         # print('results len', len(results))
         return results

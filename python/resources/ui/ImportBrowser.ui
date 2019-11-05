@@ -111,6 +111,12 @@
           <height>16777215</height>
          </size>
         </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAsNeeded</enum>
+        </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QAbstractScrollArea::AdjustIgnored</enum>
+        </property>
         <property name="editTriggers">
          <set>QAbstractItemView::NoEditTriggers</set>
         </property>
@@ -128,6 +134,12 @@
           <width>16</width>
           <height>16</height>
          </size>
+        </property>
+        <property name="textElideMode">
+         <enum>Qt::ElideNone</enum>
+        </property>
+        <property name="wordWrap">
+         <bool>false</bool>
         </property>
         <property name="columnCount">
          <number>4</number>
