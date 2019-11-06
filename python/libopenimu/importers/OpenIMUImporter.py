@@ -288,6 +288,14 @@ class OpenIMUImporter(BaseImporter):
         # Default configuration for old models
         sample_rate = 50
 
+        # TODO - need to do better with sample_rate
+        for timestamp in results:
+            # Do we have a configuration for this timestamp?
+            if results[timestamp].__contains__('config'):
+                if results[timestamp]['config'].__contains__('samplerate'):
+                    # Update sample rate
+                    sample_rate = results[timestamp]['config']['samplerate']
+
         # First create all sensors and channels
         sensors, channels = self.create_sensor_and_channels(sample_rate)
 
