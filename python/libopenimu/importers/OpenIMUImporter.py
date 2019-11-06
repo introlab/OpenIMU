@@ -14,7 +14,7 @@ import os
 
 import struct
 import datetime
-
+import json
 
 class OpenIMUImporter(BaseImporter):
     def __init__(self, manager: DBManager, participant: Participant):
@@ -285,7 +285,7 @@ class OpenIMUImporter(BaseImporter):
     def import_to_database(self, results):
         # print('OpenIMUImporter.import_to_database')
 
-        # TODO use configuration, hardcoded for now
+        # Default configuration for old models
         sample_rate = 50
 
         # First create all sensors and channels
@@ -294,6 +294,12 @@ class OpenIMUImporter(BaseImporter):
         # Timestamps are hour aligned
         count = 0
         for timestamp in results:
+            # Do we have a configuration for this timestamp?
+            if results[timestamp].__contains__('config'):
+                if results[timestamp]['config'].__contains__('samplerate'):
+                    # Update sample rate
+                    sample_rate = results[timestamp]['config']['samplerate']
+
             if results[timestamp].__contains__('imu'):
                 # print('contains imu')
                 recordset = self.get_recordset(results[timestamp]['imu']['start_time'])
@@ -386,6 +392,8 @@ class OpenIMUImporter(BaseImporter):
         file_size = file.tell()
         file.seek(old_file_position, os.SEEK_SET)
 
+        json_config = {}
+
         try:
             while file.readable():
                 chunk = file.read(1)
@@ -399,6 +407,17 @@ class OpenIMUImporter(BaseImporter):
                 if headChar[0] == b'h':
                     n = n + 1
                     # print("New log stream detected")
+                elif headChar[0] == b'c':
+                    chunk = file.read(struct.calcsize("i"))
+                    [json_size] = struct.unpack("i", chunk)
+                    json_data = file.read(json_size)
+                    try:
+                        json_config = json.loads(json_data)
+                    except:
+                        print('json configuration cannot read.')
+                        json_config = {}
+
+                    n = n + 1
                 elif headChar[0] == b't':
                     n = n + 1
                     chunk = file.read(struct.calcsize("i"))
@@ -416,6 +435,9 @@ class OpenIMUImporter(BaseImporter):
                     if not results.__contains__(timestamp_hour):
                         # print("init timestamp = ", timestamp)
                         results[timestamp_hour] = {}
+
+                        results[timestamp_hour]['config'] = json_config
+
                         results[timestamp_hour]['gps'] = {'times': [], 'values': [],
                                                           'start_time': current_timestamp,
                                                           'end_time': current_timestamp + 1}
@@ -501,6 +523,11 @@ class OpenIMUImporter(BaseImporter):
         # Generate time according to number of samples per timestamp
         for timestamp in results:
             for key in results[timestamp]:
+
+                # Do not try to process config entry
+                if key == 'config':
+                    continue
+
                 # Generate time values
                 timevect = np.linspace(results[timestamp][key]['start_time'],
                                        results[timestamp][key]['end_time'],
