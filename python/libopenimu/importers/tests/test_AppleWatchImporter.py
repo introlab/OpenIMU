@@ -31,7 +31,6 @@ class AppleWatchImporterTest(unittest.TestCase):
         manager.update_participant(participant)
         importer = AppleWatchImporter(manager, participant)
         results = importer.load('/Users/dominic/WA/OpenIMU.git/python/applewatch_data.zip')
-        #results = importer.load('/Users/dominic/Downloads/W04P12.zip')
         # print('results', results)
         importer.import_to_database(results)
 
