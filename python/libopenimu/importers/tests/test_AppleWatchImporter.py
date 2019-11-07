@@ -26,12 +26,12 @@ class AppleWatchImporterTest(unittest.TestCase):
     def test_load_zip_file():
         # Testing
 
-        manager = DBManager('applewatch.oi', overwrite=True)
+        manager = DBManager('applewatch.oi', overwrite=True, newfile=True)
         participant = Participant(name='My Participant', description='Participant Description')
         manager.update_participant(participant)
         importer = AppleWatchImporter(manager, participant)
-
         results = importer.load('/Users/dominic/WA/OpenIMU.git/python/applewatch_data.zip')
+        #results = importer.load('/Users/dominic/Downloads/W04P12.zip')
         # print('results', results)
         importer.import_to_database(results)
 

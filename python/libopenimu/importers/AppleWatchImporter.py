@@ -784,11 +784,13 @@ class AppleWatchImporter(BaseImporter):
         results_ms_ts = []
         results_ms_data = []
 
-        progress = np.floor((file.tell() / self.current_file_size)*100 / 2)  # Divided by 2, since loading is first step
-        #                                                                      DB import is second step
+        if file.seekable():
+            # Divided by 2, since loading is first step
+            # DB import is second step
+            progress = np.floor((file.tell() / self.current_file_size)*100 / 2)
 
-        if progress > 0:
-            self.update_progress.emit(progress)
+            if progress > 0:
+                self.update_progress.emit(progress)
 
         # read the whole file
         try:
@@ -802,10 +804,12 @@ class AppleWatchImporter(BaseImporter):
 
                 results_ms_ts.append(int(timestamp_ms))
                 results_ms_data.append(read_data_func(file, debug))
-                new_progress = np.floor((file.tell() / self.current_file_size)*100 / 2)
-                if new_progress != progress:  # Only send update if % was increased
-                    progress = new_progress
-                    self.update_progress.emit(progress)
+
+                if file.seekable():
+                    new_progress = np.floor((file.tell() / self.current_file_size)*100 / 2)
+                    if new_progress != progress:  # Only send update if % was increased
+                        progress = new_progress
+                        self.update_progress.emit(progress)
         except:
             # let's hope it's only eof...
             # Make sure data vectors are of the same size
