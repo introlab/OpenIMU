@@ -21,7 +21,7 @@ class ImportWindow(QDialog):
 
     dataSet = None
 
-    def __init__(self, dataset=None, parent=None, filename = None, showImport = False):
+    def __init__(self, dataset=None, parent=None, filename=None, showImport=False):
         super().__init__(parent=parent)
         self.UI = Ui_ImportDialog()
         self.UI.setupUi(self)

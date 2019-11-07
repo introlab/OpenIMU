@@ -84,8 +84,9 @@ class AppleWatchImporter(BaseImporter):
             for file in namelist:
                 if '.data' in file:
                     # print('Reading file: ', file)
-                    self.current_file_size = os.stat(file).st_size
+
                     my_file = myzip.open(file)
+                    self.current_file_size = myzip.getinfo(my_file.name).file_size
                     values = self.readDataFile(my_file, False)
 
                     # Merge data
