@@ -48,7 +48,7 @@ class BaseImporter(QObject):
             return None
 
         # Validate timestamp
-        if my_time > datetime.datetime.now() or my_time < datetime.datetime(1969, 1, 1):
+        if my_time > datetime.datetime.now() or my_time < datetime.datetime(2000, 1, 1):
             print("Invalid timestamp: " + str(timestamp))
             return None
 

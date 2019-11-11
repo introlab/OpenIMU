@@ -38,6 +38,7 @@ class DataSource(Base):
 
     @staticmethod
     def build_short_filename(filename):
+        short_filename = filename
         filename = filename.replace('/', os.sep)
         file_split = filename.split(os.sep)
 

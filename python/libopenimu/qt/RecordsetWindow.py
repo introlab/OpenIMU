@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QGraphicsScene, QApplication, QGraphicsRectItem, QGraphicsLineItem, QGraphicsItem
-from PyQt5.QtWidgets import QDialog, QMenu, QAction
+from PyQt5.QtWidgets import QDialog, QMenu, QAction, QMessageBox
 from PyQt5.QtGui import QBrush, QPen, QColor, QFont, QGuiApplication
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QPoint, QRect, QObject, QRectF
 
@@ -181,8 +181,8 @@ class RecordsetWindow(QWidget):
 
     def paintEvent(self, paint_event):
         if not self.time_pixmap:
-            self.refresh_timeview()
             self.time_pixmap = True
+            self.refresh_timeview()
 
     def resizeEvent(self, resize_event):
         if self.time_pixmap:
@@ -200,27 +200,35 @@ class RecordsetWindow(QWidget):
             if num_days * 75 > min_width:
                 min_width = num_days * 75 - 5
 
-        # Resize timeScene correctly
-        self.timeScene.clear()
-        self.timeScene.setSceneRect(self.timeScene.itemsBoundingRect())
-        self.timeScene.addLine(0, 80, min_width, 80, QPen(Qt.transparent))
+            # Resize timeScene correctly (if less than 2 years)
+            if num_days < 365 * 2:
+                self.timeScene.clear()
+                self.timeScene.setSceneRect(self.timeScene.itemsBoundingRect())
+                self.timeScene.addLine(0, 80, min_width, 80, QPen(Qt.transparent))
 
-        # Set background color
-        back_brush = QBrush(Qt.lightGray)
-        self.timeScene.setBackgroundBrush(back_brush)
-        self.timeSensorsScene.setBackgroundBrush(back_brush)
+                # Set background color
+                back_brush = QBrush(Qt.lightGray)
+                self.timeScene.setBackgroundBrush(back_brush)
+                self.timeSensorsScene.setBackgroundBrush(back_brush)
 
-        # Update display
-        self.draw_dates()
-        self.draw_sensors_names()
-        self.draw_recordsets()
-        self.draw_sensors()
-        self.draw_grid()
-        self.draw_timebar()
+                # Update display
+                self.draw_dates()
+                self.draw_sensors_names()
+                self.draw_recordsets()
+                self.draw_sensors()
+                self.draw_grid()
+                self.draw_timebar()
 
-        # Adjust splitter sizes
-        self.adjust_timeview_size()
-        # self.UI.frmSensors.hide()
+                # Adjust splitter sizes
+                self.adjust_timeview_size()
+                # self.UI.frmSensors.hide()
+            else:
+                message = QMessageBox(self)
+                message.warning(self, "Avertissement",
+                                "L'affichage du timeline de plus de 2 ans n'est pas supporté pour l'instant")
+
+        else:
+            print('Empty recordset!')
 
         QGuiApplication.restoreOverrideCursor()
 

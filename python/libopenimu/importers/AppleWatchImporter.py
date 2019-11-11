@@ -54,45 +54,42 @@ class AppleWatchImporter(BaseImporter):
 
     def load(self, filename):
         # print('AppleWatchImporter.load')
-
+        results = []
         # Removed zip loading for now,
         if 'zip' in filename:
             results = self.load_zip(filename)
         else:
-            with open(filename, "rb") as file:
-                # print('Loading File: ', filename)
-                self.current_file_size = os.stat(filename).st_size
-                results = self.readDataFile(file)
+            if '.data' in filename:
+                with open(filename, "rb") as file:
+                    # print('Loading File: ', filename)
+                    self.current_file_size = os.stat(filename).st_size
+
+                    values = self.readDataFile(file)
+                    if values is not None:
+                        results.append(values)
 
         # print('results len', len(results))
         return results
 
     def load_zip(self, filename):
-        results = {}
+        results = []
         with zipfile.ZipFile(filename) as myzip:
             # print('zip opened')
             namelist = myzip.namelist()
 
-            # print('zip contains : ', namelist)
-
-            # TODO
-            # First find SETTINGS file
-
-            # Then process data files
+            # Process data files
             for file in namelist:
                 if '.data' in file:
                     # print('Reading file: ', file)
-                    self.current_file_size = os.stat(file).st_size
                     my_file = myzip.open(file)
+                    self.current_file_size = myzip.getinfo(my_file.name).file_size
                     values = self.readDataFile(my_file, False)
 
-                    # Merge data
+                    # Append data
                     if values is not None:
-                        results.update(values)
-                else:
-                    pass
-                    # print('Unknown file : ', file)
+                        results.append(values)
 
+        # Returns an array which each element is the result of the import of one file
         return results
 
     @staticmethod
@@ -585,54 +582,65 @@ class AppleWatchImporter(BaseImporter):
         if results is None:
             return
 
-        # DL Oct. 16 2018, New import to database
-        if results.__contains__('motion'):
-            sampling_rate = results['motion']['sampling_rate']
-            if results['motion']['timestamps']:
-                self.import_motion_to_database(sampling_rate, results['motion']['timestamps'])
+        # We can have bot arrays or dict depending if we imported from a zip file or not
+        process_list = []
 
-        if results.__contains__('battery'):
-            sampling_rate = results['battery']['sampling_rate']
-            if results['battery']['timestamps']:
-                self.import_battery_to_database(sampling_rate, results['battery']['timestamps'])
+        # Testing if we have an array of result
+        if isinstance(results, dict):
+            process_list.append(results)
+        else:
+            process_list = results
 
-        if results.__contains__('sensoria'):
-            sampling_rate = results['sensoria']['sampling_rate']
-            if results['sensoria']['timestamps']:
-                self.import_sensoria_to_database(sampling_rate, results['sensoria']['timestamps'])
+        for res in process_list:
 
-        if results.__contains__('heartrate'):
-            sampling_rate = results['heartrate']['sampling_rate']
-            if results['heartrate']['timestamps']:
-                self.import_heartrate_to_database(sampling_rate, results['heartrate']['timestamps'])
+            # DL Oct. 16 2018, New import to database
+            if res.__contains__('motion'):
+                sampling_rate = res['motion']['sampling_rate']
+                if res['motion']['timestamps']:
+                    self.import_motion_to_database(sampling_rate, res['motion']['timestamps'])
 
-        if results.__contains__('beacons'):
-            sampling_rate = results['beacons']['sampling_rate']
-            if results['beacons']['timestamps']:
-                self.import_beacons_to_database(sampling_rate, results['beacons']['timestamps'])
+            if res.__contains__('battery'):
+                sampling_rate = res['battery']['sampling_rate']
+                if res['battery']['timestamps']:
+                    self.import_battery_to_database(sampling_rate, res['battery']['timestamps'])
 
-        if results.__contains__('coordinates'):
-            sampling_rate = results['coordinates']['sampling_rate']
-            if results['coordinates']['timestamps']:
-                self.import_coordinates_to_database(sampling_rate, results['coordinates']['timestamps'])
+            if res.__contains__('sensoria'):
+                sampling_rate = res['sensoria']['sampling_rate']
+                if res['sensoria']['timestamps']:
+                    self.import_sensoria_to_database(sampling_rate, res['sensoria']['timestamps'])
 
-        if results.__contains__('raw_motion'):
-            sampling_rate = results['raw_motion']['sampling_rate']
-            if results['raw_motion']['timestamps']:
-                self.import_raw_motion_to_database(sampling_rate, results['raw_motion']['timestamps'])
+            if res.__contains__('heartrate'):
+                sampling_rate = res['heartrate']['sampling_rate']
+                if res['heartrate']['timestamps']:
+                    self.import_heartrate_to_database(sampling_rate, res['heartrate']['timestamps'])
 
-        if results.__contains__('raw_accelero'):
-            sampling_rate = results['raw_accelero']['sampling_rate']
-            if results['raw_accelero']['timestamps']:
-                self.import_raw_accelerometer_to_database(sampling_rate, results['raw_accelero']['timestamps'])
+            if res.__contains__('beacons'):
+                sampling_rate = res['beacons']['sampling_rate']
+                if res['beacons']['timestamps']:
+                    self.import_beacons_to_database(sampling_rate, res['beacons']['timestamps'])
 
-        if results.__contains__('raw_gyro'):
-            sampling_rate = results['raw_gyro']['sampling_rate']
-            if results['raw_gyro']['timestamps']:
-                self.import_raw_gyro_to_database(sampling_rate, results['raw_gyro']['timestamps'])
+            if res.__contains__('coordinates'):
+                sampling_rate = res['coordinates']['sampling_rate']
+                if res['coordinates']['timestamps']:
+                    self.import_coordinates_to_database(sampling_rate, res['coordinates']['timestamps'])
 
-        # Commit DB
-        self.db.commit()
+            if res.__contains__('raw_motion'):
+                sampling_rate = res['raw_motion']['sampling_rate']
+                if res['raw_motion']['timestamps']:
+                    self.import_raw_motion_to_database(sampling_rate, res['raw_motion']['timestamps'])
+
+            if res.__contains__('raw_accelero'):
+                sampling_rate = res['raw_accelero']['sampling_rate']
+                if res['raw_accelero']['timestamps']:
+                    self.import_raw_accelerometer_to_database(sampling_rate, res['raw_accelero']['timestamps'])
+
+            if res.__contains__('raw_gyro'):
+                sampling_rate = res['raw_gyro']['sampling_rate']
+                if res['raw_gyro']['timestamps']:
+                    self.import_raw_gyro_to_database(sampling_rate, res['raw_gyro']['timestamps'])
+
+            # Commit DB
+            self.db.commit()
 
     def get_sampling_rate_from_header(self, sensor_id, header):  # header = string of json
         sample_rate = 0
@@ -781,11 +789,13 @@ class AppleWatchImporter(BaseImporter):
         results_ms_ts = []
         results_ms_data = []
 
-        progress = np.floor((file.tell() / self.current_file_size)*100 / 2)  # Divided by 2, since loading is first step
-        #                                                                      DB import is second step
+        if file.seekable():
+            # Divided by 2, since loading is first step
+            # DB import is second step
+            progress = np.floor((file.tell() / self.current_file_size)*100 / 2)
 
-        if progress > 0:
-            self.update_progress.emit(progress)
+            if progress > 0:
+                self.update_progress.emit(progress)
 
         # read the whole file
         try:
@@ -799,10 +809,12 @@ class AppleWatchImporter(BaseImporter):
 
                 results_ms_ts.append(int(timestamp_ms))
                 results_ms_data.append(read_data_func(file, debug))
-                new_progress = np.floor((file.tell() / self.current_file_size)*100 / 2)
-                if new_progress != progress:  # Only send update if % was increased
-                    progress = new_progress
-                    self.update_progress.emit(progress)
+
+                if file.seekable():
+                    new_progress = np.floor((file.tell() / self.current_file_size)*100 / 2)
+                    if new_progress != progress:  # Only send update if % was increased
+                        progress = new_progress
+                        self.update_progress.emit(progress)
         except:
             # let's hope it's only eof...
             # Make sure data vectors are of the same size

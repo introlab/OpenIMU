@@ -50,11 +50,11 @@ class ImportBrowser(QDialog):
             def process(self):
                 file_md5 = DataSource.compute_md5(filename=self.filename).hexdigest()
 
-                if not DataSource.datasource_exists_for_participant(filename=self.short_filename ,
+                if not DataSource.datasource_exists_for_participant(filename=self.short_filename,
                                                                     participant=self.importer.participant, md5=file_md5,
                                                                     db_session=self.importer.db.session):
 
-                    self.log_request.emit("Chargement du fichier: '" + self.short_filename  + "'", LogTypes.LOGTYPE_INFO)
+                    self.log_request.emit("Chargement du fichier: '" + self.short_filename + "'", LogTypes.LOGTYPE_INFO)
 
                     results = self.importer.load(self.filename)
                     if results is not None:
