@@ -41,7 +41,7 @@ class BaseImporter(QObject):
         # No recordsets when starting
         self.recordsets = []
 
-    def get_recordset(self, timestamp):
+    def get_recordset(self, timestamp, session_name=str()):
         try:
             my_time = datetime.datetime.fromtimestamp(timestamp)
         except ValueError:
@@ -59,7 +59,7 @@ class BaseImporter(QObject):
                 return record
 
         # Return new record
-        recordset = self.db.add_recordset(self.participant, str(my_time.date()), my_time, my_time)
+        recordset = self.db.add_recordset(self.participant, str(my_time.date()) + session_name, my_time, my_time)
         self.recordsets.append(recordset)
         return recordset
 

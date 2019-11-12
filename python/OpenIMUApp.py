@@ -1,7 +1,7 @@
 import sys
 
 from PyQt5.QtWidgets import QTreeWidget, QTreeWidgetItem, QStyleFactory
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QLibraryInfo
+from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QIcon, QFont
 # Models
 from libopenimu.models.Participant import Participant
@@ -360,6 +360,7 @@ if __name__ == '__main__':
 
     # print(PyQt5.__file__)
     # from pprint import pprint
+    # from PyQt5.QtCore import QLibraryInfo
     # paths = [x for x in dir(QLibraryInfo) if x.endswith('Path')]
     # pprint({x: QLibraryInfo.location(getattr(QLibraryInfo, x)) for x in paths})
 
@@ -370,9 +371,9 @@ if __name__ == '__main__':
     # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.LocalContentCanAccessRemoteUrls,True)
     # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.AllowRunningInsecureContent, True)
 
+    # Create Main Window
     window = MainWindow()
 
-    # Never executed (exec already in main)...
-
+    # Exec application
     sys.exit(app.exec_())
 

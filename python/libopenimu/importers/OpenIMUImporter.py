@@ -16,6 +16,7 @@ import struct
 import datetime
 import json
 
+
 class OpenIMUImporter(BaseImporter):
     def __init__(self, manager: DBManager, participant: Participant):
         super(OpenIMUImporter, self).__init__(manager, participant)
@@ -23,25 +24,27 @@ class OpenIMUImporter(BaseImporter):
 
         self.current_file_size = 0
 
-# def get_recordset(self, start_timestamp, end_timestamp):
-#     my_start_time = datetime.datetime.fromtimestamp(start_timestamp)
-#     my_end_time = datetime.datetime.fromtimestamp(end_timestamp)
-#
-#     # Find a record the same day
-#     for record in self.recordsets:
-#         # Same date return this record
-#         if record.start_timestamp.date() == my_start_time.date():
-#             # Update start and stop
-#             if my_start_time < record.start_timestamp:
-#                 record.start_timestamp = my_start_time
-#             if my_end_time > record.end_timestamp:
-#                 record.end_timestamp = my_end_time
-#             return record
-#
-#     # Return new record
-#     recordset = self.db.add_recordset(self.participant, str(my_start_time.date()), my_start_time, my_end_time)
-#     self.recordsets.append(recordset)
-#     return recordset
+    def get_recordset(self, timestamp, session_name=str()):
+        try:
+            my_time = datetime.datetime.fromtimestamp(timestamp)
+        except ValueError:
+            return None
+
+        # Validate timestamp
+        if my_time > datetime.datetime.now() or my_time < datetime.datetime(2000, 1, 1):
+            print("Invalid timestamp: " + str(timestamp))
+            return None
+
+        # Find a record the same day
+        for record in self.recordsets:
+            # Same date return this record
+            if record.start_timestamp.date() == my_time.date():
+                return record
+
+        # Forcing a new recordset because every recording is in a single file...
+        recordset = self.db.add_recordset(self.participant, str(my_time.date()) + session_name, my_time, my_time, force=True)
+        self.recordsets.append(recordset)
+        return recordset
 
     @timing
     def load(self, filename):

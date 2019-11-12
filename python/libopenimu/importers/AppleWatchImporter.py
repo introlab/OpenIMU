@@ -49,7 +49,7 @@ class AppleWatchImporter(BaseImporter):
 
     def __init__(self, manager: DBManager, participant: Participant):
         super().__init__(manager, participant)
-
+        self.session_name = str()
         self.current_file_size = 0
 
     def load(self, filename):
@@ -61,6 +61,25 @@ class AppleWatchImporter(BaseImporter):
         else:
             if '.data' in filename:
                 with open(filename, "rb") as file:
+
+                    # Look for session information in the same directory
+                    basename = os.path.basename(filename)
+                    session_file_name = filename.replace(basename, 'session.oimi')
+
+                    if os.path.exists(session_file_name):
+                        with open(session_file_name, 'r') as session_file:
+                            # Read JSON information
+                            session_info = json.load(session_file)
+                            # TODO better session name?
+                            if session_info.__contains__('participant') and session_info.__contains__('timestamp'):
+                                self.session_name = '_' + session_info['participant'] + '_' + session_info['timestamp']
+                            else:
+                                # Reset session name
+                                self.session_name = str()
+                    else:
+                        # Reset session name
+                        self.session_name = str()
+
                     # print('Loading File: ', filename)
                     self.current_file_size = os.stat(filename).st_size
 
@@ -134,7 +153,7 @@ class AppleWatchImporter(BaseImporter):
             #      len(raw_accelero[timestamp]['values']))
 
             # Calculate recordset
-            recordset = self.get_recordset(timestamp.timestamp())
+            recordset = self.get_recordset(timestamp.timestamp(), session_name=self.session_name)
 
             # Add motion data to database
 
@@ -188,7 +207,7 @@ class AppleWatchImporter(BaseImporter):
             #       len(raw_gyro[timestamp]['values']))
 
             # Calculate recordset
-            recordset = self.get_recordset(timestamp.timestamp())
+            recordset = self.get_recordset(timestamp.timestamp(), session_name=self.session_name)
 
             # Create time array as float64
             timesarray = np.asarray(raw_gyro[timestamp]['times'], dtype=np.float64)
@@ -227,7 +246,7 @@ class AppleWatchImporter(BaseImporter):
             #       len(heartrate[timestamp]['values']))
 
             # Calculate recordset
-            recordset = self.get_recordset(timestamp.timestamp())
+            recordset = self.get_recordset(timestamp.timestamp(), session_name=self.session_name)
 
             # Create time array as float64
             timesarray = np.asarray(heartrate[timestamp]['times'], dtype=np.float64)
@@ -282,7 +301,8 @@ class AppleWatchImporter(BaseImporter):
                 sensor_timestamps.update_timestamps()
 
                 # Calculate recordset
-                recordset = self.get_recordset(sensor_timestamps.start_timestamp.timestamp())
+                recordset = self.get_recordset(sensor_timestamps.start_timestamp.timestamp(),
+                                               session_name=self.session_name)
 
                 # Update timestamps in recordset
                 # This should not happen, recordset is initialized at the beginning of the hour
@@ -345,7 +365,7 @@ class AppleWatchImporter(BaseImporter):
             #      len(sensoria[timestamp]['values']))
 
             # Calculate recordset
-            recordset = self.get_recordset(timestamp.timestamp())
+            recordset = self.get_recordset(timestamp.timestamp(), session_name=self.session_name)
 
             # Create time array as float64
             timesarray = np.asarray(sensoria[timestamp]['times'], dtype=np.float64)
@@ -432,7 +452,8 @@ class AppleWatchImporter(BaseImporter):
                 sensor_timestamps.update_timestamps()
 
                 # Calculate recordset
-                recordset = self.get_recordset(sensor_timestamps.start_timestamp.timestamp())
+                recordset = self.get_recordset(sensor_timestamps.start_timestamp.timestamp(),
+                                               session_name=self.session_name)
 
                 # Update timestamps in recordset
                 # This should not happen, recordset is initialized at the beginning of the hour
@@ -506,7 +527,7 @@ class AppleWatchImporter(BaseImporter):
             #     len(motion[timestamp]['values']))
 
             # Calculate recordset
-            recordset = self.get_recordset(timestamp.timestamp())
+            recordset = self.get_recordset(timestamp.timestamp(), session_name=self.session_name)
 
             # Add motion data to database
 
@@ -556,7 +577,7 @@ class AppleWatchImporter(BaseImporter):
             #      len(battery[timestamp]['values']))
 
             # Calculate recordset
-            recordset = self.get_recordset(timestamp.timestamp())
+            recordset = self.get_recordset(timestamp.timestamp(), session_name=self.session_name)
 
             # Import to database
             # Create time array as float64
