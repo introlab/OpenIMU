@@ -5,7 +5,7 @@
 """
 
 from libopenimu.models.Base import Base
-from sqlalchemy import Column, Integer, Float, String, Sequence, TIMESTAMP, BLOB, ForeignKey
+from sqlalchemy import Column, Integer, String, Sequence
 # from sqlalchemy.orm import relationship
 
 

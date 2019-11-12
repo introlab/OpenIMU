@@ -96,7 +96,7 @@ class Treedatawidget(QTreeWidget):
         self.results[result.id_processed_data] = None
         self.items_results[result.id_processed_data] = None
 
-    def update_group(self, group):
+    def update_group(self, group) -> QTreeWidgetItem:
         item = self.items_groups.get(group.id_group, None)
         if item is None:
             item = QTreeWidgetItem()
@@ -114,7 +114,7 @@ class Treedatawidget(QTreeWidget):
 
         return item
 
-    def update_participant(self, part):
+    def update_participant(self, part) -> QTreeWidgetItem:
         item = self.items_participants.get(part.id_participant, None)
         group_item = self.items_groups.get(part.id_group, None)
         if item is None:
@@ -175,7 +175,7 @@ class Treedatawidget(QTreeWidget):
         self.items_participants[part.id_participant] = item
         return item
 
-    def update_recordset(self, recordset):
+    def update_recordset(self, recordset) -> QTreeWidgetItem:
         item = self.items_recordsets.get(recordset.id_recordset, None)
         if item is None:
             item = QTreeWidgetItem()
@@ -199,7 +199,7 @@ class Treedatawidget(QTreeWidget):
 
         return item
 
-    def update_result(self, result: ProcessedData):
+    def update_result(self, result: ProcessedData) -> QTreeWidgetItem:
         item = self.items_results.get(result.id_processed_data, None)
         if item is None:
             item = QTreeWidgetItem()

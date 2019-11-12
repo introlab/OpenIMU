@@ -219,5 +219,5 @@ if __name__ == '__main__':
                                                                    channel=channel)
 
                         # Process all sensor data
-                        results = freedson_adult_1998(channel_data, sensor.sampling_rate)
+                        results = freedson_adult_1998(samples=channel_data, sampling_rate=sensor.sampling_rate)
 

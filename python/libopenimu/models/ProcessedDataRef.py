@@ -1,7 +1,7 @@
 from libopenimu.models.Base import Base
 from libopenimu.models.Recordset import Recordset
 from libopenimu.models.Subrecord import Subrecord
-from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, BLOB
+from sqlalchemy import Column, Integer, Sequence, ForeignKey
 from sqlalchemy.orm import relationship
 
 

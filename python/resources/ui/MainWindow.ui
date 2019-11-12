@@ -135,7 +135,16 @@ QCheckBox::indicator:checked:!enabled { background-color:green;}
 QCheckBox::indicator:unchecked{ background-color:red;border-radius:3px;}
 QCheckBox::indicator:checked {background-color:rgb(0,255,0);border-radius:3px;}
 QCheckBox:checked{background-color:rgba(0,0,0,0%);}
-QCheckBox:!checked{background-color:rgba(0,0,0,0%);}</string>
+QCheckBox:!checked{background-color:rgba(0,0,0,0%);}
+
+/*
+QProgressBar
+*/
+
+QProgressBar::chunk{
+	background-color:qlineargradient(spread:reflect, x1:0.5, y1:0, x2:0.5, y2:0.5, stop:0 rgba(0, 127, 0, 255), stop:1 rgba(114, 255, 114, 255));
+    width: 20px;
+}</string>
   </property>
   <property name="documentMode">
    <bool>false</bool>

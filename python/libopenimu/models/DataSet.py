@@ -6,7 +6,7 @@
 
 from libopenimu.models.Base import Base
 
-from sqlalchemy import Column, Integer, Sequence, ForeignKey, TIMESTAMP, Interval, BLOB, String
+from sqlalchemy import Column, TIMESTAMP, String
 
 
 class DataSet(Base):

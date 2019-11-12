@@ -4,7 +4,7 @@ import PyQt5
 
 from PyQt5.QtWidgets import QMessageBox
 
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
+from PyQt5.QtCore import pyqtSlot
 from libopenimu.qt.Charts import IMUChartView
 import gc
 
