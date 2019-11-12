@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QDialog, QFileDialog
 from PyQt5.QtCore import pyqtSlot
 from resources.ui.python.ExportCSV_ui import Ui_ExportCSV
 from libopenimu.db.DBManager import DBManager
-from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog
+from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog, WorkerTask
 
 
 class ExportWindow(QDialog):
@@ -40,25 +40,25 @@ class ExportWindow(QDialog):
         directory = self.UI.lineDir.text()
         print('Should export in : ', directory)
 
-        # Create progress dialog
-        dialog = ProgressDialog(1, self)
-        dialog.setWindowTitle('Exportation CSV...')
-
-        class CSVExporter:
+        class CSVExporter(WorkerTask):
             def __init__(self, dbmanager, directory):
+                super().__init__('Exportation CSV', 0)
                 self.dbMan = dbmanager
                 self.directory = directory
 
             def process(self):
                 print('Exporting in :', self.directory)
                 self.dbMan.export_csv(directory)
+                self.update_progress.emit(100)
                 print('Exporting done!')
 
         exporter = CSVExporter(self.dbMan, directory)
 
-        process = BackgroundProcess([exporter.process])
+        process = BackgroundProcess([exporter])
+
+        # Create progress dialog
+        dialog = ProgressDialog(process, 'CSV Export', self)
         process.finished.connect(dialog.accept)
-        process.trigger.connect(dialog.trigger)
         process.start()
 
         # Show dialog
