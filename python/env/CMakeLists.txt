@@ -100,7 +100,7 @@ else(WIN32)
     # TODO - INSTALL WITH CONDA ?
     add_custom_target(
         python-env
-        COMMAND ${ENV_PATH}/bin/python${PYTHON_VERSION} -m pip install ${pip_packages}
+        COMMAND ${ENV_PATH}/bin/python${PYTHON_VERSION} -m pip install ${pip_packages} --upgrade
         WORKING_DIRECTORY ${ENV_PATH}/bin
         DEPENDS python_symlink
     )
