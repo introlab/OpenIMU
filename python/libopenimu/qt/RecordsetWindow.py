@@ -102,12 +102,13 @@ class DBSensorTimesTask(WorkerTask):
 
     def process(self):
         sensor = self.dbMan.get_sensor(self.sensor_id)
-        datas = self.dbMan.get_all_sensor_data(sensor=sensor, recordset=self.recordset, channel=sensor.channels[0])
+        # datas = self.dbMan.get_all_sensor_data(sensor=sensor, recordset=self.recordset, channel=sensor.channels[0])
+        datas = self.dbMan.get_sensor_times(sensor=sensor, recordset=self.recordset)
         times = []
         for data in datas:
             time = {"sensor_id": self.sensor_id,
-                    "start_time": data.timestamps.start_timestamp,
-                    "end_time": data.timestamps.end_timestamp}
+                    "start_time": data.start_timestamp,
+                    "end_time": data.end_timestamp}
             times.append(time)
 
         self.results = times
@@ -504,13 +505,13 @@ class RecordsetWindow(QWidget):
         # Combine tasks results
         self.sensors_blocks = {}
         for task in tasks:
-                for result in task.results:
-                    if result['sensor_id'] not in self.sensors_blocks:
-                        self.sensors_blocks[result['sensor_id']] = []
-                    start_time = result['start_time']
-                    end_time = result['end_time']
-                    data = {"start_time": start_time, "end_time": end_time}
-                    self.sensors_blocks[result['sensor_id']].append(data)
+            for result in task.results:
+                if result['sensor_id'] not in self.sensors_blocks:
+                    self.sensors_blocks[result['sensor_id']] = []
+                start_time = result['start_time']
+                end_time = result['end_time']
+                data = {"start_time": start_time, "end_time": end_time}
+                self.sensors_blocks[result['sensor_id']].append(data)
 
     def create_sensors_rects(self):
         rects = []

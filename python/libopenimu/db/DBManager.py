@@ -484,6 +484,13 @@ class DBManager:
 
             return result
 
+    def get_sensor_times(self, sensor: Sensor, recordset: Recordset):
+        # from sqlalchemy.orm import noload
+        query = self.session.query(SensorTimestamps).join(SensorData).filter(SensorData.id_sensor == sensor.id_sensor)\
+            .filter(SensorData.id_recordset == recordset.id_recordset)\
+            .filter(SensorData.id_channel == sensor.channels[0].id_channel)
+        return query.all()
+
     def set_dataset_infos(self, name, desc, creation_date, upload_date, author):
 
         try:

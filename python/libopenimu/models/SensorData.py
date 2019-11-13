@@ -15,7 +15,7 @@ from libopenimu.models.SensorTimestamps import SensorTimestamps
 from libopenimu.models.data_formats import DataFormat
 
 from sqlalchemy import Column, Integer, Sequence, ForeignKey, BLOB
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, deferred
 
 
 class SensorData(Base):
@@ -28,7 +28,7 @@ class SensorData(Base):
                            nullable=False)
 
     # Store the data
-    data = Column(BLOB, nullable=False)
+    data = deferred(Column(BLOB, nullable=False))
 
     # Relationships
     recordset = relationship("Recordset", cascade="all,delete")
