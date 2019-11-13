@@ -356,7 +356,12 @@ class DBManager:
         self.delete_orphan_sensors_timestamps()
         # self.engine.execute("VACUUM")
 
-    def get_all_recordsets(self, participant=Participant()):
+    def get_all_recordsets(self, participant=Participant(), start_date=None):
+        from sqlalchemy import func
+        if start_date is not None:
+            query = self.session.query(Recordset).filter(func.date(Recordset.start_timestamp) == start_date) \
+                .order_by(asc(Recordset.start_timestamp))
+            return query.all()
 
         if participant.id_participant is None:
             query = self.session.query(Recordset).order_by(asc(Recordset.start_timestamp))

@@ -8,17 +8,21 @@ from libopenimu.models.Participant import Participant
 from libopenimu.models.Base import Base
 from libopenimu.models.ProcessedData import ProcessedData
 
+from datetime import datetime
+
 
 class Treedatawidget(QTreeWidget):
     groups = {}
     participants = {}
     recordsets = {}
     results = {}
+    dates = {}
 
     items_groups = {}
     items_participants = {}
     items_recordsets = {}
     items_results = {}
+    items_dates = {}
 
     participantDragged = pyqtSignal(Participant)
 
@@ -27,7 +31,7 @@ class Treedatawidget(QTreeWidget):
     def __init__(self, parent=None):
         super(Treedatawidget, self).__init__(parent=parent)
 
-    def remove_group(self,group):
+    def remove_group(self, group):
         item = self.items_groups.get(group.id_group, None)
         # Remove all participants items in that group
         for i in range(0, item.childCount()):
@@ -42,7 +46,7 @@ class Treedatawidget(QTreeWidget):
                 self.items_groups[group.id_group] = None
                 break
 
-    def remove_participant(self,participant):
+    def remove_participant(self, participant):
         item = self.items_participants.get(participant.id_participant, None)
 
         # Remove all recordsets and results items from participant
@@ -95,6 +99,18 @@ class Treedatawidget(QTreeWidget):
 
         self.results[result.id_processed_data] = None
         self.items_results[result.id_processed_data] = None
+
+    def remove_date(self, date_text: str, id_parent_part: int):
+        date_text_id = Treedatawidget.get_date_id(date_text, id_parent_part)
+
+        item = self.items_dates.get(date_text_id, None)
+        for i in range(0, item.parent().childCount()):
+            if item.parent().child(i) == item:
+                item.parent().takeChild(i)
+                break
+
+        self.dates[date_text_id] = None
+        self.items_dates[date_text_id] = None
 
     def update_group(self, group) -> QTreeWidgetItem:
         item = self.items_groups.get(group.id_group, None)
@@ -185,11 +201,15 @@ class Treedatawidget(QTreeWidget):
             item.setData(1, Qt.UserRole, 'recordset')
             item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
 
-            part_item = self.items_participants.get(recordset.id_participant,None)
-            if part_item is not None:
-                for i in range(0, part_item.childCount()):
-                    if self.get_item_type(part_item.child(i)) == "recordsets":
-                        part_item.child(i).addChild(item)
+            date_item = self.items_dates.get(recordset.start_timestamp, None)
+            if date_item is None:
+                date_item = self.update_date(recordset.start_timestamp, recordset.id_participant)
+            date_item.addChild(item)
+            # part_item = self.items_participants.get(recordset.id_participant, None)
+            # if part_item is not None:
+            #     for i in range(0, part_item.childCount()):
+            #         if self.get_item_type(part_item.child(i)) == "recordsets":
+            #             part_item.child(i).addChild(item)
 
         else:
             item.setText(0, recordset.name)
@@ -198,6 +218,38 @@ class Treedatawidget(QTreeWidget):
         self.items_recordsets[recordset.id_recordset] = item
 
         return item
+
+    def update_date(self, date_update: datetime, id_parent_part: int) -> QTreeWidgetItem:
+        date_text = date_update.strftime("%d-%m-%Y")
+        date_text_id = Treedatawidget.get_date_id(date_text=date_text, id_parent_part=id_parent_part)
+
+        # Check if day item is already present for that date and returns it, if so.
+        if date_text_id in self.items_dates:
+            return self.items_dates[date_text_id]
+
+        item = QTreeWidgetItem()
+        item.setText(0, date_text)
+        item.setIcon(0, QIcon(':/OpenIMU/icons/date.png'))
+        item.setData(0, Qt.UserRole, 0)
+        item.setData(1, Qt.UserRole, 'date')
+        item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
+
+        part_item = self.items_participants.get(id_parent_part, None)
+        if part_item is not None:
+            for i in range(0, part_item.childCount()):
+                if self.get_item_type(part_item.child(i)) == "recordsets":
+                    part_item.child(i).addChild(item)
+        else:
+            print('No participant found in treeview for participant id=' + id_parent_part)
+
+        self.dates[date_text_id] = date_update.date()
+        self.items_dates[date_text_id] = item
+
+        return item
+
+    @staticmethod
+    def get_date_id(date_text: str, id_parent_part: int) -> str:
+        return date_text + "_" + str(id_parent_part)
 
     def update_result(self, result: ProcessedData) -> QTreeWidgetItem:
         item = self.items_results.get(result.id_processed_data, None)
@@ -210,7 +262,7 @@ class Treedatawidget(QTreeWidget):
             item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
 
             part_item = None
-            if len(result.processed_data_ref)>0:
+            if len(result.processed_data_ref) > 0:
                 part_item = self.items_participants.get(result.processed_data_ref[0].recordset.id_participant,None)
 
             if part_item is not None:
@@ -257,6 +309,9 @@ class Treedatawidget(QTreeWidget):
         if item_type == "result":
             item = self.items_results.get(item_id, None)
 
+        if item_type == "date":
+            item = self.items_dates.get(item_id, None)
+
         if item is not None:
             self.setCurrentItem(item)
             self.owner.tree_item_clicked(item, 0)
@@ -277,17 +332,22 @@ class Treedatawidget(QTreeWidget):
         if item_type == "result":
             self.update_result(data)
 
+        if item_type == "date":
+            self.update_date(data)
+
     def clear(self):
 
         self.groups = {}
         self.participants = {}
         self.recordsets = {}
         self.results = {}
+        self.dates = {}
 
         self.items_groups = {}
         self.items_participants = {}
         self.items_recordsets = {}
         self.items_results = {}
+        self.items_dates = {}
 
         super().clear()
 

@@ -23,6 +23,8 @@ from libopenimu.qt.StreamWindow import StreamWindow
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, SimpleTask, ProgressDialog
 from libopenimu.qt.ProcessSelectWindow import ProcessSelectWindow
 
+from OpenIMUApp import Treedatawidget
+
 # Models
 from libopenimu.models.Participant import Participant
 from libopenimu.models.DataSet import DataSet
@@ -314,7 +316,7 @@ class MainWindow(QMainWindow):
         self.update_participant(participant)
 
     @pyqtSlot(QTreeWidgetItem, int)
-    def tree_item_clicked(self, item, column):
+    def tree_item_clicked(self, item: QTreeWidgetItem, column: int):
         # print(item.text(column))
         item_id = self.UI.treeDataSet.get_item_id(item)
         item_type = self.UI.treeDataSet.get_item_type(item)
@@ -332,10 +334,15 @@ class MainWindow(QMainWindow):
         if item_type == "participant":
             self.show_participant(self.UI.treeDataSet.participants[item_id])
 
-        if item_type == "recordsets" or item_type == "recordset" or item_type == "subrecord":
+        if item_type == "recordsets" or item_type == "recordset" or item_type == "subrecord" or item_type == "date":
             if item_type == "recordsets":
                 part = self.UI.treeDataSet.participants[self.UI.treeDataSet.get_item_id(item.parent())]
-                self.currentRecordsets = self.dbMan.get_all_recordsets(part)
+                self.currentRecordsets = self.dbMan.get_all_recordsets(participant=part)
+            elif item_type == "date":
+                # Find associated participant
+                id_participant = self.UI.treeDataSet.get_item_id(item.parent().parent())
+                search_date = self.UI.treeDataSet.dates[Treedatawidget.get_date_id(item.text(0), id_participant)]
+                self.currentRecordsets = self.dbMan.get_all_recordsets(start_date=search_date)
             else:
                 self.currentRecordsets = [self.UI.treeDataSet.recordsets[item_id]]
 
@@ -350,7 +357,8 @@ class MainWindow(QMainWindow):
             result_widget = ResultWindow(manager=self.dbMan, results=self.UI.treeDataSet.results[item_id], parent=self)
             self.UI.frmMain.layout().addWidget(result_widget)
 
-        self.UI.frmMain.update()
+        item.setExpanded(True)
+        # self.UI.frmMain.update()
 
     @pyqtSlot()
     def data_was_saved(self):
@@ -437,6 +445,24 @@ class MainWindow(QMainWindow):
                 tasks.append(task)
                 self.UI.treeDataSet.remove_result(result)
                 # self.dbMan.delete_processed_data(result)
+
+            if item_type == "date":
+                # Delete all recordsets related to that date
+                id_participant = self.UI.treeDataSet.get_item_id(self.UI.treeDataSet.currentItem().parent().parent())
+                search_date = self.UI.treeDataSet.dates[Treedatawidget.get_date_id(self.UI.treeDataSet.currentItem()
+                                                                                   .text(0), id_participant)]
+                recordsets = self.dbMan.get_all_recordsets(start_date=search_date)
+                part_id = None
+                for recordset in recordsets:
+                    if part_id is None:
+                        part_id = recordset.id_participant
+                    task = SimpleTask("Suppression de '" + recordset.name + "'",
+                                      self.dbMan.delete_recordset, recordset)
+                    tasks.append(task)
+                    self.UI.treeDataSet.remove_recordset(recordset)
+                self.UI.treeDataSet.remove_date(self.UI.treeDataSet.currentItem().text(0), part_id)
+
+                pass
 
             if tasks:
                 process = BackgroundProcess(tasks)
