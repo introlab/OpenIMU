@@ -391,8 +391,8 @@ class MainWindow(QMainWindow):
         item_id = self.UI.treeDataSet.get_item_id(self.UI.treeDataSet.currentItem())
         item_type = self.UI.treeDataSet.get_item_type(self.UI.treeDataSet.currentItem())
 
-        if item_type == "recordsets" or item_type == "results":
-            return
+        # if item_type == "recordsets" or item_type == "results":
+        #     return
 
         msg = QMessageBox(self)
         msg.setIcon(QMessageBox.Question)
@@ -462,6 +462,21 @@ class MainWindow(QMainWindow):
                     self.UI.treeDataSet.remove_recordset(recordset)
                 self.UI.treeDataSet.remove_date(self.UI.treeDataSet.currentItem().text(0), part_id)
 
+            if item_type == "recordsets":
+                # Delete all recordsets for that participant
+                participant = self.UI.treeDataSet.participants[self.UI.treeDataSet.get_item_id(self.UI.treeDataSet
+                                                                                               .currentItem().parent())]
+                recordsets = self.dbMan.get_all_recordsets(participant=participant)
+                for recordset in recordsets:
+                    task = SimpleTask("Suppression de '" + recordset.name + "'",
+                                      self.dbMan.delete_recordset, recordset)
+                    tasks.append(task)
+                    self.UI.treeDataSet.remove_recordset(recordset)
+
+                # Remove all dates from the view
+                self.UI.treeDataSet.remove_dates_for_participant(participant.id_participant)
+
+            if item_type == "results":
                 pass
 
             if tasks:

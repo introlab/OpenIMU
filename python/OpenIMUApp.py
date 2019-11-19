@@ -112,6 +112,12 @@ class Treedatawidget(QTreeWidget):
         self.dates[date_text_id] = None
         self.items_dates[date_text_id] = None
 
+    def remove_dates_for_participant(self, id_part: int):
+        search_part = "_" + str(id_part)
+        for date_key in self.dates.keys():
+            if date_key.endswith(search_part):
+                self.remove_date(self.items_dates[date_key].text(0), id_part)
+
     def update_group(self, group) -> QTreeWidgetItem:
         item = self.items_groups.get(group.id_group, None)
         if item is None:

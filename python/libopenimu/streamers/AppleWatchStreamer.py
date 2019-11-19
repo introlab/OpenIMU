@@ -121,12 +121,13 @@ class AppleWatchRequestHandler(BaseHTTPRequestHandler):
                 self.streamer.add_log.emit("Fichier existant, mais incomplet (" + str(file_infos.st_size) + "/" +
                                            str(content_length) + " octets) - retransfert.", LogTypes.LOGTYPE_WARNING)
             else:
-                self.streamer.add_log.emit("Fichier existant - ignoré.", LogTypes.LOGTYPE_WARNING)
-                self.streamer.update_progress.emit(file_name, "", 100, 100)
-                self.send_response(200)
-                self.send_header('Content-type', 'file-transfer/ack')
-                self.end_headers()
-                return
+                self.streamer.add_log.emit("Fichier existant - écrasement du fichier.", LogTypes.LOGTYPE_WARNING)
+                # self.streamer.add_log.emit("Fichier existant - ignoré.", LogTypes.LOGTYPE_WARNING)
+                # self.streamer.update_progress.emit(file_name, "", 100, 100)
+                # self.send_response(200)
+                # self.send_header('Content-type', 'file-transfer/ack')
+                # self.end_headers()
+                # return
 
         # Destination directory if it doesn't exist
         Path(destination_dir).mkdir(parents=True, exist_ok=True)
