@@ -94,7 +94,12 @@ class BackgroundProcessForImporters(BackgroundProcess):
                 self.task.results_ready.emit(QVariant(self.task))
 
         print('BackgroundProcessForImporters starting load threads')
-        pool = QThreadPool(self)
+        pool = QThreadPool()
+
+        # Disable expiration
+        pool.setExpiryTimeout(-1)
+
+        print('MaxThread count: ', pool.maxThreadCount())
 
         # Starting all threads for importation
         runnable_list = []
@@ -106,22 +111,27 @@ class BackgroundProcessForImporters(BackgroundProcess):
             # Connect results ready signals
             task.results_ready.connect(self.results_ready)
             # Start last inserted runnable
-            pool.start(runnable_list[-1])
+            pool.start(runnable_list[-1], priority=QThread.NormalPriority)
 
         # Wait for all runnable threads
         if pool.waitForDone():
-            print('all done!')
-        else:
-            print('waitForDone error')
+            print('All threads done!')
+            # for task in self.tasks:
+            #     task.import_data()
+            #     self.task_completed.emit()
+            #     del task
 
     @pyqtSlot(QVariant)
     def results_ready(self, task):
         print('results_ready, importing to database', task.filename)
+
         task.import_data()
-        # Destroy task
-        del task
+
         print('completed...')
         self.task_completed.emit()
+
+        # Destroy task
+        del task
 
 
 class ProgressDialog(QDialog):

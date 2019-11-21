@@ -14,6 +14,7 @@ from libopenimu.qt.BackgroundProcess import BackgroundProcess, BackgroundProcess
 from libopenimu.models.DataSource import DataSource
 from libopenimu.models.Participant import Participant
 from libopenimu.models.LogTypes import LogTypes
+from libopenimu.tools.timing import timing
 
 
 class ImportBrowser(QDialog):
@@ -50,6 +51,7 @@ class ImportBrowser(QDialog):
                 self.results = []
 
             # For testing only
+            @timing
             def load_data(self):
                 file_md5 = DataSource.compute_md5(filename=self.filename).hexdigest()
 
@@ -60,6 +62,8 @@ class ImportBrowser(QDialog):
                     return True
                 return False
 
+            # For testing only
+            @timing
             def import_data(self):
                 file_md5 = DataSource.compute_md5(filename=self.filename).hexdigest()
 
@@ -91,6 +95,7 @@ class ImportBrowser(QDialog):
                                           self.importer.participant.name + "' - ignorées.",
                                           LogTypes.LOGTYPE_WARNING)
 
+            @timing
             def process(self):
                 file_md5 = DataSource.compute_md5(filename=self.filename).hexdigest()
 
@@ -100,11 +105,11 @@ class ImportBrowser(QDialog):
 
                     self.log_request.emit("Chargement du fichier: '" + self.short_filename + "'", LogTypes.LOGTYPE_INFO)
 
-                    results = self.importer.load(self.filename)
-                    if results is not None:
+                    self.results = self.importer.load(self.filename)
+                    if self.results is not None:
                         self.log_request.emit('Importation des données...', LogTypes.LOGTYPE_INFO)
-                        self.importer.import_to_database(results)
-                        results.clear()  # Needed to clear the dict cache and let the garbage collector delete it!
+                        self.importer.import_to_database(self.results)
+                        self.results.clear()  # Needed to clear the dict cache and let the garbage collector delete it!
                         # Add datasources for that file
                         for recordset in self.importer.recordsets:
                             if not DataSource.datasource_exists_for_recordset(filename=self.short_filename ,
@@ -161,8 +166,12 @@ class ImportBrowser(QDialog):
             importer.log_request.connect(self.log_request)
             all_tasks.append(importer)
 
-        # Try loading in parallell
-        process = BackgroundProcessForImporters(all_tasks)
+        # Try loading in parallel (RAM INTENSIVE!)
+        # process = BackgroundProcessForImporters(all_tasks)
+
+        # For now process in series...
+        process = BackgroundProcess(all_tasks)
+
         # Create progress dialog
         dialog = ProgressDialog(process, 'Importation des données', self)
 
