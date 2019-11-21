@@ -9,7 +9,7 @@ from libopenimu.importers.WIMUImporter import WIMUImporter
 from libopenimu.importers.ActigraphImporter import ActigraphImporter
 from libopenimu.importers.OpenIMUImporter import OpenIMUImporter
 from libopenimu.importers.AppleWatchImporter import AppleWatchImporter
-from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog, WorkerTask
+from libopenimu.qt.BackgroundProcess import BackgroundProcess, BackgroundProcessForImporters, ProgressDialog, WorkerTask
 
 from libopenimu.models.DataSource import DataSource
 from libopenimu.models.Participant import Participant
@@ -47,6 +47,49 @@ class ImportBrowser(QDialog):
                 self.importer.update_progress.connect(self.update_progress)
                 self.short_filename = DataSource.build_short_filename(self.filename)
                 self.title = self.short_filename
+                self.results = []
+
+            # For testing only
+            def load_data(self):
+                file_md5 = DataSource.compute_md5(filename=self.filename).hexdigest()
+
+                if not DataSource.datasource_exists_for_participant(filename=self.short_filename,
+                                                                    participant=self.importer.participant, md5=file_md5,
+                                                                    db_session=self.importer.db.session):
+                    self.results = self.importer.load(self.filename)
+                    return True
+                return False
+
+            def import_data(self):
+                file_md5 = DataSource.compute_md5(filename=self.filename).hexdigest()
+
+                if not DataSource.datasource_exists_for_participant(filename=self.short_filename,
+                                                                    participant=self.importer.participant, md5=file_md5,
+                                                                    db_session=self.importer.db.session):
+                    if self.results is not None:
+                        self.log_request.emit('Importation des données...', LogTypes.LOGTYPE_INFO)
+                        self.importer.import_to_database(self.results)
+                        self.results.clear()  # Needed to clear the dict cache and let the garbage collector delete it!
+                        # Add datasources for that file
+                        for recordset in self.importer.recordsets:
+                            if not DataSource.datasource_exists_for_recordset(filename=self.short_filename,
+                                                                              recordset=recordset, md5=file_md5,
+                                                                              db_session=self.importer.db.session):
+                                ds = DataSource()
+                                ds.recordset = recordset
+                                ds.file_md5 = file_md5
+                                ds.file_name = self.short_filename
+                                ds.update_datasource(db_session=self.importer.db.session)
+
+                        self.importer.clear_recordsets()
+                        self.log_request.emit('Importation du fichier complétée!', LogTypes.LOGTYPE_DONE)
+                    else:
+                        self.log_request.emit('Erreur lors du chargement du fichier: ' + self.importer.last_error,
+                                              LogTypes.LOGTYPE_ERROR)
+                else:
+                    self.log_request.emit("Données du fichier '" + self.filename + "' déjà présentes pour '" +
+                                          self.importer.participant.name + "' - ignorées.",
+                                          LogTypes.LOGTYPE_WARNING)
 
             def process(self):
                 file_md5 = DataSource.compute_md5(filename=self.filename).hexdigest()
@@ -118,7 +161,8 @@ class ImportBrowser(QDialog):
             importer.log_request.connect(self.log_request)
             all_tasks.append(importer)
 
-        process = BackgroundProcess(all_tasks)
+        # Try loading in parallell
+        process = BackgroundProcessForImporters(all_tasks)
         # Create progress dialog
         dialog = ProgressDialog(process, 'Importation des données', self)
 

@@ -1,4 +1,5 @@
-from PyQt5.QtCore import QThread, QCoreApplication, QTime, pyqtSignal, pyqtSlot, Qt, QObject
+from PyQt5.QtCore import QThread, QCoreApplication, QTime, pyqtSignal, pyqtSlot, Qt, QObject, QThreadPool, QRunnable
+from PyQt5.QtCore import QVariant
 from PyQt5.QtWidgets import QDialog, QApplication
 from PyQt5.QtGui import QMovie
 from resources.ui.python.ProgressDialog_ui import Ui_ProgressDialog
@@ -13,6 +14,7 @@ class WorkerTask(QObject):
     update_progress = pyqtSignal(int)  # Current progress in %
     size_updated = pyqtSignal()
     log_request = pyqtSignal('QString', int)
+    results_ready = pyqtSignal('QVariant')
 
     def __init__(self, title: string, size: int, parent=None):
         super().__init__(parent)
@@ -65,6 +67,61 @@ class BackgroundProcess(QThread):
             self.task_completed.emit()
             del task
         # print('Run Done!')
+
+
+# Testing parallel import (will require more ram)
+class BackgroundProcessForImporters(BackgroundProcess):
+    def __init__(self, tasks: list, parent=None):
+        super(BackgroundProcessForImporters, self).__init__(tasks, parent)
+
+    def run(self):
+        class ProcessRunnable(QRunnable):
+            def __init__(self, run_task):
+                super().__init__()
+                self.setAutoDelete(True)
+                self.task = run_task
+                self.results = []
+
+            def run(self):
+                print('processing...', self.task.filename)
+
+                if self.task.load_data():
+                    print('data loaded...', self.task.filename)
+                else:
+                    print('data not loaded...', self.task.filename)
+
+                # Emit signal that task may have results
+                self.task.results_ready.emit(QVariant(self.task))
+
+        print('BackgroundProcessForImporters starting load threads')
+        pool = QThreadPool(self)
+
+        # Starting all threads for importation
+        runnable_list = []
+        for task in self.tasks:
+            # Connect signals
+            task.update_progress.connect(self.update_current_task_progress)
+            # Add to list
+            runnable_list.append(ProcessRunnable(task))
+            # Connect results ready signals
+            task.results_ready.connect(self.results_ready)
+            # Start last inserted runnable
+            pool.start(runnable_list[-1])
+
+        # Wait for all runnable threads
+        if pool.waitForDone():
+            print('all done!')
+        else:
+            print('waitForDone error')
+
+    @pyqtSlot(QVariant)
+    def results_ready(self, task):
+        print('results_ready, importing to database', task.filename)
+        task.import_data()
+        # Destroy task
+        del task
+        print('completed...')
+        self.task_completed.emit()
 
 
 class ProgressDialog(QDialog):
