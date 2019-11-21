@@ -2,7 +2,7 @@ from libopenimu.streamers.BaseStreamer import BaseStreamer
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.Qt import QApplication
 
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import os
 from pathlib import Path
 import math
@@ -23,7 +23,7 @@ class AppleWatchStreamer(BaseStreamer):
 
         self.request_handler = AppleWatchRequestHandler
         self.request_handler.streamer = self
-        self.server = HTTPServer((self.get_local_ip_address(), self.server_port), self.request_handler)
+        self.server = ThreadingHTTPServer((self.get_local_ip_address(), self.server_port), self.request_handler)
         self.server_running = True
         self.server.serve_forever()
         self.server.server_close()
