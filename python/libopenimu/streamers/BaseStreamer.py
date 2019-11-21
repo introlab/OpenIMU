@@ -2,9 +2,13 @@ from PyQt5.QtCore import QThread, pyqtSignal
 
 
 class BaseStreamer(QThread):
-    add_log = pyqtSignal('QString', int)
-    update_progress = pyqtSignal('QString', 'QString', int, int)
-    file_error_occured = pyqtSignal('QString', 'QString')
+    add_log = pyqtSignal('QString', int)  # Msg, Logtype
+    update_progress = pyqtSignal('QString', 'QString', int, int)  # File, Progress string, value, max_value
+    file_error_occured = pyqtSignal('QString', 'QString', 'QString')  # Device, File, Error string
+
+    device_connected = pyqtSignal('QString', bool)  # Device, Connected?
+    transfer_completed = pyqtSignal('QString', 'QString')  # Device, Filename
+    transfer_started = pyqtSignal('QString', 'QString')  # Device, Filename
 
     server_save_path = './Files'
     server = None

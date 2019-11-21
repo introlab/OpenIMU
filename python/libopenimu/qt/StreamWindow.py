@@ -1,8 +1,8 @@
 from resources.ui.python.StreamWindow_ui import Ui_StreamWindow
 
 from PyQt5.QtCore import pyqtSlot, Qt
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QProgressBar, QApplication, QFileDialog
-from PyQt5.QtGui import QBrush
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QProgressBar, QListWidgetItem, QFileDialog
+from PyQt5.QtGui import QBrush, QIcon, QColor
 
 # from libopenimu.streamers.streamer_types import StreamerTypes
 from libopenimu.streamers.AppleWatchStreamer import AppleWatchStreamer
@@ -71,7 +71,7 @@ class StreamWindow(QDialog):
                 self.streamer.start()
 
     def set_edit_state(self, state: bool):
-        self.UI.txtDataPath.setEnabled(state)
+        self.UI.txtDataPath.setReadOnly(not state)
         self.UI.spinPort.setEnabled(state)
         self.UI.chkAutoImport.setEnabled(state)
         self.UI.chkDeleteFiles.setEnabled(state)
@@ -100,6 +100,9 @@ class StreamWindow(QDialog):
             self.streamer.update_progress.connect(self.update_progress)
             self.streamer.finished.connect(self.streaming_server_finished)
             self.streamer.file_error_occured.connect(self.streaming_file_error)
+            self.streamer.transfer_started.connect(self.streaming_file_started)
+            self.streamer.transfer_completed.connect(self.streaming_file_completed)
+            self.streamer.device_connected.connect(self.device_connected)
 
     def exec(self):
         # Start server
@@ -111,7 +114,7 @@ class StreamWindow(QDialog):
         super().exec()
 
     @pyqtSlot('QString', int)
-    def add_to_log(self, text, log_type):
+    def add_to_log(self, text: str, log_type: LogTypes):
         if text == ' ' or text == '\n':
             return
 
@@ -132,37 +135,60 @@ class StreamWindow(QDialog):
         self.UI.txtLog.verticalScrollBar().setValue(self.UI.txtLog.verticalScrollBar().maximum())
         # self.UI.txtLog.ensureCursorVisible()
 
-    def add_file_progress_bar(self, filename):
+    def add_file_progress_bar(self, filename: str):
         self.UI.tableFiles.setRowCount(self.UI.tableFiles.rowCount() + 1)
         index = self.UI.tableFiles.rowCount() - 1
-        self.file_rows[filename] = index
         item = QTableWidgetItem(filename)
+        self.file_rows[filename] = item
         item.setBackground(QBrush(Qt.white))
         self.UI.tableFiles.setItem(index, 1, item)
         prog = QProgressBar()
         prog.setAlignment(Qt.AlignCenter)
-
         self.UI.tableFiles.setCellWidget(index, 0, prog)
-
+        self.update_current_transfer_tab()
         return index
 
+    def update_current_transfer_tab(self):
+        self.UI.tabInfos.setTabText(0, "Transferts en cours (" + str(self.UI.tableFiles.rowCount()) + ")")
+
+    def remove_file_progress_bar(self, filename: str):
+        self.UI.tableFiles.removeRow(self.UI.tableFiles.row(self.file_rows[filename]))
+        self.file_rows[filename] = None
+        self.update_current_transfer_tab()
+
+    def add_file_completed(self, device_name: str, filename: str):
+        self.UI.tableReceived.setRowCount(self.UI.tableReceived.rowCount() + 1)
+        index = self.UI.tableReceived.rowCount() - 1
+        item = QTableWidgetItem(device_name)
+        item.setBackground(QBrush(Qt.white))
+        self.UI.tableReceived.setItem(index, 0, item)
+        item = QTableWidgetItem(filename)
+        item.setBackground(QBrush(Qt.white))
+        item.setForeground(QColor(Qt.darkGreen))
+        self.UI.tableReceived.setItem(index, 1, item)
+
+        self.UI.tabInfos.setTabText(1, "Fichiers reçus (" + str(self.UI.tableReceived.rowCount()) + ")")
+
+    def add_file_error(self, filename: str, errorstr: str):
+        self.UI.tableErrors.setRowCount(self.UI.tableErrors.rowCount() + 1)
+        index = self.UI.tableErrors.rowCount() - 1
+        item = QTableWidgetItem(filename)
+        item.setBackground(QBrush(Qt.white))
+        self.UI.tableErrors.setItem(index, 0, item)
+        item = QTableWidgetItem(errorstr)
+        item.setBackground(QBrush(Qt.white))
+        item.setForeground(QColor(Qt.red))
+        self.UI.tableErrors.setItem(index, 1, item)
+
+        self.UI.tabInfos.setTabText(2, "Erreurs (" + str(self.UI.tableErrors.rowCount()) + ")")
+
     @pyqtSlot('QString', 'QString', int, int)
-    def update_progress(self, filename, infos, value, max_value):
-        # Ne need to display the progress bar anymore
-        if value >= max_value:
-            self.UI.frameProgress.hide()
-
-        self.UI.lblProgress.setText(filename + " " + infos)
-        if max_value != self.UI.prgTotal.maximum():
-            self.UI.prgTotal.setMaximum(max_value)
-        self.UI.prgTotal.setValue(value)
-        self.UI.frameProgress.show()
-
+    def update_progress(self, filename: str, infos: str, value: int, max_value: int):
         # Update file table
         if filename in self.file_rows:
-            index = self.file_rows[filename]
+            index = self.UI.tableFiles.row(self.file_rows[filename])
         else:
-            index = self.add_file_progress_bar(filename)
+            return
 
         if index >= 0:
             prog = self.UI.tableFiles.cellWidget(index, 0)
@@ -172,21 +198,67 @@ class StreamWindow(QDialog):
                 self.UI.tableFiles.scrollToBottom()
                 self.UI.tableFiles.update()
 
-        QApplication.processEvents()
+        # QApplication.processEvents()
+
+    @pyqtSlot('QString', 'QString', 'QString')
+    def streaming_file_error(self, device_name: str, filename: str, error_str: str):
+        # Remove file from current list
+        self.remove_file_progress_bar(filename)
+
+        # Add to completed list
+        self.add_file_error(filename=filename, errorstr=error_str)
+
+        # Update device list
+        device_item = self.get_device_item(device_name=device_name, create_if_absent=False)
+        if device_item:
+            self.UI.lstDevices.takeItem(self.UI.lstDevices.row(device_item))
+        self.add_to_log(filename + " - " + error_str, LogTypes.LOGTYPE_ERROR)
+
+    def get_device_item(self, device_name: str, create_if_absent: bool) -> QListWidgetItem:
+        device_item: QListWidgetItem = None
+        for index in range(self.UI.lstDevices.count()):
+            if self.UI.lstDevices.item(index).text() == device_name:
+                device_item = self.UI.lstDevices.item(index)
+                break
+
+        if not device_item and create_if_absent:
+            device_item = QListWidgetItem(device_name)
+            device_item.setIcon(QIcon(":/OpenIMU/icons/sensor.png"))
+            self.UI.lstDevices.addItem(device_item)
+
+        return device_item
+
+    @pyqtSlot('QString', bool)
+    def device_connected(self, device_name: str, state: bool):
+        if state:
+            self.add_to_log(device_name + ": Connecté", LogTypes.LOGTYPE_INFO)
+            # Find and adds the device into the connected device list
+            self.get_device_item(device_name=device_name, create_if_absent=True)
+        else:
+            # Find and removes the device into the connected device list
+            self.add_to_log(device_name + ": Déconnecté", LogTypes.LOGTYPE_INFO)
+
+            device_item = self.get_device_item(device_name=device_name, create_if_absent=False)
+            if device_item:
+                self.UI.lstDevices.takeItem(self.UI.lstDevices.row(device_item))
 
     @pyqtSlot('QString', 'QString')
-    def streaming_file_error(self, filename, error_str):
-        # Update file table
-        if filename in self.file_rows:
-            index = self.file_rows[filename]
-        else:
-            index = self.add_file_progress_bar(filename)
+    def streaming_file_completed(self, device_name: str, file_name: str):
+        # Remove file from current list
+        self.remove_file_progress_bar(file_name)
 
-        if index >= 0:
-            prog = self.UI.tableFiles.cellWidget(index, 0)
-            if prog is not None:
-                prog.setStyleSheet("QProgressBar::chunk{background-color:qlineargradient(spread:reflect, x1:0.5, y1:0, "
-                                   "x2:0.5, y2:0.5, stop:0 rgba(117, 0, 0, 255), stop:1 rgba(255, 153, 153, 255));}")
+        # Add to completed list
+        self.add_file_completed(device_name=device_name, filename=file_name)
+
+        # Update device list
+        device_item = self.get_device_item(device_name=device_name, create_if_absent=False)
+        if device_item:
+            self.UI.lstDevices.takeItem(self.UI.lstDevices.row(device_item))
+
+    @pyqtSlot('QString', 'QString')
+    def streaming_file_started(self, device_name: str, file_name: str):
+        self.add_file_progress_bar(file_name)
+        self.get_device_item(device_name=device_name, create_if_absent=True)
 
     def get_data_save_path(self) -> str:
         return self.UI.txtDataPath.text()
