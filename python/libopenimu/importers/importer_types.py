@@ -1,6 +1,7 @@
 import numpy as np
 import struct
 
+
 class ImporterTypes:
     #WIMU2 = 0
     WIMU = 0

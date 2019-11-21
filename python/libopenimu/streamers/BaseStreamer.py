@@ -14,3 +14,12 @@ class BaseStreamer(QThread):
     def __init__(self, path='./Files', parent=None):
         super(BaseStreamer, self).__init__(parent)
         self.server_save_path = path
+
+    @staticmethod
+    def get_local_ip_address():
+        import socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        local_address = s.getsockname()[0]
+        s.close()
+        return local_address

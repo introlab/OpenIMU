@@ -3,7 +3,6 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.Qt import QApplication
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import socket
 import os
 from pathlib import Path
 import math
@@ -20,8 +19,7 @@ class AppleWatchStreamer(BaseStreamer):
         self.server_port = port
 
     def run(self):
-        self.add_log.emit("Démarrage du serveur - utilisez 'Start python client' sur la montre pour transférer.",
-                          LogTypes.LOGTYPE_INFO)
+        self.add_log.emit("Démarrage du serveur sur le port " + str(self.server_port), LogTypes.LOGTYPE_INFO)
 
         self.request_handler = AppleWatchRequestHandler
         self.request_handler.streamer = self
@@ -30,25 +28,17 @@ class AppleWatchStreamer(BaseStreamer):
         self.server.serve_forever()
         self.server.server_close()
         # print('Server stopped')
-
-    def get_streamer_infos(self):
-        return {"Adresse IP": self.get_local_ip_address(),
-                "Port": str(self.server_port),
-                "Données": self.server_save_path}
+    #
+    # def get_streamer_infos(self):
+    #     return {"Adresse IP": self.get_local_ip_address(),
+    #             "Port": str(self.server_port),
+    #             "Données": self.server_save_path}
 
     @pyqtSlot()
     def stop_server(self):
-        # print ('Stop server request.')
+        self.add_log.emit('Arrêt du serveur...', LogTypes.LOGTYPE_INFO)
         self.server_running = False
         self.server.shutdown()
-
-    @staticmethod
-    def get_local_ip_address():
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        local_address = s.getsockname()[0]
-        s.close()
-        return local_address
 
 
 class AppleWatchRequestHandler(BaseHTTPRequestHandler):

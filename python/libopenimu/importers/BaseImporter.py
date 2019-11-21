@@ -99,5 +99,4 @@ class BaseImporter(QObject):
         return sensor_data
 
     def add_datasource_to_db(self, filename, file_start_time):
-
         pass

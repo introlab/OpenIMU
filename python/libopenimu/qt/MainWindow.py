@@ -17,11 +17,13 @@ from libopenimu.qt.RecordsetWindow import RecordsetWindow
 from libopenimu.qt.ResultWindow import ResultWindow
 from libopenimu.qt.StartWindow import StartWindow
 from libopenimu.qt.ImportBrowser import ImportBrowser
-from libopenimu.qt.ImportManager import ImportManager
 from libopenimu.qt.ExportWindow import ExportWindow
 from libopenimu.qt.StreamWindow import StreamWindow
+from libopenimu.qt.ImportMatchDialog import ImportMatchDialog
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, SimpleTask, ProgressDialog
 from libopenimu.qt.ProcessSelectWindow import ProcessSelectWindow
+from libopenimu.streamers.streamer_types import StreamerTypes
+from libopenimu.importers.importer_types import ImporterTypes
 
 from OpenIMUApp import Treedatawidget
 
@@ -29,7 +31,6 @@ from OpenIMUApp import Treedatawidget
 from libopenimu.models.Participant import Participant
 from libopenimu.models.DataSet import DataSet
 from libopenimu.models.LogTypes import LogTypes
-from libopenimu.streamers.streamer_types import StreamerTypes
 
 # Database
 from libopenimu.db.DBManager import DBManager
@@ -46,7 +47,7 @@ class MainWindow(QMainWindow):
     currentRecordsets = []
 
     def __init__(self, parent=None):
-        super(MainWindow, self).__init__(parent=parent)
+        super(MainWindow, self).__init__(parent)
         self.UI = Ui_MainWindow()
         self.UI.setupUi(self)
         self.UI.dockToolBar.setTitleBarWidget(QWidget())
@@ -211,8 +212,8 @@ class MainWindow(QMainWindow):
         self.UI.btnShowLog.setChecked(visibility)
 
         if visibility:
-            sys.stdout = EmittingStream(textWritten=self.console_log_normal)
-            sys.stderr = EmittingStream(textWritten=self.console_log_error)
+            sys.stdout = EmittingStream(self.console_log_normal)
+            sys.stderr = EmittingStream(self.console_log_error)
         else:
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
@@ -280,7 +281,8 @@ class MainWindow(QMainWindow):
         msg.setIcon(QMessageBox.Question)
         msg.setStyleSheet("QPushButton{min-width: 100px; min-height: 40px;}")
 
-        msg.setText("Le fichier de données sera nettoyé. Ceci peut prendre un certain temps. \nDésirez-vous poursuivre?")
+        msg.setText("Le fichier de données sera nettoyé. Ceci peut prendre un certain temps. \n"
+                    "Désirez-vous poursuivre?")
         msg.setWindowTitle("Compactage des données")
         msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
 
@@ -311,12 +313,12 @@ class MainWindow(QMainWindow):
         self.show_participant(base_group=default_group)
 
     @pyqtSlot(Participant)
-    def participant_was_dragged(self,participant):
+    def participant_was_dragged(self, participant):
         self.dbMan.update_participant(participant)
         self.update_participant(participant)
 
     @pyqtSlot(QTreeWidgetItem, int)
-    def tree_item_clicked(self, item: QTreeWidgetItem, column: int):
+    def tree_item_clicked(self, item: QTreeWidgetItem, _: int):
         # print(item.text(column))
         item_id = self.UI.treeDataSet.get_item_id(item)
         item_type = self.UI.treeDataSet.get_item_type(item)
@@ -501,37 +503,47 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def transfer_requested(self):
-        import_man = ImportManager(dbmanager=self.dbMan, dirs=True, stream=True, parent=self)
-        # TODO: More intelligent refresh!
-        import_man.participant_added.connect(self.load_data_from_dataset)
+        # import_man = ImportManager(dbmanager=self.dbMan, dirs=True, stream=True, parent=self)
+        # # TODO: More intelligent refresh!
+        # import_man.participant_added.connect(self.load_data_from_dataset)
+        #
+        # if import_man.exec() == QDialog.Accepted:
+        stream_diag = StreamWindow(parent=self)
+        stream_diag.exec()
 
-        if import_man.exec() == QDialog.Accepted:
-            stream_diag = StreamWindow(stream_type=import_man.filetype_id, path=import_man.filename, parent=self)
-            stream_diag.exec()
+        # Do the actual import
+        # msg = QMessageBox(self)
+        # msg.setIcon(QMessageBox.Question)
+        # msg.setStyleSheet("QPushButton{min-width: 100px; min-height: 40px;}")
+        #
+        # msg.setText("Procéder à l'importation des données?")
+        # msg.setWindowTitle("Importer?")
+        # msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        #
+        # rval = msg.exec()
+        # if rval == QMessageBox.Yes:
 
-            # Do the actual import
-            msg = QMessageBox(self)
-            msg.setIcon(QMessageBox.Question)
-            msg.setStyleSheet("QPushButton{min-width: 100px; min-height: 40px;}")
+        # Match windows
+        matcher = ImportMatchDialog(dbmanager=self.dbMan, datas=stream_diag.folders_to_import, parent=self)
+        if matcher.exec() == QDialog.Accepted:
+            # for file_name, file_dataname in file_list.items():
+            #     part = matcher.data_match[file_dataname]
+            #     file_match[file_name] = part
 
-            msg.setText("Procéder à l'importation des données?")
-            msg.setWindowTitle("Importer?")
-            msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            # Build import list
+            files = matcher.get_files_match(stream_diag.get_data_save_path())
 
-            rval = msg.exec()
-            if rval == QMessageBox.Yes:
-                # Start import process
-                import_browser = ImportBrowser(data_manager=self.dbMan, parent=self)
-                import_browser.log_request.connect(self.add_to_log)
+            # Start import process
+            import_browser = ImportBrowser(data_manager=self.dbMan, parent=self)
+            import_browser.log_request.connect(self.add_to_log)
 
-                # Build import list
-                files = import_man.get_file_list()
-                importer_id = StreamerTypes.value_importer_types[import_man.filetype_id]
-                for file_name, file_part in files.items():
-                    import_browser.add_file_to_list(file_name, import_man.filetype, importer_id, file_part)
+            importer_id = StreamerTypes.value_importer_types[stream_diag.get_streamer_type()]
+            importer_name = ImporterTypes.value_names[importer_id]
+            for file_name, file_part in files.items():
+                import_browser.add_file_to_list(file_name, importer_name, importer_id, file_part)
 
-                import_browser.ok_clicked()
-                self.load_data_from_dataset()
+            import_browser.ok_clicked()
+            self.load_data_from_dataset()
 
 
 class EmittingStream(PyQt5.QtCore.QObject):

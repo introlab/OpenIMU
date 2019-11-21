@@ -12,6 +12,7 @@ from libopenimu.importers.AppleWatchImporter import AppleWatchImporter
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog, WorkerTask
 
 from libopenimu.models.DataSource import DataSource
+from libopenimu.models.Participant import Participant
 from libopenimu.models.LogTypes import LogTypes
 
 
@@ -131,7 +132,7 @@ class ImportBrowser(QDialog):
         # gc.collect()
         self.accept()
 
-    def add_file_to_list(self, filename, filetype, filetype_id, participant):
+    def add_file_to_list(self, filename: str, filetype: str, filetype_id: int, participant: Participant):
         table = self.UI.tableFiles
 
         row = table.rowCount()

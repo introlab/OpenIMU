@@ -194,37 +194,4 @@ class ImportManager(QDialog):
         self.participant_multi = (check_value == Qt.Checked)
         self.UI.frameParticipant.setVisible(not self.participant_multi)
 
-    def get_file_list(self):
-        # Build file list
-        file_list = {}  # Dictionary: file and base_data_folder (data participant ID)
-
-        # Add files to list
-        files = glob.glob(self.filename + "/**/*.*", recursive=True)  # Files in sub folders
-        for file in files:
-            file_name = file.replace("/", os.sep)
-            data_name = file.replace(self.filename, "")
-            data_name = data_name.replace("/", os.sep)
-            # data_name = os.path.split(data_name)[0].replace(os.sep, "")
-            data_name = data_name.split(os.sep)
-            index = 0
-            if data_name[index] == '':
-                index = 1
-            data_name = data_name[index]
-
-            if file_name not in file_list:
-                file_list[file_name] = data_name
-
-        file_match = {}  # Dictionary - filename and participant
-        if not self.participant_multi:
-            for file in file_list.keys():
-                file_match[file] = self.participant
-        else:
-            # Multiple participant - must show dialog and match.
-            matcher = ImportMatchDialog(dbmanager=self.dbMan, datas=list(set(file_list.values())), parent=self)
-            if matcher.exec() == QDialog.Accepted:
-                for file_name, file_dataname in file_list.items():
-                    part = matcher.data_match[file_dataname]
-                    file_match[file_name] = part
-
-        return file_match
 

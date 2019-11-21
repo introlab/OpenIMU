@@ -112,3 +112,32 @@ class ImportMatchDialog(QDialog):
             self.fill_participant_combobox(item_combo)
             item_combo.setCurrentIndex(index)
 
+    def get_files_match(self, base_path: str) -> dict:
+        import glob
+        import os
+
+        # Build file list
+        file_list = {}  # Dictionary: file and base_data_folder (data participant ID)
+
+        # Add files to list
+        files = glob.glob(base_path + "/**/*.*", recursive=True)  # Files in sub folders
+        for file in files:
+            file_name = file.replace("/", os.sep)
+            data_name = file.replace(base_path, "")
+            data_name = data_name.replace("/", os.sep)
+            # data_name = os.path.split(data_name)[0].replace(os.sep, "")
+            data_name = data_name.split(os.sep)
+            index = 0
+            if data_name[index] == '':
+                index = 1
+            data_name = data_name[index]
+
+            if file_name not in file_list:
+                file_list[file_name] = data_name
+
+        file_match = {}  # Dictionary - filename and participant
+        for file_name, file_dataname in file_list.items():
+            part = self.data_match[file_dataname]
+            file_match[file_name] = part
+
+        return file_match
