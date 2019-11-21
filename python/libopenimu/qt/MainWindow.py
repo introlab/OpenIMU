@@ -545,7 +545,7 @@ class MainWindow(QMainWindow):
             for file_name, file_part in files.items():
                 import_browser.add_file_to_list(file_name, importer_name, importer_id, file_part)
 
-            # import_browser.ok_clicked()
+            import_browser.ok_clicked()
 
             # Delete files after transfer?
             import shutil
