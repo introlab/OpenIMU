@@ -9,9 +9,10 @@ from libopenimu.streamers.streamer_types import StreamerTypes
 from libopenimu.qt.ParticipantWindow import ParticipantWindow
 from libopenimu.qt.ImportMatchDialog import ImportMatchDialog
 
+from libopenimu.tools.FileManager import FileManager
+
 import tempfile
 import os
-import glob
 
 
 class ImportManager(QDialog):
@@ -194,4 +195,21 @@ class ImportManager(QDialog):
         self.participant_multi = (check_value == Qt.Checked)
         self.UI.frameParticipant.setVisible(not self.participant_multi)
 
+    def get_file_list(self):
+        # Build file list
+        file_list = FileManager.get_file_list(self.filename)
+
+        file_match = {}  # Dictionary - filename and participant
+        if not self.participant_multi:
+            for file in file_list.keys():
+                file_match[file] = self.participant
+        else:
+            # Multiple participant - must show dialog and match.
+            matcher = ImportMatchDialog(dbmanager=self.dbMan, datas=list(set(file_list.values())), parent=self)
+            if matcher.exec() == QDialog.Accepted:
+                for file_name, file_dataname in file_list.items():
+                    part = matcher.data_match[file_dataname]
+                    file_match[file_name] = part
+
+        return file_match
 

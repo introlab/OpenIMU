@@ -90,8 +90,11 @@ class StreamWindow(QDialog):
         settings.data_save_path = self.UI.txtDataPath.text()
 
     def init_streamer(self):
+        # Create path with subfolder "ToImport"
+        save_path = self.get_data_save_path()
+
         if self.UI.cmbStreamType.currentIndex() == 0:  # Applewatch
-            self.streamer = AppleWatchStreamer(port=self.UI.spinPort.value(), path=self.UI.txtDataPath.text(),
+            self.streamer = AppleWatchStreamer(port=self.UI.spinPort.value(), path=save_path,
                                                parent=self)
 
         if self.streamer:
@@ -261,10 +264,17 @@ class StreamWindow(QDialog):
         self.get_device_item(device_name=device_name, create_if_absent=True)
 
     def get_data_save_path(self) -> str:
+        import os
+        return self.UI.txtDataPath.text() + os.sep + "ToImport"
+
+    def get_base_data_save_path(self) -> str:
         return self.UI.txtDataPath.text()
 
     def get_streamer_type(self) -> int:
         return self.UI.cmbStreamType.currentIndex()
+
+    def get_delete_files_after_import(self) -> bool:
+        return self.UI.chkDeleteFiles.isChecked()
 
     def closeEvent(self, _):
         self.close_requested()
@@ -276,7 +286,7 @@ class StreamWindow(QDialog):
 
         # Build list of root folders to import
         import os
-        self.folders_to_import = os.listdir(self.UI.txtDataPath.text())
+        self.folders_to_import = os.listdir(self.get_data_save_path())
 
         self.accept()
 

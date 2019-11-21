@@ -35,6 +35,9 @@ from libopenimu.models.LogTypes import LogTypes
 # Database
 from libopenimu.db.DBManager import DBManager
 
+# Tools
+from libopenimu.tools.FileManager import FileManager
+
 # Python
 import sys
 from datetime import datetime
@@ -542,7 +545,18 @@ class MainWindow(QMainWindow):
             for file_name, file_part in files.items():
                 import_browser.add_file_to_list(file_name, importer_name, importer_id, file_part)
 
-            import_browser.ok_clicked()
+            # import_browser.ok_clicked()
+
+            # Delete files after transfer?
+            import shutil
+            if not stream_diag.get_delete_files_after_import():
+                # Move files to "Imported" folder
+                import os
+                target_dir = stream_diag.get_base_data_save_path() + os.sep + "Imported"
+                FileManager.merge_folders(stream_diag.get_data_save_path(), target_dir)
+
+            # Remove transfered files
+            shutil.rmtree(stream_diag.get_data_save_path())
             self.load_data_from_dataset()
 
 

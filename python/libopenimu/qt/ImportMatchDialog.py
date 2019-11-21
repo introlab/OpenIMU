@@ -3,6 +3,7 @@ from PyQt5.QtCore import pyqtSlot
 
 from resources.ui.python.ImportMatchDialog_ui import Ui_ImportMatchDialog
 from libopenimu.qt.ParticipantWindow import ParticipantWindow
+from libopenimu.tools.FileManager import FileManager
 
 
 class ImportMatchDialog(QDialog):
@@ -113,27 +114,8 @@ class ImportMatchDialog(QDialog):
             item_combo.setCurrentIndex(index)
 
     def get_files_match(self, base_path: str) -> dict:
-        import glob
-        import os
-
         # Build file list
-        file_list = {}  # Dictionary: file and base_data_folder (data participant ID)
-
-        # Add files to list
-        files = glob.glob(base_path + "/**/*.*", recursive=True)  # Files in sub folders
-        for file in files:
-            file_name = file.replace("/", os.sep)
-            data_name = file.replace(base_path, "")
-            data_name = data_name.replace("/", os.sep)
-            # data_name = os.path.split(data_name)[0].replace(os.sep, "")
-            data_name = data_name.split(os.sep)
-            index = 0
-            if data_name[index] == '':
-                index = 1
-            data_name = data_name[index]
-
-            if file_name not in file_list:
-                file_list[file_name] = data_name
+        file_list = FileManager.get_file_list(from_path=base_path)
 
         file_match = {}  # Dictionary - filename and participant
         for file_name, file_dataname in file_list.items():
