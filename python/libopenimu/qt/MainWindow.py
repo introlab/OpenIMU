@@ -109,7 +109,7 @@ class MainWindow(QMainWindow):
         self.UI.btnImport.clicked.connect(self.import_requested)
         self.UI.btnExportCSV.clicked.connect(self.export_csv_requested)
         self.UI.dockDataset.visibilityChanged.connect(self.UI.btnShowDataset.setChecked)
-        self.UI.dockLog.visibilityChanged.connect(self.toggle_log)
+        # self.UI.dockLog.visibilityChanged.connect(self.toggle_log)
         self.UI.btnShowDataset.clicked.connect(self.toggle_dataset)
         self.UI.btnShowLog.clicked.connect(self.toggle_log)
         self.UI.btnTransfer.clicked.connect(self.transfer_requested)
@@ -212,14 +212,16 @@ class MainWindow(QMainWindow):
     @pyqtSlot(bool)
     def toggle_log(self, visibility):
         self.UI.dockLog.setVisible(visibility)
-        self.UI.btnShowLog.setChecked(visibility)
+        # self.UI.btnShowLog.setChecked(visibility)
 
         if visibility:
-            sys.stdout = EmittingStream(self.console_log_normal)
-            sys.stderr = EmittingStream(self.console_log_error)
+            sys.stdout = StdConsoleLogger(self.console_log_normal)
+            sys.stderr = StdConsoleLogger(self.console_log_error)
         else:
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
+
+        # print("Test!")
 
     @pyqtSlot()
     def import_requested(self):
@@ -235,8 +237,8 @@ class MainWindow(QMainWindow):
     def export_csv_requested(self):
         exporter = ExportWindow(self.dbMan, self)
         exporter.setStyleSheet(self.styleSheet())
-        if exporter.exec() == QDialog.Accepted:
-            print("Accepted")
+        # if exporter.exec() == QDialog.Accepted:
+        #     print("Accepted")
 
     @pyqtSlot()
     def infos_requested(self):
@@ -246,7 +248,6 @@ class MainWindow(QMainWindow):
         infos_window.infosOnly = True
 
         if infos_window.exec() != QDialog.Rejected:
-            # TODO: Save data
             self.currentDataSet.name = infos_window.dataSet.name
 
     @pyqtSlot()
@@ -561,13 +562,9 @@ class MainWindow(QMainWindow):
                 self.load_data_from_dataset()
 
 
-class EmittingStream(PyQt5.QtCore.QObject):
-
-    textWritten = PyQt5.QtCore.pyqtSignal(str)
-    flushRequest = PyQt5.QtCore.pyqtSignal()
+class StdConsoleLogger:
+    def __init__(self, callable_method):
+        self.callback = callable_method
 
     def write(self, text):
-        self.textWritten.emit(str(text))
-
-    def flush(self):
-        pass
+        self.callback(text)

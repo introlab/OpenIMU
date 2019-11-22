@@ -33,18 +33,7 @@ class StreamWindow(QDialog):
 
         # Initial UI state
         self.UI.frameProgress.hide()
-        # infos = self.streamer.get_streamer_infos()
-        # row = 0
-        # self.UI.tableInfos.setRowCount(len(infos))
-        # for info_item, info_value in infos.items():
-        #     item = QTableWidgetItem(info_item)
-        #     item.setBackground(QBrush(Qt.lightGray))
-        #     self.UI.tableInfos.setItem(row, 0, item)
-        #     item = QTableWidgetItem(info_value)
-        #     item.setBackground(QBrush(Qt.white))
-        #     item.setForeground(QBrush(Qt.blue))
-        #     self.UI.tableInfos.setItem(row, 1, item)
-        #     row += 1
+        self.UI.chkAutoImport.hide()  # For now...
 
         # Signals / slots connection
         self.UI.btnClose.clicked.connect(self.close_requested)
