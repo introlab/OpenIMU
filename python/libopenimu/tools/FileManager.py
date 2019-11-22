@@ -45,3 +45,38 @@ class FileManager:
                         continue
                     os.remove(dst_file)
                 shutil.move(src_file, dst_dir)
+
+    @staticmethod
+    def format_file_size(file_size: int, no_suffix: bool = False, ref_size: int = 0) -> str:
+        kb_size = 1024
+        mb_size = 1024 * kb_size
+        gb_size = 1024 * mb_size
+        tb_size = 1024 * gb_size
+
+        if ref_size == 0:
+            ref_size = file_size
+
+        if ref_size <= kb_size:
+            suffix = ' B'
+            str_size = str(file_size)
+
+        elif ref_size <= mb_size:
+            suffix = ' KB'
+            str_size = "{:.2f}".format(file_size / kb_size)
+
+        elif ref_size <= gb_size:
+            suffix = ' MB'
+            str_size = "{:.2f}".format(file_size / mb_size)
+
+        elif ref_size <= tb_size:
+            suffix = ' GB'
+            str_size = "{:.2f}".format(file_size / gb_size)
+
+        else:
+            suffix = ' TB'
+            str_size = "{:.2f}".format(file_size / tb_size)
+
+        if no_suffix:
+            suffix = ''
+
+        return str_size + suffix

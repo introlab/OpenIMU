@@ -69,7 +69,7 @@ QTreeWidget::item:selected {
 }
 
 
-QLineEdit,QPlainTextEdit,QComboBox{background-color:rgba(226, 226, 226,90%);border-radius:5px;min-height:24px;}
+QLineEdit,QPlainTextEdit,QComboBox,QDateEdit{background-color:rgba(226, 226, 226,90%);border-radius:5px;min-height:24px;}
 QComboBox{selection-color:black;}
 
 QListWidget#lstSensors,QTableWidget{background-color:rgba(200,200,200,70%);}
@@ -148,6 +148,16 @@ QProgressBar
 QProgressBar::chunk{
 	background-color:qlineargradient(spread:reflect, x1:0.5, y1:0, x2:0.5, y2:0.5, stop:0 rgba(0, 127, 0, 255), stop:1 rgba(114, 255, 114, 255));
     width: 20px;
+}
+
+/* 
+QCalendarWidget
+*/
+
+QCalendarWidget QToolButton{
+	background-color:transparent; 
+	border: 0px solid tranparent;
+	min-height:20px;
 }</string>
   </property>
   <property name="documentMode">

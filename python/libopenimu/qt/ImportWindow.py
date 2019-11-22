@@ -78,7 +78,11 @@ class ImportWindow(QDialog):
             self.UI.txtAuthor.setText(self.dataSet.author)
             self.UI.txtDesc.setPlainText(self.dataSet.description)
             self.UI.txtName.setText(self.dataSet.name)
-            self.UI.calendarUploadDate.setSelectedDate(self.dataSet.upload_date)
+            self.UI.dateData.setDate(self.dataSet.upload_date)
+        else:
+            self.UI.dateData.setDate(datetime.now())
+            import os
+            self.UI.txtAuthor.setText(os.getlogin())
         self.UI.txtFileName.setText(self.fileName)
 
     @pyqtSlot()
@@ -107,8 +111,7 @@ class ImportWindow(QDialog):
                 self.dataSet.name = self.UI.txtName.text()
                 self.dataSet.description = self.UI.txtDesc.toPlainText()
                 self.dataSet.author = self.UI.txtAuthor.text()
-
-                self.dataSet.upload_date = self.UI.calendarUploadDate.selectedDate().toPyDate()
+                self.dataSet.upload_date = self.UI.dateData.date().toPyDate()
 
                 db.set_dataset_infos(name=self.dataSet.name,
                                      desc=self.dataSet.description,

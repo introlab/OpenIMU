@@ -7,8 +7,8 @@ class BaseStreamer(QThread):
     file_error_occured = pyqtSignal('QString', 'QString', 'QString')  # Device, File, Error string
 
     device_connected = pyqtSignal('QString', bool)  # Device, Connected?
-    transfer_completed = pyqtSignal('QString', 'QString')  # Device, Filename
-    transfer_started = pyqtSignal('QString', 'QString')  # Device, Filename
+    transfer_completed = pyqtSignal('QString', 'QString', int)  # Device, Filename, file size
+    transfer_started = pyqtSignal('QString', 'QString', int)  # Device, Filename, file size
 
     server_save_path = './Files'
     server = None

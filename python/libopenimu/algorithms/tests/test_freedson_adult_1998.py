@@ -8,7 +8,7 @@
 
 
 import unittest
-import libopenimu.algorithms.freedson_adult_1998 as freedson1998
+# import libopenimu.algorithms.freedson_adult_1998 as freedson1998
 from libopenimu.algorithms.freedson_adult_1998 import CutPoints
 
 

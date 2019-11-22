@@ -526,38 +526,39 @@ class MainWindow(QMainWindow):
         # rval = msg.exec()
         # if rval == QMessageBox.Yes:
 
-        # Match windows
-        matcher = ImportMatchDialog(dbmanager=self.dbMan, datas=stream_diag.folders_to_import, parent=self)
-        if matcher.exec() == QDialog.Accepted:
-            # for file_name, file_dataname in file_list.items():
-            #     part = matcher.data_match[file_dataname]
-            #     file_match[file_name] = part
+        if stream_diag.folders_to_import:
+            # Match windows
+            matcher = ImportMatchDialog(dbmanager=self.dbMan, datas=stream_diag.folders_to_import, parent=self)
+            if matcher.exec() == QDialog.Accepted:
+                # for file_name, file_dataname in file_list.items():
+                #     part = matcher.data_match[file_dataname]
+                #     file_match[file_name] = part
 
-            # Build import list
-            files = matcher.get_files_match(stream_diag.get_data_save_path())
+                # Build import list
+                files = matcher.get_files_match(stream_diag.get_data_save_path())
 
-            # Start import process
-            import_browser = ImportBrowser(data_manager=self.dbMan, parent=self)
-            import_browser.log_request.connect(self.add_to_log)
+                # Start import process
+                import_browser = ImportBrowser(data_manager=self.dbMan, parent=self)
+                import_browser.log_request.connect(self.add_to_log)
 
-            importer_id = StreamerTypes.value_importer_types[stream_diag.get_streamer_type()]
-            importer_name = ImporterTypes.value_names[importer_id]
-            for file_name, file_part in files.items():
-                import_browser.add_file_to_list(file_name, importer_name, importer_id, file_part)
+                importer_id = StreamerTypes.value_importer_types[stream_diag.get_streamer_type()]
+                importer_name = ImporterTypes.value_names[importer_id]
+                for file_name, file_part in files.items():
+                    import_browser.add_file_to_list(file_name, importer_name, importer_id, file_part)
 
-            import_browser.ok_clicked()
+                import_browser.ok_clicked()
 
-            # Delete files after transfer?
-            import shutil
-            if not stream_diag.get_delete_files_after_import():
-                # Move files to "Imported" folder
-                import os
-                target_dir = stream_diag.get_base_data_save_path() + os.sep + "Imported"
-                FileManager.merge_folders(stream_diag.get_data_save_path(), target_dir)
+                # Delete files after transfer?
+                import shutil
+                if not stream_diag.get_delete_files_after_import():
+                    # Move files to "Imported" folder
+                    import os
+                    target_dir = stream_diag.get_base_data_save_path() + os.sep + "Imported"
+                    FileManager.merge_folders(stream_diag.get_data_save_path(), target_dir)
 
-            # Remove transfered files
-            shutil.rmtree(stream_diag.get_data_save_path())
-            self.load_data_from_dataset()
+                # Remove transfered files
+                shutil.rmtree(stream_diag.get_data_save_path())
+                self.load_data_from_dataset()
 
 
 class EmittingStream(PyQt5.QtCore.QObject):

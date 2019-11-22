@@ -107,7 +107,7 @@ class AppleWatchRequestHandler(BaseHTTPRequestHandler):
         file_name = device_name + file_path + '/' + file_name
         self.streamer.add_log.emit("Réception en cours: " + file_name + " (" + str(content_length) +
                                    " octets)", LogTypes.LOGTYPE_INFO)
-        self.streamer.transfer_started.emit(device_name, file_name)
+        self.streamer.transfer_started.emit(device_name, file_name, content_length)
 
         # Check if file exists and size matches
         file_infos = Path(destination_path)
@@ -193,7 +193,7 @@ class AppleWatchRequestHandler(BaseHTTPRequestHandler):
         else:
             # All is good!
             self.streamer.add_log.emit(device_name + ": " + file_name + " - Complété", LogTypes.LOGTYPE_DONE)
-            self.streamer.transfer_completed.emit(device_name, file_name)
+            self.streamer.transfer_completed.emit(device_name, file_name, file_infos.st_size)
         self.send_response(200)
         self.send_header('Content-type', 'file-transfer/ack')
         self.end_headers()

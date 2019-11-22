@@ -496,7 +496,8 @@ class DBManager:
         try:
             self.session.query(DataSet).delete()
             self.session.commit()
-            dataset = DataSet(name=name, description=desc, creation_date=creation_date, upload_date=upload_date, author=author)
+            dataset = DataSet(name=name, description=desc, creation_date=creation_date, upload_date=upload_date,
+                              author=author)
             self.session.add(dataset)
             self.commit()
             return dataset
@@ -541,7 +542,8 @@ class DBManager:
             query = self.session.query(ProcessedData)
             datas = query.all()
         else:
-            query = self.session.query(ProcessedData).filter(ProcessedData.processed_data_ref.recordset.participant.id_participant == participant.id_participant)
+            query = self.session.query(ProcessedData).filter(
+                ProcessedData.processed_data_ref.recordset.participant.id_participant == participant.id_participant)
             datas = query.all()
 
         return datas
@@ -585,7 +587,8 @@ class DBManager:
 
     def export_csv_participant(self, participant : Participant, directory):
         if os.path.exists(directory):
-            participant_dir = directory + '/PARTICIPANT_ID_' + str(participant.id_participant) + '_' + participant.name + '/'
+            participant_dir = directory + '/PARTICIPANT_ID_' + str(participant.id_participant) + '_' + \
+                              participant.name + '/'
             # Create participant directory
             if not os.path.exists(participant_dir):
                 os.mkdir(participant_dir)
