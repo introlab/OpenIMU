@@ -1,6 +1,7 @@
 import time
 import datetime
 
+
 def timing(f):
     def wrap(*args):
         time1 = time.time()
