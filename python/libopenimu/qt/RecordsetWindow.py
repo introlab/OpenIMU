@@ -569,6 +569,9 @@ class RecordsetWindow(QWidget):
                 or sensor.id_sensor_type == SensorType.FSR:
             return GraphType.LINECHART
 
+        if sensor.id_sensor_type == SensorType.BEACON:
+            return GraphType.BEACON
+
         if sensor.id_sensor_type == SensorType.GPS:
             return GraphType.MAP
 
@@ -592,7 +595,8 @@ class RecordsetWindow(QWidget):
                     y_range = y_range[x_range <= end_time.timestamp()]
                     x_range = x_range[x_range <= end_time.timestamp()]
                     if len(x_range) > 0 and len(y_range) > 0:
-                        graph_window.graph.update_data(x_range, y_range, series_id)
+                        if graph_window.graph is not None:
+                            graph_window.graph.update_data(x_range, y_range, series_id)
                     series_id += 1
         return
 
@@ -632,6 +636,16 @@ class RecordsetWindow(QWidget):
                                                        gps.longitude / 1e7)
                         graph_window.setCursorPositionFromTime(data.timestamps.start_timestamp)
 
+            if graph_type == GraphType.BEACON:
+                # print('should do something with beacons data')
+                for series in timeseries:
+                    if series.__contains__('x') and series.__contains__('y') and series.__contains__('label'):
+                        row_count = min(len(series['x']), len(series['y']))
+                        graph_window.graph.add_tab(series['label'], row_count)
+                        for i in range(0, row_count):
+                            # Let's add data
+                            graph_window.graph.add_row(i, series['x'][i], series['y'][i], series['label'])
+
             if graph_window is not None:
                 self.UI.mdiArea.addSubWindow(graph_window).setWindowTitle(sensor_label)
                 self.sensors_graphs[sensor.id_sensor] = graph_window
@@ -642,9 +656,12 @@ class RecordsetWindow(QWidget):
 
                 graph_window.aboutToClose.connect(self.graph_was_closed)
                 graph_window.requestData.connect(self.query_sensor_data)
-                graph_window.graph.cursorMoved.connect(self.graph_cursor_changed)
-                graph_window.graph.selectedAreaChanged.connect(self.graph_selected_area_changed)
-                graph_window.graph.clearedSelectionArea.connect(self.on_timeview_clear_selection_requested)
+
+                if graph_window.graph is not None:
+                    graph_window.graph.cursorMoved.connect(self.graph_cursor_changed)
+                    graph_window.graph.selectedAreaChanged.connect(self.graph_selected_area_changed)
+                    graph_window.graph.clearedSelectionArea.connect(self.on_timeview_clear_selection_requested)
+
                 graph_window.zoomAreaRequested.connect(self.graph_zoom_area)
                 graph_window.zoomResetRequested.connect(self.graph_zoom_reset)
 
