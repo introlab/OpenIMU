@@ -118,7 +118,7 @@ class StreamWindow(QDialog):
         for file in FileManager.get_file_list(from_path=save_path):
             import os
             device_name = 'Inconnu'
-            filename = file.lstrip(self.get_data_save_path())
+            filename = file[len(self.get_data_save_path())+1:]
             path_parts = filename.split(os.sep)
             if len(path_parts) > 1:
                 device_name = path_parts[0]
@@ -200,6 +200,10 @@ class StreamWindow(QDialog):
         self.update_current_transfer_tab()
 
     def add_file_completed(self, device_name: str, filename: str, filesize: int):
+        # Check if file is already present
+        if len(self.UI.tableReceived.findItems(filename, Qt.MatchExactly)) > 0:
+            return
+
         self.UI.tableReceived.setRowCount(self.UI.tableReceived.rowCount() + 1)
         index = self.UI.tableReceived.rowCount() - 1
 
@@ -218,6 +222,7 @@ class StreamWindow(QDialog):
         self.UI.tableReceived.setItem(index, 2, item)
 
         self.UI.tabInfos.setTabText(1, "Fichiers reçus (" + str(self.UI.tableReceived.rowCount()) + ")")
+        self.UI.tableReceived.scrollToBottom()
 
     def add_file_error(self, filename: str, errorstr: str):
         self.UI.tableErrors.setRowCount(self.UI.tableErrors.rowCount() + 1)
@@ -302,7 +307,8 @@ class StreamWindow(QDialog):
         self.remove_file_progress_bar(file_name)
 
         # Add to completed list
-        self.add_file_completed(device_name=device_name, filename=file_name, filesize=file_size)
+        import os
+        self.add_file_completed(device_name=device_name, filename=file_name.replace("/", os.sep), filesize=file_size)
 
         # Update device list
         device_item = self.get_device_item(device_name=device_name, create_if_absent=False)
