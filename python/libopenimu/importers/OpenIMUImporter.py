@@ -42,7 +42,8 @@ class OpenIMUImporter(BaseImporter):
                 return record
 
         # Forcing a new recordset because every recording is in a single file...
-        recordset = self.db.add_recordset(self.participant, str(my_time.date()) + session_name, my_time, my_time, force=True)
+        recordset = self.db.add_recordset(self.participant, str(my_time.date()) + session_name, my_time, my_time,
+                                          force=True)
         self.recordsets.append(recordset)
         return recordset
 

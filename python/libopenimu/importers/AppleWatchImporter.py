@@ -72,7 +72,7 @@ class AppleWatchImporter(BaseImporter):
                             session_info = json.load(session_file)
                             # TODO better session name?
                             if session_info.__contains__('participant') and session_info.__contains__('timestamp'):
-                                self.session_name = '_' + session_info['participant'] + '_' + session_info['timestamp']
+                                self.session_name = session_info['timestamp'] + '_' + session_info['participant']
                             else:
                                 # Reset session name
                                 self.session_name = str()
