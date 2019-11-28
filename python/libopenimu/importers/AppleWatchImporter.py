@@ -99,6 +99,22 @@ class AppleWatchImporter(BaseImporter):
             # Process data files
             for file in namelist:
                 if '.data' in file:
+
+                    # Try to extract session information if available
+                    basename = os.path.basename(file)
+                    session_file_name = file.replace(basename, 'session.oimi')
+
+                    if session_file_name in namelist:
+                        session_file = myzip.open(session_file_name)
+                        # Read JSON information
+                        session_info = json.load(session_file)
+                        # TODO better session name?
+                        if session_info.__contains__('participant') and session_info.__contains__('timestamp'):
+                            self.session_name = session_info['timestamp'] + '_' + session_info['participant']
+                        else:
+                            # Reset session name
+                            self.session_name = str()
+
                     # print('Reading file: ', file)
                     my_file = myzip.open(file)
                     self.current_file_size = myzip.getinfo(my_file.name).file_size
