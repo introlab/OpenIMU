@@ -45,5 +45,6 @@
         <file>icons/transfer.png</file>
         <file>icons/compact.png</file>
         <file>icons/bug.png</file>
+        <file>icons/date.png</file>
     </qresource>
 </RCC>

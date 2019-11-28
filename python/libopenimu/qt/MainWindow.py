@@ -4,7 +4,7 @@ import PyQt5
 
 from PyQt5.QtWidgets import QMessageBox
 
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
+from PyQt5.QtCore import pyqtSlot
 from libopenimu.qt.Charts import IMUChartView
 import gc
 
@@ -17,20 +17,26 @@ from libopenimu.qt.RecordsetWindow import RecordsetWindow
 from libopenimu.qt.ResultWindow import ResultWindow
 from libopenimu.qt.StartWindow import StartWindow
 from libopenimu.qt.ImportBrowser import ImportBrowser
-from libopenimu.qt.ImportManager import ImportManager
 from libopenimu.qt.ExportWindow import ExportWindow
 from libopenimu.qt.StreamWindow import StreamWindow
+from libopenimu.qt.ImportMatchDialog import ImportMatchDialog
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, SimpleTask, ProgressDialog
 from libopenimu.qt.ProcessSelectWindow import ProcessSelectWindow
+from libopenimu.streamers.streamer_types import StreamerTypes
+from libopenimu.importers.importer_types import ImporterTypes
+
+from OpenIMUApp import Treedatawidget
 
 # Models
 from libopenimu.models.Participant import Participant
 from libopenimu.models.DataSet import DataSet
 from libopenimu.models.LogTypes import LogTypes
-from libopenimu.streamers.streamer_types import StreamerTypes
 
 # Database
 from libopenimu.db.DBManager import DBManager
+
+# Tools
+from libopenimu.tools.FileManager import FileManager
 
 # Python
 import sys
@@ -44,7 +50,7 @@ class MainWindow(QMainWindow):
     currentRecordsets = []
 
     def __init__(self, parent=None):
-        super(MainWindow, self).__init__(parent=parent)
+        super(MainWindow, self).__init__(parent)
         self.UI = Ui_MainWindow()
         self.UI.setupUi(self)
         self.UI.dockToolBar.setTitleBarWidget(QWidget())
@@ -103,7 +109,7 @@ class MainWindow(QMainWindow):
         self.UI.btnImport.clicked.connect(self.import_requested)
         self.UI.btnExportCSV.clicked.connect(self.export_csv_requested)
         self.UI.dockDataset.visibilityChanged.connect(self.UI.btnShowDataset.setChecked)
-        self.UI.dockLog.visibilityChanged.connect(self.toggle_log)
+        # self.UI.dockLog.visibilityChanged.connect(self.toggle_log)
         self.UI.btnShowDataset.clicked.connect(self.toggle_dataset)
         self.UI.btnShowLog.clicked.connect(self.toggle_log)
         self.UI.btnTransfer.clicked.connect(self.transfer_requested)
@@ -206,14 +212,16 @@ class MainWindow(QMainWindow):
     @pyqtSlot(bool)
     def toggle_log(self, visibility):
         self.UI.dockLog.setVisible(visibility)
-        self.UI.btnShowLog.setChecked(visibility)
+        # self.UI.btnShowLog.setChecked(visibility)
 
         if visibility:
-            sys.stdout = EmittingStream(textWritten=self.console_log_normal)
-            sys.stderr = EmittingStream(textWritten=self.console_log_error)
+            sys.stdout = StdConsoleLogger(self.console_log_normal)
+            sys.stderr = StdConsoleLogger(self.console_log_error)
         else:
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
+
+        # print("Test!")
 
     @pyqtSlot()
     def import_requested(self):
@@ -229,8 +237,8 @@ class MainWindow(QMainWindow):
     def export_csv_requested(self):
         exporter = ExportWindow(self.dbMan, self)
         exporter.setStyleSheet(self.styleSheet())
-        if exporter.exec() == QDialog.Accepted:
-            print("Accepted")
+        # if exporter.exec() == QDialog.Accepted:
+        #     print("Accepted")
 
     @pyqtSlot()
     def infos_requested(self):
@@ -240,7 +248,6 @@ class MainWindow(QMainWindow):
         infos_window.infosOnly = True
 
         if infos_window.exec() != QDialog.Rejected:
-            # TODO: Save data
             self.currentDataSet.name = infos_window.dataSet.name
 
     @pyqtSlot()
@@ -278,7 +285,8 @@ class MainWindow(QMainWindow):
         msg.setIcon(QMessageBox.Question)
         msg.setStyleSheet("QPushButton{min-width: 100px; min-height: 40px;}")
 
-        msg.setText("Le fichier de données sera nettoyé. Ceci peut prendre un certain temps. \nDésirez-vous poursuivre?")
+        msg.setText("Le fichier de données sera nettoyé. Ceci peut prendre un certain temps. \n"
+                    "Désirez-vous poursuivre?")
         msg.setWindowTitle("Compactage des données")
         msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
 
@@ -309,12 +317,12 @@ class MainWindow(QMainWindow):
         self.show_participant(base_group=default_group)
 
     @pyqtSlot(Participant)
-    def participant_was_dragged(self,participant):
+    def participant_was_dragged(self, participant):
         self.dbMan.update_participant(participant)
         self.update_participant(participant)
 
     @pyqtSlot(QTreeWidgetItem, int)
-    def tree_item_clicked(self, item, column):
+    def tree_item_clicked(self, item: QTreeWidgetItem, _: int):
         # print(item.text(column))
         item_id = self.UI.treeDataSet.get_item_id(item)
         item_type = self.UI.treeDataSet.get_item_type(item)
@@ -332,10 +340,15 @@ class MainWindow(QMainWindow):
         if item_type == "participant":
             self.show_participant(self.UI.treeDataSet.participants[item_id])
 
-        if item_type == "recordsets" or item_type == "recordset" or item_type == "subrecord":
+        if item_type == "recordsets" or item_type == "recordset" or item_type == "subrecord" or item_type == "date":
             if item_type == "recordsets":
                 part = self.UI.treeDataSet.participants[self.UI.treeDataSet.get_item_id(item.parent())]
-                self.currentRecordsets = self.dbMan.get_all_recordsets(part)
+                self.currentRecordsets = self.dbMan.get_all_recordsets(participant=part)
+            elif item_type == "date":
+                # Find associated participant
+                id_participant = self.UI.treeDataSet.get_item_id(item.parent().parent())
+                search_date = self.UI.treeDataSet.dates[Treedatawidget.get_date_id(item.text(0), id_participant)]
+                self.currentRecordsets = self.dbMan.get_all_recordsets(start_date=search_date)
             else:
                 self.currentRecordsets = [self.UI.treeDataSet.recordsets[item_id]]
 
@@ -350,7 +363,8 @@ class MainWindow(QMainWindow):
             result_widget = ResultWindow(manager=self.dbMan, results=self.UI.treeDataSet.results[item_id], parent=self)
             self.UI.frmMain.layout().addWidget(result_widget)
 
-        self.UI.frmMain.update()
+        item.setExpanded(True)
+        # self.UI.frmMain.update()
 
     @pyqtSlot()
     def data_was_saved(self):
@@ -383,8 +397,8 @@ class MainWindow(QMainWindow):
         item_id = self.UI.treeDataSet.get_item_id(self.UI.treeDataSet.currentItem())
         item_type = self.UI.treeDataSet.get_item_type(self.UI.treeDataSet.currentItem())
 
-        if item_type == "recordsets" or item_type == "results":
-            return
+        # if item_type == "recordsets" or item_type == "results":
+        #     return
 
         msg = QMessageBox(self)
         msg.setIcon(QMessageBox.Question)
@@ -438,6 +452,39 @@ class MainWindow(QMainWindow):
                 self.UI.treeDataSet.remove_result(result)
                 # self.dbMan.delete_processed_data(result)
 
+            if item_type == "date":
+                # Delete all recordsets related to that date
+                id_participant = self.UI.treeDataSet.get_item_id(self.UI.treeDataSet.currentItem().parent().parent())
+                search_date = self.UI.treeDataSet.dates[Treedatawidget.get_date_id(self.UI.treeDataSet.currentItem()
+                                                                                   .text(0), id_participant)]
+                recordsets = self.dbMan.get_all_recordsets(start_date=search_date)
+                part_id = None
+                for recordset in recordsets:
+                    if part_id is None:
+                        part_id = recordset.id_participant
+                    task = SimpleTask("Suppression de '" + recordset.name + "'",
+                                      self.dbMan.delete_recordset, recordset)
+                    tasks.append(task)
+                    self.UI.treeDataSet.remove_recordset(recordset)
+                self.UI.treeDataSet.remove_date(self.UI.treeDataSet.currentItem().text(0), part_id)
+
+            if item_type == "recordsets":
+                # Delete all recordsets for that participant
+                participant = self.UI.treeDataSet.participants[self.UI.treeDataSet.get_item_id(self.UI.treeDataSet
+                                                                                               .currentItem().parent())]
+                recordsets = self.dbMan.get_all_recordsets(participant=participant)
+                for recordset in recordsets:
+                    task = SimpleTask("Suppression de '" + recordset.name + "'",
+                                      self.dbMan.delete_recordset, recordset)
+                    tasks.append(task)
+                    self.UI.treeDataSet.remove_recordset(recordset)
+
+                # Remove all dates from the view
+                self.UI.treeDataSet.remove_dates_for_participant(participant.id_participant)
+
+            if item_type == "results":
+                pass
+
             if tasks:
                 process = BackgroundProcess(tasks)
                 # Create progress dialog
@@ -460,46 +507,64 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def transfer_requested(self):
-        import_man = ImportManager(dbmanager=self.dbMan, dirs=True, stream=True, parent=self)
-        # TODO: More intelligent refresh!
-        import_man.participant_added.connect(self.load_data_from_dataset)
+        # import_man = ImportManager(dbmanager=self.dbMan, dirs=True, stream=True, parent=self)
+        # # TODO: More intelligent refresh!
+        # import_man.participant_added.connect(self.load_data_from_dataset)
+        #
+        # if import_man.exec() == QDialog.Accepted:
+        stream_diag = StreamWindow(parent=self)
+        stream_diag.exec()
 
-        if import_man.exec() == QDialog.Accepted:
-            stream_diag = StreamWindow(stream_type=import_man.filetype_id, path=import_man.filename, parent=self)
-            stream_diag.exec()
+        # Do the actual import
+        # msg = QMessageBox(self)
+        # msg.setIcon(QMessageBox.Question)
+        # msg.setStyleSheet("QPushButton{min-width: 100px; min-height: 40px;}")
+        #
+        # msg.setText("Procéder à l'importation des données?")
+        # msg.setWindowTitle("Importer?")
+        # msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        #
+        # rval = msg.exec()
+        # if rval == QMessageBox.Yes:
 
-            # Do the actual import
-            msg = QMessageBox(self)
-            msg.setIcon(QMessageBox.Question)
-            msg.setStyleSheet("QPushButton{min-width: 100px; min-height: 40px;}")
+        if stream_diag.folders_to_import:
+            # Match windows
+            matcher = ImportMatchDialog(dbmanager=self.dbMan, datas=stream_diag.folders_to_import, parent=self)
+            if matcher.exec() == QDialog.Accepted:
+                # for file_name, file_dataname in file_list.items():
+                #     part = matcher.data_match[file_dataname]
+                #     file_match[file_name] = part
 
-            msg.setText("Procéder à l'importation des données?")
-            msg.setWindowTitle("Importer?")
-            msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+                # Build import list
+                files = matcher.get_files_match(stream_diag.get_data_save_path())
 
-            rval = msg.exec()
-            if rval == QMessageBox.Yes:
                 # Start import process
                 import_browser = ImportBrowser(data_manager=self.dbMan, parent=self)
                 import_browser.log_request.connect(self.add_to_log)
 
-                # Build import list
-                files = import_man.get_file_list()
-                importer_id = StreamerTypes.value_importer_types[import_man.filetype_id]
+                importer_id = StreamerTypes.value_importer_types[stream_diag.get_streamer_type()]
+                importer_name = ImporterTypes.value_names[importer_id]
                 for file_name, file_part in files.items():
-                    import_browser.add_file_to_list(file_name, import_man.filetype, importer_id, file_part)
+                    import_browser.add_file_to_list(file_name, importer_name, importer_id, file_part)
 
                 import_browser.ok_clicked()
+
+                # Delete files after transfer?
+                import shutil
+                if not stream_diag.get_delete_files_after_import():
+                    # Move files to "Imported" folder
+                    import os
+                    target_dir = stream_diag.get_base_data_save_path() + os.sep + "Imported"
+                    FileManager.merge_folders(stream_diag.get_data_save_path(), target_dir)
+
+                # Remove transfered files
+                shutil.rmtree(stream_diag.get_data_save_path())
                 self.load_data_from_dataset()
 
 
-class EmittingStream(PyQt5.QtCore.QObject):
-
-    textWritten = PyQt5.QtCore.pyqtSignal(str)
-    flushRequest = PyQt5.QtCore.pyqtSignal()
+class StdConsoleLogger:
+    def __init__(self, callable_method):
+        self.callback = callable_method
 
     def write(self, text):
-        self.textWritten.emit(str(text))
-
-    def flush(self):
-        pass
+        self.callback(text)

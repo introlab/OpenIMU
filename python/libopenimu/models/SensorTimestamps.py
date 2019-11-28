@@ -10,7 +10,8 @@ from libopenimu.models.Base import Base
 # from libopenimu.models.Sensor import Sensor
 # from libopenimu.models.Channel import Channel
 
-from sqlalchemy import Column, Integer, Sequence, ForeignKey, TIMESTAMP, Interval, BLOB
+from sqlalchemy import Column, Integer, Sequence, TIMESTAMP,  BLOB
+from sqlalchemy.orm import deferred
 
 import numpy as np
 import datetime
@@ -26,7 +27,7 @@ class SensorTimestamps(Base):
     end_timestamp = Column(TIMESTAMP, nullable=False)
 
     # Timestamps will be stored in as floating point (double) deltas from starting timestamp
-    timestamps = Column(BLOB, nullable=False)
+    timestamps = deferred(Column(BLOB, nullable=False))
 
     def update_timestamps(self):
         if len(self.timestamps) > 0:

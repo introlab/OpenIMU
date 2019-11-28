@@ -13,3 +13,4 @@ CMakeLists.txt.user
 /setup/*.exe
 python-3.6_bak
 /docs/openimu_fileformat/OpenIMU_FileFormat.architect~
+python-3.7

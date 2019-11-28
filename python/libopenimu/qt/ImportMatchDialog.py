@@ -3,6 +3,7 @@ from PyQt5.QtCore import pyqtSlot
 
 from resources.ui.python.ImportMatchDialog_ui import Ui_ImportMatchDialog
 from libopenimu.qt.ParticipantWindow import ParticipantWindow
+from libopenimu.tools.FileManager import FileManager
 
 
 class ImportMatchDialog(QDialog):
@@ -112,3 +113,13 @@ class ImportMatchDialog(QDialog):
             self.fill_participant_combobox(item_combo)
             item_combo.setCurrentIndex(index)
 
+    def get_files_match(self, base_path: str) -> dict:
+        # Build file list
+        file_list = FileManager.get_file_list(from_path=base_path)
+
+        file_match = {}  # Dictionary - filename and participant
+        for file_name, file_dataname in file_list.items():
+            part = self.data_match[file_dataname]
+            file_match[file_name] = part
+
+        return file_match

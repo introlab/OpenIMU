@@ -38,7 +38,7 @@ QWidget#line,QWidget#line_2,QWidget#line_3{background-color:rgba(100,100,100,100
 QWidget#MainWindow,QWidget#ImportBrowser,QWidget#ImportManager,QWidget#frmParticipant,QWidget#ExportCSV,QWidget#ImportDialog,QWidget#StartDialog,QWidget#dlgProcessSelect, QWidget#DataInfosWidget,QDialog{background:qlineargradient(spread:pad, x1:0.483, y1:0, x2:0.511045, y2:1, stop:0 rgb(50, 50, 50), stop:1 rgb(153, 153, 153));border-radius:0px;}
 
 QFrame#frameTitle{background-color:rgba(130,130,130,50%);}
-QFrame#frameInfos{background-color:rgba(50,50,50,50%);}
+QFrame#frameInfos{background-color:rgba(150,150,150,100%);}
 
 QFrame#frameButtons,QFrame#frameTools,QFrame#frameCursor{background-color:rgba(0,0,0,70%);  border-radius:5px;}
 
@@ -48,7 +48,11 @@ QPushButton:!enabled,QToolButton:!enabled{color: rgb(168, 168, 168); background-
 QPushButton:checked,QToolButton:checked{color:black;border: 3px solid green;background-color:darkgreen;}
 QPushButton[checkable=true]:!checked,QToolButton[checkable=true]:!checked{color:red;background-color:rgba(180,0,0,50%);border: 2px solid rgb(180,0,0);}
 
+QToolButton#btnEdit:checked{background-color: gray; border: 0px solid transparent;}
+QToolButton#btnEdit[checkable=true]:!checked{background-color: transparent; border: 0px solid transparent;}
+
 QLabel,QCheckBox{color:white;}
+QLabel:!enabled{color:black;}
 
 QListWidget{background-color:rgba(150,150,150,50%);}
 QTreeWidget{background-color:rgba(200,200,200,75%);} 
@@ -65,7 +69,7 @@ QTreeWidget::item:selected {
 }
 
 
-QLineEdit,QPlainTextEdit,QComboBox{background-color:rgba(226, 226, 226,90%);border-radius:5px;min-height:24px;}
+QLineEdit,QPlainTextEdit,QComboBox,QDateEdit{background-color:rgba(226, 226, 226,90%);border-radius:5px;min-height:24px;}
 QComboBox{selection-color:black;}
 
 QListWidget#lstSensors,QTableWidget{background-color:rgba(200,200,200,70%);}
@@ -135,7 +139,26 @@ QCheckBox::indicator:checked:!enabled { background-color:green;}
 QCheckBox::indicator:unchecked{ background-color:red;border-radius:3px;}
 QCheckBox::indicator:checked {background-color:rgb(0,255,0);border-radius:3px;}
 QCheckBox:checked{background-color:rgba(0,0,0,0%);}
-QCheckBox:!checked{background-color:rgba(0,0,0,0%);}</string>
+QCheckBox:!checked{background-color:rgba(0,0,0,0%);}
+
+/*
+QProgressBar
+*/
+
+QProgressBar::chunk{
+	background-color:qlineargradient(spread:reflect, x1:0.5, y1:0, x2:0.5, y2:0.5, stop:0 rgba(0, 127, 0, 255), stop:1 rgba(114, 255, 114, 255));
+    width: 20px;
+}
+
+/* 
+QCalendarWidget
+*/
+
+QCalendarWidget QToolButton{
+	background-color:transparent; 
+	border: 0px solid tranparent;
+	min-height:20px;
+}</string>
   </property>
   <property name="documentMode">
    <bool>false</bool>

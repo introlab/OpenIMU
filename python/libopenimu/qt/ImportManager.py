@@ -9,9 +9,10 @@ from libopenimu.streamers.streamer_types import StreamerTypes
 from libopenimu.qt.ParticipantWindow import ParticipantWindow
 from libopenimu.qt.ImportMatchDialog import ImportMatchDialog
 
+from libopenimu.tools.FileManager import FileManager
+
 import tempfile
 import os
-import glob
 
 
 class ImportManager(QDialog):
@@ -196,23 +197,7 @@ class ImportManager(QDialog):
 
     def get_file_list(self):
         # Build file list
-        file_list = {}  # Dictionary: file and base_data_folder (data participant ID)
-
-        # Add files to list
-        files = glob.glob(self.filename + "/**/*.*", recursive=True)  # Files in sub folders
-        for file in files:
-            file_name = file.replace("/", os.sep)
-            data_name = file.replace(self.filename, "")
-            data_name = data_name.replace("/", os.sep)
-            # data_name = os.path.split(data_name)[0].replace(os.sep, "")
-            data_name = data_name.split(os.sep)
-            index = 0
-            if data_name[index] == '':
-                index = 1
-            data_name = data_name[index]
-
-            if file_name not in file_list:
-                file_list[file_name] = data_name
+        file_list = FileManager.get_file_list(self.filename)
 
         file_match = {}  # Dictionary - filename and participant
         if not self.participant_multi:

@@ -129,7 +129,8 @@ class GPSView(QWebEngineView, BaseGraph):
         if start_pos is not None and end_pos is not None:
             if self.pageReady:
                 for i in range(start_pos, end_pos):
-                    self.page().runJavaScript('addSelectedPosition(' + str(list(self.positions.values())[i].x()) + ',' + str(list(self.positions.values())[i].y()) + ');')
+                    self.page().runJavaScript('addSelectedPosition(' + str(list(self.positions.values())[i].x()) + ','
+                                              + str(list(self.positions.values())[i].y()) + ');')
 
     @property
     def is_zoomed(self):

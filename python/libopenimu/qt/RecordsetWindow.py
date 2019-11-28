@@ -102,12 +102,13 @@ class DBSensorTimesTask(WorkerTask):
 
     def process(self):
         sensor = self.dbMan.get_sensor(self.sensor_id)
-        datas = self.dbMan.get_all_sensor_data(sensor=sensor, recordset=self.recordset, channel=sensor.channels[0])
+        # datas = self.dbMan.get_all_sensor_data(sensor=sensor, recordset=self.recordset, channel=sensor.channels[0])
+        datas = self.dbMan.get_sensor_times(sensor=sensor, recordset=self.recordset)
         times = []
         for data in datas:
             time = {"sensor_id": self.sensor_id,
-                    "start_time": data.timestamps.start_timestamp,
-                    "end_time": data.timestamps.end_timestamp}
+                    "start_time": data.start_timestamp,
+                    "end_time": data.end_timestamp}
             times.append(time)
 
         self.results = times
@@ -260,7 +261,7 @@ class RecordsetWindow(QWidget):
                         self.sensors_menu.addSection(sensor.location)
                     if sensor.id_sensor not in self.sensors:
                         self.sensors[sensor.id_sensor] = sensor
-                        sensor_item = QAction(sensor.name)
+                        sensor_item = QAction(sensor.name + ' [' + str(sensor.sampling_rate) + ' Hz]')
                         sensor_item.setCheckable(True)
                         sensor_item.setProperty("sensor_id", sensor.id_sensor)
                         self.sensors_items[sensor.id_sensor] = sensor_item
@@ -442,7 +443,7 @@ class RecordsetWindow(QWidget):
             for sensor_id in sensors:
                 sensor = self.sensors[sensor_id]
                 # Sensor names
-                label = self.timeSensorsScene.addText(sensor.name)
+                label = self.timeSensorsScene.addText(sensor.name + ' [' + str(sensor.sampling_rate) + ' Hz]')
                 label.setPos(0, pos)
                 label.setDefaultTextColor(Qt.black)
                 # label.setFont(QFont("Times", 10, QFont.Bold))
@@ -504,13 +505,13 @@ class RecordsetWindow(QWidget):
         # Combine tasks results
         self.sensors_blocks = {}
         for task in tasks:
-                for result in task.results:
-                    if result['sensor_id'] not in self.sensors_blocks:
-                        self.sensors_blocks[result['sensor_id']] = []
-                    start_time = result['start_time']
-                    end_time = result['end_time']
-                    data = {"start_time": start_time, "end_time": end_time}
-                    self.sensors_blocks[result['sensor_id']].append(data)
+            for result in task.results:
+                if result['sensor_id'] not in self.sensors_blocks:
+                    self.sensors_blocks[result['sensor_id']] = []
+                start_time = result['start_time']
+                end_time = result['end_time']
+                data = {"start_time": start_time, "end_time": end_time}
+                self.sensors_blocks[result['sensor_id']].append(data)
 
     def create_sensors_rects(self):
         rects = []
@@ -568,6 +569,9 @@ class RecordsetWindow(QWidget):
                 or sensor.id_sensor_type == SensorType.FSR:
             return GraphType.LINECHART
 
+        if sensor.id_sensor_type == SensorType.BEACON:
+            return GraphType.BEACON
+
         if sensor.id_sensor_type == SensorType.GPS:
             return GraphType.MAP
 
@@ -590,8 +594,9 @@ class RecordsetWindow(QWidget):
                     x_range = x_range[x_range >= start_time.timestamp()]
                     y_range = y_range[x_range <= end_time.timestamp()]
                     x_range = x_range[x_range <= end_time.timestamp()]
-                    if len(x_range)>0 and len(y_range)>0:
-                        graph_window.graph.update_data(x_range, y_range, series_id)
+                    if len(x_range) > 0 and len(y_range) > 0:
+                        if graph_window.graph is not None:
+                            graph_window.graph.update_data(x_range, y_range, series_id)
                     series_id += 1
         return
 
@@ -600,7 +605,7 @@ class RecordsetWindow(QWidget):
     def sensor_graph_selected(self, sensor_item):
         sensor_id = sensor_item.property("sensor_id")
         sensor = self.sensors[sensor_id]
-        sensor_label = sensor.name + " (" + sensor.location + ")"
+        sensor_label = sensor.name + " (" + sensor.location + ")" + ' [' + str(sensor.sampling_rate) + ' Hz]'
 
         if sensor_item.isChecked():
             # Choose the correct display for each sensor
@@ -631,6 +636,16 @@ class RecordsetWindow(QWidget):
                                                        gps.longitude / 1e7)
                         graph_window.setCursorPositionFromTime(data.timestamps.start_timestamp)
 
+            if graph_type == GraphType.BEACON:
+                # print('should do something with beacons data')
+                for series in timeseries:
+                    if series.__contains__('x') and series.__contains__('y') and series.__contains__('label'):
+                        row_count = min(len(series['x']), len(series['y']))
+                        graph_window.graph.add_tab(series['label'], row_count)
+                        for i in range(0, row_count):
+                            # Let's add data
+                            graph_window.graph.add_row(i, series['x'][i], series['y'][i], series['label'])
+
             if graph_window is not None:
                 self.UI.mdiArea.addSubWindow(graph_window).setWindowTitle(sensor_label)
                 self.sensors_graphs[sensor.id_sensor] = graph_window
@@ -641,9 +656,12 @@ class RecordsetWindow(QWidget):
 
                 graph_window.aboutToClose.connect(self.graph_was_closed)
                 graph_window.requestData.connect(self.query_sensor_data)
-                graph_window.graph.cursorMoved.connect(self.graph_cursor_changed)
-                graph_window.graph.selectedAreaChanged.connect(self.graph_selected_area_changed)
-                graph_window.graph.clearedSelectionArea.connect(self.on_timeview_clear_selection_requested)
+
+                if graph_window.graph is not None:
+                    graph_window.graph.cursorMoved.connect(self.graph_cursor_changed)
+                    graph_window.graph.selectedAreaChanged.connect(self.graph_selected_area_changed)
+                    graph_window.graph.clearedSelectionArea.connect(self.on_timeview_clear_selection_requested)
+
                 graph_window.zoomAreaRequested.connect(self.graph_zoom_area)
                 graph_window.zoomResetRequested.connect(self.graph_zoom_reset)
 

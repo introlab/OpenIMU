@@ -8,7 +8,8 @@
 
 
 import unittest
-import libopenimu.algorithms.freedson_adult_1998 as freedson1998
+# import libopenimu.algorithms.freedson_adult_1998 as freedson1998
+from libopenimu.algorithms.freedson_adult_1998 import CutPoints
 
 
 class Freedson1998Test(unittest.TestCase):
@@ -20,22 +21,23 @@ class Freedson1998Test(unittest.TestCase):
         pass
 
     def test_cutpoints(self):
-        self.assertEqual(freedson1998.CutPoints.classify(value=0), freedson1998.CutPoints.SEDENTARY)
-        self.assertEqual(freedson1998.CutPoints.classify(value=10), freedson1998.CutPoints.SEDENTARY)
-        self.assertEqual(freedson1998.CutPoints.classify(value=99), freedson1998.CutPoints.SEDENTARY)
+        cutpoints = CutPoints()
+        self.assertEqual(cutpoints.classify(value=0), cutpoints.SEDENTARY)
+        self.assertEqual(cutpoints.classify(value=10), cutpoints.SEDENTARY)
+        self.assertEqual(cutpoints.classify(value=99), cutpoints.SEDENTARY)
 
-        self.assertEqual(freedson1998.CutPoints.classify(value=100), freedson1998.CutPoints.LIGHT)
-        self.assertEqual(freedson1998.CutPoints.classify(value=500), freedson1998.CutPoints.LIGHT)
-        self.assertEqual(freedson1998.CutPoints.classify(value=1951), freedson1998.CutPoints.LIGHT)
+        self.assertEqual(cutpoints.classify(value=100), cutpoints.LIGHT)
+        self.assertEqual(cutpoints.classify(value=500), cutpoints.LIGHT)
+        self.assertEqual(cutpoints.classify(value=1951), cutpoints.LIGHT)
 
-        self.assertEqual(freedson1998.CutPoints.classify(value=1952), freedson1998.CutPoints.MODERATE)
-        self.assertEqual(freedson1998.CutPoints.classify(value=3000), freedson1998.CutPoints.MODERATE)
-        self.assertEqual(freedson1998.CutPoints.classify(value=5724), freedson1998.CutPoints.MODERATE)
+        self.assertEqual(cutpoints.classify(value=1952), cutpoints.MODERATE)
+        self.assertEqual(cutpoints.classify(value=3000), cutpoints.MODERATE)
+        self.assertEqual(cutpoints.classify(value=5724), cutpoints.MODERATE)
 
-        self.assertEqual(freedson1998.CutPoints.classify(value=5726), freedson1998.CutPoints.VIGOROUS)
-        self.assertEqual(freedson1998.CutPoints.classify(value=8000), freedson1998.CutPoints.VIGOROUS)
-        self.assertEqual(freedson1998.CutPoints.classify(value=9498), freedson1998.CutPoints.VIGOROUS)
+        self.assertEqual(cutpoints.classify(value=5726), cutpoints.VIGOROUS)
+        self.assertEqual(cutpoints.classify(value=8000), cutpoints.VIGOROUS)
+        self.assertEqual(cutpoints.classify(value=9498), cutpoints.VIGOROUS)
 
-        self.assertEqual(freedson1998.CutPoints.classify(value=9499), freedson1998.CutPoints.VERY_VIGOROUS)
-        self.assertEqual(freedson1998.CutPoints.classify(value=100000), freedson1998.CutPoints.VERY_VIGOROUS)
-        self.assertEqual(freedson1998.CutPoints.classify(value=100000000000), freedson1998.CutPoints.VERY_VIGOROUS)
+        self.assertEqual(cutpoints.classify(value=9499), cutpoints.VERY_VIGOROUS)
+        self.assertEqual(cutpoints.classify(value=100000), cutpoints.VERY_VIGOROUS)
+        self.assertEqual(cutpoints.classify(value=100000000000), cutpoints.VERY_VIGOROUS)

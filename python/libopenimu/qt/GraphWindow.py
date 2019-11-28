@@ -4,6 +4,7 @@ from PyQt5.QtCore import pyqtSignal, QObject, QEvent, pyqtSlot
 from resources.ui.python.GraphWidget_ui import Ui_frmGraphWidget
 from libopenimu.qt.Charts import IMUChartView
 from libopenimu.qt.GPSView import GPSView
+from libopenimu.qt.BeaconsView import BeaconsView
 from libopenimu.qt.BaseGraph import GraphInteractionMode
 from libopenimu.models.Sensor import Sensor
 from libopenimu.qt.DataInfosWidget import DataInfosWidget
@@ -16,6 +17,7 @@ class GraphType:
     LINECHART = 0
     MAP = 1
     BARCHART = 2
+    BEACON = 3
 
 
 class GraphWindow(QWidget):
@@ -39,6 +41,9 @@ class GraphWindow(QWidget):
 
         if graph_type == GraphType.MAP:
             self.graph = GPSView(self)
+
+        if graph_type == GraphType.BEACON:
+            self.graph = BeaconsView(self)
 
         if self.graph is None:
             print("GraphWindow: Undefined graph type.")

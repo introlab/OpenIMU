@@ -356,7 +356,12 @@ class DBManager:
         self.delete_orphan_sensors_timestamps()
         # self.engine.execute("VACUUM")
 
-    def get_all_recordsets(self, participant=Participant()):
+    def get_all_recordsets(self, participant=Participant(), start_date=None):
+        from sqlalchemy import func
+        if start_date is not None:
+            query = self.session.query(Recordset).filter(func.date(Recordset.start_timestamp) == start_date) \
+                .order_by(asc(Recordset.start_timestamp))
+            return query.all()
 
         if participant.id_participant is None:
             query = self.session.query(Recordset).order_by(asc(Recordset.start_timestamp))
@@ -479,12 +484,20 @@ class DBManager:
 
             return result
 
+    def get_sensor_times(self, sensor: Sensor, recordset: Recordset):
+        # from sqlalchemy.orm import noload
+        query = self.session.query(SensorTimestamps).join(SensorData).filter(SensorData.id_sensor == sensor.id_sensor)\
+            .filter(SensorData.id_recordset == recordset.id_recordset)\
+            .filter(SensorData.id_channel == sensor.channels[0].id_channel)
+        return query.all()
+
     def set_dataset_infos(self, name, desc, creation_date, upload_date, author):
 
         try:
             self.session.query(DataSet).delete()
             self.session.commit()
-            dataset = DataSet(name=name, description=desc, creation_date=creation_date, upload_date=upload_date, author=author)
+            dataset = DataSet(name=name, description=desc, creation_date=creation_date, upload_date=upload_date,
+                              author=author)
             self.session.add(dataset)
             self.commit()
             return dataset
@@ -529,7 +542,8 @@ class DBManager:
             query = self.session.query(ProcessedData)
             datas = query.all()
         else:
-            query = self.session.query(ProcessedData).filter(ProcessedData.processed_data_ref.recordset.participant.id_participant == participant.id_participant)
+            query = self.session.query(ProcessedData).filter(
+                ProcessedData.processed_data_ref.recordset.participant.id_participant == participant.id_participant)
             datas = query.all()
 
         return datas
@@ -573,7 +587,8 @@ class DBManager:
 
     def export_csv_participant(self, participant : Participant, directory):
         if os.path.exists(directory):
-            participant_dir = directory + '/PARTICIPANT_ID_' + str(participant.id_participant) + '_' + participant.name + '/'
+            participant_dir = directory + '/PARTICIPANT_ID_' + str(participant.id_participant) + '_' + \
+                              participant.name + '/'
             # Create participant directory
             if not os.path.exists(participant_dir):
                 os.mkdir(participant_dir)
