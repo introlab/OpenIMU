@@ -1,13 +1,8 @@
-import sys
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QTabWidget
-from PyQt5.QtCore import QUrl, pyqtSlot, pyqtSignal, QPointF
+from PyQt5.QtCore import pyqtSlot, pyqtSignal, QPointF
 
 from libopenimu.qt.BaseGraph import BaseGraph
-from datetime import datetime
-
-import numpy as np
 import datetime
-import collections
 
 
 class BeaconsView(QTabWidget, BaseGraph):

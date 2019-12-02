@@ -31,6 +31,8 @@ set (conda_packages
     #cython
     #numpy
     #scipy
+    #mkl_fft
+    #mkl
     # Not used for now
     # jupyter
     #sqlalchemy
@@ -43,12 +45,13 @@ if(WIN32)
     set (pip_packages
         ${pip_packages}
         pypiwin32
-        PyInstaller
+        # PyInstaller
+        https://github.com/pyinstaller/pyinstaller/tarball/develop
     )
 
     set (conda_packages
         ${conda_packages}
-        PyInstaller
+        # PyInstaller
     )
 else(WIN32)
     set (pip_packages

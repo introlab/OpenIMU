@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5.QtWidgets import QTreeWidget, QTreeWidgetItem, QStyleFactory
+from PyQt5.QtWidgets import QApplication, QTreeWidget, QTreeWidgetItem, QStyleFactory
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QIcon, QFont
 # Models
@@ -405,11 +405,8 @@ def except_hook(cls, exception, traceback):
 
 # Main
 if __name__ == '__main__':
-    sys.excepthook = except_hook
-    from PyQt5.QtWidgets import QApplication
     from PyQt5.QtCore import QDir
     from libopenimu.qt.MainWindow import MainWindow
-    import PyQt5
 
     # Set Style
     QApplication.setStyle(QStyleFactory.create("Windows"))
@@ -419,6 +416,7 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
 
+    sys.excepthook = except_hook
     # qInstallMessageHandler(qt_message_handler)
 
     # Set current directory to home path
