@@ -114,6 +114,12 @@ set (installer_args
 
 
 if(WIN32)
+    set (installer_args
+        ${installer_args}
+        --hidden-import win32api
+        --paths ${PYTHON_ENV_DIRECTORY}/Lib/site-packages/scipy/.libs # PyInstaller doesn't seem to find all required DLLs for SciPy...
+    )
+
     # Build this target to make a package
     add_custom_target(python_package
         COMMAND ${PYTHON_INSTALLER_EXECUTABLE} ${installer_args} ${CMAKE_CURRENT_SOURCE_DIR}/OpenIMUApp.py

@@ -347,8 +347,9 @@ class MainWindow(QMainWindow):
             elif item_type == "date":
                 # Find associated participant
                 id_participant = self.UI.treeDataSet.get_item_id(item.parent().parent())
+                part = self.UI.treeDataSet.participants[id_participant]
                 search_date = self.UI.treeDataSet.dates[Treedatawidget.get_date_id(item.text(0), id_participant)]
-                self.currentRecordsets = self.dbMan.get_all_recordsets(start_date=search_date)
+                self.currentRecordsets = self.dbMan.get_all_recordsets(participant=part, start_date=search_date)
             else:
                 self.currentRecordsets = [self.UI.treeDataSet.recordsets[item_id]]
 
