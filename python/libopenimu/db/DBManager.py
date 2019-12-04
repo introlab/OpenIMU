@@ -361,6 +361,8 @@ class DBManager:
         if start_date is not None:
             query = self.session.query(Recordset).filter(func.date(Recordset.start_timestamp) == start_date) \
                 .order_by(asc(Recordset.start_timestamp))
+            if participant.id_participant is not None:
+                query = query.filter(Recordset.id_participant == participant.id_participant)
             return query.all()
 
         if participant.id_participant is None:
