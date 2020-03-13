@@ -237,8 +237,8 @@ class MainWindow(QMainWindow):
     def export_csv_requested(self):
         exporter = ExportWindow(self.dbMan, self)
         exporter.setStyleSheet(self.styleSheet())
-        # if exporter.exec() == QDialog.Accepted:
-        #     print("Accepted")
+        if exporter.exec() == QDialog.Accepted:
+            print("Accepted")
 
     @pyqtSlot()
     def infos_requested(self):
@@ -569,3 +569,4 @@ class StdConsoleLogger:
 
     def write(self, text):
         self.callback(text)
+
