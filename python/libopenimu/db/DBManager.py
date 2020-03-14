@@ -30,6 +30,7 @@ from libopenimu.models.Participant import Participant
 from libopenimu.models.Recordset import Recordset
 from libopenimu.models.Channel import Channel
 from libopenimu.models.SensorData import SensorData
+from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.SensorTimestamps import SensorTimestamps
 from libopenimu.models.DataSet import DataSet
 from libopenimu.models.ProcessedData import ProcessedData
@@ -612,10 +613,44 @@ class DBManager:
             for sensor in sensors:
                 # Do something
                 all_data = self.get_all_sensor_data(recordset=recordset, sensor=sensor)
+                if sensor.id_sensor_type is not SensorType.GPS:
+                    self.export_csv_sensor_data(sensor, all_data, record_dir)
+                else:
+                    self.export_csv_sensor_data_gps(sensor, all_data, record_dir)
 
-                self.export_csv_sensor_data(sensor, all_data, record_dir)
+    def export_csv_sensor_data_gps(self, sensor: Sensor, sensors_data: list, directory):
 
-    def export_csv_sensor_data(self, sensor : Sensor, sensors_data : list, directory):
+        # GPS is stored as SIRF data structures.
+        from libopenimu.importers.wimu import GPSGeodetic
+
+        filename = directory + sensor.name + '.CSV'
+        print('output to file : ', filename)
+
+        # Write CSV header
+        header = str()
+        channels = self.get_all_channels(sensor=sensor)
+
+        # Create data array
+        # TODO, WILL HANDLE ONLY ONE GPS CHANNEL FOR NOW
+        my_array = np.zeros(shape=(len(sensors_data), 3))
+
+        for channel in channels:
+            header = header + 'TIME;' + channel.label + '-Latitude;' + channel.label + '-Longitude;'
+
+            for i in range(0, len(sensors_data)):
+                gps_data = GPSGeodetic()
+                gps_data.from_bytes(sensors_data[i].data)
+                # Fill data
+                my_array[i][0] = sensors_data[i].timestamps.start_timestamp.timestamp()
+                my_array[i][1] = gps_data.get_latitude()
+                my_array[i][2] = gps_data.get_longitude()
+
+        # Save CSV
+        # print('dims:', my_array.shape)
+        # Write values
+        np.savetxt(filename, my_array, delimiter=";", header=header)
+
+    def export_csv_sensor_data(self, sensor: Sensor, sensors_data: list, directory):
         result = {}
         for sensor_data in sensors_data:
             if not result.__contains__(sensor_data.channel.id_channel):
@@ -634,7 +669,6 @@ class DBManager:
         channels = self.get_all_channels(sensor=sensor)
         for channel in channels:
             header = header + 'TIME;' + channel.label + ';'
-
 
         for channel_key in result:
             time = []
