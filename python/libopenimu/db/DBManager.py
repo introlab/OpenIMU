@@ -629,10 +629,26 @@ class DBManager:
         # Write CSV header
         header = str()
         channels = self.get_all_channels(sensor=sensor)
-        for channel in channels:
-            header = header + 'TIME;' + channel.label + ';'
 
-        print(header)
+        # Create data array
+        # TODO, WILL HANDLE ONLY ONE GPS CHANNEL FOR NOW
+        my_array = np.zeros(shape=(len(sensors_data), 3))
+
+        for channel in channels:
+            header = header + 'TIME;' + channel.label + '-Latitude;' + channel.label + '-Longitude;'
+
+            for i in range(0, len(sensors_data)):
+                gps_data = GPSGeodetic()
+                gps_data.from_bytes(sensors_data[i].data)
+                # Fill data
+                my_array[i][0] = sensors_data[i].timestamps.start_timestamp.timestamp()
+                my_array[i][1] = gps_data.get_latitude()
+                my_array[i][2] = gps_data.get_longitude()
+
+        # Save CSV
+        # print('dims:', my_array.shape)
+        # Write values
+        np.savetxt(filename, my_array, delimiter=";", header=header)
 
     def export_csv_sensor_data(self, sensor: Sensor, sensors_data: list, directory):
         result = {}
