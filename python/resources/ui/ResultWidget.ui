@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>876</width>
-    <height>429</height>
+    <height>519</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -92,7 +92,7 @@
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap>:/OpenIMU/icons/result.png</pixmap>
+           <pixmap resource="../core.qrc">:/OpenIMU/icons/result.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -253,6 +253,9 @@
          <attribute name="horizontalHeaderStretchLastSection">
           <bool>false</bool>
          </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
          <attribute name="verticalHeaderShowSortIndicator" stdset="0">
           <bool>false</bool>
          </attribute>
@@ -334,6 +337,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../core.qrc"/>
+ </resources>
  <connections/>
 </ui>

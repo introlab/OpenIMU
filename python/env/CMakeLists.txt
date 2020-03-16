@@ -45,8 +45,8 @@ if(WIN32)
     set (pip_packages
         ${pip_packages}
         pypiwin32
-        # PyInstaller
-        https://github.com/pyinstaller/pyinstaller/tarball/develop
+        PyInstaller
+        # https://github.com/pyinstaller/pyinstaller/tarball/develop
     )
 
     set (conda_packages
