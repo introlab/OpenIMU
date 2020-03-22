@@ -38,21 +38,24 @@ class ExportWindow(QDialog):
     @pyqtSlot()
     def export(self):
         directory = self.UI.lineDir.text()
+        file_format = self.UI.comboFormat.currentText()
+
         print('Should export in : ', directory)
 
-        class CSVExporter(WorkerTask):
-            def __init__(self, dbmanager, directory):
-                super().__init__('Exportation CSV', 0)
-                self.dbMan = dbmanager
-                self.directory = directory
+        class FileExporter(WorkerTask):
+            def __init__(self, _dbman, _format, _directory):
+                super().__init__('Exportation :' + _format, 0)
+                self.dbMan = _dbman
+                self.directory = _directory
+                self.format = _format
 
             def process(self):
                 print('Exporting in :', self.directory)
-                self.dbMan.export_csv(directory)
+                self.dbMan.export_file(self.format, self.directory)
                 self.update_progress.emit(100)
                 print('Exporting done!')
 
-        exporter = CSVExporter(self.dbMan, directory)
+        exporter = FileExporter(self.dbMan, file_format, directory)
 
         process = BackgroundProcess([exporter])
 

@@ -18,6 +18,7 @@ import numpy as np
 import pickle
 import sys
 import warnings
+import scipy.io as sio
 
 # Basic definitions
 from libopenimu.models.data_formats import DataFormat
@@ -561,8 +562,7 @@ class DBManager:
             raise
 
     #####################
-    def export_csv(self, directory):
-        print('DBManager, export_csv in :', directory)
+    def export_file(self, file_format, directory):
 
         groups = self.get_all_groups()
 
@@ -575,7 +575,7 @@ class DBManager:
                 # Get all participants
                 participants = self.get_all_participants()
                 for participant in participants:
-                    self.export_csv_participant(participant, group_dir)
+                    self.export_file_participant(participant, file_format, group_dir)
 
         else:
             for group in groups:
@@ -586,9 +586,9 @@ class DBManager:
                     # Get all participants
                     participants = self.get_participants_for_group(group)
                     for participant in participants:
-                        self.export_csv_participant(participant, group_dir)
+                        self.export_file_participant(participant, file_format, group_dir)
 
-    def export_csv_participant(self, participant : Participant, directory):
+    def export_file_participant(self, participant: Participant, file_format: str, directory):
         if os.path.exists(directory):
             participant_dir = directory + '/PARTICIPANT_ID_' + str(participant.id_participant) + '_' + \
                               participant.name + '/'
@@ -598,9 +598,9 @@ class DBManager:
             # Process all recordsets
             records = self.get_all_recordsets(participant)
             for record in records:
-                self.export_csv_recordset(participant, record, participant_dir)
+                self.export_file_recordset(participant, record, file_format, participant_dir)
 
-    def export_csv_recordset(self, participant : Participant, recordset : Recordset, directory):
+    def export_file_recordset(self, participant: Participant, recordset: Recordset, file_format: str, directory):
         if os.path.exists(directory):
             # Create recordset directory
             record_dir = directory + 'RECORDSET_ID_' + str(recordset.id_recordset) + '_' + str(recordset.name) + '/'
@@ -614,16 +614,21 @@ class DBManager:
                 # Do something
                 all_data = self.get_all_sensor_data(recordset=recordset, sensor=sensor)
                 if sensor.id_sensor_type is not SensorType.GPS:
-                    self.export_csv_sensor_data(sensor, all_data, record_dir)
+                    self.export_file_sensor_data(sensor, all_data, file_format, record_dir)
                 else:
-                    self.export_csv_sensor_data_gps(sensor, all_data, record_dir)
+                    self.export_file_sensor_data_gps(sensor, all_data, file_format, record_dir)
 
-    def export_csv_sensor_data_gps(self, sensor: Sensor, sensors_data: list, directory):
+    def export_file_sensor_data_gps(self, sensor: Sensor, sensors_data: list, file_format, directory):
 
         # GPS is stored as SIRF data structures.
         from libopenimu.importers.wimu import GPSGeodetic
 
-        filename = directory + sensor.name + '.CSV'
+        filename = directory + sensor.name
+        if 'CSV' in file_format:
+            filename = filename + '.CSV'
+        elif 'Matlab' in file_format:
+            filename = filename + '.mat'
+
         print('output to file : ', filename)
 
         # Write CSV header
@@ -648,9 +653,12 @@ class DBManager:
         # Save CSV
         # print('dims:', my_array.shape)
         # Write values
-        np.savetxt(filename, my_array, delimiter=";", header=header)
+        if 'CSV' in file_format:
+            np.savetxt(filename, my_array, delimiter=";", header=header)
+        elif 'Matlab' in file_format:
+            sio.savemat(filename, {sensor.name: my_array.transpose()}, do_compression=True)
 
-    def export_csv_sensor_data(self, sensor: Sensor, sensors_data: list, directory):
+    def export_file_sensor_data(self, sensor: Sensor, sensors_data: list, file_format, directory):
         result = {}
         for sensor_data in sensors_data:
             if not result.__contains__(sensor_data.channel.id_channel):
@@ -659,7 +667,12 @@ class DBManager:
             series = sensor_data.to_time_series()
             result[sensor_data.channel.id_channel].append(series)
 
-        filename = directory + sensor.name + '.CSV'
+        filename = directory + sensor.name
+        if 'CSV' in file_format:
+            filename = filename + '.CSV'
+        elif 'Matlab' in file_format:
+            filename = filename + '.mat'
+
         print('output to file : ', filename)
 
         value_list = []
@@ -685,4 +698,7 @@ class DBManager:
         my_array = np.array(value_list)
         # print('dims:', my_array.shape)
         # Write values
-        np.savetxt(filename, my_array.transpose(), delimiter=";", header=header)
+        if 'CSV' in file_format:
+            np.savetxt(filename, my_array.transpose(), delimiter=";", header=header)
+        elif 'Matlab' in file_format:
+            sio.savemat(filename, {sensor.name: my_array.transpose()}, do_compression=True)

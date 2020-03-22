@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>721</width>
+    <width>770</width>
     <height>352</height>
    </rect>
   </property>
@@ -319,7 +319,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Version 0.6.2</string>
+        <string>Version 0.6.3</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
