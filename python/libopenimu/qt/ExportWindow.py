@@ -60,7 +60,7 @@ class ExportWindow(QDialog):
         process = BackgroundProcess([exporter])
 
         # Create progress dialog
-        dialog = ProgressDialog(process, 'CSV Export', self)
+        dialog = ProgressDialog(process, 'File Export to format: ' + file_format, self)
         process.finished.connect(dialog.accept)
         process.start()
 
