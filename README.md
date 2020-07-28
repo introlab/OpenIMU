@@ -96,7 +96,7 @@ Please follow those steps to setup your development environment.
 
 ### Step 1 : Open the root CMakeLists.txt in QtCreator
 1.  Opening the root CMakeLists.txt will allow to create and build the project
-    1.  Build the project, it will automatically generate the Python environment in env/python-3.6, PyQt UI and RCC files.
+    1.  Build the project using the "python-all" target, it will automatically generate the Python environment in env/python-3.6, PyQt UI and RCC files.
     2.  All python dependencies will be automatically downloaded
     3.  Once the project is built, you will not need QtCreator until you change or add a resource file or a QtDesigner ui file.
     4.  If you change or add ui or resources files, you need to rebuild the project from QtCreator.
