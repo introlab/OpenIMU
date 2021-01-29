@@ -462,9 +462,7 @@ def gt3x_calculate_checksum(separator, record_type, timestamp, record_size, reco
     checksum ^= (record_size & 0xFF)
     checksum ^= ((record_size >> 8) & 0xFF)
 
-    # for i in range(0, len(record_data)):
-    #    checksum ^= record_data[i]
-    for record in enumerate(record_data):
+    for record in record_data:
         checksum ^= record
 
     checksum = ~checksum
@@ -542,9 +540,12 @@ def gt3x_importer(filename):
                     elif record_type is RecordType.PARAMETERS:
                         parameters_data.append(gt3x_parameters_extractor(timestamp, record_data, sample_rate))
                     else:
-                        print('Unhandled record type:', hex(record_type), 'size:', len(record_data))
+                        print('Unhandled record type:', hex(record_type), 'size:', len(record_data),
+                              ' read ', data_offset, ' / ', len(filedata))
                 else:
-                    print('Checksum error read:', checksum, 'calculated:', cs_check)
+                    print('Checksum error read:', checksum, 'calculated:', cs_check, ' read ',
+                          data_offset, ' / ', len(filedata))
+                    print('Extracted record: ', hex(separator), hex(record_type), hex(timestamp), hex(record_size))
 
                 # print('record length:', len(record_data), 'checksum:', hex(checksum))
                 data_offset += 8 + len(record_data) + 1
