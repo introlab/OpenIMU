@@ -28,6 +28,30 @@ class ActigraphImporter(BaseImporter):
 
         print('Actigraph Importer')
 
+    def get_recordset(self, timestamp, session_name=str()):
+        try:
+            my_time = datetime.datetime.fromtimestamp(timestamp)
+        except ValueError:
+            return None
+
+        # Validate timestamp
+        if my_time > datetime.datetime.now() or my_time < datetime.datetime(2000, 1, 1):
+            print("Invalid timestamp: " + str(timestamp))
+            return None
+
+        # Find a record the same day
+        for record in self.recordsets:
+            # Same date return this record
+            if record.start_timestamp.date() == my_time.date():
+                # print('Returning existing recordset', record.start_timestamp.date(), my_time.date())
+                return record
+
+        # Return new record
+        # print('New recordset', my_time, my_time)
+        recordset = self.db.add_recordset(self.participant, session_name, my_time, my_time, True)
+        self.recordsets.append(recordset)
+        return recordset
+
     @timing
     def load(self, filename):
         # print('ActigraphImporter loading:', filename)

@@ -59,7 +59,6 @@ class BaseImporter(QObject):
                 return record
 
         # Return new record
-        print('New recordset', my_time, my_time)
         recordset = self.db.add_recordset(self.participant, session_name, my_time, my_time)
         self.recordsets.append(recordset)
         return recordset
