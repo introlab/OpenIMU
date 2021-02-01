@@ -137,6 +137,9 @@ class ActigraphImporter(BaseImporter):
             counters = [0, 0, 0]
 
             for timestamp in all_timestamps:
+                session_name = str(timestamp) + '_' + info['Device Type'] + '_' \
+                               + info['Subject Name'] + '_SN:' + info['Serial Number']
+
                 for index in range(0, len(value_dict[timestamp])):
                     # print(index, timestamp, len(value_dict[timestamp][index]))
                     vector = np.concatenate(value_dict[timestamp][index])
@@ -153,7 +156,7 @@ class ActigraphImporter(BaseImporter):
                     sensor_timestamps.timestamps = timevect
                     sensor_timestamps.update_timestamps()
 
-                    recordset = self.get_recordset(timestamp)
+                    recordset = self.get_recordset(timestamp, session_name)
 
                     # Update end_timestamp if required
                     if timestamp > recordset.end_timestamp.timestamp():
@@ -181,9 +184,11 @@ class ActigraphImporter(BaseImporter):
 
             for epoch in data['battery']:
                 timestamp = datetime.datetime.fromtimestamp(epoch[0])
+                session_name = str(timestamp) + '_' + info['Device Type'] + '_' \
+                               + info['Subject Name'] + '_SN:' + info['Serial Number']
                 value = np.float32(epoch[1])
 
-                recordset = self.get_recordset(epoch[0])
+                recordset = self.get_recordset(epoch[0], session_name)
 
                 timevect = np.linspace(epoch[0], epoch[0] + 1, num=1, endpoint=False, dtype=np.float64)
                 # Create sensor timestamps first
@@ -210,9 +215,11 @@ class ActigraphImporter(BaseImporter):
 
             for epoch in data['lux']:
                 timestamp = datetime.datetime.fromtimestamp(epoch[0])
+                session_name = str(timestamp) + '_' + info['Device Type'] + '_' \
+                               + info['Subject Name'] + '_SN:' + info['Serial Number']
                 value = np.float32(epoch[1])
 
-                recordset = self.get_recordset(epoch[0])
+                recordset = self.get_recordset(epoch[0], session_name)
 
                 timevect = np.linspace(epoch[0], epoch[0] + 1, num=1, endpoint=False, dtype=np.float64)
                 # Create sensor timestamps first
