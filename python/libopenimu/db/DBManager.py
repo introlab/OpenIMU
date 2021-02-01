@@ -144,6 +144,7 @@ class DBManager:
         self.session.add_all(store)
 
     def compact(self):
+        self.clean_db()
         self.engine.execute("VACUUM")
 
     # GROUPS
