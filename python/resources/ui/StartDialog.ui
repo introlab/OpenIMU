@@ -319,7 +319,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Version 0.6.3</string>
+        <string>Version 0.6.4</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>

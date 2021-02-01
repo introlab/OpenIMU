@@ -55,8 +55,7 @@ class ParameterKeys:
         EXPONENT_MASK = np.uint32(0xFF000000)
         EXPONENT_OFFSET = np.int32(24)
 
-
-    #ADDRESS_SPACE = 0x0000
+    # ADDRESS_SPACE = 0x0000
     BATTERY_STATE = 0x00060000
     BATTERY_VOLTAGE = 0x00070000
     BOARD_REVISION = 0x00080000
@@ -73,7 +72,7 @@ class ParameterKeys:
     IMU_TEMP_SCALE = 0x00390000
     IMU_TEMP_OFFSET = 0x003A0000
 
-    #ADDRESS_SPACE = 0x0001
+    # ADDRESS_SPACE = 0x0001
     WIRELESS_MODE = 0x00000001
     WIRELESS_SERIAL_NUMBER = 0x00010001
     FEATURE_ENABLE = 0x00020001
@@ -129,7 +128,6 @@ class ParameterKeys:
 
         # Calculate the floating point value
         return significand * math.pow(2.0, exponent)
-
 
     @staticmethod
     def decode_uint32(data):
@@ -397,6 +395,21 @@ def gt3x_lux_extractor(timestamp, data, samplerate):
     return [timestamp, np.int16(lux)]
 
 
+def gt3x_capsense_extractor(timestamp, data, samplerate):
+    """
+    https://github.com/actigraph/GT3X-File-Format/blob/main/LogRecords/Capsense.md
+    :param timestamp:
+    :param data:
+    :param samplerate:
+    :return:
+    """
+    if len(data) is 6:
+        [signal, reference, state, bursts] = struct.unpack_from('<HHBB', data)
+        return [timestamp, np.uint16(signal), np.uint16(reference), np.uint8(state), np.uint8(bursts)]
+    else:
+        return [timestamp, [np.uint16(0), np.uint16(0), np.uint8(0), np.uint8(0)]]
+
+
 def gt3x_metadata_extractor(timestamp, data, samplerate):
     """
     Should contain a json object
@@ -462,9 +475,7 @@ def gt3x_calculate_checksum(separator, record_type, timestamp, record_size, reco
     checksum ^= (record_size & 0xFF)
     checksum ^= ((record_size >> 8) & 0xFF)
 
-    # for i in range(0, len(record_data)):
-    #    checksum ^= record_data[i]
-    for record in enumerate(record_data):
+    for record in record_data:
         checksum ^= record
 
     checksum = ~checksum
@@ -493,6 +504,7 @@ def gt3x_importer(filename):
     event_data = []
     metadata_data = []
     parameters_data = []
+    capsense_data = []
 
     with zipfile.ZipFile(filename) as myzip:
         # Reading info.txt file
@@ -541,10 +553,15 @@ def gt3x_importer(filename):
                         metadata_data.append(gt3x_metadata_extractor(timestamp, record_data, sample_rate))
                     elif record_type is RecordType.PARAMETERS:
                         parameters_data.append(gt3x_parameters_extractor(timestamp, record_data, sample_rate))
+                    elif record_type is RecordType.CAPSENSE:
+                        capsense_data.append(gt3x_capsense_extractor(timestamp, record_data, sample_rate))
                     else:
-                        print('Unhandled record type:', hex(record_type), 'size:', len(record_data))
+                        print('Unhandled record type:', hex(record_type), 'size:', len(record_data),
+                              ' read ', data_offset, ' / ', len(filedata))
                 else:
-                    print('Checksum error read:', checksum, 'calculated:', cs_check)
+                    print('Checksum error read:', checksum, 'calculated:', cs_check, ' read ',
+                          data_offset, ' / ', len(filedata))
+                    print('Extracted record: ', hex(separator), hex(record_type), hex(timestamp), hex(record_size))
 
                 # print('record length:', len(record_data), 'checksum:', hex(checksum))
                 data_offset += 8 + len(record_data) + 1
@@ -553,6 +570,7 @@ def gt3x_importer(filename):
     return [info, {'activity': activity_data,
                    'battery': battery_data,
                    'lux': lux_data,
+                   'capsense': capsense_data,
                    'event': event_data,
                    'parameters': parameters_data,
                    'metadata': metadata_data

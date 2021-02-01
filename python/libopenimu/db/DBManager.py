@@ -144,6 +144,7 @@ class DBManager:
         self.session.add_all(store)
 
     def compact(self):
+        self.clean_db()
         self.engine.execute("VACUUM")
 
     # GROUPS
@@ -317,7 +318,7 @@ class DBManager:
             raise
 
         # Check if we have orphan items dandling around
-        self.clean_db()
+        # self.clean_db()
 
     def delete_orphan_sensors(self):
         query = self.session.query(Sensor.id_sensor).outerjoin(SensorData).filter(SensorData.id_sensor_data == None)

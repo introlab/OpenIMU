@@ -493,6 +493,7 @@ class MainWindow(QMainWindow):
                 # Start tasks
                 process.start()
                 dialog.exec()
+                # self.dbMan.clean_db()
 
             self.add_to_log(item_name + " a été supprimé.", LogTypes.LOGTYPE_DONE)
             self.clear_main_widgets()
