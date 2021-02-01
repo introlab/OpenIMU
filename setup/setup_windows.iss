@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OpenIMU"
-#define MyAppVersion "0.6.3"
+#define MyAppVersion "0.6.4"
 #define MyAppPublisher "IntroLab - Centre de Recherche sur le Vieillissement de Sherbrooke - Université de Sherbrooke"
 #define MyAppURL "https://introlab.3it.usherbrooke.ca"
 #define MyAppExeName "OpenIMUApp.exe"
@@ -22,7 +22,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf64}\OpenIMU
+DefaultDirName={commonpf64}\OpenIMU
 DisableProgramGroupPage=yes
 OutputDir=.
 OutputBaseFilename=Setup_OpenIMU_{#MyAppVersionString}
