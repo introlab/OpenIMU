@@ -195,7 +195,8 @@ class DBManager:
             if participant.id_participant is None:
                 self.session.add(participant)
             else:
-                src_part = self.session.query(Participant).filter(Participant.id_participant == participant.id_participant).first()
+                src_part = self.session.query(Participant).filter(
+                    Participant.id_participant == participant.id_participant).first()
                 src_part.name = participant.name
                 src_part.description = participant.description
                 src_part.id_group = participant.id_group
@@ -253,12 +254,12 @@ class DBManager:
 
         # Create object
         sensor = Sensor(
-                        id_sensor_type=_id_sensor_type,
-                        name=_name,
-                        hw_name=_hw_name,
-                        location=_location,
-                        sampling_rate=_sampling_rate,
-                        data_rate=_data_rate)
+            id_sensor_type=_id_sensor_type,
+            name=_name,
+            hw_name=_hw_name,
+            location=_location,
+            sampling_rate=_sampling_rate,
+            data_rate=_data_rate)
         self.session.add(sensor)
         self.commit()
         return sensor
@@ -279,7 +280,8 @@ class DBManager:
     def add_recordset(self, participant: Participant, name, start_timestamp, end_timestamp, force=False):
 
         if not force:  # Check if we already have a recordset for that period
-            query = self.session.query(Recordset).filter((Recordset.participant == participant) & (Recordset.name == name))
+            query = self.session.query(Recordset).filter(
+                (Recordset.participant == participant) & (Recordset.name == name))
             if query.first():
                 # Update start and end times, if needed.
                 current_record = query.first()
@@ -337,18 +339,22 @@ class DBManager:
             self.commit()
 
     def delete_orphan_processed_data(self):
-        query = self.session.query(ProcessedData.id_processed_data).outerjoin(ProcessedDataRef).filter(ProcessedDataRef.id_processed_data_ref == None)
+        query = self.session.query(ProcessedData.id_processed_data).outerjoin(ProcessedDataRef).filter(
+            ProcessedDataRef.id_processed_data_ref == None)
         orphan = query.all()
         if len(orphan) > 0:
-            query = self.session.query(ProcessedData.id_processed_data).filter(ProcessedData.id_processed_data.in_(query)).delete(
+            query = self.session.query(ProcessedData.id_processed_data).filter(
+                ProcessedData.id_processed_data.in_(query)).delete(
                 synchronize_session=False)
             self.commit()
 
     def delete_orphan_sensors_timestamps(self):
-        query = self.session.query(SensorTimestamps.id_sensor_timestamps).outerjoin(SensorData).filter(SensorData.id_sensor_data == None)
+        query = self.session.query(SensorTimestamps.id_sensor_timestamps).outerjoin(SensorData).filter(
+            SensorData.id_sensor_data == None)
         orphan = query.all()
         if len(orphan) > 0:
-            query = self.session.query(SensorTimestamps.id_sensor_timestamps).filter(SensorTimestamps.id_sensor_timestamps.in_(query)).delete(
+            query = self.session.query(SensorTimestamps.id_sensor_timestamps).filter(
+                SensorTimestamps.id_sensor_timestamps.in_(query)).delete(
                 synchronize_session=False)
             self.commit()
 
@@ -373,21 +379,21 @@ class DBManager:
             # print (query)
             return query.all()
         else:
-            query = self.session.query(Recordset).filter(Recordset.id_participant == participant.id_participant)\
-                    .order_by(asc(Recordset.start_timestamp))
+            query = self.session.query(Recordset).filter(Recordset.id_participant == participant.id_participant) \
+                .order_by(asc(Recordset.start_timestamp))
             return query.all()
 
     def get_sensors(self, recordset):
-        query = self.session.query(Sensor).join(SensorData).filter(SensorData.id_recordset == recordset.id_recordset)\
-                .group_by(Sensor.id_sensor).order_by(asc(Sensor.location)).order_by(asc(Sensor.name))
+        query = self.session.query(Sensor).join(SensorData).filter(SensorData.id_recordset == recordset.id_recordset) \
+            .group_by(Sensor.id_sensor).order_by(asc(Sensor.location)).order_by(asc(Sensor.name))
         return query.all()
 
     def add_channel(self, sensor, id_sensor_unit, id_data_format, label):
         # Check if that sensor is already present in the database
         query = self.session.query(Channel).filter((Channel.sensor == sensor) &
-                                                  (Channel.id_sensor_unit == id_sensor_unit) &
-                                                  (Channel.id_data_format == id_data_format) &
-                                                  (Channel.label == label))
+                                                   (Channel.id_sensor_unit == id_sensor_unit) &
+                                                   (Channel.id_data_format == id_data_format) &
+                                                   (Channel.label == label))
 
         if query.first():
             # print("Channel " + label + " already present in DB!")
@@ -417,7 +423,8 @@ class DBManager:
         # Return all channels
         return query.all()
 
-    def add_sensor_data(self, recordset: Recordset, sensor: Sensor, channel: Channel, timestamps: SensorTimestamps, data):
+    def add_sensor_data(self, recordset: Recordset, sensor: Sensor, channel: Channel, timestamps: SensorTimestamps,
+                        data):
 
         # Create object
         sensordata = SensorData(recordset=recordset, sensor=sensor,
@@ -491,8 +498,8 @@ class DBManager:
 
     def get_sensor_times(self, sensor: Sensor, recordset: Recordset):
         # from sqlalchemy.orm import noload
-        query = self.session.query(SensorTimestamps).join(SensorData).filter(SensorData.id_sensor == sensor.id_sensor)\
-            .filter(SensorData.id_recordset == recordset.id_recordset)\
+        query = self.session.query(SensorTimestamps).join(SensorData).filter(SensorData.id_sensor == sensor.id_sensor) \
+            .filter(SensorData.id_recordset == recordset.id_recordset) \
             .filter(SensorData.id_channel == sensor.channels[0].id_channel)
         return query.all()
 
@@ -568,7 +575,7 @@ class DBManager:
         groups = self.get_all_groups()
 
         if len(groups) == 0:
-            group_dir = directory + '/NO_GROUP/'
+            group_dir = directory + os.sep + 'NO_GROUP'
             if os.path.exists(directory):
                 if not os.path.exists(group_dir):
                     os.mkdir(group_dir)
@@ -580,7 +587,9 @@ class DBManager:
 
         else:
             for group in groups:
-                group_dir = directory + '/GROUP_ID_' + str(group.id_group) + '_' + group.name + '/'
+                # Remove non-alphanumeric characters
+                group_name = ''.join(e for e in group.name if e.isalnum())
+                group_dir = directory + os.sep + group_name
                 if os.path.exists(directory):
                     if not os.path.exists(group_dir):
                         os.mkdir(group_dir)
@@ -591,8 +600,11 @@ class DBManager:
 
     def export_file_participant(self, participant: Participant, file_format: str, directory):
         if os.path.exists(directory):
-            participant_dir = directory + '/PARTICIPANT_ID_' + str(participant.id_participant) + '_' + \
-                              participant.name + '/'
+            # Remove non-alphanumeric characters
+            participant_name = ''.join(e for e in participant.name if e.isalnum())
+
+            participant_dir = directory + os.sep + participant_name
+
             # Create participant directory
             if not os.path.exists(participant_dir):
                 os.mkdir(participant_dir)
@@ -603,8 +615,14 @@ class DBManager:
 
     def export_file_recordset(self, participant: Participant, recordset: Recordset, file_format: str, directory):
         if os.path.exists(directory):
+            # Remove non-alphanumeric characters
+            # recordset_name = ''.join(e for e in recordset.name if e.isalnum())
+
             # Create recordset directory
-            record_dir = directory + 'RECORDSET_ID_' + str(recordset.id_recordset) + '_' + str(recordset.name) + '/'
+            # record_dir = directory + '/RECORDSET_ID_' + str(recordset.id_recordset) + '_' + recordset_name + '/'
+            record_dir = directory + os.sep + str(recordset.start_timestamp)\
+                .replace(':', '_').replace('-', '_').replace(' ', '_') + os.sep
+
             if not os.path.exists(record_dir):
                 os.mkdir(record_dir)
 
