@@ -147,6 +147,7 @@ class AppleWatchRequestHandler(BaseHTTPRequestHandler):
                 fh = open(destination_path, 'w')
                 text_format = True
 
+            print("About to receive: " + file_name + ": " + str(content_size_remaining) + " bytes.")
             while content_size_remaining > 0 and self.streamer.server_running:
                 if buffer_size > content_size_remaining:
                     buffer_size = content_size_remaining
