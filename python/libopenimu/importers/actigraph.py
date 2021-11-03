@@ -256,6 +256,12 @@ class ParameterKeys:
         else:
             return {param_name: value}
 
+def gt3x_read_int16(data, nb_axis=3):
+    lines = int(np.floor(len(data) * 8 / (16 * nb_axis)))
+    values = np.frombuffer(data, np.int16)
+    samples = np.reshape(values, (lines, nb_axis), 'C')
+
+    return samples
 
 def gt3x_read_uint12(data, nb_axis=3):
     """
@@ -345,6 +351,35 @@ def gt3x_activity_extractor(timestamp, data, samplerate, scale):
     # return samples in g
     return [timestamp, samples]
 
+def gt3x_activity2_extractor(timestamp, data, samplerate, scale):
+    """
+        One second of raw activity samples as little-endian signed-shorts in XYZ order.
+
+        Once a sample has been parsed we must:
+
+        Scale the resultant by the scale factor (this gives us an acceleration value in g's). Device serial numbers
+        starting with NEO and CLE use a scale factor of 341 LSB/g (±6g). MOS devices use a 256 LSB/g scale factor (±8g).
+        If a LOG_PARAMETER record is preset, then the ACCEL_SCALE value should be used.
+
+        Round the value to three decimal places.
+
+        Activity Log Record Type with 1-Byte Payload
+        An 'Activity2' (id: 0x1A) log record type with a 1-byte payload is captured on a USB connection event (and does
+        not represent a reading from the activity monitor's accelerometer). This event is captured upon docking the
+        activity monitor (via USB) to a PC or CentrePoint Data Hub (CDH) device. Therefore such records cannot be parsed
+        as the traditional activity log records and can be ignored.
+
+        :param data:
+        :param timestamp:
+        :param samplerate:
+        :return:
+        """
+
+    # This will generate float values
+    samples = gt3x_read_int16(data) / np.float32(scale)
+
+    # return samples in g
+    return [timestamp, samples]
 
 def gt3x_battery_extractor(timestamp, data, samplerate):
     """
@@ -518,6 +553,9 @@ def gt3x_importer(filename):
 
         sample_rate = float(info['Sample Rate'])
         scale = float(info['Acceleration Scale'])
+        time_offset = 0
+        if 'TimeZone' in info:
+            time_offset = int(info['TimeZone'].split(':')[0]) * 3600
         print('info', info)
         # print('My Sample rate:', sample_rate)
 
@@ -541,6 +579,9 @@ def gt3x_importer(filename):
                 cs_check = gt3x_calculate_checksum(separator, record_type, timestamp, record_size, record_data)
 
                 if checksum == cs_check:
+                    # Apply timezone offset
+                    timestamp -= time_offset
+
                     if record_type is RecordType.ACTIVITY:
                         activity_data.append(gt3x_activity_extractor(timestamp, record_data, sample_rate, scale))
                     elif record_type is RecordType.BATTERY:
@@ -555,6 +596,12 @@ def gt3x_importer(filename):
                         parameters_data.append(gt3x_parameters_extractor(timestamp, record_data, sample_rate))
                     elif record_type is RecordType.CAPSENSE:
                         capsense_data.append(gt3x_capsense_extractor(timestamp, record_data, sample_rate))
+                    elif record_type is RecordType.ACTIVITY2:
+                        if len(record_data) > 1:
+                            activity_data.append(gt3x_activity2_extractor(timestamp, record_data, sample_rate, scale))
+                        else:
+                            # Placed on USB charger - ignoring.
+                            pass
                     else:
                         print('Unhandled record type:', hex(record_type), 'size:', len(record_data),
                               ' read ', data_offset, ' / ', len(filedata))
