@@ -1,8 +1,6 @@
 ![Analytics](https://ga-beacon-279122.nn.r.appspot.com/UA-27707792-7/github-openimu-main?pixel) 
 # OpenIMU - Data Analyser for Inertial Measurement Units and Actimetry Data
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e2aa64a094a3435b9e76b63f5b0f0491)](https://www.codacy.com/app/SBriere/OpenIMU?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=introlab/OpenIMU&amp;utm_campaign=Badge_Grade)
-
 ## Authors
 *   Dominic Létourneau (@doumdi) 
 *   Simon Brière (@sbriere)
