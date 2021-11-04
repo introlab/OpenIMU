@@ -686,7 +686,7 @@ class DBManager:
             series = sensor_data.to_time_series()
             result[sensor_data.channel.id_channel].append(series)
 
-        filename = directory + sensor.name
+        filename = directory + sensor.location + '_' + sensor.name
         if 'CSV' in file_format:
             filename = filename + '.CSV'
         elif 'Matlab' in file_format:

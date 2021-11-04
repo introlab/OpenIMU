@@ -45,7 +45,7 @@ class BeaconsView(QTabWidget, BaseGraph):
         table_widget.setHorizontalHeaderItem(1, QTableWidgetItem('Value'))
         split_label = label.split('_')
         if len(split_label) == 3:
-            self.addTab(table_widget, split_label[2] + ' [' + str(int(split_label[1])) + ']')
+            self.addTab(table_widget, split_label[2] + ' [' + str(split_label[1]) + ']')
         else:
             self.addTab(table_widget, label)
 
