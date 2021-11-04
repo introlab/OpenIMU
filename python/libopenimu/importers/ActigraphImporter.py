@@ -271,13 +271,13 @@ class ActigraphImporter(BaseImporter):
                                                        info['Device Type'], 'Other', info['Sample Rate'], 1)
 
                 # Create channels
-                magneto_channels.append(self.add_channel_to_db(magneto_sensor, Units.GAUSS,
+                magneto_channels.append(self.add_channel_to_db(magneto_sensor, Units.UTESLA,
                                                                DataFormat.FLOAT32, 'Magnetometer_X'))
 
-                magneto_channels.append(self.add_channel_to_db(magneto_sensor, Units.GAUSS,
+                magneto_channels.append(self.add_channel_to_db(magneto_sensor, Units.UTESLA,
                                                                DataFormat.FLOAT32, 'Magnetometer_Y'))
 
-                magneto_channels.append(self.add_channel_to_db(magneto_sensor, Units.GAUSS,
+                magneto_channels.append(self.add_channel_to_db(magneto_sensor, Units.UTESLA,
                                                                DataFormat.FLOAT32, 'Magnetometer_Z'))
             if sensor == 'Temperature':
                 # Create sensor
