@@ -38,6 +38,24 @@ class RecordType:
     ACTIVITY2 = 0x1A
 
 
+class SensorColumn:
+    def __init__(self):
+        self.big_endian = False
+        self.signed = False
+        self.offset = 0
+        self.size = 0
+        self.scale_factor = 0
+        self.label = 'Unknown'
+
+
+class SensorSchema:
+    def __init__(self):
+        self.schema_id = 0
+        self.columns_per_row = 0
+        self.samples_in_record = 0
+        self.sensor_columns = []
+
+
 class ParameterKeys:
     """
     All Parameters keys
@@ -484,6 +502,86 @@ def gt3x_parameters_extractor(timestamp, data, samplerate):
     return [timestamp, result]
 
 
+def gt3x_sensor_schema_extractor(data):
+    schema = SensorSchema()
+    schema.schema_id = np.frombuffer(buffer=data[0:2], dtype=np.int16, count=1)[0]
+    schema.columns_per_row = np.frombuffer(buffer=data[2:4], dtype=np.int16, count=1)[0]
+    schema.samples_in_record = np.frombuffer(buffer=data[4:6], dtype=np.int16, count=1)[0]
+
+    bytes_per_column = 23
+    for col in range(0, schema.columns_per_row):
+        starting_offset = 6 + (bytes_per_column * col)
+        flags = data[starting_offset]
+        sensor_col = SensorColumn()
+        sensor_col.big_endian = (flags & 0x01) > 0
+        sensor_col.signed = (flags & 0x02) > 0
+        sensor_col.offset = data[starting_offset + 1]
+        sensor_col.size = data[starting_offset + 2]
+        # scale_factor = np.round(np.frombuffer(buffer=data[starting_offset + 3:starting_offset + 7], dtype=np.single,
+        #                                       count=1), 6)[0]
+        sensor_col.scale_factor = ParameterKeys.decode_float(data[starting_offset + 3:starting_offset + 7])
+        sensor_col.label = data[starting_offset+7:starting_offset+23].decode("utf-8").strip()
+
+        schema.sensor_columns.append(sensor_col)
+
+    return schema
+
+
+def gt3x_sensor_data_extractor(timestamp, data, sensor_schema: list):
+    schema_id = np.frombuffer(buffer=data, dtype=np.int16, count=1)
+    current_schema = [schema for schema in sensor_schema if schema.schema_id == schema_id]
+    if not current_schema:
+        print('Unknown schema id ' + schema_id)
+        return []
+    current_schema = current_schema[0]
+
+    sensor_datas = {}
+    sensor_mapping = [column.label.split()[0] for column in current_schema.sensor_columns if column.label]
+    sensor_mapping.extend(['' for missing in range(len(sensor_mapping),current_schema.columns_per_row)])
+    sensor_names = set(sensor_mapping)
+    sensor_values = {name: [] for name in sensor_names}
+
+    current_offset = 2
+    samples_num = current_schema.samples_in_record
+    if samples_num == 0:
+        record_size = sum([column.size/8 for column in current_schema.sensor_columns])
+        samples_num = int((len(data) - current_offset) / record_size)
+    for sample in range(0, samples_num):
+        current_values = {name: [] for name in sensor_names}
+        for col_index, sensor_column in enumerate(current_schema.sensor_columns):
+            bytes_in_value = int(sensor_column.size / 8)
+
+            if sensor_column.signed:
+                if bytes_in_value == 2:
+                    dt = 'h'
+                else:
+                    dt = 'b'
+            else:
+                if bytes_in_value == 2:
+                    dt = 'H'
+                else:
+                    dt = 'B'
+            if bytes_in_value >= 2:
+                if sensor_column.big_endian:
+                    dt = '>' + dt
+                else:
+                    dt = '<' + dt
+            value = struct.unpack(dt, data[current_offset:current_offset+bytes_in_value])[0]
+            if sensor_column.scale_factor != 0:
+                value /= sensor_column.scale_factor
+
+            if sensor_mapping[col_index] == 'Temperature':
+                value += 21  # Offset required to have an adequate temperature reading
+
+            current_values[sensor_mapping[col_index]].append(value)
+            current_offset += int(sensor_column.size / 8)
+
+        for name in sensor_names:
+            sensor_values[name].append(current_values[name][:])
+
+    return [timestamp, sensor_values]
+
+
 def gt3x_calculate_checksum(separator, record_type, timestamp, record_size, record_data):
     """
 
@@ -532,6 +630,9 @@ def gt3x_importer(filename):
     # Dict containing the information of the file
     info = {}
 
+    # Sensor schema structure if using SENSOR_DATA fields
+    sensor_schema = []
+
     # Empty lists to fill with data from records
     activity_data = []
     battery_data = []
@@ -540,6 +641,7 @@ def gt3x_importer(filename):
     metadata_data = []
     parameters_data = []
     capsense_data = []
+    sensor_data_data = []
 
     with zipfile.ZipFile(filename) as myzip:
         # Reading info.txt file
@@ -596,6 +698,13 @@ def gt3x_importer(filename):
                         parameters_data.append(gt3x_parameters_extractor(timestamp, record_data, sample_rate))
                     elif record_type is RecordType.CAPSENSE:
                         capsense_data.append(gt3x_capsense_extractor(timestamp, record_data, sample_rate))
+                    elif record_type is RecordType.SENSOR_SCHEMA:
+                        sensor_schema.append(gt3x_sensor_schema_extractor(record_data))
+                    elif record_type is RecordType.SENSOR_DATA:
+                        if sensor_schema:
+                            sensor_data_data.append(gt3x_sensor_data_extractor(timestamp, record_data, sensor_schema))
+                        else:
+                            print('Trying to extract SENSOR_DATA, but no SENSOR_SCHEMA!')
                     elif record_type is RecordType.ACTIVITY2:
                         if len(record_data) > 1:
                             activity_data.append(gt3x_activity2_extractor(timestamp, record_data, sample_rate, scale))
@@ -615,6 +724,7 @@ def gt3x_importer(filename):
 
     # Return file info and data contents
     return [info, {'activity': activity_data,
+                   'sensor_data': sensor_data_data,
                    'battery': battery_data,
                    'lux': lux_data,
                    'capsense': capsense_data,
