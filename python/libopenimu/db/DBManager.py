@@ -675,7 +675,8 @@ class DBManager:
         if 'CSV' in file_format:
             np.savetxt(filename, my_array, delimiter=";", header=header)
         elif 'Matlab' in file_format:
-            sio.savemat(filename, {sensor.name: my_array.transpose(), 'labels': header.split(';')}, do_compression=True)
+            sio.savemat(filename, {sensor.name.replace(' ', '_'): my_array.transpose(), 'labels': header.split(';')},
+                        do_compression=True)
 
     def export_file_sensor_data(self, sensor: Sensor, sensors_data: list, file_format, directory):
         result = {}
@@ -720,4 +721,5 @@ class DBManager:
         if 'CSV' in file_format:
             np.savetxt(filename, my_array.transpose(), delimiter=";", header=header)
         elif 'Matlab' in file_format:
-            sio.savemat(filename, {sensor.name: my_array.transpose(), 'labels': header.split(';')}, do_compression=True)
+            sio.savemat(filename, {sensor.name.replace(' ', '_'): my_array.transpose(), 'labels': header.split(';')},
+                        do_compression=True)
