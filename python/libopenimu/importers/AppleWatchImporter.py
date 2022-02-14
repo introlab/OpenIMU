@@ -223,7 +223,10 @@ class AppleWatchImporter(BaseImporter):
             #       len(raw_gyro[timestamp]['values']))
 
             # Calculate recordset
-            recordset = self.get_recordset(timestamp.timestamp(), session_name=self.session_name)
+            try:
+                recordset = self.get_recordset(timestamp.timestamp(), session_name=self.session_name)
+            except OSError as e:
+                print(e.filename + ' - ' + str(timestamp) + ' : ' + e.strerror)
 
             # Create time array as float64
             timesarray = np.asarray(raw_gyro[timestamp]['times'], dtype=np.float64)

@@ -56,7 +56,6 @@
         </property>
         <property name="font">
          <font>
-          <family>Mongolian Baiti</family>
           <pointsize>31</pointsize>
          </font>
         </property>
@@ -319,7 +318,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Version 0.6.6</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Version 0.6.7&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
