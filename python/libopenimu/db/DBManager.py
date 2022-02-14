@@ -687,7 +687,7 @@ class DBManager:
             series = sensor_data.to_time_series()
             result[sensor_data.channel.id_channel].append(series)
 
-        filename = directory + sensor.location + '_' + sensor.name
+        filename = directory + sensor.location + '_' + sensor.name.replace(' ', '_')
         if 'CSV' in file_format:
             filename = filename + '.CSV'
         elif 'Matlab' in file_format:
@@ -721,5 +721,5 @@ class DBManager:
         if 'CSV' in file_format:
             np.savetxt(filename, my_array.transpose(), delimiter=";", header=header)
         elif 'Matlab' in file_format:
-            sio.savemat(filename, {sensor.name.replace(' ', '_'): my_array.transpose(), 'labels': header.split(';')},
+            sio.savemat(filename, {sensor.name.replace(' ', ''): my_array.transpose(), 'labels': header.split(';')},
                         do_compression=True)
