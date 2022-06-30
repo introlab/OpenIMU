@@ -1,7 +1,7 @@
 import sys
 
 from PySide6.QtWidgets import QApplication, QTreeWidget, QTreeWidgetItem, QStyleFactory
-from PySide6.QtCore import Qt, Slot, Signal
+from PySide6.QtCore import Qt, Slot, Signal, QFile
 from PySide6.QtGui import QIcon, QFont
 # Models
 from libopenimu.models.Participant import Participant
@@ -409,8 +409,8 @@ if __name__ == '__main__':
     from libopenimu.qt.MainWindow import MainWindow
 
     # Set Style
-    style = QStyleFactory.create('Windows')
-    QApplication.setStyle(style)
+    # style = QStyleFactory.create('Windows')
+    # QApplication.setStyle(style)
     
     # Must be done before starting the app
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
@@ -422,6 +422,12 @@ if __name__ == '__main__':
 
     # Set current directory to home path
     QDir.setCurrent(QDir.homePath())
+
+    file = QFile(':/OpenIMU/stylesheet.qss')
+    file.open(QFile.ReadOnly)
+    stylesheet = file.readAll()
+    stylesheet = str(stylesheet, 'latin1')
+    app.setStyleSheet(stylesheet)
 
     # print(PyQt5.__file__)
     # from pprint import pprint

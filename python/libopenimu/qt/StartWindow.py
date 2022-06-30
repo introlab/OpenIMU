@@ -14,7 +14,7 @@ class StartWindow(QDialog):
     importing = False
 
     def __init__(self, parent=None):
-        super().__init__(parent=parent)
+        super(StartWindow, self).__init__(parent)
         self.UI = Ui_StartDialog()
         self.UI.setupUi(self)
 
@@ -41,7 +41,7 @@ class StartWindow(QDialog):
 
     @Slot()
     def open_clicked(self):
-        file_diag = QFileDialog.getOpenFileName(caption="Nom du fichier à ouvrir", filter="*.oi")
+        file_diag = QFileDialog.getOpenFileName(caption=self.tr("Nom du fichier à ouvrir"), filter="*.oi")
 
         if file_diag[0] != '':
             self.open_file(file_diag[0])
@@ -67,7 +67,7 @@ class StartWindow(QDialog):
     @staticmethod
     @Slot()
     def quit_clicked():
-        QApplication.quit()
+        QApplication.exit(0)
 
     @Slot()
     def recent_clicked(self):

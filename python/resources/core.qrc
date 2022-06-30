@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/OpenIMU">
         <file>IntRoLab.png</file>
-        <file>test.qml</file>
         <file>icons/import.png</file>
         <file>icons/open.png</file>
         <file>icons/participant.png</file>
@@ -46,5 +45,7 @@
         <file>icons/compact.png</file>
         <file>icons/bug.png</file>
         <file>icons/date.png</file>
+        <file>LogoOpenIMU.png</file>
+        <file>stylesheet.qss</file>
     </qresource>
 </RCC>
