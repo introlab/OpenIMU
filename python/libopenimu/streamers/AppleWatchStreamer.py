@@ -1,6 +1,5 @@
 from libopenimu.streamers.BaseStreamer import BaseStreamer
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.Qt import QApplication
+from PySide6.QtCore import Slot
 
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import os
@@ -35,7 +34,7 @@ class AppleWatchStreamer(BaseStreamer):
     #             "Port": str(self.server_port),
     #             "Données": self.server_save_path}
 
-    @pyqtSlot()
+    @Slot()
     def stop_server(self):
         self.add_log.emit('Arrêt du serveur...', LogTypes.LOGTYPE_INFO)
         self.server_running = False

@@ -176,7 +176,7 @@ class AppleWatchImporter(BaseImporter):
             # Create time array as float64
             timesarray = np.asarray(raw_accelero[timestamp]['times'], dtype=np.float64)
 
-            if len(timesarray) is 0:
+            if len(timesarray) == 0:
                 self.last_error = "Aucune données temporelles."
                 return
 
@@ -231,7 +231,7 @@ class AppleWatchImporter(BaseImporter):
             # Create time array as float64
             timesarray = np.asarray(raw_gyro[timestamp]['times'], dtype=np.float64)
 
-            if len(timesarray) is 0:
+            if len(timesarray) == 0:
                 self.last_error = "Aucune données temporelles."
                 return
 
@@ -270,7 +270,7 @@ class AppleWatchImporter(BaseImporter):
             # Create time array as float64
             timesarray = np.asarray(heartrate[timestamp]['times'], dtype=np.float64)
 
-            if len(timesarray) is 0:
+            if len(timesarray) == 0:
                 self.last_error = "Aucune données temporelles."
                 return
 
@@ -299,7 +299,7 @@ class AppleWatchImporter(BaseImporter):
             # Create time array as float64
             timesarray = np.asarray(coordinates[timestamp]['times'], dtype=np.float64)
 
-            if len(timesarray) is 0:
+            if len(timesarray) == 0:
                 self.last_error = "Aucune données temporelles."
                 return
 
@@ -389,7 +389,7 @@ class AppleWatchImporter(BaseImporter):
             # Create time array as float64
             timesarray = np.asarray(sensoria[timestamp]['times'], dtype=np.float64)
 
-            if len(timesarray) is 0:
+            if len(timesarray) == 0:
                 self.last_error = "Aucune données temporelles."
                 return
 
@@ -442,7 +442,7 @@ class AppleWatchImporter(BaseImporter):
             # Create time array as float64
             timesarray = np.asarray(beacons[timestamp]['times'], dtype=np.float64)
 
-            if len(timesarray) is 0:
+            if len(timesarray) == 0:
                 self.last_error = "Aucune données temporelles."
                 return
 
@@ -553,7 +553,7 @@ class AppleWatchImporter(BaseImporter):
             # Create time array as float64
             timesarray = np.asarray(motion[timestamp]['times'], dtype=np.float64)
 
-            if len(timesarray) is 0:
+            if len(timesarray) == 0:
                 self.last_error = "Aucune données temporelles."
                 return
 
@@ -602,7 +602,7 @@ class AppleWatchImporter(BaseImporter):
             # Create time array as float64
             timesarray = np.asarray(battery[timestamp]['times'], dtype=np.float64)
 
-            if len(timesarray) is 0:
+            if len(timesarray) == 0:
                 self.last_error = "Aucune donnée temporelle."
                 return
 

@@ -1,10 +1,9 @@
-from PyQt5.QtWidgets import QMainWindow, QWidget
-from PyQt5.QtWidgets import QApplication, QDialog, QTreeWidgetItem
-import PyQt5
+from PySide6.QtWidgets import QMainWindow, QWidget
+from PySide6.QtWidgets import QApplication, QDialog, QTreeWidgetItem
 
-from PyQt5.QtWidgets import QMessageBox
+from PySide6.QtWidgets import QMessageBox
 
-from PyQt5.QtCore import pyqtSlot
+from PySide6.QtCore import Slot
 from libopenimu.qt.Charts import IMUChartView
 import gc
 
@@ -123,7 +122,7 @@ class MainWindow(QMainWindow):
     def console_log_error(self, text):
         self.add_to_log(text, LogTypes.LOGTYPE_ERROR)
 
-    @pyqtSlot()
+    @Slot()
     def load_data_from_dataset(self):
         self.UI.treeDataSet.clear()
         self.clear_main_widgets()
@@ -178,7 +177,7 @@ class MainWindow(QMainWindow):
         part_widget.dataSaved.connect(self.data_was_saved)
         part_widget.dataCancelled.connect(self.data_was_cancelled)
 
-    @pyqtSlot('QString', int)
+    @Slot('QString', int)
     def add_to_log(self, text, log_type):
         if text == ' ' or text == '\n':
             return
@@ -205,11 +204,11 @@ class MainWindow(QMainWindow):
         return self.UI.frmMain.layout().itemAt(0).widget().data_type
 
     ######################
-    @pyqtSlot(bool)
+    @Slot(bool)
     def toggle_dataset(self, visibility):
         self.UI.dockDataset.setVisible(visibility)
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def toggle_log(self, visibility):
         self.UI.dockLog.setVisible(visibility)
         # self.UI.btnShowLog.setChecked(visibility)
@@ -223,7 +222,7 @@ class MainWindow(QMainWindow):
 
         # print("Test!")
 
-    @pyqtSlot()
+    @Slot()
     def import_requested(self):
         importer = ImportBrowser(data_manager=self.dbMan)
         importer.participant_added.connect(self.load_data_from_dataset)
@@ -233,14 +232,14 @@ class MainWindow(QMainWindow):
             self.load_data_from_dataset()
             gc.collect()
 
-    @pyqtSlot()
+    @Slot()
     def export_csv_requested(self):
         exporter = ExportWindow(self.dbMan, self)
         exporter.setStyleSheet(self.styleSheet())
         if exporter.exec() == QDialog.Accepted:
             print("Accepted")
 
-    @pyqtSlot()
+    @Slot()
     def infos_requested(self):
         infos_window = ImportWindow(dataset=self.currentDataSet, filename=self.currentFileName)
         infos_window.setStyleSheet(self.styleSheet())
@@ -250,7 +249,7 @@ class MainWindow(QMainWindow):
         if infos_window.exec() != QDialog.Rejected:
             self.currentDataSet.name = infos_window.dataSet.name
 
-    @pyqtSlot()
+    @Slot()
     def process_data_requested(self):
         if self.currentRecordsets:
 
@@ -261,7 +260,7 @@ class MainWindow(QMainWindow):
                 self.UI.treeDataSet.update_item("result", proc_window.processed_data)
                 self.UI.treeDataSet.select_item("result", proc_window.processed_data.id_processed_data)
 
-    @pyqtSlot()
+    @Slot()
     def db_close_requested(self):
         msg = QMessageBox(self)
         msg.setIcon(QMessageBox.Question)
@@ -279,7 +278,7 @@ class MainWindow(QMainWindow):
 
             self.show_start_window()
 
-    @pyqtSlot()
+    @Slot()
     def db_compact_requested(self):
         msg = QMessageBox(self)
         msg.setIcon(QMessageBox.Question)
@@ -298,11 +297,11 @@ class MainWindow(QMainWindow):
             process.start()
             dialog.exec()
 
-    @pyqtSlot()
+    @Slot()
     def new_group_requested(self):
         self.show_group()
 
-    @pyqtSlot()
+    @Slot()
     def new_participant_requested(self):
         # Check if we can get a root item (group) for the current selected item or not
         item = self.UI.treeDataSet.currentItem()
@@ -316,12 +315,12 @@ class MainWindow(QMainWindow):
 
         self.show_participant(base_group=default_group)
 
-    @pyqtSlot(Participant)
+    @Slot(Participant)
     def participant_was_dragged(self, participant):
         self.dbMan.update_participant(participant)
         self.update_participant(participant)
 
-    @pyqtSlot(QTreeWidgetItem, int)
+    @Slot(QTreeWidgetItem, int)
     def tree_item_clicked(self, item: QTreeWidgetItem, _: int):
         # print(item.text(column))
         item_id = self.UI.treeDataSet.get_item_id(item)
@@ -367,7 +366,7 @@ class MainWindow(QMainWindow):
         item.setExpanded(True)
         # self.UI.frmMain.update()
 
-    @pyqtSlot()
+    @Slot()
     def data_was_saved(self):
         item_type = self.get_current_widget_data_type()
 
@@ -381,7 +380,7 @@ class MainWindow(QMainWindow):
             self.update_participant(part)
             self.add_to_log("Participant " + part.name + " mis à jour.", LogTypes.LOGTYPE_DONE)
 
-    @pyqtSlot()
+    @Slot()
     def data_was_cancelled(self):
         item_type = self.get_current_widget_data_type()
 
@@ -393,7 +392,7 @@ class MainWindow(QMainWindow):
             if self.UI.frmMain.layout().itemAt(0).widget().participant is None:
                 self.clear_main_widgets()
 
-    @pyqtSlot()
+    @Slot()
     def delete_requested(self):
         item_id = self.UI.treeDataSet.get_item_id(self.UI.treeDataSet.currentItem())
         item_type = self.UI.treeDataSet.get_item_type(self.UI.treeDataSet.currentItem())
@@ -507,7 +506,7 @@ class MainWindow(QMainWindow):
             chart_view.add_test_data()
         return chart_view
 
-    @pyqtSlot()
+    @Slot()
     def transfer_requested(self):
         # import_man = ImportManager(dbmanager=self.dbMan, dirs=True, stream=True, parent=self)
         # # TODO: More intelligent refresh!

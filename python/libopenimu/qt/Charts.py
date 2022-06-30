@@ -1,8 +1,9 @@
-from PyQt5.QtGui import QPolygonF, QPainter, QMouseEvent, QResizeEvent, QBrush, QColor, QPen, QGuiApplication
-from PyQt5.QtChart import QChart, QChartView, QLineSeries, QBarSeries, QBarSet
-from PyQt5.QtChart import QDateTimeAxis, QValueAxis, QBarCategoryAxis
-from PyQt5.QtWidgets import QGraphicsLineItem, QGraphicsTextItem, QLabel, QOpenGLWidget, QRubberBand
-from PyQt5.QtCore import Qt, pyqtSlot, QPointF, QRect, QRectF, QPoint
+from PySide6.QtGui import QPolygonF, QPainter, QMouseEvent, QResizeEvent, QBrush, QColor, QPen, QGuiApplication
+from PySide6.QtCharts import QChart, QChartView, QLineSeries, QBarSeries, QBarSet
+from PySide6.QtCharts import QDateTimeAxis, QValueAxis, QBarCategoryAxis
+from PySide6.QtWidgets import QGraphicsLineItem, QGraphicsTextItem, QLabel, QRubberBand
+from PySide6.QtOpenGLWidgets import QOpenGLWidget
+from PySide6.QtCore import Qt, Slot, QPointF, QRect, QRectF, QPoint
 
 from libopenimu.qt.BaseGraph import BaseGraph, GraphInteractionMode
 
@@ -13,7 +14,8 @@ import datetime
 class IMUChartView(QChartView, BaseGraph):
 
     def __init__(self, parent=None):
-        super().__init__(parent=parent)
+        BaseGraph.__init__(self, parent=parent)
+        QChartView.__init__(self, parent=parent)
 
         # Render on OpenGL
         self.setViewport(QOpenGLWidget())
@@ -105,7 +107,7 @@ class IMUChartView(QChartView, BaseGraph):
         else:
             return xdata, ydata
 
-    @pyqtSlot(float, float)
+    @Slot(float, float)
     def axis_range_changed(self, min_value, max_value):
         # print('axis_range_changed', min, max)
         for axis in self.chart.axes():
@@ -497,7 +499,7 @@ class IMUChartView(QChartView, BaseGraph):
         x1 = self.chart.series()[0].at(idx1).x()
         pos1 = self.chart.mapToPosition(QPointF(x1, 0)).x()
         idx2 = idx1 + 1
-        if idx2 < len(self.chart.series()[0]):
+        if idx2 < self.chart.series()[0].count():
             x2 = self.chart.series()[0].at(idx2).x()
             if x2 != x1:
                 pos2 = self.chart.mapToPosition(QPointF(x2, 0)).x()
@@ -612,9 +614,9 @@ class OpenIMUBarGraphView(QChartView):
 if __name__ == '__main__':
     import sys
 
-    from PyQt5.QtWidgets import QApplication
-    from PyQt5.QtWidgets import QMainWindow
-    # from PyQt5.QtCore import Qt
+    from PySide6.QtWidgets import QApplication
+    from PySide6.QtWidgets import QMainWindow
+    # from PySide6.QtCore import Qt
 
     app = QApplication(sys.argv)
 

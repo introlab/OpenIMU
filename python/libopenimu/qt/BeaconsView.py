@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QTabWidget
-from PyQt5.QtCore import pyqtSlot, pyqtSignal, QPointF
+from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QTabWidget
+from PySide6.QtCore import Slot, Signal, QPointF
 
 from libopenimu.qt.BaseGraph import BaseGraph
 import datetime
@@ -7,11 +7,12 @@ import datetime
 
 class BeaconsView(QTabWidget, BaseGraph):
 
-    # aboutToClose = pyqtSignal(QObject)
-    cursorMoved = pyqtSignal(float)
+    # aboutToClose = Signal(QObject)
+    cursorMoved = Signal(float)
 
     def __init__(self, parent):
-        super().__init__(parent=parent)
+        BaseGraph.__init__(self, parent=parent)
+        QTabWidget.__init__(self, parent=parent)
 
         self.tabDict = {}
 

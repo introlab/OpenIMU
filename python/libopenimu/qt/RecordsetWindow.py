@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtWidgets import QGraphicsScene, QApplication, QGraphicsRectItem, QGraphicsLineItem, QGraphicsItem
-from PyQt5.QtWidgets import QDialog, QMenu, QAction, QMessageBox
-from PyQt5.QtGui import QBrush, QPen, QColor, QFont, QGuiApplication
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QPoint, QRect, QObject, QRectF
+from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QGraphicsScene, QApplication, QGraphicsRectItem, QGraphicsLineItem, QGraphicsItem
+from PySide6.QtWidgets import QDialog, QMenu, QMessageBox
+from PySide6.QtGui import QBrush, QPen, QColor, QFont, QGuiApplication, QAction
+from PySide6.QtCore import Qt, Slot, Signal, QPoint, QRect, QObject, QRectF
 
 from resources.ui.python.RecordsetWidget_ui import Ui_frmRecordsets
 from libopenimu.qt.GraphWindow import GraphType, GraphWindow
@@ -116,8 +116,8 @@ class DBSensorTimesTask(WorkerTask):
 
 class RecordsetWindow(QWidget):
 
-    dataDisplayRequest = pyqtSignal(str, int)
-    dataUpdateRequest = pyqtSignal(str, Base)
+    dataDisplayRequest = Signal(str, int)
+    dataUpdateRequest = Signal(str, Base)
 
     def __init__(self, manager, recordset: list, parent=None):
         super().__init__(parent=parent)
@@ -577,7 +577,7 @@ class RecordsetWindow(QWidget):
 
         return GraphType.UNKNOWN
 
-    @pyqtSlot(Sensor, datetime, datetime)
+    @Slot(Sensor, datetime, datetime)
     def query_sensor_data(self, sensor: Sensor, start_time: datetime, end_time: datetime):
         timeseries = self.get_sensor_data(sensor, start_time, end_time)[0]
 
@@ -600,7 +600,7 @@ class RecordsetWindow(QWidget):
                     series_id += 1
         return
 
-    @pyqtSlot(QAction)
+    @Slot(QAction)
     # @timing
     def sensor_graph_selected(self, sensor_item):
         sensor_id = sensor_item.property("sensor_id")
@@ -703,7 +703,7 @@ class RecordsetWindow(QWidget):
             self.UI.btnTileHorizontal.setEnabled(False)
             self.UI.btnTileVertical.setEnabled(False)
 
-    @pyqtSlot(QObject)
+    @Slot(QObject)
     def graph_was_closed(self, graph):
         for sensor_id, sensor_graph in self.sensors_graphs.items():
             if sensor_graph == graph:
@@ -715,7 +715,7 @@ class RecordsetWindow(QWidget):
         self.UI.mdiArea.tileSubWindows()
         self.update_tile_buttons_state()
 
-    @pyqtSlot(float)
+    @Slot(float)
     def graph_cursor_changed(self, timestamp):
         current_time = timestamp / 1000
         for graph in self.sensors_graphs.values():
@@ -738,19 +738,19 @@ class RecordsetWindow(QWidget):
             if pos < min_visible_x or pos > max_visible_x:
                 self.UI.scrollTimeline.setValue(pos)
 
-    @pyqtSlot(datetime, datetime)
+    @Slot(datetime, datetime)
     def graph_zoom_area(self, start_time, end_time):
         for graph in self.sensors_graphs.values():
             if graph is not None:
                 graph.zoomAreaRequestTime(start_time, end_time)
 
-    @pyqtSlot()
+    @Slot()
     def graph_zoom_reset(self):
         for graph in self.sensors_graphs.values():
             if graph is not None:
                 graph.zoomResetRequest(False)
 
-    @pyqtSlot(float, float)
+    @Slot(float, float)
     def graph_selected_area_changed(self, start_timestamp, end_timestamp):
         # Update timeview selection area
         start_pos = self.get_relative_timeview_pos(start_timestamp / 1000)
@@ -765,11 +765,11 @@ class RecordsetWindow(QWidget):
             if graph is not None:
                 graph.setSelectionAreaFromTime(start_timestamp, end_timestamp)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def timeview_scroll(self, pos):
         self.UI.graphTimeline.centerOn(pos / self.zoom_level, 0)
 
-    @pyqtSlot(float)
+    @Slot(float)
     def timeview_clicked(self, x):
         self.time_bar.setPos(x, 0)
         if len(self.recordsets)==0:
@@ -786,7 +786,7 @@ class RecordsetWindow(QWidget):
             # except AttributeError:
             #    continue
 
-    @pyqtSlot(float, float)
+    @Slot(float, float)
     def timeview_selected(self, start_x, end_x):
         selection_brush = QBrush(QColor(153, 204, 255, 128))
         selection_pen = QPen(Qt.transparent)
@@ -803,7 +803,7 @@ class RecordsetWindow(QWidget):
                 graph.setSelectionAreaFromTime(self.get_time_from_timeview_pos(start_x),
                                                self.get_time_from_timeview_pos(end_x))
 
-    @pyqtSlot()
+    @Slot()
     def on_timeview_clear_selection_requested(self):
         self.timeScene.removeItem(self.selection_rec)
         self.UI.btnClearSelection.setEnabled(False)
@@ -813,7 +813,7 @@ class RecordsetWindow(QWidget):
         for graph in self.sensors_graphs.values():
             graph.clearSelectionArea()
 
-    @pyqtSlot()
+    @Slot()
     def on_timeview_zoom_selection_requested(self):
         self.UI.graphTimeline.scale(1 / self.zoom_level, 1)
         # zoom_value = (self.timeScene.width() / (self.selection_rec.rect().width()))
@@ -828,7 +828,7 @@ class RecordsetWindow(QWidget):
                                         * self.zoom_level)
         self.on_timeview_clear_selection_requested()
 
-    @pyqtSlot()
+    @Slot()
     def on_timeview_zoom_reset_requested(self):
         self.UI.graphTimeline.scale(1 / self.zoom_level, 1)
         self.zoom_level = 1
@@ -836,14 +836,14 @@ class RecordsetWindow(QWidget):
         self.adjust_timeview_size()
         self.UI.scrollTimeline.setValue(0)
 
-    @pyqtSlot()
+    @Slot()
     def on_timeview_show_hide_requested(self):
         visible = not self.UI.frameTimeline.isVisible()
         self.UI.frameTimeline.setVisible(visible)
         self.UI.frameTimelineControls.setVisible(visible)
         # self.UI.lblCursorTime.setVisible(visible)
 
-    @pyqtSlot()
+    @Slot()
     def on_process_recordset(self):
         # Display Process Window
         window = ProcessSelectWindow(self.dbMan, self.recordsets)
@@ -853,11 +853,11 @@ class RecordsetWindow(QWidget):
             self.dataUpdateRequest.emit("result", window.processed_data)
             self.dataDisplayRequest.emit("result", window.processed_data.id_processed_data)
 
-    @pyqtSlot()
+    @Slot()
     def tile_graphs_horizontally(self):
         self.tile_graphs(True)
 
-    @pyqtSlot()
+    @Slot()
     def tile_graphs_vertically(self):
         self.tile_graphs(False)
 
@@ -881,6 +881,6 @@ class RecordsetWindow(QWidget):
             else:
                 position.setY(position.y() + window.height())
 
-    @pyqtSlot()
+    @Slot()
     def tile_graphs_auto(self):
         self.UI.mdiArea.tileSubWindows()

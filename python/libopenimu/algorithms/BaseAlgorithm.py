@@ -9,7 +9,7 @@
 from abc import abstractmethod
 from libopenimu.db.DBManager import DBManager
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
 
 
 class BaseAlgorithm:

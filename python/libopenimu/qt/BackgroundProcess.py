@@ -1,7 +1,7 @@
-from PyQt5.QtCore import QThread, QCoreApplication, QTime, pyqtSignal, pyqtSlot, Qt, QObject, QThreadPool, QRunnable
-from PyQt5.QtCore import QVariant
-from PyQt5.QtWidgets import QDialog, QApplication
-from PyQt5.QtGui import QMovie
+from PySide6.QtCore import QThread, QCoreApplication, QTime, Signal, Slot, Qt, QObject, QThreadPool, QRunnable, \
+    QElapsedTimer
+from PySide6.QtWidgets import QDialog, QApplication
+from PySide6.QtGui import QMovie
 from resources.ui.python.ProgressDialog_ui import Ui_ProgressDialog
 
 import numpy as np
@@ -11,10 +11,10 @@ import string
 
 class WorkerTask(QObject):
 
-    update_progress = pyqtSignal(int)  # Current progress in %
-    size_updated = pyqtSignal()
-    log_request = pyqtSignal('QString', int)
-    results_ready = pyqtSignal('QVariant')
+    update_progress = Signal(int)  # Current progress in %
+    size_updated = Signal()
+    log_request = Signal('QString', int)
+    results_ready = Signal('QVariant')
 
     def __init__(self, title: string, size: int, parent=None):
         super().__init__(parent)
@@ -52,8 +52,8 @@ class SimpleTask(WorkerTask):  # A simple worker task without any progress repor
 class BackgroundProcess(QThread):
 
     # Define a new signal called 'trigger' that has no arguments.
-    task_completed = pyqtSignal()
-    update_current_task_progress = pyqtSignal(int)
+    task_completed = Signal()
+    update_current_task_progress = Signal(int)
 
     def __init__(self, tasks: list, parent=None):
         super(BackgroundProcess, self).__init__(parent)
@@ -91,7 +91,7 @@ class BackgroundProcessForImporters(BackgroundProcess):
                     print('data not loaded...', self.task.filename)
 
                 # Emit signal that task may have results
-                self.task.results_ready.emit(QVariant(self.task))
+                self.task.results_ready.emit(self.task)
 
         print('BackgroundProcessForImporters starting load threads')
         pool = QThreadPool()
@@ -121,7 +121,7 @@ class BackgroundProcessForImporters(BackgroundProcess):
             #     self.task_completed.emit()
             #     del task
 
-    @pyqtSlot(QVariant)
+    @Slot('QVariant')
     def results_ready(self, task):
         print('results_ready, importing to database', task.filename)
 
@@ -148,7 +148,8 @@ class ProgressDialog(QDialog):
         self.count = -1
         self.next_task()
 
-        self.time = QTime.currentTime()
+        self.time = QElapsedTimer()
+        self.time.start()
         self.startTimer(1000)
         # self.setCancelButton(None)
         self.set_job_title(job_title)
@@ -170,9 +171,9 @@ class ProgressDialog(QDialog):
             self.UI.prgTask.hide()
 
         # Center dialog on screen
-        screen_geometry = QApplication.desktop().screenGeometry()
+        screen_geometry = QApplication.primaryScreen().availableGeometry()
         x = (screen_geometry.width() - self.width()) / 2
-        y = (screen_geometry.height() - self.height()) / 2;
+        y = (screen_geometry.height() - self.height()) / 2
         self.move(x, y)
 
         # Connect signals
@@ -194,7 +195,7 @@ class ProgressDialog(QDialog):
         self.setWindowTitle(title)
         self.UI.lblTitle.setText(title)
 
-    @pyqtSlot()
+    @Slot()
     def current_task_size_updated(self):
         new_size = self.tasks[self.count].size
         if new_size < self.UI.prgTask.value():
@@ -206,7 +207,7 @@ class ProgressDialog(QDialog):
         if self.total_work_done > self.total_work_load:
             self.total_work_done = self.total_work_load
 
-    @pyqtSlot()
+    @Slot()
     def next_task(self):
         self.count = self.count + 1
         if self.count < len(self.tasks):
@@ -218,7 +219,7 @@ class ProgressDialog(QDialog):
 
         gc.collect()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def update_current_task_progress(self, value: int):
         self.total_work_done += (value - self.UI.prgTask.value())
         self.UI.prgTask.setValue(value)

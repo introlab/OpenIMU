@@ -1,8 +1,8 @@
 from resources.ui.python.StreamWindow_ui import Ui_StreamWindow
 
-from PyQt5.QtCore import pyqtSlot, Qt
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QProgressBar, QListWidgetItem, QFileDialog
-from PyQt5.QtGui import QBrush, QIcon, QColor
+from PySide6.QtCore import Slot, Qt
+from PySide6.QtWidgets import QDialog, QTableWidgetItem, QProgressBar, QListWidgetItem, QFileDialog
+from PySide6.QtGui import QBrush, QIcon, QColor
 
 # from libopenimu.streamers.streamer_types import StreamerTypes
 from libopenimu.streamers.AppleWatchStreamer import AppleWatchStreamer
@@ -42,16 +42,16 @@ class StreamWindow(QDialog):
         self.UI.btnSave.clicked.connect(self.save_requested)
         self.UI.btnCancel.clicked.connect(self.undo_requested)
 
-    @pyqtSlot(name='browse_requested')
+    @Slot(name='browse_requested')
     def browse_requested(self):
         file = QFileDialog().getExistingDirectory(caption="Sélectionnez le répertoire de destination")
 
         if len(file) > 0:
             self.UI.txtDataPath.setText(file)
 
-    @pyqtSlot(name='edit_requested')
+    @Slot(name='edit_requested')
     def edit_requested(self):
-        from PyQt5.QtWidgets import QMessageBox
+        from PySide6.QtWidgets import QMessageBox
         msg = QMessageBox(self)
         msg.setIcon(QMessageBox.Question)
         msg.setStyleSheet("QPushButton{min-width: 100px; min-height: 40px;}")
@@ -68,7 +68,7 @@ class StreamWindow(QDialog):
                 self.streamer.stop_server()
             self.set_edit_state(True)
 
-    @pyqtSlot(name='save_requested')
+    @Slot(name='save_requested')
     def save_requested(self):
         self.set_edit_state(False)
         # Save settings for further use
@@ -78,7 +78,7 @@ class StreamWindow(QDialog):
             self.init_streamer()
             self.streamer.start()
 
-    @pyqtSlot(name='undo_requested')
+    @Slot(name='undo_requested')
     def undo_requested(self):
         self.set_edit_state(False)
         self.load_settings()
@@ -148,7 +148,7 @@ class StreamWindow(QDialog):
 
         super().exec()
 
-    @pyqtSlot('QString', int, name='add_to_log')
+    @Slot('QString', int, name='add_to_log')
     def add_to_log(self, text: str, log_type: LogTypes):
         if text == ' ' or text == '\n':
             return
@@ -237,7 +237,7 @@ class StreamWindow(QDialog):
 
         self.UI.tabInfos.setTabText(2, "Erreurs (" + str(self.UI.tableErrors.rowCount()) + ")")
 
-    @pyqtSlot('QString', 'QString', int, int, name='update_progress')
+    @Slot('QString', 'QString', int, int, name='update_progress')
     def update_progress(self, filename: str, infos: str, value: int, max_value: int):
         # Update file table
         if filename in self.file_rows:
@@ -251,7 +251,7 @@ class StreamWindow(QDialog):
                 prog.setMaximum(max_value)
                 prog.setValue(value)
                 self.UI.tableFiles.scrollToBottom()
-                self.UI.tableFiles.update()
+                # self.UI.tableFiles.update(index)
 
             size_cell = self.UI.tableFiles.item(index, 1)
             size_cell.setText(FileManager.format_file_size(file_size=value, no_suffix=True, ref_size=max_value) + " / "
@@ -259,7 +259,7 @@ class StreamWindow(QDialog):
 
         # QApplication.processEvents()
 
-    @pyqtSlot('QString', 'QString', 'QString', name='streaming_file_error')
+    @Slot('QString', 'QString', 'QString', name='streaming_file_error')
     def streaming_file_error(self, device_name: str, filename: str, error_str: str):
         # Remove file from current list
         self.remove_file_progress_bar(filename)
@@ -287,7 +287,7 @@ class StreamWindow(QDialog):
 
         return device_item
 
-    @pyqtSlot('QString', bool, name='device_connected')
+    @Slot('QString', bool, name='device_connected')
     def device_connected(self, device_name: str, state: bool):
         if state:
             self.add_to_log(device_name + ": Connecté", LogTypes.LOGTYPE_INFO)
@@ -301,7 +301,7 @@ class StreamWindow(QDialog):
             if device_item:
                 self.UI.lstDevices.takeItem(self.UI.lstDevices.row(device_item))
 
-    @pyqtSlot('QString', 'QString', int, name='streaming_file_completed')
+    @Slot('QString', 'QString', int, name='streaming_file_completed')
     def streaming_file_completed(self, device_name: str, file_name: str, file_size: int):
         # Remove file from current list
         self.remove_file_progress_bar(file_name)
@@ -315,7 +315,7 @@ class StreamWindow(QDialog):
         if device_item:
             self.UI.lstDevices.takeItem(self.UI.lstDevices.row(device_item))
 
-    @pyqtSlot('QString', 'QString', int, name='streaming_file_started')
+    @Slot('QString', 'QString', int, name='streaming_file_started')
     def streaming_file_started(self, device_name: str, file_name: str, file_size: int):
         self.add_file_progress_bar(file_name, file_size)
         self.get_device_item(device_name=device_name, create_if_absent=True)
@@ -336,7 +336,7 @@ class StreamWindow(QDialog):
     def closeEvent(self, _):
         self.close_requested()
 
-    @pyqtSlot(name='close_requested')
+    @Slot(name='close_requested')
     def close_requested(self):
         if self.streamer:
             self.streamer.stop_server()
@@ -348,7 +348,7 @@ class StreamWindow(QDialog):
 
         self.accept()
 
-    @pyqtSlot(name='streaming_server_finished')
+    @Slot(name='streaming_server_finished')
     def streaming_server_finished(self):
         # self.accept()
         pass

@@ -1,5 +1,5 @@
 #TODO MAKE THIS GENERIC
-set (PYTHON_VERSION 3.7)
+set (PYTHON_VERSION 3.10)
 add_subdirectory(env)
 
 set(PYTHON_ENV_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/env/python-${PYTHON_VERSION})
@@ -10,20 +10,20 @@ if(WIN32)
     set(PYTHON_PIP_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pip.exe)
     set(PYTHON_INSTALLER_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyinstaller.exe)
 
-    #PyQt5 Ui wrapper
-    set(PYQT5_UIC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyuic5.exe)
-    #PyQt5 Ressources compiler
-    set(PYQT5_RCC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyrcc5.exe)
+    #PySide Ui wrapper
+    set(PYSIDE_UIC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyside6-uic.exe)
+    #PySide Ressources compiler
+    set(PYSIDE_RCC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyside6-rcc.exe)
     set(APP_ICON ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/OpenIMU.ico)
 
 else(WIN32)
     set(PYTHON_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/python${PYTHON_VERSION})
     set(PYTHON_PIP_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pip)
     set(PYTHON_INSTALLER_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pyinstaller)
-    #PyQt5 Ui wrapper
-    set(PYQT5_UIC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pyuic5)
-    #PyQt5 Ressources compiler
-    set(PYQT5_RCC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pyrcc5)
+    #PySide Ui wrapper
+    set(PYSIDE_UIC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pyside6-rcc)
+    #PySide Ressources compiler
+    set(PYSIDE_RCC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pyrcc5)
     set(APP_ICON ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/OpenIMU.icns)
 endif(WIN32)
 
@@ -60,7 +60,7 @@ SET(qml
 
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/resources/ui/python)
 
-# Generate PyQt5 ui files
+# Generate PySide ui files
 set(python_uis)
 foreach(uifile ${uis})
     message(STATUS "Processing ${uifile}")
@@ -69,12 +69,12 @@ foreach(uifile ${uis})
     set(output_file ${name_without_extension}_ui.py)
     list(APPEND python_uis ${output_file})
     add_custom_target(${output_file}
-        COMMAND ${PYQT5_UIC_EXECUTABLE} ${uifile} -o resources/ui/python/${output_file}
+        COMMAND ${PYSIDE_UIC_EXECUTABLE} ${uifile} -o resources/ui/python/${output_file}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         DEPENDS ${uifile} python-env)
 endforeach(uifile)
 
-# Generate PyQt5 resources file
+# Generate PySide resources file
 set (python_qrcs)
 foreach(rcfile ${qrcs})
     message(STATUS "Processing ${rcfile}")
@@ -83,7 +83,7 @@ foreach(rcfile ${qrcs})
     set(output_file ${name_without_extension}_rc.py)
     list(APPEND python_qrcs ${output_file})
     add_custom_target(${output_file}
-        COMMAND ${PYQT5_RCC_EXECUTABLE} ${rcfile} -o ${output_file}
+        COMMAND ${PYSIDE_RCC_EXECUTABLE} ${rcfile} -o ${output_file}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         DEPENDS ${rcfile} python-env)
 endforeach(rcfile)
@@ -103,7 +103,7 @@ set (installer_args
     # --paths ${PYTHON_ENV_DIRECTORY}/lib/python${PYTHON_VERSION}/site-packages/PyQt5
     --hidden-import scipy._lib.messagestream
     --hidden-import sqlalchemy.ext.baked
-    --hidden-import PyQt5.sip
+    # --hidden-import PyQt5.sip
     --hidden-import logging.config
     --clean
     -y

@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QDialog, QFileDialog, QHBoxLayout
-from PyQt5.QtCore import pyqtSlot, Qt, pyqtSignal
+from PySide6.QtWidgets import QDialog, QFileDialog, QHBoxLayout
+from PySide6.QtCore import Slot, Qt, Signal
 
 from resources.ui.python.ImportManager_ui import Ui_ImportManager
 
@@ -28,7 +28,7 @@ class ImportManager(QDialog):
     part_widget = None
     participant_multi = False
 
-    participant_added = pyqtSignal()
+    participant_added = Signal()
 
     def __init__(self, dbmanager, dirs, stream=False, parent=None):
         super(ImportManager, self).__init__(parent=parent)
@@ -120,7 +120,7 @@ class ImportManager(QDialog):
     def set_filetype(self, format_text):
         self.UI.cmbFileType.setCurrentText(format_text)
 
-    @pyqtSlot()
+    @Slot()
     def ok_clicked(self):
         # Validate items
         if self.validate():
@@ -130,11 +130,11 @@ class ImportManager(QDialog):
             self.participant = self.UI.cmbParticipant.currentData()
             self.accept()
 
-    @pyqtSlot()
+    @Slot()
     def cancel_clicked(self):
         self.reject()
 
-    @pyqtSlot()
+    @Slot()
     def browse_clicked(self):
         if not self.import_dirs:
             file = QFileDialog().getOpenFileNames(caption="Sélectionnez le(s) fichier(s) à importer")
@@ -148,7 +148,7 @@ class ImportManager(QDialog):
             else:
                 self.UI.txtFileName.setText(file)
 
-    @pyqtSlot()
+    @Slot()
     def new_participant_requested(self):
 
         layout = QHBoxLayout(self.part_diag)
@@ -165,11 +165,11 @@ class ImportManager(QDialog):
 
         self.part_diag.exec()
 
-    @pyqtSlot()
+    @Slot()
     def participant_cancelled(self):
         self.part_diag.reject()
 
-    @pyqtSlot()
+    @Slot()
     def participant_saved(self):
         self.part_diag.accept()
         self.load_participants()
@@ -178,7 +178,7 @@ class ImportManager(QDialog):
 
         self.participant_added.emit()
 
-    @pyqtSlot()
+    @Slot()
     def current_participant_changed(self):
         if self.UI.cmbParticipant.currentIndex() == -1:
             self.UI.lblGroupName.setText("")
@@ -190,7 +190,7 @@ class ImportManager(QDialog):
         else:
             self.UI.lblGroupName.setText(self.UI.cmbParticipant.currentData().group.name)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def multi_participants_check(self, check_value):
         self.participant_multi = (check_value == Qt.Checked)
         self.UI.frameParticipant.setVisible(not self.participant_multi)

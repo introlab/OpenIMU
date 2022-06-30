@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QButtonGroup, QAbstractButton
-from PyQt5.QtCore import pyqtSignal, QObject, QEvent, pyqtSlot
+from PySide6.QtWidgets import QWidget, QButtonGroup, QAbstractButton
+from PySide6.QtCore import Signal, QObject, QEvent, Slot
 
 from resources.ui.python.GraphWidget_ui import Ui_frmGraphWidget
 from libopenimu.qt.Charts import IMUChartView
@@ -22,10 +22,10 @@ class GraphType:
 
 class GraphWindow(QWidget):
 
-    aboutToClose = pyqtSignal(QObject)
-    requestData = pyqtSignal(Sensor, datetime.datetime, datetime.datetime)
-    zoomAreaRequested = pyqtSignal(datetime.datetime, datetime.datetime)
-    zoomResetRequested = pyqtSignal()
+    aboutToClose = Signal(QObject)
+    requestData = Signal(Sensor, datetime.datetime, datetime.datetime)
+    zoomAreaRequested = Signal(datetime.datetime, datetime.datetime)
+    zoomResetRequested = Signal()
 
     def __init__(self, graph_type: GraphType, sensor: Sensor, parent=None):
         super().__init__(parent=parent)
@@ -111,12 +111,12 @@ class GraphWindow(QWidget):
         self.UI.btnZoomOut.setEnabled(self.graph.is_zoomed)
         self.UI.btnZoomReset.setEnabled(self.graph.is_zoomed)
 
-    @pyqtSlot()
+    @Slot()
     def clearSelectionRequest(self):
         self.graph.clearSelectionArea(True)
         self.UI.btnClearSelection.setEnabled(False)
 
-    @pyqtSlot()
+    @Slot()
     def zoomAreaRequest(self):
         if self.graph:
             self.graph.zoom_area()
@@ -129,7 +129,7 @@ class GraphWindow(QWidget):
             self.graph.setSelectionAreaFromTime(start_time, end_time, emit_signal)
             self.graph.zoom_area()
 
-    @pyqtSlot()
+    @Slot()
     def zoomOutRequest(self):
         if self.graph:
             self.graph.zoom_out()
@@ -138,7 +138,7 @@ class GraphWindow(QWidget):
             self.zoomAreaRequested.emit(self.graph.get_displayed_start_time(), self.graph.get_displayed_end_time())
         self.update_zoom_buttons_state()
 
-    @pyqtSlot()
+    @Slot()
     def zoomInRequest(self):
         if self.graph:
             self.graph.zoom_in()
@@ -147,7 +147,7 @@ class GraphWindow(QWidget):
             self.zoomAreaRequested.emit(self.graph.get_displayed_start_time(), self.graph.get_displayed_end_time())
         self.update_zoom_buttons_state()
 
-    @pyqtSlot()
+    @Slot()
     def zoomResetRequest(self, emit_signal=True):
         if self.graph:
             self.graph.zoom_reset()
@@ -155,18 +155,18 @@ class GraphWindow(QWidget):
                 self.zoomResetRequested.emit()
         self.update_zoom_buttons_state()
 
-    @pyqtSlot()
+    @Slot()
     def dataInfosRequest(self):
         infos = DataInfosWidget(self.sensor, self.graph.total_samples, parent=self)
         # infos.setStyleSheet(self.styleSheet())
         infos.exec()
 
-    @pyqtSlot()
+    @Slot()
     def graph_selection_changed(self):
         self.UI.btnClearSelection.setEnabled(self.graph.selection_rec is not None)
         self.update_zoom_buttons_state()
 
-    @pyqtSlot(QAbstractButton)
+    @Slot(QAbstractButton)
     def graph_interaction_mode_changed(self, button = QAbstractButton):
         if button == self.UI.btnSelect:
             self.graph.set_interaction_mode(GraphInteractionMode.SELECT)

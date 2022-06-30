@@ -2,8 +2,8 @@ from resources.ui.python.StartDialog_ui import Ui_StartDialog
 
 from libopenimu.qt.ImportWindow import ImportWindow
 
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QDialog, QFileDialog, QApplication
+from PySide6.QtCore import Slot
+from PySide6.QtWidgets import QDialog, QFileDialog, QApplication
 
 from libopenimu.tools.Settings import OpenIMUSettings
 
@@ -31,7 +31,7 @@ class StartWindow(QDialog):
         self.UI.cmbRecents.addItem("")
         self.UI.cmbRecents.addItems(self.settings.get_recent_files())
 
-    @pyqtSlot()
+    @Slot()
     def import_clicked(self):
         importdialog = ImportWindow(parent=self)
         importdialog.showImport = True
@@ -39,14 +39,14 @@ class StartWindow(QDialog):
         if importdialog.exec() == QDialog.Accepted:
             self.open_file(importdialog.fileName)
 
-    @pyqtSlot()
+    @Slot()
     def open_clicked(self):
         file_diag = QFileDialog.getOpenFileName(caption="Nom du fichier à ouvrir", filter="*.oi")
 
         if file_diag[0] != '':
             self.open_file(file_diag[0])
 
-    @pyqtSlot()
+    @Slot()
     def new_clicked(self):
         importdialog = ImportWindow(parent=self)
         importdialog.showImport = False
@@ -65,10 +65,10 @@ class StartWindow(QDialog):
             self.accept()
 
     @staticmethod
-    @pyqtSlot()
+    @Slot()
     def quit_clicked():
         QApplication.quit()
 
-    @pyqtSlot()
+    @Slot()
     def recent_clicked(self):
         self.open_file(self.UI.cmbRecents.currentText())

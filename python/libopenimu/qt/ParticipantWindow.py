@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt, pyqtSlot
+from PySide6.QtCore import Qt, Slot
 
 from resources.ui.python.ParticipantWidget_ui import Ui_frmParticipant
 from libopenimu.models.Participant import Participant
@@ -82,7 +82,7 @@ class ParticipantWindow(DataEditor):
                             (self.participant is None and self.UI.txtDesc.toPlainText() != "") or
                             (self.participant is not None and self.UI.cmbGroups.currentData() != self.participant.id_group)
                             )
-    @pyqtSlot()
+    @Slot()
     def save_clicked(self):
         if self.validate():
             if self.participant is None:
@@ -94,19 +94,19 @@ class ParticipantWindow(DataEditor):
             self.enable_buttons(False)
             self.dataSaved.emit()
 
-    @pyqtSlot()
+    @Slot()
     def cancel_clicked(self):
         self.update_data()
         self.dataCancelled.emit()
 
-    @pyqtSlot(str)
+    @Slot(str)
     def name_edited(self, new_value):
         self.update_modified_status()
 
-    @pyqtSlot()
+    @Slot()
     def desc_edited(self):
         self.update_modified_status()
 
-    @pyqtSlot()
+    @Slot()
     def group_edited(self):
         self.update_modified_status()

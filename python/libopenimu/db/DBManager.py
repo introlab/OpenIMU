@@ -326,16 +326,16 @@ class DBManager:
         query = self.session.query(Sensor.id_sensor).outerjoin(SensorData).filter(SensorData.id_sensor_data == None)
         orphan_sensors = query.all()
         if len(orphan_sensors) > 0:
-            query = self.session.query(Sensor.id_sensor).filter(Sensor.id_sensor.in_(query)).delete(
-                synchronize_session=False)
+            query = self.session.query(Sensor).filter(Sensor.id_sensor.in_(query))
+            query.delete(synchronize_session=False)
             self.commit()
 
     def delete_orphan_channels(self):
         query = self.session.query(Channel.id_channel).outerjoin(SensorData).filter(SensorData.id_sensor_data == None)
         orphan_channels = query.all()
         if len(orphan_channels) > 0:
-            query = self.session.query(Channel.id_channel).filter(Channel.id_channel.in_(query)).delete(
-                synchronize_session=False)
+            query = self.session.query(Channel).filter(Channel.id_channel.in_(query))
+            query.delete(synchronize_session=False)
             self.commit()
 
     def delete_orphan_processed_data(self):
@@ -343,9 +343,8 @@ class DBManager:
             ProcessedDataRef.id_processed_data_ref == None)
         orphan = query.all()
         if len(orphan) > 0:
-            query = self.session.query(ProcessedData.id_processed_data).filter(
-                ProcessedData.id_processed_data.in_(query)).delete(
-                synchronize_session=False)
+            query = self.session.query(ProcessedData).filter(ProcessedData.id_processed_data.in_(query))
+            query.delete(synchronize_session=False)
             self.commit()
 
     def delete_orphan_sensors_timestamps(self):
@@ -353,9 +352,8 @@ class DBManager:
             SensorData.id_sensor_data == None)
         orphan = query.all()
         if len(orphan) > 0:
-            query = self.session.query(SensorTimestamps.id_sensor_timestamps).filter(
-                SensorTimestamps.id_sensor_timestamps.in_(query)).delete(
-                synchronize_session=False)
+            query = self.session.query(SensorTimestamps).filter(SensorTimestamps.id_sensor_timestamps.in_(query))
+            query.delete(synchronize_session=False)
             self.commit()
 
     def clean_db(self):

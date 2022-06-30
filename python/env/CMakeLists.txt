@@ -16,9 +16,10 @@ file(MAKE_DIRECTORY ${ENV_PATH})
 
 # Default packages.
 set (pip_packages
-    PyQt5
-    PyQtChart
-    PyQtWebEngine
+    PySide6
+    #PyQt5
+    #PyQtChart
+    #PyQtWebEngine
     cython
     numpy
     scipy

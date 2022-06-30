@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QDialog, QFileDialog
-from PyQt5.QtCore import pyqtSlot
+from PySide6.QtWidgets import QDialog, QFileDialog
+from PySide6.QtCore import Slot
 from resources.ui.python.ExportCSV_ui import Ui_ExportCSV
 from libopenimu.db.DBManager import DBManager
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog, WorkerTask
@@ -18,7 +18,7 @@ class ExportWindow(QDialog):
 
         self.dbMan = dataManager
 
-    @pyqtSlot()
+    @Slot()
     def directory_selection_clicked(self):
         print('file selection')
         directory = QFileDialog().getExistingDirectory(caption="Sélectionnez le répertoire pour exporter")
@@ -28,14 +28,14 @@ class ExportWindow(QDialog):
         if directory:
             self.UI.lineDir.setText(directory)
 
-    @pyqtSlot()
+    @Slot()
     def directory_changed(self):
         if self.UI.lineDir.text() != "":
             self.UI.btnOK.setEnabled(True)
         else:
             self.UI.btnOK.setEnabled(False)
 
-    @pyqtSlot()
+    @Slot()
     def export(self):
         directory = self.UI.lineDir.text()
         file_format = self.UI.comboFormat.currentText()

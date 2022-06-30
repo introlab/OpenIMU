@@ -1,6 +1,7 @@
 import sys
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
-from PyQt5.QtCore import QUrl, pyqtSlot, pyqtSignal, QPointF
+from PySide6.QtWebEngineWidgets import QWebEngineView
+from PySide6.QtWebEngineCore import QWebEngineSettings
+from PySide6.QtCore import QUrl, Slot, Signal, QPointF
 
 from libopenimu.qt.BaseGraph import BaseGraph
 
@@ -11,11 +12,12 @@ import collections
 
 class GPSView(QWebEngineView, BaseGraph):
 
-    # aboutToClose = pyqtSignal(QObject)
-    cursorMoved = pyqtSignal(float)
+    # aboutToClose = Signal(QObject)
+    cursorMoved = Signal(float)
 
     def __init__(self, parent):
-        super().__init__(parent=parent)
+        BaseGraph.__init__(self, parent=parent)
+        QWebEngineView.__init__(self, parent=parent)
         self.path = []
         self.marker_position = []
         self.positions = collections.OrderedDict()
@@ -98,6 +100,8 @@ class GPSView(QWebEngineView, BaseGraph):
 
     def setSelectionAreaFromTime(self, start_time, end_time, emit_signal=False):
         self.clearSelectionArea()
+        if not start_time:
+            return
         try:
             start_pos = self.positions[start_time]  # Right on the value!
         except KeyError:
@@ -136,7 +140,7 @@ class GPSView(QWebEngineView, BaseGraph):
     def is_zoomed(self):
         return True
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def pageLoaded(self, state):
         print('page loaded:', state)
 
@@ -151,8 +155,8 @@ class GPSView(QWebEngineView, BaseGraph):
 # Testing app
 if __name__ == '__main__':
 
-    from PyQt5.QtWidgets import QApplication
-    from PyQt5.QtWidgets import QMainWindow
+    from PySide6.QtWidgets import QApplication
+    from PySide6.QtWidgets import QMainWindow
 
     app = QApplication(sys.argv)
 

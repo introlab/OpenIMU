@@ -1,11 +1,11 @@
-from PyQt5.QtWidgets import QGraphicsView, QRubberBand
-from PyQt5.QtCore import pyqtSignal, QPoint, QRect
+from PySide6.QtWidgets import QGraphicsView, QRubberBand
+from PySide6.QtCore import Signal, QPoint, QRect
 
 
 class TimeView(QGraphicsView):
 
-    time_clicked = pyqtSignal(float)
-    time_selected = pyqtSignal(float, float)
+    time_clicked = Signal(float)
+    time_selected = Signal(float, float)
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)

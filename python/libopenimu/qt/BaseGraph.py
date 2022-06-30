@@ -1,4 +1,4 @@
-from PyQt5.QtCore import pyqtSignal
+from PySide6.QtCore import Signal
 
 
 class GraphInteractionMode:
@@ -7,11 +7,12 @@ class GraphInteractionMode:
 
 
 class BaseGraph:
-    cursorMoved = pyqtSignal(float)                 # Cursor position (timestamp value)
-    selectedAreaChanged = pyqtSignal(float, float)  # Start-timestamp, end-timestamp
-    clearedSelectionArea = pyqtSignal()
+    cursorMoved = Signal(float)                 # Cursor position (timestamp value)
+    selectedAreaChanged = Signal(float, float)  # Start-timestamp, end-timestamp
+    clearedSelectionArea = Signal()
 
     def __init__(self, parent=None):
+        super().__init__()
         self.selection_rec = None
         self.interaction_mode = GraphInteractionMode.SELECT
         self.total_samples = 0

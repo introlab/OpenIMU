@@ -1,5 +1,5 @@
-from PyQt5.QtCore import pyqtSlot, Qt, pyqtSignal
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem
+from PySide6.QtCore import Slot, Qt, Signal
+from PySide6.QtWidgets import QDialog, QTableWidgetItem
 
 from resources.ui.python.ImportBrowser_ui import Ui_ImportBrowser
 from libopenimu.qt.ImportManager import ImportManager
@@ -19,8 +19,8 @@ from libopenimu.tools.timing import timing
 
 class ImportBrowser(QDialog):
     dbMan = None
-    log_request = pyqtSignal('QString', int)
-    participant_added = pyqtSignal()
+    log_request = Signal('QString', int)
+    participant_added = Signal()
 
     def __init__(self, data_manager, parent=None):
         super().__init__(parent=parent)
@@ -34,7 +34,7 @@ class ImportBrowser(QDialog):
         self.UI.btnAddDir.clicked.connect(self.add_dir_clicked)
         self.dbMan = data_manager
 
-    @pyqtSlot()
+    @Slot()
     def ok_clicked(self):
         # Do the importation
         table = self.UI.tableFiles
@@ -210,16 +210,16 @@ class ImportBrowser(QDialog):
 
         table.resizeColumnsToContents()
 
-    @pyqtSlot()
+    @Slot()
     def cancel_clicked(self):
         self.reject()
 
     @classmethod
-    @pyqtSlot()
+    @Slot()
     def thread_finished(self):
         print('Thread Finished')
 
-    @pyqtSlot()
+    @Slot()
     def add_clicked(self):
         importman = ImportManager(dbmanager=self.dbMan, dirs=False, parent=self)
         importman.participant_added.connect(self.participant_added)
@@ -237,7 +237,7 @@ class ImportBrowser(QDialog):
             for file in files:
                 self.add_file_to_list(file, importman.filetype, importman.filetype_id, importman.participant)
 
-    @pyqtSlot()
+    @Slot()
     def add_dir_clicked(self):
         importman = ImportManager(dbmanager=self.dbMan, dirs=True, parent=self)
         importman.participant_added.connect(self.participant_added)
@@ -256,7 +256,7 @@ class ImportBrowser(QDialog):
 
         # self.showNormal()
 
-    @pyqtSlot()
+    @Slot()
     def del_clicked(self):
         if self.UI.tableFiles.selectedItems():
             # print(self.UI.tableFiles.selectedItems()[0].row())

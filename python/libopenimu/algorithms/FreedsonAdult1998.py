@@ -3,9 +3,9 @@ from .BaseAlgorithm import BaseAlgorithm
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.db.DBManager import DBManager
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QGridLayout, QSpinBox, QComboBox, QFrame, QSizePolicy, \
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QGridLayout, QSpinBox, QComboBox, QFrame, QSizePolicy, \
     QLabel
-from PyQt5.QtCore import Qt
+from PySide6.QtCore import Qt
 
 from libopenimu.qt.Charts import OpenIMUBarGraphView
 

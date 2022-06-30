@@ -14,7 +14,7 @@ class ProcessedData(Base):
     processed_time = Column(TIMESTAMP, nullable=False)
 
     # Relationships
-    processed_data_ref = relationship("ProcessedDataRef", cascade="all,delete")
+    processed_data_ref = relationship("ProcessedDataRef", cascade="all,delete", back_populates="processed_data")
 
     # Database rep (optional)
     def __repr__(self):

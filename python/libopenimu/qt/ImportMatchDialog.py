@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QComboBox, QHBoxLayout
-from PyQt5.QtCore import pyqtSlot
+from PySide6.QtWidgets import QDialog, QTableWidgetItem, QComboBox, QHBoxLayout
+from PySide6.QtCore import Slot
 
 from resources.ui.python.ImportMatchDialog_ui import Ui_ImportMatchDialog
 from libopenimu.qt.ParticipantWindow import ParticipantWindow
@@ -66,7 +66,7 @@ class ImportMatchDialog(QDialog):
         for participant in self.participants:
             combobox.addItem(participant.name, userData=participant)
 
-    @pyqtSlot()
+    @Slot()
     def ok_clicked(self):
         # Validate items
         if self.validate():
@@ -77,11 +77,11 @@ class ImportMatchDialog(QDialog):
                 self.data_match[item_value] = part
             self.accept()
 
-    @pyqtSlot()
+    @Slot()
     def cancel_clicked(self):
         self.reject()
 
-    @pyqtSlot()
+    @Slot()
     def new_participant_requested(self):
         layout = QHBoxLayout(self.part_diag)
         self.part_diag.setMinimumWidth(600)
@@ -97,11 +97,11 @@ class ImportMatchDialog(QDialog):
 
         self.part_diag.exec()
 
-    @pyqtSlot()
+    @Slot()
     def participant_cancelled(self):
         self.part_diag.reject()
 
-    @pyqtSlot()
+    @Slot()
     def participant_saved(self):
         self.part_diag.accept()
         self.participants = self.dbMan.get_all_participants()

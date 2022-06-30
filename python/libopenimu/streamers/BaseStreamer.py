@@ -1,14 +1,14 @@
-from PyQt5.QtCore import QThread, pyqtSignal
+from PySide6.QtCore import QThread, Signal
 
 
 class BaseStreamer(QThread):
-    add_log = pyqtSignal('QString', int)  # Msg, Logtype
-    update_progress = pyqtSignal('QString', 'QString', int, int)  # File, Progress string, value, max_value
-    file_error_occured = pyqtSignal('QString', 'QString', 'QString')  # Device, File, Error string
+    add_log = Signal('QString', int)  # Msg, Logtype
+    update_progress = Signal('QString', 'QString', int, int)  # File, Progress string, value, max_value
+    file_error_occured = Signal('QString', 'QString', 'QString')  # Device, File, Error string
 
-    device_connected = pyqtSignal('QString', bool)  # Device, Connected?
-    transfer_completed = pyqtSignal('QString', 'QString', int)  # Device, Filename, file size
-    transfer_started = pyqtSignal('QString', 'QString', int)  # Device, Filename, file size
+    device_connected = Signal('QString', bool)  # Device, Connected?
+    transfer_completed = Signal('QString', 'QString', int)  # Device, Filename, file size
+    transfer_started = Signal('QString', 'QString', int)  # Device, Filename, file size
 
     server_save_path = './Files'
     server = None

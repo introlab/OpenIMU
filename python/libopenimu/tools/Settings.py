@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QSettings
+from PySide6.QtCore import QSettings
 
 
 class OpenIMUSettings:

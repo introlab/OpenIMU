@@ -411,7 +411,7 @@ def gt3x_battery_extractor(timestamp, data, samplerate):
     # print('Battery Extractor')
     battery = 0.0
 
-    if len(data) is 2:
+    if len(data) == 2:
         [battery] = struct.unpack_from('<H', data)
         # Convert to volts
         battery *= 0.001
@@ -442,7 +442,7 @@ def gt3x_lux_extractor(timestamp, data, samplerate):
     # print('Lux Extractor')
     lux = 0
 
-    if len(data) is 2:
+    if len(data) == 2:
         lux = struct.unpack_from('<H', data)
 
     return [timestamp, np.int16(lux)]
@@ -456,7 +456,7 @@ def gt3x_capsense_extractor(timestamp, data, samplerate):
     :param samplerate:
     :return:
     """
-    if len(data) is 6:
+    if len(data) == 6:
         [signal, reference, state, bursts] = struct.unpack_from('<HHBB', data)
         return [timestamp, np.uint16(signal), np.uint16(reference), np.uint8(state), np.uint8(bursts)]
     else:
@@ -650,7 +650,7 @@ def gt3x_importer(filename):
             for line in lines:
                 items = line.decode('UTF-8').rstrip('\r\n').split(': ')
                 # We must have the list with 2 items, key and value
-                if len(items) is 2:
+                if len(items) == 2:
                     info[items[0]] = items[1]
 
         sample_rate = float(info['Sample Rate'])
@@ -671,7 +671,7 @@ def gt3x_importer(filename):
                 # print('data_offset:', data_offset)
                 # < Little Endian, byte, byte, uint32, uint16
                 [separator, record_type, timestamp, record_size] = struct.unpack_from('<BBIH', filedata, offset=data_offset)
-                if separator is not 0x1e:
+                if separator != 0x1e:
                     print('Separator Error!!!')
 
                 # print('Extracting record: ', hex(separator), hex(record_type), hex(timestamp), hex(record_size))

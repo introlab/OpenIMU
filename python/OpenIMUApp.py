@@ -1,8 +1,8 @@
 import sys
 
-from PyQt5.QtWidgets import QApplication, QTreeWidget, QTreeWidgetItem, QStyleFactory
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QIcon, QFont
+from PySide6.QtWidgets import QApplication, QTreeWidget, QTreeWidgetItem, QStyleFactory
+from PySide6.QtCore import Qt, Slot, Signal
+from PySide6.QtGui import QIcon, QFont
 # Models
 from libopenimu.models.Participant import Participant
 from libopenimu.models.Base import Base
@@ -24,7 +24,7 @@ class Treedatawidget(QTreeWidget):
     items_results = {}
     items_dates = {}
 
-    participantDragged = pyqtSignal(Participant)
+    participantDragged = Signal(Participant)
 
     owner = None
 
@@ -299,7 +299,7 @@ class Treedatawidget(QTreeWidget):
         else:
             return ""
 
-    @pyqtSlot(str, int)
+    @Slot(str, int)
     def select_item(self, item_type, item_id):
         # print ("Selecting " + item_type + ", ID " + str(item_id))
         item = None
@@ -322,7 +322,7 @@ class Treedatawidget(QTreeWidget):
             self.setCurrentItem(item)
             self.owner.tree_item_clicked(item, 0)
 
-    @pyqtSlot(str, Base)
+    @Slot(str, Base)
     def update_item(self, item_type, data):
         # print ("Selecting " + item_type + ", ID " + str(item_id))
         # item = None
@@ -405,18 +405,19 @@ def except_hook(cls, exception, traceback):
 
 # Main
 if __name__ == '__main__':
-    from PyQt5.QtCore import QDir
+    from PySide6.QtCore import QDir
     from libopenimu.qt.MainWindow import MainWindow
 
     # Set Style
-    QApplication.setStyle(QStyleFactory.create("Windows"))
-
+    style = QStyleFactory.create('Windows')
+    QApplication.setStyle(style)
+    
     # Must be done before starting the app
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
 
     app = QApplication(sys.argv)
 
-    sys.excepthook = except_hook
+    # sys.excepthook = except_hook
     # qInstallMessageHandler(qt_message_handler)
 
     # Set current directory to home path
@@ -439,5 +440,5 @@ if __name__ == '__main__':
     window = MainWindow()
 
     # Exec application
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 

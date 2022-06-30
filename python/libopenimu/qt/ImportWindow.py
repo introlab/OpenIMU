@@ -1,7 +1,7 @@
 from resources.ui.python.ImportDialog_ui import Ui_ImportDialog
 
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox
+from PySide6.QtCore import Slot
+from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox
 
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.DataSet import DataSet
@@ -85,7 +85,7 @@ class ImportWindow(QDialog):
             self.UI.txtAuthor.setText(os.getlogin())
         self.UI.txtFileName.setText(self.fileName)
 
-    @pyqtSlot()
+    @Slot()
     def browse_clicked(self):
         file_diag = QFileDialog.getSaveFileName(caption="Nom du fichier à enregistrer", filter="*.oi")
 
@@ -95,7 +95,7 @@ class ImportWindow(QDialog):
             if file_diag[0][-len(ext):] != ext:
                 self.UI.txtFileName.setText(self.UI.txtFileName.text() + ext)
 
-    @pyqtSlot()
+    @Slot()
     def ok_clicked(self):
         # Only create file if validate
         if self.validate():
@@ -129,6 +129,6 @@ class ImportWindow(QDialog):
                 box.setText('Erreur de création de DB, s.v.p. choisir une répertoire valide')
                 box.exec()
 
-    @pyqtSlot()
+    @Slot()
     def cancel_clicked(self):
         self.reject()

@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QDialog, QListWidgetItem, QVBoxLayout, QWidget
-from PyQt5.QtCore import pyqtSlot
+from PySide6.QtWidgets import QDialog, QListWidgetItem, QVBoxLayout, QWidget
+from PySide6.QtCore import Slot
 from resources.ui.python.ProcessSelectDialog_ui import Ui_dlgProcessSelect
 from libopenimu.db.DBManager import DBManager
 from libopenimu.algorithms.BaseAlgorithm import BaseAlgorithmFactory
@@ -40,7 +40,7 @@ class ProcessSelectWindow(QDialog):
             self.UI.listWidget.setCurrentRow(0)
             self.on_list_widget_item_clicked(item=self.UI.listWidget.currentItem())
 
-    @pyqtSlot(QListWidgetItem)
+    @Slot(QListWidgetItem)
     def on_list_widget_item_clicked(self, item: QListWidgetItem):
         # print('onListWidgetItemClicked')
         # Fill info
@@ -76,7 +76,7 @@ class ProcessSelectWindow(QDialog):
         self.UI.btnProcess.setEnabled(True)
         self.UI.tabAlgo.setCurrentIndex(0)
 
-    @pyqtSlot()
+    @Slot()
     def on_process_button_clicked(self):
         if self.factory is not None:
 

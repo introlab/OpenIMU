@@ -1,4 +1,4 @@
-from PyQt5.QtCore import pyqtSlot
+from PySide6.QtCore import Slot
 
 from resources.ui.python.GroupWidget_ui import Ui_frmGroup
 
@@ -60,7 +60,7 @@ class GroupWindow(DataEditor):
                             (self.group is None and self.UI.txtDesc.toPlainText() != "")
                             )
 
-    @pyqtSlot()
+    @Slot()
     def save_clicked(self):
         if self.validate():
             if self.group is None:
@@ -72,17 +72,17 @@ class GroupWindow(DataEditor):
             self.dataSaved.emit()
 
 
-    @pyqtSlot()
+    @Slot()
     def cancel_clicked(self):
         self.update_data()
         self.dataCancelled.emit()
 
 
-    @pyqtSlot(str)
+    @Slot(str)
     def name_edited(self, new_value):
         self.update_modified_status()
 
-    @pyqtSlot()
+    @Slot()
     def desc_edited(self):
         self.update_modified_status()
 
