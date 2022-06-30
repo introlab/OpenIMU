@@ -21,10 +21,10 @@ class OpenIMUSettings:
             # No - append file
             files.insert(0, file_path)
 
-        self.settings.setValue("recent_files", files)
+        self.settings.setValue('recent_files', files)
 
     def get_recent_files(self) -> list:
-        files = self.settings.value("recent_files", defaultValue=[], type=list)
+        files = self.settings.value('recent_files')
         return files
 
     @property
