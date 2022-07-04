@@ -45,10 +45,16 @@
      <item alignment="Qt::AlignRight">
       <widget class="QComboBox" name="cmbLanguage">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
        </property>
        <property name="cursor">
         <cursorShape>ArrowCursor</cursorShape>
@@ -138,12 +144,12 @@
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
-         <normaloff>:/OpenIMU/icons/newdataset.png</normaloff>:/OpenIMU/icons/newdataset.png</iconset>
+         <normaloff>:/OpenIMU/icons/database_new.png</normaloff>:/OpenIMU/icons/database_new.png</iconset>
        </property>
        <property name="iconSize">
         <size>
-         <width>64</width>
-         <height>64</height>
+         <width>48</width>
+         <height>48</height>
         </size>
        </property>
        <property name="autoDefault">
@@ -184,8 +190,8 @@ in dataset</string>
        </property>
        <property name="iconSize">
         <size>
-         <width>64</width>
-         <height>64</height>
+         <width>40</width>
+         <height>40</height>
         </size>
        </property>
        <property name="autoDefault">
@@ -221,12 +227,12 @@ in dataset</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
-         <normaloff>:/OpenIMU/icons/open.png</normaloff>:/OpenIMU/icons/open.png</iconset>
+         <normaloff>:/OpenIMU/icons/compact.png</normaloff>:/OpenIMU/icons/compact.png</iconset>
        </property>
        <property name="iconSize">
         <size>
-         <width>64</width>
-         <height>64</height>
+         <width>48</width>
+         <height>48</height>
         </size>
        </property>
        <property name="autoDefault">

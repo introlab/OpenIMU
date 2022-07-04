@@ -31,7 +31,7 @@
     <message>
         <location filename="../ui/CrashDialog.ui" line="174"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">OK</translation>
     </message>
 </context>
 <context>
@@ -115,7 +115,7 @@
     <message>
         <location filename="../ui/DataInfosWidget.ui" line="325"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">OK</translation>
     </message>
 </context>
 <context>
@@ -163,7 +163,7 @@
     <message>
         <location filename="../ui/ExportCSV.ui" line="342"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">OK</translation>
     </message>
     <message>
         <location filename="../ui/ExportCSV.ui" line="361"/>
@@ -191,7 +191,7 @@
     <message>
         <location filename="../ui/ImportBrowser.ui" line="166"/>
         <source>Participant</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Participant</translation>
     </message>
     <message>
         <location filename="../ui/ImportBrowser.ui" line="171"/>
@@ -233,74 +233,68 @@
     <name>ImportDialog</name>
     <message>
         <location filename="../ui/ImportDialog.ui" line="14"/>
-        <source>Informations sur la base de données</source>
-        <translation type="unfinished"></translation>
+        <source>Dataset informations</source>
+        <translation>Informations sur l&apos;ensemble de données</translation>
     </message>
     <message>
-        <location filename="../ui/ImportDialog.ui" line="38"/>
-        <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Titre des données:</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ImportDialog.ui" line="37"/>
+        <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Dataset title:</source>
+        <translation>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Titre des données:</translation>
     </message>
     <message>
-        <location filename="../ui/ImportDialog.ui" line="54"/>
-        <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Auteur des données:</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ImportDialog.ui" line="52"/>
+        <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Dataset author:</source>
+        <translation>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Auteur(s):</translation>
     </message>
     <message>
-        <location filename="../ui/ImportDialog.ui" line="75"/>
-        <source>Fichier .oi qui contiendra les données</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ImportDialog.ui" line="73"/>
+        <source>.oi file that will store the data</source>
+        <translation>Fichier .oi contenant l&apos;ensemble des données</translation>
     </message>
     <message>
-        <location filename="../ui/ImportDialog.ui" line="91"/>
-        <source>Parcourir...</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ImportDialog.ui" line="89"/>
+        <source>Browse...</source>
+        <translation>Parcourir...</translation>
     </message>
     <message>
-        <location filename="../ui/ImportDialog.ui" line="115"/>
-        <source>Auteur, source, équipe de recherche, projet, ...</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ImportDialog.ui" line="123"/>
+        <source>Author, data source, research team name, ...</source>
+        <translation>Auteur, source(s) des données, équipe de recherche, ...</translation>
     </message>
     <message>
-        <location filename="../ui/ImportDialog.ui" line="128"/>
-        <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Fichier de données:</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ImportDialog.ui" line="135"/>
+        <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Dataset filename:</source>
+        <translation>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Fichier de base de données:</translation>
     </message>
     <message>
-        <location filename="../ui/ImportDialog.ui" line="150"/>
-        <source>Nom des données</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ImportDialog.ui" line="157"/>
+        <source>Dataset name</source>
+        <translation>Nom de l&apos;ensemble de données</translation>
     </message>
     <message>
-        <location filename="../ui/ImportDialog.ui" line="163"/>
-        <source>Description / Contexte
-de collecte:</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ImportDialog.ui" line="169"/>
+        <source>Description / context:</source>
+        <translation>Description / contexte:</translation>
     </message>
     <message>
-        <location filename="../ui/ImportDialog.ui" line="186"/>
-        <source>Description ou contexte de la collecte de données.</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ImportDialog.ui" line="191"/>
+        <source>Dataset description or data collection context</source>
+        <translation>Description de la base de données ou contexte de la collecte de données</translation>
     </message>
     <message>
-        <location filename="../ui/ImportDialog.ui" line="199"/>
-        <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Date de la collecte:</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ImportDialog.ui" line="203"/>
+        <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Dataset collection date:</source>
+        <translation>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Date de la collecte:</translation>
     </message>
     <message>
-        <location filename="../ui/ImportDialog.ui" line="228"/>
-        <source>dd/MM/yyyy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ImportDialog.ui" line="267"/>
+        <location filename="../ui/ImportDialog.ui" line="271"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
-        <location filename="../ui/ImportDialog.ui" line="286"/>
-        <source>Annuler</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ImportDialog.ui" line="300"/>
+        <source>Cancel</source>
+        <translation>Annuler</translation>
     </message>
 </context>
 <context>
@@ -381,7 +375,7 @@ de collecte:</source>
     <message>
         <location filename="../ui/ImportMatchDialog.ui" line="58"/>
         <source>Participant</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Participant</translation>
     </message>
     <message>
         <location filename="../ui/ImportMatchDialog.ui" line="90"/>
@@ -391,7 +385,7 @@ de collecte:</source>
     <message>
         <location filename="../ui/ImportMatchDialog.ui" line="133"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">OK</translation>
     </message>
     <message>
         <location filename="../ui/ImportMatchDialog.ui" line="159"/>
@@ -400,103 +394,230 @@ de collecte:</source>
     </message>
 </context>
 <context>
-    <name>MainWindow</name>
+    <name>ImportWindow</name>
     <message>
-        <location filename="../ui/MainWindow.ui" line="23"/>
-        <source>OpenIMU</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../libopenimu/qt/ImportWindow.py" line="50"/>
+        <source>Next</source>
+        <translation>Suivant</translation>
     </message>
+    <message>
+        <location filename="../../libopenimu/qt/ImportWindow.py" line="97"/>
+        <source>Dataset filename</source>
+        <translation>Nom du fichier de base de données</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ImportWindow.py" line="135"/>
+        <source>Dataset file creation error - please choose a valid file and directory</source>
+        <translation>Erreur lors de la création du fichier de base de données - veuillez choisir un fichier et un répertoire valide</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindow</name>
     <message>
         <location filename="../ui/MainWindow.ui" line="92"/>
         <location filename="../ui/MainWindow.ui" line="440"/>
-        <source>Structure des données</source>
-        <translation type="unfinished"></translation>
+        <source>Data structure</source>
+        <translation>Structure des données</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="198"/>
-        <source>Nouveau Groupe</source>
-        <translation type="unfinished"></translation>
+        <source>New group</source>
+        <translation>Nouveau groupe</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="239"/>
-        <source>Nouveau Participant</source>
-        <translation type="unfinished"></translation>
+        <source>New participant</source>
+        <translation>Nouveau participant</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="290"/>
-        <source>Supprimer</source>
-        <translation type="unfinished"></translation>
+        <source>Delete</source>
+        <translation>Supprimer</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="327"/>
         <location filename="../ui/MainWindow.ui" line="496"/>
-        <source>Journal</source>
-        <translation type="unfinished"></translation>
+        <source>Logs</source>
+        <translation>Journaux</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="546"/>
-        <source>Importe de nouvelles données à partir des fichiers bruts</source>
-        <translation type="unfinished"></translation>
+        <source>Import new data into this database</source>
+        <translation>Importer de nouvelles données dans cette base de données</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="549"/>
-        <source>Importer</source>
-        <translation type="unfinished"></translation>
+        <source>Import</source>
+        <translation>Importer</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="586"/>
-        <source>Transfère et importe les données directement à partir d&apos;un appareil</source>
-        <translation type="unfinished"></translation>
+        <source>Stream and import data from a device</source>
+        <translation>Transférer et importer des données à partir d&apos;un appareil</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="589"/>
-        <source>Transférer</source>
-        <translation type="unfinished"></translation>
+        <source>Stream &amp;&amp; Import</source>
+        <translation>Transférer</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="639"/>
-        <source>Traite les données avec différents algorithmes</source>
-        <translation type="unfinished"></translation>
+        <source>Process data with available algorithms</source>
+        <translation>Traiter les données avec un des algorithmes disponible</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="642"/>
-        <source>Analyser</source>
-        <translation type="unfinished"></translation>
+        <source>Process</source>
+        <translation>Analyser</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="682"/>
-        <source>Exporte les données en format CSV</source>
-        <translation type="unfinished"></translation>
+        <source>Export data to external formats</source>
+        <translation>Exporter les données vers des fichiers externes</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="685"/>
-        <source>Exporter</source>
-        <translation type="unfinished"></translation>
+        <source>Export</source>
+        <translation>Exporter</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="732"/>
-        <source>Compacter</source>
-        <translation type="unfinished"></translation>
+        <source>Compact and optimize database structure</source>
+        <translation>Compacter et optimiser la structure de la base de données</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="767"/>
-        <source>Informations sur les données</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/MainWindow.ui" line="735"/>
+        <source>Compact</source>
+        <translation>Compacter</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="770"/>
+        <source>Database information</source>
+        <translation>Informations sur la base de données</translation>
+    </message>
+    <message>
+        <location filename="../ui/MainWindow.ui" line="773"/>
         <source>Informations</source>
-        <translation type="unfinished"></translation>
+        <translation>Informations</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="826"/>
-        <source>Fermer</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/MainWindow.ui" line="829"/>
+        <source>Close the current dataset</source>
+        <translation>Fermer la base de données</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="848"/>
+        <location filename="../ui/MainWindow.ui" line="832"/>
+        <source>Close</source>
+        <translation>Fermer</translation>
+    </message>
+    <message>
+        <location filename="../ui/MainWindow.ui" line="854"/>
         <source>Quit</source>
-        <translation type="unfinished">Quitter</translation>
+        <translation>Quitter</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="61"/>
+        <source>OpenIMU - Ready.</source>
+        <translation>OpenIMU - Prêt.</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="71"/>
+        <source>Loading data...</source>
+        <translation>Chargement des données...</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="78"/>
+        <source>Data loaded!</source>
+        <translation>Données chargées!</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="289"/>
+        <source>This dataset will be closed. Do you want to continue?</source>
+        <translation>Cette base de données sera fermée. Voulez-vous continuer?</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="290"/>
+        <source>Close?</source>
+        <translation>Fermer?</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="296"/>
+        <source>File</source>
+        <translation>Fichier</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="296"/>
+        <source>was closed.</source>
+        <translation>a été fermé.</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="309"/>
+        <source>Database file will be cleaned up and optimized. This can take some time.</source>
+        <translation>Le fichier de base de données sera nettoyé et optimisé. Ceci prendra du temps.</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="310"/>
+        <source>Do you want to continue?</source>
+        <translation>Voulez-vous continuer?</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="311"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="316"/>
+        <source>Database cleanup</source>
+        <translation>Nettoyage de base de données</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="318"/>
+        <source>Cleanup</source>
+        <translation>Nettoyage</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="398"/>
+        <source>Group</source>
+        <translation>Groupe</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="398"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="403"/>
+        <source>updated.</source>
+        <translation>mis à jour.</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="403"/>
+        <source>Participant</source>
+        <translation>Participant</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="429"/>
+        <source>Are you sure you want to delete</source>
+        <translation>Êtes-vous sûrs de vouloir supprimer</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="430"/>
+        <source>and all associated elements?</source>
+        <translation>et tous les éléments associés?</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="431"/>
+        <source>Confirm deletion</source>
+        <translation>Confirmation de suppression</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="442"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="448"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="458"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="465"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="473"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="489"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="501"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="515"/>
+        <source>Deleting</source>
+        <translation>Suppression</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="521"/>
+        <source>was deleted.</source>
+        <translation>a été supprimé.</translation>
     </message>
 </context>
 <context>
@@ -545,36 +666,36 @@ de collecte:</source>
 <context>
     <name>StartDialog</name>
     <message>
-        <location filename="../ui/StartDialog.ui" line="137"/>
+        <location filename="../ui/StartDialog.ui" line="143"/>
         <source>Create new dataset</source>
-        <translation>Nouvel ensemble de
+        <translation>Nouvelle base de
 données</translation>
     </message>
     <message>
-        <location filename="../ui/StartDialog.ui" line="178"/>
+        <location filename="../ui/StartDialog.ui" line="184"/>
         <source>Import sensor data
 in dataset</source>
         <translation>Importer données
 de capteurs</translation>
     </message>
     <message>
-        <location filename="../ui/StartDialog.ui" line="220"/>
+        <location filename="../ui/StartDialog.ui" line="226"/>
         <source>Open existing dataset</source>
-        <translation>Ouvrir ensemble de
+        <translation>Ouvrir base de
 données</translation>
     </message>
     <message>
-        <location filename="../ui/StartDialog.ui" line="266"/>
+        <location filename="../ui/StartDialog.ui" line="272"/>
         <source>Open recent file:</source>
         <translation>Ouvrir fichier récent:</translation>
     </message>
     <message>
-        <location filename="../ui/StartDialog.ui" line="317"/>
+        <location filename="../ui/StartDialog.ui" line="323"/>
         <source>Quit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../ui/StartDialog.ui" line="356"/>
+        <location filename="../ui/StartDialog.ui" line="362"/>
         <source>Version</source>
         <translation>Version</translation>
     </message>
@@ -582,7 +703,7 @@ données</translation>
 <context>
     <name>StartWindow</name>
     <message>
-        <location filename="../../libopenimu/qt/StartWindow.py" line="53"/>
+        <location filename="../../libopenimu/qt/StartWindow.py" line="60"/>
         <source>Filename to open</source>
         <translation>Fichier à ouvrir</translation>
     </message>
@@ -719,6 +840,39 @@ données</translation>
     </message>
 </context>
 <context>
+    <name>dlgImportWizard</name>
+    <message>
+        <location filename="../ui/ImportDialogWizard.ui" line="14"/>
+        <source>Data import wizard</source>
+        <translation>Assistant d&apos;importation de données</translation>
+    </message>
+    <message>
+        <location filename="../ui/ImportDialogWizard.ui" line="20"/>
+        <source>Create a new dataset</source>
+        <translation>Créer une nouvelle base de données</translation>
+    </message>
+    <message>
+        <location filename="../ui/ImportDialogWizard.ui" line="37"/>
+        <source>Use an existing dataset</source>
+        <translation>Utiliser une base de données existente</translation>
+    </message>
+    <message>
+        <location filename="../ui/ImportDialogWizard.ui" line="80"/>
+        <source>Browse...</source>
+        <translation>Parcourir...</translation>
+    </message>
+    <message>
+        <location filename="../ui/ImportDialogWizard.ui" line="126"/>
+        <source>Next</source>
+        <translation>Suivant</translation>
+    </message>
+    <message>
+        <location filename="../ui/ImportDialogWizard.ui" line="152"/>
+        <source>Cancel</source>
+        <translation>Annuler</translation>
+    </message>
+</context>
+<context>
     <name>dlgProcessSelect</name>
     <message>
         <location filename="../ui/ProcessSelectDialog.ui" line="14"/>
@@ -733,7 +887,7 @@ données</translation>
     <message>
         <location filename="../ui/ProcessSelectDialog.ui" line="85"/>
         <source>Informations</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Informations</translation>
     </message>
     <message>
         <location filename="../ui/ProcessSelectDialog.ui" line="97"/>
@@ -894,7 +1048,7 @@ données</translation>
     <message>
         <location filename="../ui/ParticipantWidget.ui" line="26"/>
         <source>Participant</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Participant</translation>
     </message>
     <message>
         <location filename="../ui/ParticipantWidget.ui" line="62"/>

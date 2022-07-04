@@ -52,6 +52,7 @@ SET(uis
     resources/ui/StreamWindow.ui
     resources/ui/ImportMatchDialog.ui
     resources/ui/CrashDialog.ui
+    resources/ui/ImportDialogWizard.ui
 )
 
 SET(qrcs

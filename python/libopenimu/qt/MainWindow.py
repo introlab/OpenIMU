@@ -58,7 +58,7 @@ class MainWindow(QMainWindow):
         self.UI.dockToolBar.setTitleBarWidget(QWidget())
         self.UI.dockLog.hide()
 
-        self.add_to_log(self.tr("OpenIMU - Prêt à travailler."), LogTypes.LOGTYPE_INFO)
+        self.add_to_log(self.tr("OpenIMU - Ready."), LogTypes.LOGTYPE_INFO)
 
         # Setup signals and slots
         self.setup_signals()
@@ -68,14 +68,14 @@ class MainWindow(QMainWindow):
         self.dbMan = DBManager(self.currentFileName)
 
         # Load data
-        self.add_to_log(self.tr('Chargement des données...'), LogTypes.LOGTYPE_INFO)
+        self.add_to_log(self.tr('Loading data...'), LogTypes.LOGTYPE_INFO)
         self.currentDataSet = self.dbMan.get_dataset()
         self.load_data_from_dataset()
         self.UI.treeDataSet.setCurrentItem(None)
         self.UI.treeDataSet.owner = self
 
         # self.loadDemoData()
-        self.add_to_log(self.tr("Données chargées!"), LogTypes.LOGTYPE_DONE)
+        self.add_to_log(self.tr("Data loaded!"), LogTypes.LOGTYPE_DONE)
 
         # If we need to import data, show the import dialog
         # if start_window.importing:
@@ -257,7 +257,7 @@ class MainWindow(QMainWindow):
         exporter = ExportWindow(self.dbMan, self)
         exporter.setStyleSheet(self.styleSheet())
         if exporter.exec() == QDialog.Accepted:
-            print("Accepted")
+            pass
 
     @Slot()
     def infos_requested(self):
@@ -286,14 +286,15 @@ class MainWindow(QMainWindow):
         msg.setIcon(QMessageBox.Question)
         msg.setStyleSheet("QPushButton{min-width: 100px; min-height: 40px;}")
 
-        msg.setText("Cet ensemble de données sera fermé. Désirez-vous poursuivre?")
-        msg.setWindowTitle("Fermeture?")
+        msg.setText(self.tr('This dataset will be closed. Do you want to continue?'))
+        msg.setWindowTitle(self.tr('Close?'))
         msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
 
         rval = msg.exec()
         if rval == QMessageBox.Yes:
             self.dbMan.close()
-            self.add_to_log("Fichier " + self.currentFileName + " fermé.", LogTypes.LOGTYPE_INFO)
+            self.add_to_log(self.tr('File') + ' ' + self.currentFileName + ' ' + self.tr('was closed.'),
+                            LogTypes.LOGTYPE_INFO)
             # self.hide()
 
             # self.show_start_window()
@@ -305,16 +306,16 @@ class MainWindow(QMainWindow):
         msg.setIcon(QMessageBox.Question)
         msg.setStyleSheet("QPushButton{min-width: 100px; min-height: 40px;}")
 
-        msg.setText("Le fichier de données sera nettoyé. Ceci peut prendre un certain temps. \n"
-                    "Désirez-vous poursuivre?")
-        msg.setWindowTitle("Compactage des données")
+        msg.setText(self.tr('Database file will be cleaned up and optimized. This can take some time.') + '\n\r' +
+                    self.tr('Do you want to continue?'))
+        msg.setWindowTitle(self.tr('Database cleanup'))
         msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
 
         rval = msg.exec()
         if rval == QMessageBox.Yes:
-            task = SimpleTask("Compactage des données", self.dbMan.compact)
+            task = SimpleTask(self.tr('Database cleanup'), self.dbMan.compact)
             process = BackgroundProcess([task])
-            dialog = ProgressDialog(process, 'Nettoyage', self)
+            dialog = ProgressDialog(process, self.tr('Cleanup'), self)
             process.start()
             dialog.exec()
 
@@ -394,12 +395,12 @@ class MainWindow(QMainWindow):
         if item_type == "group":
             group = self.UI.frmMain.layout().itemAt(0).widget().group
             self.update_group(group)
-            self.add_to_log("Groupe " + group.name + " mis à jour.", LogTypes.LOGTYPE_DONE)
+            self.add_to_log(self.tr('Group') + ' ' + group.name + ' ' + self.tr('updated.'), LogTypes.LOGTYPE_DONE)
 
         if item_type == "participant":
             part = self.UI.frmMain.layout().itemAt(0).widget().participant
             self.update_participant(part)
-            self.add_to_log("Participant " + part.name + " mis à jour.", LogTypes.LOGTYPE_DONE)
+            self.add_to_log(self.tr('Participant') + ' ' + part.name + ' ' + self.tr('updated.'), LogTypes.LOGTYPE_DONE)
 
     @Slot()
     def data_was_cancelled(self):
@@ -425,9 +426,9 @@ class MainWindow(QMainWindow):
         msg.setIcon(QMessageBox.Question)
         msg.setStyleSheet("QPushButton{min-width: 100px; min-height: 40px;}")
 
-        msg.setText("Désirez-vous vraiment supprimer \"" + self.UI.treeDataSet.currentItem().text(0) +
-                    "\" et tous les éléments associés?")
-        msg.setWindowTitle("Confirmation de suppression")
+        msg.setText(self.tr('Are you sure you want to delete') + '"' + self.UI.treeDataSet.currentItem().text(0) +
+                    '"' + self.tr('and all associated elements?'))
+        msg.setWindowTitle(self.tr('Confirm deletion'))
         msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
 
         rval = msg.exec()
@@ -438,13 +439,13 @@ class MainWindow(QMainWindow):
             if item_type == "group":
                 group = self.UI.treeDataSet.groups[item_id]
                 self.UI.treeDataSet.remove_group(group)
-                task = SimpleTask("Suppression de '" + group.name + "'", self.dbMan.delete_group, group)
+                task = SimpleTask(self.tr('Deleting') + '"' + group.name + '"', self.dbMan.delete_group, group)
                 tasks.append(task)
 
             if item_type == "participant":
                 part = self.UI.treeDataSet.participants[item_id]
                 self.UI.treeDataSet.remove_participant(part)
-                task = SimpleTask("Suppression de '" + part.name + "'", self.dbMan.delete_participant, part)
+                task = SimpleTask(self.tr('Deleting') + '"' + part.name + '"', self.dbMan.delete_participant, part)
                 tasks.append(task)
 
             if item_type == "recordset":
@@ -454,21 +455,23 @@ class MainWindow(QMainWindow):
                         for ref in result.processed_data_ref:
                             if ref.recordset.id_recordset == item_id:
                                 self.UI.treeDataSet.remove_result(result)
-                                task = SimpleTask("Suppression de '" + result.name + "'",
+                                task = SimpleTask(self.tr('Deleting') + '"' + result.name + '"',
                                                   self.dbMan.delete_processed_data, result)
                                 tasks.append(task)
                                 # self.dbMan.delete_processed_data(result)
                                 break
 
                 recordset = self.UI.treeDataSet.recordsets[item_id]
-                task = SimpleTask("Suppression de '" + recordset.name + "'", self.dbMan.delete_recordset, recordset)
+                task = SimpleTask(self.tr('Deleting') + '"' + recordset.name + '"', self.dbMan.delete_recordset,
+                                  recordset)
                 tasks.append(task)
                 # self.dbMan.delete_recordset(recordset)
                 self.UI.treeDataSet.remove_recordset(recordset)
 
             if item_type == "result":
                 result = self.UI.treeDataSet.results[item_id]
-                task = SimpleTask("Suppression de '" + result.name + "'", self.dbMan.delete_processed_data, result)
+                task = SimpleTask(self.tr('Deleting') + '"' + result.name + '"', self.dbMan.delete_processed_data,
+                                  result)
                 tasks.append(task)
                 self.UI.treeDataSet.remove_result(result)
                 # self.dbMan.delete_processed_data(result)
@@ -483,7 +486,7 @@ class MainWindow(QMainWindow):
                 for recordset in recordsets:
                     if part_id is None:
                         part_id = recordset.id_participant
-                    task = SimpleTask("Suppression de '" + recordset.name + "'",
+                    task = SimpleTask(self.tr('Deleting') + '"' + recordset.name + '"',
                                       self.dbMan.delete_recordset, recordset)
                     tasks.append(task)
                     self.UI.treeDataSet.remove_recordset(recordset)
@@ -495,7 +498,7 @@ class MainWindow(QMainWindow):
                                                                                                .currentItem().parent())]
                 recordsets = self.dbMan.get_all_recordsets(participant=participant)
                 for recordset in recordsets:
-                    task = SimpleTask("Suppression de '" + recordset.name + "'",
+                    task = SimpleTask(self.tr('Deleting') + '"' + recordset.name + '"',
                                       self.dbMan.delete_recordset, recordset)
                     tasks.append(task)
                     self.UI.treeDataSet.remove_recordset(recordset)
@@ -509,13 +512,13 @@ class MainWindow(QMainWindow):
             if tasks:
                 process = BackgroundProcess(tasks)
                 # Create progress dialog
-                dialog = ProgressDialog(process, 'Suppression', self)
+                dialog = ProgressDialog(process, self.tr('Deleting'), self)
                 # Start tasks
                 process.start()
                 dialog.exec()
                 # self.dbMan.clean_db()
 
-            self.add_to_log(item_name + " a été supprimé.", LogTypes.LOGTYPE_DONE)
+            self.add_to_log(item_name + ' ' + self.tr('was deleted.'), LogTypes.LOGTYPE_DONE)
             self.clear_main_widgets()
 
     def closeEvent(self, event):

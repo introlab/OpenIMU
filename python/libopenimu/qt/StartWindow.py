@@ -1,6 +1,8 @@
 from resources.ui.python.StartDialog_ui import Ui_StartDialog
 
 from libopenimu.qt.ImportWindow import ImportWindow
+from libopenimu.qt.ImportDialogWizard import ImportDialogWizard
+from libopenimu.qt.ImportBrowser import ImportBrowser
 
 from PySide6.QtCore import Slot, Signal, QLocale
 from PySide6.QtWidgets import QDialog, QFileDialog, QApplication
@@ -41,11 +43,17 @@ class StartWindow(QDialog):
 
     @Slot()
     def import_clicked(self):
-        importdialog = ImportWindow(parent=self)
-        importdialog.showImport = True
+        importdialog = ImportDialogWizard(parent=self)  # ImportWindow(parent=self)
+        # importdialog.showImport = True
 
         if importdialog.exec() == QDialog.Accepted:
-            self.open_file(importdialog.fileName)
+            self.importing = True
+            if importdialog.useExisting:
+                self.open_file(importdialog.databaseFilename)
+            else:
+                importdialog = ImportWindow(parent=self)
+                if importdialog.exec() == QDialog.Accepted:
+                    self.open_file(importdialog.fileName)
 
     @Slot()
     def open_clicked(self):

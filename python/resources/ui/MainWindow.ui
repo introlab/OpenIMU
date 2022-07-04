@@ -20,7 +20,7 @@
    <bool>true</bool>
   </property>
   <property name="windowTitle">
-   <string>OpenIMU</string>
+   <string notr="true">OpenIMU</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../core.qrc">
@@ -89,7 +89,7 @@
     <set>Qt::LeftDockWidgetArea</set>
    </property>
    <property name="windowTitle">
-    <string>Structure des données</string>
+    <string>Data structure</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -172,7 +172,7 @@
          <number>5</number>
         </property>
         <item>
-         <widget class="QPushButton" name="btnAddGroup">
+         <widget class="QToolButton" name="btnAddGroup">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -195,14 +195,14 @@
            <cursorShape>PointingHandCursor</cursorShape>
           </property>
           <property name="toolTip">
-           <string>Nouveau Groupe</string>
+           <string>New group</string>
           </property>
           <property name="text">
            <string/>
           </property>
           <property name="icon">
            <iconset resource="../core.qrc">
-            <normaloff>:/OpenIMU/icons/group.png</normaloff>:/OpenIMU/icons/group.png</iconset>
+            <normaloff>:/OpenIMU/icons/group_new.png</normaloff>:/OpenIMU/icons/group_new.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -213,7 +213,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="btnAddParticipant">
+         <widget class="QToolButton" name="btnAddParticipant">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -236,19 +236,19 @@
            <cursorShape>PointingHandCursor</cursorShape>
           </property>
           <property name="toolTip">
-           <string>Nouveau Participant</string>
+           <string>New participant</string>
           </property>
           <property name="text">
            <string/>
           </property>
           <property name="icon">
            <iconset resource="../core.qrc">
-            <normaloff>:/OpenIMU/icons/participant.png</normaloff>:/OpenIMU/icons/participant.png</iconset>
+            <normaloff>:/OpenIMU/icons/participant_new.png</normaloff>:/OpenIMU/icons/participant_new.png</iconset>
           </property>
           <property name="iconSize">
            <size>
-            <width>20</width>
-            <height>20</height>
+            <width>24</width>
+            <height>24</height>
            </size>
           </property>
          </widget>
@@ -270,7 +270,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="btnDelete">
+         <widget class="QToolButton" name="btnDelete">
           <property name="minimumSize">
            <size>
             <width>40</width>
@@ -287,7 +287,7 @@
            <cursorShape>PointingHandCursor</cursorShape>
           </property>
           <property name="toolTip">
-           <string>Supprimer</string>
+           <string>Delete</string>
           </property>
           <property name="text">
            <string/>
@@ -324,7 +324,7 @@
     </size>
    </property>
    <property name="windowTitle">
-    <string>Journal</string>
+    <string>Logs</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -365,7 +365,7 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>1009</width>
+     <width>1043</width>
      <height>50</height>
     </size>
    </property>
@@ -437,7 +437,7 @@
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="toolTip">
-        <string>Structure des données</string>
+        <string>Data structure</string>
        </property>
        <property name="text">
         <string/>
@@ -493,7 +493,7 @@
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="toolTip">
-        <string>Journal</string>
+        <string>Logs</string>
        </property>
        <property name="text">
         <string/>
@@ -543,10 +543,10 @@
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="toolTip">
-        <string>Importe de nouvelles données à partir des fichiers bruts</string>
+        <string>Import new data into this database</string>
        </property>
        <property name="text">
-        <string>Importer</string>
+        <string>Import</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
@@ -583,10 +583,10 @@
         <bool>true</bool>
        </property>
        <property name="toolTip">
-        <string>Transfère et importe les données directement à partir d'un appareil</string>
+        <string>Stream and import data from a device</string>
        </property>
        <property name="text">
-        <string>Transférer</string>
+        <string>Stream &amp;&amp; Import</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
@@ -636,10 +636,10 @@
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="toolTip">
-        <string>Traite les données avec différents algorithmes</string>
+        <string>Process data with available algorithms</string>
        </property>
        <property name="text">
-        <string>Analyser</string>
+        <string>Process</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
@@ -679,10 +679,10 @@
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="toolTip">
-        <string>Exporte les données en format CSV</string>
+        <string>Export data to external formats</string>
        </property>
        <property name="text">
-        <string>Exporter</string>
+        <string>Export</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
@@ -728,8 +728,11 @@
        <property name="cursor">
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
+       <property name="toolTip">
+        <string>Compact and optimize database structure</string>
+       </property>
        <property name="text">
-        <string>Compacter</string>
+        <string>Compact</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
@@ -764,7 +767,7 @@
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="toolTip">
-        <string>Informations sur les données</string>
+        <string>Database information</string>
        </property>
        <property name="text">
         <string>Informations</string>
@@ -822,8 +825,11 @@
        <property name="cursor">
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
+       <property name="toolTip">
+        <string>Close the current dataset</string>
+       </property>
        <property name="text">
-        <string>Fermer</string>
+        <string>Close</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">

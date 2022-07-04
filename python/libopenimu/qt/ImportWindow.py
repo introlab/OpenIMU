@@ -21,7 +21,7 @@ class ImportWindow(QDialog):
 
     dataSet = None
 
-    def __init__(self, dataset=None, parent=None, filename=None, showImport=False):
+    def __init__(self, dataset=None, parent=None, filename=None, show_import=False):
         super().__init__(parent=parent)
         self.UI = Ui_ImportDialog()
         self.UI.setupUi(self)
@@ -29,12 +29,16 @@ class ImportWindow(QDialog):
         # Manage data if present
         self.dataSet = dataset
         self.fileName = filename
-        self.showImport = showImport
+        self.showImport = show_import
         self.update_data()
 
         # Signals / Slots connections
         self.UI.btnCancel.clicked.connect(self.cancel_clicked)
         self.UI.btnOK.clicked.connect(self.ok_clicked)
+        self.UI.txtAuthor.textChanged.connect(self.validate)
+        self.UI.txtName.textChanged.connect(self.validate)
+        self.UI.txtFileName.textChanged.connect(self.validate)
+        self.UI.dateData.dateChanged.connect(self.validate)
         # self.UI.btnAddFile.clicked.connect(self.addFile_clicked)
         # self.UI.btnDelFile.clicked.connect(self.removeFile_clicked)
         self.UI.btnBrowse.clicked.connect(self.browse_clicked)
@@ -43,7 +47,7 @@ class ImportWindow(QDialog):
         # self.UI.frameImport.setVisible(not self.showImport)
         # self.UI.splitter.setVisible(not self.noImportUI)
         if self.showImport:
-            self.UI.btnOK.setText("Suivant")
+            self.UI.btnOK.setText(self.tr("Next"))
 
         self.UI.btnBrowse.setVisible(not self.infosOnly)
         self.UI.txtFileName.setVisible(not self.infosOnly)
@@ -51,6 +55,7 @@ class ImportWindow(QDialog):
 
         return QDialog.exec(self)
 
+    @Slot()
     def validate(self):
         rval = True
         if self.UI.txtFileName.text() == '' or self.UI.txtFileName.text()[-3:] != '.oi':
@@ -71,6 +76,7 @@ class ImportWindow(QDialog):
         else:
             self.UI.txtAuthor.setStyleSheet('background-color: rgba(226, 226, 226, 90%);')
 
+        self.UI.btnOK.setEnabled(rval)
         return rval
 
     def update_data(self):
@@ -84,10 +90,11 @@ class ImportWindow(QDialog):
             import os
             self.UI.txtAuthor.setText(os.getlogin())
         self.UI.txtFileName.setText(self.fileName)
+        self.validate()  # Show mandatory fields in red
 
     @Slot()
     def browse_clicked(self):
-        file_diag = QFileDialog.getSaveFileName(caption="Nom du fichier à enregistrer", filter="*.oi")
+        file_diag = QFileDialog.getSaveFileName(caption=self.tr("Dataset filename"), filter="*.oi")
 
         if file_diag[0] != '':
             self.UI.txtFileName.setText(file_diag[0])
@@ -111,7 +118,7 @@ class ImportWindow(QDialog):
                 self.dataSet.name = self.UI.txtName.text()
                 self.dataSet.description = self.UI.txtDesc.toPlainText()
                 self.dataSet.author = self.UI.txtAuthor.text()
-                self.dataSet.upload_date = self.UI.dateData.date().toPyDate()
+                self.dataSet.upload_date = self.UI.dateData.date().toPython()
 
                 db.set_dataset_infos(name=self.dataSet.name,
                                      desc=self.dataSet.description,
@@ -124,9 +131,8 @@ class ImportWindow(QDialog):
                 self.accept()
 
             except (DBAPIError, DataError, DatabaseError):
-                print('Error!')
                 box = QMessageBox()
-                box.setText('Erreur de création de DB, s.v.p. choisir une répertoire valide')
+                box.setText(self.tr('Dataset file creation error - please choose a valid file and directory'))
                 box.exec()
 
     @Slot()
