@@ -1,7 +1,5 @@
-![Analytics](https://ga-beacon.appspot.com/UA-27707792-7/github-openimu-main?pixel) 
+![Analytics](https://ga-beacon-279122.nn.r.appspot.com/UA-27707792-7/github-openimu-main?pixel) 
 # OpenIMU - Data Analyser for Inertial Measurement Units and Actimetry Data
-
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e2aa64a094a3435b9e76b63f5b0f0491)](https://www.codacy.com/app/SBriere/OpenIMU?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=introlab/OpenIMU&amp;utm_campaign=Badge_Grade)
 
 ## Authors
 *   Dominic Létourneau (@doumdi) 
@@ -96,7 +94,7 @@ Please follow those steps to setup your development environment.
 
 ### Step 1 : Open the root CMakeLists.txt in QtCreator
 1.  Opening the root CMakeLists.txt will allow to create and build the project
-    1.  Build the project, it will automatically generate the Python environment in env/python-3.6, PyQt UI and RCC files.
+    1.  Build the project using the "python-all" target, it will automatically generate the Python environment in env/python-3.6, PyQt UI and RCC files.
     2.  All python dependencies will be automatically downloaded
     3.  Once the project is built, you will not need QtCreator until you change or add a resource file or a QtDesigner ui file.
     4.  If you change or add ui or resources files, you need to rebuild the project from QtCreator.
