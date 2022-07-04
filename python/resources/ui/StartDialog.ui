@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>OpenIMU - Démarrage</string>
+   <string notr="true">OpenIMU</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../core.qrc">
@@ -27,6 +27,46 @@
    <property name="spacing">
     <number>5</number>
    </property>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <spacer name="horizontalSpacer_5">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item alignment="Qt::AlignRight">
+      <widget class="QComboBox" name="cmbLanguage">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="cursor">
+        <cursorShape>ArrowCursor</cursorShape>
+       </property>
+       <item>
+        <property name="text">
+         <string notr="true">English</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string notr="true">Français</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -52,6 +92,21 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="spacing">
+      <number>20</number>
+     </property>
+     <property name="leftMargin">
+      <number>10</number>
+     </property>
+     <property name="topMargin">
+      <number>20</number>
+     </property>
+     <property name="rightMargin">
+      <number>10</number>
+     </property>
+     <property name="bottomMargin">
+      <number>10</number>
+     </property>
      <item>
       <widget class="QPushButton" name="btnNew">
        <property name="sizePolicy">
@@ -62,7 +117,7 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>250</width>
+         <width>200</width>
          <height>100</height>
         </size>
        </property>
@@ -79,7 +134,7 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>Nouvelles données</string>
+        <string>Create new dataset</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
@@ -106,7 +161,7 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>250</width>
+         <width>200</width>
          <height>0</height>
         </size>
        </property>
@@ -120,7 +175,8 @@
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Importer des données</string>
+        <string>Import sensor data
+in dataset</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
@@ -147,7 +203,7 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>250</width>
+         <width>200</width>
          <height>0</height>
         </size>
        </property>
@@ -161,7 +217,7 @@
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Ouvrir une base de données</string>
+        <string>Open existing dataset</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
@@ -207,7 +263,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Ouvrir un fichier récent:</string>
+        <string>Open recent file:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -258,7 +314,7 @@
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Quitter</string>
+        <string>Quit</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
@@ -297,10 +353,25 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Version 0.7.0&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>Version</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lblVersionValue">
+       <property name="font">
+        <font>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string notr="true">0.7.0</string>
        </property>
       </widget>
      </item>

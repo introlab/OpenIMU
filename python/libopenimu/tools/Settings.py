@@ -44,3 +44,21 @@ class OpenIMUSettings:
     @streamer_port.setter
     def streamer_port(self, port_value: int):
         self.settings.setValue("streamer/port", port_value)
+
+    @property
+    def current_language(self) -> str:
+        from PySide6.QtCore import QLocale
+        language = self.settings.value("language", defaultValue=QLocale.system().language())
+        if not isinstance(language, str):
+            # No value - set to default language
+            if language == QLocale.French:
+                language = 'fr'
+            elif language == QLocale.English:
+                language = 'en'
+            else:
+                language = 'en'  # Default language for all cases
+        return language
+
+    @current_language.setter
+    def current_language(self, lang: str):
+        self.settings.setValue("language", lang)

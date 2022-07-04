@@ -14,6 +14,9 @@ if(WIN32)
     set(PYSIDE_UIC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyside6-uic.exe)
     #PySide Ressources compiler
     set(PYSIDE_RCC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyside6-rcc.exe)
+    #PySide Translator
+    set(PYSIDE_TR_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyside6-lupdate.exe)
+    set(PYSIDE_TRQM_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyside6-lrelease.exe)
     set(APP_ICON ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/OpenIMU.ico)
 
 else(WIN32)
@@ -21,9 +24,12 @@ else(WIN32)
     set(PYTHON_PIP_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pip)
     set(PYTHON_INSTALLER_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pyinstaller)
     #PySide Ui wrapper
-    set(PYSIDE_UIC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pyside6-rcc)
+    set(PYSIDE_UIC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pyside6-uic)
     #PySide Ressources compiler
-    set(PYSIDE_RCC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pyrcc5)
+    set(PYSIDE_RCC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin//pyside6-rcc)
+    #PySide Translator
+    set(PYSIDE_TR_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyside6-lupdate)
+    set(PYSIDE_TRQM_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyside6-lrelease)
     set(APP_ICON ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/OpenIMU.icns)
 endif(WIN32)
 
@@ -52,11 +58,13 @@ SET(qrcs
     resources/core.qrc
 )
 
+FILE(GLOB srcs "libopenimu/**/*.py")
+
 add_custom_target(uis_target SOURCES ${uis} ${qrcs})
 
-SET(qml
-    resources/test.qml
-)
+#SET(qml
+#    resources/test.qml
+#)
 
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/resources/ui/python)
 
@@ -88,7 +96,7 @@ foreach(rcfile ${qrcs})
         DEPENDS ${rcfile} python-env)
 endforeach(rcfile)
 
-add_custom_target(qml_target SOURCES ${qml})
+# add_custom_target(qml_target SOURCES ${qml})
 
 # Find all python files
 file(GLOB_RECURSE libopenimu_python_files libopenimu/*.py)
@@ -144,6 +152,29 @@ if(APPLE)
         DEPENDS python_target ${python_uis} ${python_qrcs} python-env
     )
 endif(APPLE)
+
+#Translation files, this is done manually to avoid removing the file when doing make clean
+# Add -noobsolete parameter to remove obsoleted translations
+add_custom_target(openimu_en_ts
+    COMMAND ${PYSIDE_TR_EXECUTABLE} -target-language en ${srcs} ${uis} -ts resources/translations/openimu_en.ts -noobsolete
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+add_custom_target(openimu_fr_ts
+    COMMAND ${PYSIDE_TR_EXECUTABLE} -target-language fr ${srcs} ${uis} -ts resources/translations/openimu_fr.ts -noobsolete
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+#set qm files output directory
+set_source_files_properties(${translation_files_srcs} PROPERTIES OUTPUT_LOCATION resources/translations/)
+
+#Build this target to update translations
+add_custom_target(translations DEPENDS openimu_en_ts openimu_fr_ts)
+add_custom_target(translation_files
+    COMMAND ${PYSIDE_TRQM_EXECUTABLE} resources/translations/openimu_en.ts resources/translations/openimu_fr.ts
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    SOURCES ${translation_files_srcs}
+)
 
 
 # Build this target to generate environment and Qt ui/qrc files

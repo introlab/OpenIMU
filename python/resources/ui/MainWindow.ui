@@ -106,7 +106,7 @@
       <number>1</number>
      </property>
      <item>
-      <widget class="Treedatawidget" name="treeDataSet">
+      <widget class="TreeDataWidget" name="treeDataSet">
        <property name="sizePolicy">
         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -852,9 +852,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>Treedatawidget</class>
+   <class>TreeDataWidget</class>
    <extends>QTreeWidget</extends>
-   <header>OpenIMUApp</header>
+   <header> libopenimu.qt.TreeDataWidget</header>
   </customwidget>
  </customwidgets>
  <resources>

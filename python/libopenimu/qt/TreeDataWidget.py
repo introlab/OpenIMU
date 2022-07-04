@@ -1,8 +1,7 @@
-import sys
-
-from PySide6.QtWidgets import QApplication, QTreeWidget, QTreeWidgetItem, QStyleFactory
-from PySide6.QtCore import Qt, Slot, Signal, QFile
+from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
+from PySide6.QtCore import Signal, Qt, Slot
 from PySide6.QtGui import QIcon, QFont
+
 # Models
 from libopenimu.models.Participant import Participant
 from libopenimu.models.Base import Base
@@ -11,7 +10,7 @@ from libopenimu.models.ProcessedData import ProcessedData
 from datetime import datetime
 
 
-class Treedatawidget(QTreeWidget):
+class TreeDataWidget(QTreeWidget):
     groups = {}
     participants = {}
     recordsets = {}
@@ -29,7 +28,7 @@ class Treedatawidget(QTreeWidget):
     owner = None
 
     def __init__(self, parent=None):
-        super(Treedatawidget, self).__init__(parent=parent)
+        super(TreeDataWidget, self).__init__(parent=parent)
 
     def remove_group(self, group):
         item = self.items_groups.get(group.id_group, None)
@@ -66,7 +65,7 @@ class Treedatawidget(QTreeWidget):
                     except KeyError:
                         continue
 
-        if participant.id_group is None: # Participant without a group
+        if participant.id_group is None:  # Participant without a group
             for i in range(0, self.topLevelItemCount()):
                 if self.topLevelItem(i) == item:
                     self.takeTopLevelItem(i)
@@ -101,7 +100,7 @@ class Treedatawidget(QTreeWidget):
         self.items_results[result.id_processed_data] = None
 
     def remove_date(self, date_text: str, id_parent_part: int):
-        date_text_id = Treedatawidget.get_date_id(date_text, id_parent_part)
+        date_text_id = TreeDataWidget.get_date_id(date_text, id_parent_part)
 
         item = self.items_dates.get(date_text_id, None)
         for i in range(0, item.parent().childCount()):
@@ -147,7 +146,7 @@ class Treedatawidget(QTreeWidget):
             item.setData(1, Qt.UserRole, 'participant')
             item.setFont(0, QFont('Helvetica', 12, QFont.Bold))
 
-            if group_item is None: # Participant without a group
+            if group_item is None:  # Participant without a group
                 self.addTopLevelItem(item)
             else:
                 group_item.addChild(item)
@@ -175,7 +174,7 @@ class Treedatawidget(QTreeWidget):
             # Check if we must move it or not, if the group changed
             if item.parent() != group_item:
                 # Old group - find and remove current item
-                if item.parent() is None: # No parent...
+                if item.parent() is None:  # No parent...
                     for i in range(0, self.topLevelItemCount()):
                         if self.topLevelItem(i) == item:
                             item = self.takeTopLevelItem(i)
@@ -227,7 +226,7 @@ class Treedatawidget(QTreeWidget):
 
     def update_date(self, date_update: datetime, id_parent_part: int) -> QTreeWidgetItem:
         date_text = date_update.strftime("%d-%m-%Y")
-        date_text_id = Treedatawidget.get_date_id(date_text=date_text, id_parent_part=id_parent_part)
+        date_text_id = TreeDataWidget.get_date_id(date_text=date_text, id_parent_part=id_parent_part)
 
         # Check if day item is already present for that date and returns it, if so.
         if date_text_id in self.items_dates:
@@ -246,7 +245,7 @@ class Treedatawidget(QTreeWidget):
                 if self.get_item_type(part_item.child(i)) == "recordsets":
                     part_item.child(i).addChild(item)
         else:
-            print('No participant found in treeview for participant id=' + id_parent_part)
+            print('No participant found in treeview for participant id=' + str(id_parent_part))
 
         self.dates[date_text_id] = date_update.date()
         self.items_dates[date_text_id] = item
@@ -269,7 +268,7 @@ class Treedatawidget(QTreeWidget):
 
             part_item = None
             if len(result.processed_data_ref) > 0:
-                part_item = self.items_participants.get(result.processed_data_ref[0].recordset.id_participant,None)
+                part_item = self.items_participants.get(result.processed_data_ref[0].recordset.id_participant, None)
 
             if part_item is not None:
                 # TODO: subrecords...
@@ -339,7 +338,7 @@ class Treedatawidget(QTreeWidget):
             self.update_result(data)
 
         if item_type == "date":
-            self.update_date(data)
+            self.update_date(data, 0)
 
     def clear(self):
 
@@ -358,7 +357,8 @@ class Treedatawidget(QTreeWidget):
         super().clear()
 
     def dropEvent(self, event):
-
+        target_type = None
+        target_id = None
         index = self.indexAt(event.pos())
 
         source_item = self.currentItem()
@@ -393,58 +393,3 @@ class Treedatawidget(QTreeWidget):
                     return
 
             event.ignore()
-
-
-def except_hook(cls, exception, traceback):
-    # Display error dialog
-    from libopenimu.qt.CrashWindow import CrashWindow
-    crash_dlg = CrashWindow(traceback, exception)
-    crash_dlg.exec()
-    sys.__excepthook__(cls, exception, traceback)
-
-
-# Main
-if __name__ == '__main__':
-    from PySide6.QtCore import QDir
-    from libopenimu.qt.MainWindow import MainWindow
-
-    # Set Style
-    # style = QStyleFactory.create('Windows')
-    # QApplication.setStyle(style)
-    
-    # Must be done before starting the app
-    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
-
-    app = QApplication(sys.argv)
-
-    # sys.excepthook = except_hook
-    # qInstallMessageHandler(qt_message_handler)
-
-    # Set current directory to home path
-    QDir.setCurrent(QDir.homePath())
-
-    file = QFile(':/OpenIMU/stylesheet.qss')
-    file.open(QFile.ReadOnly)
-    stylesheet = file.readAll()
-    stylesheet = str(stylesheet, 'latin1')
-    app.setStyleSheet(stylesheet)
-
-    # print(PyQt5.__file__)
-    # from pprint import pprint
-    # from PyQt5.QtCore import QLibraryInfo
-    # paths = [x for x in dir(QLibraryInfo) if x.endswith('Path')]
-    # pprint({x: QLibraryInfo.location(getattr(QLibraryInfo, x)) for x in paths})
-
-    # WebEngine settings
-    # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.PluginsEnabled, True)
-    # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.JavascriptCanOpenWindows, True)
-    # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.JavascriptEnabled, True)
-    # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.LocalContentCanAccessRemoteUrls,True)
-    # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.AllowRunningInsecureContent, True)
-
-    # Create Main Window
-    window = MainWindow()
-
-    # Exec application
-    sys.exit(app.exec())
-

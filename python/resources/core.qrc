@@ -46,6 +46,10 @@
         <file>icons/bug.png</file>
         <file>icons/date.png</file>
         <file>LogoOpenIMU.png</file>
+    </qresource>
+    <qresource prefix="/">
         <file>stylesheet.qss</file>
+        <file>translations/openimu_en.qm</file>
+        <file>translations/openimu_fr.qm</file>
     </qresource>
 </RCC>

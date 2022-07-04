@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QApplication, QDialog, QTreeWidgetItem
 
 from PySide6.QtWidgets import QMessageBox
 
-from PySide6.QtCore import Slot
+from PySide6.QtCore import Slot, Signal
 from libopenimu.qt.Charts import IMUChartView
 import gc
 
@@ -14,7 +14,7 @@ from libopenimu.qt.GroupWindow import GroupWindow
 from libopenimu.qt.ParticipantWindow import ParticipantWindow
 from libopenimu.qt.RecordsetWindow import RecordsetWindow
 from libopenimu.qt.ResultWindow import ResultWindow
-from libopenimu.qt.StartWindow import StartWindow
+# from libopenimu.qt.StartWindow import StartWindow
 from libopenimu.qt.ImportBrowser import ImportBrowser
 from libopenimu.qt.ExportWindow import ExportWindow
 from libopenimu.qt.StreamWindow import StreamWindow
@@ -24,7 +24,7 @@ from libopenimu.qt.ProcessSelectWindow import ProcessSelectWindow
 from libopenimu.streamers.streamer_types import StreamerTypes
 from libopenimu.importers.importer_types import ImporterTypes
 
-from OpenIMUApp import Treedatawidget
+from libopenimu.qt.TreeDataWidget import TreeDataWidget
 
 # Models
 from libopenimu.models.Participant import Participant
@@ -48,55 +48,75 @@ class MainWindow(QMainWindow):
     currentDataSet = DataSet()
     currentRecordsets = []
 
-    def __init__(self, parent=None):
+    aboutToClose = Signal()
+    showStartWindow = Signal()
+
+    def __init__(self, filename: str, parent=None):
         super(MainWindow, self).__init__(parent)
         self.UI = Ui_MainWindow()
         self.UI.setupUi(self)
         self.UI.dockToolBar.setTitleBarWidget(QWidget())
         self.UI.dockLog.hide()
 
-        self.add_to_log("OpenIMU - Prêt à travailler.", LogTypes.LOGTYPE_INFO)
+        self.add_to_log(self.tr("OpenIMU - Prêt à travailler."), LogTypes.LOGTYPE_INFO)
 
         # Setup signals and slots
         self.setup_signals()
 
-        self.show_start_window()
-
-    def __del__(self):
-        # Restore sys.stdout
-        sys.stdout = sys.__stdout__
-        sys.stderr = sys.__stderr__
-
-    def show_start_window(self):
-        self.clear_main_widgets()
-        self.showMinimized()
-        start_window = StartWindow(self)
-
-        if start_window.exec() == QDialog.Rejected:
-            # User closed the dialog - exits!
-            sys.exit(0)
-
         # Init database manager
-        self.currentFileName = start_window.fileName
+        self.currentFileName = filename
         self.dbMan = DBManager(self.currentFileName)
 
-        # Maximize window
-        self.showMaximized()
-
         # Load data
-        self.add_to_log("Chargement des données...", LogTypes.LOGTYPE_INFO)
+        self.add_to_log(self.tr('Chargement des données...'), LogTypes.LOGTYPE_INFO)
         self.currentDataSet = self.dbMan.get_dataset()
         self.load_data_from_dataset()
         self.UI.treeDataSet.setCurrentItem(None)
         self.UI.treeDataSet.owner = self
 
         # self.loadDemoData()
-        self.add_to_log("Données chargées!", LogTypes.LOGTYPE_DONE)
+        self.add_to_log(self.tr("Données chargées!"), LogTypes.LOGTYPE_DONE)
 
         # If we need to import data, show the import dialog
-        if start_window.importing:
-            self.import_requested()
-            gc.collect()
+        # if start_window.importing:
+        #     self.import_requested()
+        #     gc.collect()
+
+    def __del__(self):
+        # Restore sys.stdout
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
+
+    # def show_start_window(self):
+    #     self.clear_main_widgets()
+    #     self.showMinimized()
+    #     start_window = StartWindow(self)
+    #
+    #     if start_window.exec() == QDialog.Rejected:
+    #         # User closed the dialog - exits!
+    #         sys.exit(0)
+    #
+    #     # Init database manager
+    #     self.currentFileName = start_window.fileName
+    #     self.dbMan = DBManager(self.currentFileName)
+    #
+    #     # Maximize window
+    #     self.showMaximized()
+    #
+    #     # Load data
+    #     self.add_to_log("Chargement des données...", LogTypes.LOGTYPE_INFO)
+    #     self.currentDataSet = self.dbMan.get_dataset()
+    #     self.load_data_from_dataset()
+    #     self.UI.treeDataSet.setCurrentItem(None)
+    #     self.UI.treeDataSet.owner = self
+    #
+    #     # self.loadDemoData()
+    #     self.add_to_log("Données chargées!", LogTypes.LOGTYPE_DONE)
+    #
+    #     # If we need to import data, show the import dialog
+    #     if start_window.importing:
+    #         self.import_requested()
+    #         gc.collect()
 
     def setup_signals(self):
         self.UI.treeDataSet.itemClicked.connect(self.tree_item_clicked)
@@ -274,9 +294,10 @@ class MainWindow(QMainWindow):
         if rval == QMessageBox.Yes:
             self.dbMan.close()
             self.add_to_log("Fichier " + self.currentFileName + " fermé.", LogTypes.LOGTYPE_INFO)
-            self.hide()
+            # self.hide()
 
-            self.show_start_window()
+            # self.show_start_window()
+            self.showStartWindow.emit()
 
     @Slot()
     def db_compact_requested(self):
@@ -347,7 +368,7 @@ class MainWindow(QMainWindow):
                 # Find associated participant
                 id_participant = self.UI.treeDataSet.get_item_id(item.parent().parent())
                 part = self.UI.treeDataSet.participants[id_participant]
-                search_date = self.UI.treeDataSet.dates[Treedatawidget.get_date_id(item.text(0), id_participant)]
+                search_date = self.UI.treeDataSet.dates[TreeDataWidget.get_date_id(item.text(0), id_participant)]
                 self.currentRecordsets = self.dbMan.get_all_recordsets(participant=part, start_date=search_date)
             else:
                 self.currentRecordsets = [self.UI.treeDataSet.recordsets[item_id]]
@@ -455,7 +476,7 @@ class MainWindow(QMainWindow):
             if item_type == "date":
                 # Delete all recordsets related to that date
                 id_participant = self.UI.treeDataSet.get_item_id(self.UI.treeDataSet.currentItem().parent().parent())
-                search_date = self.UI.treeDataSet.dates[Treedatawidget.get_date_id(self.UI.treeDataSet.currentItem()
+                search_date = self.UI.treeDataSet.dates[TreeDataWidget.get_date_id(self.UI.treeDataSet.currentItem()
                                                                                    .text(0), id_participant)]
                 recordsets = self.dbMan.get_all_recordsets(start_date=search_date)
                 part_id = None
@@ -497,8 +518,9 @@ class MainWindow(QMainWindow):
             self.add_to_log(item_name + " a été supprimé.", LogTypes.LOGTYPE_DONE)
             self.clear_main_widgets()
 
-#    def closeEvent(self, event):
-#        return
+    def closeEvent(self, event):
+        self.aboutToClose.emit()
+        return
 
     def create_chart_view(self, test_data=False):
         chart_view = IMUChartView(self)
