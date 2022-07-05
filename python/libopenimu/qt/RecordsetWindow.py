@@ -71,9 +71,9 @@ class DBSensorAllDataTask(WorkerTask):
         channels = self.dbMan.get_all_channels(sensor=self.sensor)
         self.size = len(channels)*len(self.recordsets)
         count = 0
+        channel_data = []
         for channel in channels:
             # Will get all data (converted to floats)
-            channel_data = []
             for record in self.recordsets:
                 channel_data += self.dbMan.get_all_sensor_data(recordset=record, convert=True, sensor=self.sensor,
                                                                channel=channel, start_time=self.start_time,
@@ -126,7 +126,7 @@ class RecordsetWindow(QWidget):
 
         # Internal lists
         self.sensors = {}           # List of sensors objects
-        self.sensors_items = {}     # List of QAction corresponding to each sensors
+        self.sensors_items = {}     # List of QAction corresponding to each sensor
         self.sensors_graphs = {}    # List of graph corresponding to each sensor graph
         self.sensors_location = []  # List of sensors location in this recordset
         self.sensors_blocks = {}    # Sensor blocks - each block of data for each sensor
@@ -141,7 +141,7 @@ class RecordsetWindow(QWidget):
         self.sensors_menu = QMenu(self.UI.btnNewGraph)
         self.UI.btnNewGraph.setMenu(self.sensors_menu)
 
-        # Data access informations
+        # Data access information
         self.dbMan = manager
         self.recordsets = recordset
 
@@ -158,7 +158,7 @@ class RecordsetWindow(QWidget):
         self.UI.graphSensorsTimeline.setScene(self.timeSensorsScene)
         self.UI.graphSensorsTimeline.fitInView(self.timeSensorsScene.sceneRect(), Qt.KeepAspectRatio)
 
-        # Update general informations about recordsets
+        # Update general information about recordsets
         self.update_recordset_infos()
 
         # Load sensors for that recordset
@@ -225,8 +225,8 @@ class RecordsetWindow(QWidget):
                 # self.UI.frmSensors.hide()
             else:
                 message = QMessageBox(self)
-                message.warning(self, "Avertissement",
-                                "L'affichage du timeline de plus de 2 ans n'est pas supporté pour l'instant")
+                message.warning(self, self.tr('Warning'), self.tr('Displaying a timeline spanning over more than 2 '
+                                                                  'years isn\'t supported for now'))
 
         else:
             print('Empty recordset!')
@@ -274,8 +274,8 @@ class RecordsetWindow(QWidget):
 
     def update_recordset_infos(self):
         if len(self.recordsets) == 0:
-            self.UI.lblTotalValue.setText("Aucune donnée.")
-            self.UI.lblDurationValue.setText("Aucune donnée.")
+            self.UI.lblTotalValue.setText(self.tr('No data.'))
+            self.UI.lblDurationValue.setText(self.tr('No data.'))
             return
 
         start_time = self.recordsets[0].start_timestamp
@@ -491,12 +491,12 @@ class RecordsetWindow(QWidget):
             sensors = self.get_sensors_for_location(location)
             for sensor_id in sensors:
                 for record in self.recordsets:
-                    tasks.append(DBSensorTimesTask(title="Chargement des données temporelles", db_manager=self.dbMan,
+                    tasks.append(DBSensorTimesTask(title=self.tr('Loading temporal data'), db_manager=self.dbMan,
                                                    sensor_id=sensor_id, recordset=record))
 
         QGuiApplication.setOverrideCursor(Qt.BusyCursor)
         process = BackgroundProcess(tasks)
-        dialog = ProgressDialog(process, "Chargement", self)
+        dialog = ProgressDialog(process, self.tr('Loading'), self)
 
         process.start()
         dialog.exec()
@@ -634,7 +634,7 @@ class RecordsetWindow(QWidget):
                     if gps.latitude != 0 and gps.longitude != 0:
                         graph_window.graph.addPosition(data.timestamps.start_timestamp, gps.latitude / 1e7,
                                                        gps.longitude / 1e7)
-                        graph_window.setCursorPositionFromTime(data.timestamps.start_timestamp)
+                        graph_window.set_cursor_position_from_time(data.timestamps.start_timestamp)
 
             if graph_type == GraphType.BEACON:
                 # print('should do something with beacons data')
@@ -681,11 +681,11 @@ class RecordsetWindow(QWidget):
     # @timing
     def get_sensor_data(self, sensor, start_time=None, end_time=None):
         QGuiApplication.setOverrideCursor(Qt.BusyCursor)
-        task = DBSensorAllDataTask("Chargement des données...", self.dbMan, sensor, start_time, end_time,
+        task = DBSensorAllDataTask(self.tr('Loading data...'), self.dbMan, sensor, start_time, end_time,
                                    self.recordsets)
 
         process = BackgroundProcess([task])
-        dialog = ProgressDialog(process, "Traitement", self)
+        dialog = ProgressDialog(process, self.tr('Processing'), self)
 
         process.start()
         dialog.exec()
@@ -720,7 +720,7 @@ class RecordsetWindow(QWidget):
         current_time = timestamp / 1000
         for graph in self.sensors_graphs.values():
             if graph is not None:
-                graph.setCursorPositionFromTime(current_time, False)
+                graph.set_cursor_position_from_time(current_time, False)
 
         pos = self.get_relative_timeview_pos(current_time)
         self.time_bar.setPos(pos,0)
@@ -742,13 +742,13 @@ class RecordsetWindow(QWidget):
     def graph_zoom_area(self, start_time, end_time):
         for graph in self.sensors_graphs.values():
             if graph is not None:
-                graph.zoomAreaRequestTime(start_time, end_time)
+                graph.zoom_area_request_time(start_time, end_time)
 
     @Slot()
     def graph_zoom_reset(self):
         for graph in self.sensors_graphs.values():
             if graph is not None:
-                graph.zoomResetRequest(False)
+                graph.zoom_reset_request(False)
 
     @Slot(float, float)
     def graph_selected_area_changed(self, start_timestamp, end_timestamp):
@@ -763,7 +763,7 @@ class RecordsetWindow(QWidget):
         # Update selection for each graph
         for graph in self.sensors_graphs.values():
             if graph is not None:
-                graph.setSelectionAreaFromTime(start_timestamp, end_timestamp)
+                graph.set_selection_area_from_time(start_timestamp, end_timestamp)
 
     @Slot(int)
     def timeview_scroll(self, pos):
@@ -782,7 +782,7 @@ class RecordsetWindow(QWidget):
         for graph in self.sensors_graphs.values():
             if graph is not None:
                 # try:
-                graph.setCursorPositionFromTime(timestamp, False)
+                graph.set_cursor_position_from_time(timestamp, False)
             # except AttributeError:
             #    continue
 
@@ -800,8 +800,8 @@ class RecordsetWindow(QWidget):
         # Update selection for each graph
         for graph in self.sensors_graphs.values():
             if graph is not None:
-                graph.setSelectionAreaFromTime(self.get_time_from_timeview_pos(start_x),
-                                               self.get_time_from_timeview_pos(end_x))
+                graph.set_selection_area_from_time(self.get_time_from_timeview_pos(start_x),
+                                                   self.get_time_from_timeview_pos(end_x))
 
     @Slot()
     def on_timeview_clear_selection_requested(self):
@@ -811,7 +811,7 @@ class RecordsetWindow(QWidget):
 
         # Clear all selected areas in graphs
         for graph in self.sensors_graphs.values():
-            graph.clearSelectionArea()
+            graph.clear_selection_area()
 
     @Slot()
     def on_timeview_zoom_selection_requested(self):

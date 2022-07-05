@@ -60,12 +60,12 @@ class GraphWindow(QWidget):
         self.update_zoom_buttons_state()
 
         # Connect signals
-        self.UI.btnClearSelection.clicked.connect(self.clearSelectionRequest)
-        self.UI.btnZoomArea.clicked.connect(self.zoomAreaRequest)
-        self.UI.btnZoomIn.clicked.connect(self.zoomInRequest)
-        self.UI.btnZoomOut.clicked.connect(self.zoomOutRequest)
-        self.UI.btnZoomReset.clicked.connect(self.zoomResetRequest)
-        self.UI.btnDataInfos.clicked.connect(self.dataInfosRequest)
+        self.UI.btnClearSelection.clicked.connect(self.clear_selection_request)
+        self.UI.btnZoomArea.clicked.connect(self.zoom_area_request)
+        self.UI.btnZoomIn.clicked.connect(self.zoom_in_request)
+        self.UI.btnZoomOut.clicked.connect(self.zoom_out_request)
+        self.UI.btnZoomReset.clicked.connect(self.zoom_reset_request)
+        self.UI.btnDataInfos.clicked.connect(self.data_infos_request)
         self.mode_buttons_group.buttonClicked.connect(self.graph_interaction_mode_changed)
         self.graph.selectedAreaChanged.connect(self.graph_selection_changed)
         self.graph.clearedSelectionArea.connect(self.graph_selection_changed)
@@ -91,16 +91,16 @@ class GraphWindow(QWidget):
 
         return super().event(e)
 
-    def setCursorPositionFromTime(self, timestamp, emit_signal=False):
+    def set_cursor_position_from_time(self, timestamp, emit_signal=False):
         if self.graph is not None:
             self.graph.setCursorPositionFromTime(timestamp, emit_signal)
 
-    def setSelectionAreaFromTime(self, start_time, end_time, emit_signal=False):
+    def set_selection_area_from_time(self, start_time, end_time, emit_signal=False):
         if self.graph is not None:
             self.graph.setSelectionAreaFromTime(start_time, end_time, emit_signal)
             self.update_zoom_buttons_state()
 
-    def clearSelectionArea(self):
+    def clear_selection_area(self):
         if self.graph is not None:
             self.graph.clearSelectionArea(False)
             self.UI.btnClearSelection.setEnabled(False)
@@ -112,25 +112,25 @@ class GraphWindow(QWidget):
         self.UI.btnZoomReset.setEnabled(self.graph.is_zoomed)
 
     @Slot()
-    def clearSelectionRequest(self):
+    def clear_selection_request(self):
         self.graph.clearSelectionArea(True)
         self.UI.btnClearSelection.setEnabled(False)
 
     @Slot()
-    def zoomAreaRequest(self):
+    def zoom_area_request(self):
         if self.graph:
             self.graph.zoom_area()
             self.requestData.emit(self.sensor, self.graph.get_displayed_start_time(), self.graph.get_displayed_end_time())
             self.zoomAreaRequested.emit(self.graph.get_displayed_start_time(), self.graph.get_displayed_end_time())
         self.update_zoom_buttons_state()
 
-    def zoomAreaRequestTime(self, start_time: float, end_time: float, emit_signal=False):
+    def zoom_area_request_time(self, start_time: float, end_time: float, emit_signal=False):
         if self.graph:
             self.graph.setSelectionAreaFromTime(start_time, end_time, emit_signal)
             self.graph.zoom_area()
 
     @Slot()
-    def zoomOutRequest(self):
+    def zoom_out_request(self):
         if self.graph:
             self.graph.zoom_out()
             self.requestData.emit(self.sensor, self.graph.get_displayed_start_time(),
@@ -139,7 +139,7 @@ class GraphWindow(QWidget):
         self.update_zoom_buttons_state()
 
     @Slot()
-    def zoomInRequest(self):
+    def zoom_in_request(self):
         if self.graph:
             self.graph.zoom_in()
             self.requestData.emit(self.sensor, self.graph.get_displayed_start_time(),
@@ -148,7 +148,7 @@ class GraphWindow(QWidget):
         self.update_zoom_buttons_state()
 
     @Slot()
-    def zoomResetRequest(self, emit_signal=True):
+    def zoom_reset_request(self, emit_signal=True):
         if self.graph:
             self.graph.zoom_reset()
             if emit_signal:
@@ -156,7 +156,7 @@ class GraphWindow(QWidget):
         self.update_zoom_buttons_state()
 
     @Slot()
-    def dataInfosRequest(self):
+    def data_infos_request(self):
         infos = DataInfosWidget(self.sensor, self.graph.total_samples, parent=self)
         # infos.setStyleSheet(self.styleSheet())
         infos.exec()

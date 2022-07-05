@@ -17,11 +17,11 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Informations sur les données</string>
+   <string>Data information</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../core.qrc">
-    <normaloff>:/OpenIMU/icons/sensor.png</normaloff>:/OpenIMU/icons/sensor.png</iconset>
+    <normaloff>:/OpenIMU/icons/OpenIMU.png</normaloff>:/OpenIMU/icons/OpenIMU.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -45,7 +45,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../core.qrc">:/OpenIMU/icons/sensor.png</pixmap>
+         <pixmap resource="../core.qrc">:/OpenIMU/icons/OpenIMU.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -57,13 +57,12 @@
         <property name="font">
          <font>
           <pointsize>15</pointsize>
-          <weight>75</weight>
           <italic>false</italic>
           <bold>true</bold>
          </font>
         </property>
         <property name="text">
-         <string>Informations sur les données</string>
+         <string>Data information</string>
         </property>
        </widget>
       </item>
@@ -86,7 +85,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Capteur</string>
+        <string>Sensor</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -98,12 +97,11 @@
        <property name="font">
         <font>
          <pointsize>10</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>(Nom du capteur)</string>
+        <string notr="true">(Sensor name)</string>
        </property>
       </widget>
      </item>
@@ -121,7 +119,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Matériel</string>
+        <string>Hardware</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -133,12 +131,11 @@
        <property name="font">
         <font>
          <pointsize>10</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>(Nom de l'appareil)</string>
+        <string notr="true">(Device name)</string>
        </property>
       </widget>
      </item>
@@ -151,7 +148,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>ID Matériel</string>
+        <string>Hardware ID</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -162,12 +159,11 @@
       <widget class="QLabel" name="lblHWIDValue">
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>(ID Matériel)</string>
+        <string notr="true">Hardware ID)</string>
        </property>
       </widget>
      </item>
@@ -197,12 +193,11 @@
        <property name="font">
         <font>
          <pointsize>10</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>(Position)</string>
+        <string notr="true">(Position)</string>
        </property>
       </widget>
      </item>
@@ -220,7 +215,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Échantillonnage</string>
+        <string>Sampling rate</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -232,12 +227,11 @@
        <property name="font">
         <font>
          <pointsize>10</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>(Fréquence échantillonnage)</string>
+        <string notr="true">(Sampling rate)</string>
        </property>
       </widget>
      </item>
@@ -249,7 +243,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Nombre d'échantillons</string>
+        <string>Samples number</string>
        </property>
       </widget>
      </item>
@@ -258,12 +252,11 @@
        <property name="font">
         <font>
          <pointsize>10</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>(Nombre échantillons)</string>
+        <string notr="true">(Samples num)</string>
        </property>
       </widget>
      </item>
@@ -275,7 +268,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Nombre de canaux</string>
+        <string>Channels number</string>
        </property>
       </widget>
      </item>
@@ -284,12 +277,11 @@
        <property name="font">
         <font>
          <pointsize>10</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>(Nombre de canaux)</string>
+        <string notr="true">(Channels num)</string>
        </property>
       </widget>
      </item>
@@ -323,6 +315,16 @@
        </property>
        <property name="text">
         <string>OK</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../core.qrc">
+         <normaloff>:/OpenIMU/icons/ok.png</normaloff>:/OpenIMU/icons/ok.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
        </property>
       </widget>
      </item>

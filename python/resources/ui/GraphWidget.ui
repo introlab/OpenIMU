@@ -14,7 +14,7 @@
    <bool>true</bool>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Graph display</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="spacing">
@@ -65,7 +65,7 @@
          <cursorShape>PointingHandCursor</cursorShape>
         </property>
         <property name="toolTip">
-         <string>Déplacer</string>
+         <string>Move tool</string>
         </property>
         <property name="text">
          <string>...</string>
@@ -97,7 +97,7 @@
          <cursorShape>PointingHandCursor</cursorShape>
         </property>
         <property name="toolTip">
-         <string>Sélectionner</string>
+         <string>Select tool</string>
         </property>
         <property name="text">
          <string>...</string>
@@ -145,7 +145,7 @@
          <cursorShape>PointingHandCursor</cursorShape>
         </property>
         <property name="toolTip">
-         <string>Zoom avant</string>
+         <string>Zoom in</string>
         </property>
         <property name="text">
          <string>...</string>
@@ -174,7 +174,7 @@
          <cursorShape>PointingHandCursor</cursorShape>
         </property>
         <property name="toolTip">
-         <string>Zoom arrière</string>
+         <string>Zoom out</string>
         </property>
         <property name="text">
          <string>...</string>
@@ -203,7 +203,7 @@
          <cursorShape>PointingHandCursor</cursorShape>
         </property>
         <property name="toolTip">
-         <string>Zoom sélection</string>
+         <string>Zoom on selection</string>
         </property>
         <property name="text">
          <string>...</string>
@@ -232,7 +232,7 @@
          <cursorShape>PointingHandCursor</cursorShape>
         </property>
         <property name="toolTip">
-         <string>Zoom initial</string>
+         <string>Initial zoom</string>
         </property>
         <property name="text">
          <string>...</string>
@@ -274,7 +274,7 @@
          <cursorShape>PointingHandCursor</cursorShape>
         </property>
         <property name="toolTip">
-         <string>Effacer la sélection</string>
+         <string>Clear selection</string>
         </property>
         <property name="text">
          <string>...</string>
@@ -316,7 +316,7 @@
          <cursorShape>PointingHandCursor</cursorShape>
         </property>
         <property name="toolTip">
-         <string>Informations sur les données</string>
+         <string>Data informations</string>
         </property>
         <property name="text">
          <string>...</string>

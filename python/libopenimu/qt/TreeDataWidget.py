@@ -154,7 +154,7 @@ class TreeDataWidget(QTreeWidget):
             parent = item
             # Recordings
             item = QTreeWidgetItem()
-            item.setText(0, 'Enregistrements')
+            item.setText(0, self.tr('Recordings'))
             item.setIcon(0, QIcon(':/OpenIMU/icons/records.png'))
             item.setData(1, Qt.UserRole, 'recordsets')
             item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
@@ -162,7 +162,7 @@ class TreeDataWidget(QTreeWidget):
 
             # Results
             item = QTreeWidgetItem()
-            item.setText(0, 'Résultats')
+            item.setText(0, self.tr('Results'))
             item.setIcon(0, QIcon(':/OpenIMU/icons/results.png'))
             item.setData(1, Qt.UserRole, 'results')
             item.setFont(0, QFont('Helvetica', 11, QFont.Bold))

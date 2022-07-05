@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QMainWindow, QWidget
-from PySide6.QtWidgets import QApplication, QDialog, QTreeWidgetItem
+from PySide6.QtWidgets import QApplication, QDialog, QTreeWidgetItem, QHBoxLayout
 
 from PySide6.QtWidgets import QMessageBox
 
@@ -21,6 +21,7 @@ from libopenimu.qt.StreamWindow import StreamWindow
 from libopenimu.qt.ImportMatchDialog import ImportMatchDialog
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, SimpleTask, ProgressDialog
 from libopenimu.qt.ProcessSelectWindow import ProcessSelectWindow
+from libopenimu.qt.DataEditor import DataEditor
 from libopenimu.streamers.streamer_types import StreamerTypes
 from libopenimu.importers.importer_types import ImporterTypes
 
@@ -47,6 +48,8 @@ class MainWindow(QMainWindow):
     dbMan = []
     currentDataSet = DataSet()
     currentRecordsets = []
+    dataWidget: DataEditor
+    dataDialog: QDialog
 
     aboutToClose = Signal()
     showStartWindow = Signal()
@@ -124,6 +127,7 @@ class MainWindow(QMainWindow):
         self.UI.btnAddGroup.clicked.connect(self.new_group_requested)
         self.UI.btnAddParticipant.clicked.connect(self.new_participant_requested)
         self.UI.treeDataSet.participantDragged.connect(self.participant_was_dragged)
+        self.UI.treeDataSet.currentItemChanged.connect(self.tree_item_changed)
         self.UI.btnDelete.clicked.connect(self.delete_requested)
         self.UI.btnImport.clicked.connect(self.import_requested)
         self.UI.btnExportCSV.clicked.connect(self.export_csv_requested)
@@ -182,7 +186,7 @@ class MainWindow(QMainWindow):
     def show_group(self, group=None):
         self.clear_main_widgets()
 
-        group_widget = GroupWindow(dbManager=self.dbMan, group=group)
+        group_widget = GroupWindow(db_manager=self.dbMan, group=group, edit_mode=True)
         self.UI.frmMain.layout().addWidget(group_widget)
 
         group_widget.dataSaved.connect(self.data_was_saved)
@@ -191,11 +195,13 @@ class MainWindow(QMainWindow):
     def show_participant(self, participant=None, base_group=None):
         self.clear_main_widgets()
 
-        part_widget = ParticipantWindow(dbManager=self.dbMan, participant=participant, default_group=base_group)
+        part_widget = ParticipantWindow(db_manager=self.dbMan, participant=participant, default_group=base_group,
+                                        edit_mode=True)
         self.UI.frmMain.layout().addWidget(part_widget)
 
         part_widget.dataSaved.connect(self.data_was_saved)
         part_widget.dataCancelled.connect(self.data_was_cancelled)
+        part_widget.dataEditing.connect(self.data_editing)
 
     @Slot('QString', int)
     def add_to_log(self, text, log_type):
@@ -321,11 +327,31 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def new_group_requested(self):
-        self.show_group()
+
+        # self.show_participant(base_group=default_group)
+        self.init_editor_dialog()
+        layout = QHBoxLayout(self.dataDialog)
+
+        self.dataWidget = GroupWindow(db_manager=self.dbMan, group=None)
+
+        layout.addWidget(self.dataWidget)
+
+        self.dataWidget.dataCancelled.connect(self.dataDialog.reject)
+        self.dataWidget.dataSaved.connect(self.dataDialog.accept)
+        self.dataDialog.setWindowTitle(self.tr('New group'))
+        if self.dataDialog.exec() == QDialog.Accepted:
+            # Save data
+            group = self.dataWidget.group
+            self.update_group(group)
+            self.UI.treeDataSet.select_item(item_type='group', item_id=group.id_group)
+            self.add_to_log(self.tr('Group') + ' ' + group.name + ' ' + self.tr('added.'), LogTypes.LOGTYPE_DONE)
+
+        # self.show_group()
 
     @Slot()
     def new_participant_requested(self):
         # Check if we can get a root item (group) for the current selected item or not
+        self.init_editor_dialog()
         item = self.UI.treeDataSet.currentItem()
         if item is not None:
             while item.parent() is not None:
@@ -335,7 +361,22 @@ class MainWindow(QMainWindow):
         if self.UI.treeDataSet.get_item_type(item) == "group":
             default_group = self.UI.treeDataSet.groups[self.UI.treeDataSet.get_item_id(item)]
 
-        self.show_participant(base_group=default_group)
+        # self.show_participant(base_group=default_group)
+        layout = QHBoxLayout(self.dataDialog)
+
+        self.dataWidget = ParticipantWindow(db_manager=self.dbMan, participant=None, default_group=default_group)
+
+        layout.addWidget(self.dataWidget)
+
+        self.dataWidget.dataCancelled.connect(self.dataDialog.reject)
+        self.dataWidget.dataSaved.connect(self.dataDialog.accept)
+        self.dataDialog.setWindowTitle(self.tr('New participant'))
+        if self.dataDialog.exec() == QDialog.Accepted:
+            # Save data
+            part = self.dataWidget.participant
+            self.update_participant(part)
+            self.UI.treeDataSet.select_item(item_type='participant', item_id=part.id_participant)
+            self.add_to_log(self.tr('Participant') + ' ' + part.name + ' ' + self.tr('added.'), LogTypes.LOGTYPE_DONE)
 
     @Slot(Participant)
     def participant_was_dragged(self, participant):
@@ -388,6 +429,10 @@ class MainWindow(QMainWindow):
         item.setExpanded(True)
         # self.UI.frmMain.update()
 
+    @Slot(QTreeWidgetItem, QTreeWidgetItem)
+    def tree_item_changed(self, current: QTreeWidgetItem, previous: QTreeWidgetItem):
+        self.UI.btnDelete.setEnabled(current is not None)
+
     @Slot()
     def data_was_saved(self):
         item_type = self.get_current_widget_data_type()
@@ -415,6 +460,11 @@ class MainWindow(QMainWindow):
                 self.clear_main_widgets()
 
     @Slot()
+    def data_editing(self, editing: bool):
+        self.UI.dockDataset.setEnabled(not editing)
+        self.UI.dockToolBar.setEnabled(not editing)
+
+    @Slot()
     def delete_requested(self):
         item_id = self.UI.treeDataSet.get_item_id(self.UI.treeDataSet.currentItem())
         item_type = self.UI.treeDataSet.get_item_type(self.UI.treeDataSet.currentItem())
@@ -426,8 +476,8 @@ class MainWindow(QMainWindow):
         msg.setIcon(QMessageBox.Question)
         msg.setStyleSheet("QPushButton{min-width: 100px; min-height: 40px;}")
 
-        msg.setText(self.tr('Are you sure you want to delete') + '"' + self.UI.treeDataSet.currentItem().text(0) +
-                    '"' + self.tr('and all associated elements?'))
+        msg.setText(self.tr('Are you sure you want to delete') + ' "' + self.UI.treeDataSet.currentItem().text(0) +
+                    '" ' + self.tr('and all associated elements?'))
         msg.setWindowTitle(self.tr('Confirm deletion'))
         msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
 
@@ -439,13 +489,13 @@ class MainWindow(QMainWindow):
             if item_type == "group":
                 group = self.UI.treeDataSet.groups[item_id]
                 self.UI.treeDataSet.remove_group(group)
-                task = SimpleTask(self.tr('Deleting') + '"' + group.name + '"', self.dbMan.delete_group, group)
+                task = SimpleTask(self.tr('Deleting') + ' "' + group.name + '" ', self.dbMan.delete_group, group)
                 tasks.append(task)
 
             if item_type == "participant":
                 part = self.UI.treeDataSet.participants[item_id]
                 self.UI.treeDataSet.remove_participant(part)
-                task = SimpleTask(self.tr('Deleting') + '"' + part.name + '"', self.dbMan.delete_participant, part)
+                task = SimpleTask(self.tr('Deleting') + ' "' + part.name + '" ', self.dbMan.delete_participant, part)
                 tasks.append(task)
 
             if item_type == "recordset":
@@ -455,14 +505,14 @@ class MainWindow(QMainWindow):
                         for ref in result.processed_data_ref:
                             if ref.recordset.id_recordset == item_id:
                                 self.UI.treeDataSet.remove_result(result)
-                                task = SimpleTask(self.tr('Deleting') + '"' + result.name + '"',
+                                task = SimpleTask(self.tr('Deleting') + ' "' + result.name + '" ',
                                                   self.dbMan.delete_processed_data, result)
                                 tasks.append(task)
                                 # self.dbMan.delete_processed_data(result)
                                 break
 
                 recordset = self.UI.treeDataSet.recordsets[item_id]
-                task = SimpleTask(self.tr('Deleting') + '"' + recordset.name + '"', self.dbMan.delete_recordset,
+                task = SimpleTask(self.tr('Deleting') + ' "' + recordset.name + '" ', self.dbMan.delete_recordset,
                                   recordset)
                 tasks.append(task)
                 # self.dbMan.delete_recordset(recordset)
@@ -470,7 +520,7 @@ class MainWindow(QMainWindow):
 
             if item_type == "result":
                 result = self.UI.treeDataSet.results[item_id]
-                task = SimpleTask(self.tr('Deleting') + '"' + result.name + '"', self.dbMan.delete_processed_data,
+                task = SimpleTask(self.tr('Deleting') + ' "' + result.name + '" ', self.dbMan.delete_processed_data,
                                   result)
                 tasks.append(task)
                 self.UI.treeDataSet.remove_result(result)
@@ -486,7 +536,7 @@ class MainWindow(QMainWindow):
                 for recordset in recordsets:
                     if part_id is None:
                         part_id = recordset.id_participant
-                    task = SimpleTask(self.tr('Deleting') + '"' + recordset.name + '"',
+                    task = SimpleTask(self.tr('Deleting') + ' "' + recordset.name + '" ',
                                       self.dbMan.delete_recordset, recordset)
                     tasks.append(task)
                     self.UI.treeDataSet.remove_recordset(recordset)
@@ -498,7 +548,7 @@ class MainWindow(QMainWindow):
                                                                                                .currentItem().parent())]
                 recordsets = self.dbMan.get_all_recordsets(participant=participant)
                 for recordset in recordsets:
-                    task = SimpleTask(self.tr('Deleting') + '"' + recordset.name + '"',
+                    task = SimpleTask(self.tr('Deleting') + ' "' + recordset.name + '" ',
                                       self.dbMan.delete_recordset, recordset)
                     tasks.append(task)
                     self.UI.treeDataSet.remove_recordset(recordset)
@@ -586,6 +636,11 @@ class MainWindow(QMainWindow):
                 # Remove transfered files
                 shutil.rmtree(stream_diag.get_data_save_path())
                 self.load_data_from_dataset()
+
+    def init_editor_dialog(self):
+        self.dataDialog = QDialog()
+        self.dataDialog.setWindowTitle(self.tr('Data Editor'))
+        self.dataDialog.setWindowIcon(self.windowIcon())
 
 
 class StdConsoleLogger:

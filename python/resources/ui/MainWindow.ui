@@ -75,7 +75,7 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>442</width>
+     <width>100</width>
      <height>180</height>
     </size>
    </property>
@@ -271,6 +271,9 @@
         </item>
         <item>
          <widget class="QToolButton" name="btnDelete">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="minimumSize">
            <size>
             <width>40</width>
@@ -531,7 +534,7 @@
        <property name="minimumSize">
         <size>
          <width>100</width>
-         <height>32</height>
+         <height>40</height>
         </size>
        </property>
        <property name="font">
@@ -568,7 +571,7 @@
        <property name="minimumSize">
         <size>
          <width>100</width>
-         <height>32</height>
+         <height>40</height>
         </size>
        </property>
        <property name="font">
@@ -624,7 +627,7 @@
        <property name="minimumSize">
         <size>
          <width>100</width>
-         <height>32</height>
+         <height>40</height>
         </size>
        </property>
        <property name="font">
@@ -667,7 +670,7 @@
        <property name="minimumSize">
         <size>
          <width>100</width>
-         <height>32</height>
+         <height>40</height>
         </size>
        </property>
        <property name="font">
@@ -717,7 +720,7 @@
        <property name="minimumSize">
         <size>
          <width>110</width>
-         <height>32</height>
+         <height>40</height>
         </size>
        </property>
        <property name="font">
@@ -754,7 +757,7 @@
        <property name="minimumSize">
         <size>
          <width>110</width>
-         <height>32</height>
+         <height>40</height>
         </size>
        </property>
        <property name="font">
@@ -807,8 +810,8 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>100</width>
-         <height>32</height>
+         <width>75</width>
+         <height>40</height>
         </size>
        </property>
        <property name="maximumSize">

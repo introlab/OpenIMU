@@ -83,7 +83,8 @@ class OpenIMUApp(QApplication):
     @Slot()
     def main_window_closing(self):
         if not self.start_window:
-            sys.exit(0)
+            # sys.exit(0)
+            self.quit()
 
     @Slot()
     def request_show_start_window(self):

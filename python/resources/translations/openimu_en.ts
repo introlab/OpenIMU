@@ -5,31 +5,31 @@
     <name>CrashDialog</name>
     <message>
         <location filename="../ui/CrashDialog.ui" line="14"/>
-        <source>Oups...</source>
+        <source>Oh no...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/CrashDialog.ui" line="50"/>
-        <source>Oups... une erreur est survenue!</source>
+        <location filename="../ui/CrashDialog.ui" line="49"/>
+        <source>Oops... An error occurred!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/CrashDialog.ui" line="88"/>
-        <source>Général</source>
+        <location filename="../ui/CrashDialog.ui" line="87"/>
+        <source>General</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/CrashDialog.ui" line="106"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Le logiciel a rencontré un problème.&lt;br/&gt;&lt;br/&gt;Vous pouvez continuer à travailler, mais&lt;span style=&quot; font-weight:600;&quot;&gt; il se pourrait que certains éléments ne fonctionnent plus correctement&lt;/span&gt;.&lt;br/&gt;&lt;br/&gt;Encore mieux, vous pouvez &lt;span style=&quot; font-weight:600;&quot;&gt;rapporter le problème aux développeurs&lt;/span&gt;! N&apos;oubliez pas de mentionner ce que vous avez fait et d&apos;inclure le rapport technique.&lt;br/&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <location filename="../ui/CrashDialog.ui" line="105"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This software encountered an issue.&lt;br/&gt;&lt;br/&gt;You can still continue to work, but&lt;span style=&quot; font-weight:600;&quot;&gt; it is possible that some features will not function properly&lt;/span&gt;.&lt;br/&gt;&lt;br/&gt;If possible, please &lt;span style=&quot; font-weight:600;&quot;&gt;report the issue to the developpers&lt;/span&gt; so it can be fixed. Don&apos;t forget to specify the steps you did to have this issue and include the technical report.&lt;br/&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/CrashDialog.ui" line="123"/>
-        <source>Rapport technique</source>
+        <location filename="../ui/CrashDialog.ui" line="122"/>
+        <source>Technical report</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/CrashDialog.ui" line="174"/>
+        <location filename="../ui/CrashDialog.ui" line="173"/>
         <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
@@ -38,82 +38,47 @@
     <name>DataInfosWidget</name>
     <message>
         <location filename="../ui/DataInfosWidget.ui" line="20"/>
-        <location filename="../ui/DataInfosWidget.ui" line="66"/>
-        <source>Informations sur les données</source>
+        <location filename="../ui/DataInfosWidget.ui" line="65"/>
+        <source>Data information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/DataInfosWidget.ui" line="89"/>
-        <source>Capteur</source>
+        <location filename="../ui/DataInfosWidget.ui" line="88"/>
+        <source>Sensor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/DataInfosWidget.ui" line="106"/>
-        <source>(Nom du capteur)</source>
+        <location filename="../ui/DataInfosWidget.ui" line="122"/>
+        <source>Hardware</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/DataInfosWidget.ui" line="124"/>
-        <source>Matériel</source>
+        <location filename="../ui/DataInfosWidget.ui" line="151"/>
+        <source>Hardware ID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/DataInfosWidget.ui" line="141"/>
-        <source>(Nom de l&apos;appareil)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/DataInfosWidget.ui" line="154"/>
-        <source>ID Matériel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/DataInfosWidget.ui" line="170"/>
-        <source>(ID Matériel)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/DataInfosWidget.ui" line="188"/>
+        <location filename="../ui/DataInfosWidget.ui" line="184"/>
         <source>Position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/DataInfosWidget.ui" line="205"/>
-        <source>(Position)</source>
+        <location filename="../ui/DataInfosWidget.ui" line="218"/>
+        <source>Sampling rate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/DataInfosWidget.ui" line="223"/>
-        <source>Échantillonnage</source>
+        <location filename="../ui/DataInfosWidget.ui" line="246"/>
+        <source>Samples number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/DataInfosWidget.ui" line="240"/>
-        <source>(Fréquence échantillonnage)</source>
+        <location filename="../ui/DataInfosWidget.ui" line="271"/>
+        <source>Channels number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/DataInfosWidget.ui" line="252"/>
-        <source>Nombre d&apos;échantillons</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/DataInfosWidget.ui" line="266"/>
-        <source>(Nombre échantillons)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/DataInfosWidget.ui" line="278"/>
-        <source>Nombre de canaux</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/DataInfosWidget.ui" line="292"/>
-        <source>(Nombre de canaux)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/DataInfosWidget.ui" line="325"/>
+        <location filename="../ui/DataInfosWidget.ui" line="317"/>
         <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
@@ -415,208 +380,231 @@
     <name>MainWindow</name>
     <message>
         <location filename="../ui/MainWindow.ui" line="92"/>
-        <location filename="../ui/MainWindow.ui" line="440"/>
+        <location filename="../ui/MainWindow.ui" line="443"/>
         <source>Data structure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="341"/>
         <location filename="../ui/MainWindow.ui" line="198"/>
         <source>New group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="373"/>
         <location filename="../ui/MainWindow.ui" line="239"/>
         <source>New participant</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="290"/>
+        <location filename="../ui/MainWindow.ui" line="293"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="327"/>
-        <location filename="../ui/MainWindow.ui" line="496"/>
+        <location filename="../ui/MainWindow.ui" line="330"/>
+        <location filename="../ui/MainWindow.ui" line="499"/>
         <source>Logs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="546"/>
+        <location filename="../ui/MainWindow.ui" line="549"/>
         <source>Import new data into this database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="549"/>
+        <location filename="../ui/MainWindow.ui" line="552"/>
         <source>Import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="586"/>
+        <location filename="../ui/MainWindow.ui" line="589"/>
         <source>Stream and import data from a device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="589"/>
+        <location filename="../ui/MainWindow.ui" line="592"/>
         <source>Stream &amp;&amp; Import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="639"/>
+        <location filename="../ui/MainWindow.ui" line="642"/>
         <source>Process data with available algorithms</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="642"/>
+        <location filename="../ui/MainWindow.ui" line="645"/>
         <source>Process</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="682"/>
+        <location filename="../ui/MainWindow.ui" line="685"/>
         <source>Export data to external formats</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="685"/>
+        <location filename="../ui/MainWindow.ui" line="688"/>
         <source>Export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="732"/>
+        <location filename="../ui/MainWindow.ui" line="735"/>
         <source>Compact and optimize database structure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="735"/>
+        <location filename="../ui/MainWindow.ui" line="738"/>
         <source>Compact</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="770"/>
+        <location filename="../ui/MainWindow.ui" line="773"/>
         <source>Database information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="773"/>
+        <location filename="../ui/MainWindow.ui" line="776"/>
         <source>Informations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="829"/>
+        <location filename="../ui/MainWindow.ui" line="832"/>
         <source>Close the current dataset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="832"/>
+        <location filename="../ui/MainWindow.ui" line="835"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="854"/>
+        <location filename="../ui/MainWindow.ui" line="857"/>
         <source>Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="61"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="64"/>
         <source>OpenIMU - Ready.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="71"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="74"/>
         <source>Loading data...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="78"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="81"/>
         <source>Data loaded!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="289"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="295"/>
         <source>This dataset will be closed. Do you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="290"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="296"/>
         <source>Close?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="296"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="302"/>
         <source>File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="296"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="302"/>
         <source>was closed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="309"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="315"/>
         <source>Database file will be cleaned up and optimized. This can take some time.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="310"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="316"/>
         <source>Do you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="311"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="316"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="317"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="322"/>
         <source>Database cleanup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="318"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="324"/>
         <source>Cleanup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="398"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="347"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="379"/>
+        <source>added.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="347"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="443"/>
         <source>Group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="398"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="403"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="443"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="448"/>
         <source>updated.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="403"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="379"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="448"/>
         <source>Participant</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="429"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="642"/>
+        <source>Data Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="479"/>
         <source>Are you sure you want to delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="430"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="480"/>
         <source>and all associated elements?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="431"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="481"/>
         <source>Confirm deletion</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="442"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="448"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="458"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="465"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="473"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="489"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="501"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="492"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="498"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="508"/>
         <location filename="../../libopenimu/qt/MainWindow.py" line="515"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="523"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="539"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="551"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="565"/>
         <source>Deleting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="521"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="571"/>
         <source>was deleted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ParticipantWindow</name>
+    <message>
+        <location filename="../../libopenimu/qt/ParticipantWindow.py" line="40"/>
+        <source>None</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -624,42 +612,71 @@
     <name>ProgressDialog</name>
     <message>
         <location filename="../ui/ProgressDialog.ui" line="20"/>
-        <source>Dialog</source>
+        <source>Progress Display</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ProgressDialog.ui" line="90"/>
-        <source>Travail en cours...</source>
+        <location filename="../ui/ProgressDialog.ui" line="89"/>
+        <source>Work in progress...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ProgressDialog.ui" line="138"/>
-        <source>En cours:</source>
+        <location filename="../ui/ProgressDialog.ui" line="137"/>
+        <source>Processing:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ProgressDialog.ui" line="152"/>
-        <source>Un grand texte pour tester les fonctions</source>
+        <location filename="../ui/ProgressDialog.ui" line="200"/>
+        <source>Unknown</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ProgressDialog.ui" line="191"/>
-        <source>00:00:00</source>
+        <location filename="../ui/ProgressDialog.ui" line="213"/>
+        <source>Remaining time:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ProgressDialog.ui" line="204"/>
-        <source>Inconnu</source>
+        <location filename="../ui/ProgressDialog.ui" line="239"/>
+        <source>Elapsed time:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RecordsetWindow</name>
+    <message>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="228"/>
+        <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ProgressDialog.ui" line="217"/>
-        <source>Restant:</source>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="229"/>
+        <source>Displaying a timeline spanning over more than 2 years isn&apos;t supported for now</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ProgressDialog.ui" line="243"/>
-        <source>Temps écoulé:</source>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="277"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="278"/>
+        <source>No data.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="494"/>
+        <source>Loading temporal data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="499"/>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="684"/>
+        <source>Loading data...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="688"/>
+        <source>Processing</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -837,6 +854,19 @@ in dataset</source>
     </message>
 </context>
 <context>
+    <name>TreeDataWidget</name>
+    <message>
+        <location filename="../../libopenimu/qt/TreeDataWidget.py" line="157"/>
+        <source>Recordings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/TreeDataWidget.py" line="165"/>
+        <source>Results</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dlgImportWizard</name>
     <message>
         <location filename="../ui/ImportDialogWizard.ui" line="14"/>
@@ -951,12 +981,12 @@ in dataset</source>
     <name>frmGraphWidget</name>
     <message>
         <location filename="../ui/GraphWidget.ui" line="17"/>
-        <source>Form</source>
+        <source>Graph display</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/GraphWidget.ui" line="68"/>
-        <source>Déplacer</source>
+        <source>Move tool</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -973,37 +1003,37 @@ in dataset</source>
     </message>
     <message>
         <location filename="../ui/GraphWidget.ui" line="100"/>
-        <source>Sélectionner</source>
+        <source>Select tool</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/GraphWidget.ui" line="148"/>
-        <source>Zoom avant</source>
+        <source>Zoom in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/GraphWidget.ui" line="177"/>
-        <source>Zoom arrière</source>
+        <source>Zoom out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/GraphWidget.ui" line="206"/>
-        <source>Zoom sélection</source>
+        <source>Zoom on selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/GraphWidget.ui" line="235"/>
-        <source>Zoom initial</source>
+        <source>Initial zoom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/GraphWidget.ui" line="277"/>
-        <source>Effacer la sélection</source>
+        <source>Clear selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/GraphWidget.ui" line="319"/>
-        <source>Informations sur les données</source>
+        <source>Data informations</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1011,32 +1041,37 @@ in dataset</source>
     <name>frmGroup</name>
     <message>
         <location filename="../ui/GroupWidget.ui" line="26"/>
-        <source>Groupe</source>
+        <source>Group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GroupWidget.ui" line="65"/>
-        <source>Informations sur le groupe</source>
+        <location filename="../ui/GroupWidget.ui" line="64"/>
+        <source>Group information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GroupWidget.ui" line="89"/>
-        <source>Nom</source>
+        <location filename="../ui/GroupWidget.ui" line="80"/>
+        <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GroupWidget.ui" line="112"/>
+        <location filename="../ui/GroupWidget.ui" line="118"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/GroupWidget.ui" line="195"/>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/GroupWidget.ui" line="224"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/GroupWidget.ui" line="141"/>
         <source>Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/GroupWidget.ui" line="165"/>
-        <source>Sauvegarder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/GroupWidget.ui" line="194"/>
-        <source>Annuler</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1048,33 +1083,38 @@ in dataset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ParticipantWidget.ui" line="62"/>
-        <source>Informations sur le participant</source>
+        <location filename="../ui/ParticipantWidget.ui" line="61"/>
+        <source>Participant information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ParticipantWidget.ui" line="86"/>
-        <source>Nom</source>
+        <location filename="../ui/ParticipantWidget.ui" line="77"/>
+        <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ParticipantWidget.ui" line="109"/>
+        <location filename="../ui/ParticipantWidget.ui" line="115"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ParticipantWidget.ui" line="221"/>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ParticipantWidget.ui" line="250"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ParticipantWidget.ui" line="167"/>
+        <source>Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ParticipantWidget.ui" line="138"/>
         <source>Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ParticipantWidget.ui" line="162"/>
-        <source>Sauvegarder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ParticipantWidget.ui" line="191"/>
-        <source>Annuler</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ParticipantWidget.ui" line="216"/>
-        <source>Groupe</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1082,83 +1122,73 @@ in dataset</source>
     <name>frmRecordsets</name>
     <message>
         <location filename="../ui/RecordsetWidget.ui" line="20"/>
-        <source>Form</source>
+        <source>Recordset display</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="123"/>
-        <source>Plage des enregistrements: </source>
+        <location filename="../ui/RecordsetWidget.ui" line="122"/>
+        <source>Data range: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="143"/>
-        <source>29/03/2018 11:45:04 - 03/04/2018 09:37:56</source>
+        <location filename="../ui/RecordsetWidget.ui" line="172"/>
+        <source>Total time:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="175"/>
-        <source>Temps total:</source>
+        <location filename="../ui/RecordsetWidget.ui" line="304"/>
+        <source>Zoom on selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="195"/>
-        <source>5 jours, 22 heures 52 minutes et 50 secondes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/RecordsetWidget.ui" line="419"/>
-        <source>Zoomer sur la sélection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/RecordsetWidget.ui" line="422"/>
-        <location filename="../ui/RecordsetWidget.ui" line="451"/>
-        <location filename="../ui/RecordsetWidget.ui" line="480"/>
-        <location filename="../ui/RecordsetWidget.ui" line="653"/>
-        <location filename="../ui/RecordsetWidget.ui" line="685"/>
-        <location filename="../ui/RecordsetWidget.ui" line="714"/>
-        <location filename="../ui/RecordsetWidget.ui" line="743"/>
+        <location filename="../ui/RecordsetWidget.ui" line="278"/>
+        <location filename="../ui/RecordsetWidget.ui" line="307"/>
+        <location filename="../ui/RecordsetWidget.ui" line="349"/>
+        <location filename="../ui/RecordsetWidget.ui" line="679"/>
+        <location filename="../ui/RecordsetWidget.ui" line="711"/>
+        <location filename="../ui/RecordsetWidget.ui" line="740"/>
+        <location filename="../ui/RecordsetWidget.ui" line="769"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="448"/>
-        <source>Réiniatiliser le zoom</source>
+        <location filename="../ui/RecordsetWidget.ui" line="275"/>
+        <source>Initial zoom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="477"/>
-        <source>Effacer la sélection</source>
+        <location filename="../ui/RecordsetWidget.ui" line="346"/>
+        <source>Clear selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="522"/>
-        <source>Afficher / masquer la ligne temporelle</source>
+        <location filename="../ui/RecordsetWidget.ui" line="549"/>
+        <source>Show / hide temporal view</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="562"/>
-        <source>Date / Heure Inconnues</source>
+        <location filename="../ui/RecordsetWidget.ui" line="588"/>
+        <source>Unknown date / time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="650"/>
-        <source>Nouvel affichage</source>
+        <location filename="../ui/RecordsetWidget.ui" line="676"/>
+        <source>New graph</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="682"/>
-        <source>Organiser horizontalement</source>
+        <location filename="../ui/RecordsetWidget.ui" line="708"/>
+        <source>Tile horizontally</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="711"/>
-        <source>Organiser verticalement</source>
+        <location filename="../ui/RecordsetWidget.ui" line="737"/>
+        <source>Tile vertically</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="740"/>
-        <source>Organiser automatiquement</source>
+        <location filename="../ui/RecordsetWidget.ui" line="766"/>
+        <source>Auto tile</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

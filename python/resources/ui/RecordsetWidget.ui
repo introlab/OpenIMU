@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Recordset display</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QLabel#lblCursorTime{color:cyan;}
@@ -115,12 +115,11 @@ QGraphicsView{background-color:transparent;}
            </property>
            <property name="font">
             <font>
-             <weight>50</weight>
              <bold>false</bold>
             </font>
            </property>
            <property name="text">
-            <string>Plage des enregistrements: </string>
+            <string>Data range: </string>
            </property>
           </widget>
          </item>
@@ -135,12 +134,11 @@ QGraphicsView{background-color:transparent;}
            <property name="font">
             <font>
              <pointsize>10</pointsize>
-             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
            <property name="text">
-            <string>29/03/2018 11:45:04 - 03/04/2018 09:37:56</string>
+            <string notr="true">29/03/2018 11:45:04 - 03/04/2018 09:37:56</string>
            </property>
           </widget>
          </item>
@@ -167,12 +165,11 @@ QGraphicsView{background-color:transparent;}
            </property>
            <property name="font">
             <font>
-             <weight>50</weight>
              <bold>false</bold>
             </font>
            </property>
            <property name="text">
-            <string>Temps total:</string>
+            <string>Total time:</string>
            </property>
           </widget>
          </item>
@@ -187,12 +184,11 @@ QGraphicsView{background-color:transparent;}
            <property name="font">
             <font>
              <pointsize>10</pointsize>
-             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
            <property name="text">
-            <string>5 jours, 22 heures 52 minutes et 50 secondes</string>
+            <string notr="true">5 jours, 22 heures 52 minutes et 50 secondes</string>
            </property>
           </widget>
          </item>
@@ -211,7 +207,13 @@ QGraphicsView{background-color:transparent;}
          <property name="spacing">
           <number>0</number>
          </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
          <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
           <number>0</number>
          </property>
          <property name="bottomMargin">
@@ -222,6 +224,145 @@ QGraphicsView{background-color:transparent;}
            <property name="spacing">
             <number>0</number>
            </property>
+           <item>
+            <widget class="QFrame" name="frameTimelineControls">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>40</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_6">
+              <property name="spacing">
+               <number>6</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item alignment="Qt::AlignHCenter">
+               <widget class="QToolButton" name="btnZoomReset">
+                <property name="minimumSize">
+                 <size>
+                  <width>30</width>
+                  <height>30</height>
+                 </size>
+                </property>
+                <property name="cursor">
+                 <cursorShape>PointingHandCursor</cursorShape>
+                </property>
+                <property name="toolTip">
+                 <string>Initial zoom</string>
+                </property>
+                <property name="text">
+                 <string>...</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../core.qrc">
+                  <normaloff>:/OpenIMU/icons/zoom_reset.png</normaloff>:/OpenIMU/icons/zoom_reset.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item alignment="Qt::AlignHCenter">
+               <widget class="QToolButton" name="btnTimeZoomSelection">
+                <property name="minimumSize">
+                 <size>
+                  <width>30</width>
+                  <height>30</height>
+                 </size>
+                </property>
+                <property name="cursor">
+                 <cursorShape>PointingHandCursor</cursorShape>
+                </property>
+                <property name="toolTip">
+                 <string>Zoom on selection</string>
+                </property>
+                <property name="text">
+                 <string>...</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../core.qrc">
+                  <normaloff>:/OpenIMU/icons/zoom_selection.png</normaloff>:/OpenIMU/icons/zoom_selection.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item alignment="Qt::AlignHCenter">
+               <widget class="QToolButton" name="btnClearSelection">
+                <property name="minimumSize">
+                 <size>
+                  <width>30</width>
+                  <height>30</height>
+                 </size>
+                </property>
+                <property name="cursor">
+                 <cursorShape>PointingHandCursor</cursorShape>
+                </property>
+                <property name="toolTip">
+                 <string>Clear selection</string>
+                </property>
+                <property name="text">
+                 <string>...</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../core.qrc">
+                  <normaloff>:/OpenIMU/icons/selection_clear.png</normaloff>:/OpenIMU/icons/selection_clear.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
            <item>
             <widget class="QGraphicsView" name="graphSensorsTimeline">
              <property name="sizePolicy">
@@ -381,120 +522,6 @@ QGraphicsView{background-color:transparent;}
           <number>2</number>
          </property>
          <item>
-          <widget class="QFrame" name="frameTimelineControls">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <property name="spacing">
-             <number>6</number>
-            </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QToolButton" name="btnTimeZoomSelection">
-              <property name="minimumSize">
-               <size>
-                <width>30</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="cursor">
-               <cursorShape>PointingHandCursor</cursorShape>
-              </property>
-              <property name="toolTip">
-               <string>Zoomer sur la sélection</string>
-              </property>
-              <property name="text">
-               <string>...</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../core.qrc">
-                <normaloff>:/OpenIMU/icons/zoom_selection.png</normaloff>:/OpenIMU/icons/zoom_selection.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QToolButton" name="btnZoomReset">
-              <property name="minimumSize">
-               <size>
-                <width>30</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="cursor">
-               <cursorShape>PointingHandCursor</cursorShape>
-              </property>
-              <property name="toolTip">
-               <string>Réiniatiliser le zoom</string>
-              </property>
-              <property name="text">
-               <string>...</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../core.qrc">
-                <normaloff>:/OpenIMU/icons/zoom_reset.png</normaloff>:/OpenIMU/icons/zoom_reset.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QToolButton" name="btnClearSelection">
-              <property name="minimumSize">
-               <size>
-                <width>30</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="cursor">
-               <cursorShape>PointingHandCursor</cursorShape>
-              </property>
-              <property name="toolTip">
-               <string>Effacer la sélection</string>
-              </property>
-              <property name="text">
-               <string>...</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../core.qrc">
-                <normaloff>:/OpenIMU/icons/selection_clear.png</normaloff>:/OpenIMU/icons/selection_clear.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
           <spacer name="horizontalSpacer_4">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -519,7 +546,7 @@ QGraphicsView{background-color:transparent;}
             <cursorShape>PointingHandCursor</cursorShape>
            </property>
            <property name="toolTip">
-            <string>Afficher / masquer la ligne temporelle</string>
+            <string>Show / hide temporal view</string>
            </property>
            <property name="text">
             <string/>
@@ -554,12 +581,11 @@ QGraphicsView{background-color:transparent;}
            <property name="font">
             <font>
              <pointsize>10</pointsize>
-             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
            <property name="text">
-            <string>Date / Heure Inconnues</string>
+            <string>Unknown date / time</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -647,7 +673,7 @@ QGraphicsView{background-color:transparent;}
             <cursorShape>PointingHandCursor</cursorShape>
            </property>
            <property name="toolTip">
-            <string>Nouvel affichage</string>
+            <string>New graph</string>
            </property>
            <property name="text">
             <string>...</string>
@@ -679,7 +705,7 @@ QGraphicsView{background-color:transparent;}
             <cursorShape>PointingHandCursor</cursorShape>
            </property>
            <property name="toolTip">
-            <string>Organiser horizontalement</string>
+            <string>Tile horizontally</string>
            </property>
            <property name="text">
             <string>...</string>
@@ -708,7 +734,7 @@ QGraphicsView{background-color:transparent;}
             <cursorShape>PointingHandCursor</cursorShape>
            </property>
            <property name="toolTip">
-            <string>Organiser verticalement</string>
+            <string>Tile vertically</string>
            </property>
            <property name="text">
             <string>...</string>
@@ -737,7 +763,7 @@ QGraphicsView{background-color:transparent;}
             <cursorShape>PointingHandCursor</cursorShape>
            </property>
            <property name="toolTip">
-            <string>Organiser automatiquement</string>
+            <string>Auto tile</string>
            </property>
            <property name="text">
             <string>...</string>

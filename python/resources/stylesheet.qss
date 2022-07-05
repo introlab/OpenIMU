@@ -16,6 +16,17 @@ QWidget#MainWindow,QWidget#ImportBrowser,QWidget#ImportManager,QWidget#frmPartic
 }
 
 /*************************/
+/* QMainWindow           */
+/*************************/
+
+QMainWindow::separator {
+    background: grey;
+    width: 5px;
+    height: 5px;
+}
+
+
+/*************************/
 /* QPushButton           */
 /*************************/
 
@@ -31,7 +42,7 @@ QPushButton{
 
 QPushButton:hover{
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 rgb(100,100,100), stop: 1 rgb(200,200,200));
-    border: 2px solid white;
+    /*border: 2px solid lightgrey;*/
     border-radius: 5px;
 }
 
@@ -73,17 +84,29 @@ QPushButton#btnQuit:hover{
 /*************************/
 /* QLabel                */
 /*************************/
-QLabel,QCheckBox{color:white;}
-QLabel:!enabled{color:black;}
+QLabel,QCheckBox{
+    color:white;
+}
+
+QLabel:!enabled{
+    color:lightgrey;
+}
 
 /*************************/
 /* Text editors          */
 /*************************/
-QLineEdit,QPlainTextEdit,QComboBox,QDateEdit{
-    background-color:rgba(226, 226, 226,90%);
-    border-radius:5px;
-    min-height:24px;
-    padding-left: 10px;}
+QLineEdit, QPlainTextEdit, QComboBox, QDateEdit{
+    background-color: rgba(226, 226, 226,90%);
+    border-radius: 5px;
+    min-height: 24px;
+    padding-left: 10px;
+}
+
+QLineEdit:!enabled, QPlainTextEdit:!enabled, QComboBox:!enabled, QDateEdit:!enabled{
+    background-color: rgba(226, 226, 226, 10%);
+    font: bold;
+    color: white;
+}
 
 /*************************/
 /* QProgressBar          */
@@ -168,33 +191,17 @@ QTreeWidget::item:selected {
         background-color:rgba(255,255,255,0);
 }
 
-/*QPushButton:hover,QToolButton:hover{border-radius: 5px; color:black;background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 grey, stop: 0.2  rgb(200,200, 200), stop:1 grey);border: 2px solid rgb(186, 186, 186);}
-QPushButton,QToolButton{border-radius: 5px; color:white; background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 black, stop: 0.2  rgb(200,200, 200), stop:1 black);border: 2px solid rgb(96, 96, 96);}
-QPushButton:!enabled,QToolButton:!enabled{border-radius: 5px; color: rgb(168, 168, 168); background-color: rgba(200,200,200,10%);border: 0px transparent}
-QPushButton:checked,QToolButton:checked{border-radius: 5px; color:black;border: 3px solid green;background-color:darkgreen;}
-QPushButton[checkable=true]:!checked,QToolButton[checkable=true]:!checked{border-radius: 5px; color:red;background-color:rgba(180,0,0,50%);border: 2px solid rgb(180,0,0);}
-
-QToolButton#btnEdit:checked{border-radius: 5px; background-color: gray; border: 0px solid transparent;}
-QToolButton#btnEdit[checkable=true]:!checked{border-radius: 5px; background-color: transparent; border: 0px solid transparent;}*/
-
-/*QFrame#frameTitle{background-color:rgba(130,130,130,50%);}
-QFrame#frameInfos{background-color:rgba(150,150,150,100%);}
-
-QFrame#frameButtons,QFrame#frameTools,QFrame#frameCursor{background-color:rgba(0,0,0,70%);  border-radius:5px;}
-
-QListWidget{background-color:rgba(150,150,150,50%);}
-
-
-
-QListWidget#lstSensors,QTableWidget{background-color:rgba(200,200,200,70%);}
-
-QDockWidget{color:white;}
-QDockWidget::title{
-border: 2px solid darkgrey;
-background-color:grey;
-text-align: center;
+/************************/
+/* QFrame               */
+/************************/
+QFrame#frameButtons,QFrame#frameTools,QFrame#frameCursor{
+    background-color:rgba(0,0,0,70%);
+    border-radius:5px;
 }
 
+/************************/
+/* QTabWidget           */
+/************************/
 QTabWidget::pane {
     background-color: rgba(50,50,50,50%);
     border-radius: 5px;
@@ -204,6 +211,24 @@ QTabWidget::pane {
 QTabWidget::tab-bar {
     left: 0px;
 }
+
+/************************/
+/* QDockWidget          */
+/************************/
+
+QDockWidget{
+    color:white;
+}
+
+QDockWidget::title{
+    border: 2px solid darkgrey;
+    background-color:grey;
+    text-align: center;
+}
+
+/************************/
+/* QTabWidget           */
+/************************/
 
 QTabBar::tab,QTableWidget::tab,QHeaderView::section {
     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0  rgba(128,128,140,50%),  stop: 1.0  rgba(128,128,140,25%));
@@ -229,11 +254,38 @@ QTabBar::tab:!selected {
     margin-top: 2px;
 }
 
-QMainWindow::separator {
-    background: grey;
-    width: 5px;
-    height: 5px;
+/************************/
+/* QTableWidget         */
+/************************/
+
+QTableWidget{
+    background-color:rgba(200,200,200,70%);
 }
+
+/************************/
+/* QListWidget          */
+/************************/
+QListWidget{
+    background-color:rgba(150,150,150,50%);
+}
+
+QListWidget#lstSensors{
+    background-color:rgba(200,200,200,70%);
+}
+
+
+/*QPushButton:hover,QToolButton:hover{border-radius: 5px; color:black;background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 grey, stop: 0.2  rgb(200,200, 200), stop:1 grey);border: 2px solid rgb(186, 186, 186);}
+QPushButton,QToolButton{border-radius: 5px; color:white; background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 black, stop: 0.2  rgb(200,200, 200), stop:1 black);border: 2px solid rgb(96, 96, 96);}
+QPushButton:!enabled,QToolButton:!enabled{border-radius: 5px; color: rgb(168, 168, 168); background-color: rgba(200,200,200,10%);border: 0px transparent}
+QPushButton:checked,QToolButton:checked{border-radius: 5px; color:black;border: 3px solid green;background-color:darkgreen;}
+QPushButton[checkable=true]:!checked,QToolButton[checkable=true]:!checked{border-radius: 5px; color:red;background-color:rgba(180,0,0,50%);border: 2px solid rgb(180,0,0);}
+
+QToolButton#btnEdit:checked{border-radius: 5px; background-color: gray; border: 0px solid transparent;}
+QToolButton#btnEdit[checkable=true]:!checked{border-radius: 5px; background-color: transparent; border: 0px solid transparent;}*/
+
+/*QFrame#frameTitle{background-color:rgba(130,130,130,50%);}
+QFrame#frameInfos{background-color:rgba(150,150,150,100%);}
+
 
 QSpinBox{
         background-color:rgba(226, 226, 226,90%);

@@ -6,4 +6,5 @@ class DataEditor(QWidget):
 
     dataSaved = Signal()
     dataCancelled = Signal()
+    dataEditing = Signal(bool)
     data_type = "none"
