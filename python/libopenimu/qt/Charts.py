@@ -1,7 +1,7 @@
 from PySide6.QtGui import QPolygonF, QPainter, QMouseEvent, QResizeEvent, QBrush, QColor, QPen, QGuiApplication
 from PySide6.QtCharts import QChart, QChartView, QLineSeries, QBarSeries, QBarSet
 from PySide6.QtCharts import QDateTimeAxis, QValueAxis, QBarCategoryAxis
-from PySide6.QtWidgets import QGraphicsLineItem, QGraphicsTextItem, QLabel, QRubberBand
+from PySide6.QtWidgets import QGraphicsLineItem, QLabel, QRubberBand
 from PySide6.QtOpenGLWidgets import QOpenGLWidget
 from PySide6.QtCore import Qt, Slot, QPointF, QRect, QRectF, QPoint
 
@@ -19,7 +19,6 @@ class IMUChartView(QChartView, BaseGraph):
 
         # Render on OpenGL
         self.setViewport(QOpenGLWidget())
-
         self.xvalues = {}
 
         self.chart = QChart()
@@ -59,7 +58,7 @@ class IMUChartView(QChartView, BaseGraph):
 
     def build_style(self):
         self.setStyleSheet("QLabel{color:blue;}")
-        self.chart.setTheme(QChart.ChartThemeBlueCerulean)
+        self.chart.setTheme(QChart.ChartThemeDark)
         self.setBackgroundBrush(QBrush(Qt.darkGray))
         self.chart.setPlotAreaBackgroundBrush(QBrush(Qt.black))
         self.chart.setPlotAreaBackgroundVisible(True)
@@ -93,8 +92,8 @@ class IMUChartView(QChartView, BaseGraph):
             decimate_factor = int(np.floor(decimate_factor))
             # print('decimate factor', decimate_factor)
 
-            x = np.ndarray(int(len(xdata) / decimate_factor), dtype=np.float64)
-            y = np.ndarray(int(len(ydata) / decimate_factor), dtype=np.float64)
+            x = np.ndarray([int(len(xdata) / decimate_factor)], dtype=np.float64)
+            y = np.ndarray([int(len(ydata) / decimate_factor)], dtype=np.float64)
             # for i in range(len(x)):
             for i, _ in enumerate(x):
                 index = i * decimate_factor
@@ -121,18 +120,18 @@ class IMUChartView(QChartView, BaseGraph):
 
         # Create new axes
         # Create axis X
-        axisx = QDateTimeAxis()
-        axisx.setTickCount(5)
-        axisx.setFormat("dd MMM yyyy hh:mm:ss")
-        axisx.setTitleText("Date")
-        self.chart.addAxis(axisx, Qt.AlignBottom)
+        axis_x = QDateTimeAxis()
+        axis_x.setTickCount(5)
+        axis_x.setFormat("dd MMM yyyy hh:mm:ss")
+        axis_x.setTitleText(self.tr('Date'))
+        self.chart.addAxis(axis_x, Qt.AlignBottom)
 
         # Create axis Y
-        axisY = QValueAxis()
-        axisY.setTickCount(5)
-        axisY.setLabelFormat("%.3f")
-        axisY.setTitleText("Values")
-        self.chart.addAxis(axisY, Qt.AlignLeft)
+        axis_y = QValueAxis()
+        axis_y.setTickCount(5)
+        axis_y.setLabelFormat("%.3f")
+        axis_y.setTitleText(self.tr('Values'))
+        self.chart.addAxis(axis_y, Qt.AlignLeft)
         # axisY.rangeChanged.connect(self.axis_range_changed)
 
         ymin = None
@@ -140,8 +139,8 @@ class IMUChartView(QChartView, BaseGraph):
 
         # Attach axes to series, find min-max
         for series in self.chart.series():
-            series.attachAxis(axisx)
-            series.attachAxis(axisY)
+            series.attachAxis(axis_x)
+            series.attachAxis(axis_y)
             vect = series.pointsVector()
             # for i in range(len(vect)):
             for i, _ in enumerate(vect):
@@ -155,7 +154,7 @@ class IMUChartView(QChartView, BaseGraph):
         # Update range
         # print('min max', ymin, ymax)
         if ymin is not None:
-            axisY.setRange(ymin, ymax)
+            axis_y.setRange(ymin, ymax)
 
         # Make the X,Y axis more readable
         # axisx.applyNiceNumbers()
@@ -170,8 +169,7 @@ class IMUChartView(QChartView, BaseGraph):
 
         curve.setPen(pen)
         # curve.setPointsVisible(True)
-
-        # curve.setUseOpenGL(True)
+        curve.setUseOpenGL(True)
 
         self.total_samples = max(self.total_samples, len(xdata))
 
@@ -189,8 +187,8 @@ class IMUChartView(QChartView, BaseGraph):
         points = []
         for i, _ in enumerate(xdecimated):
             # TODO hack
-            # curve.append(QPointF(xdecimated[i], ydecimated[i]))
             points.append(QPointF(xdecimated[i], ydecimated[i]))
+            # curve.append(QPointF(xdecimated[i], ydecimated[i]))
 
         curve.replace(points)
         points.clear()
@@ -268,9 +266,7 @@ class IMUChartView(QChartView, BaseGraph):
 
                 current_series.replace(new_points)
                 new_points.clear()
-
                 # self.xvalues[series_id] = np.array(xdata)
-
         return
 
     @classmethod
@@ -310,25 +306,26 @@ class IMUChartView(QChartView, BaseGraph):
 
         xdata = np.linspace(0., 10., npoints)
         self.add_data(xdata, np.sin(xdata), color=Qt.red, legend_text='Acc. X')
-        # self.add_data(xdata, np.cos(xdata), color=Qt.green, legend_text='Acc. Y')
-        # self.add_data(xdata, np.cos(2 * xdata), color=Qt.blue, legend_text='Acc. Z')
+        self.add_data(xdata, np.cos(xdata), color=Qt.green, legend_text='Acc. Y')
+        self.add_data(xdata, np.cos(2 * xdata), color=Qt.blue, legend_text='Acc. Z')
         self.set_title("Simple example with %d curves of %d points (OpenGL Accelerated Series)"
                        % (self.ncurves, npoints))
 
     def mouseMoveEvent(self, e: QMouseEvent):
         if self.selecting:
 
-            clicked_x = max(self.chart.plotArea().x(), min(self.mapToScene(e.pos()).x(),
+            pos = e.position().toPoint()
+            clicked_x = max(self.chart.plotArea().x(), min(self.mapToScene(pos).x(),
                                                            self.chart.plotArea().x() + self.chart.plotArea().width()))
 
-            clicked_y = max(self.chart.plotArea().y(), min(self.mapToScene(e.pos()).y(),
+            clicked_y = max(self.chart.plotArea().y(), min(self.mapToScene(pos).y(),
                                                            self.chart.plotArea().y() + self.chart.plotArea().height()))
 
             current_pos = QPoint(clicked_x, clicked_y)  # e.pos()
 
             self.selection_stop_time = self.chart.mapToValue(QPointF(clicked_x, 0)).x()
 
-            self.set_cursor_position(clicked_x, True)
+            self.set_cursor_position(clicked_x, False)
 
             if self.interaction_mode == GraphInteractionMode.SELECT:
                 if current_pos.x() < self.initialClick.x():
@@ -356,10 +353,11 @@ class IMUChartView(QChartView, BaseGraph):
         # if self.chart.plotArea().contains(e.pos()):
 
         self.selecting = True
-        clicked_x = max(self.chart.plotArea().x(), min(self.mapToScene(e.pos()).x(),
+        pos = e.position().toPoint()
+        clicked_x = max(self.chart.plotArea().x(), min(self.mapToScene(pos).x(),
                                                        self.chart.plotArea().x() + self.chart.plotArea().width()))
 
-        clicked_y = max(self.chart.plotArea().y(), min(self.mapToScene(e.pos()).y(),
+        clicked_y = max(self.chart.plotArea().y(), min(self.mapToScene(pos).y(),
                                                        self.chart.plotArea().y() + self.chart.plotArea().height()))
 
         self.initialClick = QPoint(clicked_x, clicked_y)  # e.pos()
@@ -381,7 +379,8 @@ class IMUChartView(QChartView, BaseGraph):
 
         # Assure if click is inside plot area
         # Handling rubberbands (with min / max x)
-        clicked_x = max(self.chart.plotArea().x(), min(self.mapToScene(e.pos()).x(),
+        pos = e.position().toPoint()
+        clicked_x = max(self.chart.plotArea().x(), min(self.mapToScene(pos).x(),
                                                        self.chart.plotArea().x() + self.chart.plotArea().width()))
 
         if self.interaction_mode == GraphInteractionMode.SELECT:
@@ -460,7 +459,7 @@ class IMUChartView(QChartView, BaseGraph):
         ypos = 10
         last_val = None
         for i in range(self.ncurves):
-            # Find nearest point
+            # Find the nearest point
             idx = (np.abs(self.xvalues[i] - xmap_initial)).argmin()
             ymap = self.chart.series()[i].at(idx).y()
             xmap = self.chart.series()[i].at(idx).x()
@@ -489,7 +488,7 @@ class IMUChartView(QChartView, BaseGraph):
         self.update()
 
     def set_cursor_position_from_time(self, timestamp, emit_signal=False):
-        # Find nearest point
+        # Find the nearest point
         if isinstance(timestamp, datetime.datetime):
             timestamp = timestamp.timestamp()
         pos = self.get_pos_from_time(timestamp)
@@ -649,4 +648,4 @@ if __name__ == '__main__':
     window = create_imu_view()
     # window2 = create_bar_view()
 
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

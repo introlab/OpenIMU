@@ -73,6 +73,7 @@ class DBSensorAllDataTask(WorkerTask):
         count = 0
         channel_data = []
         for channel in channels:
+            channel_data = []
             # Will get all data (converted to floats)
             for record in self.recordsets:
                 channel_data += self.dbMan.get_all_sensor_data(recordset=record, convert=True, sensor=self.sensor,
@@ -84,6 +85,7 @@ class DBSensorAllDataTask(WorkerTask):
             if len(channel_data) > 0:
                 timeseries.append(self.create_data_timeseries(channel_data))
                 timeseries[-1]['label'] = channel.label
+
         self.results = {'sensor': self.sensor, 'timeseries': timeseries, 'channel_data': channel_data}
 
 
@@ -276,6 +278,8 @@ class RecordsetWindow(QWidget):
         if len(self.recordsets) == 0:
             self.UI.lblTotalValue.setText(self.tr('No data.'))
             self.UI.lblDurationValue.setText(self.tr('No data.'))
+            self.UI.frmSensors.hide()
+            self.UI.frameTop.hide()
             return
 
         start_time = self.recordsets[0].start_timestamp
@@ -491,8 +495,8 @@ class RecordsetWindow(QWidget):
             sensors = self.get_sensors_for_location(location)
             for sensor_id in sensors:
                 for record in self.recordsets:
-                    tasks.append(DBSensorTimesTask(title=self.tr('Loading temporal data'), db_manager=self.dbMan,
-                                                   sensor_id=sensor_id, recordset=record))
+                    tasks.append(DBSensorTimesTask(title=self.tr('Loading temporal data') + '...',
+                                                   db_manager=self.dbMan, sensor_id=sensor_id, recordset=record))
 
         QGuiApplication.setOverrideCursor(Qt.BusyCursor)
         process = BackgroundProcess(tasks)
@@ -631,8 +635,8 @@ class RecordsetWindow(QWidget):
                     gps = GPSGeodetic()
                     gps.from_bytes(data.data)
                     if gps.latitude != 0 and gps.longitude != 0:
-                        graph_window.graph.addPosition(data.timestamps.start_timestamp, gps.latitude / 1e7,
-                                                       gps.longitude / 1e7)
+                        graph_window.graph.add_position(data.timestamps.start_timestamp, gps.latitude / 1e7,
+                                                        gps.longitude / 1e7)
                         graph_window.set_cursor_position_from_time(data.timestamps.start_timestamp)
 
             if graph_type == GraphType.BEACON:
@@ -743,7 +747,7 @@ class RecordsetWindow(QWidget):
                 graph.set_cursor_position_from_time(current_time, False)
 
         pos = self.get_relative_timeview_pos(current_time)
-        self.time_bar.setPos(pos,0)
+        self.time_bar.setPos(pos, 0)
 
         # Ensure time bar is visible if scrollable
         self.ensure_time_bar_visible(pos)

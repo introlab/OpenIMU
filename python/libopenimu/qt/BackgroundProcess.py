@@ -1,5 +1,4 @@
-from PySide6.QtCore import QThread, QCoreApplication, QTime, Signal, Slot, Qt, QObject, QThreadPool, QRunnable, \
-    QElapsedTimer
+from PySide6.QtCore import QThread, QCoreApplication, Signal, Slot, Qt, QObject, QThreadPool, QRunnable, QElapsedTimer
 from PySide6.QtWidgets import QDialog, QApplication
 from PySide6.QtGui import QMovie
 from resources.ui.python.ProgressDialog_ui import Ui_ProgressDialog
@@ -13,7 +12,7 @@ class WorkerTask(QObject):
 
     update_progress = Signal(int)  # Current progress in %
     size_updated = Signal()
-    log_request = Signal('QString', int)
+    log_request = Signal(str, int)
     results_ready = Signal('QVariant')
 
     def __init__(self, title: string, size: int, parent=None):
@@ -135,12 +134,16 @@ class BackgroundProcessForImporters(BackgroundProcess):
 
 
 class ProgressDialog(QDialog):
+    cancel_requested = Signal()
+
     def __init__(self, bg_process: BackgroundProcess, job_title: string, parent=None):
-        super(ProgressDialog, self).__init__(parent)
+        QDialog.__init__(self, parent=parent)
 
         self.UI = Ui_ProgressDialog()
         self.UI.setupUi(self)
         self.setWindowFlags(Qt.SplashScreen)
+
+        # self.UI.frameCancel.hide()  # Hide cancel frame
 
         self.tasks = bg_process.tasks
         self.UI.prgTotal.setMinimum(0)
@@ -171,7 +174,11 @@ class ProgressDialog(QDialog):
             self.UI.prgTask.hide()
 
         # Center dialog on screen
-        screen_geometry = QApplication.primaryScreen().availableGeometry()
+        if parent:
+            screen_geometry = parent.window().windowHandle().screen().availableGeometry()
+        else:
+            screen_geometry = QApplication.primaryScreen().availableGeometry()
+
         x = (screen_geometry.width() - self.width()) / 2
         y = (screen_geometry.height() - self.height()) / 2
         self.move(x, y)
@@ -180,6 +187,7 @@ class ProgressDialog(QDialog):
         bg_process.finished.connect(self.accept)
         bg_process.task_completed.connect(self.next_task)
         bg_process.update_current_task_progress.connect(self.update_current_task_progress)
+        # self.UI.btnCancelTask.clicked.connect(self.cancel_clicked)
 
     def showEvent(self, event):
         self.display_current_task()
@@ -246,6 +254,11 @@ class ProgressDialog(QDialog):
         m = np.floor((display_time - h * 3600000) / 60000)
         s = np.floor((display_time - h * 3600000 - m * 60000) / 1000)
         return "%02d:%02d:%02d" % (h, m, s)
+
+    @Slot()
+    def cancel_clicked(self):
+        print('Cancel requested')
+        self.cancel_requested.emit()
 
 
 # Main

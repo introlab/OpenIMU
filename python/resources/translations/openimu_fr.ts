@@ -155,6 +155,19 @@
     </message>
 </context>
 <context>
+    <name>IMUChartView</name>
+    <message>
+        <location filename="../../libopenimu/qt/Charts.py" line="126"/>
+        <source>Date</source>
+        <translation>Date</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/Charts.py" line="133"/>
+        <source>Values</source>
+        <translation>Valeurs</translation>
+    </message>
+</context>
+<context>
     <name>ImportBrowser</name>
     <message>
         <location filename="../ui/ImportBrowser.ui" line="14"/>
@@ -670,38 +683,38 @@
 <context>
     <name>RecordsetWindow</name>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="228"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="230"/>
         <source>Warning</source>
         <translation>Avertissement</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="229"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="231"/>
         <source>Displaying a timeline spanning over more than 2 years isn&apos;t supported for now</source>
         <translation>L&apos;affichage d&apos;une ligne du temps de 2 ans ou plus n&apos;est pas supportée pour l&apos;instant</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="277"/>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="278"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="279"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="280"/>
         <source>No data.</source>
         <translation>Aucune donnée.</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="494"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="498"/>
         <source>Loading temporal data</source>
         <translation>Chargement des données temporelles</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="499"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="503"/>
         <source>Loading</source>
         <translation>Chargement</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="704"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="708"/>
         <source>Loading data...</source>
         <translation>Chargement des données...</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="708"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="712"/>
         <source>Processing</source>
         <translation>Traitement</translation>
     </message>

@@ -42,6 +42,10 @@ class GraphWindow(QWidget):
 
         if graph_type == GraphType.MAP:
             self.graph = GPSView(self)
+            self.UI.btnMove.hide()
+            self.UI.btnSelect.hide()
+            self.UI.btnClearSelection.hide()
+            self.UI.btnZoomArea.hide()
 
         if graph_type == GraphType.BEACON:
             self.graph = BeaconsView(self)

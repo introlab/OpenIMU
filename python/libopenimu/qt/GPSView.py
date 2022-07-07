@@ -27,7 +27,7 @@ class GPSView(QWebEngineView, BaseGraph):
         self.settings().setAttribute(QWebEngineSettings.JavascriptEnabled, True)
         self.settings().setAttribute(QWebEngineSettings.LocalContentCanAccessRemoteUrls, True)
 
-        self.loadFinished.connect(self.pageLoaded)
+        self.loadFinished.connect(self.page_loaded)
 
         # Load file from qrc
         self.setUrl(QUrl('qrc:/OpenIMU/html/map.html'))
@@ -38,7 +38,7 @@ class GPSView(QWebEngineView, BaseGraph):
     # def closeEvent(self, QCloseEvent):
     #    self.aboutToClose.emit(self)
 
-    def addPosition(self, timestamp, latitude, longitude):
+    def add_position(self, timestamp, latitude, longitude):
         # if timestamp < self.reftime:
         #    self.reftime = timestamp
         if isinstance(timestamp, datetime.datetime):
@@ -141,14 +141,14 @@ class GPSView(QWebEngineView, BaseGraph):
         return True
 
     @Slot(bool)
-    def pageLoaded(self, state):
+    def page_loaded(self, state):
         print('page loaded:', state)
 
         if state is True:
             self.pageReady = True
             for coords in self.path:
                 self.page().runJavaScript('addPosition(' + str(coords[0]) + ',' + str(coords[1]) + ');')
-            if self.marker_position != []:
+            if self.marker_position:
                 self.page().runJavaScript('setMarkerPosition(' + str(self.marker_position[0]) + ',' + str(self.marker_position[1]) + ');')
 
 
