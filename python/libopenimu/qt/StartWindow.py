@@ -2,10 +2,9 @@ from resources.ui.python.StartDialog_ui import Ui_StartDialog
 
 from libopenimu.qt.ImportWindow import ImportWindow
 from libopenimu.qt.ImportDialogWizard import ImportDialogWizard
-from libopenimu.qt.ImportBrowser import ImportBrowser
 
 from PySide6.QtCore import Slot, Signal, QLocale
-from PySide6.QtWidgets import QDialog, QFileDialog, QApplication
+from PySide6.QtWidgets import QDialog, QFileDialog, QApplication, QMessageBox
 
 from libopenimu.tools.Settings import OpenIMUSettings
 
@@ -15,6 +14,7 @@ class StartWindow(QDialog):
     filename = ''
     importing = False
     request_language_change = Signal(str)
+    loading = True
 
     def __init__(self, parent=None):
         super(StartWindow, self).__init__(parent)
@@ -27,6 +27,12 @@ class StartWindow(QDialog):
         else:
             self.UI.cmbLanguage.setCurrentIndex(0)
 
+        # Check recent files list
+        self.settings = OpenIMUSettings()
+        self.UI.cmbRecents.clear()
+        self.UI.cmbRecents.addItem("")
+        self.UI.cmbRecents.addItems(self.settings.get_recent_files())
+
         # Signals
         self.UI.btnImport.clicked.connect(self.import_clicked)
         self.UI.btnOpen.clicked.connect(self.open_clicked)
@@ -34,12 +40,7 @@ class StartWindow(QDialog):
         self.UI.btnQuit.clicked.connect(self.quit_clicked)
         self.UI.cmbRecents.currentIndexChanged.connect(self.recent_clicked)
         self.UI.cmbLanguage.currentIndexChanged.connect(self.language_changed)
-
-        # Check recent files list
-        self.settings = OpenIMUSettings()
-        self.UI.cmbRecents.clear()
-        self.UI.cmbRecents.addItem("")
-        self.UI.cmbRecents.addItems(self.settings.get_recent_files())
+        self.loading = False
 
     @Slot()
     def import_clicked(self):
@@ -70,15 +71,22 @@ class StartWindow(QDialog):
         if importdialog.exec() == QDialog.Accepted:
             self.open_file(importdialog.fileName)
 
-    def open_file(self, filename: str):
+    def open_file(self, filename: str) -> bool:
         from os import path
+        if not filename:
+            return True
+
         if not path.exists(filename):
-            return
+            QMessageBox.warning(self, self.tr('File missing'),
+                                filename + ' ' + self.tr('doesn\'t exist. Perhaps it has been moved, deleted or '
+                                                         'renamed?'))
+            return False
 
         self.filename = filename
         self.settings.add_recent_file(self.filename)
         if self.isVisible():
             self.accept()
+        return True
 
     @staticmethod
     @Slot()
@@ -87,7 +95,17 @@ class StartWindow(QDialog):
 
     @Slot()
     def recent_clicked(self):
-        self.open_file(self.UI.cmbRecents.currentText())
+        if self.loading:
+            return
+
+        if not self.open_file(self.UI.cmbRecents.currentText()):
+            # Unable to open - remove from recents!
+            self.loading = True
+            self.settings.remove_recent_file(self.UI.cmbRecents.currentText())
+            index = self.UI.cmbRecents.currentIndex()
+            self.UI.cmbRecents.setCurrentIndex(0)
+            self.UI.cmbRecents.removeItem(index)
+            self.loading = False
 
     @Slot()
     def language_changed(self, index: int):

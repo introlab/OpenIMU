@@ -268,7 +268,7 @@ class MainWindow(QMainWindow):
     @Slot()
     def infos_requested(self):
         infos_window = ImportWindow(dataset=self.currentDataSet, filename=self.currentFileName)
-        infos_window.setStyleSheet(self.styleSheet())
+        # infos_window.setStyleSheet(self.styleSheet())
         infos_window.noImportUI = True
         infos_window.infosOnly = True
 

@@ -16,7 +16,7 @@ class GPSView(QWebEngineView, BaseGraph):
     cursorMoved = Signal(float)
 
     def __init__(self, parent):
-        BaseGraph.__init__(self, parent=parent)
+        BaseGraph.__init__(self)
         QWebEngineView.__init__(self, parent=parent)
         self.path = []
         self.marker_position = []
@@ -52,7 +52,7 @@ class GPSView(QWebEngineView, BaseGraph):
         else:
             self.path.append([latitude, longitude])
 
-    def setCursorPositionFromTime(self, timestamp, emit_signal=False):
+    def set_cursor_position_from_time(self, timestamp, emit_signal=False):
 
         # timestamp -= datetime.timedelta(microseconds=timestamp.microsecond)
         # position = None
@@ -94,12 +94,12 @@ class GPSView(QWebEngineView, BaseGraph):
         if self.pageReady:
             self.page().runJavaScript('zoomOut();')
 
-    def clearSelectionArea(self, emit_signal=False):
+    def clear_selection_area(self, emit_signal=False):
         if self.pageReady:
             self.page().runJavaScript('clearSelectedPath();')
 
-    def setSelectionAreaFromTime(self, start_time, end_time, emit_signal=False):
-        self.clearSelectionArea()
+    def set_selection_area_from_time(self, start_time, end_time, emit_signal=False):
+        self.clear_selection_area()
         if not start_time:
             return
         try:

@@ -14,7 +14,7 @@ import datetime
 class IMUChartView(QChartView, BaseGraph):
 
     def __init__(self, parent=None):
-        BaseGraph.__init__(self, parent=parent)
+        BaseGraph.__init__(self)
         QChartView.__init__(self, parent=parent)
 
         # Render on OpenGL
@@ -168,7 +168,6 @@ class IMUChartView(QChartView, BaseGraph):
             pen.setColor(color)
         pen.setWidthF(1.5)
 
-
         curve.setPen(pen)
         # curve.setPointsVisible(True)
 
@@ -221,28 +220,30 @@ class IMUChartView(QChartView, BaseGraph):
             # Find start and end indexes
             start_index = -1
             try:
-                start_index = current_points.index(QPointF(xdata[0]*1000, ydata[0]))  # Right on the value!
+                start_index = current_points.index(QPointF(xdata[0] * 1000, ydata[0]))  # Right on the value!
                 # print("update_data: start_index found exact match.")
             except ValueError:
                 # print("update_data: start_index no exact match - scanning deeper...")
                 for i, value in enumerate(current_points):
                     # print(str(current_points[i].x()) + " == " + str(xdata[0]*1000))
-                    if current_points[i].x() == xdata[0]*1000 or (i > 0 and current_points[i - 1].x() < xdata[0]*1000
-                                                             < current_points[i].x()):
+                    if current_points[i].x() == xdata[0] * 1000 or (
+                            i > 0 and current_points[i - 1].x() < xdata[0] * 1000
+                            < current_points[i].x()):
                         start_index = i
                         # print("update_data: start_index found approximative match.")
                         break
 
             end_index = -1
             try:
-                end_index = current_points.index(QPointF(xdata[len(xdata)-1] * 1000, ydata[len(ydata)-1]))  # Right on!
+                end_index = current_points.index(
+                    QPointF(xdata[len(xdata) - 1] * 1000, ydata[len(ydata) - 1]))  # Right on!
                 # print("update_data: start_index found exact match.")
             except ValueError:
                 # print("update_data: start_index no exact match - scanning deeper...")
                 for i, value in enumerate(current_points):
                     # print(str(current_points[i].x()) + " == " + str(xdata[0]*1000))
-                    if current_points[i].x() == xdata[len(xdata)-1] * 1000 or (
-                            i > 0 and current_points[i - 1].x() < xdata[len(xdata)-1] * 1000
+                    if current_points[i].x() == xdata[len(xdata) - 1] * 1000 or (
+                            i > 0 and current_points[i - 1].x() < xdata[len(xdata) - 1] * 1000
                             < current_points[i].x()):
                         end_index = i
                         # print("update_data: start_index found approximative match.")
@@ -260,10 +261,10 @@ class IMUChartView(QChartView, BaseGraph):
                 points = []
                 for i, value in enumerate(xdata):
                     # TODO improve
-                    points.append(QPointF(value*1000, ydata[i]))
+                    points.append(QPointF(value * 1000, ydata[i]))
 
-                new_points = current_points[0:start_index] + points[0:len(points)-1] + \
-                             current_points[end_index:len(current_points)-1]
+                new_points = current_points[0:start_index] + points[0:len(points) - 1] + \
+                             current_points[end_index:len(current_points) - 1]
 
                 current_series.replace(new_points)
                 new_points.clear()
@@ -312,7 +313,7 @@ class IMUChartView(QChartView, BaseGraph):
         # self.add_data(xdata, np.cos(xdata), color=Qt.green, legend_text='Acc. Y')
         # self.add_data(xdata, np.cos(2 * xdata), color=Qt.blue, legend_text='Acc. Z')
         self.set_title("Simple example with %d curves of %d points (OpenGL Accelerated Series)"
-                        % (self.ncurves, npoints))
+                       % (self.ncurves, npoints))
 
     def mouseMoveEvent(self, e: QMouseEvent):
         if self.selecting:
@@ -327,7 +328,7 @@ class IMUChartView(QChartView, BaseGraph):
 
             self.selection_stop_time = self.chart.mapToValue(QPointF(clicked_x, 0)).x()
 
-            self.setCursorPosition(clicked_x, True)
+            self.set_cursor_position(clicked_x, True)
 
             if self.interaction_mode == GraphInteractionMode.SELECT:
                 if current_pos.x() < self.initialClick.x():
@@ -341,7 +342,7 @@ class IMUChartView(QChartView, BaseGraph):
                                                      width, self.chart.plotArea().height()))
                 if self.selection_rec:
                     self.selection_rec.setRect(QRectF(start_x, self.chart.plotArea().y(),
-                                                     width, self.chart.plotArea().height()))
+                                                      width, self.chart.plotArea().height()))
 
             if self.interaction_mode == GraphInteractionMode.MOVE:
                 new_pos = current_pos - self.initialClick
@@ -365,7 +366,7 @@ class IMUChartView(QChartView, BaseGraph):
 
         self.selection_start_time = self.chart.mapToValue(QPointF(clicked_x, 0)).x()
 
-        self.setCursorPosition(clicked_x, True)
+        self.set_cursor_position(clicked_x, True)
 
         if self.interaction_mode == GraphInteractionMode.SELECT:
             self.selectionBand.setGeometry(QRect(self.initialClick.x(), self.chart.plotArea().y(), 1,
@@ -388,16 +389,16 @@ class IMUChartView(QChartView, BaseGraph):
             if clicked_x != self.mapToScene(self.initialClick).x():
                 mapped_x = self.mapToScene(self.initialClick).x()
                 if self.initialClick.x() < clicked_x:
-                    self.setSelectionArea(mapped_x, clicked_x, True)
+                    self.set_selection_area(mapped_x, clicked_x, True)
                 else:
-                    self.setSelectionArea(clicked_x, mapped_x, True)
+                    self.set_selection_area(clicked_x, mapped_x, True)
 
         if self.interaction_mode == GraphInteractionMode.MOVE:
             QGuiApplication.restoreOverrideCursor()
 
         self.selecting = False
 
-    def clearSelectionArea(self, emit_signal=False):
+    def clear_selection_area(self, emit_signal=False):
         if self.selection_rec:
             self.scene().removeItem(self.selection_rec)
             self.selection_rec = None
@@ -405,7 +406,7 @@ class IMUChartView(QChartView, BaseGraph):
         if emit_signal:
             self.clearedSelectionArea.emit()
 
-    def setSelectionArea(self, start_pos, end_pos, emit_signal=False):
+    def set_selection_area(self, start_pos, end_pos, emit_signal=False):
         selection_brush = QBrush(QColor(153, 204, 255, 128))
         selection_pen = QPen(Qt.transparent)
 
@@ -419,19 +420,19 @@ class IMUChartView(QChartView, BaseGraph):
             self.selectedAreaChanged.emit(self.chart.mapToValue(QPointF(start_pos, 0)).x(),
                                           self.chart.mapToValue(QPointF(end_pos, 0)).x())
 
-    def setSelectionAreaFromTime(self, start_time, end_time, emit_signal=False):
+    def set_selection_area_from_time(self, start_time, end_time, emit_signal=False):
         # Convert times to x values
         if isinstance(start_time, datetime.datetime):
-            start_time = start_time.timestamp()*1000
+            start_time = start_time.timestamp() * 1000
         if isinstance(end_time, datetime.datetime):
-            end_time = end_time.timestamp()*1000
+            end_time = end_time.timestamp() * 1000
 
         start_pos = self.chart.mapToPosition(QPointF(start_time, 0)).x()
         end_pos = self.chart.mapToPosition(QPointF(end_time, 0)).x()
 
-        self.setSelectionArea(start_pos, end_pos)
+        self.set_selection_area(start_pos, end_pos)
 
-    def setCursorPosition(self, pos, emit_signal=False):
+    def set_cursor_position(self, pos, emit_signal=False):
 
         self.cursor_time = self.chart.mapToValue(QPointF(pos, 0)).x()
 
@@ -464,7 +465,8 @@ class IMUChartView(QChartView, BaseGraph):
             ymap = self.chart.series()[i].at(idx).y()
             xmap = self.chart.series()[i].at(idx).x()
             if i == 0:
-                display += "<i>" + (datetime.datetime.fromtimestamp(xmap_initial/1000)).strftime('%d-%m-%Y %H:%M:%S:%f') + \
+                display += "<i>" + (datetime.datetime.fromtimestamp(xmap_initial / 1000)).strftime(
+                    '%d-%m-%Y %H:%M:%S:%f') + \
                            "</i>"
 
             # Compute where to display label
@@ -486,12 +488,12 @@ class IMUChartView(QChartView, BaseGraph):
 
         self.update()
 
-    def setCursorPositionFromTime(self, timestamp, emit_signal=False):
+    def set_cursor_position_from_time(self, timestamp, emit_signal=False):
         # Find nearest point
         if isinstance(timestamp, datetime.datetime):
             timestamp = timestamp.timestamp()
         pos = self.get_pos_from_time(timestamp)
-        self.setCursorPosition(pos, emit_signal)
+        self.set_cursor_position(pos, emit_signal)
 
     def get_pos_from_time(self, timestamp):
         px = timestamp
@@ -520,11 +522,11 @@ class IMUChartView(QChartView, BaseGraph):
 
         # Update cursor from time
         if self.cursor_time:
-            self.setCursorPositionFromTime(self.cursor_time / 1000.0)
+            self.set_cursor_position_from_time(self.cursor_time / 1000.0)
 
         # Update selection
         if self.selection_rec:
-            self.setSelectionAreaFromTime(self.selection_start_time, self.selection_stop_time)
+            self.set_selection_area_from_time(self.selection_start_time, self.selection_stop_time)
 
     def zoom_in(self):
         self.chart.zoomIn()
@@ -540,7 +542,7 @@ class IMUChartView(QChartView, BaseGraph):
             zoom_rec.setY(0)
             zoom_rec.setHeight(self.chart.plotArea().height())
             self.chart.zoomIn(zoom_rec)
-            self.clearSelectionArea(True)
+            self.clear_selection_area(True)
             self.update_axes()
 
     def zoom_reset(self):
@@ -550,7 +552,7 @@ class IMUChartView(QChartView, BaseGraph):
     def get_displayed_start_time(self):
         min_x = self.chart.mapToScene(self.chart.plotArea()).boundingRect().x()
         xmap = self.chart.mapToValue(QPointF(min_x, 0)).x()
-        return datetime.datetime.fromtimestamp(xmap/1000)
+        return datetime.datetime.fromtimestamp(xmap / 1000)
 
     def get_displayed_end_time(self):
         max_x = self.chart.mapToScene(self.chart.plotArea()).boundingRect().x()
@@ -603,7 +605,7 @@ class OpenIMUBarGraphView(QChartView):
     def add_test_data(self):
         print('adding test data series')
         self.set_title('Testing bars')
-        self.set_category_axis(['A','B','C','D'])
+        self.set_category_axis(['A', 'B', 'C', 'D'])
         self.add_set('Test1', [0.1, 2, 3, 4])
         self.add_set('Test2', [3, 2, 1, 4])
         self.add_set('Test3', [4, 1, 3, 2])
@@ -616,9 +618,11 @@ if __name__ == '__main__':
 
     from PySide6.QtWidgets import QApplication
     from PySide6.QtWidgets import QMainWindow
+
     # from PySide6.QtCore import Qt
 
     app = QApplication(sys.argv)
+
 
     def create_imu_view():
         window = QMainWindow()
@@ -630,6 +634,7 @@ if __name__ == '__main__':
         window.show()
         return window
 
+
     def create_bar_view():
         window = QMainWindow()
         view = OpenIMUBarGraphView(window)
@@ -639,6 +644,7 @@ if __name__ == '__main__':
         window.resize(640, 480)
         window.show()
         return window
+
 
     window = create_imu_view()
     # window2 = create_bar_view()

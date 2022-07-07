@@ -2,6 +2,24 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en">
 <context>
+    <name>BeaconsView</name>
+    <message>
+        <location filename="../../libopenimu/qt/BeaconsView.py" line="22"/>
+        <source>Timestamp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/BeaconsView.py" line="22"/>
+        <source>RSSI</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/BeaconsView.py" line="22"/>
+        <source>TX Power</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CrashDialog</name>
     <message>
         <location filename="../ui/CrashDialog.ui" line="14"/>
@@ -259,6 +277,14 @@
     <message>
         <location filename="../ui/ImportDialog.ui" line="300"/>
         <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ImportDialogWizard</name>
+    <message>
+        <location filename="../../libopenimu/qt/ImportDialogWizard.py" line="38"/>
+        <source>Dataset to import data into</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -670,12 +696,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="684"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="704"/>
         <source>Loading data...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="688"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="708"/>
         <source>Processing</source>
         <translation type="unfinished"></translation>
     </message>
@@ -717,8 +743,18 @@ in dataset</source>
 <context>
     <name>StartWindow</name>
     <message>
-        <location filename="../../libopenimu/qt/StartWindow.py" line="60"/>
+        <location filename="../../libopenimu/qt/StartWindow.py" line="61"/>
         <source>Filename to open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/StartWindow.py" line="80"/>
+        <source>File missing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/StartWindow.py" line="82"/>
+        <source>doesn&apos;t exist. Perhaps it has been moved, deleted or renamed?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -985,54 +1021,54 @@ in dataset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GraphWidget.ui" line="68"/>
+        <location filename="../ui/GraphWidget.ui" line="82"/>
         <source>Move tool</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GraphWidget.ui" line="71"/>
-        <location filename="../ui/GraphWidget.ui" line="103"/>
-        <location filename="../ui/GraphWidget.ui" line="151"/>
-        <location filename="../ui/GraphWidget.ui" line="180"/>
-        <location filename="../ui/GraphWidget.ui" line="209"/>
-        <location filename="../ui/GraphWidget.ui" line="238"/>
-        <location filename="../ui/GraphWidget.ui" line="280"/>
-        <location filename="../ui/GraphWidget.ui" line="322"/>
+        <location filename="../ui/GraphWidget.ui" line="85"/>
+        <location filename="../ui/GraphWidget.ui" line="117"/>
+        <location filename="../ui/GraphWidget.ui" line="165"/>
+        <location filename="../ui/GraphWidget.ui" line="194"/>
+        <location filename="../ui/GraphWidget.ui" line="223"/>
+        <location filename="../ui/GraphWidget.ui" line="252"/>
+        <location filename="../ui/GraphWidget.ui" line="294"/>
+        <location filename="../ui/GraphWidget.ui" line="339"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GraphWidget.ui" line="100"/>
+        <location filename="../ui/GraphWidget.ui" line="114"/>
         <source>Select tool</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GraphWidget.ui" line="148"/>
+        <location filename="../ui/GraphWidget.ui" line="162"/>
         <source>Zoom in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GraphWidget.ui" line="177"/>
+        <location filename="../ui/GraphWidget.ui" line="191"/>
         <source>Zoom out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GraphWidget.ui" line="206"/>
+        <location filename="../ui/GraphWidget.ui" line="220"/>
         <source>Zoom on selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GraphWidget.ui" line="235"/>
+        <location filename="../ui/GraphWidget.ui" line="249"/>
         <source>Initial zoom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GraphWidget.ui" line="277"/>
+        <location filename="../ui/GraphWidget.ui" line="291"/>
         <source>Clear selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GraphWidget.ui" line="319"/>
+        <location filename="../ui/GraphWidget.ui" line="336"/>
         <source>Data informations</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1248,6 +1284,19 @@ in dataset</source>
     <message>
         <location filename="../ui/ResultWidget.ui" line="287"/>
         <source>Sources de données</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>tableDataViewWidget</name>
+    <message>
+        <location filename="../ui/TableDataViewWidget.ui" line="14"/>
+        <source>Data view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/TableDataViewWidget.ui" line="26"/>
+        <source>Channel:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

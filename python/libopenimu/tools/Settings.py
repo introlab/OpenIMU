@@ -27,6 +27,12 @@ class OpenIMUSettings:
         files = self.settings.value('recent_files')
         return files
 
+    def remove_recent_file(self, file_path: str):
+        files = self.get_recent_files()
+        if file_path in files:
+            files.remove(file_path)
+            self.settings.setValue('recent_files', files)
+
     @property
     def data_save_path(self):
         import tempfile

@@ -9,8 +9,7 @@ QWidget#line,QWidget#line_2,QWidget#line_3{
     background-color:rgba(100,100,100,100%);
 }
 
-
-QWidget#MainWindow,QWidget#ImportBrowser,QWidget#ImportManager,QWidget#frmParticipant,QWidget#ExportCSV,QWidget#ImportDialog,QWidget#StartDialog,QWidget#dlgProcessSelect, QWidget#DataInfosWidget,QDialog{
+QWidget#MainWindow, QWidget#ImportBrowser, QWidget#ImportManager, QWidget#frmParticipant, QWidget#ExportCSV, QWidget#ImportDialog, QWidget#StartDialog, QWidget#dlgProcessSelect, QWidget#DataInfosWidget, QWidget#GraphWindow, QDialog {
     background:qlineargradient(spread:pad, x1:0.483, y1:0, x2:0.511045, y2:1, stop:0 rgb(50,50,50), stop:1 rgb(20,20,20));
     border-radius:0px;
 }
@@ -181,20 +180,22 @@ QToolButton#btnAddGroup, QToolButton#btnAddParticipant, QToolButton#btnDelete{
 QTreeWidget{background-color:rgba(200,200,200,75%);}
 
 QTreeWidget::item:hover,QTreeWidget::item:hover:selected {
-        border:none;
-        border-radius:5px;
-        background-color:rgba(255,255,255,100);
+    border:none;
+    border-radius:5px;
+    background-color:rgba(255,255,255,100);
 }
 
 QTreeWidget::item:selected {
-        border:none;
-        background-color:rgba(255,255,255,0);
+    border:none;
+    /*background-color:rgba(255,255,255,0);*/
+    background-color:rgba(173, 216, 230, 70%); /* Light blue */
+    color: black;
 }
 
 /************************/
 /* QFrame               */
 /************************/
-QFrame#frameButtons,QFrame#frameTools,QFrame#frameCursor{
+QFrame#frameButtons,QFrame#frameTools,QFrame#frameCursor,QFrame#frameControls{
     background-color:rgba(0,0,0,70%);
     border-radius:5px;
 }
@@ -232,13 +233,13 @@ QDockWidget::title{
 
 QTabBar::tab,QTableWidget::tab,QHeaderView::section {
     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0  rgba(128,128,140,50%),  stop: 1.0  rgba(128,128,140,25%));
-    border: 2px solid  rgba(128,128,140,50%);
+    border: 1px solid rgba(128,128,140,50%);
     border-bottom: 0px;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
+    /*border-top-left-radius: 4px;
+    border-top-right-radius: 4px;*/
     padding: 2px;
     min-height:25px;
-        color: white;
+    color: white;
 }
 
 QTabBar::tab:selected, QTabBar::tab:hover {
@@ -254,13 +255,33 @@ QTabBar::tab:!selected {
     margin-top: 2px;
 }
 
+QHeaderView {
+   background-color: rgb(50,50,50);
+}
+
 /************************/
-/* QTableWidget         */
+/* QTableWidget / View  */
 /************************/
 
 QTableWidget{
-    background-color:rgba(200,200,200,70%);
+    background-color: rgba(255,255,255,70%);
+    border: 0px solid transparent;
+    text-align: center;
 }
+
+QTableWidget QTableCornerButton::section {
+    background: rgb(50,50,50);
+    border: 2px outset grey;
+}
+
+QTableWidget::item:selected{
+    background-color: lightblue;
+    color: black;
+}
+
+
+
+
 
 /************************/
 /* QListWidget          */

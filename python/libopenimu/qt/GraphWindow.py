@@ -1,5 +1,6 @@
-from PySide6.QtWidgets import QWidget, QButtonGroup, QAbstractButton
+from PySide6.QtWidgets import QWidget, QButtonGroup, QAbstractButton, QApplication
 from PySide6.QtCore import Signal, QObject, QEvent, Slot
+from PySide6.QtGui import QLinearGradient, QColor
 
 from resources.ui.python.GraphWidget_ui import Ui_frmGraphWidget
 from libopenimu.qt.Charts import IMUChartView
@@ -44,6 +45,7 @@ class GraphWindow(QWidget):
 
         if graph_type == GraphType.BEACON:
             self.graph = BeaconsView(self)
+            self.UI.frameTools.hide()
 
         if self.graph is None:
             print("GraphWindow: Undefined graph type.")
@@ -93,16 +95,16 @@ class GraphWindow(QWidget):
 
     def set_cursor_position_from_time(self, timestamp, emit_signal=False):
         if self.graph is not None:
-            self.graph.setCursorPositionFromTime(timestamp, emit_signal)
+            self.graph.set_cursor_position_from_time(timestamp, emit_signal)
 
     def set_selection_area_from_time(self, start_time, end_time, emit_signal=False):
         if self.graph is not None:
-            self.graph.setSelectionAreaFromTime(start_time, end_time, emit_signal)
+            self.graph.set_selection_area_from_time(start_time, end_time, emit_signal)
             self.update_zoom_buttons_state()
 
     def clear_selection_area(self):
         if self.graph is not None:
-            self.graph.clearSelectionArea(False)
+            self.graph.clear_selection_area(False)
             self.UI.btnClearSelection.setEnabled(False)
             self.update_zoom_buttons_state()
 
@@ -113,7 +115,7 @@ class GraphWindow(QWidget):
 
     @Slot()
     def clear_selection_request(self):
-        self.graph.clearSelectionArea(True)
+        self.graph.clear_selection_area(True)
         self.UI.btnClearSelection.setEnabled(False)
 
     @Slot()
@@ -126,7 +128,7 @@ class GraphWindow(QWidget):
 
     def zoom_area_request_time(self, start_time: float, end_time: float, emit_signal=False):
         if self.graph:
-            self.graph.setSelectionAreaFromTime(start_time, end_time, emit_signal)
+            self.graph.set_selection_area_from_time(start_time, end_time, emit_signal)
             self.graph.zoom_area()
 
     @Slot()

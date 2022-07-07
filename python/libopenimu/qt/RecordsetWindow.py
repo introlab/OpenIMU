@@ -1,8 +1,8 @@
 from PySide6.QtWidgets import QWidget
 from PySide6.QtWidgets import QGraphicsScene, QApplication, QGraphicsRectItem, QGraphicsLineItem, QGraphicsItem
-from PySide6.QtWidgets import QDialog, QMenu, QMessageBox
+from PySide6.QtWidgets import QDialog, QMenu, QMessageBox, QMdiSubWindow
 from PySide6.QtGui import QBrush, QPen, QColor, QFont, QGuiApplication, QAction
-from PySide6.QtCore import Qt, Slot, Signal, QPoint, QRect, QObject, QRectF
+from PySide6.QtCore import Qt, Slot, Signal, QPoint, QRect, QObject, QRectF, QFile
 
 from resources.ui.python.RecordsetWidget_ui import Ui_frmRecordsets
 from libopenimu.qt.GraphWindow import GraphType, GraphWindow
@@ -617,7 +617,6 @@ class RecordsetWindow(QWidget):
 
             graph_type = self.get_sensor_graph_type(sensor)
             graph_window = GraphWindow(graph_type, sensor, self.UI.mdiArea)
-            graph_window.setStyleSheet(self.styleSheet() + graph_window.styleSheet())
 
             if graph_type == GraphType.LINECHART:
                 # Add series
@@ -637,17 +636,38 @@ class RecordsetWindow(QWidget):
                         graph_window.set_cursor_position_from_time(data.timestamps.start_timestamp)
 
             if graph_type == GraphType.BEACON:
-                # print('should do something with beacons data')
                 for series in timeseries:
                     if series.__contains__('x') and series.__contains__('y') and series.__contains__('label'):
                         row_count = min(len(series['x']), len(series['y']))
-                        graph_window.graph.add_tab(series['label'], row_count)
-                        for i in range(0, row_count):
-                            # Let's add data
-                            graph_window.graph.add_row(i, series['x'][i], series['y'][i], series['label'])
+                        beacon_id_parts = series['label'].split('_')
+                        if len(beacon_id_parts) >= 2:
+                            beacon_id = beacon_id_parts[0] + beacon_id_parts[1]
+                        else:
+                            beacon_id = series['label']
+                        if series['label'].endswith('RSSI'):
+                            for i in range(0, row_count):
+                                # Let's add data
+                                graph_window.graph.add_data(label=beacon_id, timestamp=series['x'][i],
+                                                            rssi=series['y'][i])
+
+                        if series['label'].endswith('Power'):
+                            for i in range(0, row_count):
+                                # Let's add data
+                                graph_window.graph.add_data(label=beacon_id, timestamp=series['x'][i],
+                                                            tx_power=series['y'][i])
+                # Select first channel
+                graph_window.graph.on_channel_changed()
 
             if graph_window is not None:
-                self.UI.mdiArea.addSubWindow(graph_window).setWindowTitle(sensor_label)
+                subwindow = QMdiSubWindow()
+                subwindow.setAttribute(Qt.WA_DeleteOnClose)
+                subwindow.setWindowTitle(sensor_label)
+                subwindow.setWindowIcon(self.windowIcon())
+                subwindow.setWidget(graph_window)
+                subwindow.setObjectName('GraphWindow')  # Name required to set the proper background style!
+
+                self.UI.mdiArea.addSubWindow(subwindow)
+
                 self.sensors_graphs[sensor.id_sensor] = graph_window
                 # self.UI.displayContents.layout().insertWidget(0,graph)
 
@@ -847,7 +867,7 @@ class RecordsetWindow(QWidget):
     def on_process_recordset(self):
         # Display Process Window
         window = ProcessSelectWindow(self.dbMan, self.recordsets)
-        window.setStyleSheet(self.styleSheet())
+        # window.setStyleSheet(self.styleSheet())
 
         if window.exec() == QDialog.Accepted:
             self.dataUpdateRequest.emit("result", window.processed_data)
