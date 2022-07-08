@@ -472,6 +472,7 @@ class ActigraphImporter(BaseImporter):
 
         # Flush DB
         self.db.flush()
+
     @timing
     def import_to_database(self, results):
         [info, data] = results

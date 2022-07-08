@@ -6,10 +6,10 @@ from resources.ui.python.ProgressDialog_ui import Ui_ProgressDialog
 import numpy as np
 import gc
 import string
+import traceback
 
 
 class WorkerTask(QObject):
-
     update_progress = Signal(int)  # Current progress in %
     size_updated = Signal()
     log_request = Signal(str, int)
@@ -49,9 +49,9 @@ class SimpleTask(WorkerTask):  # A simple worker task without any progress repor
 
 
 class BackgroundProcess(QThread):
-
     # Define a new signal called 'trigger' that has no arguments.
     task_completed = Signal()
+    task_error = Signal(str, str)  # filename, error msg
     update_current_task_progress = Signal(int)
 
     def __init__(self, tasks: list, parent=None):
@@ -62,10 +62,12 @@ class BackgroundProcess(QThread):
         # print('Run Starting!')
         for task in self.tasks:
             task.update_progress.connect(self.update_current_task_progress)
-            task.process()
+            try:
+                task.process()
+            except Exception as e:
+                self.task_error.emit(task.filename, str(traceback.format_exception(e, limit=-1)))
             self.task_completed.emit()
             del task
-        # print('Run Done!')
 
 
 # Testing parallel import (will require more ram)
@@ -264,10 +266,13 @@ class ProgressDialog(QDialog):
 # Main
 if __name__ == '__main__':
     import sys
+
     app = QCoreApplication(sys.argv)
+
 
     def hello_world():
         print('Hello world')
+
 
     thread = BackgroundProcess([hello_world])
     thread.start()

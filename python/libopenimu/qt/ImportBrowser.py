@@ -1,5 +1,5 @@
 from PySide6.QtCore import Slot, Qt, Signal, QObject, QEvent, QFileInfo, QDirIterator, QDir
-from PySide6.QtWidgets import QDialog, QTableWidgetItem, QComboBox, QApplication, QHBoxLayout, QFileDialog
+from PySide6.QtWidgets import QDialog, QTableWidgetItem, QComboBox, QApplication, QHBoxLayout, QFileDialog, QMessageBox
 from PySide6.QtGui import QDropEvent, QDragEnterEvent, QDragMoveEvent, QDragLeaveEvent, QIcon, QKeyEvent
 
 from resources.ui.python.ImportBrowser_ui import Ui_ImportBrowser
@@ -26,6 +26,7 @@ class ImportBrowser(QDialog):
     log_request = Signal('QString', int)
     participant_added = Signal()
     part_widget = None
+    has_error = False
 
     def __init__(self, data_manager, parent=None):
         super().__init__(parent=parent)
@@ -201,7 +202,10 @@ class ImportBrowser(QDialog):
         # process = BackgroundProcessForImporters(all_tasks)
 
         # For now process in series...
+        self.has_error = False
         process = BackgroundProcess(all_tasks)
+        # process.finished.connect(self.process_finished)
+        process.task_error.connect(self.process_error_occurred)
 
         # Create progress dialog
         dialog = ProgressDialog(process, self.tr('Data importation'), self)
@@ -213,8 +217,22 @@ class ImportBrowser(QDialog):
         # self.showMinimized()
         dialog.exec()
 
+        if self.has_error:
+            # Error occured while importing
+            QMessageBox.critical(self, self.tr('Error while importing data'),
+                                 self.tr('Error occured while importing data files. See logs for more information.'))
+            self.has_error = False
+
         # gc.collect()
         self.accept()
+
+    # def process_finished(self):
+    #     print('Import process finished')
+
+    def process_error_occurred(self, filename: str, error_msg: str):
+        self.log_request.emit(self.tr('Error importing file:') + ' "' + filename + '" - ' + error_msg,
+                              LogTypes.LOGTYPE_ERROR)
+        self.has_error = True
 
     def add_file_to_list(self, filename: str, filetype_id: int = -1):
         table = self.UI.tableFiles
