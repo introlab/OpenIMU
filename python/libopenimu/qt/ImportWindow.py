@@ -1,10 +1,11 @@
 from resources.ui.python.ImportDialog_ui import Ui_ImportDialog
 
-from PySide6.QtCore import Slot
+from PySide6.QtCore import Slot, QFileInfo
 from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox
 
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.DataSet import DataSet
+from libopenimu.tools.Settings import OpenIMUSettings
 
 from sqlalchemy.exc import DBAPIError, DatabaseError, DataError
 
@@ -94,13 +95,16 @@ class ImportWindow(QDialog):
 
     @Slot()
     def browse_clicked(self):
-        file_diag = QFileDialog.getSaveFileName(caption=self.tr("Dataset filename"), filter="*.oi")
+        settings = OpenIMUSettings
+        file_diag = QFileDialog.getSaveFileName(parent=self, caption=self.tr("Dataset filename"), filter="*.oi",
+                                                dir=str(settings.database_base_path))
 
         if file_diag[0] != '':
             self.UI.txtFileName.setText(file_diag[0])
             ext = file_diag[1][-(len(file_diag[1]) - 1):]
             if file_diag[0][-len(ext):] != ext:
                 self.UI.txtFileName.setText(self.UI.txtFileName.text() + ext)
+            settings.database_base_path = QFileInfo(file_diag[0]).path()
 
     @Slot()
     def ok_clicked(self):

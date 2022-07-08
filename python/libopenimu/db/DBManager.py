@@ -215,7 +215,7 @@ class DBManager:
         return query.first()
 
     def get_all_participants(self):
-        query = self.session.query(Participant)
+        query = self.session.query(Participant).order_by(Participant.name.asc(), Participant.id_group.asc())
         return query.all()
 
     def get_participants_for_group(self, group):

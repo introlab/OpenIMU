@@ -38,7 +38,6 @@ SET(uis
     resources/ui/MainWindow.ui
     resources/ui/StartDialog.ui
     resources/ui/ImportDialog.ui
-    resources/ui/ImportManager.ui
     resources/ui/GroupWidget.ui
     resources/ui/ParticipantWidget.ui
     resources/ui/RecordsetWidget.ui

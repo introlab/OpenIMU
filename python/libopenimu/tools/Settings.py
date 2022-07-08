@@ -25,6 +25,8 @@ class OpenIMUSettings:
 
     def get_recent_files(self) -> list:
         files = self.settings.value('recent_files')
+        if not files:
+            files = []
         return files
 
     def remove_recent_file(self, file_path: str):
@@ -68,3 +70,28 @@ class OpenIMUSettings:
     @current_language.setter
     def current_language(self, lang: str):
         self.settings.setValue("language", lang)
+
+    @property
+    def data_load_path(self) -> str:
+        return self.settings.value("data/loadpath")
+
+    @data_load_path.setter
+    def data_load_path(self, path: str):
+        self.settings.setValue('data/loadpath', path)
+
+    @property
+    def data_save_path(self) -> str:
+        return self.settings.value("data/savepath")
+
+    @data_save_path.setter
+    def data_save_path(self, path: str):
+        self.settings.setValue('data/savepath', path)
+
+    @property
+    def database_base_path(self) -> str:
+        return self.settings.value("data/databasepath")
+
+    @database_base_path.setter
+    def database_base_path(self, path: str):
+        self.settings.setValue('data/databasepath', path)
+

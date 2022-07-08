@@ -3,6 +3,7 @@ from PySide6.QtCore import Slot
 from resources.ui.python.ExportCSV_ui import Ui_ExportCSV
 from libopenimu.db.DBManager import DBManager
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog, WorkerTask
+from libopenimu.tools.Settings import OpenIMUSettings
 
 
 class ExportWindow(QDialog):
@@ -20,12 +21,15 @@ class ExportWindow(QDialog):
 
     @Slot()
     def directory_selection_clicked(self):
-        print('file selection')
-        directory = QFileDialog().getExistingDirectory(caption="Sélectionnez le répertoire pour exporter")
-
-        print(directory)
+        # print('file selection')
+        settings = OpenIMUSettings()
+        directory = QFileDialog().getExistingDirectory(caption="Sélectionnez le répertoire pour exporter",
+                                                       dir=settings.data_save_path)
+        # print(directory)
 
         if directory:
+
+            settings.data_save_path = directory
             self.UI.lineDir.setText(directory)
 
     @Slot()

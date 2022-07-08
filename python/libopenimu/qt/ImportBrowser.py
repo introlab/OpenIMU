@@ -1,38 +1,66 @@
-from PySide6.QtCore import Slot, Qt, Signal
-from PySide6.QtWidgets import QDialog, QTableWidgetItem
+from PySide6.QtCore import Slot, Qt, Signal, QObject, QEvent, QFileInfo, QDirIterator, QDir
+from PySide6.QtWidgets import QDialog, QTableWidgetItem, QComboBox, QApplication, QHBoxLayout, QFileDialog
+from PySide6.QtGui import QDropEvent, QDragEnterEvent, QDragMoveEvent, QDragLeaveEvent, QIcon, QKeyEvent
 
 from resources.ui.python.ImportBrowser_ui import Ui_ImportBrowser
-from libopenimu.qt.ImportManager import ImportManager
 
 from libopenimu.importers.importer_types import ImporterTypes
 from libopenimu.importers.WIMUImporter import WIMUImporter
 from libopenimu.importers.ActigraphImporter import ActigraphImporter
 from libopenimu.importers.OpenIMUImporter import OpenIMUImporter
 from libopenimu.importers.AppleWatchImporter import AppleWatchImporter
-from libopenimu.qt.BackgroundProcess import BackgroundProcess, BackgroundProcessForImporters, ProgressDialog, WorkerTask
+from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog, WorkerTask
+from libopenimu.qt.ParticipantWindow import ParticipantWindow
 
 from libopenimu.models.DataSource import DataSource
 from libopenimu.models.Participant import Participant
 from libopenimu.models.LogTypes import LogTypes
 from libopenimu.tools.timing import timing
+from libopenimu.tools.Settings import OpenIMUSettings
+
+import os
 
 
 class ImportBrowser(QDialog):
     dbMan = None
     log_request = Signal('QString', int)
     participant_added = Signal()
+    part_widget = None
 
     def __init__(self, data_manager, parent=None):
         super().__init__(parent=parent)
         self.UI = Ui_ImportBrowser()
         self.UI.setupUi(self)
+        self.part_diag = QDialog()
+
+        self.UI.stackMain.setCurrentIndex(0)
+        self.UI.progAdding.hide()
 
         self.UI.btnCancel.clicked.connect(self.cancel_clicked)
         self.UI.btnOK.clicked.connect(self.ok_clicked)
-        self.UI.btnAddFile.clicked.connect(self.add_clicked)
+        self.UI.btnAddFile.clicked.connect(self.add_file_clicked)
         self.UI.btnDelFile.clicked.connect(self.del_clicked)
         self.UI.btnAddDir.clicked.connect(self.add_dir_clicked)
+        self.UI.cmbParticipant.currentIndexChanged.connect(self.on_participant_combobox_changed)
+        self.UI.btnAddPart.clicked.connect(self.on_add_participant_clicked)
+        self.UI.tableFiles.itemSelectionChanged.connect(self.update_buttons_states)
+
+        self.installEventFilter(self)
+        self.UI.tableFiles.installEventFilter(self)
+
         self.dbMan = data_manager
+
+        # Load participants
+        self.participants = self.dbMan.get_all_participants()
+
+        # Load participants combo box
+        self.fill_participant_combobox(self.UI.cmbParticipant, include_group=True)
+
+        # Invalid fields list
+        self.invalid_controls = []
+
+        # Disable "OK" button by default
+        self.UI.btnOK.setEnabled(False)
 
     @Slot()
     def ok_clicked(self):
@@ -71,7 +99,7 @@ class ImportBrowser(QDialog):
                                                                     participant=self.importer.participant, md5=file_md5,
                                                                     db_session=self.importer.db.session):
                     if self.results is not None:
-                        self.log_request.emit('Importation des données...', LogTypes.LOGTYPE_INFO)
+                        self.log_request.emit(self.tr('Importing data...'), LogTypes.LOGTYPE_INFO)
                         self.importer.import_to_database(self.results)
                         self.results.clear()  # Needed to clear the dict cache and let the garbage collector delete it!
                         # Add datasources for that file
@@ -86,13 +114,14 @@ class ImportBrowser(QDialog):
                                 ds.update_datasource(db_session=self.importer.db.session)
 
                         self.importer.clear_recordsets()
-                        self.log_request.emit('Importation du fichier complétée!', LogTypes.LOGTYPE_DONE)
+                        self.log_request.emit(self.tr('File import completed.'), LogTypes.LOGTYPE_DONE)
                     else:
-                        self.log_request.emit('Erreur lors du chargement du fichier: ' + self.importer.last_error,
+                        self.log_request.emit(self.tr('Error loading file:') + ' ' + self.importer.last_error,
                                               LogTypes.LOGTYPE_ERROR)
                 else:
-                    self.log_request.emit("Données du fichier '" + self.filename + "' déjà présentes pour '" +
-                                          self.importer.participant.name + "' - ignorées.",
+                    self.log_request.emit(self.tr('Data from file') + ' "' + self.short_filename + '" ' +
+                                          self.tr('already in the database for participant') + ' "' +
+                                          self.importer.participant.name + '" - ' + self.tr('ignored.'),
                                           LogTypes.LOGTYPE_WARNING)
 
             @timing
@@ -103,11 +132,12 @@ class ImportBrowser(QDialog):
                                                                     participant=self.importer.participant, md5=file_md5,
                                                                     db_session=self.importer.db.session):
 
-                    self.log_request.emit("Chargement du fichier: '" + self.short_filename + "'", LogTypes.LOGTYPE_INFO)
+                    self.log_request.emit(self.tr('Loading file:') + ' "' + self.short_filename + '"',
+                                          LogTypes.LOGTYPE_INFO)
 
                     self.results = self.importer.load(self.filename)
                     if self.results is not None:
-                        self.log_request.emit('Importation des données...', LogTypes.LOGTYPE_INFO)
+                        self.log_request.emit(self.tr('Importing data...'), LogTypes.LOGTYPE_INFO)
                         self.importer.import_to_database(self.results)
                         self.results.clear()  # Needed to clear the dict cache and let the garbage collector delete it!
                         # Add datasources for that file
@@ -122,21 +152,22 @@ class ImportBrowser(QDialog):
                                 ds.update_datasource(db_session=self.importer.db.session)
 
                         self.importer.clear_recordsets()
-                        self.log_request.emit('Importation du fichier complétée!', LogTypes.LOGTYPE_DONE)
+                        self.log_request.emit(self.tr('File import completed.'), LogTypes.LOGTYPE_DONE)
                     else:
-                        self.log_request.emit('Erreur lors du chargement du fichier: ' + self.importer.last_error,
+                        self.log_request.emit(self.tr('Error loading file:') + ' ' + self.importer.last_error,
                                               LogTypes.LOGTYPE_ERROR)
                 else:
-                    self.log_request.emit("Données du fichier '" + self.filename + "' déjà présentes pour '" +
-                                          self.importer.participant.name + "' - ignorées.",
+                    self.log_request.emit(self.tr('Data from file') + ' "' + self.short_filename + '" ' +
+                                          self.tr('already in the database for participant') + ' "' +
+                                          self.importer.participant.name + '" - ' + self.tr('ignored.'),
                                           LogTypes.LOGTYPE_WARNING)
 
         importers = []
 
         for i in range(0, table.rowCount()):
-            part = table.item(i, 1).data(Qt.UserRole)
-            file_type = table.item(i, 2).data(Qt.UserRole)
-            file_name = table.item(i, 3).text()
+            part = table.cellWidget(i, 2).currentData()
+            file_type = table.cellWidget(i, 1).currentData()
+            file_name = table.item(i, 0).text()
             data_importer = None
             if file_type == ImporterTypes.ACTIGRAPH:
                 data_importer = ActigraphImporter(manager=self.dbMan, participant=part)
@@ -173,7 +204,7 @@ class ImportBrowser(QDialog):
         process = BackgroundProcess(all_tasks)
 
         # Create progress dialog
-        dialog = ProgressDialog(process, 'Importation des données', self)
+        dialog = ProgressDialog(process, self.tr('Data importation'), self)
 
         # Start tasks
         process.start()
@@ -185,30 +216,84 @@ class ImportBrowser(QDialog):
         # gc.collect()
         self.accept()
 
-    def add_file_to_list(self, filename: str, filetype: str, filetype_id: int, participant: Participant):
+    def add_file_to_list(self, filename: str, filetype_id: int = -1):
         table = self.UI.tableFiles
+        count = self.UI.progAdding.value()
+        if count+1 <= self.UI.progAdding.maximum():
+            self.UI.progAdding.setValue(count+1)
+
+        if table.findItems(filename, Qt.MatchExactly):
+            return  # Already there!
+
+        ignore_list = ['session.oimi', 'watch_logs.txt']  # filename that are ignored
+        filename_name = filename.split(os.pathsep)[-1]
+        if any(name in filename_name.lower() for name in ignore_list):
+            return  # Ignored
+
+        # Get type if not specified
+        if filetype_id == -1:
+            filetype_id, file_type_name = ImporterTypes.detect_type_from_file(filename)
 
         row = table.rowCount()
         table.setRowCount(row + 1)
+
+        # File name
         cell = QTableWidgetItem()
         cell.setText(filename)
-        table.setItem(row, 3, cell)
-        cell = QTableWidgetItem()
-        cell.setText(filetype)
-        cell.setData(Qt.UserRole, filetype_id)
-        table.setItem(row, 2, cell)
-        cell = QTableWidgetItem()
-        group = ""
-        if participant.group is not None:
-            group = participant.group.name
-        cell.setText(group)
         table.setItem(row, 0, cell)
-        cell = QTableWidgetItem()
-        cell.setText(participant.name)
-        cell.setData(Qt.UserRole, participant)
-        table.setItem(row, 1, cell)
 
-        table.resizeColumnsToContents()
+        # File format
+        item_combo = QComboBox()
+        self.fill_importers_combobox(item_combo)
+        item_combo.currentTextChanged.connect(self.row_combobox_changed)
+        table.setCellWidget(row, 1, item_combo)
+        item_combo.setCurrentIndex(item_combo.findData(filetype_id))
+        self.validate_row_combobox(item_combo)
+
+        # Participant (and group)
+        item_combo = QComboBox()
+        self.fill_participant_combobox(combobox=item_combo, include_group=True)
+        item_combo.currentIndexChanged.connect(self.row_combobox_changed)
+        table.setCellWidget(row, 2, item_combo)
+        item_combo.setCurrentIndex(item_combo.findText(self.UI.cmbParticipant.currentText()))
+        self.validate_row_combobox(item_combo)
+
+        # table.resizeColumnsToContents()
+        QApplication.processEvents()
+
+    def add_dir_to_list(self, dir_path: str):
+        # Browse all files in directory
+        dir_browser = QDirIterator(dir_path, QDir.Files | QDir.NoDotAndDotDot, QDirIterator.Subdirectories)
+        files = []
+        while dir_browser.hasNext():
+            files.append(dir_browser.next())
+        prog_max = self.UI.progAdding.maximum()
+        self.UI.progAdding.setMaximum(prog_max + len(files))
+        while files:
+            self.add_file_to_list(files.pop())
+
+    @staticmethod
+    def fill_importers_combobox(combobox: QComboBox):
+        combobox.clear()
+        combobox.addItem('', ImporterTypes.UNKNOWN)
+        for importer in ImporterTypes.value_types:
+            if importer != ImporterTypes.WIMU:  # Ignore WIMU for now...
+                combobox.addItem(QIcon(':/OpenIMU/icons/sensor.png'), ImporterTypes.value_names[importer],
+                                 importer)
+
+    def fill_participant_combobox(self, combobox: QComboBox, include_group=False):
+        combobox.clear()
+        combobox.addItem('', -1)
+        for participant in self.participants:
+            self.add_participant_in_combobox(participant, combobox, include_group)
+
+    @staticmethod
+    def add_participant_in_combobox(participant: Participant, combobox: QComboBox, include_group=False):
+        name = participant.name
+        if include_group:
+            if participant.group:
+                name = participant.group.name + '/' + participant.name
+        combobox.addItem(QIcon(':/OpenIMU/icons/participant.png'), name, participant)
 
     @Slot()
     def cancel_clicked(self):
@@ -217,48 +302,178 @@ class ImportBrowser(QDialog):
     @classmethod
     @Slot()
     def thread_finished(self):
-        print('Thread Finished')
+        # print('Thread Finished')
+        pass
 
     @Slot()
-    def add_clicked(self):
-        importman = ImportManager(dbmanager=self.dbMan, dirs=False, parent=self)
-        importman.participant_added.connect(self.participant_added)
+    def add_file_clicked(self):
+        settings = OpenIMUSettings()
+        files = QFileDialog.getOpenFileNames(parent=self, caption=self.tr('Select file(s) to import'),
+                                             dir=settings.data_load_path)
+        files = files[0]
+        if not files:
+            return
 
-        if self.UI.tableFiles.rowCount() > 0:
-            # Copy informations into the dialog
-            last_row = self.UI.tableFiles.rowCount() - 1
-            importman.set_participant(self.UI.tableFiles.item(last_row, 1).text())
-            importman.set_filetype(self.UI.tableFiles.item(last_row, 2).text())
+        self.show_progress_bar(True)
+        self.UI.progAdding.setMaximum(len(files))
+        self.UI.progAdding.setValue(0)
 
-        # self.showMinimized()
-        if importman.exec() == QDialog.Accepted:
-            files = importman.filename.split(";")
-            # Add file to list
-            for file in files:
-                self.add_file_to_list(file, importman.filetype, importman.filetype_id, importman.participant)
+        for file in files:
+            self.add_file_to_list(file)
+
+        self.show_progress_bar(False)
+        self.UI.tableFiles.resizeColumnsToContents()
+
+        settings.data_load_path = QFileInfo(files[0]).path()
 
     @Slot()
     def add_dir_clicked(self):
-        importman = ImportManager(dbmanager=self.dbMan, dirs=True, parent=self)
-        importman.participant_added.connect(self.participant_added)
+        settings = OpenIMUSettings()
+        dirs = QFileDialog.getExistingDirectory(parent=self, caption=self.tr('Select folder to import'),
+                                                dir=settings.data_load_path)
+        if not dirs:
+            return
 
-        if self.UI.tableFiles.rowCount() > 0:
-            # Copy informations into the dialog
-            last_row = self.UI.tableFiles.rowCount() - 1
-            importman.set_participant(self.UI.tableFiles.item(last_row, 1).text())
-            importman.set_filetype(self.UI.tableFiles.item(last_row, 2).text())
+        self.show_progress_bar(True)
+        self.UI.progAdding.setMaximum(0)
+        self.UI.progAdding.setValue(0)
 
-        # self.showMinimized()
-        if importman.exec() == QDialog.Accepted:
-            files = importman.get_file_list()
-            for file_name, file_part in files.items():
-                self.add_file_to_list(file_name, importman.filetype, importman.filetype_id, file_part)
+        self.add_dir_to_list(dirs)
 
-        # self.showNormal()
+        self.show_progress_bar(False)
+        self.UI.tableFiles.resizeColumnsToContents()
+
+        settings.data_load_path = dirs
 
     @Slot()
     def del_clicked(self):
-        if self.UI.tableFiles.selectedItems():
-            # print(self.UI.tableFiles.selectedItems()[0].row())
+        # if self.UI.tableFiles.selectedItems():
+        for item in self.UI.tableFiles.selectedItems():
+            type_combo = self.UI.tableFiles.cellWidget(item.row(), 1)
+            if type_combo in self.invalid_controls:
+                self.invalid_controls.remove(type_combo)
+            part_combo = self.UI.tableFiles.cellWidget(item.row(), 2)
+            if part_combo in self.invalid_controls:
+                self.invalid_controls.remove(part_combo)
 
-            self.UI.tableFiles.removeRow(self.UI.tableFiles.selectedItems()[0].row())
+            self.UI.tableFiles.removeRow(item.row())
+            self.update_buttons_states()
+            # self.UI.tableFiles.removeRow(self.UI.tableFiles.selectedItems()[0].row())
+
+    def eventFilter(self, target: QObject, event: QEvent) -> bool:
+        # print(event)
+        if target == self:
+            if isinstance(event, QDragEnterEvent):
+                # print('DragEnterEvent')
+                self.UI.stackMain.setCurrentWidget(self.UI.pageDropFiles)
+                event.acceptProposedAction()
+                return True
+
+            if isinstance(event, QDragMoveEvent):
+                event.acceptProposedAction()
+                return True
+
+            if isinstance(event, QDragLeaveEvent):
+                self.UI.stackMain.setCurrentWidget(self.UI.pageFiles)
+                return True
+
+            if isinstance(event, QDropEvent):
+                # print('DropEvent')
+                # Process files
+                mime_data = event.mimeData()
+                self.UI.stackMain.setCurrentWidget(self.UI.pageFiles)
+                if mime_data.hasUrls():
+                    files = mime_data.urls()
+                    self.show_progress_bar(True)
+                    self.UI.progAdding.setMaximum(len(files))
+                    self.UI.progAdding.setValue(0)
+                    for file in files:
+                        if file.isLocalFile():  # Support only local files
+                            # Get full file name
+                            filename = file.path()
+                            if filename.startswith('/'):
+                                filename = filename.removeprefix('/')
+                            # Check if we have a directory
+                            info = QFileInfo(filename)
+                            if info.isFile():
+                                self.add_file_to_list(filename)
+                            elif info.isDir():
+                                self.add_dir_to_list(filename)
+                    self.show_progress_bar(False)
+                    self.UI.tableFiles.resizeColumnsToContents()
+                event.acceptProposedAction()
+                return True
+
+        if target == self.UI.tableFiles:
+            if isinstance(event, QKeyEvent):
+                if event.key() == Qt.Key_Delete:
+                    self.del_clicked()
+                    event.accept()
+                    return True
+
+        return super().eventFilter(target, event)
+
+    @Slot()
+    def row_combobox_changed(self):
+        sender = self.sender()
+        self.validate_row_combobox(sender)
+
+    def validate_row_combobox(self, combobox: QComboBox):
+        if combobox.currentIndex() == 0 or not combobox.currentText():
+            combobox.setStyleSheet('background: #ffcccc;')
+            if combobox not in self.invalid_controls:
+                self.invalid_controls.append(combobox)
+        else:
+            combobox.setStyleSheet('')
+            if combobox in self.invalid_controls:
+                self.invalid_controls.remove(combobox)
+
+        self.update_buttons_states()
+
+    @Slot()
+    def on_participant_combobox_changed(self):
+        self.update_current_participant_name()
+        self.UI.lblWarning.setVisible(self.UI.cmbParticipant.currentIndex() <= 0)
+
+    def update_current_participant_name(self):
+        if self.UI.cmbParticipant.currentText():
+            self.UI.lblDropParticipantName.setText(self.UI.cmbParticipant.currentText())
+        else:
+            self.UI.lblDropParticipantName.setText(self.tr('Unspecified'))
+
+    def show_progress_bar(self, show: bool):
+        self.UI.frameParticipant.setEnabled(not show)
+        self.UI.frameButtons.setEnabled(not show)
+        self.UI.frameTools.setEnabled(not show)
+        if show:
+            self.UI.progAdding.show()
+        else:
+            self.UI.progAdding.hide()
+
+    @Slot()
+    def on_add_participant_clicked(self):
+        layout = QHBoxLayout(self.part_diag)
+        self.part_diag.setMinimumWidth(600)
+
+        self.part_widget = ParticipantWindow(db_manager=self.dbMan)
+        layout.addWidget(self.part_widget)
+
+        self.part_widget.dataCancelled.connect(self.part_diag.reject)
+        self.part_widget.dataSaved.connect(self.part_diag.accept)
+        self.part_diag.setWindowTitle(self.tr('New participant'))
+        if self.part_diag.exec() == QDialog.Accepted:
+            # Add data
+            part = self.part_widget.participant
+            self.participants.append(part)
+            self.add_participant_in_combobox(part, self.UI.cmbParticipant, include_group=True)
+
+            # Add to each combo box in each table line...
+            for i in range(self.UI.tableFiles.rowCount()):
+                combobox = self.UI.tableFiles.cellWidget(i, 2)
+                self.add_participant_in_combobox(participant=part, combobox=combobox, include_group=True)
+
+    @Slot()
+    def update_buttons_states(self):
+        self.UI.btnOK.setEnabled(len(self.invalid_controls) == 0 and self.UI.tableFiles.rowCount() > 0)
+        self.UI.btnDelFile.setEnabled(self.UI.tableFiles.rowCount() > 0 and len(self.UI.tableFiles.selectedItems()) > 0)
+

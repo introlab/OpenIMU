@@ -1,7 +1,9 @@
 from resources.ui.python.ImportDialogWizard_ui import Ui_dlgImportWizard
 
-from PySide6.QtCore import Slot
-from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox
+from PySide6.QtCore import Slot, QFileInfo
+from PySide6.QtWidgets import QDialog, QFileDialog
+
+from libopenimu.tools.Settings import OpenIMUSettings
 
 
 class ImportDialogWizard(QDialog):
@@ -35,10 +37,13 @@ class ImportDialogWizard(QDialog):
 
     @Slot()
     def browse_clicked(self):
-        file_diag = QFileDialog.getOpenFileName(caption=self.tr('Dataset to import data into'), filter='*.oi')
+        settings = OpenIMUSettings
+        file_diag = QFileDialog.getOpenFileName(caption=self.tr('Dataset to import data into'), filter='*.oi',
+                                                dir=settings.database_base_path)
 
         if file_diag[0] != '':
             self.UI.txtFilename.setText(file_diag[0])
+            settings.database_base_path = QFileInfo(file_diag[0]).path()
 
     @Slot()
     def filename_changed(self):

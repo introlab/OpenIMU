@@ -1,9 +1,9 @@
 from PySide6.QtWidgets import QMainWindow, QWidget
 from PySide6.QtWidgets import QApplication, QDialog, QTreeWidgetItem, QHBoxLayout
-
 from PySide6.QtWidgets import QMessageBox
+from PySide6.QtGui import QKeyEvent
 
-from PySide6.QtCore import Slot, Signal
+from PySide6.QtCore import Slot, Signal, QObject, QEvent, Qt
 from libopenimu.qt.Charts import IMUChartView
 import gc
 
@@ -76,6 +76,7 @@ class MainWindow(QMainWindow):
         self.load_data_from_dataset()
         self.UI.treeDataSet.setCurrentItem(None)
         self.UI.treeDataSet.owner = self
+        self.UI.treeDataSet.installEventFilter(self)
 
         # self.loadDemoData()
         self.add_to_log(self.tr("Data loaded!"), LogTypes.LOGTYPE_DONE)
@@ -641,6 +642,16 @@ class MainWindow(QMainWindow):
         self.dataDialog = QDialog()
         self.dataDialog.setWindowTitle(self.tr('Data Editor'))
         self.dataDialog.setWindowIcon(self.windowIcon())
+
+    def eventFilter(self, target: QObject, event: QEvent) -> bool:
+        if target == self.UI.treeDataSet:
+            if isinstance(event, QKeyEvent):
+                if event.key() == Qt.Key_Delete:
+                    self.delete_requested()
+                    event.accept()
+                    return True
+
+        return super().eventFilter(target, event)
 
 
 class StdConsoleLogger:

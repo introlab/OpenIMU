@@ -91,6 +91,14 @@ QLabel:!enabled{
     color:lightgrey;
 }
 
+QLabel#lblDragDrop{
+    color: orange;
+}
+
+QLabel#lblWarning{
+    color: red;
+}
+
 /*************************/
 /* Text editors          */
 /*************************/
@@ -111,17 +119,22 @@ QLineEdit:!enabled, QPlainTextEdit:!enabled, QComboBox:!enabled, QDateEdit:!enab
 /* QProgressBar          */
 /*************************/
 QProgressBar::chunk{
-        background-color:qlineargradient(spread:reflect, x1:0.5, y1:0, x2:0.5, y2:0.5, stop:0 rgba(0, 127, 0, 255), stop:1 rgba(114, 255, 114, 255));
+    background-color:qlineargradient(spread:reflect, x1:0.5, y1:0, x2:0.5, y2:0.5, stop:0 rgba(0, 127, 0, 255), stop:1 rgba(114, 255, 114, 255));
     width: 20px;
+}
+
+QProgressBar{
+    color: black;
+    text-align: center;
 }
 
 /*************************/
 /* QCalendarWidget       */
 /*************************/
 QCalendarWidget QToolButton{
-        background-color:transparent;
-        border: 0px solid tranparent;
-        min-height:20px;
+    background-color:transparent;
+    border: 0px solid tranparent;
+    min-height:20px;
 }
 
 /*************************/
@@ -200,6 +213,11 @@ QFrame#frameButtons,QFrame#frameTools,QFrame#frameCursor,QFrame#frameControls{
     border-radius:5px;
 }
 
+QFrame#frameDropFiles{
+    border-radius:5px;
+    border: 2px dashed rgba(255,255,255,50%);
+}
+
 /************************/
 /* QTabWidget           */
 /************************/
@@ -216,7 +234,6 @@ QTabWidget::tab-bar {
 /************************/
 /* QDockWidget          */
 /************************/
-
 QDockWidget{
     color:white;
 }
@@ -279,10 +296,6 @@ QTableWidget::item:selected{
     color: black;
 }
 
-
-
-
-
 /************************/
 /* QListWidget          */
 /************************/
@@ -294,6 +307,16 @@ QListWidget#lstSensors{
     background-color:rgba(200,200,200,70%);
 }
 
+/************************/
+/* QCheckBox            */
+/************************/
+
+QCheckBox::indicator:unchecked:!enabled { background-color:rgba(128,0,0,100%);}
+QCheckBox::indicator:checked:!enabled { background-color:green;}
+QCheckBox::indicator:unchecked{ background-color:red;border-radius:3px;}
+QCheckBox::indicator:checked {background-color:rgb(0,255,0);border-radius:3px;}
+QCheckBox:checked{background-color:rgba(0,0,0,0%);}
+QCheckBox:!checked{background-color:rgba(0,0,0,0%);}
 
 /*QPushButton:hover,QToolButton:hover{border-radius: 5px; color:black;background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 grey, stop: 0.2  rgb(200,200, 200), stop:1 grey);border: 2px solid rgb(186, 186, 186);}
 QPushButton,QToolButton{border-radius: 5px; color:white; background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 black, stop: 0.2  rgb(200,200, 200), stop:1 black);border: 2px solid rgb(96, 96, 96);}
@@ -314,13 +337,6 @@ QSpinBox{
         min-height:24px;
 }
 
-// QCheckBox
 
-QCheckBox::indicator:unchecked:!enabled { background-color:rgba(128,0,0,100%);}
-QCheckBox::indicator:checked:!enabled { background-color:green;}
-QCheckBox::indicator:unchecked{ background-color:red;border-radius:3px;}
-QCheckBox::indicator:checked {background-color:rgb(0,255,0);border-radius:3px;}
-QCheckBox:checked{background-color:rgba(0,0,0,0%);}
-QCheckBox:!checked{background-color:rgba(0,0,0,0%);}
 
 */

@@ -3,7 +3,7 @@ from resources.ui.python.StartDialog_ui import Ui_StartDialog
 from libopenimu.qt.ImportWindow import ImportWindow
 from libopenimu.qt.ImportDialogWizard import ImportDialogWizard
 
-from PySide6.QtCore import Slot, Signal, QLocale
+from PySide6.QtCore import Slot, Signal, QLocale, QFileInfo
 from PySide6.QtWidgets import QDialog, QFileDialog, QApplication, QMessageBox
 
 from libopenimu.tools.Settings import OpenIMUSettings
@@ -31,7 +31,8 @@ class StartWindow(QDialog):
         self.settings = OpenIMUSettings()
         self.UI.cmbRecents.clear()
         self.UI.cmbRecents.addItem("")
-        self.UI.cmbRecents.addItems(self.settings.get_recent_files())
+        recent_files = self.settings.get_recent_files()
+        self.UI.cmbRecents.addItems(recent_files)
 
         # Signals
         self.UI.btnImport.clicked.connect(self.import_clicked)
@@ -58,10 +59,12 @@ class StartWindow(QDialog):
 
     @Slot()
     def open_clicked(self):
-        file_diag = QFileDialog.getOpenFileName(caption=self.tr('Filename to open'), filter='*.oi')
+        file_diag = QFileDialog.getOpenFileName(caption=self.tr('Filename to open'), filter='*.oi',
+                                                dir=self.settings.database_base_path)
 
         if file_diag[0] != '':
             self.open_file(file_diag[0])
+            self.settings.database_base_path = QFileInfo(file_diag[0]).path()
 
     @Slot()
     def new_clicked(self):

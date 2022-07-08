@@ -3,7 +3,8 @@ import struct
 
 
 class ImporterTypes:
-    #WIMU2 = 0
+    # WIMU2 = 0
+    UNKNOWN = -1
     WIMU = 0
     ACTIGRAPH = 1
     OPENIMU = 2
@@ -11,6 +12,27 @@ class ImporterTypes:
 
     value_types = [WIMU, ACTIGRAPH, OPENIMU, APPLEWATCH]
     value_names = ['WIMU', 'Actigraph', 'OpenIMU', 'AppleWatch']
+
+    @staticmethod
+    def detect_type_from_file(filename: str) -> (int, str):
+        file_extension = filename.split('.')
+        # TODO: Use more than file extension for more reliable identification...
+        if file_extension:
+            # Identify file with extension
+            file_extension = file_extension[-1]  # Last part of the filename
+            if file_extension.lower() == 'gt3x' or file_extension.lower() == 'gtx':
+                file_type = ImporterTypes.ACTIGRAPH
+                return file_type, ImporterTypes.value_names[file_type]
+
+            if file_extension.lower() == 'oimu':
+                file_type = ImporterTypes.OPENIMU
+                return file_type, ImporterTypes.value_names[file_type]
+
+            if file_extension.lower() == 'data':
+                file_type = ImporterTypes.APPLEWATCH
+                return file_type, ImporterTypes.value_names[file_type]
+
+        return ImporterTypes.UNKNOWN, ''
 
 
 class BeaconData:
