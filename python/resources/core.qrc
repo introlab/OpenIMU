@@ -54,6 +54,17 @@
         <file>icons/group_new.png</file>
         <file>icons/participant_new.png</file>
         <file>icons/database_new.png</file>
+        <file>icons/sensor_actigraph.png</file>
+        <file>icons/sensor_minilogger.png</file>
+        <file>icons/sensor_watch.png</file>
+        <file>controls/check_off.png</file>
+        <file>controls/check_off_disabled.png</file>
+        <file>controls/check_on.png</file>
+        <file>controls/check_on_disabled.png</file>
+        <file>controls/check2_off.png</file>
+        <file>controls/check2_off_disabled.png</file>
+        <file>controls/check2_on.png</file>
+        <file>controls/check2_on_disabled.png</file>
     </qresource>
     <qresource prefix="/">
         <file>stylesheet.qss</file>

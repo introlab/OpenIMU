@@ -622,7 +622,7 @@ class MainWindow(QMainWindow):
                 importer_id = StreamerTypes.value_importer_types[stream_diag.get_streamer_type()]
                 importer_name = ImporterTypes.value_names[importer_id]
                 for file_name, file_part in files.items():
-                    import_browser.add_file_to_list(file_name, importer_name, importer_id, file_part)
+                    import_browser.add_file_to_list(file_name, importer_id, file_part)
 
                 import_browser.ok_clicked()
 
@@ -646,9 +646,8 @@ class MainWindow(QMainWindow):
     def eventFilter(self, target: QObject, event: QEvent) -> bool:
         if target == self.UI.treeDataSet:
             if isinstance(event, QKeyEvent):
-                if event.key() == Qt.Key_Delete:
+                if event.key() == Qt.Key_Delete and event.type() == QEvent.Type.KeyPress:
                     self.delete_requested()
-                    event.accept()
                     return True
 
         return super().eventFilter(target, event)

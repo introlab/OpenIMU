@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1009</width>
+    <width>1043</width>
     <height>593</height>
    </rect>
   </property>
@@ -75,7 +75,7 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>100</width>
+     <width>274</width>
      <height>180</height>
     </size>
    </property>
@@ -586,10 +586,10 @@
         <bool>true</bool>
        </property>
        <property name="toolTip">
-        <string>Stream and import data from a device</string>
+        <string>Transfer data from a device</string>
        </property>
        <property name="text">
-        <string>Stream &amp;&amp; Import</string>
+        <string>Transfer from device</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">

@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QDialog, QTableWidgetItem, QComboBox, QHBoxLayout
 from PySide6.QtCore import Slot
+from PySide6.QtGui import QIcon
 
 from resources.ui.python.ImportMatchDialog_ui import Ui_ImportMatchDialog
 from libopenimu.qt.ParticipantWindow import ParticipantWindow
@@ -32,11 +33,16 @@ class ImportMatchDialog(QDialog):
             row = self.UI.tableMatch.rowCount()
             self.UI.tableMatch.setRowCount(row+1)
             item = QTableWidgetItem(data)
+            item.setIcon(QIcon(':/OpenIMU/icons/compact.png'))
             self.UI.tableMatch.setItem(row, 0, item)
             item_combo = QComboBox()
             self.fill_participant_combobox(item_combo)
-            item_combo.setCurrentIndex(item_combo.findText(data))
             self.UI.tableMatch.setCellWidget(row, 1, item_combo)
+            item_combo.currentIndexChanged.connect(self.validate)
+            item_combo.setCurrentIndex(item_combo.findText(data))
+
+
+        self.validate()
 
         # Connect signals / slots
         self.UI.btnOK.clicked.connect(self.ok_clicked)
@@ -46,17 +52,20 @@ class ImportMatchDialog(QDialog):
         # Init participant dialog
         self.part_diag = QDialog(parent=self)
 
-    def validate(self):
+    @Slot()
+    def validate(self) -> bool:
         rval = True
 
         for i in range(0, self.UI.tableMatch.rowCount()):
             item_combo = self.UI.tableMatch.cellWidget(i, 1)
             index = item_combo.currentIndex()
-            if index < 0:
+            if index <= 0:
                 item_combo.setStyleSheet('background-color: #ffcccc;')
                 rval = False
             else:
                 item_combo.setStyleSheet('')
+
+        self.UI.btnOK.setEnabled(rval)
 
         return rval
 
@@ -64,7 +73,7 @@ class ImportMatchDialog(QDialog):
         combobox.clear()
         combobox.addItem("", -1)
         for participant in self.participants:
-            combobox.addItem(participant.name, userData=participant)
+            combobox.addItem(QIcon(':/OpenIMU/icons/participant.png'), participant.name, userData=participant)
 
     @Slot()
     def ok_clicked(self):

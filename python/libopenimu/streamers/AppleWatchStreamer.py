@@ -1,5 +1,5 @@
 from libopenimu.streamers.BaseStreamer import BaseStreamer
-from PySide6.QtCore import Slot
+from PySide6.QtCore import Slot, QObject
 
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import os
@@ -18,7 +18,8 @@ class AppleWatchStreamer(BaseStreamer):
         self.server_port = port
 
     def run(self):
-        self.add_log.emit("Démarrage du serveur sur le port " + str(self.server_port), LogTypes.LOGTYPE_INFO)
+        self.add_log.emit(self.tr('Starting Sensorlogger (Apple Watch) server on port') + ' ' + str(self.server_port),
+                          LogTypes.LOGTYPE_INFO)
 
         self.request_handler = AppleWatchRequestHandler
         self.request_handler.streamer = self
@@ -36,12 +37,12 @@ class AppleWatchStreamer(BaseStreamer):
 
     @Slot()
     def stop_server(self):
-        self.add_log.emit('Arrêt du serveur...', LogTypes.LOGTYPE_INFO)
+        self.add_log.emit(self.tr('Stopping Sensorlogger (Apple Watch) server...'), LogTypes.LOGTYPE_INFO)
         self.server_running = False
         self.server.shutdown()
 
 
-class AppleWatchRequestHandler(BaseHTTPRequestHandler):
+class AppleWatchRequestHandler(BaseHTTPRequestHandler, QObject):
     streamer: AppleWatchStreamer = None
 
     def setup(self):
@@ -50,7 +51,6 @@ class AppleWatchRequestHandler(BaseHTTPRequestHandler):
 
     # Simple get to show what to do for file transfer
     def do_GET(self):
-
         # Ping requests can be answered directly
         content_type = self.headers['Content-Type']
         if content_type == 'cdrv-cmd/Connect':
@@ -87,14 +87,16 @@ class AppleWatchRequestHandler(BaseHTTPRequestHandler):
         file_name = self.headers['File-Name']
 
         if content_type != 'cdrv-cmd/File-Upload':
-            self.streamer.add_log.emit("Commande non-acceptée: " + content_type, LogTypes.LOGTYPE_WARNING)
+            self.streamer.add_log.emit(self.tr('Command refused') + ': ' + content_type,
+                                       LogTypes.LOGTYPE_WARNING)
             self.send_response(400)
             self.end_headers()
             return
 
         if None in [file_type, device_type, device_name, file_path, file_name]:
-            self.streamer.add_log.emit("Requête mal-formattée. Refusée.", LogTypes.LOGTYPE_ERROR)
-            self.streamer.file_error_occured.emit("Inconnu", file_name, "Requête mal formattée. Refusée.")
+            self.streamer.add_log.emit(self.tr('Badly formatted request. Refused.'), LogTypes.LOGTYPE_ERROR)
+            self.streamer.file_error_occured.emit(self.tr('Unknown'), file_name,
+                                                  self.tr('Badly formatted request. Refused.'))
             self.send_response(400)
             self.end_headers()
             return
@@ -104,8 +106,8 @@ class AppleWatchRequestHandler(BaseHTTPRequestHandler):
         destination_path = destination_dir + file_name
 
         file_name = device_name + file_path + '/' + file_name
-        self.streamer.add_log.emit("Réception en cours: " + file_name + " (" + str(content_length) +
-                                   " octets)", LogTypes.LOGTYPE_INFO)
+        self.streamer.add_log.emit(self.tr('Receiving') + ': ' + file_name + " (" + str(content_length) +
+                                   ' ' + self.tr('bytes') + ')', LogTypes.LOGTYPE_INFO)
         self.streamer.transfer_started.emit(device_name, file_name, content_length)
 
         # Check if file exists and size matches
@@ -113,11 +115,12 @@ class AppleWatchRequestHandler(BaseHTTPRequestHandler):
         if file_infos.exists():
             file_infos = os.stat(destination_path)
             if file_infos.st_size < content_length:
-                self.streamer.add_log.emit(file_name + " - Fichier existant, mais incomplet ("
+                self.streamer.add_log.emit(file_name + ' - ' + self.tr('Existing file, but incomplete') + ' ('
                                            + str(file_infos.st_size) + "/" +
-                                           str(content_length) + " octets) - retransfert.", LogTypes.LOGTYPE_WARNING)
+                                           str(content_length) + ' ' + self.tr('bytes') + ' - ' +
+                                           self.tr('retransferring'), LogTypes.LOGTYPE_WARNING)
             else:
-                self.streamer.add_log.emit(file_name + " - Fichier existant - écrasement du fichier.",
+                self.streamer.add_log.emit(file_name + ' - ' + self.tr('Existing file - overwriting'),
                                            LogTypes.LOGTYPE_WARNING)
                 # self.streamer.add_log.emit("Fichier existant - ignoré.", LogTypes.LOGTYPE_WARNING)
                 # self.streamer.update_progress.emit(file_name, "", 100, 100)
@@ -146,7 +149,7 @@ class AppleWatchRequestHandler(BaseHTTPRequestHandler):
                 fh = open(destination_path, 'w')
                 text_format = True
 
-            print("About to receive: " + file_name + ": " + str(content_size_remaining) + " bytes.")
+            # print("About to receive: " + file_name + ": " + str(content_size_remaining) + " bytes.")
             while content_size_remaining > 0 and self.streamer.server_running:
                 if buffer_size > content_size_remaining:
                     buffer_size = content_size_remaining
@@ -176,7 +179,7 @@ class AppleWatchRequestHandler(BaseHTTPRequestHandler):
         else:
             # self.streamer.add_log.emit(device_name + ": " + file_name + " - Type de fichier non-supporté: " +
             #                            file_type.lower(), LogTypes.LOGTYPE_ERROR)
-            self.streamer.file_error_occured.emit(device_name, file_name, "Type de fichier non-supporté: " +
+            self.streamer.file_error_occured.emit(device_name, file_name, self.tr('Unsupported file type') + ': ' +
                                                   file_type.lower())
             self.send_response(400)
             self.send_header('Content-type', 'file-transfer/invalid-file-type')
@@ -187,13 +190,19 @@ class AppleWatchRequestHandler(BaseHTTPRequestHandler):
         file_infos = os.stat(destination_path)
         if file_infos.st_size < content_length:
             # Missing data?!?!
-            error = "Erreur de transmission:  " + str(file_infos.st_size) + " octets reçus sur " + str(content_length)
+            error = self.tr('Error receiving') + ': ' + str(file_infos.st_size) + ' ' + \
+                    self.tr('bytes received, expected') + ' ' + str(content_length)
             # self.streamer.add_log.emit(error, LogTypes.LOGTYPE_ERROR)
             self.streamer.file_error_occured.emit(device_name, file_name, error)
         else:
             # All is good!
-            self.streamer.add_log.emit(device_name + ": " + file_name + " - Complété", LogTypes.LOGTYPE_DONE)
+            self.streamer.add_log.emit(device_name + ": " + file_name + " - " + self.tr('Completed'),
+                                       LogTypes.LOGTYPE_DONE)
             self.streamer.transfer_completed.emit(device_name, file_name, file_infos.st_size)
         self.send_response(200)
         self.send_header('Content-type', 'file-transfer/ack')
         self.end_headers()
+
+    def log_request(self, code: int | str = ..., size: int | str = ...) -> None:
+        # Suppress messages
+        return

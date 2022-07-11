@@ -36,13 +36,13 @@ class OpenIMUSettings:
             self.settings.setValue('recent_files', files)
 
     @property
-    def data_save_path(self):
+    def streamer_data_save_path(self):
         import tempfile
         import os
         return self.settings.value("streamer/savepath", defaultValue=tempfile.gettempdir() + os.sep + "OpenIMU")
 
-    @data_save_path.setter
-    def data_save_path(self, save_path: str):
+    @streamer_data_save_path.setter
+    def streamer_data_save_path(self, save_path: str):
         self.settings.setValue('streamer/savepath', save_path)
 
     @property
@@ -52,6 +52,14 @@ class OpenIMUSettings:
     @streamer_port.setter
     def streamer_port(self, port_value: int):
         self.settings.setValue("streamer/port", port_value)
+
+    @property
+    def streamer_delete_data_after_transfer(self):
+        return self.settings.value("streamer/deletedata", defaultValue=False)
+
+    @streamer_delete_data_after_transfer.setter
+    def streamer_delete_data_after_transfer(self, delete: bool):
+        self.settings.setValue("streamer/deletedata", delete)
 
     @property
     def current_language(self) -> str:

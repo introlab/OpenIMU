@@ -1,7 +1,7 @@
 from resources.ui.python.StreamWindow_ui import Ui_StreamWindow
 
 from PySide6.QtCore import Slot, Qt
-from PySide6.QtWidgets import QDialog, QTableWidgetItem, QProgressBar, QListWidgetItem, QFileDialog
+from PySide6.QtWidgets import QDialog, QTableWidgetItem, QProgressBar, QListWidgetItem, QFileDialog, QSpinBox
 from PySide6.QtGui import QBrush, QIcon, QColor
 
 # from libopenimu.streamers.streamer_types import StreamerTypes
@@ -27,13 +27,11 @@ class StreamWindow(QDialog):
         self.UI.setupUi(self)
         # self.setWindowFlags(Qt.WindowTitleHint)
 
+        self.UI.tabInfos.setCurrentIndex(0)  # Set "in progress" as default tab
+
         self.load_settings()
         self.init_streamer()
         self.set_edit_state(False)
-
-        # Initial UI state
-        self.UI.frameProgress.hide()
-        self.UI.chkAutoImport.hide()  # For now...
 
         # Signals / slots connection
         self.UI.btnClose.clicked.connect(self.close_requested)
@@ -44,7 +42,7 @@ class StreamWindow(QDialog):
 
     @Slot(name='browse_requested')
     def browse_requested(self):
-        file = QFileDialog().getExistingDirectory(caption="Sélectionnez le répertoire de destination")
+        file = QFileDialog().getExistingDirectory(caption=self.tr('Select raw data target directory'))
 
         if len(file) > 0:
             self.UI.txtDataPath.setText(file)
@@ -56,9 +54,9 @@ class StreamWindow(QDialog):
         msg.setIcon(QMessageBox.Question)
         msg.setStyleSheet("QPushButton{min-width: 100px; min-height: 40px;}")
 
-        msg.setText("Le serveur sera arrêté pour l'édition et les transferts en cours seront arrêtés.\n"
-                    "Voulez-vous continuer?")
-        msg.setWindowTitle("Éditer")
+        msg.setText(self.tr('While editing settings, no data will be able to be transferred, and all in progress '
+                            'transfers will be cancelled.') + '\n' + self.tr('Do you want to continue?'))
+        msg.setWindowTitle(self.tr('Enter edit mode'))
         msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
 
         rval = msg.exec()
@@ -87,25 +85,32 @@ class StreamWindow(QDialog):
             self.streamer.start()
 
     def set_edit_state(self, state: bool):
-        self.UI.txtDataPath.setReadOnly(not state)
+        # self.UI.txtDataPath.setReadOnly(not state)
+        self.UI.txtDataPath.setEnabled(state)
         self.UI.spinPort.setEnabled(state)
-        self.UI.chkAutoImport.setEnabled(state)
         self.UI.chkDeleteFiles.setEnabled(state)
-        self.UI.btnBrowse.setEnabled(state)
-        self.UI.btnEdit.setDisabled(state)
+        self.UI.btnBrowse.setVisible(state)
+        self.UI.btnEdit.setVisible(not state)
         self.UI.frameEdit.setVisible(state)
+        if not state:
+            self.UI.spinPort.setButtonSymbols(QSpinBox.NoButtons)
+        else:
+            self.UI.spinPort.setButtonSymbols(QSpinBox.UpDownArrows)
 
     def load_settings(self):
         from libopenimu.tools.Settings import OpenIMUSettings
         settings = OpenIMUSettings()
-        self.UI.txtDataPath.setText(settings.data_save_path)
+        self.UI.txtDataPath.setText(settings.streamer_data_save_path)
         self.UI.spinPort.setValue(settings.streamer_port)
+        self.UI.chkDeleteFiles.setChecked(settings.streamer_delete_data_after_transfer)
 
     def save_settings(self):
         from libopenimu.tools.Settings import OpenIMUSettings
         settings = OpenIMUSettings()
         settings.streamer_port = self.UI.spinPort.value()
-        settings.data_save_path = self.UI.txtDataPath.text()
+        if self.UI.txtDataPath.text():
+            settings.streamer_data_save_path = self.UI.txtDataPath.text()
+        settings.streamer_delete_data_after_transfer = self.UI.chkDeleteFiles.isChecked()
 
     def init_streamer(self):
         # Create path with subfolder "ToImport"
@@ -117,7 +122,7 @@ class StreamWindow(QDialog):
 
         for file in FileManager.get_file_list(from_path=save_path):
             import os
-            device_name = 'Inconnu'
+            device_name = self.tr('Unknown')
             filename = file[len(self.get_data_save_path())+1:]
             path_parts = filename.split(os.sep)
             if len(path_parts) > 1:
@@ -125,7 +130,7 @@ class StreamWindow(QDialog):
             file_size = os.path.getsize(file)
             self.add_file_completed(device_name=device_name, filename=filename, filesize=file_size)
 
-        if self.UI.cmbStreamType.currentIndex() == 0:  # Applewatch
+        if self.UI.tabStreamers.currentIndex() == 0:  # Apple Watch
             self.streamer = AppleWatchStreamer(port=self.UI.spinPort.value(), path=save_path,
                                                parent=self)
 
@@ -144,7 +149,7 @@ class StreamWindow(QDialog):
         if self.streamer:
             self.streamer.start()
         else:
-            self.add_to_log("Aucun serveur sélectionné!", LogTypes.LOGTYPE_ERROR)
+            self.add_to_log(self.tr('Unknown streamer type! Aborting.'), LogTypes.LOGTYPE_ERROR)
 
         super().exec()
 
@@ -176,6 +181,8 @@ class StreamWindow(QDialog):
 
         prog = QProgressBar()
         prog.setAlignment(Qt.AlignCenter)
+        prog.setMaximum(100)
+        prog.setValue(0)
         self.UI.tableFiles.setCellWidget(index, 0, prog)
 
         item = QTableWidgetItem(FileManager.format_file_size(filesize))
@@ -192,7 +199,7 @@ class StreamWindow(QDialog):
         return index
 
     def update_current_transfer_tab(self):
-        self.UI.tabInfos.setTabText(0, "Transferts en cours (" + str(self.UI.tableFiles.rowCount()) + ")")
+        self.UI.tabInfos.setTabText(0, self.tr('In progress') + ' (' + str(self.UI.tableFiles.rowCount()) + ')')
 
     def remove_file_progress_bar(self, filename: str):
         self.UI.tableFiles.removeRow(self.UI.tableFiles.row(self.file_rows[filename]))
@@ -221,7 +228,7 @@ class StreamWindow(QDialog):
         item.setForeground(QColor(Qt.darkGreen))
         self.UI.tableReceived.setItem(index, 2, item)
 
-        self.UI.tabInfos.setTabText(1, "Fichiers reçus (" + str(self.UI.tableReceived.rowCount()) + ")")
+        self.UI.tabInfos.setTabText(1, self.tr('Completed') + ' (' + str(self.UI.tableReceived.rowCount()) + ')')
         self.UI.tableReceived.scrollToBottom()
 
     def add_file_error(self, filename: str, errorstr: str):
@@ -235,7 +242,7 @@ class StreamWindow(QDialog):
         item.setForeground(QColor(Qt.red))
         self.UI.tableErrors.setItem(index, 1, item)
 
-        self.UI.tabInfos.setTabText(2, "Erreurs (" + str(self.UI.tableErrors.rowCount()) + ")")
+        self.UI.tabInfos.setTabText(2, self.tr('Errors') + ' (' + str(self.UI.tableErrors.rowCount()) + ')')
 
     @Slot('QString', 'QString', int, int, name='update_progress')
     def update_progress(self, filename: str, infos: str, value: int, max_value: int):
@@ -248,14 +255,15 @@ class StreamWindow(QDialog):
         if index >= 0:
             prog = self.UI.tableFiles.cellWidget(index, 0)
             if prog is not None:
-                prog.setMaximum(max_value)
-                prog.setValue(value)
+                # prog.setMaximum(100)
+                prog.setValue(int((value / max_value)*100))
                 self.UI.tableFiles.scrollToBottom()
                 # self.UI.tableFiles.update(index)
 
             size_cell = self.UI.tableFiles.item(index, 1)
             size_cell.setText(FileManager.format_file_size(file_size=value, no_suffix=True, ref_size=max_value) + " / "
                               + FileManager.format_file_size(file_size=max_value))
+            # print(filename + ': ' + str(value) + ' / ' + str(max_value))
 
         # QApplication.processEvents()
 
@@ -282,7 +290,8 @@ class StreamWindow(QDialog):
 
         if not device_item and create_if_absent:
             device_item = QListWidgetItem(device_name)
-            device_item.setIcon(QIcon(":/OpenIMU/icons/sensor.png"))
+            device_item.setIcon(QIcon(":/OpenIMU/icons/sensor_watch.png"))
+            device_item.setBackground(Qt.white)
             self.UI.lstDevices.addItem(device_item)
 
         return device_item
@@ -290,12 +299,12 @@ class StreamWindow(QDialog):
     @Slot('QString', bool, name='device_connected')
     def device_connected(self, device_name: str, state: bool):
         if state:
-            self.add_to_log(device_name + ": Connecté", LogTypes.LOGTYPE_INFO)
+            self.add_to_log(device_name + ': ' + self.tr('connected'), LogTypes.LOGTYPE_INFO)
             # Find and adds the device into the connected device list
             self.get_device_item(device_name=device_name, create_if_absent=True)
         else:
             # Find and removes the device into the connected device list
-            self.add_to_log(device_name + ": Déconnecté", LogTypes.LOGTYPE_INFO)
+            self.add_to_log(device_name + ': ' + self.tr('disconnected'), LogTypes.LOGTYPE_INFO)
 
             device_item = self.get_device_item(device_name=device_name, create_if_absent=False)
             if device_item:
@@ -328,7 +337,7 @@ class StreamWindow(QDialog):
         return self.UI.txtDataPath.text()
 
     def get_streamer_type(self) -> int:
-        return self.UI.cmbStreamType.currentIndex()
+        return self.UI.tabStreamers.currentIndex()
 
     def get_delete_files_after_import(self) -> bool:
         return self.UI.chkDeleteFiles.isChecked()
@@ -352,3 +361,4 @@ class StreamWindow(QDialog):
     def streaming_server_finished(self):
         # self.accept()
         pass
+

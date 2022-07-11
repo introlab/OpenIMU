@@ -1,4 +1,8 @@
 http://www.iconarchive.com/show/tulliana-2-icons-by-umut-pulat.html
 https://iconarchive.com/show/snowish-icons-by-saki.2.html
 
+<a href="https://www.flaticon.com/free-icons/smart-watch" title="smart watch icons">Smart watch icons created by Iconic Panda - Flaticon</a>
 <div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+<a href="https://www.flaticon.com/free-icons/smart-band" title="smart band icons">Smart band icons created by Circlon Tech - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/motion-sensor" title="motion sensor icons">Motion sensor icons created by Muhammad Waqas Khan - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/sync" title="sync icons">Sync icons created by Creatype - Flaticon</a>

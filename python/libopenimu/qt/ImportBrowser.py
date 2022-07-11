@@ -208,7 +208,11 @@ class ImportBrowser(QDialog):
         process.task_error.connect(self.process_error_occurred)
 
         # Create progress dialog
-        dialog = ProgressDialog(process, self.tr('Data importation'), self)
+        parent = self
+        from libopenimu.qt.MainWindow import MainWindow
+        if self.parent() and isinstance(self.parent(), MainWindow):
+            parent = self.parent()  # If possible, use MainWindow as parent
+        dialog = ProgressDialog(process, self.tr('Data importation'), parent)
 
         # Start tasks
         process.start()
@@ -234,7 +238,7 @@ class ImportBrowser(QDialog):
                               LogTypes.LOGTYPE_ERROR)
         self.has_error = True
 
-    def add_file_to_list(self, filename: str, filetype_id: int = -1):
+    def add_file_to_list(self, filename: str, filetype_id: int = -1, file_participant=None):
         table = self.UI.tableFiles
         count = self.UI.progAdding.value()
         if count+1 <= self.UI.progAdding.maximum():
@@ -273,7 +277,10 @@ class ImportBrowser(QDialog):
         self.fill_participant_combobox(combobox=item_combo, include_group=True)
         item_combo.currentIndexChanged.connect(self.row_combobox_changed)
         table.setCellWidget(row, 2, item_combo)
-        item_combo.setCurrentIndex(item_combo.findText(self.UI.cmbParticipant.currentText()))
+        if file_participant:
+            item_combo.setCurrentIndex(item_combo.findText(file_participant.name))
+        else:
+            item_combo.setCurrentIndex(item_combo.findText(self.UI.cmbParticipant.currentText()))
         self.validate_row_combobox(item_combo)
 
         # table.resizeColumnsToContents()
@@ -296,8 +303,14 @@ class ImportBrowser(QDialog):
         combobox.addItem('', ImporterTypes.UNKNOWN)
         for importer in ImporterTypes.value_types:
             if importer != ImporterTypes.WIMU:  # Ignore WIMU for now...
-                combobox.addItem(QIcon(':/OpenIMU/icons/sensor.png'), ImporterTypes.value_names[importer],
-                                 importer)
+                icon = QIcon(':/OpenIMU/icons/sensor.png')
+                if importer == ImporterTypes.OPENIMU:
+                    icon = QIcon(':/OpenIMU/icons/sensor_minilogger.png')
+                if importer == ImporterTypes.ACTIGRAPH:
+                    icon = QIcon(':/OpenIMU/icons/sensor_actigraph.png')
+                if importer == ImporterTypes.APPLEWATCH:
+                    icon = QIcon(':/OpenIMU/icons/sensor_watch.png')
+                combobox.addItem(icon, ImporterTypes.value_names[importer], importer)
 
     def fill_participant_combobox(self, combobox: QComboBox, include_group=False):
         combobox.clear()
@@ -424,7 +437,7 @@ class ImportBrowser(QDialog):
 
         if target == self.UI.tableFiles:
             if isinstance(event, QKeyEvent):
-                if event.key() == Qt.Key_Delete:
+                if event.key() == Qt.Key_Delete and event.type() == QEvent.Type.KeyPress:
                     self.del_clicked()
                     event.accept()
                     return True

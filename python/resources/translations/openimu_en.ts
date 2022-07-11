@@ -2,6 +2,84 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en">
 <context>
+    <name>AppleWatchRequestHandler</name>
+    <message>
+        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="90"/>
+        <source>Command refused</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="97"/>
+        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="99"/>
+        <source>Badly formatted request. Refused.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="98"/>
+        <source>Unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="109"/>
+        <source>Receiving</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="118"/>
+        <source>Existing file, but incomplete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="110"/>
+        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="120"/>
+        <source>bytes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="121"/>
+        <source>retransferring</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="123"/>
+        <source>Existing file - overwriting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="182"/>
+        <source>Unsupported file type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="193"/>
+        <source>Error receiving</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="194"/>
+        <source>bytes received, expected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="199"/>
+        <source>Completed</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AppleWatchStreamer</name>
+    <message>
+        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="21"/>
+        <source>Starting Sensorlogger (Apple Watch) server on port</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="40"/>
+        <source>Stopping Sensorlogger (Apple Watch) server...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BeaconsView</name>
     <message>
         <location filename="../../libopenimu/qt/BeaconsView.py" line="22"/>
@@ -246,28 +324,43 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="207"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="215"/>
         <source>Data importation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="311"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="226"/>
+        <source>Error while importing data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="227"/>
+        <source>Error occured while importing data files. See logs for more information.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="237"/>
+        <source>Error importing file:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="342"/>
         <source>Select file(s) to import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="332"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="363"/>
         <source>Select folder to import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="442"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="473"/>
         <location filename="../ui/ImportBrowser.ui" line="645"/>
         <source>Unspecified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="463"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="494"/>
         <source>New participant</source>
         <translation type="unfinished"></translation>
     </message>
@@ -356,38 +449,38 @@
 <context>
     <name>ImportMatchDialog</name>
     <message>
-        <location filename="../ui/ImportMatchDialog.ui" line="14"/>
-        <source>Correspondances données - participants</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ImportMatchDialog.ui" line="27"/>
-        <source>Veuillez associer les données aux bons participants</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ImportMatchDialog.ui" line="53"/>
-        <source>Donnée</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ImportMatchDialog.ui" line="58"/>
+        <location filename="../ui/ImportMatchDialog.ui" line="63"/>
         <source>Participant</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ImportMatchDialog.ui" line="90"/>
-        <source>Ajouter un participant</source>
+        <location filename="../ui/ImportMatchDialog.ui" line="14"/>
+        <source>Data / participant matching</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ImportMatchDialog.ui" line="133"/>
+        <location filename="../ui/ImportMatchDialog.ui" line="26"/>
+        <source>Please assign the following data to the correct participant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ImportMatchDialog.ui" line="58"/>
+        <source>Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ImportMatchDialog.ui" line="95"/>
+        <source>Add participant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/ImportMatchDialog.ui" line="138"/>
         <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ImportMatchDialog.ui" line="159"/>
-        <source>Annuler</source>
+        <location filename="../ui/ImportMatchDialog.ui" line="164"/>
+        <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -412,43 +505,43 @@
 <context>
     <name>Importer</name>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="102"/>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="140"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="103"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="141"/>
         <source>Importing data...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="117"/>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="155"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="118"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="156"/>
         <source>File import completed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="119"/>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="157"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="120"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="158"/>
         <source>Error loading file:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="122"/>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="160"/>
-        <source>Data from file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../libopenimu/qt/ImportBrowser.py" line="123"/>
         <location filename="../../libopenimu/qt/ImportBrowser.py" line="161"/>
-        <source>already in the database for participant</source>
+        <source>Data from file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../libopenimu/qt/ImportBrowser.py" line="124"/>
         <location filename="../../libopenimu/qt/ImportBrowser.py" line="162"/>
+        <source>already in the database for participant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="125"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="163"/>
         <source>ignored.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="135"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="136"/>
         <source>Loading file:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -496,12 +589,12 @@
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="589"/>
-        <source>Stream and import data from a device</source>
+        <source>Transfer data from a device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="592"/>
-        <source>Stream &amp;&amp; Import</source>
+        <source>Transfer from device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -794,17 +887,17 @@ in dataset</source>
 <context>
     <name>StartWindow</name>
     <message>
-        <location filename="../../libopenimu/qt/StartWindow.py" line="61"/>
+        <location filename="../../libopenimu/qt/StartWindow.py" line="62"/>
         <source>Filename to open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/StartWindow.py" line="82"/>
+        <location filename="../../libopenimu/qt/StartWindow.py" line="83"/>
         <source>File missing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/StartWindow.py" line="84"/>
+        <location filename="../../libopenimu/qt/StartWindow.py" line="85"/>
         <source>doesn&apos;t exist. Perhaps it has been moved, deleted or renamed?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -813,130 +906,175 @@ in dataset</source>
     <name>StreamWindow</name>
     <message>
         <location filename="../ui/StreamWindow.ui" line="14"/>
-        <source>Gestionnaire de transfert</source>
+        <source>Data transfer and import from a device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="37"/>
-        <source>Éditer</source>
+        <location filename="../ui/StreamWindow.ui" line="91"/>
+        <source>SensorLogger (Apple Watch)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="72"/>
-        <source>Informations serveur</source>
+        <location filename="../ui/StreamWindow.ui" line="323"/>
+        <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="96"/>
-        <source>Type de transfert:</source>
+        <location filename="../ui/StreamWindow.ui" line="156"/>
+        <source>Server address:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="113"/>
-        <source>Applewatch</source>
+        <location filename="../ui/StreamWindow.ui" line="187"/>
+        <source>Browse...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="157"/>
-        <source>Répertoire de données</source>
+        <location filename="../ui/StreamWindow.ui" line="238"/>
+        <source>Data save folder:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="207"/>
+        <location filename="../ui/StreamWindow.ui" line="248"/>
+        <source>Delete raw data after transfer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/StreamWindow.ui" line="320"/>
+        <source>Edit settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/StreamWindow.ui" line="390"/>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/StreamWindow.ui" line="419"/>
+        <source>Undo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/StreamWindow.ui" line="448"/>
+        <source>Active devices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/StreamWindow.ui" line="499"/>
+        <source>In progress (0)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/StreamWindow.ui" line="542"/>
+        <source>Progress</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/StreamWindow.ui" line="547"/>
+        <location filename="../ui/StreamWindow.ui" line="607"/>
+        <source>Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/StreamWindow.ui" line="552"/>
+        <location filename="../ui/StreamWindow.ui" line="612"/>
+        <location filename="../ui/StreamWindow.ui" line="656"/>
+        <source>Filename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/StreamWindow.ui" line="565"/>
+        <source>Completed (0)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/StreamWindow.ui" line="602"/>
+        <source>Device</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/StreamWindow.ui" line="625"/>
+        <source>Errors (0)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/StreamWindow.ui" line="661"/>
+        <source>Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/StreamWindow.ui" line="674"/>
+        <source>Transfer log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/StreamWindow.ui" line="738"/>
+        <source>Close and import data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/StreamWindow.ui" line="260"/>
         <source>Port</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="217"/>
-        <source>Supprimer les fichiers bruts après le transfert</source>
+        <location filename="../ui/StreamWindow.ui" line="67"/>
+        <source>Transfer data from devices</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="240"/>
-        <source>Adresse</source>
+        <location filename="../../libopenimu/qt/StreamWindow.py" line="45"/>
+        <source>Select raw data target directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="271"/>
-        <source>Parcourir...</source>
+        <location filename="../../libopenimu/qt/StreamWindow.py" line="58"/>
+        <source>Do you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="280"/>
-        <source>Importer chaque fichier dès qu&apos;il a été transféré</source>
+        <location filename="../../libopenimu/qt/StreamWindow.py" line="58"/>
+        <source>While editing settings, no data will be able to be transferred, and all in progress transfers will be cancelled.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="304"/>
-        <source>0.0.0.0</source>
+        <location filename="../../libopenimu/qt/StreamWindow.py" line="59"/>
+        <source>Enter edit mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="372"/>
-        <source>Sauvegarder</source>
+        <location filename="../../libopenimu/qt/StreamWindow.py" line="126"/>
+        <source>Unknown</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="401"/>
-        <source>Annuler</source>
+        <location filename="../../libopenimu/qt/StreamWindow.py" line="152"/>
+        <source>Unknown streamer type! Aborting.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="431"/>
-        <source>Actifs</source>
+        <location filename="../../libopenimu/qt/StreamWindow.py" line="202"/>
+        <source>In progress</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="478"/>
-        <source>Transferts en cours (0)</source>
+        <location filename="../../libopenimu/qt/StreamWindow.py" line="231"/>
+        <source>Completed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="521"/>
-        <source>Progression</source>
+        <location filename="../../libopenimu/qt/StreamWindow.py" line="245"/>
+        <source>Errors</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="526"/>
-        <location filename="../ui/StreamWindow.ui" line="573"/>
-        <source>Taille</source>
+        <location filename="../../libopenimu/qt/StreamWindow.py" line="302"/>
+        <source>connected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="531"/>
-        <location filename="../ui/StreamWindow.ui" line="578"/>
-        <location filename="../ui/StreamWindow.ui" line="618"/>
-        <source>Fichier</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/StreamWindow.ui" line="540"/>
-        <source>Fichiers reçus (0)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/StreamWindow.ui" line="568"/>
-        <source>Appareil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/StreamWindow.ui" line="587"/>
-        <source>Erreurs (0)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/StreamWindow.ui" line="623"/>
-        <source>Erreur</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/StreamWindow.ui" line="632"/>
-        <source>Journal</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/StreamWindow.ui" line="720"/>
-        <source>Terminer le transfert</source>
+        <location filename="../../libopenimu/qt/StreamWindow.py" line="307"/>
+        <source>disconnected</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

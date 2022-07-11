@@ -52,7 +52,7 @@ class AppleWatchImporter(BaseImporter):
         self.session_name = str()
         self.current_file_size = 0
 
-    def load(self, filename):
+    def load(self, filename: str):
         # print('AppleWatchImporter.load')
         results = []
         # Removed zip loading for now,
@@ -66,6 +66,12 @@ class AppleWatchImporter(BaseImporter):
                     basename = os.path.basename(filename)
                     session_file_name = filename.replace(basename, 'session.oimi')
 
+                    # Default session name
+                    parts = filename.split(os.path.sep)
+                    if len(parts) >= 2:
+                        self.session_name = parts[-2]
+
+                    # Use .oimi file if present to properly name the session
                     if os.path.exists(session_file_name):
                         with open(session_file_name, 'r') as session_file:
                             # Read JSON information
@@ -73,12 +79,6 @@ class AppleWatchImporter(BaseImporter):
                             # TODO better session name?
                             if session_info.__contains__('participant') and session_info.__contains__('timestamp'):
                                 self.session_name = session_info['timestamp'] + '_' + session_info['participant']
-                            else:
-                                # Reset session name
-                                self.session_name = str()
-                    else:
-                        # Reset session name
-                        self.session_name = str()
 
                     # print('Loading File: ', filename)
                     self.current_file_size = os.stat(filename).st_size
