@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QDialog, QListWidgetItem, QVBoxLayout, QWidget
 from PySide6.QtCore import Slot
+from PySide6.QtGui import QIcon
 from resources.ui.python.ProcessSelectDialog_ui import Ui_dlgProcessSelect
 
 from libopenimu.db.DBManager import DBManager
@@ -35,6 +36,7 @@ class ProcessSelectWindow(QDialog):
         for factory in BaseAlgorithmFactory.factories:
             # Add to list
             item = QListWidgetItem(factory.name())
+            item.setIcon(QIcon(':/OpenIMU/icons/result.png'))
             self.UI.listWidget.addItem(item)
             # Connect signals
             self.UI.listWidget.itemClicked.connect(self.on_list_widget_item_clicked)
@@ -92,13 +94,13 @@ class ProcessSelectWindow(QDialog):
                     self.results = {}
 
                 def process(self):
-                    print('Processor starting')
+                    # print('Processor starting')
                     self.results = algo.calculate(self.dbMan, self.recordsets)
-                    print('results:', self.results)
-                    print('Processor done!')
+                    # print('results:', self.results)
+                    # print('Processor done!')
 
                 def get_results(self):
-                    print('getting results')
+                    # print('getting results')
                     return self.results
 
             # Initialize processor
@@ -122,7 +124,7 @@ class ProcessSelectWindow(QDialog):
             process = BackgroundProcess([processor])
 
             # Create progress dialog
-            dialog = ProgressDialog(process, 'Analyse des données', self)
+            dialog = ProgressDialog(process, self.tr('Data processing'), self)
 
             # process.finished.connect(dialog.accept)
             # process.trigger.connect(dialog.trigger)
@@ -133,7 +135,7 @@ class ProcessSelectWindow(QDialog):
             results = processor.get_results()
 
             # results = algo.calculate(self.dbMan, self.recordsets)
-            print('Algo results', results)
+            # print('Algo results', results)
 
             # window = QMainWindow(self)
             # window.setWindowTitle('Results: ' + self.factory.info()['name'])

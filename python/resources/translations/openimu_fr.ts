@@ -80,6 +80,14 @@
     </message>
 </context>
 <context>
+    <name>BaseAlgorithmFactory</name>
+    <message>
+        <location filename="../../libopenimu/algorithms/BaseAlgorithm.py" line="110"/>
+        <source>No settings available for that algorithm</source>
+        <translation>Aucun paramètre n&apos;est disponible pour cet algorithme</translation>
+    </message>
+</context>
+<context>
     <name>BeaconsView</name>
     <message>
         <location filename="../../libopenimu/qt/BeaconsView.py" line="22"/>
@@ -192,34 +200,62 @@
         <translation>Sélection des données</translation>
     </message>
     <message>
-        <location filename="../ui/DataSelector.ui" line="103"/>
+        <location filename="../ui/DataSelector.ui" line="79"/>
+        <source>Only one participant can be selected</source>
+        <translation>Un seul participant peut être sélectionné</translation>
+    </message>
+    <message>
+        <location filename="../ui/DataSelector.ui" line="118"/>
         <source>Select all</source>
         <translation>Tout sélectionner</translation>
     </message>
     <message>
-        <location filename="../ui/DataSelector.ui" line="126"/>
+        <location filename="../ui/DataSelector.ui" line="141"/>
         <source>Deselect all</source>
         <translation>Tout désélectionner</translation>
     </message>
     <message>
-        <location filename="../ui/DataSelector.ui" line="162"/>
+        <location filename="../ui/DataSelector.ui" line="177"/>
         <source>Expand all</source>
         <translation>Tout voir</translation>
     </message>
     <message>
-        <location filename="../ui/DataSelector.ui" line="185"/>
+        <location filename="../ui/DataSelector.ui" line="200"/>
         <source>Collapse all</source>
         <translation>Tout cacher</translation>
     </message>
     <message>
-        <location filename="../ui/DataSelector.ui" line="241"/>
+        <location filename="../ui/DataSelector.ui" line="256"/>
         <source>Next</source>
         <translation>Suivant</translation>
     </message>
     <message>
-        <location filename="../ui/DataSelector.ui" line="270"/>
+        <location filename="../ui/DataSelector.ui" line="285"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
+    </message>
+</context>
+<context>
+    <name>Evenson2008Factory</name>
+    <message>
+        <location filename="../../libopenimu/algorithms/Evenson2008.py" line="249"/>
+        <source>Original values</source>
+        <translation>Valeurs originales</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/algorithms/Evenson2008.py" line="250"/>
+        <source>Custom values</source>
+        <translation>Valeurs personnalisées</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/algorithms/Evenson2008.py" line="259"/>
+        <source>Preset</source>
+        <translation>Réglage</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/algorithms/Evenson2008.py" line="323"/>
+        <source>Active minutes</source>
+        <translation>Minutes actives</translation>
     </message>
 </context>
 <context>
@@ -273,6 +309,29 @@
         <location filename="../ui/ExportCSV.ui" line="361"/>
         <source>Annuler</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FreedsonAdult1998Factory</name>
+    <message>
+        <location filename="../../libopenimu/algorithms/FreedsonAdult1998.py" line="121"/>
+        <source>Original values</source>
+        <translation>Valeurs originales</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/algorithms/FreedsonAdult1998.py" line="122"/>
+        <source>Custom values</source>
+        <translation>Valeurs personnalisées</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/algorithms/FreedsonAdult1998.py" line="132"/>
+        <source>Preset</source>
+        <translation>Réglage</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/algorithms/FreedsonAdult1998.py" line="202"/>
+        <source>Active minutes</source>
+        <translation>Minutes actives</translation>
     </message>
 </context>
 <context>
@@ -607,13 +666,13 @@
         <translation>Structure des données</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="362"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="364"/>
         <location filename="../ui/MainWindow.ui" line="198"/>
         <source>New group</source>
         <translation>Nouveau groupe</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="394"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="397"/>
         <location filename="../ui/MainWindow.ui" line="239"/>
         <source>New participant</source>
         <translation>Nouveau participant</translation>
@@ -710,119 +769,119 @@
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="65"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="66"/>
         <source>OpenIMU - Ready.</source>
         <translation>OpenIMU - Prêt.</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="75"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="77"/>
         <source>Loading data...</source>
         <translation>Chargement des données...</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="83"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="85"/>
         <source>Data loaded!</source>
         <translation>Données chargées!</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="316"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="318"/>
         <source>This dataset will be closed. Do you want to continue?</source>
         <translation>Cette base de données sera fermée. Voulez-vous continuer?</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="317"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="319"/>
         <source>Close?</source>
         <translation>Fermer?</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="323"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="325"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="323"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="325"/>
         <source>was closed.</source>
         <translation>a été fermé.</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="336"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="338"/>
         <source>Database file will be cleaned up and optimized. This can take some time.</source>
         <translation>Le fichier de base de données sera nettoyé et optimisé. Ceci prendra du temps.</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="337"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="339"/>
         <source>Do you want to continue?</source>
         <translation>Voulez-vous continuer?</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="338"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="343"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="340"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="345"/>
         <source>Database cleanup</source>
         <translation>Nettoyage de base de données</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="345"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="347"/>
         <source>Cleanup</source>
         <translation>Nettoyage</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="368"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="400"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="370"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="403"/>
         <source>added.</source>
         <translation>ajouté.</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="368"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="508"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="370"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="511"/>
         <source>Group</source>
         <translation>Groupe</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="508"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="513"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="511"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="516"/>
         <source>updated.</source>
         <translation>mis à jour.</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="400"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="513"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="403"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="516"/>
         <source>Participant</source>
         <translation>Participant</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="714"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="717"/>
         <source>Data Editor</source>
         <translation>Éditeur de données</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="544"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="547"/>
         <source>Are you sure you want to delete</source>
         <translation>Êtes-vous sûrs de vouloir supprimer</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="545"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="548"/>
         <source>and all associated elements?</source>
         <translation>et tous les éléments associés?</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="546"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="549"/>
         <source>Confirm deletion</source>
         <translation>Confirmation de suppression</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="557"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="563"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="573"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="580"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="588"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="604"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="616"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="630"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="560"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="566"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="576"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="583"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="591"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="607"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="619"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="633"/>
         <source>Deleting</source>
         <translation>Suppression</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="636"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="639"/>
         <source>was deleted.</source>
         <translation>a été supprimé.</translation>
     </message>
@@ -833,6 +892,14 @@
         <location filename="../../libopenimu/qt/ParticipantWindow.py" line="39"/>
         <source>None</source>
         <translation>Aucun</translation>
+    </message>
+</context>
+<context>
+    <name>ProcessSelectWindow</name>
+    <message>
+        <location filename="../../libopenimu/qt/ProcessSelectWindow.py" line="127"/>
+        <source>Data processing</source>
+        <translation>Traitement des données</translation>
     </message>
 </context>
 <context>
@@ -1188,78 +1255,58 @@ données</translation>
     <name>dlgProcessSelect</name>
     <message>
         <location filename="../ui/ProcessSelectDialog.ui" line="14"/>
-        <source>Sélection d&apos;un algorithme de traitement</source>
-        <translation type="unfinished"></translation>
+        <source>Processing algorithm selection</source>
+        <translation>Sélection de l&apos;algorithme de traitement</translation>
     </message>
     <message>
-        <location filename="../ui/ProcessSelectDialog.ui" line="53"/>
-        <source>Algorithmes de traitement</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ProcessSelectDialog.ui" line="52"/>
+        <source>Processing algorithms</source>
+        <translation>Algorithmes de traitement</translation>
     </message>
     <message>
-        <location filename="../ui/ProcessSelectDialog.ui" line="85"/>
+        <location filename="../ui/ProcessSelectDialog.ui" line="100"/>
         <source>Informations</source>
-        <translation type="unfinished">Informations</translation>
+        <translation>Informations</translation>
     </message>
     <message>
-        <location filename="../ui/ProcessSelectDialog.ui" line="97"/>
-        <source>Nom</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ProcessSelectDialog.ui" line="110"/>
-        <source>(Nom)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ProcessSelectDialog.ui" line="123"/>
-        <source>Auteur</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ProcessSelectDialog.ui" line="111"/>
+        <source>Name</source>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../ui/ProcessSelectDialog.ui" line="136"/>
-        <source>(Auteur)</source>
-        <translation type="unfinished"></translation>
+        <source>Author</source>
+        <translation>Auteur</translation>
     </message>
     <message>
-        <location filename="../ui/ProcessSelectDialog.ui" line="149"/>
+        <location filename="../ui/ProcessSelectDialog.ui" line="217"/>
+        <source>Reference</source>
+        <translation>Référence</translation>
+    </message>
+    <message>
+        <location filename="../ui/ProcessSelectDialog.ui" line="262"/>
+        <source>Settings</source>
+        <translation>Paramètres</translation>
+    </message>
+    <message>
+        <location filename="../ui/ProcessSelectDialog.ui" line="296"/>
+        <source>Process</source>
+        <translation>Analyser</translation>
+    </message>
+    <message>
+        <location filename="../ui/ProcessSelectDialog.ui" line="325"/>
+        <source>Cancel</source>
+        <translation>Annuler</translation>
+    </message>
+    <message>
+        <location filename="../ui/ProcessSelectDialog.ui" line="160"/>
         <source>Version</source>
-        <translation type="unfinished">Version</translation>
+        <translation>Version</translation>
     </message>
     <message>
-        <location filename="../ui/ProcessSelectDialog.ui" line="162"/>
-        <source>(Version)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ProcessSelectDialog.ui" line="175"/>
+        <location filename="../ui/ProcessSelectDialog.ui" line="184"/>
         <source>Description</source>
-        <translation type="unfinished">Description</translation>
-    </message>
-    <message>
-        <location filename="../ui/ProcessSelectDialog.ui" line="210"/>
-        <source>Référence</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ProcessSelectDialog.ui" line="229"/>
-        <source>(Référence)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ProcessSelectDialog.ui" line="246"/>
-        <source>Paramètres</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ProcessSelectDialog.ui" line="280"/>
-        <source>Exécuter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ProcessSelectDialog.ui" line="309"/>
-        <source>Annuler</source>
-        <translation type="unfinished"></translation>
+        <translation>Description</translation>
     </message>
 </context>
 <context>
@@ -1461,59 +1508,40 @@ données</translation>
     <name>frmResult</name>
     <message>
         <location filename="../ui/ResultWidget.ui" line="20"/>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ResultWidget.ui" line="37"/>
-        <source>Date du traitement:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ResultWidget.ui" line="50"/>
-        <source>Nom:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ResultWidget.ui" line="57"/>
-        <source>(Date)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../ui/ResultWidget.ui" line="70"/>
-        <source>(Nom)</source>
-        <translation type="unfinished"></translation>
+        <source>Results display</source>
+        <translation>Affichage des résultats</translation>
     </message>
     <message>
-        <location filename="../ui/ResultWidget.ui" line="119"/>
-        <source>Affichage du résultat</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ResultWidget.ui" line="97"/>
+        <source>Processing date:</source>
+        <translation>Date de l&apos;analyse:</translation>
     </message>
     <message>
-        <location filename="../ui/ResultWidget.ui" line="135"/>
-        <source>Rapport</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ResultWidget.ui" line="133"/>
+        <source>Results</source>
+        <translation>Résultats</translation>
     </message>
     <message>
-        <location filename="../ui/ResultWidget.ui" line="165"/>
-        <location filename="../ui/ResultWidget.ui" line="226"/>
-        <source>Données</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ResultWidget.ui" line="167"/>
+        <location filename="../ui/ResultWidget.ui" line="228"/>
+        <source>Data</source>
+        <translation>Données</translation>
     </message>
     <message>
-        <location filename="../ui/ResultWidget.ui" line="177"/>
-        <source>Paramètres</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ResultWidget.ui" line="178"/>
+        <source>Settings</source>
+        <translation>Paramètres</translation>
     </message>
     <message>
-        <location filename="../ui/ResultWidget.ui" line="279"/>
-        <source>Copier les données</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ResultWidget.ui" line="278"/>
+        <source>Copy data to clipboard</source>
+        <translation>Copier les données dans le presse-papier</translation>
     </message>
     <message>
-        <location filename="../ui/ResultWidget.ui" line="287"/>
-        <source>Sources de données</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ResultWidget.ui" line="300"/>
+        <source>Data Sources</source>
+        <translation>Sources de données</translation>
     </message>
 </context>
 <context>

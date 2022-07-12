@@ -10,12 +10,14 @@ from abc import abstractmethod
 from libopenimu.db.DBManager import DBManager
 
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
+from PySide6.QtCore import QObject
 
 
-class BaseAlgorithm:
+class BaseAlgorithm(QObject):
     params = dict
 
     def __init__(self, params: dict):
+        QObject.__init__(self)
         self.configure(params)
 
     @abstractmethod
@@ -27,12 +29,12 @@ class BaseAlgorithm:
         pass
 
 
-class BaseAlgorithmFactory:
+class BaseAlgorithmFactory(QObject):
     # Will hold all factories
     factories = list()
 
     def __init__(self):
-        pass
+        QObject.__init__(self)
 
     @staticmethod
     def factory_count():
@@ -105,7 +107,7 @@ class BaseAlgorithmFactory:
     @abstractmethod
     def build_config_widget(self, parent_widget: QWidget, default_params: dict = None):
         layout = QVBoxLayout()
-        label = QLabel("Aucun paramètre pour cet algorithme")
+        label = QLabel(self.tr('No settings available for that algorithm'))
         layout.addWidget(label)
 
         base_widget = QWidget(parent_widget)

@@ -577,7 +577,7 @@ class OpenIMUBarGraphView(QChartView):
 
     def build_style(self):
         self.setStyleSheet("QLabel{color:blue;}")
-        self.chart.setTheme(QChart.ChartThemeBlueCerulean)
+        self.chart.setTheme(QChart.ChartThemeDark)
         self.setBackgroundBrush(QBrush(Qt.darkGray))
         self.chart.setPlotAreaBackgroundBrush(QBrush(Qt.black))
         self.chart.setPlotAreaBackgroundVisible(True)

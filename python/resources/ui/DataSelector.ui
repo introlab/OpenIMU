@@ -69,6 +69,21 @@
     </widget>
    </item>
    <item>
+    <widget class="QLabel" name="lblOnlyOneParticipant">
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Only one participant can be selected</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QTreeWidget" name="treeData">
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>

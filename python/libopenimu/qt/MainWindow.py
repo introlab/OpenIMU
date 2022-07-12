@@ -296,7 +296,7 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def process_data_requested(self):
-        selector_diag = DataSelector(self.dbMan, self)
+        selector_diag = DataSelector(db_manager=self.dbMan, parent=self, allow_only_one_participant=True)
         selector_diag.exec()
 
         if selector_diag.result() == QDialog.Accepted:
@@ -720,7 +720,7 @@ class MainWindow(QMainWindow):
     def eventFilter(self, target: QObject, event: QEvent) -> bool:
         if target == self.UI.treeDataSet:
             if isinstance(event, QKeyEvent):
-                if event.key() == Qt.Key_Delete and event.type() == QEvent.Type.KeyPress:
+                if event.key() == Qt.Key_Delete and event.type() == QEvent.Type.KeyRelease:
                     self.delete_requested()
                     return True
 

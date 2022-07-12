@@ -23,7 +23,7 @@ class DataSelector(QDialog):
     items_recordsets = {}
     items_dates = {}
 
-    def __init__(self, db_manager: DBManager, parent=None):
+    def __init__(self, db_manager: DBManager, allow_only_one_participant=False, parent=None):
         QDialog.__init__(self, parent=parent)
         self.UI = Ui_DataSelector()
         self.UI.setupUi(self)
@@ -32,6 +32,9 @@ class DataSelector(QDialog):
         self.load_data_from_dataset()
         self.update_buttons_states()
         self.loading = False
+        self.only_one_participant = allow_only_one_participant
+        self.UI.lblOnlyOneParticipant.setVisible(self.only_one_participant)
+        self.UI.btnCheckAll.setEnabled(not self.only_one_participant)
 
         self.UI.btnCancel.clicked.connect(self.cancel_clicked)
         self.UI.btnOK.clicked.connect(self.ok_clicked)
@@ -170,8 +173,9 @@ class DataSelector(QDialog):
             return
 
         self.loading = True
+        check = item.checkState(0) == Qt.Checked
 
-        if item.checkState(0) == Qt.Checked:
+        if check:
             # Must check all its children!
             for i in range(item.childCount()):
                 self.check_item(item.child(i), True)
@@ -182,7 +186,7 @@ class DataSelector(QDialog):
                 item.parent().setCheckState(0, Qt.Checked)
                 item = item.parent()
 
-        if item.checkState(0) == Qt.Unchecked:
+        else:
             # Uncheck all childs
             for i in range(item.childCount()):
                 self.check_item(item.child(i), False)
@@ -201,6 +205,18 @@ class DataSelector(QDialog):
                     break
 
                 item = item.parent()
+
+        if not item.parent():
+            # Root item, manage only select one participant
+            if self.only_one_participant:
+                # Enable / disable all others
+                for i in range(self.UI.treeData.topLevelItemCount()):
+                    root_item = self.UI.treeData.topLevelItem(i)
+                    if root_item != item:
+                        if check:
+                            root_item.setDisabled(True)
+                        else:
+                            root_item.setDisabled(False)
 
         self.loading = False
         self.update_buttons_states()

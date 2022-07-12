@@ -14,6 +14,10 @@ QWidget#MainWindow, QWidget#ImportBrowser, QWidget#ImportManager, QWidget#frmPar
     border-radius:0px;
 }
 
+QWidget#centralWidget{
+    background-color: transparent;
+}
+
 /*************************/
 /* QMainWindow           */
 /*************************/
@@ -91,12 +95,16 @@ QLabel:!enabled{
     color:lightgrey;
 }
 
-QLabel#lblDragDrop, QLabel#lblIPValue{
+QLabel#lblDragDrop, QLabel#lblIPValue, QLabel#lblOnlyOneParticipant{
     color: orange;
 }
 
 QLabel#lblWarning{
     color: red;
+}
+
+QLabel#lblRefValue{
+    color: cyan;
 }
 
 /*************************/
@@ -259,7 +267,7 @@ QDockWidget::title{
 /* QTabWidget           */
 /************************/
 
-QTabBar::tab,QTableWidget::tab,QHeaderView::section {
+QTabBar::tab, QTableWidget::tab, QHeaderView::section {
     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0  rgba(128,128,140,50%),  stop: 1.0  rgba(128,128,140,25%));
     border: 1px solid rgba(128,128,140,50%);
     border-bottom: 0px;
@@ -307,6 +315,13 @@ QTableWidget::item:selected{
     color: black;
 }
 
+QTableWidget#tableData, QTableWidget#tableParams{
+    background-color: transparent;
+}
+
+QTableWidget#tableParams QHeaderView, QTableWidget#tableData QHeaderView{
+    background-color: transparent;
+}
 /************************/
 /* QListWidget          */
 /************************/
@@ -381,6 +396,15 @@ QSpinBox:!enabled{
 QSpinBox#spinPort:!enabled{
     color: orange;
     font-weight: bold;
+}
+
+/************************/
+/* QScrollArea            */
+/************************/
+
+QScrollArea {
+    background-color: transparent;
+    border: 0px solid transparent;
 }
 
 
