@@ -17,9 +17,7 @@
    <string>Graph display</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget#frmGraphWidget{
-background-color: blue;
-}</string>
+   <string notr="true"/>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="spacing">

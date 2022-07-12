@@ -126,6 +126,7 @@ class TreeDataWidget(QTreeWidget):
             item.setData(0, Qt.UserRole, group.id_group)
             item.setData(1, Qt.UserRole, 'group')
             item.setFont(0, QFont('Helvetica', 12, QFont.Bold))
+            item.setFlags(item.flags() | Qt.ItemIsEditable)
 
             self.addTopLevelItem(item)
             self.groups[group.id_group] = group
@@ -145,6 +146,7 @@ class TreeDataWidget(QTreeWidget):
             item.setData(0, Qt.UserRole, part.id_participant)
             item.setData(1, Qt.UserRole, 'participant')
             item.setFont(0, QFont('Helvetica', 12, QFont.Bold))
+            item.setFlags(item.flags() | Qt.ItemIsEditable)
 
             if group_item is None:  # Participant without a group
                 self.addTopLevelItem(item)
@@ -205,6 +207,7 @@ class TreeDataWidget(QTreeWidget):
             item.setData(0, Qt.UserRole, recordset.id_recordset)
             item.setData(1, Qt.UserRole, 'recordset')
             item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
+            item.setFlags(item.flags() | Qt.ItemIsEditable)
 
             date_item = self.items_dates.get(recordset.start_timestamp, None)
             if date_item is None:
@@ -265,6 +268,7 @@ class TreeDataWidget(QTreeWidget):
             item.setData(0, Qt.UserRole, result.id_processed_data)
             item.setData(1, Qt.UserRole, 'result')
             item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
+            item.setFlags(item.flags() | Qt.ItemIsEditable)
 
             part_item = None
             if len(result.processed_data_ref) > 0:
@@ -297,6 +301,18 @@ class TreeDataWidget(QTreeWidget):
             return item.data(0, Qt.UserRole)
         else:
             return ""
+
+    def get_current_participant_id(self) -> int:
+        current_type = self.get_item_type(self.currentItem())
+        if current_type == 'participant':
+            return self.get_item_id(self.currentItem())
+        if current_type == 'recordsets' or current_type == 'results':
+            return self.get_item_id(self.currentItem().parent())
+        if current_type == 'result' or current_type == 'date':
+            return self.get_item_id(self.currentItem().parent().parent())
+        if current_type == 'recordset':
+            return self.get_item_id(self.currentItem().parent().parent().parent())
+        return -1
 
     @Slot(str, int)
     def select_item(self, item_type, item_id):

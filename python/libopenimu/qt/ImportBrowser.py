@@ -23,7 +23,7 @@ import os
 
 class ImportBrowser(QDialog):
     dbMan = None
-    log_request = Signal('QString', int)
+    log_request = Signal(str, int)
     participant_added = Signal()
     part_widget = None
     has_error = False
@@ -63,11 +63,7 @@ class ImportBrowser(QDialog):
         # Disable "OK" button by default
         self.UI.btnOK.setEnabled(False)
 
-    @Slot()
-    def ok_clicked(self):
-        # Do the importation
-        table = self.UI.tableFiles
-
+    def do_import(self, file_list: list[dict]):
         class Importer(WorkerTask):
 
             def __init__(self, filename, task_size, file_importer):
@@ -91,41 +87,7 @@ class ImportBrowser(QDialog):
                     return True
                 return False
 
-            # For testing only
-            @timing
-            def import_data(self):
-                file_md5 = DataSource.compute_md5(filename=self.filename).hexdigest()
-
-                if not DataSource.datasource_exists_for_participant(filename=self.short_filename,
-                                                                    participant=self.importer.participant, md5=file_md5,
-                                                                    db_session=self.importer.db.session):
-                    if self.results is not None:
-                        self.log_request.emit(self.tr('Importing data...'), LogTypes.LOGTYPE_INFO)
-                        self.importer.import_to_database(self.results)
-                        self.results.clear()  # Needed to clear the dict cache and let the garbage collector delete it!
-                        # Add datasources for that file
-                        for recordset in self.importer.recordsets:
-                            if not DataSource.datasource_exists_for_recordset(filename=self.short_filename,
-                                                                              recordset=recordset, md5=file_md5,
-                                                                              db_session=self.importer.db.session):
-                                ds = DataSource()
-                                ds.recordset = recordset
-                                ds.file_md5 = file_md5
-                                ds.file_name = self.short_filename
-                                ds.update_datasource(db_session=self.importer.db.session)
-
-                        self.importer.clear_recordsets()
-                        self.log_request.emit(self.tr('File import completed.'), LogTypes.LOGTYPE_DONE)
-                    else:
-                        self.log_request.emit(self.tr('Error loading file:') + ' ' + self.importer.last_error,
-                                              LogTypes.LOGTYPE_ERROR)
-                else:
-                    self.log_request.emit(self.tr('Data from file') + ' "' + self.short_filename + '" ' +
-                                          self.tr('already in the database for participant') + ' "' +
-                                          self.importer.participant.name + '" - ' + self.tr('ignored.'),
-                                          LogTypes.LOGTYPE_WARNING)
-
-            @timing
+            # @timing
             def process(self):
                 file_md5 = DataSource.compute_md5(filename=self.filename).hexdigest()
 
@@ -165,10 +127,14 @@ class ImportBrowser(QDialog):
 
         importers = []
 
-        for i in range(0, table.rowCount()):
-            part = table.cellWidget(i, 2).currentData()
-            file_type = table.cellWidget(i, 1).currentData()
-            file_name = table.item(i, 0).text()
+        for to_import in file_list:
+            if 'participant' not in to_import or 'file_type' not in to_import or 'file_name' not in to_import:
+                self.log_request.emit(self.tr('Invalid import structure') + ': ' + str(to_import),
+                                      LogTypes.LOGTYPE_WARNING)
+                continue
+            part = to_import['participant']
+            file_type = to_import['file_type']
+            file_name = to_import['file_name']
             data_importer = None
             if file_type == ImporterTypes.ACTIGRAPH:
                 data_importer = ActigraphImporter(manager=self.dbMan, participant=part)
@@ -189,8 +155,11 @@ class ImportBrowser(QDialog):
                 # results = data_importer.load(file_name)
                 # data_importer.import_to_database(results)
             else:
-                # TODO: Error message
-                self.reject()
+                self.log_request.emit(self.tr('Unknown file type') + ': ' + str(file_type) + ' - ' +
+                                      self.tr('Skipping file') + ' ' + file_name, LogTypes.LOGTYPE_ERROR)
+                continue
+
+        self.hide()  # Hide self
 
         # Run in background all importers (in sequence)
         all_tasks = []
@@ -229,6 +198,24 @@ class ImportBrowser(QDialog):
 
         # gc.collect()
         self.accept()
+
+    @Slot()
+    def ok_clicked(self):
+        # Do the importation
+        table = self.UI.tableFiles
+
+        # Create list of files to import
+        imports = []
+        for i in range(0, table.rowCount()):
+
+            part = table.cellWidget(i, 2).currentData()
+            file_type = table.cellWidget(i, 1).currentData()
+            file_name = table.item(i, 0).text()
+            file_info = {'participant': part, 'file_type': file_type, 'file_name': file_name}
+            imports.append(file_info)
+
+        # Do the import itself!
+        self.do_import(imports)
 
     # def process_finished(self):
     #     print('Import process finished')
@@ -314,7 +301,7 @@ class ImportBrowser(QDialog):
 
     def fill_participant_combobox(self, combobox: QComboBox, include_group=False):
         combobox.clear()
-        combobox.addItem('', -1)
+        combobox.addItem('', None)
         for participant in self.participants:
             self.add_participant_in_combobox(participant, combobox, include_group)
 
@@ -486,7 +473,7 @@ class ImportBrowser(QDialog):
         layout = QHBoxLayout(self.part_diag)
         self.part_diag.setMinimumWidth(600)
 
-        self.part_widget = ParticipantWindow(db_manager=self.dbMan)
+        self.part_widget = ParticipantWindow(db_manager=self.dbMan, edit_mode=True)
         layout.addWidget(self.part_widget)
 
         self.part_widget.dataCancelled.connect(self.part_diag.reject)
@@ -508,3 +495,8 @@ class ImportBrowser(QDialog):
         self.UI.btnOK.setEnabled(len(self.invalid_controls) == 0 and self.UI.tableFiles.rowCount() > 0)
         self.UI.btnDelFile.setEnabled(self.UI.tableFiles.rowCount() > 0 and len(self.UI.tableFiles.selectedItems()) > 0)
 
+    def select_participant(self, participant_id: int):
+        for i in range(1, self.UI.cmbParticipant.count()):
+            if self.UI.cmbParticipant.itemData(i).id_participant == participant_id:
+                self.UI.cmbParticipant.setCurrentIndex(i)
+                return

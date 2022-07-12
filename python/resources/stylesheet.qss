@@ -115,6 +115,10 @@ QLineEdit:!enabled, QPlainTextEdit:!enabled, QComboBox:!enabled, QDateEdit:!enab
     color: white;
 }
 
+QLineEdit:!enabled#txtName{
+    background-color: transparent;
+}
+
 /*************************/
 /* QProgressBar          */
 /*************************/
@@ -181,7 +185,7 @@ QToolButton[checkable=true]:!checked{
 }
 
 /* Transparent tool buttons */
-QToolButton#btnAddGroup, QToolButton#btnAddParticipant, QToolButton#btnDelete{
+QToolButton#btnAddGroup, QToolButton#btnAddParticipant, QToolButton#btnDelete, QToolButton#btnRename{
     background-color: transparent;
     border: 0px solid transparent;
 }
@@ -192,18 +196,19 @@ QToolButton#btnAddGroup, QToolButton#btnAddParticipant, QToolButton#btnDelete{
 
 QTreeWidget{background-color:rgba(200,200,200,75%);}
 
-QTreeWidget::item:hover,QTreeWidget::item:hover:selected {
-    border:none;
+QTreeWidget::item:hover#treeDataSet,QTreeWidget::item:hover:selected#treeDataSet {
+    border: none;
     border-radius:5px;
     background-color:rgba(255,255,255,100);
 }
 
 QTreeWidget::item:selected {
-    border:none;
+    border: none;
     /*background-color:rgba(255,255,255,0);*/
     background-color:rgba(173, 216, 230, 70%); /* Light blue */
     color: black;
 }
+
 
 /************************/
 /* QFrame               */
@@ -306,13 +311,13 @@ QTableWidget::item:selected{
 /* QListWidget          */
 /************************/
 QListWidget{
-    background-color:rgba(150,150,150,50%);
+    background-color:rgba(200,200,200,70%);
 }
-
+/*
 QListWidget#lstSensors, QListWidget#lstDevices{
     background-color:rgba(200,200,200,70%);
 }
-
+*/
 /************************/
 /* QCheckBox            */
 /************************/

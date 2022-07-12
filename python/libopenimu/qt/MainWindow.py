@@ -21,6 +21,7 @@ from libopenimu.qt.StreamWindow import StreamWindow
 from libopenimu.qt.ImportMatchDialog import ImportMatchDialog
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, SimpleTask, ProgressDialog
 from libopenimu.qt.ProcessSelectWindow import ProcessSelectWindow
+from libopenimu.qt.DataSelector import DataSelector
 from libopenimu.qt.DataEditor import DataEditor
 from libopenimu.streamers.streamer_types import StreamerTypes
 from libopenimu.importers.importer_types import ImporterTypes
@@ -41,6 +42,7 @@ from libopenimu.tools.FileManager import FileManager
 # Python
 import sys
 from datetime import datetime
+import os
 
 
 class MainWindow(QMainWindow):
@@ -69,6 +71,7 @@ class MainWindow(QMainWindow):
         # Init database manager
         self.currentFileName = filename
         self.dbMan = DBManager(self.currentFileName)
+        self.setWindowTitle('OpenIMU - ' + os.path.basename(self.currentFileName))
 
         # Load data
         self.add_to_log(self.tr('Loading data...'), LogTypes.LOGTYPE_INFO)
@@ -128,8 +131,10 @@ class MainWindow(QMainWindow):
         self.UI.btnAddGroup.clicked.connect(self.new_group_requested)
         self.UI.btnAddParticipant.clicked.connect(self.new_participant_requested)
         self.UI.treeDataSet.participantDragged.connect(self.participant_was_dragged)
-        self.UI.treeDataSet.currentItemChanged.connect(self.tree_item_changed)
+        self.UI.treeDataSet.currentItemChanged.connect(self.tree_item_current_changed)
+        self.UI.treeDataSet.itemChanged.connect(self.tree_item_changed)
         self.UI.btnDelete.clicked.connect(self.delete_requested)
+        self.UI.btnRename.clicked.connect(self.rename_requested)
         self.UI.btnImport.clicked.connect(self.import_requested)
         self.UI.btnExportCSV.clicked.connect(self.export_csv_requested)
         self.UI.dockDataset.visibilityChanged.connect(self.UI.btnShowDataset.setChecked)
@@ -187,17 +192,18 @@ class MainWindow(QMainWindow):
     def show_group(self, group=None):
         self.clear_main_widgets()
 
-        group_widget = GroupWindow(db_manager=self.dbMan, group=group, edit_mode=True)
+        group_widget = GroupWindow(db_manager=self.dbMan, group=group, edit_mode=False)
         self.UI.frmMain.layout().addWidget(group_widget)
 
         group_widget.dataSaved.connect(self.data_was_saved)
         group_widget.dataCancelled.connect(self.data_was_cancelled)
+        group_widget.dataEditing.connect(self.data_editing)
 
     def show_participant(self, participant=None, base_group=None):
         self.clear_main_widgets()
 
         part_widget = ParticipantWindow(db_manager=self.dbMan, participant=participant, default_group=base_group,
-                                        edit_mode=True)
+                                        edit_mode=False)
         self.UI.frmMain.layout().addWidget(part_widget)
 
         part_widget.dataSaved.connect(self.data_was_saved)
@@ -227,8 +233,17 @@ class MainWindow(QMainWindow):
         QApplication.processEvents()
 
     def get_current_widget_data_type(self):
-        # TODO: checks!
-        return self.UI.frmMain.layout().itemAt(0).widget().data_type
+        if self.UI.frmMain.layout().count() > 0:
+            if self.UI.frmMain.layout().itemAt(0).widget():
+                if hasattr(self.UI.frmMain.layout().itemAt(0).widget(), 'data_type'):
+                    return self.UI.frmMain.layout().itemAt(0).widget().data_type
+        return ''
+
+    def get_current_widget(self) -> QWidget | None:
+        if self.UI.frmMain.layout().count() > 0:
+            if self.UI.frmMain.layout().itemAt(0).widget():
+                return self.UI.frmMain.layout().itemAt(0).widget()
+        return None
 
     ######################
     @Slot(bool)
@@ -253,8 +268,11 @@ class MainWindow(QMainWindow):
     def import_requested(self):
         importer = ImportBrowser(data_manager=self.dbMan)
         importer.participant_added.connect(self.load_data_from_dataset)
+        current_part_id = self.UI.treeDataSet.get_current_participant_id()
+        if current_part_id >= 0:
+            importer.select_participant(current_part_id)
         importer.log_request.connect(self.add_to_log)
-        importer.setStyleSheet(self.styleSheet())
+        # importer.setStyleSheet(self.styleSheet())
         if importer.exec() == QDialog.Accepted:
             self.load_data_from_dataset()
             gc.collect()
@@ -278,10 +296,14 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def process_data_requested(self):
-        if self.currentRecordsets:
+        selector_diag = DataSelector(self.dbMan, self)
+        selector_diag.exec()
 
-            # Display Process Window
-            proc_window = ProcessSelectWindow(data_manager=self.dbMan, recordsets=self.currentRecordsets, parent=self)
+        if selector_diag.result() == QDialog.Accepted:
+            # Show process window
+            proc_window = ProcessSelectWindow(data_manager=self.dbMan,
+                                              recordsets=selector_diag.get_selected_recordsets(),
+                                              parent=self)
 
             if proc_window.exec() == QDialog.Accepted:
                 self.UI.treeDataSet.update_item("result", proc_window.processed_data)
@@ -333,7 +355,7 @@ class MainWindow(QMainWindow):
         self.init_editor_dialog()
         layout = QHBoxLayout(self.dataDialog)
 
-        self.dataWidget = GroupWindow(db_manager=self.dbMan, group=None)
+        self.dataWidget = GroupWindow(db_manager=self.dbMan, group=None, edit_mode=True)
 
         layout.addWidget(self.dataWidget)
 
@@ -365,7 +387,8 @@ class MainWindow(QMainWindow):
         # self.show_participant(base_group=default_group)
         layout = QHBoxLayout(self.dataDialog)
 
-        self.dataWidget = ParticipantWindow(db_manager=self.dbMan, participant=None, default_group=default_group)
+        self.dataWidget = ParticipantWindow(db_manager=self.dbMan, participant=None, default_group=default_group,
+                                            edit_mode=True)
 
         layout.addWidget(self.dataWidget)
 
@@ -386,13 +409,20 @@ class MainWindow(QMainWindow):
 
     @Slot(QTreeWidgetItem, int)
     def tree_item_clicked(self, item: QTreeWidgetItem, _: int):
-        # print(item.text(column))
+        pass
+
+    @Slot(QTreeWidgetItem, QTreeWidgetItem)
+    def tree_item_current_changed(self, item: QTreeWidgetItem, previous: QTreeWidgetItem):
         item_id = self.UI.treeDataSet.get_item_id(item)
         item_type = self.UI.treeDataSet.get_item_type(item)
 
+        self.UI.btnDelete.setEnabled(item is not None)
+        self.UI.btnRename.setEnabled(item_type == 'group' or item_type == 'participant' or
+                                     item_type == 'recordset' or item_type == 'result')
+
         # Clear all widgets
         self.clear_main_widgets()
-        self.UI.btnProcess.setEnabled(False)
+        # self.UI.btnProcess.setEnabled(False)
         self.currentRecordsets = []
 
         if item_type == "group":
@@ -421,7 +451,7 @@ class MainWindow(QMainWindow):
             self.UI.frmMain.layout().addWidget(records_widget)
             records_widget.dataDisplayRequest.connect(self.UI.treeDataSet.select_item)
             records_widget.dataUpdateRequest.connect(self.UI.treeDataSet.update_item)
-            self.UI.btnProcess.setEnabled(True)
+            # self.UI.btnProcess.setEnabled(True)
 
         if item_type == "result":
             result_widget = ResultWindow(manager=self.dbMan, results=self.UI.treeDataSet.results[item_id], parent=self)
@@ -430,9 +460,46 @@ class MainWindow(QMainWindow):
         item.setExpanded(True)
         # self.UI.frmMain.update()
 
-    @Slot(QTreeWidgetItem, QTreeWidgetItem)
-    def tree_item_changed(self, current: QTreeWidgetItem, previous: QTreeWidgetItem):
-        self.UI.btnDelete.setEnabled(current is not None)
+    @Slot(QTreeWidgetItem, int)
+    def tree_item_changed(self, item: QTreeWidgetItem, col: int):
+        if col != 0:
+            return
+        # This occurs on editing or update. Check if we need to change the name in the database.
+        item_type = self.UI.treeDataSet.get_item_type(item)
+        item_id = self.UI.treeDataSet.get_item_id(item)
+        if item_type == 'group':
+            group = self.dbMan.get_group(item_id)
+            if group and group.name != item.text(0):
+                group.name = item.text(0)
+                self.dbMan.update_group(group)
+                return
+
+        if item_type == 'participant':
+            part = self.dbMan.get_participant(item_id)
+            if part and part.name != item.text(0):
+                part.name = item.text(0)
+                self.dbMan.update_participant(part)
+                return
+
+        if item_type == 'recordset':
+            recordset = self.dbMan.get_recordset(item_id)
+            if recordset and recordset.name != item.text(0):
+                recordset.name = item.text(0)
+                self.dbMan.session.commit()
+                return
+
+        if item_type == 'result':
+            result = self.dbMan.get_processed_data(item_id)
+            if result and result.name != item.text(0):
+                result.name = item.text(0)
+                self.dbMan.session.commit()
+                if self.get_current_widget_data_type() == 'result':
+                    # Manually update name in the displayed widget
+                    current_widget = self.get_current_widget()
+                    if current_widget and isinstance(current_widget, ResultWindow):
+                        current_widget.data = result
+                        current_widget.update_data()
+                return
 
     @Slot()
     def data_was_saved(self):
@@ -572,6 +639,10 @@ class MainWindow(QMainWindow):
             self.add_to_log(item_name + ' ' + self.tr('was deleted.'), LogTypes.LOGTYPE_DONE)
             self.clear_main_widgets()
 
+    @Slot()
+    def rename_requested(self):
+        self.UI.treeDataSet.editItem(self.UI.treeDataSet.currentItem(), 0)
+
     def closeEvent(self, event):
         self.aboutToClose.emit()
         return
@@ -620,11 +691,14 @@ class MainWindow(QMainWindow):
                 import_browser.log_request.connect(self.add_to_log)
 
                 importer_id = StreamerTypes.value_importer_types[stream_diag.get_streamer_type()]
-                importer_name = ImporterTypes.value_names[importer_id]
+                file_list = []
                 for file_name, file_part in files.items():
-                    import_browser.add_file_to_list(file_name, importer_id, file_part)
+                    # import_browser.add_file_to_list(file_name, importer_id, file_part)
+                    file_info = {'participant': file_part, 'file_name': file_name, 'file_type': importer_id}
+                    file_list.append(file_info)
 
-                import_browser.ok_clicked()
+                import_browser.do_import(file_list)
+                # import_browser.ok_clicked()
 
                 # Delete files after transfer?
                 import shutil

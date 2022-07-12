@@ -10,7 +10,6 @@ class GroupWindow(DataEditor):
 
     group = Group()
     dbMan = None
-    editMode = False  # Set to true if the edit button behavior is required
 
     def __init__(self, db_manager, group=None, parent=None, edit_mode=False):
         super().__init__(parent=parent)
@@ -22,10 +21,7 @@ class GroupWindow(DataEditor):
         self.data_type = "group"
 
         # Setup editing UI
-        self.editMode = edit_mode
-        self.UI.btnEdit.setVisible(self.editMode)
-        self.UI.frameButtons.setVisible(not self.editMode)
-        self.UI.frameData.setEnabled(not self.editMode)
+        self.set_edit_mode(edit_mode)
 
         # Signals / Slots connections
         self.UI.btnCancel.clicked.connect(self.cancel_clicked)
@@ -33,11 +29,10 @@ class GroupWindow(DataEditor):
         self.UI.txtName.textEdited.connect(self.name_edited)
         self.UI.txtDesc.textChanged.connect(self.desc_edited)
         self.UI.btnEdit.clicked.connect(self.edit_clicked)
+        self.dbMan.groupUpdated.connect(self.db_group_updated)
 
         # Update data
         self.update_data()
-
-        self.enable_buttons(False)
 
     def validate(self):
         rval = True
@@ -58,17 +53,12 @@ class GroupWindow(DataEditor):
             self.UI.txtDesc.setPlainText("")
         self.validate()
 
-    def enable_buttons(self, enable):
-        self.UI.btnCancel.setEnabled(enable or self.group is None or self.editMode)
-        self.UI.btnSave.setEnabled(enable)
-
     def update_modified_status(self):
-        self.enable_buttons(
-                            (self.group is not None and self.UI.txtName.text() != self.group.name) or
-                            (self.group is None and self.UI.txtName.text() != "") or
-                            (self.group is not None and self.UI.txtDesc.toPlainText() != self.group.description) or
-                            (self.group is None and self.UI.txtDesc.toPlainText() != "")
-                            )
+        has_changes = (self.group is not None and self.UI.txtName.text() != self.group.name) or \
+                      (self.group is None and self.UI.txtName.text() != "") or \
+                      (self.group is not None and self.UI.txtDesc.toPlainText() != self.group.description) or \
+                      (self.group is None and self.UI.txtDesc.toPlainText() != "")
+        self.UI.btnSave.setEnabled(has_changes)
         self.validate()
 
     @Slot()
@@ -79,24 +69,15 @@ class GroupWindow(DataEditor):
             self.group.name = self.UI.txtName.text()
             self.group.description = self.UI.txtDesc.toPlainText()
             self.group = self.dbMan.update_group(self.group)
-            self.enable_buttons(False)
             self.dataSaved.emit()
 
-            if self.editMode:
-                self.UI.btnEdit.show()
-                self.UI.frameButtons.hide()
-                self.UI.frameData.setEnabled(False)
-                self.dataEditing.emit(False)
+            self.set_edit_mode(False)
 
     @Slot()
     def cancel_clicked(self):
         self.update_data()
         self.dataCancelled.emit()
-        if self.editMode:
-            self.UI.btnEdit.show()
-            self.UI.frameButtons.hide()
-            self.UI.frameData.setEnabled(False)
-            self.dataEditing.emit(False)
+        self.set_edit_mode(False)
 
     @Slot(str)
     def name_edited(self, new_value):
@@ -108,9 +89,22 @@ class GroupWindow(DataEditor):
 
     @Slot()
     def edit_clicked(self):
-        if self.UI.btnEdit.isVisible():
+        self.set_edit_mode(self.UI.btnEdit.isVisible())
+
+    def set_edit_mode(self, editing: bool):
+        if editing:
             self.UI.btnEdit.hide()
             self.UI.frameButtons.show()
-            self.UI.frameData.setEnabled(True)
-            self.dataEditing.emit(True)
+        else:
+            self.UI.btnEdit.show()
+            self.UI.frameButtons.hide()
+
+        self.UI.frameData.setEnabled(editing)
+        self.dataEditing.emit(editing)
+        self.UI.txtName.setEnabled(editing)
+
+    @Slot(Group)
+    def db_group_updated(self, group: Group):
+        self.group = group
+        self.update_data()
 

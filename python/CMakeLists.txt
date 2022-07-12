@@ -53,6 +53,7 @@ SET(uis
     resources/ui/CrashDialog.ui
     resources/ui/ImportDialogWizard.ui
     resources/ui/TableDataViewWidget.ui
+    resources/ui/DataSelector.ui
 )
 
 SET(qrcs

@@ -2,6 +2,7 @@ from PySide6.QtCore import Qt, Slot
 
 from resources.ui.python.ParticipantWidget_ui import Ui_frmParticipant
 from libopenimu.models.Participant import Participant
+from libopenimu.models.Group import Group
 from libopenimu.qt.DataEditor import DataEditor
 
 
@@ -9,7 +10,6 @@ class ParticipantWindow(DataEditor):
 
     participant = Participant()
     dbMan = None
-    editMode = False  # Set to true if the edit button behavior is required
 
     def __init__(self, db_manager, participant=None, parent=None, default_group=None, edit_mode=False):
         super().__init__(parent=parent)
@@ -21,10 +21,7 @@ class ParticipantWindow(DataEditor):
         self.data_type = "participant"
 
         # Setup editing UI
-        self.editMode = edit_mode
-        self.UI.btnEdit.setVisible(self.editMode)
-        self.UI.frameButtons.setVisible(not self.editMode)
-        self.UI.frameData.setEnabled(not self.editMode)
+        self.set_edit_mode(edit_mode)
 
         # Signals / Slots connections
         self.UI.btnCancel.clicked.connect(self.cancel_clicked)
@@ -33,6 +30,8 @@ class ParticipantWindow(DataEditor):
         self.UI.txtDesc.textChanged.connect(self.desc_edited)
         self.UI.cmbGroups.currentIndexChanged.connect(self.group_edited)
         self.UI.btnEdit.clicked.connect(self.edit_clicked)
+        self.dbMan.participantUpdated.connect(self.db_participant_updated)
+        self.dbMan.groupUpdated.connect(self.db_group_updated)
 
         # Load groups
         groups = self.dbMan.get_all_groups()
@@ -48,8 +47,6 @@ class ParticipantWindow(DataEditor):
         # Set default group for new participants
         if default_group is not None:
             self.UI.cmbGroups.setCurrentIndex(self.UI.cmbGroups.findData(default_group.id_group, Qt.UserRole))
-
-        self.enable_buttons(False)
 
     def validate(self):
         rval = True
@@ -79,18 +76,14 @@ class ParticipantWindow(DataEditor):
             self.UI.cmbGroups.setCurrentIndex(0)
         self.validate()
 
-    def enable_buttons(self, enable):
-        self.UI.btnCancel.setEnabled(enable or self.participant is None or self.editMode)
-        self.UI.btnSave.setEnabled(enable)
-
     def update_modified_status(self):
-        self.enable_buttons(
-                            (self.participant is not None and self.UI.txtName.text() != self.participant.name) or
-                            (self.participant is None and self.UI.txtName.text() != "") or
-                            (self.participant is not None and self.UI.txtDesc.toPlainText() != self.participant.description) or
-                            (self.participant is None and self.UI.txtDesc.toPlainText() != "") or
-                            (self.participant is not None and self.UI.cmbGroups.currentData() != self.participant.id_group)
-                            )
+        has_changes = (self.participant is not None and self.UI.txtName.text() != self.participant.name) or \
+                      (self.participant is None and self.UI.txtName.text() != "") or \
+                      (self.participant is not None and self.UI.txtDesc.toPlainText() !=
+                       self.participant.description) or \
+                      (self.participant is None and self.UI.txtDesc.toPlainText() != "") or \
+                      (self.participant is not None and self.UI.cmbGroups.currentData() != self.participant.id_group)
+        self.UI.btnSave.setEnabled(has_changes)
         self.validate()
 
     @Slot()
@@ -102,24 +95,14 @@ class ParticipantWindow(DataEditor):
             self.participant.description = self.UI.txtDesc.toPlainText()
             self.participant.id_group = self.UI.cmbGroups.currentData()
             self.participant = self.dbMan.update_participant(self.participant)
-            self.enable_buttons(False)
             self.dataSaved.emit()
-
-            if self.editMode:
-                self.UI.btnEdit.show()
-                self.UI.frameButtons.hide()
-                self.UI.frameData.setEnabled(False)
-                self.dataEditing.emit(False)
+            self.set_edit_mode(False)
 
     @Slot()
     def cancel_clicked(self):
         self.update_data()
         self.dataCancelled.emit()
-        if self.editMode:
-            self.UI.btnEdit.show()
-            self.UI.frameButtons.hide()
-            self.UI.frameData.setEnabled(False)
-            self.dataEditing.emit(False)
+        self.set_edit_mode(False)
 
     @Slot(str)
     def name_edited(self, new_value):
@@ -135,8 +118,28 @@ class ParticipantWindow(DataEditor):
 
     @Slot()
     def edit_clicked(self):
-        if self.UI.btnEdit.isVisible():
+        self.set_edit_mode(self.UI.btnEdit.isVisible())
+
+    def set_edit_mode(self, editing: bool):
+        if editing:
             self.UI.btnEdit.hide()
             self.UI.frameButtons.show()
-            self.UI.frameData.setEnabled(True)
-            self.dataEditing.emit(True)
+        else:
+            self.UI.btnEdit.show()
+            self.UI.frameButtons.hide()
+
+        self.UI.frameData.setEnabled(editing)
+        self.dataEditing.emit(editing)
+        self.UI.txtName.setEnabled(editing)
+
+    @Slot(Participant)
+    def db_participant_updated(self, part: Participant):
+        self.participant = part
+        self.update_data()
+
+    @Slot(Group)
+    def db_group_updated(self, group: Group):
+        for i in range(self.UI.cmbGroups.count()):
+            if self.UI.cmbGroups.itemData(i) == group.id_group:
+                self.UI.cmbGroups.setItemText(i, group.name)
+                return

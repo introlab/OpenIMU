@@ -20,6 +20,8 @@ import sys
 import warnings
 import scipy.io as sio
 
+from PySide6.QtCore import QObject, Signal
+
 # Basic definitions
 from libopenimu.models.data_formats import DataFormat
 
@@ -41,8 +43,13 @@ from alembic.config import Config
 from alembic import command
 
 
-class DBManager:
+class DBManager(QObject):
+
+    groupUpdated = Signal(Group)
+    participantUpdated = Signal(Participant)
+
     def __init__(self, filename, overwrite=False, echo=False, newfile=False):
+        QObject.__init__(self)
         warnings.simplefilter(action='ignore', category=FutureWarning)
 
         dburl = 'sqlite:///' + filename + '?check_same_thread=False'
@@ -159,6 +166,7 @@ class DBManager:
                 group.id_group = src_group.id_group
 
             self.commit()
+            self.groupUpdated.emit(group)
             return group
 
         except Exception as e:
@@ -176,7 +184,7 @@ class DBManager:
             raise
 
         # Check if we have orphan items dandling around
-        self.clean_db()
+        # self.clean_db()
         # self.engine.execute("VACUUM")
 
     def get_group(self, id_group):
@@ -203,6 +211,7 @@ class DBManager:
                 participant.id_participant = src_part.id_participant
 
             self.commit()
+            self.participantUpdated.emit(participant)
             return participant
 
         except Exception as e:
@@ -212,6 +221,10 @@ class DBManager:
 
     def get_participant(self, id_participant):
         query = self.session.query(Participant).filter(Participant.id_participant == id_participant)
+        return query.first()
+
+    def get_processed_data(self, id_processed_data):
+        query = self.session.query(ProcessedData).filter(ProcessedData.id_processed_data == id_processed_data)
         return query.first()
 
     def get_all_participants(self):
@@ -235,7 +248,7 @@ class DBManager:
             raise
 
         # Check if we have orphan items dandling around
-        self.clean_db()
+        # self.clean_db()
         # self.engine.execute("VACUUM")
 
     #
@@ -306,7 +319,7 @@ class DBManager:
 
     def get_recordset(self, id_recordset):
         query = self.session.query(Recordset).filter(Recordset.id_recordset == id_recordset)
-        print('get_recordset', query.first())
+        # print('get_recordset', query.first())
         return query.first()
 
     def delete_recordset(self, recordset):

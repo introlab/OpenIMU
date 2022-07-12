@@ -65,6 +65,7 @@
         <file>controls/check2_off_disabled.png</file>
         <file>controls/check2_on.png</file>
         <file>controls/check2_on_disabled.png</file>
+        <file>icons/export.png</file>
     </qresource>
     <qresource prefix="/">
         <file>stylesheet.qss</file>

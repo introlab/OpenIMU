@@ -180,6 +180,49 @@
     </message>
 </context>
 <context>
+    <name>DataSelector</name>
+    <message>
+        <location filename="../ui/DataSelector.ui" line="14"/>
+        <source>Data Selector</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/DataSelector.ui" line="64"/>
+        <source>Select data files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/DataSelector.ui" line="103"/>
+        <source>Select all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/DataSelector.ui" line="126"/>
+        <source>Deselect all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/DataSelector.ui" line="162"/>
+        <source>Expand all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/DataSelector.ui" line="185"/>
+        <source>Collapse all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/DataSelector.ui" line="241"/>
+        <source>Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/DataSelector.ui" line="270"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ExportCSV</name>
     <message>
         <location filename="../ui/ExportCSV.ui" line="14"/>
@@ -324,43 +367,58 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="215"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="132"/>
+        <source>Invalid import structure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="158"/>
+        <source>Unknown file type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="159"/>
+        <source>Skipping file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="184"/>
         <source>Data importation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="226"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="195"/>
         <source>Error while importing data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="227"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="196"/>
         <source>Error occured while importing data files. See logs for more information.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="237"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="224"/>
         <source>Error importing file:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="342"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="329"/>
         <source>Select file(s) to import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="363"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="350"/>
         <source>Select folder to import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="473"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="460"/>
         <location filename="../ui/ImportBrowser.ui" line="645"/>
         <source>Unspecified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="494"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="481"/>
         <source>New participant</source>
         <translation type="unfinished"></translation>
     </message>
@@ -441,7 +499,7 @@
 <context>
     <name>ImportDialogWizard</name>
     <message>
-        <location filename="../../libopenimu/qt/ImportDialogWizard.py" line="41"/>
+        <location filename="../../libopenimu/qt/ImportDialogWizard.py" line="46"/>
         <source>Dataset to import data into</source>
         <translation type="unfinished"></translation>
     </message>
@@ -506,42 +564,36 @@
     <name>Importer</name>
     <message>
         <location filename="../../libopenimu/qt/ImportBrowser.py" line="103"/>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="141"/>
         <source>Importing data...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../libopenimu/qt/ImportBrowser.py" line="118"/>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="156"/>
         <source>File import completed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../libopenimu/qt/ImportBrowser.py" line="120"/>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="158"/>
         <source>Error loading file:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../libopenimu/qt/ImportBrowser.py" line="123"/>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="161"/>
         <source>Data from file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../libopenimu/qt/ImportBrowser.py" line="124"/>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="162"/>
         <source>already in the database for participant</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../libopenimu/qt/ImportBrowser.py" line="125"/>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="163"/>
         <source>ignored.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="136"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="98"/>
         <source>Loading file:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -550,222 +602,227 @@
     <name>MainWindow</name>
     <message>
         <location filename="../ui/MainWindow.ui" line="92"/>
-        <location filename="../ui/MainWindow.ui" line="443"/>
+        <location filename="../ui/MainWindow.ui" line="481"/>
         <source>Data structure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="342"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="362"/>
         <location filename="../ui/MainWindow.ui" line="198"/>
         <source>New group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="374"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="394"/>
         <location filename="../ui/MainWindow.ui" line="239"/>
         <source>New participant</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="293"/>
+        <source>Rename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/MainWindow.ui" line="331"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="330"/>
-        <location filename="../ui/MainWindow.ui" line="499"/>
+        <location filename="../ui/MainWindow.ui" line="368"/>
+        <location filename="../ui/MainWindow.ui" line="537"/>
         <source>Logs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="549"/>
+        <location filename="../ui/MainWindow.ui" line="587"/>
         <source>Import new data into this database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="552"/>
+        <location filename="../ui/MainWindow.ui" line="590"/>
         <source>Import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="589"/>
+        <location filename="../ui/MainWindow.ui" line="627"/>
         <source>Transfer data from a device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="592"/>
+        <location filename="../ui/MainWindow.ui" line="630"/>
         <source>Transfer from device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="642"/>
+        <location filename="../ui/MainWindow.ui" line="680"/>
         <source>Process data with available algorithms</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="645"/>
+        <location filename="../ui/MainWindow.ui" line="683"/>
         <source>Process</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="685"/>
+        <location filename="../ui/MainWindow.ui" line="723"/>
         <source>Export data to external formats</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="688"/>
+        <location filename="../ui/MainWindow.ui" line="726"/>
         <source>Export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="735"/>
+        <location filename="../ui/MainWindow.ui" line="773"/>
         <source>Compact and optimize database structure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="738"/>
+        <location filename="../ui/MainWindow.ui" line="776"/>
         <source>Compact</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="773"/>
+        <location filename="../ui/MainWindow.ui" line="811"/>
         <source>Database information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="776"/>
+        <location filename="../ui/MainWindow.ui" line="814"/>
         <source>Informations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="832"/>
+        <location filename="../ui/MainWindow.ui" line="870"/>
         <source>Close the current dataset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="835"/>
+        <location filename="../ui/MainWindow.ui" line="873"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="857"/>
+        <location filename="../ui/MainWindow.ui" line="895"/>
         <source>Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="64"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="65"/>
         <source>OpenIMU - Ready.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="74"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="75"/>
         <source>Loading data...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="82"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="83"/>
         <source>Data loaded!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="296"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="316"/>
         <source>This dataset will be closed. Do you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="297"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="317"/>
         <source>Close?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="303"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="323"/>
         <source>File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="303"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="323"/>
         <source>was closed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="316"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="336"/>
         <source>Database file will be cleaned up and optimized. This can take some time.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="317"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="337"/>
         <source>Do you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="318"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="323"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="338"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="343"/>
         <source>Database cleanup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="325"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="345"/>
         <source>Cleanup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="348"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="380"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="368"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="400"/>
         <source>added.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="348"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="444"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="368"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="508"/>
         <source>Group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="444"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="449"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="508"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="513"/>
         <source>updated.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="380"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="449"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="400"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="513"/>
         <source>Participant</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="643"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="714"/>
         <source>Data Editor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="480"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="544"/>
         <source>Are you sure you want to delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="481"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="545"/>
         <source>and all associated elements?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="482"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="546"/>
         <source>Confirm deletion</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="493"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="499"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="509"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="516"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="524"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="540"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="552"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="566"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="557"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="563"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="573"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="580"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="588"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="604"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="616"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="630"/>
         <source>Deleting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="572"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="636"/>
         <source>was deleted.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -773,7 +830,7 @@
 <context>
     <name>ParticipantWindow</name>
     <message>
-        <location filename="../../libopenimu/qt/ParticipantWindow.py" line="40"/>
+        <location filename="../../libopenimu/qt/ParticipantWindow.py" line="39"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1081,12 +1138,12 @@ in dataset</source>
 <context>
     <name>TreeDataWidget</name>
     <message>
-        <location filename="../../libopenimu/qt/TreeDataWidget.py" line="157"/>
+        <location filename="../../libopenimu/qt/TreeDataWidget.py" line="159"/>
         <source>Recordings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/TreeDataWidget.py" line="165"/>
+        <location filename="../../libopenimu/qt/TreeDataWidget.py" line="167"/>
         <source>Results</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1109,17 +1166,17 @@ in dataset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ImportDialogWizard.ui" line="80"/>
+        <location filename="../ui/ImportDialogWizard.ui" line="96"/>
         <source>Browse...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ImportDialogWizard.ui" line="126"/>
+        <location filename="../ui/ImportDialogWizard.ui" line="142"/>
         <source>Next</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ImportDialogWizard.ui" line="152"/>
+        <location filename="../ui/ImportDialogWizard.ui" line="168"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1210,54 +1267,54 @@ in dataset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GraphWidget.ui" line="82"/>
+        <location filename="../ui/GraphWidget.ui" line="80"/>
         <source>Move tool</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GraphWidget.ui" line="85"/>
-        <location filename="../ui/GraphWidget.ui" line="117"/>
-        <location filename="../ui/GraphWidget.ui" line="165"/>
-        <location filename="../ui/GraphWidget.ui" line="194"/>
-        <location filename="../ui/GraphWidget.ui" line="223"/>
-        <location filename="../ui/GraphWidget.ui" line="252"/>
-        <location filename="../ui/GraphWidget.ui" line="294"/>
-        <location filename="../ui/GraphWidget.ui" line="339"/>
+        <location filename="../ui/GraphWidget.ui" line="83"/>
+        <location filename="../ui/GraphWidget.ui" line="115"/>
+        <location filename="../ui/GraphWidget.ui" line="163"/>
+        <location filename="../ui/GraphWidget.ui" line="192"/>
+        <location filename="../ui/GraphWidget.ui" line="221"/>
+        <location filename="../ui/GraphWidget.ui" line="250"/>
+        <location filename="../ui/GraphWidget.ui" line="292"/>
+        <location filename="../ui/GraphWidget.ui" line="337"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GraphWidget.ui" line="114"/>
+        <location filename="../ui/GraphWidget.ui" line="112"/>
         <source>Select tool</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GraphWidget.ui" line="162"/>
+        <location filename="../ui/GraphWidget.ui" line="160"/>
         <source>Zoom in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GraphWidget.ui" line="191"/>
+        <location filename="../ui/GraphWidget.ui" line="189"/>
         <source>Zoom out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GraphWidget.ui" line="220"/>
+        <location filename="../ui/GraphWidget.ui" line="218"/>
         <source>Zoom on selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GraphWidget.ui" line="249"/>
+        <location filename="../ui/GraphWidget.ui" line="247"/>
         <source>Initial zoom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GraphWidget.ui" line="291"/>
+        <location filename="../ui/GraphWidget.ui" line="289"/>
         <source>Clear selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GraphWidget.ui" line="336"/>
+        <location filename="../ui/GraphWidget.ui" line="334"/>
         <source>Data informations</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1270,32 +1327,22 @@ in dataset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GroupWidget.ui" line="64"/>
-        <source>Group information</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/GroupWidget.ui" line="80"/>
+        <location filename="../ui/GroupWidget.ui" line="88"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GroupWidget.ui" line="118"/>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/GroupWidget.ui" line="195"/>
+        <location filename="../ui/GroupWidget.ui" line="174"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GroupWidget.ui" line="224"/>
+        <location filename="../ui/GroupWidget.ui" line="203"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/GroupWidget.ui" line="141"/>
+        <location filename="../ui/GroupWidget.ui" line="120"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1308,37 +1355,27 @@ in dataset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ParticipantWidget.ui" line="61"/>
-        <source>Participant information</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ParticipantWidget.ui" line="77"/>
+        <location filename="../ui/ParticipantWidget.ui" line="85"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ParticipantWidget.ui" line="115"/>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ParticipantWidget.ui" line="221"/>
+        <location filename="../ui/ParticipantWidget.ui" line="200"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ParticipantWidget.ui" line="250"/>
+        <location filename="../ui/ParticipantWidget.ui" line="229"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ParticipantWidget.ui" line="167"/>
+        <location filename="../ui/ParticipantWidget.ui" line="123"/>
         <source>Group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ParticipantWidget.ui" line="138"/>
+        <location filename="../ui/ParticipantWidget.ui" line="146"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>

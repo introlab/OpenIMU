@@ -14,14 +14,21 @@ import pickle
 
 class ResultWindow(QWidget):
 
-    def __init__(self, manager:DBManager, results:ProcessedData, parent=None):
+    def __init__(self, manager: DBManager, results: ProcessedData, parent=None):
         super().__init__(parent=parent)
         self.UI = Ui_frmResult()
         self.UI.setupUi(self)
 
         self.data = results
         self.dbMan = manager
+        self.data_type = 'result'
 
+        self.recordsets = []
+        self.factory = None
+
+        self.update_data()
+
+    def update_data(self):
         # Update display
         self.UI.lblNameValue.setText(self.data.name)
         self.UI.lblTimeValue.setText(str(self.data.processed_time.strftime("%d-%m-%Y %H:%M:%S")))
@@ -29,9 +36,8 @@ class ResultWindow(QWidget):
         self.UI.btnCopyData.clicked.connect(self.copy_data_to_clipboard)
 
         # Results sources
-        self.recordsets = []
+
         for ref in self.data.processed_data_ref:
-            #TODO: subrecords!
             item = QListWidgetItem()
             item.setText(ref.recordset.name)
             item.setIcon(QIcon(':/OpenIMU/icons/recordset.png'))
@@ -50,8 +56,8 @@ class ResultWindow(QWidget):
             # Data table
             table_data = self.factory.build_data_table(cdata)
             if table_data:
-                self.UI.tableData.setColumnCount(len(table_data['headers'])+1)
-                self.UI.tableData.setRowCount(len(table_data['data_names'])+1)
+                self.UI.tableData.setColumnCount(len(table_data['headers']) + 1)
+                self.UI.tableData.setRowCount(len(table_data['data_names']) + 1)
                 # self.UI.tableData.setHorizontalHeaderLabels(table_data['headers'])
                 # self.UI.tableData.setVerticalHeaderLabels(table_data['data_names'])
                 # self.UI.tableData.horizontalHeader().setVisible(True)

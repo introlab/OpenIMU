@@ -1,7 +1,10 @@
 from PySide6.QtWidgets import QDialog, QListWidgetItem, QVBoxLayout, QWidget
 from PySide6.QtCore import Slot
 from resources.ui.python.ProcessSelectDialog_ui import Ui_dlgProcessSelect
+
 from libopenimu.db.DBManager import DBManager
+from libopenimu.models.Recordset import Recordset
+
 from libopenimu.algorithms.BaseAlgorithm import BaseAlgorithmFactory
 
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog, WorkerTask
@@ -10,7 +13,7 @@ from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog, W
 class ProcessSelectWindow(QDialog):
     processed_data = None
 
-    def __init__(self, data_manager: DBManager, recordsets: list, parent=None):
+    def __init__(self, data_manager: DBManager, recordsets: list[Recordset], parent=None):
         super(ProcessSelectWindow, self).__init__(parent=parent)
         self.UI = Ui_dlgProcessSelect()
         self.UI.setupUi(self)

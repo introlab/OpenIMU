@@ -95,7 +95,7 @@ class ImportMatchDialog(QDialog):
         layout = QHBoxLayout(self.part_diag)
         self.part_diag.setMinimumWidth(600)
 
-        self.part_widget = ParticipantWindow(db_manager=self.dbMan)
+        self.part_widget = ParticipantWindow(db_manager=self.dbMan, edit_mode=True)
         self.part_widget.setStyleSheet(self.styleSheet())
 
         # print(self.styleSheet())
