@@ -66,6 +66,9 @@
         <file>controls/check2_on.png</file>
         <file>controls/check2_on_disabled.png</file>
         <file>icons/export.png</file>
+        <file>icons/browse.png</file>
+        <file>icons/file_csv.png</file>
+        <file>icons/file_matlab.png</file>
     </qresource>
     <qresource prefix="/">
         <file>stylesheet.qss</file>

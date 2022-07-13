@@ -59,7 +59,7 @@ class DBManager(QObject):
                 print('removing database')
                 os.remove(filename)
 
-        print('Using sqlalchemy version: ', sqlalchemy.__version__)
+        # print('Using sqlalchemy version: ', sqlalchemy.__version__)
 
         # Create engine (sqlite), echo will output logging information
         self.engine = create_engine(dburl, echo=echo)
@@ -79,6 +79,9 @@ class DBManager(QObject):
 
         # Session instance
         self.session = self.SessionMaker()
+
+        # Keep copy of the filename
+        self.dbFilename = filename
 
     @staticmethod
     def init_alembic(dburl):
@@ -219,7 +222,7 @@ class DBManager(QObject):
             print('Error: ', message)
             raise
 
-    def get_participant(self, id_participant):
+    def get_participant(self, id_participant) -> Participant:
         query = self.session.query(Participant).filter(Participant.id_participant == id_participant)
         return query.first()
 
@@ -317,7 +320,7 @@ class DBManager(QObject):
         self.commit()
         return record
 
-    def get_recordset(self, id_recordset):
+    def get_recordset(self, id_recordset) -> Recordset | None:
         query = self.session.query(Recordset).filter(Recordset.id_recordset == id_recordset)
         # print('get_recordset', query.first())
         return query.first()
@@ -559,14 +562,12 @@ class DBManager(QObject):
         return data
 
     def get_all_processed_data(self, participant=Participant()):
-
-        datas = None
         if participant.id_participant is None:
             query = self.session.query(ProcessedData)
             datas = query.all()
         else:
-            query = self.session.query(ProcessedData).filter(
-                ProcessedData.processed_data_ref.recordset.participant.id_participant == participant.id_participant)
+            query = self.session.query(ProcessedData).join(ProcessedDataRef).join(Recordset).join(Participant).filter(
+                Participant.id_participant == participant.id_participant)
             datas = query.all()
 
         return datas

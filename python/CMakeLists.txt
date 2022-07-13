@@ -43,7 +43,7 @@ SET(uis
     resources/ui/RecordsetWidget.ui
     resources/ui/ResultWidget.ui
     resources/ui/ImportBrowser.ui
-    resources/ui/ExportCSV.ui
+    resources/ui/ExportDialog.ui
     resources/ui/ProcessSelectDialog.ui
     resources/ui/GraphWidget.ui
     resources/ui/DataInfosWidget.ui
@@ -54,6 +54,7 @@ SET(uis
     resources/ui/ImportDialogWizard.ui
     resources/ui/TableDataViewWidget.ui
     resources/ui/DataSelector.ui
+    resources/ui/DataSelectorDialog.ui
 )
 
 SET(qrcs

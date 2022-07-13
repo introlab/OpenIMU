@@ -7,3 +7,4 @@ https://iconarchive.com/show/snowish-icons-by-saki.2.html
 <a href="https://www.flaticon.com/free-icons/motion-sensor" title="motion sensor icons">Motion sensor icons created by Muhammad Waqas Khan - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/sync" title="sync icons">Sync icons created by Creatype - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/data-analytics" title="data analytics icons">Data analytics icons created by vectorspoint - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/csv-file-format" title="csv file format icons">Csv file format icons created by Yuan Design - Flaticon</a>

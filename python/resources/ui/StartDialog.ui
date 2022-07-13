@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>782</width>
-    <height>420</height>
+    <height>452</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -140,7 +140,7 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>Create new dataset</string>
+        <string>Create new database</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
@@ -182,7 +182,7 @@
        </property>
        <property name="text">
         <string>Import sensor data
-in dataset</string>
+in database</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
@@ -223,7 +223,7 @@ in dataset</string>
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Open existing dataset</string>
+        <string>Open existing database</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
@@ -358,6 +358,11 @@ in dataset</string>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="font">
+        <font>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="text">
         <string>Version</string>
        </property>
@@ -373,7 +378,7 @@ in dataset</string>
       <widget class="QLabel" name="lblVersionValue">
        <property name="font">
         <font>
-         <bold>true</bold>
+         <bold>false</bold>
         </font>
        </property>
        <property name="text">

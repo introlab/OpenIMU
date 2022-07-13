@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>985</width>
-    <height>549</height>
+    <height>570</height>
    </rect>
   </property>
   <property name="acceptDrops">
@@ -317,7 +317,7 @@
                </property>
                <property name="icon">
                 <iconset resource="../core.qrc">
-                 <normaloff>:/OpenIMU/icons/group.png</normaloff>:/OpenIMU/icons/group.png</iconset>
+                 <normaloff>:/OpenIMU/icons/browse.png</normaloff>:/OpenIMU/icons/browse.png</iconset>
                </property>
                <property name="iconSize">
                 <size>

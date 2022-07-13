@@ -103,3 +103,11 @@ class OpenIMUSettings:
     def database_base_path(self, path: str):
         self.settings.setValue('data/databasepath', path)
 
+    @property
+    def data_export_path(self) -> str:
+        return self.settings.value("data/exportpath")
+
+    @data_export_path.setter
+    def data_export_path(self, path: str):
+        self.settings.setValue('data/exportpath', path)
+

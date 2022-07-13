@@ -195,44 +195,52 @@
         <translation>Sélecteur de données</translation>
     </message>
     <message>
-        <location filename="../ui/DataSelector.ui" line="64"/>
-        <source>Select data files</source>
-        <translation>Sélection des données</translation>
-    </message>
-    <message>
-        <location filename="../ui/DataSelector.ui" line="79"/>
+        <location filename="../ui/DataSelector.ui" line="25"/>
         <source>Only one participant can be selected</source>
         <translation>Un seul participant peut être sélectionné</translation>
     </message>
     <message>
-        <location filename="../ui/DataSelector.ui" line="118"/>
+        <location filename="../ui/DataSelector.ui" line="64"/>
         <source>Select all</source>
         <translation>Tout sélectionner</translation>
     </message>
     <message>
-        <location filename="../ui/DataSelector.ui" line="141"/>
+        <location filename="../ui/DataSelector.ui" line="87"/>
         <source>Deselect all</source>
         <translation>Tout désélectionner</translation>
     </message>
     <message>
-        <location filename="../ui/DataSelector.ui" line="177"/>
+        <location filename="../ui/DataSelector.ui" line="123"/>
         <source>Expand all</source>
         <translation>Tout voir</translation>
     </message>
     <message>
-        <location filename="../ui/DataSelector.ui" line="200"/>
+        <location filename="../ui/DataSelector.ui" line="146"/>
         <source>Collapse all</source>
         <translation>Tout cacher</translation>
     </message>
+</context>
+<context>
+    <name>DataSelectorDialog</name>
     <message>
-        <location filename="../ui/DataSelector.ui" line="256"/>
-        <source>Next</source>
-        <translation>Suivant</translation>
+        <location filename="../ui/DataSelectorDialog.ui" line="14"/>
+        <source>Data Selector Dialog</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/DataSelector.ui" line="285"/>
+        <location filename="../ui/DataSelectorDialog.ui" line="64"/>
+        <source>Select data files</source>
+        <translation type="unfinished">Sélection des données</translation>
+    </message>
+    <message>
+        <location filename="../ui/DataSelectorDialog.ui" line="119"/>
+        <source>Next</source>
+        <translation type="unfinished">Suivant</translation>
+    </message>
+    <message>
+        <location filename="../ui/DataSelectorDialog.ui" line="148"/>
         <source>Cancel</source>
-        <translation>Annuler</translation>
+        <translation type="unfinished">Annuler</translation>
     </message>
 </context>
 <context>
@@ -259,55 +267,116 @@
     </message>
 </context>
 <context>
-    <name>ExportCSV</name>
+    <name>ExportDialog</name>
     <message>
-        <location filename="../ui/ExportCSV.ui" line="14"/>
-        <source>Exporter les données </source>
+        <location filename="../ui/ExportDialog.ui" line="14"/>
+        <source>Data exporter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ExportCSV.ui" line="37"/>
-        <source>Répertoire de destination:</source>
+        <location filename="../ui/ExportDialog.ui" line="79"/>
+        <source>Select data to export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ExportCSV.ui" line="61"/>
-        <source>Le répertoire qui contiendra les données exportées</source>
+        <location filename="../ui/ExportDialog.ui" line="113"/>
+        <source>Destination folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ExportCSV.ui" line="77"/>
-        <source>Parcourir...</source>
+        <location filename="../ui/ExportDialog.ui" line="137"/>
+        <source>Folder that will contains exported data files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ExportCSV.ui" line="99"/>
+        <location filename="../ui/ExportDialog.ui" line="153"/>
+        <source>Browse...</source>
+        <translation type="unfinished">Parcourir...</translation>
+    </message>
+    <message>
+        <location filename="../ui/ExportDialog.ui" line="188"/>
         <source>Format:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ExportCSV.ui" line="115"/>
-        <source>CSV</source>
+        <location filename="../ui/ExportDialog.ui" line="226"/>
+        <source>Create a subfolder with the database name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ExportCSV.ui" line="120"/>
-        <source>Matlab</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ExportDialog.ui" line="292"/>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuler</translation>
     </message>
     <message>
-        <location filename="../ui/ExportCSV.ui" line="292"/>
-        <source>Le contenu entier de la base de données sera exporté.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ExportCSV.ui" line="342"/>
+        <location filename="../ui/ExportDialog.ui" line="263"/>
         <source>OK</source>
         <translation type="unfinished">OK</translation>
     </message>
+</context>
+<context>
+    <name>ExportWindow</name>
     <message>
-        <location filename="../ui/ExportCSV.ui" line="361"/>
-        <source>Annuler</source>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="50"/>
+        <source>Select base folder for exported files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="84"/>
+        <source>Export path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="85"/>
+        <source>already exists. Data will be overwritten.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="86"/>
+        <source>Do you want to continue?</source>
+        <translation type="unfinished">Voulez-vous continuer?</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="87"/>
+        <source>Data overwrite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="172"/>
+        <source>Error while exporting data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="173"/>
+        <source>Error occurred while exporting data files. See logs for more information.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="181"/>
+        <source>Error exporting data:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FileExporter</name>
+    <message>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="108"/>
+        <source>Exporting to format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="117"/>
+        <source>Exporting groups...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="124"/>
+        <source>Exporting participants...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="131"/>
+        <source>Exporting recordsets...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -978,22 +1047,19 @@
     <name>StartDialog</name>
     <message>
         <location filename="../ui/StartDialog.ui" line="143"/>
-        <source>Create new dataset</source>
-        <translation>Nouvelle base de
-données</translation>
+        <source>Create new database</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/StartDialog.ui" line="184"/>
         <source>Import sensor data
-in dataset</source>
-        <translation>Importer données
-de capteurs</translation>
+in database</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/StartDialog.ui" line="226"/>
-        <source>Open existing dataset</source>
-        <translation>Ouvrir base de
-données</translation>
+        <source>Open existing database</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/StartDialog.ui" line="272"/>
@@ -1006,7 +1072,7 @@ données</translation>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../ui/StartDialog.ui" line="362"/>
+        <location filename="../ui/StartDialog.ui" line="367"/>
         <source>Version</source>
         <translation>Version</translation>
     </message>
@@ -1227,13 +1293,13 @@ données</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialogWizard.ui" line="20"/>
-        <source>Create a new dataset</source>
-        <translation>Créer une nouvelle base de données</translation>
+        <source>Create a new database</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/ImportDialogWizard.ui" line="37"/>
-        <source>Use an existing dataset</source>
-        <translation>Utiliser une base de données existente</translation>
+        <source>Use an existing database</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/ImportDialogWizard.ui" line="96"/>

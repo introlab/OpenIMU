@@ -16,12 +16,12 @@ from libopenimu.qt.RecordsetWindow import RecordsetWindow
 from libopenimu.qt.ResultWindow import ResultWindow
 # from libopenimu.qt.StartWindow import StartWindow
 from libopenimu.qt.ImportBrowser import ImportBrowser
-from libopenimu.qt.ExportWindow import ExportWindow
+from libopenimu.qt.ExportDialog import ExportWindow
 from libopenimu.qt.StreamWindow import StreamWindow
 from libopenimu.qt.ImportMatchDialog import ImportMatchDialog
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, SimpleTask, ProgressDialog
 from libopenimu.qt.ProcessSelectWindow import ProcessSelectWindow
-from libopenimu.qt.DataSelector import DataSelector
+from libopenimu.qt.DataSelectorDialog import DataSelectorDialog
 from libopenimu.qt.DataEditor import DataEditor
 from libopenimu.streamers.streamer_types import StreamerTypes
 from libopenimu.importers.importer_types import ImporterTypes
@@ -136,7 +136,7 @@ class MainWindow(QMainWindow):
         self.UI.btnDelete.clicked.connect(self.delete_requested)
         self.UI.btnRename.clicked.connect(self.rename_requested)
         self.UI.btnImport.clicked.connect(self.import_requested)
-        self.UI.btnExportCSV.clicked.connect(self.export_csv_requested)
+        self.UI.btnExportCSV.clicked.connect(self.export_requested)
         self.UI.dockDataset.visibilityChanged.connect(self.UI.btnShowDataset.setChecked)
         # self.UI.dockLog.visibilityChanged.connect(self.toggle_log)
         self.UI.btnShowDataset.clicked.connect(self.toggle_dataset)
@@ -278,9 +278,9 @@ class MainWindow(QMainWindow):
             gc.collect()
 
     @Slot()
-    def export_csv_requested(self):
+    def export_requested(self):
         exporter = ExportWindow(self.dbMan, self)
-        exporter.setStyleSheet(self.styleSheet())
+        exporter.log_request.connect(self.add_to_log)
         if exporter.exec() == QDialog.Accepted:
             pass
 
@@ -296,7 +296,7 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def process_data_requested(self):
-        selector_diag = DataSelector(db_manager=self.dbMan, parent=self, allow_only_one_participant=True)
+        selector_diag = DataSelectorDialog(db_manager=self.dbMan, parent=self, allow_only_one_participant=True)
         selector_diag.exec()
 
         if selector_diag.result() == QDialog.Accepted:

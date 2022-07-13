@@ -14,6 +14,7 @@ class WorkerTask(QObject):
     size_updated = Signal()
     log_request = Signal(str, int)
     results_ready = Signal('QVariant')
+    change_task_title = Signal(str)
 
     def __init__(self, title: string, size: int, parent=None):
         super().__init__(parent)
@@ -53,8 +54,9 @@ class BackgroundProcess(QThread):
     task_completed = Signal()
     task_error = Signal(str, str)  # filename, error msg
     update_current_task_progress = Signal(int)
+    update_current_task_title = Signal(str)
 
-    def __init__(self, tasks: list, parent=None):
+    def __init__(self, tasks: list[WorkerTask], parent=None):
         super(BackgroundProcess, self).__init__(parent)
         self.tasks = tasks
 
@@ -62,10 +64,15 @@ class BackgroundProcess(QThread):
         # print('Run Starting!')
         for task in self.tasks:
             task.update_progress.connect(self.update_current_task_progress)
+            task.change_task_title.connect(self.update_current_task_title)
             try:
                 task.process()
             except Exception as e:
-                self.task_error.emit(task.filename, str(traceback.format_exception(e, limit=-1)))
+                context = task.title
+                if hasattr(task, 'filename'):
+                    context = task.filename
+                self.task_error.emit(context, str(traceback.format_exception(e, limit=-1)))
+                print('Task error: ' + context + ' - ' + str(traceback.format_exception(e)))
             self.task_completed.emit()
             del task
 
@@ -124,11 +131,11 @@ class BackgroundProcessForImporters(BackgroundProcess):
 
     @Slot('QVariant')
     def results_ready(self, task):
-        print('results_ready, importing to database', task.filename)
+        # print('results_ready, importing to database', task.filename)
 
         task.import_data()
 
-        print('completed...')
+        # print('completed...')
         self.task_completed.emit()
 
         # Destroy task
@@ -189,6 +196,7 @@ class ProgressDialog(QDialog):
         bg_process.finished.connect(self.accept)
         bg_process.task_completed.connect(self.next_task)
         bg_process.update_current_task_progress.connect(self.update_current_task_progress)
+        bg_process.update_current_task_title.connect(self.set_task_title)
         # self.UI.btnCancelTask.clicked.connect(self.cancel_clicked)
 
     def showEvent(self, event):
@@ -196,14 +204,18 @@ class ProgressDialog(QDialog):
 
     def display_current_task(self):
         if self.count < len(self.tasks):
-            self.UI.lblCurrentTaskValue.setText(self.tasks[self.count].title)
+            self.set_task_title(self.tasks[self.count].title)
 
     def compute_workload(self):
         return sum(t.size for t in self.tasks)
 
-    def set_job_title(self, title):
+    def set_job_title(self, title: str):
         self.setWindowTitle(title)
         self.UI.lblTitle.setText(title)
+
+    @Slot(str)
+    def set_task_title(self, title: str):
+        self.UI.lblCurrentTaskValue.setText(title)
 
     @Slot()
     def current_task_size_updated(self):

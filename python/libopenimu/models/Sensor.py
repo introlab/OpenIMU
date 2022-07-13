@@ -26,7 +26,6 @@ class Sensor(Base):
     data_rate = Column(Integer, nullable=False)
 
     # Which sensor type
-    # TODO USEFUL?
     # sensor_type = relationship("SensorType")
     channels = relationship("Channel", cascade="all,delete-orphan", back_populates="sensor")
 

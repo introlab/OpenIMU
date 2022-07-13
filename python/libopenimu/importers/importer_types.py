@@ -11,7 +11,7 @@ class ImporterTypes:
     APPLEWATCH = 3
 
     value_types = [WIMU, ACTIGRAPH, OPENIMU, APPLEWATCH]
-    value_names = ['WIMU', 'Actigraph', 'OpenIMU', 'AppleWatch']
+    value_names = ['WIMU', 'Actigraph', 'OpenIMU', 'SensorLogger (Apple Watch)']
 
     @staticmethod
     def detect_type_from_file(filename: str) -> (int, str):

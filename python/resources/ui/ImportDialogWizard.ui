@@ -17,7 +17,7 @@
    <item>
     <widget class="QRadioButton" name="radioNewDataset">
      <property name="text">
-      <string>Create a new dataset</string>
+      <string>Create a new database</string>
      </property>
      <property name="icon">
       <iconset resource="../core.qrc">
@@ -34,7 +34,7 @@
    <item>
     <widget class="QRadioButton" name="radioExistingDataset">
      <property name="text">
-      <string>Use an existing dataset</string>
+      <string>Use an existing database</string>
      </property>
      <property name="icon">
       <iconset resource="../core.qrc">
@@ -97,7 +97,7 @@
           </property>
           <property name="icon">
            <iconset resource="../core.qrc">
-            <normaloff>:/OpenIMU/icons/group.png</normaloff>:/OpenIMU/icons/group.png</iconset>
+            <normaloff>:/OpenIMU/icons/browse.png</normaloff>:/OpenIMU/icons/browse.png</iconset>
           </property>
           <property name="iconSize">
            <size>

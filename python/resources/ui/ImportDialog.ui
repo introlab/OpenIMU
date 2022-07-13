@@ -90,7 +90,7 @@
          </property>
          <property name="icon">
           <iconset resource="../core.qrc">
-           <normaloff>:/OpenIMU/icons/zoom_selection.png</normaloff>:/OpenIMU/icons/zoom_selection.png</iconset>
+           <normaloff>:/OpenIMU/icons/browse.png</normaloff>:/OpenIMU/icons/browse.png</iconset>
          </property>
          <property name="iconSize">
           <size>

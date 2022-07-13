@@ -1,43 +1,52 @@
-from PySide6.QtWidgets import QDialog, QTreeWidgetItem
+from PySide6.QtWidgets import QWidget, QTreeWidgetItem
 from PySide6.QtGui import QIcon
-from PySide6.QtCore import Qt, Slot
+from PySide6.QtCore import Qt, Slot, Signal
 
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.Group import Group
 from libopenimu.models.Participant import Participant
 from libopenimu.models.Recordset import Recordset
+from libopenimu.models.ProcessedData import ProcessedData
 
 from resources.ui.python.DataSelector_ui import Ui_DataSelector
 from libopenimu.qt.TreeDataWidget import TreeDataWidget
 import datetime
 
 
-class DataSelector(QDialog):
-    groups = {}
-    participants = {}
-    recordsets = {}
-    dates = {}
+class DataSelector(QWidget):
 
-    items_groups = {}
-    items_participants = {}
-    items_recordsets = {}
-    items_dates = {}
+    dataIsValid = Signal(bool)
 
-    def __init__(self, db_manager: DBManager, allow_only_one_participant=False, parent=None):
-        QDialog.__init__(self, parent=parent)
+    def __init__(self, db_manager: DBManager, allow_only_one_participant=False, show_results=False, parent=None):
+        QWidget.__init__(self, parent=parent)
+
+        # Data holders
+        self.groups = {}
+        self.participants = {}
+        self.recordsets = {}
+        self.dates = {}
+        self.results = {}
+
+        self.items_groups = {}
+        self.items_participants = {}
+        self.items_recordsets = {}
+        self.items_dates = {}
+        self.items_results = {}
+
         self.UI = Ui_DataSelector()
         self.UI.setupUi(self)
 
+        self.only_one_participant = allow_only_one_participant
+        self.show_results = show_results
+
         self.dbMan = db_manager
         self.load_data_from_dataset()
-        self.update_buttons_states()
+
         self.loading = False
-        self.only_one_participant = allow_only_one_participant
+
         self.UI.lblOnlyOneParticipant.setVisible(self.only_one_participant)
         self.UI.btnCheckAll.setEnabled(not self.only_one_participant)
 
-        self.UI.btnCancel.clicked.connect(self.cancel_clicked)
-        self.UI.btnOK.clicked.connect(self.ok_clicked)
         self.UI.btnExpandAll.clicked.connect(self.expand_all_clicked)
         self.UI.btnCollapseAll.clicked.connect(self.collapse_all_clicked)
         self.UI.btnCheckAll.clicked.connect(self.check_all_clicked)
@@ -61,6 +70,13 @@ class DataSelector(QDialog):
         recordsets = self.dbMan.get_all_recordsets()
         for recordset in recordsets:
             self.add_recordset(recordset)
+
+        # Results
+        if self.show_results:
+            for participant in participants:
+                results = self.dbMan.get_all_processed_data(participant=participant)
+                for result in results:
+                    self.add_result(result, participant.id_participant)
 
     def add_group(self, group: Group) -> QTreeWidgetItem:
         item = QTreeWidgetItem()
@@ -109,6 +125,22 @@ class DataSelector(QDialog):
 
         return item
 
+    def add_result(self, result: ProcessedData, id_participant: int) -> QTreeWidgetItem:
+        item = QTreeWidgetItem()
+        item.setText(0, result.name)
+        item.setIcon(0, QIcon(':/OpenIMU/icons/result.png'))
+        item.setData(0, Qt.UserRole, result.id_processed_data)
+        item.setCheckState(0, Qt.Unchecked)
+
+        parent_item = self.items_participants[id_participant]
+        if parent_item:
+            parent_item.addChild(item)
+
+        self.results[result.id_processed_data] = result
+        self.items_results[result.id_processed_data] = item
+
+        return item
+
     def add_date(self, date_update: datetime, id_parent_part: int) -> QTreeWidgetItem:
         date_text = date_update.strftime("%d-%m-%Y")
         date_text_id = TreeDataWidget.get_date_id(date_text=date_text, id_parent_part=id_parent_part)
@@ -135,14 +167,6 @@ class DataSelector(QDialog):
         return item
 
     @Slot()
-    def cancel_clicked(self):
-        self.reject()
-
-    @Slot()
-    def ok_clicked(self):
-        self.accept()
-
-    @Slot()
     def expand_all_clicked(self):
         self.UI.treeData.expandAll()
 
@@ -155,14 +179,14 @@ class DataSelector(QDialog):
         self.UI.treeData.expandAll()
         for i in range(self.UI.treeData.topLevelItemCount()):
             self.check_item(self.UI.treeData.topLevelItem(i), True)
-        self.update_buttons_states()
+        self.validate()
 
     @Slot()
     def uncheck_all_clicked(self):
         self.UI.treeData.collapseAll()
         for i in range(self.UI.treeData.topLevelItemCount()):
             self.check_item(self.UI.treeData.topLevelItem(i), False)
-        self.update_buttons_states()
+        self.validate()
 
     @Slot(QTreeWidgetItem, int)
     def item_changed(self, item: QTreeWidgetItem, col: int):
@@ -219,7 +243,7 @@ class DataSelector(QDialog):
                             root_item.setDisabled(False)
 
         self.loading = False
-        self.update_buttons_states()
+        self.validate()
 
     def check_item(self, item: QTreeWidgetItem, check: bool):
         if check:
@@ -231,13 +255,13 @@ class DataSelector(QDialog):
             self.check_item(item.child(i), check)
 
     def validate(self) -> bool:
+        rval = False
         for i in range(self.UI.treeData.topLevelItemCount()):
             if self.UI.treeData.topLevelItem(i).checkState(0) == Qt.Checked:
-                return True  # At least one item checked!
-        return False
-
-    def update_buttons_states(self):
-        self.UI.btnOK.setEnabled(self.validate())
+                rval = True  # At least one item checked!
+                break
+        self.dataIsValid.emit(rval)
+        return rval
 
     def get_selected_recordsets(self) -> list[Recordset]:
         recordsets = []
@@ -248,3 +272,40 @@ class DataSelector(QDialog):
                     recordsets.append(self.recordsets[id_recordset])
 
         return recordsets
+
+    def get_selected_groups(self) -> list[Group]:
+        groups = []
+        for id_group in self.groups:
+            item = self.items_groups[id_group]
+            if item:
+                if item.checkState(0) == Qt.Checked:
+                    groups.append(self.groups[id_group])
+
+        return groups
+
+    def get_selected_participants(self) -> list[Participant]:
+        participants = []
+        for id_participant in self.participants:
+            item = self.items_participants[id_participant]
+            if item:
+                if item.checkState(0) == Qt.Checked:
+                    participants.append(self.participants[id_participant])
+
+        return participants
+
+    def get_selected_results(self) -> list[ProcessedData]:
+        results = []
+        for id_processed_data in self.results:
+            item = self.items_results[id_processed_data]
+            if item:
+                if item.checkState(0) == Qt.Checked:
+                    results.append(self.results[id_processed_data])
+
+        return results
+
+    def get_all_selected(self) -> dict:  # Return ids of selected items
+        rval = {'groups': [group.id_group for group in self.get_selected_groups()],
+                'participants': [part.id_participant for part in self.get_selected_participants()],
+                'recordsets': [r.id_recordset for r in self.get_selected_recordsets()],
+                'results': [r.id_processed_data for r in self.get_selected_results()]}
+        return rval

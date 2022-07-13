@@ -18,6 +18,10 @@ QWidget#centralWidget{
     background-color: transparent;
 }
 
+QWidget#wdgDataSelector{
+    background-color: black;
+}
+
 /*************************/
 /* QMainWindow           */
 /*************************/
