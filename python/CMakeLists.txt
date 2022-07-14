@@ -112,10 +112,8 @@ message(STATUS ${python_files})
 
 #PyInstaller (Beta, Still have problems with QtWebEngine not found.)
 set (installer_args
-    # --paths ${PYTHON_ENV_DIRECTORY}/lib/python${PYTHON_VERSION}/site-packages/PyQt5
-    --hidden-import scipy._lib.messagestream
-    --hidden-import sqlalchemy.ext.baked
-    # --hidden-import PyQt5.sip
+    #--hidden-import scipy._lib.messagestream
+    #--hidden-import sqlalchemy.ext.baked
     --hidden-import logging.config
     --clean
     -y
@@ -129,16 +127,16 @@ if(WIN32)
     set (installer_args
         ${installer_args}
         --hidden-import win32api
-        --hidden-import pkg_resources.py2_warn
+        #--hidden-import pkg_resources.py2_warn
         --paths ${PYTHON_ENV_DIRECTORY}/Lib/site-packages/scipy/.libs # PyInstaller doesn't seem to find all required DLLs for SciPy...
         --paths ${PYTHON_ENV_DIRECTORY}/Library/bin # PyInstaller doesn't seem to find sqlite3.dll...
     )
 
     # Build this target to make a package
     add_custom_target(python_package
-        COMMAND ${PYTHON_INSTALLER_EXECUTABLE} ${installer_args} ${CMAKE_CURRENT_SOURCE_DIR}/OpenIMUApp.py
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/alembic.ini ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMUApp
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/alembic ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMUApp/alembic
+        COMMAND ${PYTHON_INSTALLER_EXECUTABLE} ${installer_args} ${CMAKE_CURRENT_SOURCE_DIR}/OpenIMU.py
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/alembic.ini ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/alembic ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU/alembic
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         DEPENDS python_target ${python_uis} ${python_qrcs} python-env
     )
@@ -147,11 +145,11 @@ endif(WIN32)
 if(APPLE)
     # Build this target to make a package
     add_custom_target(python_package
-        COMMAND ${PYTHON_INSTALLER_EXECUTABLE} ${installer_args} ${CMAKE_CURRENT_SOURCE_DIR}/OpenIMUApp.py
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/alembic.ini ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMUApp.app/Contents/MacOS/
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/alembic ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMUApp.app/Contents/MacOS/alembic
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../setup/qt.conf ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMUApp.app/Contents/Resources
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../setup/Info.plist ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMUApp.app/Contents/Info.plist
+        COMMAND ${PYTHON_INSTALLER_EXECUTABLE} ${installer_args} ${CMAKE_CURRENT_SOURCE_DIR}/OpenIMU.py
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/alembic.ini ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/MacOS/
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/alembic ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/MacOS/alembic
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../setup/qt.conf ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/Resources
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../setup/Info.plist ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/Info.plist
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         DEPENDS python_target ${python_uis} ${python_qrcs} python-env
     )

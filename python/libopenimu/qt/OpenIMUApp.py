@@ -53,7 +53,8 @@ class OpenIMUApp(QApplication):
             QLocale.setDefault(locale)
 
             # Install Qt Translator for default widgets
-            if self.qt_translator.load('qt_' + locale.name(), QLibraryInfo.location(QLibraryInfo.TranslationsPath)):
+            print(QLibraryInfo.location(QLibraryInfo.TranslationsPath))
+            if self.qt_translator.load('qtbase_' + locale.name(), QLibraryInfo.location(QLibraryInfo.TranslationsPath)):
                 self.installTranslator(self.qt_translator)
             else:
                 print('Error loading QT translator for default widgets!')

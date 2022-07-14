@@ -636,6 +636,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../ui/ImportDialog.ui" line="157"/>
+        <source>Database name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../ui/ImportDialog.ui" line="37"/>
         <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Database title:</source>
         <translation type="unfinished"></translation>
@@ -643,11 +648,6 @@
     <message>
         <location filename="../ui/ImportDialog.ui" line="135"/>
         <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Database filename:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/ImportDialog.ui" line="157"/>
-        <source>Dataset name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1059,39 +1059,57 @@
 <context>
     <name>RecordsetWindow</name>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="230"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="228"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="231"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="229"/>
         <source>Displaying a timeline spanning over more than 2 years isn&apos;t supported for now</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="279"/>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="280"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="277"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="278"/>
         <source>No data.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="498"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="496"/>
         <source>Loading temporal data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="503"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="501"/>
         <source>Loading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="708"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="706"/>
         <source>Loading data...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="712"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="710"/>
         <source>Processing</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Snake</name>
+    <message>
+        <location filename="../../libopenimu/qt/AboutScreen.py" line="73"/>
+        <source>-- PAUSED --</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/AboutScreen.py" line="158"/>
+        <source>GAME OVER</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/AboutScreen.py" line="160"/>
+        <source>Press &apos;Space&apos; to play again</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

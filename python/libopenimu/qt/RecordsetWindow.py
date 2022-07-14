@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QWidget
 from PySide6.QtWidgets import QGraphicsScene, QApplication, QGraphicsRectItem, QGraphicsLineItem, QGraphicsItem
-from PySide6.QtWidgets import QDialog, QMenu, QMessageBox, QMdiSubWindow
+from PySide6.QtWidgets import QMenu, QMessageBox, QMdiSubWindow
 from PySide6.QtGui import QBrush, QPen, QColor, QFont, QGuiApplication, QAction
 from PySide6.QtCore import Qt, Slot, Signal, QPoint, QRect, QObject, QRectF, QFile
 
@@ -13,8 +13,6 @@ from libopenimu.models.Base import Base
 from libopenimu.importers.wimu import GPSGeodetic
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog, WorkerTask
 from libopenimu.db.DBManager import DBManager
-
-from libopenimu.qt.ProcessSelectWindow import ProcessSelectWindow
 
 # from libopenimu.tools.timing import timing
 import numpy as np
@@ -867,15 +865,15 @@ class RecordsetWindow(QWidget):
         self.UI.frameTimelineControls.setVisible(visible)
         # self.UI.lblCursorTime.setVisible(visible)
 
-    @Slot()
-    def on_process_recordset(self):
-        # Display Process Window
-        window = ProcessSelectWindow(self.dbMan, self.recordsets)
-        # window.setStyleSheet(self.styleSheet())
-
-        if window.exec() == QDialog.Accepted:
-            self.dataUpdateRequest.emit("result", window.processed_data)
-            self.dataDisplayRequest.emit("result", window.processed_data.id_processed_data)
+    # @Slot()
+    # def on_process_recordset(self):
+    #     # Display Process Window
+    #     window = ProcessSelectWindow(self.dbMan, self.recordsets)
+    #     # window.setStyleSheet(self.styleSheet())
+    #
+    #     if window.exec() == QDialog.Accepted:
+    #         self.dataUpdateRequest.emit("result", window.processed_data)
+    #         self.dataDisplayRequest.emit("result", window.processed_data.id_processed_data)
 
     @Slot()
     def tile_graphs_horizontally(self):

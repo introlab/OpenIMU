@@ -636,6 +636,11 @@
         <translation>Auteur, source(s) des données, équipe de recherche, ...</translation>
     </message>
     <message>
+        <location filename="../ui/ImportDialog.ui" line="157"/>
+        <source>Database name</source>
+        <translation>Nom de la base de données</translation>
+    </message>
+    <message>
         <location filename="../ui/ImportDialog.ui" line="37"/>
         <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Database title:</source>
         <translation>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Titre de la base de données:</translation>
@@ -644,11 +649,6 @@
         <location filename="../ui/ImportDialog.ui" line="135"/>
         <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Database filename:</source>
         <translation>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Fichier de la base de données:</translation>
-    </message>
-    <message>
-        <location filename="../ui/ImportDialog.ui" line="157"/>
-        <source>Dataset name</source>
-        <translation>Nom de l&apos;ensemble de données</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialog.ui" line="169"/>
@@ -1059,40 +1059,58 @@
 <context>
     <name>RecordsetWindow</name>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="230"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="228"/>
         <source>Warning</source>
         <translation>Avertissement</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="231"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="229"/>
         <source>Displaying a timeline spanning over more than 2 years isn&apos;t supported for now</source>
         <translation>L&apos;affichage d&apos;une ligne du temps de 2 ans ou plus n&apos;est pas supportée pour l&apos;instant</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="279"/>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="280"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="277"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="278"/>
         <source>No data.</source>
         <translation>Aucune donnée.</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="498"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="496"/>
         <source>Loading temporal data</source>
         <translation>Chargement des données temporelles</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="503"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="501"/>
         <source>Loading</source>
         <translation>Chargement</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="708"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="706"/>
         <source>Loading data...</source>
         <translation>Chargement des données...</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="712"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="710"/>
         <source>Processing</source>
         <translation>Traitement</translation>
+    </message>
+</context>
+<context>
+    <name>Snake</name>
+    <message>
+        <location filename="../../libopenimu/qt/AboutScreen.py" line="73"/>
+        <source>-- PAUSED --</source>
+        <translation>-- EN PAUSE --</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/AboutScreen.py" line="158"/>
+        <source>GAME OVER</source>
+        <translation>FIN DE PARTIE</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/AboutScreen.py" line="160"/>
+        <source>Press &apos;Space&apos; to play again</source>
+        <translation>Appuyez sur &apos;Espace&apos; pour rejouer</translation>
     </message>
 </context>
 <context>

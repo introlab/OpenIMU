@@ -154,7 +154,7 @@
         </size>
        </property>
        <property name="placeholderText">
-        <string>Dataset name</string>
+        <string>Database name</string>
        </property>
       </widget>
      </item>

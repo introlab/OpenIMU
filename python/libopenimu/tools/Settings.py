@@ -81,7 +81,7 @@ class OpenIMUSettings:
 
     @property
     def data_load_path(self) -> str:
-        return self.settings.value("data/loadpath")
+        return self.settings.value("data/loadpath", defaultValue='')
 
     @data_load_path.setter
     def data_load_path(self, path: str):
@@ -89,7 +89,7 @@ class OpenIMUSettings:
 
     @property
     def data_save_path(self) -> str:
-        return self.settings.value("data/savepath")
+        return self.settings.value("data/savepath", defaultValue='')
 
     @data_save_path.setter
     def data_save_path(self, path: str):
@@ -97,7 +97,7 @@ class OpenIMUSettings:
 
     @property
     def database_base_path(self) -> str:
-        return self.settings.value("data/databasepath")
+        return self.settings.value("data/databasepath", defaultValue='')
 
     @database_base_path.setter
     def database_base_path(self, path: str):
@@ -105,7 +105,7 @@ class OpenIMUSettings:
 
     @property
     def data_export_path(self) -> str:
-        return self.settings.value("data/exportpath")
+        return self.settings.value("data/exportpath", defaultValue='')
 
     @data_export_path.setter
     def data_export_path(self, path: str):
