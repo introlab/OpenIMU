@@ -225,22 +225,22 @@
     <message>
         <location filename="../ui/DataSelectorDialog.ui" line="14"/>
         <source>Data Selector Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Fenêtre de sélection des données</translation>
     </message>
     <message>
         <location filename="../ui/DataSelectorDialog.ui" line="64"/>
         <source>Select data files</source>
-        <translation type="unfinished">Sélection des données</translation>
+        <translation>Sélection des données</translation>
     </message>
     <message>
         <location filename="../ui/DataSelectorDialog.ui" line="119"/>
         <source>Next</source>
-        <translation type="unfinished">Suivant</translation>
+        <translation>Suivant</translation>
     </message>
     <message>
         <location filename="../ui/DataSelectorDialog.ui" line="148"/>
         <source>Cancel</source>
-        <translation type="unfinished">Annuler</translation>
+        <translation>Annuler</translation>
     </message>
 </context>
 <context>
@@ -271,113 +271,123 @@
     <message>
         <location filename="../ui/ExportDialog.ui" line="14"/>
         <source>Data exporter</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportateur de données</translation>
     </message>
     <message>
         <location filename="../ui/ExportDialog.ui" line="79"/>
         <source>Select data to export</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionner les données à exporter</translation>
     </message>
     <message>
         <location filename="../ui/ExportDialog.ui" line="113"/>
-        <source>Destination folder</source>
-        <translation type="unfinished"></translation>
+        <source>Destination directory:</source>
+        <translation>Répertoire de destination:</translation>
     </message>
     <message>
         <location filename="../ui/ExportDialog.ui" line="137"/>
-        <source>Folder that will contains exported data files</source>
-        <translation type="unfinished"></translation>
+        <source>Directory that will contains exported data files</source>
+        <translation>Répertoire qui contiendra les fichiers de données</translation>
     </message>
     <message>
         <location filename="../ui/ExportDialog.ui" line="153"/>
         <source>Browse...</source>
-        <translation type="unfinished">Parcourir...</translation>
+        <translation>Parcourir...</translation>
     </message>
     <message>
         <location filename="../ui/ExportDialog.ui" line="188"/>
         <source>Format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Format:</translation>
     </message>
     <message>
         <location filename="../ui/ExportDialog.ui" line="226"/>
         <source>Create a subfolder with the database name</source>
-        <translation type="unfinished"></translation>
+        <translation>Créer un sous-répertoire avec comme nom le nom de la base de données</translation>
     </message>
     <message>
         <location filename="../ui/ExportDialog.ui" line="292"/>
         <source>Cancel</source>
-        <translation type="unfinished">Annuler</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../ui/ExportDialog.ui" line="263"/>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
     <name>ExportWindow</name>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="50"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="54"/>
         <source>Select base folder for exported files</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionnez le répertoire de base pour les fichiers exportés</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="84"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="90"/>
         <source>Export path</source>
-        <translation type="unfinished"></translation>
+        <translation>Le répertoire d&apos;exportation</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="85"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="91"/>
         <source>already exists. Data will be overwritten.</source>
-        <translation type="unfinished"></translation>
+        <translation>existe. Les données seront remplacées.</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="86"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="92"/>
         <source>Do you want to continue?</source>
-        <translation type="unfinished">Voulez-vous continuer?</translation>
+        <translation>Voulez-vous continuer?</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="87"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="93"/>
         <source>Data overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>Écrasement des données</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="172"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="186"/>
+        <source>Exporting to format</source>
+        <translation>Exportation au format</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="197"/>
         <source>Error while exporting data</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur lors de l&apos;exportation des données</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="173"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="198"/>
         <source>Error occurred while exporting data files. See logs for more information.</source>
-        <translation type="unfinished"></translation>
+        <translation>Une erreur est survenue lors de l&apos;exportation des données. Vérifiez le journal pour plus d&apos;informations.</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="181"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="206"/>
         <source>Error exporting data:</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur lors de l&apos;exportation des données:</translation>
     </message>
 </context>
 <context>
     <name>FileExporter</name>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="108"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="114"/>
         <source>Exporting to format</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportation au format</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="117"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="123"/>
         <source>Exporting groups...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportation des groupes...</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="124"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="130"/>
         <source>Exporting participants...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporatation des participants...</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="131"/>
-        <source>Exporting recordsets...</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="138"/>
+        <source>Exporting recordsets</source>
+        <translation>Exportation des enregistrements</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="149"/>
+        <source>Exporting processed data</source>
+        <translation>Exportation des données traitées</translation>
     </message>
 </context>
 <context>
@@ -564,11 +574,6 @@
         <translation>Informations sur l&apos;ensemble de données</translation>
     </message>
     <message>
-        <location filename="../ui/ImportDialog.ui" line="37"/>
-        <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Dataset title:</source>
-        <translation>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Titre des données:</translation>
-    </message>
-    <message>
         <location filename="../ui/ImportDialog.ui" line="52"/>
         <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Dataset author:</source>
         <translation>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Auteur(s):</translation>
@@ -589,9 +594,14 @@
         <translation>Auteur, source(s) des données, équipe de recherche, ...</translation>
     </message>
     <message>
+        <location filename="../ui/ImportDialog.ui" line="37"/>
+        <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Database title:</source>
+        <translation>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Titre de la base de données:</translation>
+    </message>
+    <message>
         <location filename="../ui/ImportDialog.ui" line="135"/>
-        <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Dataset filename:</source>
-        <translation>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Fichier de base de données:</translation>
+        <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Database filename:</source>
+        <translation>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Fichier de la base de données:</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialog.ui" line="157"/>
@@ -1048,18 +1058,19 @@
     <message>
         <location filename="../ui/StartDialog.ui" line="143"/>
         <source>Create new database</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouvelle base de données</translation>
     </message>
     <message>
         <location filename="../ui/StartDialog.ui" line="184"/>
         <source>Import sensor data
 in database</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer données de capteurs
+dans la base de données</translation>
     </message>
     <message>
         <location filename="../ui/StartDialog.ui" line="226"/>
         <source>Open existing database</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir base de données</translation>
     </message>
     <message>
         <location filename="../ui/StartDialog.ui" line="272"/>
@@ -1294,12 +1305,12 @@ in database</source>
     <message>
         <location filename="../ui/ImportDialogWizard.ui" line="20"/>
         <source>Create a new database</source>
-        <translation type="unfinished"></translation>
+        <translation>Créer une nouvelle base de données</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialogWizard.ui" line="37"/>
         <source>Use an existing database</source>
-        <translation type="unfinished"></translation>
+        <translation>Utiliser une base de données existante</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialogWizard.ui" line="96"/>

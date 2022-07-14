@@ -5,6 +5,7 @@ from PySide6.QtGui import QIcon
 from libopenimu.models.Group import Group
 from libopenimu.models.Participant import Participant
 from libopenimu.models.Recordset import Recordset
+from libopenimu.models.ProcessedData import ProcessedData
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.Sensor import Sensor
 from libopenimu.models.SensorData import SensorData
@@ -13,6 +14,9 @@ import os
 import csv
 import scipy.io as sio
 import numpy as np
+import pickle
+import numbers
+import unicodedata
 
 
 class ExporterTypes:
@@ -48,7 +52,9 @@ class DBExporter(QObject):
     @staticmethod
     def clean_string(to_clean: str) -> str:
         # Remove non-alphanumeric characters in string
-        return ''.join(e for e in to_clean if e.isalnum())
+        rval = ''.join(c for c in unicodedata.normalize('NFD', to_clean) if unicodedata.category(c) != 'Mn')
+        rval = ''.join(e for e in rval if e.isalnum())
+        return rval
 
     @staticmethod
     def dict_to_csv(filename: str, values: dict):
@@ -81,8 +87,12 @@ class DBExporter(QObject):
         return part_dir
 
     def get_base_path_for_recordset(self, recordset: Recordset) -> str:
-        return self.get_base_path_for_participant(recordset.participant) + os.sep + \
+        return self.get_base_path_for_participant(recordset.participant) + os.sep + 'Recordsets' + os.sep + \
                DBExporter.clean_string(recordset.name)
+
+    def get_base_path_for_processed_data(self, data: ProcessedData) -> str:
+        return self.get_base_path_for_participant(data.processed_data_ref[0].recordset.participant) + os.sep + \
+               'Processed' + os.sep + DBExporter.clean_string(data.name)
 
     def export_group(self, id_group: int):
         group_name = self.tr('GROUP_None')
@@ -101,9 +111,9 @@ class DBExporter(QObject):
                 # Export group info in file
                 group_info = {'id_group': group.id_group, 'name': group.name, 'description': group.description}
                 if self.exportFormat == ExporterTypes.CSV:
-                    DBExporter.dict_to_csv(group_dir + os.sep + 'infos_group.csv', group_info)
+                    DBExporter.dict_to_csv(group_dir + os.sep + 'infos_Group.csv', group_info)
                 if self.exportFormat == ExporterTypes.MATLAB:
-                    DBExporter.dict_to_mat(group_dir + os.sep + 'infos_group.mat', {'group': group_info})
+                    DBExporter.dict_to_mat(group_dir + os.sep + 'infos_Group.mat', {'group': group_info})
 
     def export_participant(self, id_participant: int):
         participant = self.dbMan.get_participant(id_participant)
@@ -117,9 +127,9 @@ class DBExporter(QObject):
             part_info = {'id_participant': participant.id_participant, 'name': participant.name,
                          'description': participant.description}
             if self.exportFormat == ExporterTypes.CSV:
-                DBExporter.dict_to_csv(part_dir + os.sep + 'infos_participant.csv', part_info)
+                DBExporter.dict_to_csv(part_dir + os.sep + 'infos_Participant.csv', part_info)
             if self.exportFormat == ExporterTypes.MATLAB:
-                DBExporter.dict_to_mat(part_dir + os.sep + 'infos_participant.mat', {'participant': part_info})
+                DBExporter.dict_to_mat(part_dir + os.sep + 'infos_Participant.mat', {'participant': part_info})
 
     def export_recordset(self, id_recordset: int):
         recordset = self.dbMan.get_recordset(id_recordset)
@@ -128,16 +138,16 @@ class DBExporter(QObject):
             rec_dir = self.get_base_path_for_recordset(recordset)
 
             if not os.path.exists(rec_dir):
-                os.mkdir(rec_dir)
+                os.makedirs(rec_dir)
 
             # Export infos in file
             infos = {'id_recordset': recordset.id_recordset, 'name': recordset.name,
                      'start_time': str(recordset.start_timestamp), 'start_timestamp': recordset.start_timestamp.timestamp(),
                      'end_time': str(recordset.end_timestamp), 'end_timestamp': recordset.end_timestamp.timestamp()}
             if self.exportFormat == ExporterTypes.CSV:
-                DBExporter.dict_to_csv(rec_dir + os.sep + 'infos_recordset.csv', infos)
+                DBExporter.dict_to_csv(rec_dir + os.sep + 'infos_Recordset.csv', infos)
             if self.exportFormat == ExporterTypes.MATLAB:
-                DBExporter.dict_to_mat(rec_dir + os.sep + 'infos_recordset.mat', {'recordset': infos})
+                DBExporter.dict_to_mat(rec_dir + os.sep + 'infos_Recordset.mat', {'recordset': infos})
 
             # Process data in recordsets
             # Get all sensors
@@ -151,6 +161,57 @@ class DBExporter(QObject):
                     self.export_sensor_data_beacons(sensor, all_data, rec_dir)
                 else:
                     self.export_sensor_data(sensor, all_data, rec_dir)
+
+    def export_processed_data(self, id_processed_data: int):
+        data = self.dbMan.get_processed_data(id_processed_data)
+
+        if data:
+            results_dir = self.get_base_path_for_processed_data(data)
+
+            if not os.path.exists(results_dir):
+                os.makedirs(results_dir)
+
+            # Export infos in file
+            infos = {'id_processed_data': data.id_processed_data, 'name': data.name,
+                     'id_data_processor': data.id_data_processor, 'params': data.params,
+                     'recordsets': [{'id_recordset': r.recordset.id_recordset, 'name': r.recordset.name}
+                                    for r in data.processed_data_ref]}
+            clean_data_name = DBExporter.clean_string(data.name)
+            if self.exportFormat == ExporterTypes.CSV:
+                DBExporter.dict_to_csv(results_dir + os.sep + 'infos_' + clean_data_name + '.csv', infos)
+            if self.exportFormat == ExporterTypes.MATLAB:
+                DBExporter.dict_to_mat(results_dir + os.sep + 'infos_' + clean_data_name + '.mat',
+                                       {'processed_data': infos})
+
+            # Export results
+            results = pickle.loads(data.data)
+            if results:
+                # NOTE: Only process numerical values for now, since we are using numpy arrays. Other solution should be
+                # investigated eventually (such as pandas)
+                header: list = [key for key in results[0].keys() if isinstance(results[0][key], numbers.Number)]
+                result_variables = []
+                if 'result' in results[0].keys():
+                    # Create columns for each result value
+                    result_variables = [var for var in results[0]['result'].keys()
+                                        if isinstance(results[0]['result'][var], numbers.Number)]
+                    header.extend(['result_' + var for var in result_variables])
+
+                # Format data
+                results_array = np.array(np.empty((len(results), len(header))))
+                for idx, result in enumerate(results):
+                    array = [result[key] for key in header if not key.startswith('result_')]
+                    if result_variables:
+                        array.extend([result['result'][var] for var in result_variables])
+                    results_array[idx] = array
+
+                # Write values
+                filename = results_dir + os.sep + clean_data_name
+                if self.exportFormat == ExporterTypes.CSV:
+                    np.savetxt(filename + '.csv', results_array, delimiter="\t", header=str(header), fmt='%.4f')
+                elif self.exportFormat == ExporterTypes.MATLAB:
+                    sio.savemat(filename + '.mat',
+                                {clean_data_name: {'values': results_array, 'labels': header}},
+                                do_compression=True, long_field_names=True)
 
     def export_sensor_data(self, sensor: Sensor, sensors_data: list[SensorData], base_dir: str):
         result = {}
@@ -197,9 +258,10 @@ class DBExporter(QObject):
         # print('dims:', my_array.shape)
         # Write values
         if self.exportFormat == ExporterTypes.CSV:
-            np.savetxt(filename, my_array.transpose(), delimiter="\t", header=header)
+            np.savetxt(filename, my_array.transpose(), delimiter="\t", header=header, fmt='%.4f')
         elif self.exportFormat == ExporterTypes.MATLAB:
-            sio.savemat(filename, {sensor.name.replace(' ', ''): my_array.transpose(), 'labels': header.split('\t')},
+            sio.savemat(filename, {sensor.name.replace(' ', ''): {'values': my_array.transpose(),
+                                                                  'labels': header.split('\t')}},
                         do_compression=True, long_field_names=True)
 
     def export_sensor_data_gps(self, sensor: Sensor, sensors_data: list[SensorData], base_dir: str):
@@ -240,9 +302,10 @@ class DBExporter(QObject):
         # print('dims:', my_array.shape)
         # Write values
         if self.exportFormat == ExporterTypes.CSV:
-            np.savetxt(filename, my_array, delimiter="\t", header=header)
+            np.savetxt(filename, my_array, delimiter="\t", header=header, fmt='%.8f')
         elif self.exportFormat == ExporterTypes.MATLAB:
-            sio.savemat(filename, {sensor.name.replace(' ', '_'): my_array.transpose(), 'labels': header.split('\t')},
+            sio.savemat(filename, {sensor.name.replace(' ', '_'): {'values': my_array.transpose(),
+                                                                   'labels': header.split('\t')}},
                         do_compression=True, long_field_names=True)
 
     def export_sensor_data_beacons(self, sensor: Sensor, sensors_data: list[SensorData], base_dir: str):
@@ -306,11 +369,11 @@ class DBExporter(QObject):
             # Save one file per beacon
             filename = base_dir + os.sep + base_filename + '_' + beacon
             if self.exportFormat == ExporterTypes.CSV:
-                np.savetxt(filename + '.csv', beacons[beacon], delimiter="\t", header=header)
+                np.savetxt(filename + '.csv', beacons[beacon], delimiter="\t", header=header, fmt='%.4f')
             elif self.exportFormat == ExporterTypes.MATLAB:
 
                 var_name = sensor.name.replace(' ', '') + '_' + beacon
-                sio.savemat(filename + '.mat', {var_name: beacons[beacon], 'labels': header.split('\t')},
+                sio.savemat(filename + '.mat', {var_name: {'values': beacons[beacon], 'labels': header.split('\t')}},
                             do_compression=True, long_field_names=True)
 
     def export_sensor_infos(self, sensor: Sensor, base_dir: str, base_filename: str):

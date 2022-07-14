@@ -111,3 +111,11 @@ class OpenIMUSettings:
     def data_export_path(self, path: str):
         self.settings.setValue('data/exportpath', path)
 
+    @property
+    def data_export_type(self) -> int:
+        return self.settings.value('data/exporttype')
+
+    @data_export_type.setter
+    def data_export_type(self, export_type: int):
+        self.settings.setValue('data/exporttype', export_type)
+

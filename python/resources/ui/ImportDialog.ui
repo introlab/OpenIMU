@@ -34,7 +34,7 @@
         </font>
        </property>
        <property name="text">
-        <string>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Dataset title:</string>
+        <string>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Database title:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -132,7 +132,7 @@
         </font>
        </property>
        <property name="text">
-        <string>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Dataset filename:</string>
+        <string>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Database filename:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

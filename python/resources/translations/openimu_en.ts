@@ -280,12 +280,12 @@
     </message>
     <message>
         <location filename="../ui/ExportDialog.ui" line="113"/>
-        <source>Destination folder</source>
+        <source>Destination directory:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/ExportDialog.ui" line="137"/>
-        <source>Folder that will contains exported data files</source>
+        <source>Directory that will contains exported data files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -317,42 +317,47 @@
 <context>
     <name>ExportWindow</name>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="50"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="54"/>
         <source>Select base folder for exported files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="84"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="90"/>
         <source>Export path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="85"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="91"/>
         <source>already exists. Data will be overwritten.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="86"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="92"/>
         <source>Do you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="87"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="93"/>
         <source>Data overwrite</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="172"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="186"/>
+        <source>Exporting to format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="197"/>
         <source>Error while exporting data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="173"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="198"/>
         <source>Error occurred while exporting data files. See logs for more information.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="181"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="206"/>
         <source>Error exporting data:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -360,23 +365,28 @@
 <context>
     <name>FileExporter</name>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="108"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="114"/>
         <source>Exporting to format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="117"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="123"/>
         <source>Exporting groups...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="124"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="130"/>
         <source>Exporting participants...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="131"/>
-        <source>Exporting recordsets...</source>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="138"/>
+        <source>Exporting recordsets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="149"/>
+        <source>Exporting processed data</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -564,11 +574,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ImportDialog.ui" line="37"/>
-        <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Dataset title:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../ui/ImportDialog.ui" line="52"/>
         <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Dataset author:</source>
         <translation type="unfinished"></translation>
@@ -589,8 +594,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../ui/ImportDialog.ui" line="37"/>
+        <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Database title:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../ui/ImportDialog.ui" line="135"/>
-        <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Dataset filename:</source>
+        <source>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Database filename:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

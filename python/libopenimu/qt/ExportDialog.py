@@ -31,9 +31,13 @@ class ExportWindow(QDialog):
         self.data_selector = DataSelector(db_manager=self.dbMan, parent=self, show_results=True)
         self.UI.wdgDataSelector.layout().addWidget(self.data_selector)
 
+        last_export_type_id = self.settings.data_export_type
+
         for exporter_id in ExporterTypes.value_types:
             self.UI.comboFormat.addItem(ExporterTypes.get_icon_for_type(exporter_id),
                                         ExporterTypes.value_names[exporter_id], exporter_id)
+            if exporter_id == last_export_type_id:
+                self.UI.comboFormat.setCurrentIndex(self.UI.comboFormat.count()-1)
 
         self.UI.btnBrowse.clicked.connect(self.directory_selection_clicked)
         self.UI.btnOK.clicked.connect(self.export)
@@ -70,6 +74,8 @@ class ExportWindow(QDialog):
         file_format_id = self.UI.comboFormat.currentData()
 
         export_path = self.UI.txtDir.text()
+        self.settings.data_export_type = file_format_id
+
         if self.UI.chkDatabaseDir.isChecked():
             # Create subfolder with database filename
             subfolder = os.path.basename(self.dbMan.dbFilename).split('.')[0]
@@ -128,10 +134,25 @@ class ExportWindow(QDialog):
                     self.update_progress.emit(current_count)
 
                 # Export recordsets (and data)
-                self.change_task_title.emit(self.tr('Exporting recordsets...'))
+                title = self.tr('Exporting recordsets')
+                current = 1
+                total_count = len(self.dataList['recordsets'])
                 for id_recordset in self.dataList['recordsets']:
+                    self.change_task_title.emit(title + ' (' + str(current) + ' / ' + str(total_count) + ')')
                     self.dbExporter.export_recordset(id_recordset)
                     current_count += 1
+                    current += 1
+                    self.update_progress.emit(current_count)
+
+                # Export results
+                title = self.tr('Exporting processed data')
+                current = 1
+                total_count = len(self.dataList['results'])
+                for id_result in self.dataList['results']:
+                    self.change_task_title.emit(title + ' (' + str(current) + ' / ' + str(total_count) + ')')
+                    self.dbExporter.export_processed_data(id_result)
+                    current_count += 1
+                    current += 1
                     self.update_progress.emit(current_count)
 
                 # print('Exporting done!')
@@ -146,10 +167,14 @@ class ExportWindow(QDialog):
         # # Export participants
         # for id_participant in data_list['participants']:
         #     exporter.export_participant(id_participant)
-        #
-        # # Export recordsets (and data)
+
+        # Export recordsets (and data)
         # for id_recordset in data_list['recordsets']:
         #     exporter.export_recordset(id_recordset)
+
+        # Export results
+        # for id_result in data_list['results']:
+        #     exporter.export_processed_data(id_result)
 
         file_exporter = FileExporter(exporter, self.data_selector.get_all_selected())
 

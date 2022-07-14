@@ -110,7 +110,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Destination folder</string>
+        <string>Destination directory:</string>
        </property>
       </widget>
      </item>
@@ -134,7 +134,7 @@
           </size>
          </property>
          <property name="placeholderText">
-          <string>Folder that will contains exported data files</string>
+          <string>Directory that will contains exported data files</string>
          </property>
         </widget>
        </item>
