@@ -2,9 +2,11 @@ from resources.ui.python.StartDialog_ui import Ui_StartDialog
 
 from libopenimu.qt.ImportWindow import ImportWindow
 from libopenimu.qt.ImportDialogWizard import ImportDialogWizard
+from libopenimu.qt.AboutScreen import AboutScreen
 
 from PySide6.QtCore import Slot, Signal, QLocale, QFileInfo
 from PySide6.QtWidgets import QDialog, QFileDialog, QApplication, QMessageBox
+from PySide6.QtGui import QMouseEvent
 
 from libopenimu.tools.Settings import OpenIMUSettings
 
@@ -41,6 +43,8 @@ class StartWindow(QDialog):
         self.UI.btnQuit.clicked.connect(self.quit_clicked)
         self.UI.cmbRecents.currentIndexChanged.connect(self.recent_clicked)
         self.UI.cmbLanguage.currentIndexChanged.connect(self.language_changed)
+        self.UI.lblLogo.mouseReleaseEvent = self.logo_clicked
+
         self.loading = False
 
     @Slot()
@@ -119,4 +123,8 @@ class StartWindow(QDialog):
             current_lang = 'fr'
 
         self.request_language_change.emit(current_lang)
+
+    def logo_clicked(self, _: QMouseEvent):
+        about_diag = AboutScreen(self)
+        about_diag.exec()
 

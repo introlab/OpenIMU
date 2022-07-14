@@ -76,12 +76,15 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="lblIntrolab">
+      <widget class="QLabel" name="lblLogo">
        <property name="maximumSize">
         <size>
          <width>280</width>
          <height>180</height>
         </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
         <string/>

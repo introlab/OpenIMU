@@ -55,6 +55,7 @@ SET(uis
     resources/ui/TableDataViewWidget.ui
     resources/ui/DataSelector.ui
     resources/ui/DataSelectorDialog.ui
+    resources/ui/AboutScreen.ui
 )
 
 SET(qrcs

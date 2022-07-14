@@ -5,9 +5,9 @@ QWidget#dockWidgetTreeContents,QWidget#dockWidgetLogContents,QWidget#dockWidgetT
     border-radius:5px;
 }
 
-QWidget#line,QWidget#line_2,QWidget#line_3{
+/*QWidget#line,QWidget#line_2,QWidget#line_3{
     background-color:rgba(100,100,100,100%);
-}
+}*/
 
 QWidget#MainWindow, QWidget#ImportBrowser, QWidget#ImportManager, QWidget#frmParticipant, QWidget#ExportCSV, QWidget#ImportDialog, QWidget#StartDialog, QWidget#dlgProcessSelect, QWidget#DataInfosWidget, QWidget#GraphWindow, QDialog {
     background:qlineargradient(spread:pad, x1:0.483, y1:0, x2:0.511045, y2:1, stop:0 rgb(50,50,50), stop:1 rgb(20,20,20));
@@ -20,6 +20,10 @@ QWidget#centralWidget{
 
 QWidget#wdgDataSelector{
     background-color: black;
+}
+
+QWidget#wdgFun{
+    border: 1px solid white;
 }
 
 /*************************/
@@ -99,7 +103,7 @@ QLabel:!enabled{
     color:lightgrey;
 }
 
-QLabel#lblDragDrop, QLabel#lblIPValue, QLabel#lblOnlyOneParticipant{
+QLabel#lblDragDrop, QLabel#lblIPValue, QLabel#lblOnlyOneParticipant, QLabel#lblAboutTitle{
     color: orange;
 }
 
@@ -239,6 +243,10 @@ QFrame#frameInfos{
     background-color:rgba(150,150,150,10%);
     border: 1px solid white;
     border-radius: 3px;
+}
+
+QFrame#frameLogos{
+    background-color: white;
 }
 
 /************************/

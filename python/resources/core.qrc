@@ -69,6 +69,8 @@
         <file>icons/browse.png</file>
         <file>icons/file_csv.png</file>
         <file>icons/file_matlab.png</file>
+        <file>logo_CDRV.png</file>
+        <file>INTER.png</file>
     </qresource>
     <qresource prefix="/">
         <file>stylesheet.qss</file>

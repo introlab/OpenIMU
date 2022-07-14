@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QMainWindow, QWidget
 from PySide6.QtWidgets import QApplication, QDialog, QTreeWidgetItem, QHBoxLayout
 from PySide6.QtWidgets import QMessageBox
-from PySide6.QtGui import QKeyEvent
+from PySide6.QtGui import QKeyEvent, QMouseEvent
 
 from PySide6.QtCore import Slot, Signal, QObject, QEvent, Qt
 from libopenimu.qt.Charts import IMUChartView
@@ -14,7 +14,6 @@ from libopenimu.qt.GroupWindow import GroupWindow
 from libopenimu.qt.ParticipantWindow import ParticipantWindow
 from libopenimu.qt.RecordsetWindow import RecordsetWindow
 from libopenimu.qt.ResultWindow import ResultWindow
-# from libopenimu.qt.StartWindow import StartWindow
 from libopenimu.qt.ImportBrowser import ImportBrowser
 from libopenimu.qt.ExportDialog import ExportWindow
 from libopenimu.qt.StreamWindow import StreamWindow
@@ -23,8 +22,8 @@ from libopenimu.qt.BackgroundProcess import BackgroundProcess, SimpleTask, Progr
 from libopenimu.qt.ProcessSelectWindow import ProcessSelectWindow
 from libopenimu.qt.DataSelectorDialog import DataSelectorDialog
 from libopenimu.qt.DataEditor import DataEditor
+from libopenimu.qt.AboutScreen import AboutScreen
 from libopenimu.streamers.streamer_types import StreamerTypes
-from libopenimu.importers.importer_types import ImporterTypes
 
 from libopenimu.qt.TreeDataWidget import TreeDataWidget
 
@@ -145,6 +144,8 @@ class MainWindow(QMainWindow):
         self.UI.btnClose.clicked.connect(self.db_close_requested)
         self.UI.btnCompact.clicked.connect(self.db_compact_requested)
         self.UI.btnProcess.clicked.connect(self.process_data_requested)
+
+        self.UI.lblLogo.mouseReleaseEvent = self.show_about
 
     def console_log_normal(self, text):
         self.add_to_log(text, LogTypes.LOGTYPE_DEBUG)
@@ -725,6 +726,10 @@ class MainWindow(QMainWindow):
                     return True
 
         return super().eventFilter(target, event)
+
+    def show_about(self, _: QMouseEvent):
+        about = AboutScreen(self)
+        about.exec()
 
 
 class StdConsoleLogger:
