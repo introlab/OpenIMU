@@ -1,10 +1,9 @@
 from PySide6.QtWidgets import QMainWindow, QWidget
 from PySide6.QtWidgets import QApplication, QDialog, QTreeWidgetItem, QHBoxLayout
 from PySide6.QtWidgets import QMessageBox
-from PySide6.QtGui import QKeyEvent, QMouseEvent
+from PySide6.QtGui import QKeyEvent, QMouseEvent, QKeySequence
 
 from PySide6.QtCore import Slot, Signal, QObject, QEvent, Qt
-from libopenimu.qt.Charts import IMUChartView
 import gc
 
 # UI
@@ -287,6 +286,7 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def infos_requested(self):
+
         infos_window = ImportWindow(dataset=self.currentDataSet, filename=self.currentFileName)
         # infos_window.setStyleSheet(self.styleSheet())
         infos_window.noImportUI = True
@@ -414,6 +414,9 @@ class MainWindow(QMainWindow):
 
     @Slot(QTreeWidgetItem, QTreeWidgetItem)
     def tree_item_current_changed(self, item: QTreeWidgetItem, previous: QTreeWidgetItem):
+        if not item:
+            return
+
         item_id = self.UI.treeDataSet.get_item_id(item)
         item_type = self.UI.treeDataSet.get_item_type(item)
 
@@ -648,12 +651,6 @@ class MainWindow(QMainWindow):
         self.aboutToClose.emit()
         return
 
-    def create_chart_view(self, test_data=False):
-        chart_view = IMUChartView(self)
-        if test_data is True:
-            chart_view.add_test_data()
-        return chart_view
-
     @Slot()
     def transfer_requested(self):
         # import_man = ImportManager(dbmanager=self.dbMan, dirs=True, stream=True, parent=self)
@@ -721,7 +718,8 @@ class MainWindow(QMainWindow):
     def eventFilter(self, target: QObject, event: QEvent) -> bool:
         if target == self.UI.treeDataSet:
             if isinstance(event, QKeyEvent):
-                if event.key() == Qt.Key_Delete and event.type() == QEvent.Type.KeyRelease:
+                if (event.matches(QKeySequence.Delete) or event.key() == Qt.Key_Delete or
+                    event.key() == Qt.Key_Backspace) and event.type() == QEvent.Type.KeyRelease:
                     self.delete_requested()
                     return True
 
@@ -738,4 +736,3 @@ class StdConsoleLogger:
 
     def write(self, text):
         self.callback(text)
-

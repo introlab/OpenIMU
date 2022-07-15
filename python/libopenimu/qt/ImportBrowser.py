@@ -19,6 +19,7 @@ from libopenimu.tools.timing import timing
 from libopenimu.tools.Settings import OpenIMUSettings
 
 import os
+import platform
 
 
 class ImportBrowser(QDialog):
@@ -409,7 +410,8 @@ class ImportBrowser(QDialog):
                         if file.isLocalFile():  # Support only local files
                             # Get full file name
                             filename = file.path()
-                            if filename.startswith('/'):
+                            if platform.system() == 'Windows' and filename.startswith('/'):
+                                # Remove / that appears at the start of the file on Windows
                                 filename = filename.removeprefix('/')
                             # Check if we have a directory
                             info = QFileInfo(filename)

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -20,16 +20,12 @@
    <string>Recordset display</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">/*QLabel#lblCursorTime{color:cyan;}
-
-QWidget#displayContents,QFrame#frmSensors,QScrollArea{background-color:rgba(0,0,0,0%);}
-
-QMdiArea{background-color:rgba(250,250,250,0%);}
-
-QGraphicsView{background-color:transparent;}
-*/</string>
+   <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
+   <property name="spacing">
+    <number>0</number>
+   </property>
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -799,7 +795,7 @@ QGraphicsView{background-color:transparent;}
       <item>
        <widget class="QMdiArea" name="mdiArea">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
+         <sizepolicy hsizetype="Expanding" vsizetype="Ignored">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>

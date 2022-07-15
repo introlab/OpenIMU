@@ -1,7 +1,11 @@
 import sys
 
-from PySide6.QtWidgets import QApplication, QTreeWidget, QTreeWidgetItem, QStyleFactory
-from PySide6.QtCore import Qt, Slot, Signal, QFile
+from PySide6.QtWidgets import QApplication, QMainWindow
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QSurfaceFormat
+from libopenimu.qt.OpenIMUApp import OpenIMUApp
+
+from libopenimu.qt.Charts import IMUChartView
 
 
 def except_hook(cls, exception, traceback):
@@ -18,10 +22,14 @@ if __name__ == '__main__':
     from libopenimu.qt.OpenIMUApp import OpenIMUApp
     from libopenimu.qt.MainWindow import MainWindow
 
+    # Support high DPI scaling
+    # Must be done before starting the app
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+
     app = OpenIMUApp()
 
     # Route errors to error dialog
-    sys.excepthook = except_hook
+    # sys.excepthook = except_hook
 
     # Set current directory to home path
     QDir.setCurrent(QDir.homePath())

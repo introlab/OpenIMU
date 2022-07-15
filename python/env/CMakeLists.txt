@@ -5,7 +5,7 @@ if(WIN32)
     message(STATUS "env $ENV{HOMEPATH}")
     set(CONDA_PATH "$ENV{SYSTEMDRIVE}$ENV{HOMEPATH}/Miniconda3/Scripts/conda.exe")
 else(WIN32)
-    set(CONDA_PATH "$ENV{HOME}/miniconda3/bin/conda")
+    set(CONDA_PATH "$ENV{HOME}/opt/miniconda3/bin/conda")
 endif(WIN32)
 
 

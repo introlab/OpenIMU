@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1043</width>
+    <width>1119</width>
     <height>593</height>
    </rect>
   </property>
@@ -25,21 +25,6 @@
   <property name="windowIcon">
    <iconset resource="../core.qrc">
     <normaloff>:/OpenIMU/icons/OpenIMU.png</normaloff>:/OpenIMU/icons/OpenIMU.png</iconset>
-  </property>
-  <property name="styleSheet">
-   <string notr="true"/>
-  </property>
-  <property name="documentMode">
-   <bool>false</bool>
-  </property>
-  <property name="dockNestingEnabled">
-   <bool>false</bool>
-  </property>
-  <property name="dockOptions">
-   <set>QMainWindow::AnimatedDocks</set>
-  </property>
-  <property name="unifiedTitleAndToolBarOnMac">
-   <bool>false</bool>
   </property>
   <widget class="QWidget" name="frmMain">
    <property name="sizePolicy">
@@ -75,8 +60,8 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>274</width>
-     <height>180</height>
+     <width>280</width>
+     <height>182</height>
     </size>
    </property>
    <property name="floating">
@@ -406,7 +391,7 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>1078</width>
+     <width>1119</width>
      <height>50</height>
     </size>
    </property>

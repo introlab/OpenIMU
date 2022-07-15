@@ -210,7 +210,10 @@ QToolButton#btnAddGroup, QToolButton#btnAddParticipant, QToolButton#btnDelete, Q
 /* QTreeWidget          */
 /************************/
 
-QTreeWidget{background-color:rgba(200,200,200,75%);}
+QTreeWidget{
+    background-color:rgba(200,200,200,75%);
+    show-decoration-selected: 0;
+}
 
 QTreeWidget::item:hover#treeDataSet,QTreeWidget::item:hover:selected#treeDataSet {
     border: none;
@@ -362,6 +365,7 @@ QListWidget::indicator, QTreeWidget::indicator, QTableWidget::indicator {
 QCheckBox::indicator:unchecked:!enabled {
     image: url(:/OpenIMU/controls/check_off_disabled.png);
 }
+
 QListWidget::indicator:unchecked:!enabled, QTreeWidget::indicator:unchecked:!enabled, QTableWidget::indicator:unchecked:!enabled{
     image: url(:/OpenIMU/controls/check2_off_disabled.png);
 }

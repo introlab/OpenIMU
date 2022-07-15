@@ -26,8 +26,8 @@ class AboutScreen(QDialog):
                 if self.UI.wdgFun.layout().count() > 0:
                     self.UI.wdgFun.layout().removeWidget(self.UI.wdgFun.layout().itemAt(0))
                 snake = Snake()
-                snake.setFocus()
                 self.UI.wdgFun.layout().addWidget(snake)
+                snake.setFocus()
 
 
 # Based on https://github.com/mlisbit/pyqt_snake

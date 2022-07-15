@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QApplication, QDialog
+from PySide6.QtWidgets import QApplication, QDialog, QHBoxLayout
 from PySide6.QtCore import Qt, QFile, QLocale, QTranslator, QLibraryInfo, Slot
 
 from libopenimu.tools.Settings import OpenIMUSettings
@@ -11,21 +11,24 @@ import sys
 class OpenIMUApp(QApplication):
 
     def __init__(self):
-        super().__init__()
+        QApplication.__init__(self)
+        # diag = QDialog()
+        # layout = QHBoxLayout(diag)
+        # graph2 = IMUChartView()
+        # graph2.add_test_data()
+        # layout.addWidget(graph2)
+        # diag.exec()
         self.settings = OpenIMUSettings()
         self.qt_translator = QTranslator()
         self.translator = QTranslator()
 
-        self.start_window = None
-        self.main_window = None
+        self.start_window: StartWindow | None = None
+        self.main_window: MainWindow | None = None
 
         # Set Style
         # style = QStyleFactory.create('Windows')
         # self.setStyle(style)
 
-        # Support high DPI scaling
-        # Must be done before starting the app
-        self.setAttribute(Qt.AA_EnableHighDpiScaling)
         # Don't quit automatically - because we are using both Start and Main Windows, app can stop early if not set
         self.setQuitOnLastWindowClosed(False)
 
@@ -53,7 +56,7 @@ class OpenIMUApp(QApplication):
             QLocale.setDefault(locale)
 
             # Install Qt Translator for default widgets
-            print(QLibraryInfo.location(QLibraryInfo.TranslationsPath))
+            # print(QLibraryInfo.location(QLibraryInfo.TranslationsPath))
             if self.qt_translator.load('qtbase_' + locale.name(), QLibraryInfo.location(QLibraryInfo.TranslationsPath)):
                 self.installTranslator(self.qt_translator)
             else:
@@ -91,11 +94,12 @@ class OpenIMUApp(QApplication):
     def request_show_start_window(self):
         self.show_start_window()
         if self.main_window:
-            self.main_window.hide()
+            self.main_window.deleteLater()
             self.main_window = None
 
     def show_start_window(self):
         if self.start_window:
+            self.start_window.deleteLater()
             self.start_window = None
 
         self.start_window = StartWindow()

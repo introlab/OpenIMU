@@ -18,7 +18,7 @@ class IMUChartView(QChartView, BaseGraph):
         QChartView.__init__(self, parent=parent)
 
         # Render on OpenGL
-        self.setViewport(QOpenGLWidget())
+        self.setViewport(QOpenGLWidget(self))
         self.xvalues = {}
 
         self.chart = QChart()

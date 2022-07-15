@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>182</height>
+    <height>188</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -81,7 +81,6 @@ QProgressBar#prgTotal::chunk{
        </property>
        <property name="font">
         <font>
-         <pointsize>12</pointsize>
          <bold>true</bold>
         </font>
        </property>
@@ -129,7 +128,6 @@ QProgressBar#prgTotal::chunk{
        </property>
        <property name="font">
         <font>
-         <pointsize>10</pointsize>
          <italic>true</italic>
         </font>
        </property>
@@ -142,7 +140,6 @@ QProgressBar#prgTotal::chunk{
       <widget class="QLabel" name="lblCurrentTaskValue">
        <property name="font">
         <font>
-         <pointsize>10</pointsize>
          <bold>true</bold>
         </font>
        </property>

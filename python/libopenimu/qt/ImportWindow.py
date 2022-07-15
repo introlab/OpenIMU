@@ -95,7 +95,7 @@ class ImportWindow(QDialog):
 
     @Slot()
     def browse_clicked(self):
-        settings = OpenIMUSettings
+        settings = OpenIMUSettings()
         file_diag = QFileDialog.getSaveFileName(parent=self, caption=self.tr("Dataset filename"), filter="*.oi",
                                                 dir=str(settings.database_base_path))
 

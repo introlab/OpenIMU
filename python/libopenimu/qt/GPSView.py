@@ -1,4 +1,3 @@
-import sys
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWebEngineCore import QWebEngineSettings
 from PySide6.QtCore import QUrl, Slot, Signal, QPointF
@@ -8,6 +7,7 @@ from libopenimu.qt.BaseGraph import BaseGraph
 import numpy as np
 import datetime
 import collections
+import sys
 
 
 class GPSView(QWebEngineView, BaseGraph):

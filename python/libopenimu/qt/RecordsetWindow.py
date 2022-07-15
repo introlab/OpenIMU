@@ -180,6 +180,9 @@ class RecordsetWindow(QWidget):
         self.UI.btnClearSelection.setEnabled(False)
         self.update_tile_buttons_state()
 
+    def __del__(self):
+        self.UI.mdiArea.closeAllSubWindows()
+
     def paintEvent(self, paint_event):
         if not self.time_pixmap:
             self.time_pixmap = True
@@ -325,7 +328,7 @@ class RecordsetWindow(QWidget):
 
     def get_time_from_timeview_pos(self, pos):
         if len(self.recordsets) == 0:
-            return None;
+            return None
 
         start_time = self.get_recordset_start_day_date().timestamp()
         end_time = self.get_recordset_end_day_date().timestamp()
@@ -502,6 +505,8 @@ class RecordsetWindow(QWidget):
 
         process.start()
         dialog.exec()
+        process.deleteLater()
+        dialog.deleteLater()
         QGuiApplication.restoreOverrideCursor()
 
         # Combine tasks results
@@ -711,6 +716,8 @@ class RecordsetWindow(QWidget):
 
         process.start()
         dialog.exec()
+        process.deleteLater()
+        dialog.deleteLater()
         QGuiApplication.restoreOverrideCursor()
 
         return task.results['timeseries'], task.results['channel_data']
@@ -825,7 +832,6 @@ class RecordsetWindow(QWidget):
                 graph.set_selection_area_from_time(self.get_time_from_timeview_pos(start_x),
                                                    self.get_time_from_timeview_pos(end_x))
 
-    @Slot()
     def on_timeview_clear_selection_requested(self):
         self.timeScene.removeItem(self.selection_rec)
         self.UI.btnClearSelection.setEnabled(False)
@@ -835,7 +841,6 @@ class RecordsetWindow(QWidget):
         for graph in self.sensors_graphs.values():
             graph.clear_selection_area()
 
-    @Slot()
     def on_timeview_zoom_selection_requested(self):
         self.UI.graphTimeline.scale(1 / self.zoom_level, 1)
         # zoom_value = (self.timeScene.width() / (self.selection_rec.rect().width()))
@@ -850,7 +855,6 @@ class RecordsetWindow(QWidget):
                                         * self.zoom_level)
         self.on_timeview_clear_selection_requested()
 
-    @Slot()
     def on_timeview_zoom_reset_requested(self):
         self.UI.graphTimeline.scale(1 / self.zoom_level, 1)
         self.zoom_level = 1
@@ -858,7 +862,6 @@ class RecordsetWindow(QWidget):
         self.adjust_timeview_size()
         self.UI.scrollTimeline.setValue(0)
 
-    @Slot()
     def on_timeview_show_hide_requested(self):
         visible = not self.UI.frameTimeline.isVisible()
         self.UI.frameTimeline.setVisible(visible)

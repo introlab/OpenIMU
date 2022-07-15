@@ -1,14 +1,13 @@
-from PySide6.QtWidgets import QWidget, QButtonGroup, QAbstractButton, QApplication
+from PySide6.QtWidgets import QWidget, QButtonGroup, QAbstractButton
 from PySide6.QtCore import Signal, QObject, QEvent, Slot
-from PySide6.QtGui import QLinearGradient, QColor
 
 from resources.ui.python.GraphWidget_ui import Ui_frmGraphWidget
 from libopenimu.qt.Charts import IMUChartView
-from libopenimu.qt.GPSView import GPSView
 from libopenimu.qt.BeaconsView import BeaconsView
 from libopenimu.qt.BaseGraph import GraphInteractionMode
-from libopenimu.models.Sensor import Sensor
 from libopenimu.qt.DataInfosWidget import DataInfosWidget
+
+from libopenimu.models.Sensor import Sensor
 
 import datetime
 
@@ -38,9 +37,10 @@ class GraphWindow(QWidget):
         # Create correct graph
         self.graph = None
         if graph_type == GraphType.LINECHART:
-            self.graph = IMUChartView(self)
+            self.graph = IMUChartView()
 
         if graph_type == GraphType.MAP:
+            from libopenimu.qt.GPSView import GPSView
             self.graph = GPSView(self)
             self.UI.btnMove.hide()
             self.UI.btnSelect.hide()
@@ -54,7 +54,6 @@ class GraphWindow(QWidget):
         if self.graph is None:
             print("GraphWindow: Undefined graph type.")
             return
-
         self.UI.wdgChart.layout().addWidget(self.graph)
 
         # Initial UI state

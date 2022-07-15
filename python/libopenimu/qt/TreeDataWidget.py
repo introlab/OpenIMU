@@ -11,24 +11,23 @@ from datetime import datetime
 
 
 class TreeDataWidget(QTreeWidget):
-    groups = {}
-    participants = {}
-    recordsets = {}
-    results = {}
-    dates = {}
-
-    items_groups = {}
-    items_participants = {}
-    items_recordsets = {}
-    items_results = {}
-    items_dates = {}
 
     participantDragged = Signal(Participant)
 
-    owner = None
-
     def __init__(self, parent=None):
-        super(TreeDataWidget, self).__init__(parent=parent)
+        QTreeWidget.__init__(self, parent)
+        self.owner = None
+        self.groups = {}
+        self.participants = {}
+        self.recordsets = {}
+        self.results = {}
+        self.dates = {}
+
+        self.items_groups = {}
+        self.items_participants = {}
+        self.items_recordsets = {}
+        self.items_results = {}
+        self.items_dates = {}
 
     def remove_group(self, group):
         item = self.items_groups.get(group.id_group, None)
@@ -357,7 +356,7 @@ class TreeDataWidget(QTreeWidget):
             self.update_date(data, 0)
 
     def clear(self):
-
+        super().clear()
         self.groups = {}
         self.participants = {}
         self.recordsets = {}
@@ -369,8 +368,6 @@ class TreeDataWidget(QTreeWidget):
         self.items_recordsets = {}
         self.items_results = {}
         self.items_dates = {}
-
-        super().clear()
 
     def dropEvent(self, event):
         target_type = None
