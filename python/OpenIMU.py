@@ -25,10 +25,12 @@ if __name__ == '__main__':
     # Must be done before starting the app
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
 
-    # Needed for the webengine to work properly, at least on Mac OS
+    # Needed for the webengine to work properly
+    # Initially useful for MacOS, but also seem to improve speed a little in Windows...
+
+    # if platform.system() == 'Darwin':
     QApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
-    if platform.system() == 'Darwin':
-        QQuickWindow.setGraphicsApi(QSGRendererInterface.OpenGLRhi)
+    QQuickWindow.setGraphicsApi(QSGRendererInterface.OpenGLRhi)
 
     app = OpenIMUApp()
 

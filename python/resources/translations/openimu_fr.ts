@@ -547,58 +547,58 @@
         <translation>Glisser &amp; déposer les fichiers à importer ici</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="132"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="133"/>
         <source>Invalid import structure</source>
         <translation>Format d&apos;importation invalide</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="158"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="159"/>
         <source>Unknown file type</source>
         <translation>Type de fichier inconnu</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="159"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="160"/>
         <source>Skipping file</source>
         <translation>Fichier ignoré</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="184"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="185"/>
         <source>Data importation</source>
         <translation>Importation des données</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="195"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="196"/>
         <source>Error while importing data</source>
         <translation>Erreur lors de l&apos;importation des données</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="196"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="197"/>
         <source>Error occured while importing data files. See logs for more information.</source>
         <translation>Au moins une erreur est survenue lors de l&apos;importation des fichiers. Voir dans les journaux pour plus d&apos;information.</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="224"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="225"/>
         <source>Error importing file:</source>
         <translation>Erreur lors de l&apos;importation du fichier:</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="329"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="330"/>
         <source>Select file(s) to import</source>
         <translation>Sélectionner le(s) fichier(s) à importer</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="350"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="351"/>
         <source>Select folder to import</source>
         <translation>Sélectionner le dossier à importer</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="460"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="462"/>
         <location filename="../ui/ImportBrowser.ui" line="645"/>
         <source>Unspecified</source>
         <translation>Non-spécifié</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="481"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="483"/>
         <source>New participant</source>
         <translation>Nouveau participant</translation>
     </message>
@@ -743,37 +743,37 @@
 <context>
     <name>Importer</name>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="103"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="104"/>
         <source>Importing data...</source>
         <translation>Importation des données...</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="118"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="119"/>
         <source>File import completed.</source>
         <translation>Importation du fichier complétée.</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="120"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="121"/>
         <source>Error loading file:</source>
         <translation>Erreur lors du chargement du fichier:</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="123"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="124"/>
         <source>Data from file</source>
         <translation>Les données du fichier</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="124"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="125"/>
         <source>already in the database for participant</source>
         <translation>sont déjà présentes pour le participant</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="125"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="126"/>
         <source>ignored.</source>
         <translation>ignorées.</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="98"/>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="99"/>
         <source>Loading file:</source>
         <translation>Chargement du fichier:</translation>
     </message>
@@ -781,126 +781,126 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../ui/MainWindow.ui" line="92"/>
-        <location filename="../ui/MainWindow.ui" line="510"/>
+        <location filename="../ui/MainWindow.ui" line="77"/>
+        <location filename="../ui/MainWindow.ui" line="495"/>
         <source>Data structure</source>
         <translation>Structure des données</translation>
     </message>
     <message>
         <location filename="../../libopenimu/qt/MainWindow.py" line="365"/>
-        <location filename="../ui/MainWindow.ui" line="198"/>
+        <location filename="../ui/MainWindow.ui" line="183"/>
         <source>New group</source>
         <translation>Nouveau groupe</translation>
     </message>
     <message>
         <location filename="../../libopenimu/qt/MainWindow.py" line="398"/>
-        <location filename="../ui/MainWindow.ui" line="239"/>
+        <location filename="../ui/MainWindow.ui" line="224"/>
         <source>New participant</source>
         <translation>Nouveau participant</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="293"/>
+        <location filename="../ui/MainWindow.ui" line="278"/>
         <source>Rename</source>
         <translation>Renommer</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="331"/>
+        <location filename="../ui/MainWindow.ui" line="316"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="368"/>
-        <location filename="../ui/MainWindow.ui" line="566"/>
+        <location filename="../ui/MainWindow.ui" line="353"/>
+        <location filename="../ui/MainWindow.ui" line="551"/>
         <source>Logs</source>
         <translation>Journaux</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="616"/>
+        <location filename="../ui/MainWindow.ui" line="601"/>
         <source>Import new data into this database</source>
         <translation>Importer de nouvelles données dans cette base de données</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="619"/>
+        <location filename="../ui/MainWindow.ui" line="604"/>
         <source>Import</source>
         <translation>Importer</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="656"/>
+        <location filename="../ui/MainWindow.ui" line="641"/>
         <source>Transfer data from a device</source>
         <translation>Transférer des données à partir d&apos;un appareil</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="659"/>
+        <location filename="../ui/MainWindow.ui" line="644"/>
         <source>Transfer from device</source>
         <translation>Recevoir données</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="709"/>
+        <location filename="../ui/MainWindow.ui" line="694"/>
         <source>Process data with available algorithms</source>
         <translation>Traiter les données avec un des algorithmes disponible</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="712"/>
+        <location filename="../ui/MainWindow.ui" line="697"/>
         <source>Process</source>
         <translation>Analyser</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="752"/>
+        <location filename="../ui/MainWindow.ui" line="737"/>
         <source>Export data to external formats</source>
         <translation>Exporter les données vers des fichiers externes</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="755"/>
+        <location filename="../ui/MainWindow.ui" line="740"/>
         <source>Export</source>
         <translation>Exporter</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="802"/>
+        <location filename="../ui/MainWindow.ui" line="787"/>
         <source>Compact and optimize database structure</source>
         <translation>Compacter et optimiser la structure de la base de données</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="805"/>
+        <location filename="../ui/MainWindow.ui" line="790"/>
         <source>Compact</source>
         <translation>Compacter</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="840"/>
+        <location filename="../ui/MainWindow.ui" line="825"/>
         <source>Database information</source>
         <translation>Informations sur la base de données</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="843"/>
+        <location filename="../ui/MainWindow.ui" line="828"/>
         <source>Informations</source>
         <translation>Informations</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="899"/>
+        <location filename="../ui/MainWindow.ui" line="884"/>
         <source>Close the current dataset</source>
         <translation>Fermer la base de données</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="902"/>
+        <location filename="../ui/MainWindow.ui" line="887"/>
         <source>Close</source>
         <translation>Fermer</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.ui" line="924"/>
+        <location filename="../ui/MainWindow.ui" line="909"/>
         <source>Quit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="65"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="64"/>
         <source>OpenIMU - Ready.</source>
         <translation>OpenIMU - Prêt.</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="76"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="75"/>
         <source>Loading data...</source>
         <translation>Chargement des données...</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="84"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="83"/>
         <source>Data loaded!</source>
         <translation>Données chargées!</translation>
     </message>
@@ -953,56 +953,56 @@
     </message>
     <message>
         <location filename="../../libopenimu/qt/MainWindow.py" line="371"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="512"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="515"/>
         <source>Group</source>
         <translation>Groupe</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="512"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="517"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="515"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="520"/>
         <source>updated.</source>
         <translation>mis à jour.</translation>
     </message>
     <message>
         <location filename="../../libopenimu/qt/MainWindow.py" line="404"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="517"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="520"/>
         <source>Participant</source>
         <translation>Participant</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="718"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="715"/>
         <source>Data Editor</source>
         <translation>Éditeur de données</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="548"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="551"/>
         <source>Are you sure you want to delete</source>
         <translation>Êtes-vous sûrs de vouloir supprimer</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="549"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="552"/>
         <source>and all associated elements?</source>
         <translation>et tous les éléments associés?</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="550"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="553"/>
         <source>Confirm deletion</source>
         <translation>Confirmation de suppression</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="561"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="567"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="577"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="584"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="592"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="608"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="620"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="634"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="564"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="570"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="580"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="587"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="595"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="611"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="623"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="637"/>
         <source>Deleting</source>
         <translation>Suppression</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="640"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="643"/>
         <source>was deleted.</source>
         <translation>a été supprimé.</translation>
     </message>
@@ -1031,27 +1031,27 @@
         <translation>Affichage de la progression</translation>
     </message>
     <message>
-        <location filename="../ui/ProgressDialog.ui" line="89"/>
+        <location filename="../ui/ProgressDialog.ui" line="88"/>
         <source>Work in progress...</source>
         <translation>Travail en cours...</translation>
     </message>
     <message>
-        <location filename="../ui/ProgressDialog.ui" line="137"/>
+        <location filename="../ui/ProgressDialog.ui" line="135"/>
         <source>Processing:</source>
         <translation>En cours:</translation>
     </message>
     <message>
-        <location filename="../ui/ProgressDialog.ui" line="200"/>
+        <location filename="../ui/ProgressDialog.ui" line="197"/>
         <source>Unknown</source>
         <translation>Inconnu</translation>
     </message>
     <message>
-        <location filename="../ui/ProgressDialog.ui" line="213"/>
+        <location filename="../ui/ProgressDialog.ui" line="210"/>
         <source>Remaining time:</source>
         <translation>Temps restant:</translation>
     </message>
     <message>
-        <location filename="../ui/ProgressDialog.ui" line="239"/>
+        <location filename="../ui/ProgressDialog.ui" line="236"/>
         <source>Elapsed time:</source>
         <translation>Temps écoulé:</translation>
     </message>
@@ -1059,38 +1059,38 @@
 <context>
     <name>RecordsetWindow</name>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="228"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="231"/>
         <source>Warning</source>
         <translation>Avertissement</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="229"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="232"/>
         <source>Displaying a timeline spanning over more than 2 years isn&apos;t supported for now</source>
         <translation>L&apos;affichage d&apos;une ligne du temps de 2 ans ou plus n&apos;est pas supportée pour l&apos;instant</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="277"/>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="278"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="280"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="281"/>
         <source>No data.</source>
         <translation>Aucune donnée.</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="496"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="499"/>
         <source>Loading temporal data</source>
         <translation>Chargement des données temporelles</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="501"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="504"/>
         <source>Loading</source>
         <translation>Chargement</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="706"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="711"/>
         <source>Loading data...</source>
         <translation>Chargement des données...</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="710"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="715"/>
         <source>Processing</source>
         <translation>Traitement</translation>
     </message>
@@ -1345,12 +1345,12 @@ dans la base de données</translation>
 <context>
     <name>TreeDataWidget</name>
     <message>
-        <location filename="../../libopenimu/qt/TreeDataWidget.py" line="159"/>
+        <location filename="../../libopenimu/qt/TreeDataWidget.py" line="158"/>
         <source>Recordings</source>
         <translation>Enregistrements</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/TreeDataWidget.py" line="167"/>
+        <location filename="../../libopenimu/qt/TreeDataWidget.py" line="166"/>
         <source>Results</source>
         <translation>Résultats</translation>
     </message>
@@ -1575,68 +1575,68 @@ dans la base de données</translation>
         <translation>Affichage - Enregistrement(s)</translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="122"/>
+        <location filename="../ui/RecordsetWidget.ui" line="118"/>
         <source>Data range: </source>
         <translation>Plage des données: </translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="172"/>
+        <location filename="../ui/RecordsetWidget.ui" line="168"/>
         <source>Total time:</source>
         <translation>Temps total:</translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="304"/>
+        <location filename="../ui/RecordsetWidget.ui" line="300"/>
         <source>Zoom on selection</source>
         <translation>Zoomer sur la sélection</translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="278"/>
-        <location filename="../ui/RecordsetWidget.ui" line="307"/>
-        <location filename="../ui/RecordsetWidget.ui" line="349"/>
-        <location filename="../ui/RecordsetWidget.ui" line="679"/>
-        <location filename="../ui/RecordsetWidget.ui" line="711"/>
-        <location filename="../ui/RecordsetWidget.ui" line="740"/>
-        <location filename="../ui/RecordsetWidget.ui" line="769"/>
+        <location filename="../ui/RecordsetWidget.ui" line="274"/>
+        <location filename="../ui/RecordsetWidget.ui" line="303"/>
+        <location filename="../ui/RecordsetWidget.ui" line="345"/>
+        <location filename="../ui/RecordsetWidget.ui" line="675"/>
+        <location filename="../ui/RecordsetWidget.ui" line="707"/>
+        <location filename="../ui/RecordsetWidget.ui" line="736"/>
+        <location filename="../ui/RecordsetWidget.ui" line="765"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="275"/>
+        <location filename="../ui/RecordsetWidget.ui" line="271"/>
         <source>Initial zoom</source>
         <translation>Zoom initial</translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="346"/>
+        <location filename="../ui/RecordsetWidget.ui" line="342"/>
         <source>Clear selection</source>
         <translation>Effacer la sélection</translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="549"/>
+        <location filename="../ui/RecordsetWidget.ui" line="545"/>
         <source>Show / hide temporal view</source>
         <translation>Afficher / masquer la vue temporelle</translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="588"/>
+        <location filename="../ui/RecordsetWidget.ui" line="584"/>
         <source>Unknown date / time</source>
         <translation>Date / heure inconnue</translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="676"/>
+        <location filename="../ui/RecordsetWidget.ui" line="672"/>
         <source>New graph</source>
         <translation>Nouveau graphique</translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="708"/>
+        <location filename="../ui/RecordsetWidget.ui" line="704"/>
         <source>Tile horizontally</source>
         <translation>Organiser horizontalement</translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="737"/>
+        <location filename="../ui/RecordsetWidget.ui" line="733"/>
         <source>Tile vertically</source>
         <translation>Organiser verticalement</translation>
     </message>
     <message>
-        <location filename="../ui/RecordsetWidget.ui" line="766"/>
+        <location filename="../ui/RecordsetWidget.ui" line="762"/>
         <source>Auto tile</source>
         <translation>Organiser automatiquement</translation>
     </message>

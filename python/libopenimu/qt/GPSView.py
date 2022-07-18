@@ -142,7 +142,7 @@ class GPSView(QWebEngineView, BaseGraph):
 
     @Slot(bool)
     def page_loaded(self, state):
-        print('page loaded:', state)
+        # print('page loaded:', state)
 
         if state is True:
             self.pageReady = True
