@@ -12,6 +12,7 @@ QWidget#dockWidgetTreeContents,QWidget#dockWidgetLogContents,QWidget#dockWidgetT
 QWidget#MainWindow, QWidget#ImportBrowser, QWidget#ImportManager, QWidget#frmParticipant, QWidget#ExportCSV, QWidget#ImportDialog, QWidget#StartDialog, QWidget#dlgProcessSelect, QWidget#DataInfosWidget, QWidget#GraphWindow, QDialog {
     background:qlineargradient(spread:pad, x1:0.483, y1:0, x2:0.511045, y2:1, stop:0 rgb(50,50,50), stop:1 rgb(20,20,20));
     border-radius:0px;
+    color: white;
 }
 
 QWidget#centralWidget{

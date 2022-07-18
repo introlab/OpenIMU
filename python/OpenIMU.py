@@ -1,11 +1,10 @@
 import sys
+import platform
 
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QSurfaceFormat
-from libopenimu.qt.OpenIMUApp import OpenIMUApp
-
-from libopenimu.qt.Charts import IMUChartView
+from PySide6.QtQuick import QQuickWindow, QSGRendererInterface
 
 
 def except_hook(cls, exception, traceback):
@@ -25,6 +24,11 @@ if __name__ == '__main__':
     # Support high DPI scaling
     # Must be done before starting the app
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+
+    # Needed for the webengine to work properly, at least on Mac OS
+    QApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
+    if platform.system() == 'Darwin':
+        QQuickWindow.setGraphicsApi(QSGRendererInterface.OpenGLRhi)
 
     app = OpenIMUApp()
 
