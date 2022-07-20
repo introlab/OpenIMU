@@ -918,11 +918,6 @@
         <translation>Données chargées!</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="319"/>
-        <source>This dataset will be closed. Do you want to continue?</source>
-        <translation>Cette base de données sera fermée. Voulez-vous continuer?</translation>
-    </message>
-    <message>
         <location filename="../../libopenimu/qt/MainWindow.py" line="320"/>
         <source>Close?</source>
         <translation>Fermer?</translation>
@@ -993,6 +988,11 @@
         <translation>Êtes-vous sûrs de vouloir supprimer</translation>
     </message>
     <message>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="319"/>
+        <source>This database will be closed. Do you want to continue?</source>
+        <translation>Cette base de données sera fermée. Souhaitez-vous continuer?</translation>
+    </message>
+    <message>
         <location filename="../../libopenimu/qt/MainWindow.py" line="552"/>
         <source>and all associated elements?</source>
         <translation>et tous les éléments associés?</translation>
@@ -1044,27 +1044,27 @@
         <translation>Affichage de la progression</translation>
     </message>
     <message>
-        <location filename="../ui/ProgressDialog.ui" line="88"/>
+        <location filename="../ui/ProgressDialog.ui" line="89"/>
         <source>Work in progress...</source>
         <translation>Travail en cours...</translation>
     </message>
     <message>
-        <location filename="../ui/ProgressDialog.ui" line="135"/>
+        <location filename="../ui/ProgressDialog.ui" line="136"/>
         <source>Processing:</source>
         <translation>En cours:</translation>
     </message>
     <message>
-        <location filename="../ui/ProgressDialog.ui" line="197"/>
+        <location filename="../ui/ProgressDialog.ui" line="198"/>
         <source>Unknown</source>
         <translation>Inconnu</translation>
     </message>
     <message>
-        <location filename="../ui/ProgressDialog.ui" line="210"/>
+        <location filename="../ui/ProgressDialog.ui" line="211"/>
         <source>Remaining time:</source>
         <translation>Temps restant:</translation>
     </message>
     <message>
-        <location filename="../ui/ProgressDialog.ui" line="236"/>
+        <location filename="../ui/ProgressDialog.ui" line="237"/>
         <source>Elapsed time:</source>
         <translation>Temps écoulé:</translation>
     </message>

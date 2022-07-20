@@ -145,10 +145,11 @@ QProgressBar::chunk{
 }
 
 QProgressBar{
-    color: black;
+    color: white;
     text-align: center;
     border: 1px solid black;
     border-radius: 5px;
+    background-color: rgba(0,0,0, 75%);
 }
 
 /*************************/

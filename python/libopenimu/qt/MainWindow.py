@@ -316,7 +316,7 @@ class MainWindow(QMainWindow):
         msg.setIcon(QMessageBox.Question)
         msg.setStyleSheet("QPushButton{min-width: 100px; min-height: 40px;}")
 
-        msg.setText(self.tr('This dataset will be closed. Do you want to continue?'))
+        msg.setText(self.tr('This database will be closed. Do you want to continue?'))
         msg.setWindowTitle(self.tr('Close?'))
         msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
 

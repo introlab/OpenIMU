@@ -19,11 +19,11 @@ This software was developped with support from [INTER](http://regroupementinter.
   
     *   [OpenIMU-MiniLogger](https://github.com/introlab/OpenIMU-MiniLogger)
   
-    *   AppleWatch SensorLogger (Open-source project available soon)
+    *   AppleWatch SensorLogger (Custom research app for data collection)
 
 *   Transfer data directly from sensors:
 
-    *   AppleWatch SensorLogger (Open-source project available soon)
+    *   AppleWatch SensorLogger (Custom research app for data collection)
 
 *   Data organization
 
@@ -48,21 +48,21 @@ This software was developped with support from [INTER](http://regroupementinter.
     *   Processing module, currently supporting:
     
         *   Freedson Activity Algorithm (Freedson PS1, Melanson E, Sirard J., Calibration of the Computer Science and Applications, Inc. accelerometer., Med Sci Sports Exerc. 1998 May;30(5):777-81)
+		*	Evenson Activity Alogirhtm (Kelly R. Evenson, Diane J. Catellier, Karminder Gill, Kristin S. Ondrak & Robert G. McMurray (2008) Calibration of two objective measures of physical activity for children, Journal of Sports Sciences, 26:14, 1557-1565, DOI: 10.1080/02640410802334196 )
 
     *   Processed results viewer
 
 *   Data exporter
 
     *   CSV format
+	*	Matlab format
+	*	Data export selector
+
+* Available in French and English, and as Windows and Mac OS apps.
 
 ### Planned features
-*   English translation (currently only available in French)
 
 *   Data splitting into sub-recordsets (by time, by day, manually)
-
-*   Versatile data exporter (currently exporting all data, not possible to filter or change format)
-
-*   Matlab API to access the OpenIMU file format (database)
 
 *   More data processing modules
 
@@ -72,6 +72,7 @@ This software was developped with support from [INTER](http://regroupementinter.
 ![Screenshot_3](./docs/images/GPSView_Screen.png)
 ![Screenshot_4](./docs/images/Analyze_Screen.png)
 ![Screenshot_5](./docs/images/Results_Screen.png)
+![Screenshot_6](./docs/images/Export_Screen.png)
 
 ## Getting Started for Developers
 Please follow those steps to setup your development environment.
@@ -88,7 +89,6 @@ Please follow those steps to setup your development environment.
     1.  Install the latest Desktop distribution fitting your compiling environment (will not be needed in the future)
   
 4.  Install [MiniConda3](https://conda.io/miniconda.html)
-    1.  Install Python 3.6 version for current user (in user directory)
     
 5.  Install [PyCharm Community Edition](https://www.jetbrains.com/pycharm/)
 
