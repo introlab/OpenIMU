@@ -15,14 +15,14 @@ set (ENV_PATH ${CMAKE_CURRENT_SOURCE_DIR}/python-${PYTHON_VERSION})
 file(MAKE_DIRECTORY ${ENV_PATH})
 
 # Default packages.
-set (pip_packages
-    PySide6
-    cython
-    numpy
-    scipy
-    sqlalchemy
-    alembic
-)
+#set (pip_packages
+#    PySide6
+#    cython
+#    numpy
+#    scipy
+#    sqlalchemy
+#    alembic
+#)
 
 # SB - Moved conda packages to pip to reduce package size (numpy and scipy, mainly)
 set (conda_packages

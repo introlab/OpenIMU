@@ -110,11 +110,19 @@ add_custom_target(python_target SOURCES ${libopenimu_python_files} ${openimuapp_
 
 message(STATUS ${python_files})
 
-#PyInstaller (Beta, Still have problems with QtWebEngine not found.)
+# PyInstaller
 set (installer_args
     #--hidden-import scipy._lib.messagestream
     #--hidden-import sqlalchemy.ext.baked
     --hidden-import logging.config
+#    --exclude-module PySide6.QtQml
+#    --exclude-module PySide6.QtQmlModels
+#    --exclude-module PySide6.QtQuick3DUtils
+#    --exclude-module PySide6.QtSerialPort
+#    --exclude-module PySide6.QtVirtualKeyboard
+#    --exclude-module PySide6.QtPositioning
+#    --exclude-module PySide6.QtWebChannel
+#    --exclude-module PySide6.QtWebEngineWidgets
     --clean
     -y
     --windowed # If windowed, no console is displayed
@@ -143,16 +151,78 @@ if(WIN32)
 endif(WIN32)
 
 if(APPLE)
+    set(MACSIGNID "")
+
+    set (installer_args
+        ${installer_args}
+        --osx-bundle-identifier ca.cdrv.openimu
+    )
     # Build this target to make a package
+    # set(APPSIGNPATH ${CMAKE_CURRENT_SOURCE_DIR}/dist)
+
+    set (qt_libs
+        "Contents/Frameworks/PySide6/Qt/lib/QtCore.framework/Versions/A/QtCore"
+        "Contents/Frameworks/PySide6/Qt/lib/QtDBus.framework/Versions/A/QtDBus"
+        "Contents/Frameworks/PySide6/Qt/lib/QtGui.framework/Versions/A/QtGui"
+        "Contents/Frameworks/PySide6/Qt/lib/QtNetwork.framework/Versions/A/QtNetwork"
+        "Contents/Frameworks/PySide6/Qt/lib/QtOpenGL.framework/Versions/A/QtOpenGL"
+        "Contents/Frameworks/PySide6/Qt/lib/QtPositioning.framework/Versions/A/QtPositioning"
+        "Contents/Frameworks/PySide6/Qt/lib/QtQml.framework/Versions/A/QtQml"
+        "Contents/Frameworks/PySide6/Qt/lib/QtQmlModels.framework/Versions/A/QtQmlModels"
+        "Contents/Frameworks/PySide6/Qt/lib/QtQuick.framework/Versions/A/QtQuick"
+        "Contents/Frameworks/PySide6/Qt/lib/QtWebChannel.framework/Versions/A/QtWebChannel"
+        "Contents/Frameworks/PySide6/Qt/lib/QtWebEngineCore.framework/Versions/A/QtWebEngineCore"
+    )
+
+    set(sign_libs)
+    foreach(lib ${qt_libs})
+        list(APPEND sign_libs
+            COMMAND codesign --force -s ${MACSIGNID} --deep --options=runtime --timestamp -v ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/${lib}
+        )
+    endforeach()
+    # Sign web engine with specific entitlements
+    list(APPEND sign_libs
+        COMMAND codesign --force -s ${MACSIGNID} --deep --options=runtime --timestamp --entitlements ${CMAKE_CURRENT_SOURCE_DIR}/../setup/QtWebEngineProcess.entitlements -v ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/Frameworks/PySide6/Qt/lib/QtWebEngineCore.framework/Versions/A/Helpers/QtWebEngineProcess.app
+        COMMAND codesign --force -s ${MACSIGNID} --deep --options=runtime --timestamp --entitlements ${CMAKE_CURRENT_SOURCE_DIR}/../setup/QtWebEngineProcess.entitlements -v ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/Frameworks/PySide6/Qt/lib/QtWebEngineCore.framework/Versions/A/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess
+    )
+
     add_custom_target(python_package
         COMMAND ${PYTHON_INSTALLER_EXECUTABLE} ${installer_args} ${CMAKE_CURRENT_SOURCE_DIR}/OpenIMU.py
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/alembic.ini ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/MacOS/
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/alembic ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/MacOS/alembic
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../setup/qt.conf ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/Resources
+        # COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../setup/qt.conf ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/Resources
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../setup/Info.plist ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/Info.plist
+
+        # Move Qt libraries in the correct Resource folder, since won't be able to properly sign otherwise
+
+        # Using shell script, since the following lines will do absolute links and not relative ones...
+#        COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/MacOS/PySide6 ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/Resources/PySide6
+#        COMMAND ln -s ../Resources/PySide6 ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/MacOS
+#        COMMAND ln -s ../MacOS/Qt* ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/Resources
+#        COMMAND ln -s ../MacOS/lib*.dylib ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/Resources
+
+        # Sign executables
+        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../setup/prepare_to_sign.sh
+
+        ${sign_libs}
+        COMMAND codesign --force -s ${MACSIGNID} --deep --options=runtime --timestamp  -v ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app
+
+        # COMMAND codesign --force -s ${MACSIGNID} --options=runtime --timestamp --entitlements ${CMAKE_CURRENT_SOURCE_DIR}/../setup/QtWebEngineProcess.entitlements -v ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app
+
+#        COMMAND codesign -dvv -v -v ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app
+#        COMMAND codesign --force --verify --verbose --sign ${MACSIGNID} --entitlements ${CMAKE_CURRENT_SOURCE_DIR}/../setup/QtWebEngineProcess.entitlements --options=runtime --timestamp -v ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/MacOS/PySide6/Qt/lib/QtWebEngineCore.framework/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess COMMAND_ECHO STDOUT
+#        COMMAND codesign --force --verify --verbose --sign ${MACSIGNID} --options=runtime --timestamp --entitlements ${CMAKE_CURRENT_SOURCE_DIR}/../setup/QtWebEngineProcess.entitlements -v ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/MacOS/OpenIMU COMMAND_ECHO STDOUT
+
+#       # Create dmg file
+        # ** Requires create-dmg installed with brew (https://github.com/create-dmg/create-dmg)
+        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../setup/create_dmg.sh
+
+        COMMAND codesign -s ${MACSIGNID} --options=runtime --timestamp -vvv ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.dmg
+
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         DEPENDS python_target ${python_uis} ${python_qrcs} python-env
     )
+
 endif(APPLE)
 
 #Translation files, this is done manually to avoid removing the file when doing make clean

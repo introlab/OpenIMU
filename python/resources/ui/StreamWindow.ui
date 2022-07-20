@@ -213,7 +213,6 @@
               </property>
               <property name="font">
                <font>
-                <pointsize>10</pointsize>
                 <bold>true</bold>
                 <stylestrategy>NoAntialias</stylestrategy>
                </font>
@@ -283,7 +282,6 @@
               </property>
               <property name="font">
                <font>
-                <pointsize>10</pointsize>
                 <bold>true</bold>
                 <stylestrategy>PreferDefault</stylestrategy>
                </font>
