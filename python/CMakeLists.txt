@@ -138,7 +138,6 @@ if(WIN32)
         #--hidden-import pkg_resources.py2_warn
         --paths ${PYTHON_ENV_DIRECTORY}/Lib/site-packages/scipy/.libs # PyInstaller doesn't seem to find all required DLLs for SciPy...
         --paths ${PYTHON_ENV_DIRECTORY}/Library/bin # PyInstaller doesn't seem to find sqlite3.dll...
-        --splash ../setup/splash.png # For now, only works on Windows and Linux
     )
 
     # Build this target to make a package
@@ -172,7 +171,7 @@ if(APPLE)
         "Contents/Frameworks/PySide6/Qt/lib/QtQmlModels.framework/Versions/A/QtQmlModels"
         "Contents/Frameworks/PySide6/Qt/lib/QtQuick.framework/Versions/A/QtQuick"
         "Contents/Frameworks/PySide6/Qt/lib/QtWebChannel.framework/Versions/A/QtWebChannel"
-        "Contents/Frameworks/PySide6/Qt/lib/QtWebEngineCore.framework/Versions/A/QtWebEngineCore"
+        # "Contents/Frameworks/PySide6/Qt/lib/QtWebEngineCore.framework/Versions/A/QtWebEngineCore"
     )
 
     set(sign_libs)
@@ -182,8 +181,9 @@ if(APPLE)
         )
     endforeach()
     # Sign web engine with specific entitlements
+    # Not working correctly for now - fix me!
     list(APPEND sign_libs
-        COMMAND codesign --force -s ${MACSIGNID} --deep --options=runtime --timestamp --entitlements ${CMAKE_CURRENT_SOURCE_DIR}/../setup/QtWebEngineProcess.entitlements -v ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/Frameworks/PySide6/Qt/lib/QtWebEngineCore.framework/Versions/A/Helpers/QtWebEngineProcess.app
+#        COMMAND codesign --force -s ${MACSIGNID} --deep --options=runtime --timestamp --entitlements ${CMAKE_CURRENT_SOURCE_DIR}/../setup/QtWebEngineProcess.entitlements -v ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/Frameworks/PySide6/Qt/lib/QtWebEngineCore.framework/Versions/A/Helpers/QtWebEngineProcess.app
         COMMAND codesign --force -s ${MACSIGNID} --deep --options=runtime --timestamp --entitlements ${CMAKE_CURRENT_SOURCE_DIR}/../setup/QtWebEngineProcess.entitlements -v ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/Frameworks/PySide6/Qt/lib/QtWebEngineCore.framework/Versions/A/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess
     )
 
@@ -204,6 +204,10 @@ if(APPLE)
 
         # Sign executables
         COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../setup/prepare_to_sign.sh
+
+        # Since webengine isn't working for now, removing from final package to reduce size
+        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/Frameworks/PySide6/Qt/lib/QtWebEngineCore.framework/Versions/A/QtWebEngineCore
+        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app/Contents/MacOS/QtWebEngineCore
 
         ${sign_libs}
         COMMAND codesign --force -s ${MACSIGNID} --deep --options=runtime --timestamp  -v ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU.app

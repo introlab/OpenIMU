@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QButtonGroup, QAbstractButton
+from PySide6.QtWidgets import QWidget, QButtonGroup, QAbstractButton, QMessageBox
 from PySide6.QtCore import Signal, QObject, QEvent, Slot
 
 from resources.ui.python.GraphWidget_ui import Ui_frmGraphWidget
@@ -10,6 +10,7 @@ from libopenimu.qt.DataInfosWidget import DataInfosWidget
 from libopenimu.models.Sensor import Sensor
 
 import datetime
+import platform
 
 
 class GraphType:
@@ -40,6 +41,10 @@ class GraphWindow(QWidget):
             self.graph = IMUChartView()
 
         if graph_type == GraphType.MAP:
+            if platform.system() == 'Darwin':
+                QMessageBox.warning(self, self.tr('Not available'), self.tr('Unfortunately, this feature isn\'t '
+                                                                            'available on Mac OS for now.'))
+                return
             from libopenimu.qt.GPSView import GPSView
             self.graph = GPSView(self)
             self.UI.btnMove.hide()

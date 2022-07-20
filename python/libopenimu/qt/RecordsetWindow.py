@@ -634,13 +634,18 @@ class RecordsetWindow(QWidget):
                 graph_window.graph.set_title(sensor_label)
 
             if graph_type == GraphType.MAP:
-                for data in channel_data:
-                    gps = GPSGeodetic()
-                    gps.from_bytes(data.data)
-                    if gps.latitude != 0 and gps.longitude != 0:
-                        graph_window.graph.add_position(data.timestamps.start_timestamp, gps.latitude / 1e7,
-                                                        gps.longitude / 1e7)
-                        graph_window.set_cursor_position_from_time(data.timestamps.start_timestamp)
+                import platform
+                if platform.system() != 'Darwin':
+                    for data in channel_data:
+                        gps = GPSGeodetic()
+                        gps.from_bytes(data.data)
+                        if gps.latitude != 0 and gps.longitude != 0:
+                            graph_window.graph.add_position(data.timestamps.start_timestamp, gps.latitude / 1e7,
+                                                            gps.longitude / 1e7)
+                            graph_window.set_cursor_position_from_time(data.timestamps.start_timestamp)
+                else:
+                    graph_window.deleteLater()
+                    graph_window = None
 
             if graph_type == GraphType.BEACON:
                 for series in timeseries:
