@@ -396,6 +396,13 @@ QCheckBox:checked{color:lightgreen;background-color:rgba(0,0,0,0%);}
 QCheckBox:!checked{color:red;background-color:rgba(0,0,0,0%);}
 
 /************************/
+/* QSpinBox             */
+/************************/
+QComboBox QAbstractItemView {
+    selection-color: blue;
+}
+
+/************************/
 /* QSpinBox            */
 /************************/
 
