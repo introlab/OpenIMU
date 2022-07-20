@@ -456,6 +456,19 @@
     </message>
 </context>
 <context>
+    <name>GraphWindow</name>
+    <message>
+        <location filename="../../libopenimu/qt/GraphWindow.py" line="45"/>
+        <source>Not available</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/GraphWindow.py" line="46"/>
+        <source>Unfortunately, this feature isn&apos;t available on Mac OS for now.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>IMUChartView</name>
     <message>
         <location filename="../../libopenimu/qt/Charts.py" line="126"/>
@@ -1085,12 +1098,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="711"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="716"/>
         <source>Loading data...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="715"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="720"/>
         <source>Processing</source>
         <translation type="unfinished"></translation>
     </message>
