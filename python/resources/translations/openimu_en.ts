@@ -1178,7 +1178,7 @@ in database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="323"/>
+        <location filename="../ui/StreamWindow.ui" line="321"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1193,90 +1193,90 @@ in database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="238"/>
+        <location filename="../ui/StreamWindow.ui" line="237"/>
         <source>Data save folder:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="248"/>
+        <location filename="../ui/StreamWindow.ui" line="247"/>
         <source>Delete raw data after transfer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="320"/>
+        <location filename="../ui/StreamWindow.ui" line="318"/>
         <source>Edit settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="390"/>
+        <location filename="../ui/StreamWindow.ui" line="388"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="419"/>
+        <location filename="../ui/StreamWindow.ui" line="417"/>
         <source>Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="448"/>
+        <location filename="../ui/StreamWindow.ui" line="446"/>
         <source>Active devices</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="499"/>
+        <location filename="../ui/StreamWindow.ui" line="497"/>
         <source>In progress (0)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="542"/>
+        <location filename="../ui/StreamWindow.ui" line="540"/>
         <source>Progress</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="547"/>
-        <location filename="../ui/StreamWindow.ui" line="607"/>
+        <location filename="../ui/StreamWindow.ui" line="545"/>
+        <location filename="../ui/StreamWindow.ui" line="605"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="552"/>
-        <location filename="../ui/StreamWindow.ui" line="612"/>
-        <location filename="../ui/StreamWindow.ui" line="656"/>
+        <location filename="../ui/StreamWindow.ui" line="550"/>
+        <location filename="../ui/StreamWindow.ui" line="610"/>
+        <location filename="../ui/StreamWindow.ui" line="654"/>
         <source>Filename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="565"/>
+        <location filename="../ui/StreamWindow.ui" line="563"/>
         <source>Completed (0)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="602"/>
+        <location filename="../ui/StreamWindow.ui" line="600"/>
         <source>Device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="625"/>
+        <location filename="../ui/StreamWindow.ui" line="623"/>
         <source>Errors (0)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="661"/>
+        <location filename="../ui/StreamWindow.ui" line="659"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="674"/>
+        <location filename="../ui/StreamWindow.ui" line="672"/>
         <source>Transfer log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="738"/>
+        <location filename="../ui/StreamWindow.ui" line="736"/>
         <source>Close and import data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="260"/>
+        <location filename="../ui/StreamWindow.ui" line="259"/>
         <source>Port</source>
         <translation type="unfinished"></translation>
     </message>

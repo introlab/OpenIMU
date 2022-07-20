@@ -21,6 +21,13 @@ if __name__ == '__main__':
     from libopenimu.qt.OpenIMUApp import OpenIMUApp
     from libopenimu.qt.MainWindow import MainWindow
 
+    try:
+        # Close the splash screen, if running from a frozen package with pyinstaller
+        import pyi_splash
+        pyi_splash.close()
+    except ModuleNotFoundError:
+        pass
+
     # Support high DPI scaling
     # Must be done before starting the app
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)

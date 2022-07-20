@@ -1179,7 +1179,7 @@ dans la base de données</translation>
         <translation>SensorLogger (Apple Watch)</translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="323"/>
+        <location filename="../ui/StreamWindow.ui" line="321"/>
         <source>Edit</source>
         <translation>Éditer</translation>
     </message>
@@ -1194,90 +1194,90 @@ dans la base de données</translation>
         <translation>Parcourir...</translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="238"/>
+        <location filename="../ui/StreamWindow.ui" line="237"/>
         <source>Data save folder:</source>
         <translation>Répertoire données brutes:</translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="248"/>
+        <location filename="../ui/StreamWindow.ui" line="247"/>
         <source>Delete raw data after transfer</source>
         <translation>Supprimer les données brutes après le transfert</translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="320"/>
+        <location filename="../ui/StreamWindow.ui" line="318"/>
         <source>Edit settings</source>
         <translation>Éditer paramètres</translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="390"/>
+        <location filename="../ui/StreamWindow.ui" line="388"/>
         <source>Save</source>
         <translation>Sauvegarder</translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="419"/>
+        <location filename="../ui/StreamWindow.ui" line="417"/>
         <source>Undo</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="448"/>
+        <location filename="../ui/StreamWindow.ui" line="446"/>
         <source>Active devices</source>
         <translation>Appareils actifs</translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="499"/>
+        <location filename="../ui/StreamWindow.ui" line="497"/>
         <source>In progress (0)</source>
         <translation>En cours (0)</translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="542"/>
+        <location filename="../ui/StreamWindow.ui" line="540"/>
         <source>Progress</source>
         <translation>Progression</translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="547"/>
-        <location filename="../ui/StreamWindow.ui" line="607"/>
+        <location filename="../ui/StreamWindow.ui" line="545"/>
+        <location filename="../ui/StreamWindow.ui" line="605"/>
         <source>Size</source>
         <translation>Taille</translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="552"/>
-        <location filename="../ui/StreamWindow.ui" line="612"/>
-        <location filename="../ui/StreamWindow.ui" line="656"/>
+        <location filename="../ui/StreamWindow.ui" line="550"/>
+        <location filename="../ui/StreamWindow.ui" line="610"/>
+        <location filename="../ui/StreamWindow.ui" line="654"/>
         <source>Filename</source>
         <translation>Fichier</translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="565"/>
+        <location filename="../ui/StreamWindow.ui" line="563"/>
         <source>Completed (0)</source>
         <translation>Complétés (0)</translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="602"/>
+        <location filename="../ui/StreamWindow.ui" line="600"/>
         <source>Device</source>
         <translation>Appareil</translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="625"/>
+        <location filename="../ui/StreamWindow.ui" line="623"/>
         <source>Errors (0)</source>
         <translation>Erreurs (0)</translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="661"/>
+        <location filename="../ui/StreamWindow.ui" line="659"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="674"/>
+        <location filename="../ui/StreamWindow.ui" line="672"/>
         <source>Transfer log</source>
         <translation>Journal</translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="738"/>
+        <location filename="../ui/StreamWindow.ui" line="736"/>
         <source>Close and import data</source>
         <translation>Fermer et importer</translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="260"/>
+        <location filename="../ui/StreamWindow.ui" line="259"/>
         <source>Port</source>
         <translation>Port</translation>
     </message>
