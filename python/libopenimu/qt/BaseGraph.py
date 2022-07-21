@@ -1,4 +1,5 @@
-from PyQt5.QtCore import pyqtSignal
+from PySide6.QtCore import Signal, QFile
+from PySide6.QtWidgets import QWidget
 
 
 class GraphInteractionMode:
@@ -7,33 +8,33 @@ class GraphInteractionMode:
 
 
 class BaseGraph:
-    cursorMoved = pyqtSignal(float)                 # Cursor position (timestamp value)
-    selectedAreaChanged = pyqtSignal(float, float)  # Start-timestamp, end-timestamp
-    clearedSelectionArea = pyqtSignal()
+    cursorMoved = Signal(float)                 # Cursor position (timestamp value)
+    selectedAreaChanged = Signal(float, float)  # Start-timestamp, end-timestamp
+    clearedSelectionArea = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self):
         self.selection_rec = None
         self.interaction_mode = GraphInteractionMode.SELECT
         self.total_samples = 0
 
     @classmethod
-    def setCursorPosition(cls, pos, emit_signal=False):
+    def set_cursor_position(cls, pos, emit_signal=False):
         return
 
     @classmethod
-    def setCursorPositionFromTime(cls, timestamp, emit_signal=False):
+    def set_cursor_position_from_time(cls, timestamp, emit_signal=False):
         return
 
     @classmethod
-    def setSelectionArea(cls, start_pos, end_pos, emit_signal=False):
+    def set_selection_area(cls, start_pos, end_pos, emit_signal=False):
         return
 
     @classmethod
-    def setSelectionAreaFromTime(cls, start_time, end_time, emit_signal=False):
+    def set_selection_area_from_time(cls, start_time, end_time, emit_signal=False):
         return
 
     @classmethod
-    def clearSelectionArea(cls, emit_signal=False):
+    def clear_selection_area(cls, emit_signal=False):
         return
 
     @classmethod

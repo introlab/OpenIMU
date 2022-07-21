@@ -13,7 +13,7 @@ from libopenimu.models.Participant import Participant
 
 import datetime
 
-from PyQt5.QtCore import QObject, pyqtSignal
+from PySide6.QtCore import QObject, Signal
 
 
 @timing
@@ -26,7 +26,7 @@ def load_worker(importer, filename):
 
 class BaseImporter(QObject):
 
-    update_progress = pyqtSignal(int)
+    update_progress = Signal(int)
     last_error = ""
 
     def __init__(self, manager: DBManager, participant: Participant, parent=None):

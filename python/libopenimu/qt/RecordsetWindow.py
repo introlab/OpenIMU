@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtWidgets import QGraphicsScene, QApplication, QGraphicsRectItem, QGraphicsLineItem, QGraphicsItem
-from PyQt5.QtWidgets import QDialog, QMenu, QAction, QMessageBox
-from PyQt5.QtGui import QBrush, QPen, QColor, QFont, QGuiApplication
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QPoint, QRect, QObject, QRectF
+from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QGraphicsScene, QApplication, QGraphicsRectItem, QGraphicsLineItem, QGraphicsItem
+from PySide6.QtWidgets import QMenu, QMessageBox, QMdiSubWindow
+from PySide6.QtGui import QBrush, QPen, QColor, QFont, QGuiApplication, QAction
+from PySide6.QtCore import Qt, Slot, Signal, QPoint, QRect, QObject, QRectF, QFile
 
 from resources.ui.python.RecordsetWidget_ui import Ui_frmRecordsets
 from libopenimu.qt.GraphWindow import GraphType, GraphWindow
@@ -13,8 +13,6 @@ from libopenimu.models.Base import Base
 from libopenimu.importers.wimu import GPSGeodetic
 from libopenimu.qt.BackgroundProcess import BackgroundProcess, ProgressDialog, WorkerTask
 from libopenimu.db.DBManager import DBManager
-
-from libopenimu.qt.ProcessSelectWindow import ProcessSelectWindow
 
 # from libopenimu.tools.timing import timing
 import numpy as np
@@ -71,9 +69,10 @@ class DBSensorAllDataTask(WorkerTask):
         channels = self.dbMan.get_all_channels(sensor=self.sensor)
         self.size = len(channels)*len(self.recordsets)
         count = 0
+        channel_data = []
         for channel in channels:
-            # Will get all data (converted to floats)
             channel_data = []
+            # Will get all data (converted to floats)
             for record in self.recordsets:
                 channel_data += self.dbMan.get_all_sensor_data(recordset=record, convert=True, sensor=self.sensor,
                                                                channel=channel, start_time=self.start_time,
@@ -84,6 +83,7 @@ class DBSensorAllDataTask(WorkerTask):
             if len(channel_data) > 0:
                 timeseries.append(self.create_data_timeseries(channel_data))
                 timeseries[-1]['label'] = channel.label
+
         self.results = {'sensor': self.sensor, 'timeseries': timeseries, 'channel_data': channel_data}
 
 
@@ -116,8 +116,8 @@ class DBSensorTimesTask(WorkerTask):
 
 class RecordsetWindow(QWidget):
 
-    dataDisplayRequest = pyqtSignal(str, int)
-    dataUpdateRequest = pyqtSignal(str, Base)
+    dataDisplayRequest = Signal(str, int)
+    dataUpdateRequest = Signal(str, Base)
 
     def __init__(self, manager, recordset: list, parent=None):
         super().__init__(parent=parent)
@@ -126,7 +126,7 @@ class RecordsetWindow(QWidget):
 
         # Internal lists
         self.sensors = {}           # List of sensors objects
-        self.sensors_items = {}     # List of QAction corresponding to each sensors
+        self.sensors_items = {}     # List of QAction corresponding to each sensor
         self.sensors_graphs = {}    # List of graph corresponding to each sensor graph
         self.sensors_location = []  # List of sensors location in this recordset
         self.sensors_blocks = {}    # Sensor blocks - each block of data for each sensor
@@ -141,7 +141,7 @@ class RecordsetWindow(QWidget):
         self.sensors_menu = QMenu(self.UI.btnNewGraph)
         self.UI.btnNewGraph.setMenu(self.sensors_menu)
 
-        # Data access informations
+        # Data access information
         self.dbMan = manager
         self.recordsets = recordset
 
@@ -158,7 +158,7 @@ class RecordsetWindow(QWidget):
         self.UI.graphSensorsTimeline.setScene(self.timeSensorsScene)
         self.UI.graphSensorsTimeline.fitInView(self.timeSensorsScene.sceneRect(), Qt.KeepAspectRatio)
 
-        # Update general informations about recordsets
+        # Update general information about recordsets
         self.update_recordset_infos()
 
         # Load sensors for that recordset
@@ -179,6 +179,9 @@ class RecordsetWindow(QWidget):
         self.UI.btnTimeZoomSelection.setEnabled(False)
         self.UI.btnClearSelection.setEnabled(False)
         self.update_tile_buttons_state()
+
+    def __del__(self):
+        self.UI.mdiArea.closeAllSubWindows()
 
     def paintEvent(self, paint_event):
         if not self.time_pixmap:
@@ -225,8 +228,8 @@ class RecordsetWindow(QWidget):
                 # self.UI.frmSensors.hide()
             else:
                 message = QMessageBox(self)
-                message.warning(self, "Avertissement",
-                                "L'affichage du timeline de plus de 2 ans n'est pas supporté pour l'instant")
+                message.warning(self, self.tr('Warning'), self.tr('Displaying a timeline spanning over more than 2 '
+                                                                  'years isn\'t supported for now'))
 
         else:
             print('Empty recordset!')
@@ -274,8 +277,10 @@ class RecordsetWindow(QWidget):
 
     def update_recordset_infos(self):
         if len(self.recordsets) == 0:
-            self.UI.lblTotalValue.setText("Aucune donnée.")
-            self.UI.lblDurationValue.setText("Aucune donnée.")
+            self.UI.lblTotalValue.setText(self.tr('No data.'))
+            self.UI.lblDurationValue.setText(self.tr('No data.'))
+            self.UI.frmSensors.hide()
+            self.UI.frameTop.hide()
             return
 
         start_time = self.recordsets[0].start_timestamp
@@ -323,7 +328,7 @@ class RecordsetWindow(QWidget):
 
     def get_time_from_timeview_pos(self, pos):
         if len(self.recordsets) == 0:
-            return None;
+            return None
 
         start_time = self.get_recordset_start_day_date().timestamp()
         end_time = self.get_recordset_end_day_date().timestamp()
@@ -491,15 +496,17 @@ class RecordsetWindow(QWidget):
             sensors = self.get_sensors_for_location(location)
             for sensor_id in sensors:
                 for record in self.recordsets:
-                    tasks.append(DBSensorTimesTask(title="Chargement des données temporelles", db_manager=self.dbMan,
-                                                   sensor_id=sensor_id, recordset=record))
+                    tasks.append(DBSensorTimesTask(title=self.tr('Loading temporal data') + '...',
+                                                   db_manager=self.dbMan, sensor_id=sensor_id, recordset=record))
 
         QGuiApplication.setOverrideCursor(Qt.BusyCursor)
         process = BackgroundProcess(tasks)
-        dialog = ProgressDialog(process, "Chargement", self)
+        dialog = ProgressDialog(process, self.tr('Loading'), self)
 
         process.start()
         dialog.exec()
+        process.deleteLater()
+        dialog.deleteLater()
         QGuiApplication.restoreOverrideCursor()
 
         # Combine tasks results
@@ -577,7 +584,7 @@ class RecordsetWindow(QWidget):
 
         return GraphType.UNKNOWN
 
-    @pyqtSlot(Sensor, datetime, datetime)
+    @Slot(Sensor, datetime, datetime)
     def query_sensor_data(self, sensor: Sensor, start_time: datetime, end_time: datetime):
         timeseries = self.get_sensor_data(sensor, start_time, end_time)[0]
 
@@ -600,7 +607,7 @@ class RecordsetWindow(QWidget):
                     series_id += 1
         return
 
-    @pyqtSlot(QAction)
+    @Slot(QAction)
     # @timing
     def sensor_graph_selected(self, sensor_item):
         sensor_id = sensor_item.property("sensor_id")
@@ -617,7 +624,6 @@ class RecordsetWindow(QWidget):
 
             graph_type = self.get_sensor_graph_type(sensor)
             graph_window = GraphWindow(graph_type, sensor, self.UI.mdiArea)
-            graph_window.setStyleSheet(self.styleSheet() + graph_window.styleSheet())
 
             if graph_type == GraphType.LINECHART:
                 # Add series
@@ -628,26 +634,52 @@ class RecordsetWindow(QWidget):
                 graph_window.graph.set_title(sensor_label)
 
             if graph_type == GraphType.MAP:
-                for data in channel_data:
-                    gps = GPSGeodetic()
-                    gps.from_bytes(data.data)
-                    if gps.latitude != 0 and gps.longitude != 0:
-                        graph_window.graph.addPosition(data.timestamps.start_timestamp, gps.latitude / 1e7,
-                                                       gps.longitude / 1e7)
-                        graph_window.setCursorPositionFromTime(data.timestamps.start_timestamp)
+                import platform
+                if platform.system() != 'Darwin':
+                    for data in channel_data:
+                        gps = GPSGeodetic()
+                        gps.from_bytes(data.data)
+                        if gps.latitude != 0 and gps.longitude != 0:
+                            graph_window.graph.add_position(data.timestamps.start_timestamp, gps.latitude / 1e7,
+                                                            gps.longitude / 1e7)
+                            graph_window.set_cursor_position_from_time(data.timestamps.start_timestamp)
+                else:
+                    graph_window.deleteLater()
+                    graph_window = None
 
             if graph_type == GraphType.BEACON:
-                # print('should do something with beacons data')
                 for series in timeseries:
                     if series.__contains__('x') and series.__contains__('y') and series.__contains__('label'):
                         row_count = min(len(series['x']), len(series['y']))
-                        graph_window.graph.add_tab(series['label'], row_count)
-                        for i in range(0, row_count):
-                            # Let's add data
-                            graph_window.graph.add_row(i, series['x'][i], series['y'][i], series['label'])
+                        beacon_id_parts = series['label'].split('_')
+                        if len(beacon_id_parts) >= 2:
+                            beacon_id = beacon_id_parts[0] + beacon_id_parts[1]
+                        else:
+                            beacon_id = series['label']
+                        if series['label'].endswith('RSSI'):
+                            for i in range(0, row_count):
+                                # Let's add data
+                                graph_window.graph.add_data(label=beacon_id, timestamp=series['x'][i],
+                                                            rssi=series['y'][i])
+
+                        if series['label'].endswith('Power'):
+                            for i in range(0, row_count):
+                                # Let's add data
+                                graph_window.graph.add_data(label=beacon_id, timestamp=series['x'][i],
+                                                            tx_power=series['y'][i])
+                # Select first channel
+                graph_window.graph.on_channel_changed()
 
             if graph_window is not None:
-                self.UI.mdiArea.addSubWindow(graph_window).setWindowTitle(sensor_label)
+                subwindow = QMdiSubWindow()
+                subwindow.setAttribute(Qt.WA_DeleteOnClose)
+                subwindow.setWindowTitle(sensor_label)
+                subwindow.setWindowIcon(self.windowIcon())
+                subwindow.setWidget(graph_window)
+                subwindow.setObjectName('GraphWindow')  # Name required to set the proper background style!
+
+                self.UI.mdiArea.addSubWindow(subwindow)
+
                 self.sensors_graphs[sensor.id_sensor] = graph_window
                 # self.UI.displayContents.layout().insertWidget(0,graph)
 
@@ -681,14 +713,16 @@ class RecordsetWindow(QWidget):
     # @timing
     def get_sensor_data(self, sensor, start_time=None, end_time=None):
         QGuiApplication.setOverrideCursor(Qt.BusyCursor)
-        task = DBSensorAllDataTask("Chargement des données...", self.dbMan, sensor, start_time, end_time,
+        task = DBSensorAllDataTask(self.tr('Loading data...'), self.dbMan, sensor, start_time, end_time,
                                    self.recordsets)
 
         process = BackgroundProcess([task])
-        dialog = ProgressDialog(process, "Traitement", self)
+        dialog = ProgressDialog(process, self.tr('Processing'), self)
 
         process.start()
         dialog.exec()
+        process.deleteLater()
+        dialog.deleteLater()
         QGuiApplication.restoreOverrideCursor()
 
         return task.results['timeseries'], task.results['channel_data']
@@ -703,7 +737,7 @@ class RecordsetWindow(QWidget):
             self.UI.btnTileHorizontal.setEnabled(False)
             self.UI.btnTileVertical.setEnabled(False)
 
-    @pyqtSlot(QObject)
+    @Slot(QObject)
     def graph_was_closed(self, graph):
         for sensor_id, sensor_graph in self.sensors_graphs.items():
             if sensor_graph == graph:
@@ -715,15 +749,15 @@ class RecordsetWindow(QWidget):
         self.UI.mdiArea.tileSubWindows()
         self.update_tile_buttons_state()
 
-    @pyqtSlot(float)
+    @Slot(float)
     def graph_cursor_changed(self, timestamp):
         current_time = timestamp / 1000
         for graph in self.sensors_graphs.values():
             if graph is not None:
-                graph.setCursorPositionFromTime(current_time, False)
+                graph.set_cursor_position_from_time(current_time, False)
 
         pos = self.get_relative_timeview_pos(current_time)
-        self.time_bar.setPos(pos,0)
+        self.time_bar.setPos(pos, 0)
 
         # Ensure time bar is visible if scrollable
         self.ensure_time_bar_visible(pos)
@@ -738,19 +772,19 @@ class RecordsetWindow(QWidget):
             if pos < min_visible_x or pos > max_visible_x:
                 self.UI.scrollTimeline.setValue(pos)
 
-    @pyqtSlot(datetime, datetime)
+    @Slot(datetime, datetime)
     def graph_zoom_area(self, start_time, end_time):
         for graph in self.sensors_graphs.values():
             if graph is not None:
-                graph.zoomAreaRequestTime(start_time, end_time)
+                graph.zoom_area_request_time(start_time, end_time)
 
-    @pyqtSlot()
+    @Slot()
     def graph_zoom_reset(self):
         for graph in self.sensors_graphs.values():
             if graph is not None:
-                graph.zoomResetRequest(False)
+                graph.zoom_reset_request(False)
 
-    @pyqtSlot(float, float)
+    @Slot(float, float)
     def graph_selected_area_changed(self, start_timestamp, end_timestamp):
         # Update timeview selection area
         start_pos = self.get_relative_timeview_pos(start_timestamp / 1000)
@@ -763,13 +797,13 @@ class RecordsetWindow(QWidget):
         # Update selection for each graph
         for graph in self.sensors_graphs.values():
             if graph is not None:
-                graph.setSelectionAreaFromTime(start_timestamp, end_timestamp)
+                graph.set_selection_area_from_time(start_timestamp, end_timestamp)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def timeview_scroll(self, pos):
         self.UI.graphTimeline.centerOn(pos / self.zoom_level, 0)
 
-    @pyqtSlot(float)
+    @Slot(float)
     def timeview_clicked(self, x):
         self.time_bar.setPos(x, 0)
         if len(self.recordsets)==0:
@@ -782,11 +816,11 @@ class RecordsetWindow(QWidget):
         for graph in self.sensors_graphs.values():
             if graph is not None:
                 # try:
-                graph.setCursorPositionFromTime(timestamp, False)
+                graph.set_cursor_position_from_time(timestamp, False)
             # except AttributeError:
             #    continue
 
-    @pyqtSlot(float, float)
+    @Slot(float, float)
     def timeview_selected(self, start_x, end_x):
         selection_brush = QBrush(QColor(153, 204, 255, 128))
         selection_pen = QPen(Qt.transparent)
@@ -800,10 +834,9 @@ class RecordsetWindow(QWidget):
         # Update selection for each graph
         for graph in self.sensors_graphs.values():
             if graph is not None:
-                graph.setSelectionAreaFromTime(self.get_time_from_timeview_pos(start_x),
-                                               self.get_time_from_timeview_pos(end_x))
+                graph.set_selection_area_from_time(self.get_time_from_timeview_pos(start_x),
+                                                   self.get_time_from_timeview_pos(end_x))
 
-    @pyqtSlot()
     def on_timeview_clear_selection_requested(self):
         self.timeScene.removeItem(self.selection_rec)
         self.UI.btnClearSelection.setEnabled(False)
@@ -811,9 +844,8 @@ class RecordsetWindow(QWidget):
 
         # Clear all selected areas in graphs
         for graph in self.sensors_graphs.values():
-            graph.clearSelectionArea()
+            graph.clear_selection_area()
 
-    @pyqtSlot()
     def on_timeview_zoom_selection_requested(self):
         self.UI.graphTimeline.scale(1 / self.zoom_level, 1)
         # zoom_value = (self.timeScene.width() / (self.selection_rec.rect().width()))
@@ -828,7 +860,6 @@ class RecordsetWindow(QWidget):
                                         * self.zoom_level)
         self.on_timeview_clear_selection_requested()
 
-    @pyqtSlot()
     def on_timeview_zoom_reset_requested(self):
         self.UI.graphTimeline.scale(1 / self.zoom_level, 1)
         self.zoom_level = 1
@@ -836,28 +867,27 @@ class RecordsetWindow(QWidget):
         self.adjust_timeview_size()
         self.UI.scrollTimeline.setValue(0)
 
-    @pyqtSlot()
     def on_timeview_show_hide_requested(self):
         visible = not self.UI.frameTimeline.isVisible()
         self.UI.frameTimeline.setVisible(visible)
         self.UI.frameTimelineControls.setVisible(visible)
         # self.UI.lblCursorTime.setVisible(visible)
 
-    @pyqtSlot()
-    def on_process_recordset(self):
-        # Display Process Window
-        window = ProcessSelectWindow(self.dbMan, self.recordsets)
-        window.setStyleSheet(self.styleSheet())
+    # @Slot()
+    # def on_process_recordset(self):
+    #     # Display Process Window
+    #     window = ProcessSelectWindow(self.dbMan, self.recordsets)
+    #     # window.setStyleSheet(self.styleSheet())
+    #
+    #     if window.exec() == QDialog.Accepted:
+    #         self.dataUpdateRequest.emit("result", window.processed_data)
+    #         self.dataDisplayRequest.emit("result", window.processed_data.id_processed_data)
 
-        if window.exec() == QDialog.Accepted:
-            self.dataUpdateRequest.emit("result", window.processed_data)
-            self.dataDisplayRequest.emit("result", window.processed_data.id_processed_data)
-
-    @pyqtSlot()
+    @Slot()
     def tile_graphs_horizontally(self):
         self.tile_graphs(True)
 
-    @pyqtSlot()
+    @Slot()
     def tile_graphs_vertically(self):
         self.tile_graphs(False)
 
@@ -881,6 +911,6 @@ class RecordsetWindow(QWidget):
             else:
                 position.setY(position.y() + window.height())
 
-    @pyqtSlot()
+    @Slot()
     def tile_graphs_auto(self):
         self.UI.mdiArea.tileSubWindows()

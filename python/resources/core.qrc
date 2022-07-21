@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/OpenIMU">
         <file>IntRoLab.png</file>
-        <file>test.qml</file>
         <file>icons/import.png</file>
         <file>icons/open.png</file>
         <file>icons/participant.png</file>
@@ -46,5 +45,36 @@
         <file>icons/compact.png</file>
         <file>icons/bug.png</file>
         <file>icons/date.png</file>
+        <file>LogoOpenIMU.png</file>
+        <file>icons/ok.png</file>
+        <file>icons/undo.png</file>
+        <file>icons/new.png</file>
+        <file>icons/next.png</file>
+        <file>icons/previous.png</file>
+        <file>icons/group_new.png</file>
+        <file>icons/participant_new.png</file>
+        <file>icons/database_new.png</file>
+        <file>icons/sensor_actigraph.png</file>
+        <file>icons/sensor_minilogger.png</file>
+        <file>icons/sensor_watch.png</file>
+        <file>controls/check_off.png</file>
+        <file>controls/check_off_disabled.png</file>
+        <file>controls/check_on.png</file>
+        <file>controls/check_on_disabled.png</file>
+        <file>controls/check2_off.png</file>
+        <file>controls/check2_off_disabled.png</file>
+        <file>controls/check2_on.png</file>
+        <file>controls/check2_on_disabled.png</file>
+        <file>icons/export.png</file>
+        <file>icons/browse.png</file>
+        <file>icons/file_csv.png</file>
+        <file>icons/file_matlab.png</file>
+        <file>logo_CDRV.png</file>
+        <file>INTER.png</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>stylesheet.qss</file>
+        <file>translations/openimu_en.qm</file>
+        <file>translations/openimu_fr.qm</file>
     </qresource>
 </RCC>

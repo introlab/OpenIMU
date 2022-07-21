@@ -1,8 +1,7 @@
-import sys
+from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
+from PySide6.QtCore import Signal, Qt, Slot
+from PySide6.QtGui import QIcon, QFont
 
-from PyQt5.QtWidgets import QApplication, QTreeWidget, QTreeWidgetItem, QStyleFactory
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QIcon, QFont
 # Models
 from libopenimu.models.Participant import Participant
 from libopenimu.models.Base import Base
@@ -11,25 +10,24 @@ from libopenimu.models.ProcessedData import ProcessedData
 from datetime import datetime
 
 
-class Treedatawidget(QTreeWidget):
-    groups = {}
-    participants = {}
-    recordsets = {}
-    results = {}
-    dates = {}
+class TreeDataWidget(QTreeWidget):
 
-    items_groups = {}
-    items_participants = {}
-    items_recordsets = {}
-    items_results = {}
-    items_dates = {}
-
-    participantDragged = pyqtSignal(Participant)
-
-    owner = None
+    participantDragged = Signal(Participant)
 
     def __init__(self, parent=None):
-        super(Treedatawidget, self).__init__(parent=parent)
+        QTreeWidget.__init__(self, parent)
+        self.owner = None
+        self.groups = {}
+        self.participants = {}
+        self.recordsets = {}
+        self.results = {}
+        self.dates = {}
+
+        self.items_groups = {}
+        self.items_participants = {}
+        self.items_recordsets = {}
+        self.items_results = {}
+        self.items_dates = {}
 
     def remove_group(self, group):
         item = self.items_groups.get(group.id_group, None)
@@ -66,7 +64,7 @@ class Treedatawidget(QTreeWidget):
                     except KeyError:
                         continue
 
-        if participant.id_group is None: # Participant without a group
+        if participant.id_group is None:  # Participant without a group
             for i in range(0, self.topLevelItemCount()):
                 if self.topLevelItem(i) == item:
                     self.takeTopLevelItem(i)
@@ -101,7 +99,7 @@ class Treedatawidget(QTreeWidget):
         self.items_results[result.id_processed_data] = None
 
     def remove_date(self, date_text: str, id_parent_part: int):
-        date_text_id = Treedatawidget.get_date_id(date_text, id_parent_part)
+        date_text_id = TreeDataWidget.get_date_id(date_text, id_parent_part)
 
         item = self.items_dates.get(date_text_id, None)
         for i in range(0, item.parent().childCount()):
@@ -127,6 +125,7 @@ class Treedatawidget(QTreeWidget):
             item.setData(0, Qt.UserRole, group.id_group)
             item.setData(1, Qt.UserRole, 'group')
             item.setFont(0, QFont('Helvetica', 12, QFont.Bold))
+            item.setFlags(item.flags() | Qt.ItemIsEditable)
 
             self.addTopLevelItem(item)
             self.groups[group.id_group] = group
@@ -146,8 +145,9 @@ class Treedatawidget(QTreeWidget):
             item.setData(0, Qt.UserRole, part.id_participant)
             item.setData(1, Qt.UserRole, 'participant')
             item.setFont(0, QFont('Helvetica', 12, QFont.Bold))
+            item.setFlags(item.flags() | Qt.ItemIsEditable)
 
-            if group_item is None: # Participant without a group
+            if group_item is None:  # Participant without a group
                 self.addTopLevelItem(item)
             else:
                 group_item.addChild(item)
@@ -155,7 +155,7 @@ class Treedatawidget(QTreeWidget):
             parent = item
             # Recordings
             item = QTreeWidgetItem()
-            item.setText(0, 'Enregistrements')
+            item.setText(0, self.tr('Recordings'))
             item.setIcon(0, QIcon(':/OpenIMU/icons/records.png'))
             item.setData(1, Qt.UserRole, 'recordsets')
             item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
@@ -163,7 +163,7 @@ class Treedatawidget(QTreeWidget):
 
             # Results
             item = QTreeWidgetItem()
-            item.setText(0, 'Résultats')
+            item.setText(0, self.tr('Results'))
             item.setIcon(0, QIcon(':/OpenIMU/icons/results.png'))
             item.setData(1, Qt.UserRole, 'results')
             item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
@@ -175,7 +175,7 @@ class Treedatawidget(QTreeWidget):
             # Check if we must move it or not, if the group changed
             if item.parent() != group_item:
                 # Old group - find and remove current item
-                if item.parent() is None: # No parent...
+                if item.parent() is None:  # No parent...
                     for i in range(0, self.topLevelItemCount()):
                         if self.topLevelItem(i) == item:
                             item = self.takeTopLevelItem(i)
@@ -206,6 +206,7 @@ class Treedatawidget(QTreeWidget):
             item.setData(0, Qt.UserRole, recordset.id_recordset)
             item.setData(1, Qt.UserRole, 'recordset')
             item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
+            item.setFlags(item.flags() | Qt.ItemIsEditable)
 
             date_item = self.items_dates.get(recordset.start_timestamp, None)
             if date_item is None:
@@ -227,7 +228,7 @@ class Treedatawidget(QTreeWidget):
 
     def update_date(self, date_update: datetime, id_parent_part: int) -> QTreeWidgetItem:
         date_text = date_update.strftime("%d-%m-%Y")
-        date_text_id = Treedatawidget.get_date_id(date_text=date_text, id_parent_part=id_parent_part)
+        date_text_id = TreeDataWidget.get_date_id(date_text=date_text, id_parent_part=id_parent_part)
 
         # Check if day item is already present for that date and returns it, if so.
         if date_text_id in self.items_dates:
@@ -246,7 +247,7 @@ class Treedatawidget(QTreeWidget):
                 if self.get_item_type(part_item.child(i)) == "recordsets":
                     part_item.child(i).addChild(item)
         else:
-            print('No participant found in treeview for participant id=' + id_parent_part)
+            print('No participant found in treeview for participant id=' + str(id_parent_part))
 
         self.dates[date_text_id] = date_update.date()
         self.items_dates[date_text_id] = item
@@ -266,10 +267,11 @@ class Treedatawidget(QTreeWidget):
             item.setData(0, Qt.UserRole, result.id_processed_data)
             item.setData(1, Qt.UserRole, 'result')
             item.setFont(0, QFont('Helvetica', 11, QFont.Bold))
+            item.setFlags(item.flags() | Qt.ItemIsEditable)
 
             part_item = None
             if len(result.processed_data_ref) > 0:
-                part_item = self.items_participants.get(result.processed_data_ref[0].recordset.id_participant,None)
+                part_item = self.items_participants.get(result.processed_data_ref[0].recordset.id_participant, None)
 
             if part_item is not None:
                 # TODO: subrecords...
@@ -299,7 +301,19 @@ class Treedatawidget(QTreeWidget):
         else:
             return ""
 
-    @pyqtSlot(str, int)
+    def get_current_participant_id(self) -> int:
+        current_type = self.get_item_type(self.currentItem())
+        if current_type == 'participant':
+            return self.get_item_id(self.currentItem())
+        if current_type == 'recordsets' or current_type == 'results':
+            return self.get_item_id(self.currentItem().parent())
+        if current_type == 'result' or current_type == 'date':
+            return self.get_item_id(self.currentItem().parent().parent())
+        if current_type == 'recordset':
+            return self.get_item_id(self.currentItem().parent().parent().parent())
+        return -1
+
+    @Slot(str, int)
     def select_item(self, item_type, item_id):
         # print ("Selecting " + item_type + ", ID " + str(item_id))
         item = None
@@ -322,7 +336,7 @@ class Treedatawidget(QTreeWidget):
             self.setCurrentItem(item)
             self.owner.tree_item_clicked(item, 0)
 
-    @pyqtSlot(str, Base)
+    @Slot(str, Base)
     def update_item(self, item_type, data):
         # print ("Selecting " + item_type + ", ID " + str(item_id))
         # item = None
@@ -339,10 +353,10 @@ class Treedatawidget(QTreeWidget):
             self.update_result(data)
 
         if item_type == "date":
-            self.update_date(data)
+            self.update_date(data, 0)
 
     def clear(self):
-
+        super().clear()
         self.groups = {}
         self.participants = {}
         self.recordsets = {}
@@ -355,10 +369,9 @@ class Treedatawidget(QTreeWidget):
         self.items_results = {}
         self.items_dates = {}
 
-        super().clear()
-
     def dropEvent(self, event):
-
+        target_type = None
+        target_id = None
         index = self.indexAt(event.pos())
 
         source_item = self.currentItem()
@@ -393,51 +406,3 @@ class Treedatawidget(QTreeWidget):
                     return
 
             event.ignore()
-
-
-def except_hook(cls, exception, traceback):
-    # Display error dialog
-    from libopenimu.qt.CrashWindow import CrashWindow
-    crash_dlg = CrashWindow(traceback, exception)
-    crash_dlg.exec()
-    sys.__excepthook__(cls, exception, traceback)
-
-
-# Main
-if __name__ == '__main__':
-    from PyQt5.QtCore import QDir
-    from libopenimu.qt.MainWindow import MainWindow
-
-    # Set Style
-    QApplication.setStyle(QStyleFactory.create("Windows"))
-
-    # Must be done before starting the app
-    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
-
-    app = QApplication(sys.argv)
-
-    sys.excepthook = except_hook
-    # qInstallMessageHandler(qt_message_handler)
-
-    # Set current directory to home path
-    QDir.setCurrent(QDir.homePath())
-
-    # print(PyQt5.__file__)
-    # from pprint import pprint
-    # from PyQt5.QtCore import QLibraryInfo
-    # paths = [x for x in dir(QLibraryInfo) if x.endswith('Path')]
-    # pprint({x: QLibraryInfo.location(getattr(QLibraryInfo, x)) for x in paths})
-
-    # WebEngine settings
-    # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.PluginsEnabled, True)
-    # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.JavascriptCanOpenWindows, True)
-    # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.JavascriptEnabled, True)
-    # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.LocalContentCanAccessRemoteUrls,True)
-    # QWebEngineSettings.globalSettings().setAttribute(QWebEngineSettings.AllowRunningInsecureContent, True)
-
-    # Create Main Window
-    window = MainWindow()
-
-    # Exec application
-    sys.exit(app.exec_())
-

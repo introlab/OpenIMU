@@ -3,9 +3,9 @@ from .BaseAlgorithm import BaseAlgorithm
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.db.DBManager import DBManager
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QGridLayout, QSpinBox, QComboBox, QFrame, QSizePolicy, \
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QGridLayout, QSpinBox, QComboBox, QFrame, QSizePolicy, \
     QLabel
-from PyQt5.QtCore import Qt
+from PySide6.QtCore import Qt
 
 from libopenimu.qt.Charts import OpenIMUBarGraphView
 
@@ -18,7 +18,7 @@ class FreedsonAdult1998(BaseAlgorithm):
         super().__init__(params)
 
     def configure(self, params: dict):
-        print('FreedsonAdult1998.configure')
+        # print('FreedsonAdult1998.configure')
         super().configure(params)
 
     def calculate(self, manager: DBManager, recordsets: list):
@@ -118,8 +118,8 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
         # Initialize inputs
         self.config_preset_input = QComboBox()
         # self.config_preset_input.addItem('')
-        self.config_preset_input.addItem('Valeurs originales', [99, 1951, 5724, 9498])
-        self.config_preset_input.addItem('Personnalisées', [-1, -1, -1, -1])
+        self.config_preset_input.addItem(self.tr('Original values'), [99, 1951, 5724, 9498])
+        self.config_preset_input.addItem(self.tr('Custom values'), [-1, -1, -1, -1])
         # self.config_preset_input.addItem('Child', [99, 573, 1002, 0])
         self.config_preset_input.currentIndexChanged.connect(self.config_preset_changed)
 
@@ -129,7 +129,7 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
                                    'QLabel{background-color: rgba(0,0,0,0%);}')
         preset_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Maximum)
         frame_layout = QGridLayout()
-        item_label = QLabel('Preset')
+        item_label = QLabel(self.tr('Preset'))
         frame_layout.addWidget(item_label, 0, 0)
         frame_layout.addWidget(self.config_preset_input, 0, 1)
         # frame_layout.addRow('Preset', self.config_preset_input)
@@ -199,7 +199,7 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
 
         scroll.setLayout(layout)
         view = OpenIMUBarGraphView(scroll)
-        view.set_title('Active minutes')
+        view.set_title(self.tr('Active minutes'))
         layout.addWidget(view)
 
         for result in results:

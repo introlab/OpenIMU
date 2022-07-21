@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>589</width>
-    <height>244</height>
+    <height>256</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Oups...</string>
+   <string>Oh no...</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../core.qrc">
@@ -19,7 +19,7 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QLabel#lblTitle{color: red;}
-QLabel#lblInfos{background-color: white;}
+QLabel#lblInfos{background-color: white;color: black;}
 
 QDialog{background:qlineargradient(spread:pad, x1:0.483, y1:0, x2:0.511045, y2:1, stop:0 rgb(50, 50, 50), stop:1 rgb(153, 153, 153));border-radius:0px;}
 
@@ -42,12 +42,11 @@ QPushButton[checkable=true]:!checked,QToolButton[checkable=true]:!checked{color:
      <property name="font">
       <font>
        <pointsize>14</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
      <property name="text">
-      <string>Oups... une erreur est survenue!</string>
+      <string>Oops... An error occurred!</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -85,7 +84,7 @@ QPushButton[checkable=true]:!checked,QToolButton[checkable=true]:!checked{color:
        </property>
        <widget class="QWidget" name="tabGeneral">
         <attribute name="title">
-         <string>Général</string>
+         <string>General</string>
         </attribute>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <property name="leftMargin">
@@ -103,7 +102,7 @@ QPushButton[checkable=true]:!checked,QToolButton[checkable=true]:!checked{color:
          <item>
           <widget class="QLabel" name="lblInfos">
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Le logiciel a rencontré un problème.&lt;br/&gt;&lt;br/&gt;Vous pouvez continuer à travailler, mais&lt;span style=&quot; font-weight:600;&quot;&gt; il se pourrait que certains éléments ne fonctionnent plus correctement&lt;/span&gt;.&lt;br/&gt;&lt;br/&gt;Encore mieux, vous pouvez &lt;span style=&quot; font-weight:600;&quot;&gt;rapporter le problème aux développeurs&lt;/span&gt;! N'oubliez pas de mentionner ce que vous avez fait et d'inclure le rapport technique.&lt;br/&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This software encountered an issue.&lt;br/&gt;&lt;br/&gt;You can still continue to work, but&lt;span style=&quot; font-weight:600;&quot;&gt; it is possible that some features will not function properly&lt;/span&gt;.&lt;br/&gt;&lt;br/&gt;If possible, please &lt;span style=&quot; font-weight:600;&quot;&gt;report the issue to the developpers&lt;/span&gt; so it can be fixed. Don't forget to specify the steps you did to have this issue and include the technical report.&lt;br/&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignJustify|Qt::AlignTop</set>
@@ -120,7 +119,7 @@ QPushButton[checkable=true]:!checked,QToolButton[checkable=true]:!checked{color:
        </widget>
        <widget class="QWidget" name="tabTech">
         <attribute name="title">
-         <string>Rapport technique</string>
+         <string>Technical report</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <property name="leftMargin">
@@ -164,7 +163,7 @@ QPushButton[checkable=true]:!checked,QToolButton[checkable=true]:!checked{color:
        <property name="minimumSize">
         <size>
          <width>100</width>
-         <height>24</height>
+         <height>40</height>
         </size>
        </property>
        <property name="cursor">
@@ -172,6 +171,16 @@ QPushButton[checkable=true]:!checked,QToolButton[checkable=true]:!checked{color:
        </property>
        <property name="text">
         <string>OK</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../core.qrc">
+         <normaloff>:/OpenIMU/icons/delete.png</normaloff>:/OpenIMU/icons/delete.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
        </property>
       </widget>
      </item>

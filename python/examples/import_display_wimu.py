@@ -57,9 +57,9 @@ if __name__ == '__main__':
 
     import sys
 
-    from PyQt5.QtWidgets import QApplication
-    from PyQt5.QtWidgets import QMainWindow
-    from PyQt5.QtCore import Qt
+    from PySide6.QtWidgets import QApplication
+    from PySide6.QtWidgets import QMainWindow
+    from PySide6.QtCore import Qt
     app = QApplication(sys.argv)
 
     timeseries_acc = []

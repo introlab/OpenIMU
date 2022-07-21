@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Informations sur la base de données</string>
+   <string>Dataset informations</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../core.qrc">
@@ -30,12 +30,11 @@
       <widget class="QLabel" name="lblName">
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Titre des données:</string>
+        <string>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Database title:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -46,12 +45,11 @@
       <widget class="QLabel" name="lblAuthor">
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Auteur des données:</string>
+        <string>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Dataset author:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -72,7 +70,7 @@
           <string/>
          </property>
          <property name="placeholderText">
-          <string>Fichier .oi qui contiendra les données</string>
+          <string>.oi file that will store the data</string>
          </property>
         </widget>
        </item>
@@ -88,7 +86,17 @@
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="text">
-          <string>Parcourir...</string>
+          <string>Browse...</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../core.qrc">
+           <normaloff>:/OpenIMU/icons/browse.png</normaloff>:/OpenIMU/icons/browse.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
          </property>
          <property name="autoDefault">
           <bool>false</bool>
@@ -112,7 +120,7 @@
         </size>
        </property>
        <property name="placeholderText">
-        <string>Auteur, source, équipe de recherche, projet, ...</string>
+        <string>Author, data source, research team name, ...</string>
        </property>
       </widget>
      </item>
@@ -120,12 +128,11 @@
       <widget class="QLabel" name="lblFile">
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Fichier de données:</string>
+        <string>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Database filename:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -147,7 +154,7 @@
         </size>
        </property>
        <property name="placeholderText">
-        <string>Nom des données</string>
+        <string>Database name</string>
        </property>
       </widget>
      </item>
@@ -155,13 +162,11 @@
       <widget class="QLabel" name="lblDesc">
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>Description / Contexte
-de collecte:</string>
+        <string>Description / context:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -183,7 +188,7 @@ de collecte:</string>
         <bool>false</bool>
        </property>
        <property name="placeholderText">
-        <string>Description ou contexte de la collecte de données.</string>
+        <string>Dataset description or data collection context</string>
        </property>
       </widget>
      </item>
@@ -191,12 +196,11 @@ de collecte:</string>
       <widget class="QLabel" name="lblUploadDate">
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Date de la collecte:</string>
+        <string>&lt;font color=&quot;red&quot;&gt;*&lt;/font&gt; Dataset collection date:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -222,10 +226,10 @@ de collecte:</string>
         </datetime>
        </property>
        <property name="currentSection">
-        <enum>QDateTimeEdit::YearSection</enum>
+        <enum>QDateTimeEdit::DaySection</enum>
        </property>
        <property name="displayFormat">
-        <string>dd/MM/yyyy</string>
+        <string notr="true">dd/MM/yyyy</string>
        </property>
        <property name="calendarPopup">
         <bool>true</bool>
@@ -266,6 +270,16 @@ de collecte:</string>
        <property name="text">
         <string>OK</string>
        </property>
+       <property name="icon">
+        <iconset resource="../core.qrc">
+         <normaloff>:/OpenIMU/icons/ok.png</normaloff>:/OpenIMU/icons/ok.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
        <property name="autoDefault">
         <bool>false</bool>
        </property>
@@ -283,7 +297,17 @@ de collecte:</string>
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Annuler</string>
+        <string>Cancel</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../core.qrc">
+         <normaloff>:/OpenIMU/icons/undo.png</normaloff>:/OpenIMU/icons/undo.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
        </property>
        <property name="autoDefault">
         <bool>false</bool>

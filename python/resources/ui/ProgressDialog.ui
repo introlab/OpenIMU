@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>200</height>
+    <height>188</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Progress Display</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QDialog{background-color:rgb(130,130,130);border-style:solid; border-color: black; border-width: 5px;}
@@ -81,13 +81,12 @@ QProgressBar#prgTotal::chunk{
        </property>
        <property name="font">
         <font>
-         <pointsize>12</pointsize>
-         <weight>75</weight>
+         <pointsize>14</pointsize>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>Travail en cours...</string>
+        <string>Work in progress...</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -130,12 +129,11 @@ QProgressBar#prgTotal::chunk{
        </property>
        <property name="font">
         <font>
-         <pointsize>10</pointsize>
          <italic>true</italic>
         </font>
        </property>
        <property name="text">
-        <string>En cours:</string>
+        <string>Processing:</string>
        </property>
       </widget>
      </item>
@@ -143,13 +141,11 @@ QProgressBar#prgTotal::chunk{
       <widget class="QLabel" name="lblCurrentTaskValue">
        <property name="font">
         <font>
-         <pointsize>10</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>Un grand texte pour tester les fonctions</string>
+        <string notr="true">(Task text)</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -183,12 +179,11 @@ QProgressBar#prgTotal::chunk{
       <widget class="QLabel" name="lblElapsedValue">
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>00:00:00</string>
+        <string notr="true">00:00:00</string>
        </property>
       </widget>
      </item>
@@ -196,12 +191,11 @@ QProgressBar#prgTotal::chunk{
       <widget class="QLabel" name="lblRemainingValue">
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>Inconnu</string>
+        <string>Unknown</string>
        </property>
       </widget>
      </item>
@@ -214,7 +208,7 @@ QProgressBar#prgTotal::chunk{
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Restant:</string>
+        <string>Remaining time:</string>
        </property>
       </widget>
      </item>
@@ -240,7 +234,7 @@ QProgressBar#prgTotal::chunk{
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Temps écoulé:</string>
+        <string>Elapsed time:</string>
        </property>
       </widget>
      </item>

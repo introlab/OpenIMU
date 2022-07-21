@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Sélection d'un algorithme de traitement</string>
+   <string>Processing algorithm selection</string>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
@@ -32,7 +32,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap>:/OpenIMU/icons/results.png</pixmap>
+         <pixmap resource="../core.qrc">:/OpenIMU/icons/results.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -44,13 +44,12 @@
         <property name="font">
          <font>
           <pointsize>15</pointsize>
-          <weight>75</weight>
           <italic>false</italic>
           <bold>true</bold>
          </font>
         </property>
         <property name="text">
-         <string>Algorithmes de traitement</string>
+         <string>Processing algorithms</string>
         </property>
        </widget>
       </item>
@@ -73,14 +72,30 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
       </widget>
      </item>
      <item>
       <widget class="QTabWidget" name="tabAlgo">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
        </property>
        <widget class="QWidget" name="tabInfos">
+        <attribute name="icon">
+         <iconset resource="../core.qrc">
+          <normaloff>:/OpenIMU/icons/info.png</normaloff>:/OpenIMU/icons/info.png</iconset>
+        </attribute>
         <attribute name="title">
          <string>Informations</string>
         </attribute>
@@ -89,12 +104,11 @@
           <widget class="QLabel" name="lblName">
            <property name="font">
             <font>
-             <weight>75</weight>
-             <bold>true</bold>
+             <bold>false</bold>
             </font>
            </property>
            <property name="text">
-            <string>Nom</string>
+            <string>Name</string>
            </property>
           </widget>
          </item>
@@ -102,12 +116,12 @@
           <widget class="QLabel" name="lblNameValue">
            <property name="font">
             <font>
-             <weight>50</weight>
-             <bold>false</bold>
+             <pointsize>10</pointsize>
+             <bold>true</bold>
             </font>
            </property>
            <property name="text">
-            <string>(Nom)</string>
+            <string notr="true">(Name)</string>
            </property>
           </widget>
          </item>
@@ -115,12 +129,11 @@
           <widget class="QLabel" name="lblAuthor">
            <property name="font">
             <font>
-             <weight>75</weight>
-             <bold>true</bold>
+             <bold>false</bold>
             </font>
            </property>
            <property name="text">
-            <string>Auteur</string>
+            <string>Author</string>
            </property>
           </widget>
          </item>
@@ -128,12 +141,11 @@
           <widget class="QLabel" name="lblAuthorValue">
            <property name="font">
             <font>
-             <weight>50</weight>
-             <bold>false</bold>
+             <bold>true</bold>
             </font>
            </property>
            <property name="text">
-            <string>(Auteur)</string>
+            <string notr="true">(Auteur)</string>
            </property>
           </widget>
          </item>
@@ -141,8 +153,7 @@
           <widget class="QLabel" name="lblProcessVersion">
            <property name="font">
             <font>
-             <weight>75</weight>
-             <bold>true</bold>
+             <bold>false</bold>
             </font>
            </property>
            <property name="text">
@@ -154,12 +165,11 @@
           <widget class="QLabel" name="lblVersionValue">
            <property name="font">
             <font>
-             <weight>50</weight>
-             <bold>false</bold>
+             <bold>true</bold>
             </font>
            </property>
            <property name="text">
-            <string>(Version)</string>
+            <string notr="true">(Version)</string>
            </property>
           </widget>
          </item>
@@ -167,8 +177,7 @@
           <widget class="QLabel" name="lblDesc">
            <property name="font">
             <font>
-             <weight>75</weight>
-             <bold>true</bold>
+             <bold>false</bold>
             </font>
            </property>
            <property name="text">
@@ -186,7 +195,6 @@
            </property>
            <property name="font">
             <font>
-             <weight>50</weight>
              <bold>false</bold>
             </font>
            </property>
@@ -202,12 +210,11 @@
           <widget class="QLabel" name="lblRef">
            <property name="font">
             <font>
-             <weight>75</weight>
-             <bold>true</bold>
+             <bold>false</bold>
             </font>
            </property>
            <property name="text">
-            <string>Référence</string>
+            <string>Reference</string>
            </property>
           </widget>
          </item>
@@ -221,12 +228,17 @@
            </property>
            <property name="font">
             <font>
-             <weight>50</weight>
-             <bold>false</bold>
+             <bold>true</bold>
             </font>
            </property>
            <property name="text">
-            <string>(Référence)</string>
+            <string notr="true">(Reference)</string>
+           </property>
+           <property name="textFormat">
+            <enum>Qt::AutoText</enum>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -242,8 +254,12 @@
         </layout>
        </widget>
        <widget class="QWidget" name="tabParams">
+        <attribute name="icon">
+         <iconset resource="../core.qrc">
+          <normaloff>:/OpenIMU/icons/graph.png</normaloff>:/OpenIMU/icons/graph.png</iconset>
+        </attribute>
         <attribute name="title">
-         <string>Paramètres</string>
+         <string>Settings</string>
         </attribute>
        </widget>
       </widget>
@@ -277,16 +293,16 @@
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Exécuter</string>
+        <string>Process</string>
        </property>
        <property name="icon">
-        <iconset>
-         <normaloff>:/OpenIMU/icons/import.png</normaloff>:/OpenIMU/icons/import.png</iconset>
+        <iconset resource="../core.qrc">
+         <normaloff>:/OpenIMU/icons/process.png</normaloff>:/OpenIMU/icons/process.png</iconset>
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>30</width>
+         <height>30</height>
         </size>
        </property>
        <property name="autoDefault">
@@ -306,11 +322,11 @@
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Annuler</string>
+        <string>Cancel</string>
        </property>
        <property name="icon">
-        <iconset>
-         <normaloff>:/OpenIMU/icons/delete.png</normaloff>:/OpenIMU/icons/delete.png</iconset>
+        <iconset resource="../core.qrc">
+         <normaloff>:/OpenIMU/icons/undo.png</normaloff>:/OpenIMU/icons/undo.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -327,7 +343,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../core.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>btnCancel</sender>

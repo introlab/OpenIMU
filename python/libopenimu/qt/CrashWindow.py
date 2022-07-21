@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QDialog
-from PyQt5.QtCore import pyqtSlot
+from PySide6.QtWidgets import QDialog
+from PySide6.QtCore import Slot
 from resources.ui.python.CrashDialog_ui import Ui_CrashDialog
 
 import traceback
@@ -18,6 +18,6 @@ class CrashWindow(QDialog):
 
         self.UI.btnOK.clicked.connect(self.ok_clicked)
 
-    @pyqtSlot()
+    @Slot()
     def ok_clicked(self):
         self.accept()

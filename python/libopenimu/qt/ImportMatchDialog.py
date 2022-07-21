@@ -1,5 +1,6 @@
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QComboBox, QHBoxLayout
-from PyQt5.QtCore import pyqtSlot
+from PySide6.QtWidgets import QDialog, QTableWidgetItem, QComboBox, QHBoxLayout
+from PySide6.QtCore import Slot
+from PySide6.QtGui import QIcon
 
 from resources.ui.python.ImportMatchDialog_ui import Ui_ImportMatchDialog
 from libopenimu.qt.ParticipantWindow import ParticipantWindow
@@ -32,11 +33,16 @@ class ImportMatchDialog(QDialog):
             row = self.UI.tableMatch.rowCount()
             self.UI.tableMatch.setRowCount(row+1)
             item = QTableWidgetItem(data)
+            item.setIcon(QIcon(':/OpenIMU/icons/compact.png'))
             self.UI.tableMatch.setItem(row, 0, item)
             item_combo = QComboBox()
             self.fill_participant_combobox(item_combo)
-            item_combo.setCurrentIndex(item_combo.findText(data))
             self.UI.tableMatch.setCellWidget(row, 1, item_combo)
+            item_combo.currentIndexChanged.connect(self.validate)
+            item_combo.setCurrentIndex(item_combo.findText(data))
+
+
+        self.validate()
 
         # Connect signals / slots
         self.UI.btnOK.clicked.connect(self.ok_clicked)
@@ -46,17 +52,20 @@ class ImportMatchDialog(QDialog):
         # Init participant dialog
         self.part_diag = QDialog(parent=self)
 
-    def validate(self):
+    @Slot()
+    def validate(self) -> bool:
         rval = True
 
         for i in range(0, self.UI.tableMatch.rowCount()):
             item_combo = self.UI.tableMatch.cellWidget(i, 1)
             index = item_combo.currentIndex()
-            if index < 0:
+            if index <= 0:
                 item_combo.setStyleSheet('background-color: #ffcccc;')
                 rval = False
             else:
                 item_combo.setStyleSheet('')
+
+        self.UI.btnOK.setEnabled(rval)
 
         return rval
 
@@ -64,9 +73,9 @@ class ImportMatchDialog(QDialog):
         combobox.clear()
         combobox.addItem("", -1)
         for participant in self.participants:
-            combobox.addItem(participant.name, userData=participant)
+            combobox.addItem(QIcon(':/OpenIMU/icons/participant.png'), participant.name, userData=participant)
 
-    @pyqtSlot()
+    @Slot()
     def ok_clicked(self):
         # Validate items
         if self.validate():
@@ -77,16 +86,16 @@ class ImportMatchDialog(QDialog):
                 self.data_match[item_value] = part
             self.accept()
 
-    @pyqtSlot()
+    @Slot()
     def cancel_clicked(self):
         self.reject()
 
-    @pyqtSlot()
+    @Slot()
     def new_participant_requested(self):
         layout = QHBoxLayout(self.part_diag)
         self.part_diag.setMinimumWidth(600)
 
-        self.part_widget = ParticipantWindow(dbManager=self.dbMan)
+        self.part_widget = ParticipantWindow(db_manager=self.dbMan, edit_mode=True)
         self.part_widget.setStyleSheet(self.styleSheet())
 
         # print(self.styleSheet())
@@ -97,11 +106,11 @@ class ImportMatchDialog(QDialog):
 
         self.part_diag.exec()
 
-    @pyqtSlot()
+    @Slot()
     def participant_cancelled(self):
         self.part_diag.reject()
 
-    @pyqtSlot()
+    @Slot()
     def participant_saved(self):
         self.part_diag.accept()
         self.participants = self.dbMan.get_all_participants()

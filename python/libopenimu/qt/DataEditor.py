@@ -1,9 +1,10 @@
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import pyqtSignal
+from PySide6.QtWidgets import QWidget
+from PySide6.QtCore import Signal
 
 
 class DataEditor(QWidget):
 
-    dataSaved = pyqtSignal()
-    dataCancelled = pyqtSignal()
+    dataSaved = Signal()
+    dataCancelled = Signal()
+    dataEditing = Signal(bool)
     data_type = "none"

@@ -20,6 +20,8 @@ import sys
 import warnings
 import scipy.io as sio
 
+from PySide6.QtCore import QObject, Signal
+
 # Basic definitions
 from libopenimu.models.data_formats import DataFormat
 
@@ -41,8 +43,13 @@ from alembic.config import Config
 from alembic import command
 
 
-class DBManager:
+class DBManager(QObject):
+
+    groupUpdated = Signal(Group)
+    participantUpdated = Signal(Participant)
+
     def __init__(self, filename, overwrite=False, echo=False, newfile=False):
+        QObject.__init__(self)
         warnings.simplefilter(action='ignore', category=FutureWarning)
 
         dburl = 'sqlite:///' + filename + '?check_same_thread=False'
@@ -52,7 +59,7 @@ class DBManager:
                 print('removing database')
                 os.remove(filename)
 
-        print('Using sqlalchemy version: ', sqlalchemy.__version__)
+        # print('Using sqlalchemy version: ', sqlalchemy.__version__)
 
         # Create engine (sqlite), echo will output logging information
         self.engine = create_engine(dburl, echo=echo)
@@ -72,6 +79,9 @@ class DBManager:
 
         # Session instance
         self.session = self.SessionMaker()
+
+        # Keep copy of the filename
+        self.dbFilename = filename
 
     @staticmethod
     def init_alembic(dburl):
@@ -159,6 +169,7 @@ class DBManager:
                 group.id_group = src_group.id_group
 
             self.commit()
+            self.groupUpdated.emit(group)
             return group
 
         except Exception as e:
@@ -176,7 +187,7 @@ class DBManager:
             raise
 
         # Check if we have orphan items dandling around
-        self.clean_db()
+        # self.clean_db()
         # self.engine.execute("VACUUM")
 
     def get_group(self, id_group):
@@ -203,6 +214,7 @@ class DBManager:
                 participant.id_participant = src_part.id_participant
 
             self.commit()
+            self.participantUpdated.emit(participant)
             return participant
 
         except Exception as e:
@@ -210,12 +222,16 @@ class DBManager:
             print('Error: ', message)
             raise
 
-    def get_participant(self, id_participant):
+    def get_participant(self, id_participant) -> Participant:
         query = self.session.query(Participant).filter(Participant.id_participant == id_participant)
         return query.first()
 
+    def get_processed_data(self, id_processed_data) -> ProcessedData:
+        query = self.session.query(ProcessedData).filter(ProcessedData.id_processed_data == id_processed_data)
+        return query.first()
+
     def get_all_participants(self):
-        query = self.session.query(Participant)
+        query = self.session.query(Participant).order_by(Participant.name.asc(), Participant.id_group.asc())
         return query.all()
 
     def get_participants_for_group(self, group):
@@ -235,7 +251,7 @@ class DBManager:
             raise
 
         # Check if we have orphan items dandling around
-        self.clean_db()
+        # self.clean_db()
         # self.engine.execute("VACUUM")
 
     #
@@ -304,9 +320,9 @@ class DBManager:
         self.commit()
         return record
 
-    def get_recordset(self, id_recordset):
+    def get_recordset(self, id_recordset) -> Recordset | None:
         query = self.session.query(Recordset).filter(Recordset.id_recordset == id_recordset)
-        print('get_recordset', query.first())
+        # print('get_recordset', query.first())
         return query.first()
 
     def delete_recordset(self, recordset):
@@ -326,16 +342,16 @@ class DBManager:
         query = self.session.query(Sensor.id_sensor).outerjoin(SensorData).filter(SensorData.id_sensor_data == None)
         orphan_sensors = query.all()
         if len(orphan_sensors) > 0:
-            query = self.session.query(Sensor.id_sensor).filter(Sensor.id_sensor.in_(query)).delete(
-                synchronize_session=False)
+            query = self.session.query(Sensor).filter(Sensor.id_sensor.in_(query))
+            query.delete(synchronize_session=False)
             self.commit()
 
     def delete_orphan_channels(self):
         query = self.session.query(Channel.id_channel).outerjoin(SensorData).filter(SensorData.id_sensor_data == None)
         orphan_channels = query.all()
         if len(orphan_channels) > 0:
-            query = self.session.query(Channel.id_channel).filter(Channel.id_channel.in_(query)).delete(
-                synchronize_session=False)
+            query = self.session.query(Channel).filter(Channel.id_channel.in_(query))
+            query.delete(synchronize_session=False)
             self.commit()
 
     def delete_orphan_processed_data(self):
@@ -343,9 +359,8 @@ class DBManager:
             ProcessedDataRef.id_processed_data_ref == None)
         orphan = query.all()
         if len(orphan) > 0:
-            query = self.session.query(ProcessedData.id_processed_data).filter(
-                ProcessedData.id_processed_data.in_(query)).delete(
-                synchronize_session=False)
+            query = self.session.query(ProcessedData).filter(ProcessedData.id_processed_data.in_(query))
+            query.delete(synchronize_session=False)
             self.commit()
 
     def delete_orphan_sensors_timestamps(self):
@@ -353,9 +368,8 @@ class DBManager:
             SensorData.id_sensor_data == None)
         orphan = query.all()
         if len(orphan) > 0:
-            query = self.session.query(SensorTimestamps.id_sensor_timestamps).filter(
-                SensorTimestamps.id_sensor_timestamps.in_(query)).delete(
-                synchronize_session=False)
+            query = self.session.query(SensorTimestamps).filter(SensorTimestamps.id_sensor_timestamps.in_(query))
+            query.delete(synchronize_session=False)
             self.commit()
 
     def clean_db(self):
@@ -548,14 +562,12 @@ class DBManager:
         return data
 
     def get_all_processed_data(self, participant=Participant()):
-
-        datas = None
         if participant.id_participant is None:
             query = self.session.query(ProcessedData)
             datas = query.all()
         else:
-            query = self.session.query(ProcessedData).filter(
-                ProcessedData.processed_data_ref.recordset.participant.id_participant == participant.id_participant)
+            query = self.session.query(ProcessedData).join(ProcessedDataRef).join(Recordset).join(Participant).filter(
+                Participant.id_participant == participant.id_participant)
             datas = query.all()
 
         return datas
@@ -568,158 +580,3 @@ class DBManager:
             message = 'Error deleting processed data' + ': ' + str(e)
             print('Error: ', message)
             raise
-
-    #####################
-    def export_file(self, file_format, directory):
-
-        groups = self.get_all_groups()
-
-        if len(groups) == 0:
-            group_dir = directory + os.sep + 'NO_GROUP'
-            if os.path.exists(directory):
-                if not os.path.exists(group_dir):
-                    os.mkdir(group_dir)
-
-                # Get all participants
-                participants = self.get_all_participants()
-                for participant in participants:
-                    self.export_file_participant(participant, file_format, group_dir)
-
-        else:
-            for group in groups:
-                # Remove non-alphanumeric characters
-                group_name = ''.join(e for e in group.name if e.isalnum())
-                group_dir = directory + os.sep + group_name
-                if os.path.exists(directory):
-                    if not os.path.exists(group_dir):
-                        os.mkdir(group_dir)
-                    # Get all participants
-                    participants = self.get_participants_for_group(group)
-                    for participant in participants:
-                        self.export_file_participant(participant, file_format, group_dir)
-
-    def export_file_participant(self, participant: Participant, file_format: str, directory):
-        if os.path.exists(directory):
-            # Remove non-alphanumeric characters
-            participant_name = ''.join(e for e in participant.name if e.isalnum())
-
-            participant_dir = directory + os.sep + participant_name
-
-            # Create participant directory
-            if not os.path.exists(participant_dir):
-                os.mkdir(participant_dir)
-            # Process all recordsets
-            records = self.get_all_recordsets(participant)
-            for record in records:
-                self.export_file_recordset(participant, record, file_format, participant_dir)
-
-    def export_file_recordset(self, participant: Participant, recordset: Recordset, file_format: str, directory):
-        if os.path.exists(directory):
-            # Remove non-alphanumeric characters
-            # recordset_name = ''.join(e for e in recordset.name if e.isalnum())
-
-            # Create recordset directory
-            # record_dir = directory + '/RECORDSET_ID_' + str(recordset.id_recordset) + '_' + recordset_name + '/'
-            record_dir = directory + os.sep + str(recordset.start_timestamp)\
-                .replace(':', '_').replace('-', '_').replace(' ', '_') + os.sep
-
-            if not os.path.exists(record_dir):
-                os.mkdir(record_dir)
-
-            # Get all sensors
-            sensors = self.get_sensors(recordset)
-
-            for sensor in sensors:
-                # Do something
-                all_data = self.get_all_sensor_data(recordset=recordset, sensor=sensor)
-                if sensor.id_sensor_type is not SensorType.GPS:
-                    self.export_file_sensor_data(sensor, all_data, file_format, record_dir)
-                else:
-                    self.export_file_sensor_data_gps(sensor, all_data, file_format, record_dir)
-
-    def export_file_sensor_data_gps(self, sensor: Sensor, sensors_data: list, file_format, directory):
-
-        # GPS is stored as SIRF data structures.
-        from libopenimu.importers.wimu import GPSGeodetic
-
-        filename = directory + sensor.name
-        if 'CSV' in file_format:
-            filename = filename + '.CSV'
-        elif 'Matlab' in file_format:
-            filename = filename + '.mat'
-
-        print('output to file : ', filename)
-
-        # Write CSV header
-        header = str()
-        channels = self.get_all_channels(sensor=sensor)
-
-        # Create data array
-        # TODO, WILL HANDLE ONLY ONE GPS CHANNEL FOR NOW
-        my_array = np.zeros(shape=(len(sensors_data), 3))
-
-        for channel in channels:
-            header = header + 'TIME;' + channel.label + '-Latitude;' + channel.label + '-Longitude;'
-
-            for i in range(0, len(sensors_data)):
-                gps_data = GPSGeodetic()
-                gps_data.from_bytes(sensors_data[i].data)
-                # Fill data
-                my_array[i][0] = sensors_data[i].timestamps.start_timestamp.timestamp()
-                my_array[i][1] = gps_data.get_latitude()
-                my_array[i][2] = gps_data.get_longitude()
-
-        # Save CSV
-        # print('dims:', my_array.shape)
-        # Write values
-        if 'CSV' in file_format:
-            np.savetxt(filename, my_array, delimiter=";", header=header)
-        elif 'Matlab' in file_format:
-            sio.savemat(filename, {sensor.name.replace(' ', '_'): my_array.transpose(), 'labels': header.split(';')},
-                        do_compression=True)
-
-    def export_file_sensor_data(self, sensor: Sensor, sensors_data: list, file_format, directory):
-        result = {}
-        for sensor_data in sensors_data:
-            if not result.__contains__(sensor_data.channel.id_channel):
-                result[sensor_data.channel.id_channel] = []
-
-            series = sensor_data.to_time_series()
-            result[sensor_data.channel.id_channel].append(series)
-
-        filename = directory + sensor.location + '_' + sensor.name.replace(' ', '_')
-        if 'CSV' in file_format:
-            filename = filename + '.CSV'
-        elif 'Matlab' in file_format:
-            filename = filename + '.mat'
-
-        print('output to file : ', filename)
-
-        value_list = []
-
-        # Write CSV header
-        header = str()
-        channels = self.get_all_channels(sensor=sensor)
-        for channel in channels:
-            header = header + 'TIME;' + channel.label + ';'
-
-        for channel_key in result:
-            time = []
-            values = []
-            for list_item in result[channel_key]:
-                time.append(list_item['time'])
-                values.append(list_item['values'])
-
-            all_time = np.concatenate(time)
-            all_values = np.concatenate(values)
-            value_list.append(all_time)
-            value_list.append(all_values)
-
-        my_array = np.array(value_list)
-        # print('dims:', my_array.shape)
-        # Write values
-        if 'CSV' in file_format:
-            np.savetxt(filename, my_array.transpose(), delimiter=";", header=header)
-        elif 'Matlab' in file_format:
-            sio.savemat(filename, {sensor.name.replace(' ', ''): my_array.transpose(), 'labels': header.split(';')},
-                        do_compression=True)

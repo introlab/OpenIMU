@@ -1,21 +1,23 @@
-import sys
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
-from PyQt5.QtCore import QUrl, pyqtSlot, pyqtSignal, QPointF
+from PySide6.QtWebEngineWidgets import QWebEngineView
+from PySide6.QtWebEngineCore import QWebEngineSettings
+from PySide6.QtCore import QUrl, Slot, Signal, QPointF
 
 from libopenimu.qt.BaseGraph import BaseGraph
 
 import numpy as np
 import datetime
 import collections
+import sys
 
 
 class GPSView(QWebEngineView, BaseGraph):
 
-    # aboutToClose = pyqtSignal(QObject)
-    cursorMoved = pyqtSignal(float)
+    # aboutToClose = Signal(QObject)
+    cursorMoved = Signal(float)
 
     def __init__(self, parent):
-        super().__init__(parent=parent)
+        BaseGraph.__init__(self)
+        QWebEngineView.__init__(self, parent=parent)
         self.path = []
         self.marker_position = []
         self.positions = collections.OrderedDict()
@@ -25,7 +27,7 @@ class GPSView(QWebEngineView, BaseGraph):
         self.settings().setAttribute(QWebEngineSettings.JavascriptEnabled, True)
         self.settings().setAttribute(QWebEngineSettings.LocalContentCanAccessRemoteUrls, True)
 
-        self.loadFinished.connect(self.pageLoaded)
+        self.loadFinished.connect(self.page_loaded)
 
         # Load file from qrc
         self.setUrl(QUrl('qrc:/OpenIMU/html/map.html'))
@@ -36,7 +38,7 @@ class GPSView(QWebEngineView, BaseGraph):
     # def closeEvent(self, QCloseEvent):
     #    self.aboutToClose.emit(self)
 
-    def addPosition(self, timestamp, latitude, longitude):
+    def add_position(self, timestamp, latitude, longitude):
         # if timestamp < self.reftime:
         #    self.reftime = timestamp
         if isinstance(timestamp, datetime.datetime):
@@ -50,7 +52,7 @@ class GPSView(QWebEngineView, BaseGraph):
         else:
             self.path.append([latitude, longitude])
 
-    def setCursorPositionFromTime(self, timestamp, emit_signal=False):
+    def set_cursor_position_from_time(self, timestamp, emit_signal=False):
 
         # timestamp -= datetime.timedelta(microseconds=timestamp.microsecond)
         # position = None
@@ -92,12 +94,14 @@ class GPSView(QWebEngineView, BaseGraph):
         if self.pageReady:
             self.page().runJavaScript('zoomOut();')
 
-    def clearSelectionArea(self, emit_signal=False):
+    def clear_selection_area(self, emit_signal=False):
         if self.pageReady:
             self.page().runJavaScript('clearSelectedPath();')
 
-    def setSelectionAreaFromTime(self, start_time, end_time, emit_signal=False):
-        self.clearSelectionArea()
+    def set_selection_area_from_time(self, start_time, end_time, emit_signal=False):
+        self.clear_selection_area()
+        if not start_time:
+            return
         try:
             start_pos = self.positions[start_time]  # Right on the value!
         except KeyError:
@@ -136,23 +140,23 @@ class GPSView(QWebEngineView, BaseGraph):
     def is_zoomed(self):
         return True
 
-    @pyqtSlot(bool)
-    def pageLoaded(self, state):
-        print('page loaded:', state)
+    @Slot(bool)
+    def page_loaded(self, state):
+        # print('page loaded:', state)
 
         if state is True:
             self.pageReady = True
             for coords in self.path:
                 self.page().runJavaScript('addPosition(' + str(coords[0]) + ',' + str(coords[1]) + ');')
-            if self.marker_position != []:
+            if self.marker_position:
                 self.page().runJavaScript('setMarkerPosition(' + str(self.marker_position[0]) + ',' + str(self.marker_position[1]) + ');')
 
 
 # Testing app
 if __name__ == '__main__':
 
-    from PyQt5.QtWidgets import QApplication
-    from PyQt5.QtWidgets import QMainWindow
+    from PySide6.QtWidgets import QApplication
+    from PySide6.QtWidgets import QMainWindow
 
     app = QApplication(sys.argv)
 

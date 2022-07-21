@@ -9,12 +9,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>770</width>
-    <height>352</height>
+    <width>782</width>
+    <height>452</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>OpenIMU - Démarrage</string>
+   <string notr="true">OpenIMU</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../core.qrc">
@@ -24,54 +24,98 @@
    <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>5</number>
+   </property>
    <item>
-    <widget class="QFrame" name="frameTitle">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QLabel" name="lblIntrolab">
-        <property name="maximumSize">
-         <size>
-          <width>300</width>
-          <height>80</height>
-         </size>
-        </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <spacer name="horizontalSpacer_5">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item alignment="Qt::AlignRight">
+      <widget class="QComboBox" name="cmbLanguage">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>ArrowCursor</cursorShape>
+       </property>
+       <item>
         <property name="text">
-         <string/>
+         <string notr="true">English</string>
         </property>
-        <property name="pixmap">
-         <pixmap resource="../core.qrc">:/OpenIMU/IntRoLab.png</pixmap>
-        </property>
-        <property name="scaledContents">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="lblOpenIMU">
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>80</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>31</pointsize>
-         </font>
-        </property>
+       </item>
+       <item>
         <property name="text">
-         <string>Open IMU</string>
+         <string notr="true">Français</string>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="lblLogo">
+       <property name="maximumSize">
+        <size>
+         <width>280</width>
+         <height>180</height>
+        </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../core.qrc">:/OpenIMU/LogoOpenIMU.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="spacing">
+      <number>20</number>
+     </property>
+     <property name="leftMargin">
+      <number>10</number>
+     </property>
+     <property name="topMargin">
+      <number>20</number>
+     </property>
+     <property name="rightMargin">
+      <number>10</number>
+     </property>
+     <property name="bottomMargin">
+      <number>10</number>
+     </property>
      <item>
       <widget class="QPushButton" name="btnNew">
        <property name="sizePolicy">
@@ -82,8 +126,8 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>0</width>
-         <height>150</height>
+         <width>200</width>
+         <height>100</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -99,16 +143,16 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>Nouvelles données</string>
+        <string>Create new database</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
-         <normaloff>:/OpenIMU/icons/newdataset.png</normaloff>:/OpenIMU/icons/newdataset.png</iconset>
+         <normaloff>:/OpenIMU/icons/database_new.png</normaloff>:/OpenIMU/icons/database_new.png</iconset>
        </property>
        <property name="iconSize">
         <size>
-         <width>64</width>
-         <height>64</height>
+         <width>48</width>
+         <height>48</height>
         </size>
        </property>
        <property name="autoDefault">
@@ -124,6 +168,12 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="maximumSize">
         <size>
          <width>16777215</width>
@@ -134,7 +184,8 @@
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Importer des données</string>
+        <string>Import sensor data
+in database</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
@@ -142,8 +193,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>64</width>
-         <height>64</height>
+         <width>40</width>
+         <height>40</height>
         </size>
        </property>
        <property name="autoDefault">
@@ -159,6 +210,12 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="maximumSize">
         <size>
          <width>16777215</width>
@@ -169,16 +226,16 @@
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Ouvrir une base de données</string>
+        <string>Open existing database</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
-         <normaloff>:/OpenIMU/icons/open.png</normaloff>:/OpenIMU/icons/open.png</iconset>
+         <normaloff>:/OpenIMU/icons/compact.png</normaloff>:/OpenIMU/icons/compact.png</iconset>
        </property>
        <property name="iconSize">
         <size>
-         <width>64</width>
-         <height>64</height>
+         <width>48</width>
+         <height>48</height>
         </size>
        </property>
        <property name="autoDefault">
@@ -192,9 +249,9 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <spacer name="horizontalSpacer_2">
+      <spacer name="horizontalSpacer_3">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -209,13 +266,13 @@
      <item>
       <widget class="QLabel" name="lblRecents">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Ouvrir un fichier récent:</string>
+        <string>Open recent file:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -241,20 +298,7 @@
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
       <widget class="QPushButton" name="btnQuit">
        <property name="sizePolicy">
@@ -266,7 +310,7 @@
        <property name="minimumSize">
         <size>
          <width>150</width>
-         <height>40</height>
+         <height>50</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -279,7 +323,7 @@
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Quitter</string>
+        <string>Quit</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
@@ -297,7 +341,7 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_3">
+      <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -317,11 +361,31 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="font">
+        <font>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Version 0.6.7&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>Version</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
        </property>
        <property name="alignment">
-        <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lblVersionValue">
+       <property name="font">
+        <font>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string notr="true">1.0.0</string>
        </property>
       </widget>
      </item>

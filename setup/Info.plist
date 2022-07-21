@@ -3,22 +3,32 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDisplayName</key>
-	<string>OpenIMUApp</string>
+	<string>OpenIMU</string>
 	<key>CFBundleExecutable</key>
-	<string>MacOS/OpenIMUApp</string>
+	<string>MacOS/OpenIMU</string>
 	<key>CFBundleIconFile</key>
 	<string>OpenIMU.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>OpenIMUApp</string>
+	<string>OpenIMU</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>OpenIMUApp</string>
+	<string>OpenIMU</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.6.0</string>
+	<string>1.0.0</string>
 	<key>NSHighResolutionCapable</key>
 	<string>True</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.13</string>
+	<key>CFBundleGetInfoString</key>
+	<string>OpenIMU</string>
+	<key>NSAppleScriptEnabled</key>
+	<false/>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>Bundle OS Type code</key>
+	<string></string>
 </dict>
 </plist>

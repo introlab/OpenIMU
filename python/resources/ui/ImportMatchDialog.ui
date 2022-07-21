@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Correspondances données - participants</string>
+   <string>Data / participant matching</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -19,12 +19,11 @@
      <property name="font">
       <font>
        <pointsize>10</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
      <property name="text">
-      <string>Veuillez associer les données aux bons participants</string>
+      <string>Please assign the following data to the correct participant</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -36,11 +35,17 @@
      <property name="horizontalScrollBarPolicy">
       <enum>Qt::ScrollBarAsNeeded</enum>
      </property>
-     <attribute name="horizontalHeaderDefaultSectionSize">
-      <number>225</number>
-     </attribute>
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::NoSelection</enum>
+     </property>
      <attribute name="horizontalHeaderMinimumSectionSize">
       <number>50</number>
+     </attribute>
+     <attribute name="horizontalHeaderDefaultSectionSize">
+      <number>225</number>
      </attribute>
      <attribute name="horizontalHeaderStretchLastSection">
       <bool>true</bool>
@@ -50,7 +55,7 @@
      </attribute>
      <column>
       <property name="text">
-       <string>Donnée</string>
+       <string>Data</string>
       </property>
      </column>
      <column>
@@ -87,11 +92,11 @@
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Ajouter un participant</string>
+        <string>Add participant</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
-         <normaloff>:/OpenIMU/icons/participant.png</normaloff>:/OpenIMU/icons/participant.png</iconset>
+         <normaloff>:/OpenIMU/icons/participant_new.png</normaloff>:/OpenIMU/icons/participant_new.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -134,7 +139,7 @@
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
-         <normaloff>:/OpenIMU/icons/import.png</normaloff>:/OpenIMU/icons/import.png</iconset>
+         <normaloff>:/OpenIMU/icons/ok.png</normaloff>:/OpenIMU/icons/ok.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -156,11 +161,11 @@
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Annuler</string>
+        <string>Cancel</string>
        </property>
        <property name="icon">
         <iconset resource="../core.qrc">
-         <normaloff>:/OpenIMU/icons/delete.png</normaloff>:/OpenIMU/icons/delete.png</iconset>
+         <normaloff>:/OpenIMU/icons/undo.png</normaloff>:/OpenIMU/icons/undo.png</iconset>
        </property>
        <property name="iconSize">
         <size>

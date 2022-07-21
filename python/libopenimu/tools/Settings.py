@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QSettings
+from PySide6.QtCore import QSettings
 
 
 class OpenIMUSettings:
@@ -21,20 +21,28 @@ class OpenIMUSettings:
             # No - append file
             files.insert(0, file_path)
 
-        self.settings.setValue("recent_files", files)
+        self.settings.setValue('recent_files', files)
 
     def get_recent_files(self) -> list:
-        files = self.settings.value("recent_files", defaultValue=[], type=list)
+        files = self.settings.value('recent_files')
+        if not files:
+            files = []
         return files
 
+    def remove_recent_file(self, file_path: str):
+        files = self.get_recent_files()
+        if file_path in files:
+            files.remove(file_path)
+            self.settings.setValue('recent_files', files)
+
     @property
-    def data_save_path(self):
+    def streamer_data_save_path(self):
         import tempfile
         import os
         return self.settings.value("streamer/savepath", defaultValue=tempfile.gettempdir() + os.sep + "OpenIMU")
 
-    @data_save_path.setter
-    def data_save_path(self, save_path: str):
+    @streamer_data_save_path.setter
+    def streamer_data_save_path(self, save_path: str):
         self.settings.setValue('streamer/savepath', save_path)
 
     @property
@@ -44,3 +52,70 @@ class OpenIMUSettings:
     @streamer_port.setter
     def streamer_port(self, port_value: int):
         self.settings.setValue("streamer/port", port_value)
+
+    @property
+    def streamer_delete_data_after_transfer(self):
+        return self.settings.value("streamer/deletedata", defaultValue=False)
+
+    @streamer_delete_data_after_transfer.setter
+    def streamer_delete_data_after_transfer(self, delete: bool):
+        self.settings.setValue("streamer/deletedata", delete)
+
+    @property
+    def current_language(self) -> str:
+        from PySide6.QtCore import QLocale
+        language = self.settings.value("language", defaultValue=QLocale.system().language())
+        if not isinstance(language, str):
+            # No value - set to default language
+            if language == QLocale.French:
+                language = 'fr'
+            elif language == QLocale.English:
+                language = 'en'
+            else:
+                language = 'en'  # Default language for all cases
+        return language
+
+    @current_language.setter
+    def current_language(self, lang: str):
+        self.settings.setValue("language", lang)
+
+    @property
+    def data_load_path(self) -> str:
+        return self.settings.value("data/loadpath", defaultValue='')
+
+    @data_load_path.setter
+    def data_load_path(self, path: str):
+        self.settings.setValue('data/loadpath', path)
+
+    @property
+    def data_save_path(self) -> str:
+        return self.settings.value("data/savepath", defaultValue='')
+
+    @data_save_path.setter
+    def data_save_path(self, path: str):
+        self.settings.setValue('data/savepath', path)
+
+    @property
+    def database_base_path(self) -> str:
+        return self.settings.value("data/databasepath", defaultValue='')
+
+    @database_base_path.setter
+    def database_base_path(self, path: str):
+        self.settings.setValue('data/databasepath', path)
+
+    @property
+    def data_export_path(self) -> str:
+        return self.settings.value("data/exportpath", defaultValue='')
+
+    @data_export_path.setter
+    def data_export_path(self, path: str):
+        self.settings.setValue('data/exportpath', path)
+
+    @property
+    def data_export_type(self) -> int:
+        return self.settings.value('data/exporttype')
+
+    @data_export_type.setter
+    def data_export_type(self, export_type: int):
+        self.settings.setValue('data/exporttype', export_type)
+

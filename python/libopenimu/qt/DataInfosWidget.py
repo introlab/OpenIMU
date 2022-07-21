@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QDialog
-from PyQt5.QtCore import pyqtSlot
+from PySide6.QtWidgets import QDialog
+from PySide6.QtCore import Slot
 from libopenimu.models.Sensor import Sensor
 
 from resources.ui.python.DataInfosWidget_ui import Ui_DataInfosWidget
@@ -27,6 +27,6 @@ class DataInfosWidget(QDialog):
         self.UI.lblSamplesValue.setText(str(self.sample_num))
         self.UI.lblChannelsValue.setText(str(len(self.sensor.channels)))
 
-    @pyqtSlot()
+    @Slot()
     def close_requested(self):
         self.accept()

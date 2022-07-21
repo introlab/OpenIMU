@@ -3,9 +3,9 @@ from .BaseAlgorithm import BaseAlgorithm
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.db.DBManager import DBManager
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QGridLayout, QSpinBox, QComboBox, QFrame, QSizePolicy, \
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QGridLayout, QSpinBox, QComboBox, QFrame, QSizePolicy, \
     QLabel
-from PyQt5.QtCore import Qt
+from PySide6.QtCore import Qt
 
 from libopenimu.qt.Charts import OpenIMUBarGraphView
 import numpy as np
@@ -214,7 +214,7 @@ class Evenson2008Factory(BaseAlgorithmFactory):
         return 2
 
     def info(self):
-        my_info = {'description': """ \
+        my_info = {'description': """\
         Classify activity counts into various intensity levels (Sedentary, Light, Moderate, Vigorous) using 3D 
         accelerometer data.
         
@@ -231,7 +231,7 @@ class Evenson2008Factory(BaseAlgorithmFactory):
             - Final data is reported in seconds
 
         """, 'name': self.name(), 'author': 'Simon Brière', 'version': '0.1',
-                   'reference': (" Kelly R. Evenson, Diane J. Catellier, Karminder Gill, Kristin S. Ondrak & Robert G. "
+                   'reference': ("Kelly R. Evenson, Diane J. Catellier, Karminder Gill, Kristin S. Ondrak & Robert G. "
                                  "McMurray (2008) Calibration of two objective measures of physical activity for "
                                  "children, Journal of Sports Sciences, 26:14, 1557-1565, "
                                  "DOI: 10.1080/02640410802334196 "),
@@ -246,8 +246,8 @@ class Evenson2008Factory(BaseAlgorithmFactory):
         # Initialize inputs
         self.config_preset_input = QComboBox()
         # self.config_preset_input.addItem('')
-        self.config_preset_input.addItem('Valeurs originales', [25, 573, 1002])
-        self.config_preset_input.addItem('Personnalisées', [-1, -1, -1])
+        self.config_preset_input.addItem(self.tr('Original values'), [25, 573, 1002])
+        self.config_preset_input.addItem(self.tr('Custom values'), [-1, -1, -1])
         self.config_preset_input.currentIndexChanged.connect(self.config_preset_changed)
 
         base_layout = QVBoxLayout()
@@ -256,7 +256,7 @@ class Evenson2008Factory(BaseAlgorithmFactory):
                                    'QLabel{background-color: rgba(0,0,0,0%);}')
         preset_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Maximum)
         frame_layout = QGridLayout()
-        item_label = QLabel('Preset')
+        item_label = QLabel(self.tr('Preset'))
         frame_layout.addWidget(item_label, 0, 0)
         frame_layout.addWidget(self.config_preset_input, 0, 1)
         # frame_layout.addRow('Preset', self.config_preset_input)
@@ -314,14 +314,13 @@ class Evenson2008Factory(BaseAlgorithmFactory):
             self.config_moderate_input.setEnabled(params[0] == -1)
 
     def build_display_widget(self, parent_widget: QWidget, results, recordsets):
-
         layout = QVBoxLayout()
         # Add Scroll area
         scroll = QScrollArea(parent=parent_widget)
 
         scroll.setLayout(layout)
         view = OpenIMUBarGraphView(scroll)
-        view.set_title('Active minutes')
+        view.set_title(self.tr('Active minutes'))
         layout.addWidget(view)
 
         for result in results:
