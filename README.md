@@ -1,4 +1,3 @@
-![Analytics](https://ga-beacon-279122.nn.r.appspot.com/UA-27707792-7/github-openimu-main?pixel) 
 # OpenIMU - Data Analyser for Inertial Measurement Units and Actimetry Data
 
 ## Authors
