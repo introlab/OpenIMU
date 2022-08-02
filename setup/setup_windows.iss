@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OpenIMU"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.0.1"
 #define MyAppPublisher "INTER - CdRV - 3IT - USherbrooke"
 #define MyAppURL "https://github.com/introlab/OpenIMU"
 #define MyAppExeName "OpenIMU.exe"
@@ -54,6 +54,14 @@ Source: "..\python\alembic\*"; DestDir: "{app}\alembic"; Flags: ignoreversion re
 [Icons]
 Name: "{commonprograms}\OpenIMU\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+
+[Run]
+; Add firewall exception
+Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""OpenIMU"" protocol=TCP dir=in action=allow program=""{app}\{#MyAppExeName}"" "; StatusMsg: "Adding Firewall Exception"; Flags: runhidden
+
+[UninstallRun]
+Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall delete rule name=""OpenIMU"" "; StatusMsg: "Removing Firewall Exception"; Flags: runhidden; RunOnceId: "DelFirewallException"
+
 
 [Code]
 // Import IsISPackageInstalled() function from UninsIS.dll at setup time
