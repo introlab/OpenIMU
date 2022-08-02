@@ -55,7 +55,10 @@ class OpenIMUSettings:
 
     @property
     def streamer_delete_data_after_transfer(self):
-        return self.settings.value("streamer/deletedata", defaultValue=False)
+        delete_data = self.settings.value("streamer/deletedata", defaultValue=False)
+        if isinstance(delete_data, str):
+            delete_data = (delete_data == 'true')
+        return delete_data
 
     @streamer_delete_data_after_transfer.setter
     def streamer_delete_data_after_transfer(self, delete: bool):
