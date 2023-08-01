@@ -538,6 +538,9 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def delete_requested(self):
+        if not self.UI.treeDataSet.currentItem():
+            return
+
         item_id = self.UI.treeDataSet.get_item_id(self.UI.treeDataSet.currentItem())
         item_type = self.UI.treeDataSet.get_item_type(self.UI.treeDataSet.currentItem())
 

@@ -165,8 +165,11 @@ class AppleWatchImporter(BaseImporter):
         # Data is already hour-aligned iterate through hours
         count = 0
         for timestamp in raw_accelero:
+            # Filter invalid timestamp if needed
+            if timestamp.year < 2000:
+                continue
             # print('raw_accelero', timestamp, len(raw_accelero[timestamp]['times']),
-            #      len(raw_accelero[timestamp]['values']))
+            #       len(raw_accelero[timestamp]['values']))
 
             # Calculate recordset
             recordset = self.get_recordset(timestamp.timestamp(), session_name=self.session_name)
@@ -219,6 +222,9 @@ class AppleWatchImporter(BaseImporter):
         # Data is already hour-aligned iterate through hours
         count = 0
         for timestamp in raw_gyro:
+            # Filter invalid timestamp if needed
+            if timestamp.year < 2000:
+                continue
             # print('raw_gyro', timestamp, len(raw_gyro[timestamp]['times']),
             #       len(raw_gyro[timestamp]['values']))
 
@@ -261,6 +267,9 @@ class AppleWatchImporter(BaseImporter):
         heartrate_channel = self.add_channel_to_db(heartrate_sensor, Units.BPM, DataFormat.UINT8, 'Heartrate')
         count = 0
         for timestamp in heartrate:
+            # Filter invalid timestamp if needed
+            if timestamp.year < 2000:
+                continue
             # print('heartrate', timestamp, len(heartrate[timestamp]['times']),
             #       len(heartrate[timestamp]['values']))
 
@@ -293,6 +302,9 @@ class AppleWatchImporter(BaseImporter):
         coordinates_channel = self.add_channel_to_db(coordinates_sensor, Units.NONE, DataFormat.UINT8, 'Coordinates')
 
         for timestamp in coordinates:
+            # Filter invalid timestamp if needed
+            if timestamp.year < 2000:
+                continue
             # print('coordinates', timestamp, len(coordinates[timestamp]['times']),
             #      len(coordinates[timestamp]['values']))
 
@@ -380,6 +392,9 @@ class AppleWatchImporter(BaseImporter):
                                                             DataFormat.UINT16, 'HEEL'))
         count = 0
         for timestamp in sensoria:
+            # Filter invalid timestamp if needed
+            if timestamp.year < 2000:
+                continue
             # print('sensoria', timestamp, len(sensoria[timestamp]['times']),
             #      len(sensoria[timestamp]['values']))
 
@@ -436,6 +451,9 @@ class AppleWatchImporter(BaseImporter):
 
         # Data is already hour-aligned iterate through hours
         for timestamp in beacons:
+            # Filter invalid timestamp if needed
+            if timestamp.year < 2000:
+                continue
             # print('beacons', timestamp, len(beacons[timestamp]['times']),
             #      len(beacons[timestamp]['values']))
 
@@ -542,6 +560,9 @@ class AppleWatchImporter(BaseImporter):
         # Data is already hour-aligned iterate through hours
         count = 0
         for timestamp in motion:
+            # Filter invalid timestamp if needed
+            if timestamp.year < 2000:
+                continue
             # print('motion', timestamp, len(motion[timestamp]['times']),
             #     len(motion[timestamp]['values']))
 
@@ -592,6 +613,9 @@ class AppleWatchImporter(BaseImporter):
         # Data is already hour-aligned iterate through hours
         count = 0
         for timestamp in battery:
+            # Filter invalid timestamp if needed
+            if timestamp.year < 2000:
+                continue
             # print('battery', timestamp, len(battery[timestamp]['times']),
             #      len(battery[timestamp]['values']))
 

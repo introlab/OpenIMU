@@ -138,6 +138,7 @@ if(WIN32)
         #--hidden-import pkg_resources.py2_warn
         --paths ${PYTHON_ENV_DIRECTORY}/Lib/site-packages/scipy/.libs # PyInstaller doesn't seem to find all required DLLs for SciPy...
         --paths ${PYTHON_ENV_DIRECTORY}/Library/bin # PyInstaller doesn't seem to find sqlite3.dll...
+        --splash ../setup/splash.png # For now, only works on Windows and Linux
     )
 
     # Build this target to make a package
