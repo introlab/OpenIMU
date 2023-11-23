@@ -573,7 +573,8 @@ class RecordsetWindow(QWidget):
                 or sensor.id_sensor_type == SensorType.TEMPERATURE \
                 or sensor.id_sensor_type == SensorType.HEARTRATE \
                 or sensor.id_sensor_type == SensorType.ORIENTATION \
-                or sensor.id_sensor_type == SensorType.FSR:
+                or sensor.id_sensor_type == SensorType.FSR \
+                or sensor.id_sensor_type == SensorType.STEP:
             return GraphType.LINECHART
 
         if sensor.id_sensor_type == SensorType.BEACON:
@@ -620,7 +621,8 @@ class RecordsetWindow(QWidget):
             timeseries, channel_data = self.get_sensor_data(sensor)  # Fetch all sensor data
 
             # Color map for curves
-            colors = [Qt.blue, Qt.green, Qt.yellow, Qt.red]
+            colors = [Qt.darkMagenta, Qt.gray, Qt.darkCyan, Qt.darkRed, Qt.darkYellow, Qt.darkGreen, Qt.darkBlue,
+                      Qt.white, Qt.magenta, Qt.cyan, Qt.blue, Qt.green, Qt.yellow, Qt.red]
 
             graph_type = self.get_sensor_graph_type(sensor)
             graph_window = GraphWindow(graph_type, sensor, self.UI.mdiArea)

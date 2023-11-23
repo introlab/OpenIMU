@@ -45,7 +45,7 @@ class IMUChartView(QChartView, BaseGraph):
         self.setMouseTracking(True)
 
         self.labelValue = QLabel(self)
-        self.labelValue.setStyleSheet("background-color: rgba(255,255,255,75%); color: black;")
+        self.labelValue.setStyleSheet("background-color: rgba(255,255,255,100%); color: black;")
         self.labelValue.setAlignment(Qt.AlignCenter)
         self.labelValue.setMargin(5)
         self.labelValue.setVisible(False)

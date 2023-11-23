@@ -36,16 +36,17 @@ import gc
 
 class AppleWatchImporter(BaseImporter):
     HEADER = 0xEAEA
-    BATTERY_ID = 0x01
-    SENSORIA_ID = 0x02
-    HEARTRATE_ID = 0x03
-    PROCESSED_MOTION_ID = 0x04
-    # LOCATION_ID = 0x05
-    BEACONS_ID = 0x06
-    COORDINATES_ID = 0x7
-    RAW_MOTION_ID = 0x8
-    RAW_ACCELERO_ID = 0x9
-    RAW_GYRO_ID = 0x0A
+    BATTERY_ID = 1
+    SENSORIA_ID = 2
+    HEARTRATE_ID = 3
+    PROCESSED_MOTION_ID = 4
+    # LOCATION_ID = 5
+    BEACONS_ID = 6
+    COORDINATES_ID = 7
+    RAW_MOTION_ID = 8
+    RAW_ACCELERO_ID = 9
+    RAW_GYRO_ID = 10
+    PEDOMETER_ID = 11
 
     def __init__(self, manager: DBManager, participant: Participant):
         super().__init__(manager, participant)
@@ -347,6 +348,75 @@ class AppleWatchImporter(BaseImporter):
                 self.add_sensor_data_to_db(recordset, coordinates_sensor, coordinates_channel,
                                            sensor_timestamps, geo)
                 self.update_progress.emit(50 + np.floor(i / len(valuesarray) / 2 * 100))
+
+    def import_pedometer_to_database(self, pedometer: dict):
+        pedometer_sensor = self.add_sensor_to_db(SensorType.STEP, 'Pedometer', 'AppleWatch', 'Wrist',
+                                                 0, 1)
+        step_channel = self.add_channel_to_db(pedometer_sensor, Units.NONE, DataFormat.UINT32,'Step count')
+        distance_channel = self.add_channel_to_db(pedometer_sensor, Units.METERS, DataFormat.FLOAT32,'Distance')
+        average_pace_channel = self.add_channel_to_db(pedometer_sensor, Units.METERS_PER_SEC, DataFormat.FLOAT32,
+                                                      'Average Pace')
+        pace_channel = self.add_channel_to_db(pedometer_sensor, Units.METERS_PER_SEC, DataFormat.FLOAT32,
+                                              'Pace')
+        cadence_channel = self.add_channel_to_db(pedometer_sensor, Units.METERS_PER_SEC, DataFormat.FLOAT32, 'Cadence')
+        floors_up_channel = self.add_channel_to_db(pedometer_sensor, Units.NONE, DataFormat.UINT32, 'Floors ascended')
+        floors_down_channel = self.add_channel_to_db(pedometer_sensor, Units.NONE, DataFormat.UINT32,
+                                                     'Floors descended')
+
+        count = 0
+        for timestamp in pedometer:
+            # Filter invalid timestamp if needed
+            if timestamp.year < 2000:
+                continue
+
+            # Calculate recordset
+            recordset = self.get_recordset(timestamp.timestamp(), session_name=self.session_name)
+
+            # Create time array as float64
+            timesarray = np.asarray(pedometer[timestamp]['times'], dtype=np.float64)
+
+            if len(timesarray) == 0:
+                self.last_error = "No temporal data"
+                return
+
+            # Create sensor timestamps first
+            sensor_timestamps = self.create_sensor_timestamps(timesarray, recordset)
+
+            # Step counts as UInt32
+            valuesarray = np.asarray(pedometer[timestamp]['values'], dtype=np.uint32)
+
+            # Store counts
+            self.add_sensor_data_to_db(recordset, pedometer_sensor, step_channel, sensor_timestamps,
+                                       valuesarray[:, 0])
+
+            values = valuesarray[:, 5]
+            # if values.min() >= 0 and values.max() >= 0:  # Ignore if not available (all -1)
+            self.add_sensor_data_to_db(recordset, pedometer_sensor, floors_up_channel, sensor_timestamps, values)
+
+            values = valuesarray[:, 6]
+            # if values.min() >= 0 and values.max() >= 0:
+            self.add_sensor_data_to_db(recordset, pedometer_sensor, floors_down_channel, sensor_timestamps, values)
+
+            # Other values are float32
+            valuesarray = np.asarray(pedometer[timestamp]['values'], dtype=np.float32)
+            values = valuesarray[:, 1]
+            # if values.min() >= 0 and values.max() >= 0:  # Ignore if not available (all -1)
+            self.add_sensor_data_to_db(recordset, pedometer_sensor, distance_channel, sensor_timestamps, values)
+
+            values = valuesarray[:, 2]
+            # if values.min() >= 0 and values.max() >= 0:  # Ignore if not available (all -1)
+            self.add_sensor_data_to_db(recordset, pedometer_sensor, average_pace_channel, sensor_timestamps, values)
+
+            values = valuesarray[:, 3]
+            # if values.min() >= 0 and values.max() >= 0:  # Ignore if not available (all -1)
+            self.add_sensor_data_to_db(recordset, pedometer_sensor, pace_channel, sensor_timestamps, values)
+
+            values = valuesarray[:, 4]
+            # if values.min() >= 0 and values.max() >= 0:  # Ignore if not available (all -1)
+            self.add_sensor_data_to_db(recordset, pedometer_sensor, cadence_channel, sensor_timestamps, values)
+
+            count += 1
+            self.update_progress.emit(50 + np.floor(count / len(pedometer) / 2 * 100))
 
     def import_sensoria_to_database(self, sample_rate, sensoria: dict):
         # DL Oct. 17 2018, New import to database
@@ -656,8 +726,6 @@ class AppleWatchImporter(BaseImporter):
             process_list = results
 
         for res in process_list:
-
-            # DL Oct. 16 2018, New import to database
             if res.__contains__('motion'):
                 sampling_rate = res['motion']['sampling_rate']
                 if res['motion']['timestamps']:
@@ -688,11 +756,6 @@ class AppleWatchImporter(BaseImporter):
                 if res['coordinates']['timestamps']:
                     self.import_coordinates_to_database(sampling_rate, res['coordinates']['timestamps'])
 
-            if res.__contains__('raw_motion'):
-                sampling_rate = res['raw_motion']['sampling_rate']
-                if res['raw_motion']['timestamps']:
-                    self.import_raw_motion_to_database(sampling_rate, res['raw_motion']['timestamps'])
-
             if res.__contains__('raw_accelero'):
                 sampling_rate = res['raw_accelero']['sampling_rate']
                 if res['raw_accelero']['timestamps']:
@@ -703,6 +766,9 @@ class AppleWatchImporter(BaseImporter):
                 if res['raw_gyro']['timestamps']:
                     self.import_raw_gyro_to_database(sampling_rate, res['raw_gyro']['timestamps'])
 
+            if res.__contains__('pedometer'):
+                if res['pedometer']['timestamps']:
+                    self.import_pedometer_to_database(res['pedometer']['timestamps'])
             # Commit DB
             self.db.commit()
 
@@ -758,13 +824,6 @@ class AppleWatchImporter(BaseImporter):
         • File Version byte: eg. 0x01
         • 4 bytes (as UInt32) for participantID
         • Byte for sensor identification
-        ◦ Battery: 1
-        ◦ Sensoria: 2
-        ◦ Heartrate: 3
-        ◦ Motion: 4
-        * Location : 5
-        ◦ Beacons: 6
-        ◦ Coordinates: 7
         """
 
         results = {}
@@ -805,6 +864,7 @@ class AppleWatchImporter(BaseImporter):
 
         # prepare for loop by finding right sensor info
         dict_name = ""
+        read_data_func = None
         if sensor_id == self.BATTERY_ID:
             read_data_func = self.read_battery_data
             dict_name = "battery"
@@ -837,8 +897,11 @@ class AppleWatchImporter(BaseImporter):
         elif sensor_id == self.RAW_GYRO_ID:
             read_data_func = self.read_raw_gyro_data
             dict_name = 'raw_gyro'
+        elif sensor_id == self.PEDOMETER_ID:
+            read_data_func = self.read_pedometer_data
+            dict_name = 'pedometer'
         else:
-            self.last_error = "Identifiant de capteur inconnu:" + hex(sensor_id)
+            self.last_error = "Unknown sensor ID:" + str(sensor_id)
             return None
 
         # DL 16 oct. 2018. New format for results. Will keep all timestamps and group them by hour
@@ -885,22 +948,6 @@ class AppleWatchImporter(BaseImporter):
             min_size = min(len(results_ms_ts), len(results_ms_data))
             results_ms_ts = results_ms_ts[0:min_size]
             results_ms_data = results_ms_data[0:min_size]
-
-        # insertion sort on almost sorted timestamps, tends to O(n)
-        # for i in range(1, len(results_ms_ts)):
-        #     curr_ts = results_ms_ts[i]
-        #     curr_data = results_ms_data[i]
-        #     j = i - 1
-        #     # compare timestamps
-        #     while j >= 0 and curr_ts < results_ms_ts[j]:
-        #         # drift up and continue looking
-        #         results_ms_ts[j + 1] = results_ms_ts[j]
-        #         results_ms_data[j + 1] = results_ms_data[j]
-        #         j -= 1
-        #     # only replace if needed
-        #     if j != i - 1:
-        #         results_ms_ts[j + 1] = curr_ts
-        #         results_ms_data[j + 1] = curr_data
 
         # Create hour-aligned separated data
         for i, result in enumerate(results_ms_ts):
@@ -1066,4 +1113,21 @@ class AppleWatchImporter(BaseImporter):
         data = struct.unpack("<3f", chunk)
         if debug:
             print('RAW GYRO: ', data)
+        return data
+
+    @staticmethod
+    def read_pedometer_data(file, debug=False):
+        """
+         - Number of steps:     uint32
+         - Distance:            float32, -1.0 if the value is not available on device
+         - Average active pace: float32, -1.0 if the value is not available on device
+         - Current pace:        float32, -1.0 if the value is not available on device
+         - Current cadence:     float32, -1.0 if the value is not available on device
+         - Floors ascended:     int32, -1.0 if the value is not available on device
+         - Floors descended:    int32, -1.0 if the value is not available on device
+        """
+        chunk = file.read(28)
+        data = struct.unpack("<1I4f2i", chunk)
+        if debug:
+            print("RAW PEDOMETER: ", data)
         return data
