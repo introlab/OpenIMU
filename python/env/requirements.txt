@@ -1,8 +1,8 @@
 pypiwin32==223; sys_platform == 'win32'
-PySide6==6.3.1
-cython==0.29.30
-numpy==1.23.1
-scipy==1.8.1
-sqlalchemy==1.4.39
-alembic==1.8.1
-pyinstaller==5.2
+PySide6==6.6.0
+cython==3.0.5
+numpy==1.26.2
+scipy==1.11.4
+sqlalchemy==2.0.23
+alembic==1.12.1
+pyinstaller==6.2.0

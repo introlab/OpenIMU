@@ -60,8 +60,11 @@ class BackgroundProcess(QThread):
         super(BackgroundProcess, self).__init__(parent)
         self.tasks = tasks
 
+    # def __del__(self):
+    #     print('BackgroundProcess - Deleted!')
+
     def run(self):
-        # print('Run Starting!')
+        # print(str(self.thread()) + ' - Run Starting!')
         for task in self.tasks:
             task.update_progress.connect(self.update_current_task_progress)
             task.change_task_title.connect(self.update_current_task_title)
@@ -74,7 +77,8 @@ class BackgroundProcess(QThread):
                 self.task_error.emit(context, str(traceback.format_exception(e, limit=-1)))
                 print('Task error: ' + context + ' - ' + str(traceback.format_exception(e)))
             self.task_completed.emit()
-            del task
+        # print(str(self.thread()) + ' - Run completed!')
+        self.exit(0)
 
 
 # Testing parallel import (will require more ram)
@@ -139,7 +143,7 @@ class BackgroundProcessForImporters(BackgroundProcess):
         self.task_completed.emit()
 
         # Destroy task
-        del task
+        # del task
 
 
 class ProgressDialog(QDialog):
@@ -239,7 +243,7 @@ class ProgressDialog(QDialog):
             self.UI.prgTask.setMaximum(self.tasks[self.count].size)
             self.tasks[self.count].size_updated.connect(self.current_task_size_updated)
 
-        gc.collect()
+        # gc.collect()
 
     @Slot(int)
     def update_current_task_progress(self, value: int):

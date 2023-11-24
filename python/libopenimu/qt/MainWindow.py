@@ -187,7 +187,8 @@ class MainWindow(QMainWindow):
 
     def clear_main_widgets(self):
         for i in reversed(range(self.UI.frmMain.layout().count())):
-            self.UI.frmMain.layout().itemAt(i).widget().setParent(None)
+            # self.UI.frmMain.layout().itemAt(i).widget().setParent(None)
+            self.UI.frmMain.layout().takeAt(i).widget().deleteLater()
 
     def show_group(self, group=None):
         self.clear_main_widgets()

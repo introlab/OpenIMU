@@ -490,6 +490,9 @@ class RecordsetWindow(QWidget):
         # self.UI.graphSensorsTimeline.setMaximumHeight(self.timeSensorsScene.itemsBoundingRect().height())
 
     def load_sensors_blocks(self):
+        import gc
+        gc.collect()
+
         # Create request tasks
         tasks = []
         for location in self.sensors_location:
@@ -505,8 +508,6 @@ class RecordsetWindow(QWidget):
 
         process.start()
         dialog.exec()
-        process.deleteLater()
-        dialog.deleteLater()
         QGuiApplication.restoreOverrideCursor()
 
         # Combine tasks results
@@ -519,6 +520,7 @@ class RecordsetWindow(QWidget):
                 end_time = result['end_time']
                 data = {"start_time": start_time, "end_time": end_time}
                 self.sensors_blocks[result['sensor_id']].append(data)
+            del task
 
     def create_sensors_rects(self):
         rects = []
@@ -617,7 +619,6 @@ class RecordsetWindow(QWidget):
 
         if sensor_item.isChecked():
             # Choose the correct display for each sensor
-            graph_window = None
             timeseries, channel_data = self.get_sensor_data(sensor)  # Fetch all sensor data
 
             # Color map for curves
@@ -628,12 +629,13 @@ class RecordsetWindow(QWidget):
             graph_window = GraphWindow(graph_type, sensor, self.UI.mdiArea)
 
             if graph_type == GraphType.LINECHART:
-                # Add series
-                for series in timeseries:
-                    graph_window.graph.add_data(series['x'], series['y'], color=colors.pop(),
-                                                legend_text=series['label'])
+                if graph_window.graph:
+                    # Add series
+                    for series in timeseries:
+                        graph_window.graph.add_data(series['x'], series['y'], color=colors.pop(),
+                                                    legend_text=series['label'])
 
-                graph_window.graph.set_title(sensor_label)
+                    graph_window.graph.set_title(sensor_label)
 
             if graph_type == GraphType.MAP:
                 import platform
@@ -706,7 +708,7 @@ class RecordsetWindow(QWidget):
                 if self.sensors_graphs[sensor.id_sensor] is not None:
                     self.UI.mdiArea.removeSubWindow(self.sensors_graphs[sensor.id_sensor].parent())
                     self.sensors_graphs[sensor.id_sensor].hide()
-                    del self.sensors_graphs[sensor.id_sensor]
+                    # del self.sensors_graphs[sensor.id_sensor]
                     self.UI.mdiArea.tileSubWindows()
             except KeyError:
                 pass
@@ -718,13 +720,10 @@ class RecordsetWindow(QWidget):
         task = DBSensorAllDataTask(self.tr('Loading data...'), self.dbMan, sensor, start_time, end_time,
                                    self.recordsets)
 
-        process = BackgroundProcess([task])
+        process = BackgroundProcess([task], self)
         dialog = ProgressDialog(process, self.tr('Processing'), self)
-
         process.start()
         dialog.exec()
-        process.deleteLater()
-        dialog.deleteLater()
         QGuiApplication.restoreOverrideCursor()
 
         return task.results['timeseries'], task.results['channel_data']
@@ -744,8 +743,8 @@ class RecordsetWindow(QWidget):
         for sensor_id, sensor_graph in self.sensors_graphs.items():
             if sensor_graph == graph:
                 # self.sensors_graphs[sensor_id] = None
-                del self.sensors_graphs[sensor_id]
                 self.sensors_items[sensor_id].setChecked(False)
+                del self.sensors_graphs[sensor_id]
                 break
 
         self.UI.mdiArea.tileSubWindows()

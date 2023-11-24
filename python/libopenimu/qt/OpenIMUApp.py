@@ -94,12 +94,12 @@ class OpenIMUApp(QApplication):
     def request_show_start_window(self):
         self.show_start_window()
         if self.main_window:
-            self.main_window.deleteLater()
+            # self.main_window.deleteLater()
             self.main_window = None
 
     def show_start_window(self):
         if self.start_window:
-            self.start_window.deleteLater()
+            # self.start_window.deleteLater()
             self.start_window = None
 
         self.start_window = StartWindow()

@@ -433,7 +433,7 @@ class MagOptions:
 
 
 class IMUOptions:
-    beta = np.float(0.0)
+    beta = float(0.0)
     disable_magneto = False
     auto_calib_gyro = False
 
