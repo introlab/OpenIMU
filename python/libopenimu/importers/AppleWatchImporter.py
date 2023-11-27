@@ -49,6 +49,7 @@ class AppleWatchImporter(BaseImporter):
     RAW_GYRO_ID = 10
     PEDOMETER_ID = 11
     ACTIVITY_ID = 13
+    HEADINGS_ID = 16
 
     def __init__(self, manager: DBManager, participant: Participant):
         super().__init__(manager, participant)
@@ -781,6 +782,70 @@ class AppleWatchImporter(BaseImporter):
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(battery) / 2 * 100))
 
+    def import_headings_to_database(self, sampling_rate, headings: dict):
+        # Create channels and sensors
+        orientation_sensor = self.add_sensor_to_db(SensorType.HEADINGS, 'Headings', 'AppleWatch',
+                                                   'Wrist', sampling_rate, 1)
+
+        orientation_channels = list()
+        orientation_channels.append(self.add_channel_to_db(orientation_sensor, Units.DEGREES, DataFormat.FLOAT32,
+                                                           'True Heading'))
+
+        orientation_channels.append(self.add_channel_to_db(orientation_sensor, Units.DEGREES, DataFormat.FLOAT32,
+                                                           'Accuracy'))
+
+        orientation_channels.append(self.add_channel_to_db(orientation_sensor, Units.DEGREES, DataFormat.FLOAT32,
+                                                           'Mag Heading'))
+
+        # Create sensor
+        magneto_sensor = self.add_sensor_to_db(SensorType.MAGNETOMETER, 'Magnetometer', 'AppleWatch',
+                                               'Wrist', sampling_rate, 1)
+
+        magneto_channels = list()
+
+        # Create channels
+        magneto_channels.append(self.add_channel_to_db(magneto_sensor, Units.UTESLA, DataFormat.FLOAT32, 'Mag_X'))
+        magneto_channels.append(self.add_channel_to_db(magneto_sensor, Units.UTESLA, DataFormat.FLOAT32, 'Mag_Y'))
+        magneto_channels.append(self.add_channel_to_db(magneto_sensor, Units.UTESLA, DataFormat.FLOAT32, 'Mag_Z'))
+
+        # Data is already hour-aligned iterate through hours
+        count = 0
+        for timestamp in headings:
+            # Filter invalid timestamp if needed
+            if timestamp.year < 2000:
+                continue
+
+            # Calculate recordset
+            recordset = self.get_recordset(timestamp.timestamp(), session_name=self.session_name)
+
+            # Add data to database
+
+            # Create time array as float64
+            timesarray = np.asarray(headings[timestamp]['times'], dtype=np.float64)
+
+            if len(timesarray) == 0:
+                self.last_error = "Aucune données temporelles."
+                return
+
+            # Other values are float32
+            valuesarray = np.asarray(headings[timestamp]['values'], dtype=np.float32)
+
+            # Create sensor timestamps first
+            sensor_timestamps = self.create_sensor_timestamps(timesarray, recordset)
+
+            # Acc
+            for i, channel in enumerate(orientation_channels):
+                self.add_sensor_data_to_db(recordset, orientation_sensor, channel,
+                                           sensor_timestamps, valuesarray[:, i])
+
+            # Gyro
+            for i, channel in enumerate(magneto_channels):
+                self.add_sensor_data_to_db(recordset, magneto_sensor, channel,
+                                           sensor_timestamps, valuesarray[:, i + 6])
+
+            count += 1
+            self.update_progress.emit(50 + np.floor(count / len(headings) / 2 * 100))
+
     def import_to_database(self, results):
         if results is None:
             return
@@ -843,6 +908,10 @@ class AppleWatchImporter(BaseImporter):
                 if res['activity']['timestamps']:
                     self.import_activity_to_database(res['activity']['timestamps'])
 
+            if res.__contains__('headings'):
+                sampling_rate = 50  # For now, since no frequency in settings?
+                if res['headings']['timestamps']:
+                    self.import_headings_to_database(sampling_rate, res['headings']['timestamps'])
             # Commit DB
             self.db.commit()
 
@@ -977,6 +1046,9 @@ class AppleWatchImporter(BaseImporter):
         elif sensor_id == self.ACTIVITY_ID:
             read_data_func = self.read_activity_data
             dict_name = 'activity'
+        elif sensor_id == self.HEADINGS_ID:
+            read_data_func = self.read_headings_data
+            dict_name = 'headings'
         else:
             self.last_error = "Unknown sensor ID:" + str(sensor_id)
             return None
@@ -1229,4 +1301,20 @@ class AppleWatchImporter(BaseImporter):
         data = struct.unpack("<1B", chunk)
         if debug:
             print("RAW ACTIVITY: ", data)
+        return data
+
+    @staticmethod
+    def read_headings_data(file, debug=False):
+        """
+        True Heading: Float32 -- 4 bytes: Heading in degrees relative to true north (0 = North, 180 = South). Only valid if "True Heading Accuracy" is positive.
+        True Heading Accuracy: Float32 -- 4 bytes: Accuracy in degrees of "True Heading", with negative values representing unreliable or uncalibrated sensor.
+        Magnetic Heading: Float32 -- 4 bytes: Heading in degrees relative to magnetic north.
+        Magnetometer x-data: Float32 -- 4 bytes: x-value of magnetometer (microTeslas)
+        Magnetometer y-data: Float32 -- 4 bytes: y-value of magnetometer (microTeslas)
+        Magnetometer z-data: Float32 -- 4 bytes: z-value of magnetometer (microTeslas)
+        """
+        chunk = file.read(24)
+        data = struct.unpack("<6f", chunk)
+        if debug:
+            print("HEADINGS: ", data)
         return data

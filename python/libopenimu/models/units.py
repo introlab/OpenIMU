@@ -20,6 +20,7 @@ class Units:
     GAUSS = 11
     CELCIUS = 12
     BPM = 13
+    DEGREES = 14
 
     value_dict = {METERS: 'METERS',
                   GRAVITY_G: 'G',
