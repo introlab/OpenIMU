@@ -697,6 +697,15 @@ class AppleWatchImporter(BaseImporter):
         gyro_channels.append(self.add_channel_to_db(gyro_sensor, Units.DEG_PER_SEC,
                                                     DataFormat.FLOAT32, 'Gyro_Z'))
 
+        orientation_sensor = self.add_sensor_to_db(SensorType.ORIENTATION, 'Attitude', 'AppleWatch',
+                                                   'Wrist', sampling_rate, 1)
+
+        orientation_channels = list()
+        orientation_channels.append(self.add_channel_to_db(orientation_sensor, Units.NONE, DataFormat.FLOAT32, 'q0'))
+        orientation_channels.append(self.add_channel_to_db(orientation_sensor, Units.NONE, DataFormat.FLOAT32, 'q1'))
+        orientation_channels.append(self.add_channel_to_db(orientation_sensor, Units.NONE, DataFormat.FLOAT32, 'q2'))
+        orientation_channels.append(self.add_channel_to_db(orientation_sensor, Units.NONE, DataFormat.FLOAT32, 'q3'))
+
         # Data is already hour-aligned iterate through hours
         count = 0
         for timestamp in motion:
@@ -739,6 +748,11 @@ class AppleWatchImporter(BaseImporter):
             for i, gyro_channel in enumerate(gyro_channels):
                 self.add_sensor_data_to_db(recordset, gyro_sensor, gyro_channel,
                                            sensor_timestamps, valuesarray[:, i + 6])
+
+            # Attitude
+            for i, channel in enumerate(orientation_channels):
+                self.add_sensor_data_to_db(recordset, orientation_sensor, channel, sensor_timestamps,
+                                           valuesarray[:, i + 9])
 
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(motion) / 2 * 100))
@@ -833,15 +847,15 @@ class AppleWatchImporter(BaseImporter):
             # Create sensor timestamps first
             sensor_timestamps = self.create_sensor_timestamps(timesarray, recordset)
 
-            # Acc
+            # Headings
             for i, channel in enumerate(orientation_channels):
                 self.add_sensor_data_to_db(recordset, orientation_sensor, channel,
                                            sensor_timestamps, valuesarray[:, i])
 
-            # Gyro
+            # Magneto
             for i, channel in enumerate(magneto_channels):
                 self.add_sensor_data_to_db(recordset, magneto_sensor, channel,
-                                           sensor_timestamps, valuesarray[:, i + 6])
+                                           sensor_timestamps, valuesarray[:, i + 3])
 
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(headings) / 2 * 100))
