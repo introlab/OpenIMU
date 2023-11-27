@@ -31,6 +31,7 @@ import struct
 import json  # For file header config
 import gc
 
+
 # from collections import defaultdict
 
 
@@ -47,6 +48,7 @@ class AppleWatchImporter(BaseImporter):
     RAW_ACCELERO_ID = 9
     RAW_GYRO_ID = 10
     PEDOMETER_ID = 11
+    ACTIVITY_ID = 13
 
     def __init__(self, manager: DBManager, participant: Participant):
         super().__init__(manager, participant)
@@ -84,7 +86,7 @@ class AppleWatchImporter(BaseImporter):
                     # print('Loading File: ', filename)
                     self.current_file_size = os.stat(filename).st_size
 
-                    values = self.readDataFile(file)
+                    values = self.read_data_file(file)
                     if values is not None:
                         results.append(values)
 
@@ -119,7 +121,7 @@ class AppleWatchImporter(BaseImporter):
                     # print('Reading file: ', file)
                     my_file = myzip.open(file)
                     self.current_file_size = myzip.getinfo(my_file.name).file_size
-                    values = self.readDataFile(my_file, False)
+                    values = self.read_data_file(my_file, False)
 
                     # Append data
                     if values is not None:
@@ -144,6 +146,71 @@ class AppleWatchImporter(BaseImporter):
             recordset.end_timestamp = sensor_timestamps.end_timestamp
 
         return sensor_timestamps
+
+    def import_activity_to_database(self, activity: dict):
+        activity_sensor = self.add_sensor_to_db(SensorType.ACTIVITY, 'Activity', 'AppleWatch', 'Wrist',
+                                                0, 1)
+        confidence_channel = self.add_channel_to_db(activity_sensor, Units.NONE, DataFormat.UINT8, 'Confidence')
+        car_channel = self.add_channel_to_db(activity_sensor, Units.NONE, DataFormat.UINT8, 'Automotive')
+        cycle_channel = self.add_channel_to_db(activity_sensor, Units.NONE, DataFormat.UINT8, 'Cycling')
+        run_channel = self.add_channel_to_db(activity_sensor, Units.NONE, DataFormat.UINT8, 'Running')
+        stat_channel = self.add_channel_to_db(activity_sensor, Units.NONE, DataFormat.UINT8, 'Stationnary')
+        walk_channel = self.add_channel_to_db(activity_sensor, Units.NONE, DataFormat.UINT8, 'Walking')
+        unknown_channel = self.add_channel_to_db(activity_sensor, Units.NONE, DataFormat.UINT8,'Unknown')
+
+        count = 0
+        for timestamp in activity:
+            # Filter invalid timestamp if needed
+            if timestamp.year < 2000:
+                continue
+
+            # Calculate recordset
+            recordset = self.get_recordset(timestamp.timestamp(), session_name=self.session_name)
+
+            # Create time array as float64
+            timesarray = np.asarray(activity[timestamp]['times'], dtype=np.float64)
+
+            if len(timesarray) == 0:
+                self.last_error = "No temporal data"
+                return
+
+            # Create sensor timestamps first
+            sensor_timestamps = self.create_sensor_timestamps(timesarray, recordset)
+
+            # All stored into one UInt8 value...
+            valuesarray = np.asarray(activity[timestamp]['values'], dtype=np.uint8)
+
+            # Extract values
+            mask = np.full(valuesarray.shape, 0x03)
+            masked = np.bitwise_and(valuesarray, mask)
+            self.add_sensor_data_to_db(recordset, activity_sensor, confidence_channel, sensor_timestamps, masked[:, 0])
+
+            mask = np.full(valuesarray.shape, 0x04)
+            masked = np.right_shift(np.bitwise_and(valuesarray, mask), 2)
+            self.add_sensor_data_to_db(recordset, activity_sensor, car_channel, sensor_timestamps, masked[:, 0])
+
+            mask = np.full(valuesarray.shape, 0x08)
+            masked = np.right_shift(np.bitwise_and(valuesarray, mask), 3)
+            self.add_sensor_data_to_db(recordset, activity_sensor, cycle_channel, sensor_timestamps, masked[:, 0])
+
+            mask = np.full(valuesarray.shape, 0x10)
+            masked = np.right_shift(np.bitwise_and(valuesarray, mask), 4)
+            self.add_sensor_data_to_db(recordset, activity_sensor, run_channel, sensor_timestamps, masked[:, 0])
+
+            mask = np.full(valuesarray.shape, 0x20)
+            masked = np.right_shift(np.bitwise_and(valuesarray, mask), 5)
+            self.add_sensor_data_to_db(recordset, activity_sensor, stat_channel, sensor_timestamps, masked[:, 0])
+
+            mask = np.full(valuesarray.shape, 0x40)
+            masked = np.right_shift(np.bitwise_and(valuesarray, mask), 6)
+            self.add_sensor_data_to_db(recordset, activity_sensor, walk_channel, sensor_timestamps, masked[:, 0])
+
+            mask = np.full(valuesarray.shape, 0x80)
+            masked = np.right_shift(np.bitwise_and(valuesarray, mask), 7)
+            self.add_sensor_data_to_db(recordset, activity_sensor, unknown_channel, sensor_timestamps, masked[:, 0])
+
+            count += 1
+            self.update_progress.emit(50 + np.floor(count / len(activity) / 2 * 100))
 
     def import_raw_accelerometer_to_database(self, sample_rate, raw_accelero: dict):
         # DL Oct. 17 2018, New import to database
@@ -198,8 +265,9 @@ class AppleWatchImporter(BaseImporter):
                 self.add_sensor_data_to_db(recordset, raw_accelerometer_sensor, channel,
                                            sensor_timestamps, valuesarray[:, i])
                 count += 1
-                self.update_progress.emit(50 + np.floor(count / (len(raw_accelero)*len(raw_accelerometer_channels)) / 2
-                                                        * 100))
+                self.update_progress.emit(
+                    50 + np.floor(count / (len(raw_accelero) * len(raw_accelerometer_channels)) / 2
+                                  * 100))
 
     def import_raw_gyro_to_database(self, sample_rate, raw_gyro: dict):
         # DL Oct. 17 2018, New import to database
@@ -230,6 +298,7 @@ class AppleWatchImporter(BaseImporter):
             #       len(raw_gyro[timestamp]['values']))
 
             # Calculate recordset
+            recordset = None
             try:
                 recordset = self.get_recordset(timestamp.timestamp(), session_name=self.session_name)
             except OSError as e:
@@ -352,8 +421,8 @@ class AppleWatchImporter(BaseImporter):
     def import_pedometer_to_database(self, pedometer: dict):
         pedometer_sensor = self.add_sensor_to_db(SensorType.STEP, 'Pedometer', 'AppleWatch', 'Wrist',
                                                  0, 1)
-        step_channel = self.add_channel_to_db(pedometer_sensor, Units.NONE, DataFormat.UINT32,'Step count')
-        distance_channel = self.add_channel_to_db(pedometer_sensor, Units.METERS, DataFormat.FLOAT32,'Distance')
+        step_channel = self.add_channel_to_db(pedometer_sensor, Units.NONE, DataFormat.UINT32, 'Step count')
+        distance_channel = self.add_channel_to_db(pedometer_sensor, Units.METERS, DataFormat.FLOAT32, 'Distance')
         average_pace_channel = self.add_channel_to_db(pedometer_sensor, Units.METERS_PER_SEC, DataFormat.FLOAT32,
                                                       'Average Pace')
         pace_channel = self.add_channel_to_db(pedometer_sensor, Units.METERS_PER_SEC, DataFormat.FLOAT32,
@@ -571,20 +640,20 @@ class AppleWatchImporter(BaseImporter):
                     recordset.end_timestamp = sensor_timestamps.end_timestamp
 
                 # Create channel
-                channel_txPower = self.add_channel_to_db(beacons_sensor, Units.NONE,
-                                                         DataFormat.SINT8, key + '_TxPower')
+                channel_tx_power = self.add_channel_to_db(beacons_sensor, Units.NONE,
+                                                          DataFormat.SINT8, key + '_TxPower')
 
-                channel_RSSI = self.add_channel_to_db(beacons_sensor, Units.NONE,
+                channel_rssi = self.add_channel_to_db(beacons_sensor, Units.NONE,
                                                       DataFormat.SINT8, key + '_RSSI')
 
                 tx_power_vect = np.asarray([x[1] for x in channel_values[key]], dtype=np.int8)
                 rssi_vect = np.asarray([x[2] for x in channel_values[key]], dtype=np.int8)
 
                 # Add data
-                self.add_sensor_data_to_db(recordset, beacons_sensor, channel_txPower,
+                self.add_sensor_data_to_db(recordset, beacons_sensor, channel_tx_power,
                                            sensor_timestamps, tx_power_vect)
 
-                self.add_sensor_data_to_db(recordset, beacons_sensor, channel_RSSI,
+                self.add_sensor_data_to_db(recordset, beacons_sensor, channel_rssi,
                                            sensor_timestamps, rssi_vect)
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(beacons) / 2 * 100))
@@ -769,6 +838,11 @@ class AppleWatchImporter(BaseImporter):
             if res.__contains__('pedometer'):
                 if res['pedometer']['timestamps']:
                     self.import_pedometer_to_database(res['pedometer']['timestamps'])
+
+            if res.__contains__('activity'):
+                if res['activity']['timestamps']:
+                    self.import_activity_to_database(res['activity']['timestamps'])
+
             # Commit DB
             self.db.commit()
 
@@ -817,7 +891,7 @@ class AppleWatchImporter(BaseImporter):
 
         return sample_rate
 
-    def readDataFile(self, file, debug=False):
+    def read_data_file(self, file, debug=False):
         """
         All binary files have a similar header
         • Two bytes for file identifier (based on Wimu format): 0xEA, 0xEA
@@ -900,6 +974,9 @@ class AppleWatchImporter(BaseImporter):
         elif sensor_id == self.PEDOMETER_ID:
             read_data_func = self.read_pedometer_data
             dict_name = 'pedometer'
+        elif sensor_id == self.ACTIVITY_ID:
+            read_data_func = self.read_activity_data
+            dict_name = 'activity'
         else:
             self.last_error = "Unknown sensor ID:" + str(sensor_id)
             return None
@@ -919,13 +996,14 @@ class AppleWatchImporter(BaseImporter):
         if file.seekable():
             # Divided by 2, since loading is first step
             # DB import is second step
-            progress = np.floor((file.tell() / self.current_file_size)*100 / 2)
+            progress = np.floor((file.tell() / self.current_file_size) * 100 / 2)
 
             if progress > 0:
                 self.update_progress.emit(progress)
 
         # read the whole file
         try:
+            progress = 0
             while file.readable() and read_data_func is not None:
 
                 # Read timestamp
@@ -938,7 +1016,7 @@ class AppleWatchImporter(BaseImporter):
                 results_ms_data.append(read_data_func(file, debug))
 
                 if file.seekable():
-                    new_progress = np.floor((file.tell() / self.current_file_size)*100 / 2)
+                    new_progress = np.floor((file.tell() / self.current_file_size) * 100 / 2)
                     if new_progress != progress:  # Only send update if % was increased
                         progress = new_progress
                         self.update_progress.emit(progress)
@@ -1130,4 +1208,25 @@ class AppleWatchImporter(BaseImporter):
         data = struct.unpack("<1I4f2i", chunk)
         if debug:
             print("RAW PEDOMETER: ", data)
+        return data
+
+    @staticmethod
+    def read_activity_data(file, debug=False):
+        """
+        Detected Activities: UInt8 -- 1 byte: Detected activities and confidence level:
+            Bits 0-1: Confidence level:
+                00 : low
+                01 : medium
+                10 : high
+            Bit 2: Automative activity detected
+            Bit 3: Cycling activity detected
+            Bit 4: Running activity detected
+            Bit 5: Stationary activity detected
+            Bit 6: Walking activity detected
+            Bit 7: Unknown activity detected
+        """
+        chunk = file.read(1)
+        data = struct.unpack("<1B", chunk)
+        if debug:
+            print("RAW ACTIVITY: ", data)
         return data

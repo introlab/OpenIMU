@@ -27,7 +27,7 @@ class IMUChartView(QChartView, BaseGraph):
         self.chart.legend().setVisible(True)
         self.chart.legend().setAlignment(Qt.AlignTop)
         self.ncurves = 0
-        # self.setRenderHint(QPainter.Antialiasing)
+        self.setRenderHint(QPainter.Antialiasing)
 
         # Cursor (with chart as parent)
         self.cursor = QGraphicsLineItem(self.chart)

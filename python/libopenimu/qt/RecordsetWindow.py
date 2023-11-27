@@ -181,7 +181,8 @@ class RecordsetWindow(QWidget):
         self.update_tile_buttons_state()
 
     def __del__(self):
-        self.UI.mdiArea.closeAllSubWindows()
+        # self.UI.mdiArea.closeAllSubWindows()
+        pass
 
     def paintEvent(self, paint_event):
         if not self.time_pixmap:
@@ -576,7 +577,8 @@ class RecordsetWindow(QWidget):
                 or sensor.id_sensor_type == SensorType.HEARTRATE \
                 or sensor.id_sensor_type == SensorType.ORIENTATION \
                 or sensor.id_sensor_type == SensorType.FSR \
-                or sensor.id_sensor_type == SensorType.STEP:
+                or sensor.id_sensor_type == SensorType.STEP \
+                or sensor.id_sensor_type == SensorType.ACTIVITY:
             return GraphType.LINECHART
 
         if sensor.id_sensor_type == SensorType.BEACON:

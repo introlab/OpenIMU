@@ -326,7 +326,7 @@ class MainWindow(QMainWindow):
             self.dbMan.close()
             self.add_to_log(self.tr('File') + ' ' + self.currentFileName + ' ' + self.tr('was closed.'),
                             LogTypes.LOGTYPE_INFO)
-            # self.hide()
+            self.hide()
 
             # self.show_start_window()
             self.showStartWindow.emit()
