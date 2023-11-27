@@ -181,31 +181,31 @@ class AppleWatchImporter(BaseImporter):
             valuesarray = np.asarray(activity[timestamp]['values'], dtype=np.uint8)
 
             # Extract values
-            mask = np.full(valuesarray.shape, 0x03)
+            mask = np.full(valuesarray.shape, fill_value=0x03, dtype=np.uint8)
             masked = np.bitwise_and(valuesarray, mask)
             self.add_sensor_data_to_db(recordset, activity_sensor, confidence_channel, sensor_timestamps, masked[:, 0])
 
-            mask = np.full(valuesarray.shape, 0x04)
+            mask = np.full(valuesarray.shape, fill_value=0x04, dtype=np.uint8)
             masked = np.right_shift(np.bitwise_and(valuesarray, mask), 2)
             self.add_sensor_data_to_db(recordset, activity_sensor, car_channel, sensor_timestamps, masked[:, 0])
 
-            mask = np.full(valuesarray.shape, 0x08)
+            mask = np.full(valuesarray.shape, fill_value=0x08, dtype=np.uint8)
             masked = np.right_shift(np.bitwise_and(valuesarray, mask), 3)
             self.add_sensor_data_to_db(recordset, activity_sensor, cycle_channel, sensor_timestamps, masked[:, 0])
 
-            mask = np.full(valuesarray.shape, 0x10)
+            mask = np.full(valuesarray.shape, fill_value=0x10, dtype=np.uint8)
             masked = np.right_shift(np.bitwise_and(valuesarray, mask), 4)
             self.add_sensor_data_to_db(recordset, activity_sensor, run_channel, sensor_timestamps, masked[:, 0])
 
-            mask = np.full(valuesarray.shape, 0x20)
+            mask = np.full(valuesarray.shape, fill_value=0x20, dtype=np.uint8)
             masked = np.right_shift(np.bitwise_and(valuesarray, mask), 5)
             self.add_sensor_data_to_db(recordset, activity_sensor, stat_channel, sensor_timestamps, masked[:, 0])
 
-            mask = np.full(valuesarray.shape, 0x40)
+            mask = np.full(valuesarray.shape, fill_value=0x40, dtype=np.uint8)
             masked = np.right_shift(np.bitwise_and(valuesarray, mask), 6)
             self.add_sensor_data_to_db(recordset, activity_sensor, walk_channel, sensor_timestamps, masked[:, 0])
 
-            mask = np.full(valuesarray.shape, 0x80)
+            mask = np.full(valuesarray.shape, fill_value=0x80, dtype=np.uint8)
             masked = np.right_shift(np.bitwise_and(valuesarray, mask), 7)
             self.add_sensor_data_to_db(recordset, activity_sensor, unknown_channel, sensor_timestamps, masked[:, 0])
 

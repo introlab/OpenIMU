@@ -10,15 +10,13 @@ from sqlalchemy import create_engine, asc, or_, and_
 from sqlalchemy.orm import sessionmaker
 # noinspection PyProtectedMember
 from sqlalchemy.engine import Engine
-from sqlalchemy import event
+from sqlalchemy import event, text
 
 import os
 import datetime
-import numpy as np
 import pickle
 import sys
 import warnings
-import scipy.io as sio
 
 from PySide6.QtCore import QObject, Signal
 
@@ -155,7 +153,8 @@ class DBManager(QObject):
 
     def compact(self):
         self.clean_db()
-        self.engine.execute("VACUUM")
+        with self.engine.connect() as connection:
+            connection.execute(text("VACUUM"))
 
     # GROUPS
     def update_group(self, group):
