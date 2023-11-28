@@ -2,6 +2,7 @@ from PySide6.QtCore import QThread, QCoreApplication, Signal, Slot, Qt, QObject,
 from PySide6.QtWidgets import QDialog, QApplication
 from PySide6.QtGui import QMovie
 from resources.ui.python.ProgressDialog_ui import Ui_ProgressDialog
+from libopenimu.models.LogTypes import LogTypes
 
 import numpy as np
 import gc
@@ -31,7 +32,7 @@ class WorkerTask(QObject):
         self.size_updated.emit()
 
     def process(self):
-        print("Empty task - " + self.title + " - nothing to process!")
+        self.log_request.emit("Empty task - " + self.title + " - nothing to process!", LogTypes.LOGTYPE_WARNING)
 
 
 class SimpleTask(WorkerTask):  # A simple worker task without any progress reporting
@@ -75,7 +76,7 @@ class BackgroundProcess(QThread):
                 if hasattr(task, 'filename'):
                     context = task.filename
                 self.task_error.emit(context, str(traceback.format_exception(e, limit=-1)))
-                print('Task error: ' + context + ' - ' + str(traceback.format_exception(e)))
+                # print('Task error: ' + context + ' - ' + str(traceback.format_exception(e)))
             self.task_completed.emit()
         # print(str(self.thread()) + ' - Run completed!')
         self.exit(0)
@@ -95,23 +96,23 @@ class BackgroundProcessForImporters(BackgroundProcess):
                 self.results = []
 
             def run(self):
-                print('processing...', self.task.filename)
+                # print('processing...', self.task.filename)
 
-                if self.task.load_data():
-                    print('data loaded...', self.task.filename)
-                else:
-                    print('data not loaded...', self.task.filename)
+                # if self.task.load_data():
+                #     print('data loaded...', self.task.filename)
+                # else:
+                #     print('data not loaded...', self.task.filename)
 
                 # Emit signal that task may have results
                 self.task.results_ready.emit(self.task)
 
-        print('BackgroundProcessForImporters starting load threads')
+        # print('BackgroundProcessForImporters starting load threads')
         pool = QThreadPool()
 
         # Disable expiration
         pool.setExpiryTimeout(-1)
 
-        print('MaxThread count: ', pool.maxThreadCount())
+        # print('MaxThread count: ', pool.maxThreadCount())
 
         # Starting all threads for importation
         runnable_list = []
@@ -127,7 +128,8 @@ class BackgroundProcessForImporters(BackgroundProcess):
 
         # Wait for all runnable threads
         if pool.waitForDone():
-            print('All threads done!')
+            pass
+            # print('All threads done!')
             # for task in self.tasks:
             #     task.import_data()
             #     self.task_completed.emit()
@@ -275,7 +277,7 @@ class ProgressDialog(QDialog):
 
     @Slot()
     def cancel_clicked(self):
-        print('Cancel requested')
+        # print('Cancel requested')
         self.cancel_requested.emit()
 
 

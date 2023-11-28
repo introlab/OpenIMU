@@ -579,7 +579,8 @@ class RecordsetWindow(QWidget):
                 or sensor.id_sensor_type == SensorType.FSR \
                 or sensor.id_sensor_type == SensorType.STEP \
                 or sensor.id_sensor_type == SensorType.ACTIVITY \
-                or sensor.id_sensor_type == SensorType.HEADINGS:
+                or sensor.id_sensor_type == SensorType.HEADINGS \
+                or sensor.id_sensor_type == SensorType.BIOMETRICS:
             return GraphType.LINECHART
 
         if sensor.id_sensor_type == SensorType.BEACON:

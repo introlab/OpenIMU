@@ -49,6 +49,7 @@ class AppleWatchImporter(BaseImporter):
     RAW_GYRO_ID = 10
     PEDOMETER_ID = 11
     ACTIVITY_ID = 13
+    HEALTH_ID = 15
     HEADINGS_ID = 16
 
     def __init__(self, manager: DBManager, participant: Participant):
@@ -157,7 +158,7 @@ class AppleWatchImporter(BaseImporter):
         run_channel = self.add_channel_to_db(activity_sensor, Units.NONE, DataFormat.UINT8, 'Running')
         stat_channel = self.add_channel_to_db(activity_sensor, Units.NONE, DataFormat.UINT8, 'Stationnary')
         walk_channel = self.add_channel_to_db(activity_sensor, Units.NONE, DataFormat.UINT8, 'Walking')
-        unknown_channel = self.add_channel_to_db(activity_sensor, Units.NONE, DataFormat.UINT8,'Unknown')
+        unknown_channel = self.add_channel_to_db(activity_sensor, Units.NONE, DataFormat.UINT8, 'Unknown')
 
         count = 0
         for timestamp in activity:
@@ -331,7 +332,6 @@ class AppleWatchImporter(BaseImporter):
             self.update_progress.emit(50 + np.floor(count / len(raw_gyro) / 2 * 100))
 
     def import_heartrate_to_database(self, sample_rate, heartrate: dict):
-        # DL Oct. 17 2018, New import to database
         heartrate_sensor = self.add_sensor_to_db(SensorType.HEARTRATE, 'Heartrate', 'AppleWatch', 'Wrist',
                                                  sample_rate, 1)
 
@@ -860,6 +860,97 @@ class AppleWatchImporter(BaseImporter):
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(headings) / 2 * 100))
 
+    def import_health_to_database(self, settings, health: dict):
+        # Check settings to find out what sensors are enabled
+        if 'healthkitTypes' not in settings:
+            # print("No healthkit types found - ignoring.")
+            return
+
+        health_types = json.loads(settings)['healthkitTypes']
+
+        # Create base sensor(s)
+        health_sensor = self.add_sensor_to_db(SensorType.BIOMETRICS, 'Health', 'AppleWatch',
+                                              'Wrist', 0, 1)
+
+        step_sensor = None
+        if 'stepCount' in health_types:
+            step_sensor = self.add_sensor_to_db(SensorType.STEP, 'Step Count (Health)', 'AppleWatch', 'Wrist',
+                                                0, 1)
+
+        heartrate_sensor = None
+        if 'heartRate' in health_types:
+            heartrate_sensor = self.add_sensor_to_db(SensorType.HEARTRATE, 'Heartrate (Health)', 'AppleWatch', 'Wrist',
+                                                     0, 1)
+
+        health_channels = list()
+
+        for health_type in health_types:
+            # Set specific informations depending on type
+            base_sensor = health_sensor
+            units = Units.NONE
+
+            if health_type == 'stepCount':
+                base_sensor = step_sensor
+            if health_type == 'heartRate':
+                base_sensor = heartrate_sensor
+            if health_type == 'activeEnergyBurned' or health_type == 'basalEnergyBurned':
+                units = Units.KCALORIES
+            if (health_type == 'heartRate' or health_type == 'respiratoryRate' or health_type == 'restingHeartRate'
+                    or health_type == 'walkingHeartRateAverage'):
+                units = Units.BPM
+            if health_type == 'oxygenSaturation' or health_type == 'appleWalkingSteadiness':
+                units = Units.PERCENTAGE
+            if health_type == 'vo2Max':
+                units = Units.MLKGMIN
+            if health_type == 'heartRateVariability':
+                units = Units.MILLISECONDS
+            if health_type == 'bodyTemperature':
+                units = Units.DEGREES
+            if health_type == 'appleExerciseTime' or health_type == 'appleStandTime' or health_type == 'appleMoveTime':
+                units = Units.SECONDS
+            if health_type == 'walkingSpeed':
+                units = Units.METERS_PER_SEC
+            if health_type == 'walkingStepLength':
+                units = Units.METERS
+
+            # Create channel
+            health_channels.append(self.add_channel_to_db(base_sensor, units, DataFormat.FLOAT32, health_type))
+
+        # Import data depending on each sensors
+        count = 0
+        for timestamp in health:
+            # Filter invalid timestamp if needed
+            if timestamp.year < 2000:
+                continue
+
+            # Calculate recordset
+            recordset = self.get_recordset(timestamp.timestamp(), session_name=self.session_name)
+
+            # Add data to database
+
+            # Create time array as float64
+            timesarray = np.asarray(health[timestamp]['times'], dtype=np.float64)
+
+            if len(timesarray) == 0:
+                self.last_error = "Aucune données temporelles."
+                return
+
+            # Other values are float32
+            valuesarray = np.asarray(health[timestamp]['values'], dtype=np.float32)
+
+            # Regroup according to health_index
+            for i, channel in enumerate(health_channels):
+                # print("Importing channel #" + str(i) + ": " + channel.label)
+                values_index = np.where(valuesarray[:, 2] == i)[0]
+                if len(values_index) > 0:
+                    times = timesarray[values_index]
+                    values = valuesarray[values_index, :]
+                    sensor_timestamps = self.create_sensor_timestamps(times, recordset)
+                    self.add_sensor_data_to_db(recordset, channel.sensor, channel, sensor_timestamps, values[:, 3])
+
+            count += 1
+            self.update_progress.emit(50 + np.floor(count / len(health) / 2 * 100))
+
     def import_to_database(self, results):
         if results is None:
             return
@@ -926,6 +1017,9 @@ class AppleWatchImporter(BaseImporter):
                 sampling_rate = 50  # For now, since no frequency in settings?
                 if res['headings']['timestamps']:
                     self.import_headings_to_database(sampling_rate, res['headings']['timestamps'])
+
+            if res.__contains__('health'):
+                self.import_health_to_database(res['health']['settings'], res['health']['timestamps'])
             # Commit DB
             self.db.commit()
 
@@ -1063,6 +1157,9 @@ class AppleWatchImporter(BaseImporter):
         elif sensor_id == self.HEADINGS_ID:
             read_data_func = self.read_headings_data
             dict_name = 'headings'
+        elif sensor_id == self.HEALTH_ID:
+            read_data_func = self.read_health_data
+            dict_name = 'health'
         else:
             self.last_error = "Unknown sensor ID:" + str(sensor_id)
             return None
@@ -1074,6 +1171,7 @@ class AppleWatchImporter(BaseImporter):
 
         # Insert sampling rate information
         results[dict_name]['sampling_rate'] = self.get_sampling_rate_from_header(sensor_id, settings_json_str)
+        results[dict_name]['settings'] = settings_json_str
 
         # lists of co-dependant timestamp(ms) and data
         results_ms_ts = []
@@ -1106,7 +1204,7 @@ class AppleWatchImporter(BaseImporter):
                     if new_progress != progress:  # Only send update if % was increased
                         progress = new_progress
                         self.update_progress.emit(progress)
-        except:
+        except Exception as e:
             # let's hope it's only eof...
             # Make sure data vectors are of the same size
             min_size = min(len(results_ms_ts), len(results_ms_data))
@@ -1331,4 +1429,18 @@ class AppleWatchImporter(BaseImporter):
         data = struct.unpack("<6f", chunk)
         if debug:
             print("HEADINGS: ", data)
+        return data
+
+    @staticmethod
+    def read_health_data(file, debug=False):
+        """
+        Start Timestamp: UInt64 -- 8 bytes: Sample start timestamp (Unix format) with milliseconds precision
+        End Timestamp: UInt64 -- 8 bytes: Sample end timestamp (Unix format) with milliseconds precision
+        Type index: UInt16 -- 2 byte: Index of the type of this sample in the list of types from the given settings list (see above)
+        Value: Float64 -- 8 bytes: Value of the sample. Units are defined by the type of the sample (see above).
+        """
+        chunk = file.read(26)
+        data = struct.unpack("<2Q1H1d", chunk)
+        if debug:
+            print("HEALTH: ", data)
         return data
