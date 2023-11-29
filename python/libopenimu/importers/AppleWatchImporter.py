@@ -52,6 +52,7 @@ class AppleWatchImporter(BaseImporter):
     HEALTH_ID = 15
     HEADINGS_ID = 16
     RAW_MAGNETO_ID = 17
+    TREMOR_ID = 18
 
     def __init__(self, manager: DBManager, participant: Participant):
         super().__init__(manager, participant)
@@ -997,6 +998,59 @@ class AppleWatchImporter(BaseImporter):
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(health) / 2 * 100))
 
+    def import_tremor_to_database(self, tremor: dict):
+        # Create channels and sensors
+        tremor_sensor = self.add_sensor_to_db(SensorType.BIOMETRICS, 'Tremor', 'AppleWatch', 'Wrist', 0, 1)
+
+        tremor_channels = list()
+        tremor_channels.append(self.add_channel_to_db(tremor_sensor, Units.MILLISECONDS, DataFormat.UINT64,
+                                                      'Start Timestamp'))
+
+        tremor_channels.append(self.add_channel_to_db(tremor_sensor, Units.MILLISECONDS, DataFormat.UINT64,
+                                                      'End Timestamp'))
+
+        tremor_channels.append(self.add_channel_to_db(tremor_sensor, Units.PERCENTAGE, DataFormat.FLOAT32, 'None'))
+        tremor_channels.append(self.add_channel_to_db(tremor_sensor, Units.PERCENTAGE, DataFormat.FLOAT32, 'Slight'))
+        tremor_channels.append(self.add_channel_to_db(tremor_sensor, Units.PERCENTAGE, DataFormat.FLOAT32, 'Mild'))
+        tremor_channels.append(self.add_channel_to_db(tremor_sensor, Units.PERCENTAGE, DataFormat.FLOAT32, 'Moderate'))
+        tremor_channels.append(self.add_channel_to_db(tremor_sensor, Units.PERCENTAGE, DataFormat.FLOAT32, 'Strong'))
+
+        # Data is already hour-aligned iterate through hours
+        count = 0
+        for timestamp in tremor:
+            # Filter invalid timestamp if needed
+            if timestamp.year < 2000:
+                continue
+
+            # Calculate recordset
+            recordset = self.get_recordset(timestamp.timestamp(), session_name=self.session_name)
+
+            # Add data to database
+
+            # Create time array as float64
+            timesarray = np.asarray(tremor[timestamp]['times'], dtype=np.float64)
+
+            if len(timesarray) == 0:
+                self.last_error = "Aucune données temporelles."
+                return
+
+            valuesarray = np.asarray(tremor[timestamp]['values'], dtype=np.float32)
+
+            # Create sensor timestamps first
+            sensor_timestamps = self.create_sensor_timestamps(timesarray, recordset)
+
+            for i, channel in enumerate(tremor_channels):
+                # Start and end timestamp are larger than float32 - a cast is required (channel 0 and 1)
+                if i <= 1:
+                    current_timestamp = np.uint64(valuesarray[:, i*2:i*2+1])
+                    self.add_sensor_data_to_db(recordset, tremor_sensor, channel, sensor_timestamps, current_timestamp)
+                else:
+                    self.add_sensor_data_to_db(recordset, tremor_sensor, channel, sensor_timestamps,
+                                               valuesarray[:, i + 3])
+
+            count += 1
+            self.update_progress.emit(50 + np.floor(count / len(tremor) / 2 * 100))
+
     def import_to_database(self, results):
         if results is None:
             return
@@ -1071,6 +1125,10 @@ class AppleWatchImporter(BaseImporter):
                 sampling_rate = res['raw_magneto']['sampling_rate']
                 if res['raw_magneto']['timestamps']:
                     self.import_raw_magneto_to_database(sampling_rate, res['raw_magneto']['timestamps'])
+
+            if res.__contains__('tremor'):
+                if res['tremor']['timestamps']:
+                    self.import_tremor_to_database(res['tremor']['timestamps'])
             # Commit DB
             self.db.commit()
 
@@ -1214,6 +1272,9 @@ class AppleWatchImporter(BaseImporter):
         elif sensor_id == self.RAW_MAGNETO_ID:
             read_data_func = self.read_raw_magneto_data
             dict_name = 'raw_magneto'
+        # elif sensor_id == self.TREMOR_ID:
+        #     read_data_func = self.read_tremor_data
+        #     dict_name = 'tremor'
         else:
             self.last_error = "Unknown sensor ID:" + str(sensor_id)
             return None
@@ -1510,4 +1571,21 @@ class AppleWatchImporter(BaseImporter):
         data = struct.unpack("<3f", chunk)
         if debug:
             print('RAW MAGNETO: ', data)
+        return data
+
+    @staticmethod
+    def read_tremor_data(file, debug=False):
+        """
+        Start Timestamp: Uint64 -- 8 bytes: Timestamp (Unix format) with milliseconds precision on which the measurement started
+        End Timestamp: Uint64 -- 8 bytes: Timestamp (Unix format) with milliseconds precision on which the measurement ended
+        No Tremor Ratio: Float32 -- 4 bytes: Ratio of time where no tremor where detected, between 0 and 1
+        Slight Tremor Ratio: Float32 -- 4 bytes: Ratio of time where slight tremors where detected, between 0 and 1
+        Mild Tremor Ratio: Float32 -- 4 bytes: Ratio of time where mild tremors where detected, between 0 and 1
+        Moderate Tremor Ratio: Float32 -- 4 bytes: Ratio of time where moderate tremors where detected, between 0 and 1
+        Strong Tremor Ratio: Float32 -- 4 bytes: Ratio of time where strong tremors where detected, between 0 and 1
+        """
+        chunk = file.read(36)
+        data = struct.unpack("<2Q<4f", chunk)
+        if debug:
+            print('TREMOR: ', data)
         return data
