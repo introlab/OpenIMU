@@ -51,6 +51,7 @@ class AppleWatchImporter(BaseImporter):
     ACTIVITY_ID = 13
     HEALTH_ID = 15
     HEADINGS_ID = 16
+    RAW_MAGNETO_ID = 17
 
     def __init__(self, manager: DBManager, participant: Participant):
         super().__init__(manager, participant)
@@ -330,6 +331,51 @@ class AppleWatchImporter(BaseImporter):
 
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(raw_gyro) / 2 * 100))
+
+    def import_raw_magneto_to_database(self, sample_rate, raw_data: dict):
+        # Create sensor
+        raw_magneto_sensor = self.add_sensor_to_db(SensorType.MAGNETOMETER, 'Raw Magneto', 'AppleWatch',
+                                                   'Wrist', sample_rate, 1)
+
+        raw_mag_channels = list()
+
+        # Create channels
+        raw_mag_channels.append(self.add_channel_to_db(raw_magneto_sensor, Units.UTESLA, DataFormat.FLOAT32, 'Mag_X'))
+        raw_mag_channels.append(self.add_channel_to_db(raw_magneto_sensor, Units.UTESLA, DataFormat.FLOAT32, 'Mag_Y'))
+        raw_mag_channels.append(self.add_channel_to_db(raw_magneto_sensor, Units.UTESLA, DataFormat.FLOAT32, 'Mag_Z'))
+
+        # Data is already hour-aligned iterate through hours
+        count = 0
+        for timestamp in raw_data:
+            # Filter invalid timestamp if needed
+            if timestamp.year < 2000:
+                continue
+
+            # Calculate recordset
+            recordset = None
+            try:
+                recordset = self.get_recordset(timestamp.timestamp(), session_name=self.session_name)
+            except OSError as e:
+                print(e.filename + ' - ' + str(timestamp) + ' : ' + e.strerror)
+
+            # Create time array as float64
+            timesarray = np.asarray(raw_data[timestamp]['times'], dtype=np.float64)
+
+            if len(timesarray) == 0:
+                self.last_error = "Aucune données temporelles."
+                return
+
+            # Other values are float32
+            valuesarray = np.asarray(raw_data[timestamp]['values'], dtype=np.float32)
+
+            # Create sensor timestamps first
+            sensor_timestamps = self.create_sensor_timestamps(timesarray, recordset)
+
+            for i, channel in enumerate(raw_mag_channels):
+                self.add_sensor_data_to_db(recordset, raw_magneto_sensor, channel, sensor_timestamps, valuesarray[:, i])
+
+            count += 1
+            self.update_progress.emit(50 + np.floor(count / len(raw_data) / 2 * 100))
 
     def import_heartrate_to_database(self, sample_rate, heartrate: dict):
         heartrate_sensor = self.add_sensor_to_db(SensorType.HEARTRATE, 'Heartrate', 'AppleWatch', 'Wrist',
@@ -927,7 +973,6 @@ class AppleWatchImporter(BaseImporter):
             recordset = self.get_recordset(timestamp.timestamp(), session_name=self.session_name)
 
             # Add data to database
-
             # Create time array as float64
             timesarray = np.asarray(health[timestamp]['times'], dtype=np.float64)
 
@@ -946,6 +991,7 @@ class AppleWatchImporter(BaseImporter):
                     times = timesarray[values_index]
                     values = valuesarray[values_index, :]
                     sensor_timestamps = self.create_sensor_timestamps(times, recordset)
+                    # TODO: Manage specific reading start & end timestamp
                     self.add_sensor_data_to_db(recordset, channel.sensor, channel, sensor_timestamps, values[:, 3])
 
             count += 1
@@ -1020,6 +1066,11 @@ class AppleWatchImporter(BaseImporter):
 
             if res.__contains__('health'):
                 self.import_health_to_database(res['health']['settings'], res['health']['timestamps'])
+
+            if res.__contains__('raw_magneto'):
+                sampling_rate = res['raw_magneto']['sampling_rate']
+                if res['raw_magneto']['timestamps']:
+                    self.import_raw_magneto_to_database(sampling_rate, res['raw_magneto']['timestamps'])
             # Commit DB
             self.db.commit()
 
@@ -1160,6 +1211,9 @@ class AppleWatchImporter(BaseImporter):
         elif sensor_id == self.HEALTH_ID:
             read_data_func = self.read_health_data
             dict_name = 'health'
+        elif sensor_id == self.RAW_MAGNETO_ID:
+            read_data_func = self.read_raw_magneto_data
+            dict_name = 'raw_magneto'
         else:
             self.last_error = "Unknown sensor ID:" + str(sensor_id)
             return None
@@ -1443,4 +1497,17 @@ class AppleWatchImporter(BaseImporter):
         data = struct.unpack("<2Q1H1d", chunk)
         if debug:
             print("HEALTH: ", data)
+        return data
+
+    @staticmethod
+    def read_raw_magneto_data(file, debug=False):
+        """
+        Magnetometer x-data: Float32 -- 4 bytes: Magnetometer data for x-axis (microTeslas)
+        Magnetometer y-data: Float32 -- 4 bytes: Magnetometer data for y-axis (microTeslas)
+        Magnetometer z-data: Float32 -- 4 bytes: Magnetometer data for z-axis (microTeslas)
+        """
+        chunk = file.read(12)
+        data = struct.unpack("<3f", chunk)
+        if debug:
+            print('RAW MAGNETO: ', data)
         return data
