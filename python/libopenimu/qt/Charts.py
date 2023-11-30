@@ -422,6 +422,8 @@ class IMUChartView(QChartView, BaseGraph):
                                           self.chart.mapToValue(QPointF(end_pos, 0)).x())
 
     def set_selection_area_from_time(self, start_time, end_time, emit_signal=False):
+        if not start_time or not end_time:
+            return
         # Convert times to x values
         if isinstance(start_time, datetime.datetime):
             start_time = start_time.timestamp() * 1000

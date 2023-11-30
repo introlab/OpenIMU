@@ -254,7 +254,8 @@ class DBManager(QObject):
         # self.engine.execute("VACUUM")
 
     #
-    def add_sensor(self, _id_sensor_type, _name, _hw_name, _location, _sampling_rate, _data_rate):
+    def add_sensor(self, _id_sensor_type, _name, _hw_name, _location, _sampling_rate, _data_rate,
+                   _settings: str | None = None):
         # Check if that sensor is already present in the database
         query = self.session.query(Sensor).filter((Sensor.id_sensor_type == _id_sensor_type) &
                                                   (Sensor.location == _location) &
@@ -265,7 +266,7 @@ class DBManager(QObject):
 
         if query.first():
             # print("Sensor " + _name + " already present in DB!")
-            return query.first();
+            return query.first()
 
         # Create object
         sensor = Sensor(
@@ -274,7 +275,8 @@ class DBManager(QObject):
             hw_name=_hw_name,
             location=_location,
             sampling_rate=_sampling_rate,
-            data_rate=_data_rate)
+            data_rate=_data_rate,
+            settings=_settings)
         self.session.add(sensor)
         self.commit()
         return sensor

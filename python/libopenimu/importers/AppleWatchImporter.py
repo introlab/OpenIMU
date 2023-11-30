@@ -151,9 +151,9 @@ class AppleWatchImporter(BaseImporter):
 
         return sensor_timestamps
 
-    def import_activity_to_database(self, activity: dict):
+    def import_activity_to_database(self, settings: str, activity: dict):
         activity_sensor = self.add_sensor_to_db(SensorType.ACTIVITY, 'Activity', 'AppleWatch', 'Wrist',
-                                                0, 1)
+                                                0, 1, settings)
         confidence_channel = self.add_channel_to_db(activity_sensor, Units.NONE, DataFormat.UINT8, 'Confidence')
         car_channel = self.add_channel_to_db(activity_sensor, Units.NONE, DataFormat.UINT8, 'Automotive')
         cycle_channel = self.add_channel_to_db(activity_sensor, Units.NONE, DataFormat.UINT8, 'Cycling')
@@ -216,11 +216,11 @@ class AppleWatchImporter(BaseImporter):
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(activity) / 2 * 100))
 
-    def import_raw_accelerometer_to_database(self, sample_rate, raw_accelero: dict):
+    def import_raw_accelerometer_to_database(self, settings: str, sample_rate, raw_accelero: dict):
         # DL Oct. 17 2018, New import to database
         raw_accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Raw Accelerometer',
                                                          'AppleWatch',
-                                                         'Wrist', sample_rate, 1)
+                                                         'Wrist', sample_rate, 1, settings)
 
         raw_accelerometer_channels = list()
 
@@ -273,12 +273,12 @@ class AppleWatchImporter(BaseImporter):
                     50 + np.floor(count / (len(raw_accelero) * len(raw_accelerometer_channels)) / 2
                                   * 100))
 
-    def import_raw_gyro_to_database(self, sample_rate, raw_gyro: dict):
+    def import_raw_gyro_to_database(self, settings, sample_rate, raw_gyro: dict):
         # DL Oct. 17 2018, New import to database
         # Create sensor
         raw_gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Raw Gyro',
                                                 'AppleWatch',
-                                                'Wrist', sample_rate, 1)
+                                                'Wrist', sample_rate, 1, settings)
 
         raw_gyro_channels = list()
 
@@ -333,10 +333,10 @@ class AppleWatchImporter(BaseImporter):
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(raw_gyro) / 2 * 100))
 
-    def import_raw_magneto_to_database(self, sample_rate, raw_data: dict):
+    def import_raw_magneto_to_database(self, settings, sample_rate, raw_data: dict):
         # Create sensor
         raw_magneto_sensor = self.add_sensor_to_db(SensorType.MAGNETOMETER, 'Raw Magneto', 'AppleWatch',
-                                                   'Wrist', sample_rate, 1)
+                                                   'Wrist', sample_rate, 1, settings)
 
         raw_mag_channels = list()
 
@@ -378,9 +378,9 @@ class AppleWatchImporter(BaseImporter):
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(raw_data) / 2 * 100))
 
-    def import_heartrate_to_database(self, sample_rate, heartrate: dict):
+    def import_heartrate_to_database(self, settings, sample_rate, heartrate: dict):
         heartrate_sensor = self.add_sensor_to_db(SensorType.HEARTRATE, 'Heartrate', 'AppleWatch', 'Wrist',
-                                                 sample_rate, 1)
+                                                 sample_rate, 1, settings)
 
         heartrate_channel = self.add_channel_to_db(heartrate_sensor, Units.BPM, DataFormat.UINT8, 'Heartrate')
         count = 0
@@ -413,10 +413,10 @@ class AppleWatchImporter(BaseImporter):
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(heartrate) / 2 * 100))
 
-    def import_coordinates_to_database(self, sample_rate, coordinates: dict):
+    def import_coordinates_to_database(self, settings, sample_rate, coordinates: dict):
         # DL Oct. 17 2018, New import to database
         coordinates_sensor = self.add_sensor_to_db(SensorType.GPS, 'Coordinates', 'AppleWatch', 'Wrist',
-                                                   sample_rate, 1)
+                                                   sample_rate, 1, settings)
         coordinates_channel = self.add_channel_to_db(coordinates_sensor, Units.NONE, DataFormat.UINT8, 'Coordinates')
 
         for timestamp in coordinates:
@@ -466,9 +466,9 @@ class AppleWatchImporter(BaseImporter):
                                            sensor_timestamps, geo)
                 self.update_progress.emit(50 + np.floor(i / len(valuesarray) / 2 * 100))
 
-    def import_pedometer_to_database(self, pedometer: dict):
+    def import_pedometer_to_database(self, settings, pedometer: dict):
         pedometer_sensor = self.add_sensor_to_db(SensorType.STEP, 'Pedometer', 'AppleWatch', 'Wrist',
-                                                 0, 1)
+                                                 0, 1, settings)
         step_channel = self.add_channel_to_db(pedometer_sensor, Units.NONE, DataFormat.UINT32, 'Step count')
         distance_channel = self.add_channel_to_db(pedometer_sensor, Units.METERS, DataFormat.FLOAT32, 'Distance')
         average_pace_channel = self.add_channel_to_db(pedometer_sensor, Units.METERS_PER_SEC, DataFormat.FLOAT32,
@@ -535,10 +535,10 @@ class AppleWatchImporter(BaseImporter):
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(pedometer) / 2 * 100))
 
-    def import_sensoria_to_database(self, sample_rate, sensoria: dict):
+    def import_sensoria_to_database(self, settings, sample_rate, sensoria: dict):
         # DL Oct. 17 2018, New import to database
         sensoria_acc_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer', 'Sensoria', 'Foot',
-                                                    sample_rate, 1)
+                                                    sample_rate, 1, settings)
 
         sensoria_acc_channels = list()
         sensoria_acc_channels.append(self.add_channel_to_db(sensoria_acc_sensor, Units.GRAVITY_G,
@@ -549,7 +549,7 @@ class AppleWatchImporter(BaseImporter):
                                                             DataFormat.FLOAT32, 'Accelerometer_Z'))
 
         sensoria_gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyrometer', 'Sensoria', 'Foot',
-                                                     sample_rate, 1)
+                                                     sample_rate, 1, settings)
         sensoria_gyro_channels = list()
         sensoria_gyro_channels.append(self.add_channel_to_db(sensoria_gyro_sensor, Units.DEG_PER_SEC,
                                                              DataFormat.FLOAT32, 'Gyro_X'))
@@ -559,7 +559,7 @@ class AppleWatchImporter(BaseImporter):
                                                              DataFormat.FLOAT32, 'Gyro_Z'))
 
         sensoria_mag_sensor = self.add_sensor_to_db(SensorType.MAGNETOMETER, 'Magnetometer', 'Sensoria', 'Foot',
-                                                    sample_rate, 1)
+                                                    sample_rate, 1, settings)
         sensoria_mag_channels = list()
         sensoria_mag_channels.append(self.add_channel_to_db(sensoria_mag_sensor, Units.GAUSS,
                                                             DataFormat.FLOAT32, 'Mag_X'))
@@ -569,7 +569,7 @@ class AppleWatchImporter(BaseImporter):
                                                             DataFormat.FLOAT32, 'Mag_Z'))
 
         sensoria_fsr_sensor = self.add_sensor_to_db(SensorType.FSR, 'FSR', 'Sensoria', 'Foot',
-                                                    sample_rate, 1)
+                                                    sample_rate, 1, settings)
         sensoria_fsr_channels = list()
         sensoria_fsr_channels.append(self.add_channel_to_db(sensoria_fsr_sensor, Units.NONE,
                                                             DataFormat.UINT16, 'META-1'))
@@ -630,10 +630,10 @@ class AppleWatchImporter(BaseImporter):
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(sensoria) / 2 * 100))
 
-    def import_beacons_to_database(self, sample_rate, beacons: dict):
+    def import_beacons_to_database(self, settings, sample_rate, beacons: dict):
         # DL Oct. 17 2018, New import to database
         beacons_sensor = self.add_sensor_to_db(SensorType.BEACON, 'Beacons', 'Kontact', 'Environment',
-                                               sample_rate, 1)
+                                               sample_rate, 1, settings)
         channel_values = dict()
 
         # Data is already hour-aligned iterate through hours
@@ -706,14 +706,12 @@ class AppleWatchImporter(BaseImporter):
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(beacons) / 2 * 100))
 
-    def import_motion_to_database(self, sampling_rate, motion: dict):
+    def import_motion_to_database(self, settings, sampling_rate, motion: dict):
         # DL Oct. 16 2018, New import to database
 
         # Create channels and sensors
         accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer',
-                                                     'AppleWatch',
-                                                     'Wrist',
-                                                     sampling_rate, 1)
+                                                     'AppleWatch','Wrist', sampling_rate, 1, settings)
 
         accelerometer_channels = list()
 
@@ -728,9 +726,8 @@ class AppleWatchImporter(BaseImporter):
                                                              DataFormat.FLOAT32, 'Accelerometer_Z'))
 
         # Create sensor
-        gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyro',
-                                            'AppleWatch',
-                                            'Wrist', sampling_rate, 1)
+        gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyro','AppleWatch','Wrist',
+                                            sampling_rate, 1, settings)
 
         gyro_channels = list()
 
@@ -745,7 +742,7 @@ class AppleWatchImporter(BaseImporter):
                                                     DataFormat.FLOAT32, 'Gyro_Z'))
 
         orientation_sensor = self.add_sensor_to_db(SensorType.ORIENTATION, 'Attitude', 'AppleWatch',
-                                                   'Wrist', sampling_rate, 1)
+                                                   'Wrist', sampling_rate, 1, settings)
 
         orientation_channels = list()
         orientation_channels.append(self.add_channel_to_db(orientation_sensor, Units.NONE, DataFormat.FLOAT32, 'q0'))
@@ -804,10 +801,10 @@ class AppleWatchImporter(BaseImporter):
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(motion) / 2 * 100))
 
-    def import_battery_to_database(self, sampling_rate, battery: dict):
+    def import_battery_to_database(self, settings, sampling_rate, battery: dict):
         # DL Oct. 16 2018, New import to database
         battery_sensor = self.add_sensor_to_db(SensorType.BATTERY, 'Battery', 'AppleWatch', 'Wrist',
-                                               sampling_rate, 1)
+                                               sampling_rate, 1, settings)
 
         battery_channel = self.add_channel_to_db(battery_sensor, Units.VOLTS, DataFormat.UINT8, 'Battery Percentage')
 
@@ -843,10 +840,10 @@ class AppleWatchImporter(BaseImporter):
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(battery) / 2 * 100))
 
-    def import_headings_to_database(self, sampling_rate, headings: dict):
+    def import_headings_to_database(self, settings, sampling_rate, headings: dict):
         # Create channels and sensors
         orientation_sensor = self.add_sensor_to_db(SensorType.HEADINGS, 'Headings', 'AppleWatch',
-                                                   'Wrist', sampling_rate, 1)
+                                                   'Wrist', sampling_rate, 1, settings)
 
         orientation_channels = list()
         orientation_channels.append(self.add_channel_to_db(orientation_sensor, Units.DEGREES, DataFormat.FLOAT32,
@@ -860,7 +857,7 @@ class AppleWatchImporter(BaseImporter):
 
         # Create sensor
         magneto_sensor = self.add_sensor_to_db(SensorType.MAGNETOMETER, 'Magnetometer', 'AppleWatch',
-                                               'Wrist', sampling_rate, 1)
+                                               'Wrist', sampling_rate, 1, settings)
 
         magneto_channels = list()
 
@@ -917,7 +914,7 @@ class AppleWatchImporter(BaseImporter):
 
         # Create base sensor(s)
         health_sensor = self.add_sensor_to_db(SensorType.BIOMETRICS, 'Health', 'AppleWatch',
-                                              'Wrist', 0, 1)
+                                              'Wrist', 0, 1, settings)
 
         step_sensor = None
         if 'stepCount' in health_types:
@@ -998,9 +995,10 @@ class AppleWatchImporter(BaseImporter):
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(health) / 2 * 100))
 
-    def import_tremor_to_database(self, tremor: dict):
+    def import_tremor_to_database(self, settings, tremor: dict):
         # Create channels and sensors
-        tremor_sensor = self.add_sensor_to_db(SensorType.BIOMETRICS, 'Tremor', 'AppleWatch', 'Wrist', 0, 1)
+        tremor_sensor = self.add_sensor_to_db(SensorType.BIOMETRICS, 'Tremor', 'AppleWatch', 'Wrist', 0, 1,
+                                              settings)
 
         tremor_channels = list()
         tremor_channels.append(self.add_channel_to_db(tremor_sensor, Units.MILLISECONDS, DataFormat.UINT64,
@@ -1068,55 +1066,64 @@ class AppleWatchImporter(BaseImporter):
             if res.__contains__('motion'):
                 sampling_rate = res['motion']['sampling_rate']
                 if res['motion']['timestamps']:
-                    self.import_motion_to_database(sampling_rate, res['motion']['timestamps'])
+                    self.import_motion_to_database(res['motion']['settings'], sampling_rate,
+                                                   res['motion']['timestamps'])
 
             if res.__contains__('battery'):
                 sampling_rate = res['battery']['sampling_rate']
                 if res['battery']['timestamps']:
-                    self.import_battery_to_database(sampling_rate, res['battery']['timestamps'])
+                    self.import_battery_to_database(res['battery']['settings'], sampling_rate,
+                                                    res['battery']['timestamps'])
 
             if res.__contains__('sensoria'):
                 sampling_rate = res['sensoria']['sampling_rate']
                 if res['sensoria']['timestamps']:
-                    self.import_sensoria_to_database(sampling_rate, res['sensoria']['timestamps'])
+                    self.import_sensoria_to_database(res['sensoria']['settings'], sampling_rate,
+                                                     res['sensoria']['timestamps'])
 
             if res.__contains__('heartrate'):
                 sampling_rate = res['heartrate']['sampling_rate']
                 if res['heartrate']['timestamps']:
-                    self.import_heartrate_to_database(sampling_rate, res['heartrate']['timestamps'])
+                    self.import_heartrate_to_database(res['heartrate']['settings'], sampling_rate,
+                                                      res['heartrate']['timestamps'])
 
             if res.__contains__('beacons'):
                 sampling_rate = res['beacons']['sampling_rate']
                 if res['beacons']['timestamps']:
-                    self.import_beacons_to_database(sampling_rate, res['beacons']['timestamps'])
+                    self.import_beacons_to_database(res['beacons']['settings'], sampling_rate,
+                                                    res['beacons']['timestamps'])
 
             if res.__contains__('coordinates'):
                 sampling_rate = res['coordinates']['sampling_rate']
                 if res['coordinates']['timestamps']:
-                    self.import_coordinates_to_database(sampling_rate, res['coordinates']['timestamps'])
+                    self.import_coordinates_to_database(res['coordinates']['settings'], sampling_rate,
+                                                        res['coordinates']['timestamps'])
 
             if res.__contains__('raw_accelero'):
                 sampling_rate = res['raw_accelero']['sampling_rate']
                 if res['raw_accelero']['timestamps']:
-                    self.import_raw_accelerometer_to_database(sampling_rate, res['raw_accelero']['timestamps'])
+                    self.import_raw_accelerometer_to_database(res['raw_accelero']['settings'], sampling_rate,
+                                                              res['raw_accelero']['timestamps'])
 
             if res.__contains__('raw_gyro'):
                 sampling_rate = res['raw_gyro']['sampling_rate']
                 if res['raw_gyro']['timestamps']:
-                    self.import_raw_gyro_to_database(sampling_rate, res['raw_gyro']['timestamps'])
+                    self.import_raw_gyro_to_database(res['raw_gyro']['settings'], sampling_rate,
+                                                     res['raw_gyro']['timestamps'])
 
             if res.__contains__('pedometer'):
                 if res['pedometer']['timestamps']:
-                    self.import_pedometer_to_database(res['pedometer']['timestamps'])
+                    self.import_pedometer_to_database(res['pedometer']['settings'], res['pedometer']['timestamps'])
 
             if res.__contains__('activity'):
                 if res['activity']['timestamps']:
-                    self.import_activity_to_database(res['activity']['timestamps'])
+                    self.import_activity_to_database(res['activity']['settings'], res['activity']['timestamps'])
 
             if res.__contains__('headings'):
                 sampling_rate = 50  # For now, since no frequency in settings?
                 if res['headings']['timestamps']:
-                    self.import_headings_to_database(sampling_rate, res['headings']['timestamps'])
+                    self.import_headings_to_database(res['headings']['settings'], sampling_rate,
+                                                     res['headings']['timestamps'])
 
             if res.__contains__('health'):
                 self.import_health_to_database(res['health']['settings'], res['health']['timestamps'])
@@ -1124,11 +1131,12 @@ class AppleWatchImporter(BaseImporter):
             if res.__contains__('raw_magneto'):
                 sampling_rate = res['raw_magneto']['sampling_rate']
                 if res['raw_magneto']['timestamps']:
-                    self.import_raw_magneto_to_database(sampling_rate, res['raw_magneto']['timestamps'])
+                    self.import_raw_magneto_to_database(res['raw_magneto']['settings'], sampling_rate,
+                                                        res['raw_magneto']['timestamps'])
 
             if res.__contains__('tremor'):
                 if res['tremor']['timestamps']:
-                    self.import_tremor_to_database(res['tremor']['timestamps'])
+                    self.import_tremor_to_database(res['tremor']['settings'], res['tremor']['timestamps'])
             # Commit DB
             self.db.commit()
 
