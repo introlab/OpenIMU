@@ -1,6 +1,7 @@
 from libopenimu.models.Base import Base
 from sqlalchemy import Column, Integer, String, Sequence
 import numpy as np
+import json
 
 
 class DataFormat:
@@ -15,6 +16,7 @@ class DataFormat:
     SINT64 = 7
     FLOAT32 = 8
     FLOAT64 = 9
+    JSON = 10
 
     value_dict = {UINT8: 'UINT8',
                   SINT8: 'SINT8',
@@ -25,7 +27,8 @@ class DataFormat:
                   UINT64: 'UINT64',
                   SINT64: 'SINT64',
                   FLOAT32: 'FLOAT32',
-                  FLOAT64: 'FLOAT64'}
+                  FLOAT64: 'FLOAT64',
+                  JSON: 'JSON'}
 
     @staticmethod
     def name(id_data_format):
@@ -67,6 +70,8 @@ class DataFormat:
         elif id_data_format is DataFormat.FLOAT64:
             return np.frombuffer(buffer=buffer, dtype=np.float64)
 
+        elif id_data_format is DataFormat.JSON:
+            return np.array([json.loads(buffer.decode())])
         else:
             return None
 

@@ -4,6 +4,7 @@ from PySide6.QtCore import Signal, QObject, QEvent, Slot
 from resources.ui.python.GraphWidget_ui import Ui_frmGraphWidget
 from libopenimu.qt.Charts import IMUChartView
 from libopenimu.qt.BeaconsView import BeaconsView
+from libopenimu.qt.PromptsView import PromptsView
 from libopenimu.qt.BaseGraph import GraphInteractionMode
 from libopenimu.qt.DataInfosWidget import DataInfosWidget
 
@@ -19,6 +20,7 @@ class GraphType:
     MAP = 1
     BARCHART = 2
     BEACON = 3
+    QUESTIONS = 4
 
 
 class GraphWindow(QWidget):
@@ -54,6 +56,10 @@ class GraphWindow(QWidget):
 
         if graph_type == GraphType.BEACON:
             self.graph = BeaconsView(self)
+            self.UI.frameTools.hide()
+
+        if graph_type == GraphType.QUESTIONS:
+            self.graph = PromptsView(self)
             self.UI.frameTools.hide()
 
         if self.graph is None:

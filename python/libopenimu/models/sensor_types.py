@@ -20,6 +20,7 @@ class SensorType:
     ACTIVITY = 14
     HEADINGS = 15
     BIOMETRICS = 16
+    QUESTIONS = 17
 
     # All values in a dictionary
     value_dict = {ACCELEROMETER: 'ACCELEROMETER',
@@ -36,7 +37,8 @@ class SensorType:
                   TEMPERATURE: 'TEMPERATURE',
                   ACTIVITY: 'ACTIVITY',
                   HEADINGS: 'HEADINGS',
-                  BIOMETRICS: 'BIOMETRICS'}
+                  BIOMETRICS: 'BIOMETRICS',
+                  QUESTIONS: 'QUESTIONS'}
 
     @staticmethod
     def is_valid_type(id_sensor_type):

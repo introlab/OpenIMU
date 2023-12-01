@@ -262,7 +262,8 @@ class DBManager(QObject):
                                                   (Sensor.name == _name) &
                                                   (Sensor.hw_name == _hw_name) &
                                                   (Sensor.sampling_rate == _sampling_rate) &
-                                                  (Sensor.data_rate) == _data_rate)
+                                                  (Sensor.data_rate == _data_rate) &
+                                                  (Sensor.settings == _settings))
 
         if query.first():
             # print("Sensor " + _name + " already present in DB!")
@@ -505,10 +506,11 @@ class DBManager(QObject):
             result = query.all()
 
             # Convert to the right format
-            for sensor_data in result:
-                # print('data len:', len(sensor_data.data))
-                sensor_data.data = DataFormat.from_bytes(sensor_data.data, sensor_data.channel.id_data_format)
-
+            with self.session.no_autoflush:
+                for sensor_data in result:
+                    # print('data len:', len(sensor_data.data))
+                    sensor_data.data = DataFormat.from_bytes(sensor_data.data, sensor_data.channel.id_data_format)
+            self.session.rollback()
             return result
 
     def get_sensor_times(self, sensor: Sensor, recordset: Recordset):

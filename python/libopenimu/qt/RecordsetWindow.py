@@ -589,6 +589,9 @@ class RecordsetWindow(QWidget):
         if sensor.id_sensor_type == SensorType.GPS:
             return GraphType.MAP
 
+        if sensor.id_sensor_type == SensorType.QUESTIONS:
+            return GraphType.QUESTIONS
+
         return GraphType.UNKNOWN
 
     @Slot(Sensor, datetime, datetime)
@@ -677,6 +680,18 @@ class RecordsetWindow(QWidget):
                                                             tx_power=series['y'][i])
                 # Select first channel
                 graph_window.graph.on_channel_changed()
+
+            if graph_type == GraphType.QUESTIONS:
+                graph_window.graph.load_question_datas(sensor.settings)
+                # Now load each questions
+                for series in timeseries:
+                    current_index = 0
+                    for answer in series['y']:
+                        graph_window.graph.add_answer(np.array([series['x'][current_index*2],
+                                                                series['x'][current_index*2+1]]), answer)
+                        current_index += 1
+
+                graph_window.graph.refresh()
 
             if graph_window is not None:
                 subwindow = QMdiSubWindow()

@@ -49,6 +49,7 @@ class AppleWatchImporter(BaseImporter):
     RAW_GYRO_ID = 10
     PEDOMETER_ID = 11
     ACTIVITY_ID = 13
+    QUESTION_ID = 14
     HEALTH_ID = 15
     HEADINGS_ID = 16
     RAW_MAGNETO_ID = 17
@@ -1049,6 +1050,74 @@ class AppleWatchImporter(BaseImporter):
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(tremor) / 2 * 100))
 
+    def import_question_to_database(self, settings, question: dict):
+        # Create base sensor(s)
+        questions_sensor = self.add_sensor_to_db(SensorType.QUESTIONS, 'Prompts', 'AppleWatch',
+                                                 'Wrist', 0, 1, settings)
+
+        # Create channel for each prompt
+        prompt_channels = {}
+        settings_json = json.loads(settings)
+        if 'prompts' in settings_json:
+            for prompt in settings_json['prompts']:
+                prompt_channels[prompt['id']] = self.add_channel_to_db(questions_sensor, Units.NONE, DataFormat.JSON,
+                                                                       prompt['id'])
+
+        # Import data depending on each sensors
+        count = 0
+        for timestamp in question:
+            # Filter invalid timestamp if needed
+            if timestamp.year < 2000:
+                continue
+
+            # Calculate recordset
+            recordset = self.get_recordset(timestamp.timestamp(), session_name=self.session_name)
+
+            # Add data to database
+            # Create time array as float64
+            timesarray = np.asarray(question[timestamp]['times'], dtype=np.float64)
+
+            if len(timesarray) == 0:
+                self.last_error = "Aucune données temporelles."
+                return
+
+            for index in range(timesarray.size):
+                answer = question[timestamp]['values'][index]
+                question_time = answer[-1] / 1000
+                sensor_timestamps = self.create_sensor_timestamps(np.array([question_time, timesarray[index]]),
+                                                                  recordset)
+                # JSON structure for answer
+                answer_count = answer[1]
+                answers_index = list(answer[2:2+answer_count])
+                answer_id = answer[0].decode()
+                answers_choices = [seta['answer']['choices'] for seta in settings_json['prompts']
+                                   if seta['id'] == answer_id][0]
+                answers_text = [answers_choices[i] for i in answers_index]
+                answer_json = {'question_id': answer_id,
+                               'answer_index': answers_index,
+                               'answer_text': answers_text}
+                data = np.array(json.dumps(answer_json).encode())
+                self.add_sensor_data_to_db(recordset, questions_sensor, prompt_channels[answer_id], sensor_timestamps,
+                                           data)
+
+
+            # Other values are float32
+            # valuesarray = np.asarray(health[timestamp]['values'], dtype=np.float32)
+            #
+            # # Regroup according to health_index
+            # for i, channel in enumerate(health_channels):
+            #     # print("Importing channel #" + str(i) + ": " + channel.label)
+            #     values_index = np.where(valuesarray[:, 2] == i)[0]
+            #     if len(values_index) > 0:
+            #         times = timesarray[values_index]
+            #         values = valuesarray[values_index, :]
+            #         sensor_timestamps = self.create_sensor_timestamps(times, recordset)
+            #         # TODO: Manage specific reading start & end timestamp
+            #         self.add_sensor_data_to_db(recordset, channel.sensor, channel, sensor_timestamps, values[:, 3])
+
+            count += 1
+            self.update_progress.emit(50 + np.floor(count / len(question) / 2 * 100))
+
     def import_to_database(self, results):
         if results is None:
             return
@@ -1137,6 +1206,11 @@ class AppleWatchImporter(BaseImporter):
             if res.__contains__('tremor'):
                 if res['tremor']['timestamps']:
                     self.import_tremor_to_database(res['tremor']['settings'], res['tremor']['timestamps'])
+
+            if res.__contains__('question'):
+                if res['question']['timestamps']:
+                    self.import_question_to_database(res['question']['settings'], res['question']['timestamps'])
+
             # Commit DB
             self.db.commit()
 
@@ -1280,6 +1354,9 @@ class AppleWatchImporter(BaseImporter):
         elif sensor_id == self.RAW_MAGNETO_ID:
             read_data_func = self.read_raw_magneto_data
             dict_name = 'raw_magneto'
+        elif sensor_id == self.QUESTION_ID:
+            read_data_func = self.read_prompt_data
+            dict_name = 'question'
         # elif sensor_id == self.TREMOR_ID:
         #     read_data_func = self.read_tremor_data
         #     dict_name = 'tremor'
@@ -1596,4 +1673,32 @@ class AppleWatchImporter(BaseImporter):
         data = struct.unpack("<2Q<4f", chunk)
         if debug:
             print('TREMOR: ', data)
+        return data
+
+    @staticmethod
+    def read_prompt_data(file, debug=False):
+        """
+        Prompt ID size: UInt16 -- 2 bytes: Size of prompt ID string (N)
+        Prompt ID: String -- N bytes: Prompt identifier
+        Results size: UInt16 -- 2 bytes: Size of the results array (RN)
+        Results: UInt16 -- RN*2 bytes: Selected results (index of the selected answer in the list of answers)
+        Shown timestamp: UInt64 -- 8 bytes: Timestamp (Unix format) with milliseconds precision of the prompt first displaying to user.
+        """
+        chunk = file.read(2)
+        size = struct.unpack("<1H", chunk)[0]
+        chunk = file.read(size)
+        # Question id
+        data = struct.unpack("<" + str(size) + "s", chunk)
+        # Question answers
+        chunk = file.read(2)
+        data += struct.unpack("<1H", chunk)
+        # Browse each answer and put them in a list
+        size = data[-1]
+        for i in range(size):
+            chunk = file.read(2)
+            data += struct.unpack("<1H", chunk)
+        chunk = file.read(8)
+        data += struct.unpack("<1Q", chunk)
+        if debug:
+            print('PROMPT: ', data)
         return data
