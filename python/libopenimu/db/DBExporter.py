@@ -17,6 +17,7 @@ import numpy as np
 import pickle
 import numbers
 import unicodedata
+import json
 
 
 class ExporterTypes:
@@ -39,7 +40,6 @@ class ExporterTypes:
 
 
 class DBExporter(QObject):
-
     exportProcessed = Signal()
 
     def __init__(self, db_manager: DBManager, export_path: str, export_format: int, parent=None):
@@ -88,11 +88,11 @@ class DBExporter(QObject):
 
     def get_base_path_for_recordset(self, recordset: Recordset) -> str:
         return self.get_base_path_for_participant(recordset.participant) + os.sep + 'Recordsets' + os.sep + \
-               DBExporter.clean_string(recordset.name)
+            DBExporter.clean_string(recordset.name)
 
     def get_base_path_for_processed_data(self, data: ProcessedData) -> str:
         return self.get_base_path_for_participant(data.processed_data_ref[0].recordset.participant) + os.sep + \
-               'Processed' + os.sep + DBExporter.clean_string(data.name)
+            'Processed' + os.sep + DBExporter.clean_string(data.name)
 
     def export_group(self, id_group: int):
         group_name = self.tr('GROUP_None')
@@ -142,7 +142,8 @@ class DBExporter(QObject):
 
             # Export infos in file
             infos = {'id_recordset': recordset.id_recordset, 'name': recordset.name,
-                     'start_time': str(recordset.start_timestamp), 'start_timestamp': recordset.start_timestamp.timestamp(),
+                     'start_time': str(recordset.start_timestamp),
+                     'start_timestamp': recordset.start_timestamp.timestamp(),
                      'end_time': str(recordset.end_timestamp), 'end_timestamp': recordset.end_timestamp.timestamp()}
             if self.exportFormat == ExporterTypes.CSV:
                 DBExporter.dict_to_csv(rec_dir + os.sep + 'infos_Recordset.csv', infos)
@@ -159,6 +160,10 @@ class DBExporter(QObject):
                     self.export_sensor_data_gps(sensor, all_data, rec_dir)
                 elif sensor.id_sensor_type == SensorType.BEACON:
                     self.export_sensor_data_beacons(sensor, all_data, rec_dir)
+                elif sensor.id_sensor_type == SensorType.QUESTIONS:
+                    self.export_sensor_data_questions(sensor, all_data, rec_dir)
+                elif sensor.id_sensor_type == SensorType.BIOMETRICS:
+                    self.export_sensor_data_health(sensor, all_data, rec_dir)
                 else:
                     self.export_sensor_data(sensor, all_data, rec_dir)
 
@@ -230,7 +235,7 @@ class DBExporter(QObject):
         # Data files
         filename = base_dir + os.sep + base_filename
         if self.exportFormat == ExporterTypes.CSV:
-            filename = filename + '.CSV'
+            filename = filename + '.csv'
         elif self.exportFormat == ExporterTypes.MATLAB:
             filename = filename + '.mat'
 
@@ -275,7 +280,7 @@ class DBExporter(QObject):
 
         filename = base_dir + os.sep + base_filename
         if self.exportFormat == ExporterTypes.CSV:
-            filename = filename + '.CSV'
+            filename = filename + '.csv'
         elif self.exportFormat == ExporterTypes.MATLAB:
             filename = filename + '.mat'
 
@@ -307,6 +312,87 @@ class DBExporter(QObject):
             sio.savemat(filename, {sensor.name.replace(' ', '_'): {'values': my_array.transpose(),
                                                                    'labels': header.split('\t')}},
                         do_compression=True, long_field_names=True)
+
+    def export_sensor_data_questions(self, sensor: Sensor, sensors_data: list[SensorData], base_dir: str):
+        base_filename = sensor.name.replace(' ', '_')
+
+        # Write sensor infos file
+        self.export_sensor_infos(sensor, base_dir, base_filename)
+
+        # Data files
+        filename = base_dir + os.sep + base_filename
+        if self.exportFormat == ExporterTypes.CSV:
+            filename = filename + '.csv'
+        elif self.exportFormat == ExporterTypes.MATLAB:
+            filename = filename + '.mat'
+
+        header = ['Label', 'Shown', 'Answered', 'Index', 'Value']
+
+        # Read questions data
+        answers_obj = np.zeros(shape=(len(sensors_data), 5), dtype='object')
+        index = 0
+        for sensor_data in sensors_data:
+            data = json.loads(sensor_data.data)
+            data['start_timestamp'] = sensor_data.timestamps.start_timestamp.timestamp()
+            data['end_timestamp'] = sensor_data.timestamps.end_timestamp.timestamp()
+            answers_obj[index][0] = data['question_id']
+            answers_obj[index][1] = data['start_timestamp']
+            answers_obj[index][2] = data['end_timestamp']
+            answers_obj[index][3] = ', '.join([str(item) for item in data['answer_index']])
+            answers_obj[index][4] = ', '.join(data['answer_text'])
+            index += 1
+
+        # Write values
+        if self.exportFormat == ExporterTypes.CSV:
+            np.savetxt(filename, answers_obj, delimiter="\t", header='\t'.join(header), fmt='%s')
+
+        elif self.exportFormat == ExporterTypes.MATLAB:
+            sio.savemat(filename, {sensor.name.replace(' ', '_'): {'values': answers_obj, 'labels': header}},
+                        do_compression=True, long_field_names=True)
+
+    def export_sensor_data_health(self, sensor: Sensor, sensors_data: list[SensorData], base_dir: str):
+        result = {}
+        for sensor_data in sensors_data:
+            if not result.__contains__(sensor_data.channel.id_channel):
+                result[sensor_data.channel.id_channel] = []
+
+            series = sensor_data.to_time_series()
+            result[sensor_data.channel.id_channel].append(series)
+
+        base_filename = sensor.location + '_' + sensor.name.replace(' ', '_')
+
+        # Write sensor infos file
+        self.export_sensor_infos(sensor, base_dir, base_filename)
+
+        # Data files
+        header = ['Time', 'Value']
+        # One file per channel (health value)
+        for id_channel in result.keys():
+            channel = self.dbMan.get_channel(id_channel)
+            value_list = []
+            if channel:
+                label = channel.label.replace(' ', '_').replace('(', '').replace(')', '')
+                time = []
+                values = []
+
+                for list_item in result[id_channel]:
+                    time.append(list_item['time'])
+                    values.append(list_item['values'])
+
+                all_time = np.concatenate(time)
+                all_values = np.concatenate(values)
+                value_list.append(all_time)
+                value_list.append(all_values)
+
+            my_array = np.array(value_list)
+            filename = base_dir + os.sep + base_filename + '_' + label
+            if self.exportFormat == ExporterTypes.CSV:
+                np.savetxt(filename + '.csv', my_array.transpose(), delimiter="\t", header='\t'.join(header),
+                           fmt='%.4f')
+            elif self.exportFormat == ExporterTypes.MATLAB:
+                sio.savemat(filename + '.mat', {sensor.name.replace(' ', '') + '_' + label:
+                                                    {'values': my_array.transpose(), 'labels': header}},
+                            do_compression=True, long_field_names=True)
 
     def export_sensor_data_beacons(self, sensor: Sensor, sensors_data: list[SensorData], base_dir: str):
         result = {}
@@ -343,16 +429,16 @@ class DBExporter(QObject):
                 for data in result[id_channel]:
                     if beacons[beacon_id] is None:
                         rows = len(data['time'])
-                        beacons[beacon_id] = np.array([data['time'], [None]*rows, [None]*rows]).transpose()
+                        beacons[beacon_id] = np.array([data['time'], [None] * rows, [None] * rows]).transpose()
 
                     if channel.label.endswith('RSSI'):
                         for index, t in enumerate(data['time']):
                             t_index = np.where(beacons[beacon_id][:, 0] == t)
-                            if t_index:   # Time already there?
+                            if t_index:  # Time already there?
                                 beacons[beacon_id][t_index, 1] = data['values'][index]
                             else:
                                 beacons[beacon_id] = beacons[beacon_id] = np.vstack((beacons[beacon_id],
-                                                                                    [t,  data['values'][index], None]))
+                                                                                     [t, data['values'][index], None]))
 
                     if channel.label.endswith('Power'):
                         for index, t in enumerate(data['time']):
@@ -379,7 +465,8 @@ class DBExporter(QObject):
     def export_sensor_infos(self, sensor: Sensor, base_dir: str, base_filename: str):
         infos = {'id_sensor': sensor.id_sensor, 'name': sensor.name, 'id_sensor_type': sensor.id_sensor_type,
                  'location': sensor.location, 'data_rate': sensor.data_rate, 'sampling_rate': sensor.sampling_rate,
-                 'channels': len(sensor.channels), 'hardware_id': sensor.hw_id, 'hardware_name': sensor.hw_name}
+                 'channels': len(sensor.channels), 'hardware_id': sensor.hw_id, 'hardware_name': sensor.hw_name,
+                 'settings': sensor.settings}
         if self.exportFormat == ExporterTypes.CSV:
             DBExporter.dict_to_csv(base_dir + os.sep + 'infos_' + base_filename + '.csv', infos)
         if self.exportFormat == ExporterTypes.MATLAB:
