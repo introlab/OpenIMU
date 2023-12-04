@@ -75,22 +75,22 @@
         <translation>Fichier existant - remplacement</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="182"/>
+        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="180"/>
         <source>Unsupported file type</source>
         <translation>Type de fichier non-supporté</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="193"/>
+        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="191"/>
         <source>Error receiving</source>
         <translation>Error lors de la réception</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="194"/>
+        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="192"/>
         <source>bytes received, expected</source>
         <translation>octets reçus, attendus</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="199"/>
+        <location filename="../../libopenimu/streamers/AppleWatchStreamer.py" line="197"/>
         <source>Completed</source>
         <translation>Completé</translation>
     </message>
@@ -384,21 +384,6 @@
         <translation>Écrasement des données</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="186"/>
-        <source>Exporting to format</source>
-        <translation>Exportation au format</translation>
-    </message>
-    <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="197"/>
-        <source>Error while exporting data</source>
-        <translation>Erreur lors de l&apos;exportation des données</translation>
-    </message>
-    <message>
-        <location filename="../../libopenimu/qt/ExportDialog.py" line="198"/>
-        <source>Error occurred while exporting data files. See logs for more information.</source>
-        <translation>Une erreur est survenue lors de l&apos;exportation des données. Vérifiez le journal pour plus d&apos;informations.</translation>
-    </message>
-    <message>
         <location filename="../../libopenimu/qt/ExportDialog.py" line="206"/>
         <source>Error exporting data:</source>
         <translation>Erreur lors de l&apos;exportation des données:</translation>
@@ -408,6 +393,7 @@
     <name>FileExporter</name>
     <message>
         <location filename="../../libopenimu/qt/ExportDialog.py" line="114"/>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="186"/>
         <source>Exporting to format</source>
         <translation>Exportation au format</translation>
     </message>
@@ -430,6 +416,16 @@
         <location filename="../../libopenimu/qt/ExportDialog.py" line="149"/>
         <source>Exporting processed data</source>
         <translation>Exportation des données traitées</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="197"/>
+        <source>Error while exporting data</source>
+        <translation>Erreur lors de l&apos;exportation des données</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ExportDialog.py" line="198"/>
+        <source>Error occurred while exporting data files. See logs for more information.</source>
+        <translation>Une erreur est survenue lors de l&apos;exportation des données. Vérifiez le journal pour plus d&apos;informations.</translation>
     </message>
 </context>
 <context>
@@ -458,12 +454,12 @@
 <context>
     <name>GraphWindow</name>
     <message>
-        <location filename="../../libopenimu/qt/GraphWindow.py" line="45"/>
+        <location filename="../../libopenimu/qt/GraphWindow.py" line="47"/>
         <source>Not available</source>
         <translation>Non disponible</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/GraphWindow.py" line="46"/>
+        <location filename="../../libopenimu/qt/GraphWindow.py" line="48"/>
         <source>Unfortunately, this feature isn&apos;t available on Mac OS for now.</source>
         <translation>Cette fonctionnalité n&apos;est malheureusement pas disponible sous Mac OS pour l&apos;instant.</translation>
     </message>
@@ -471,12 +467,12 @@
 <context>
     <name>IMUChartView</name>
     <message>
-        <location filename="../../libopenimu/qt/Charts.py" line="126"/>
+        <location filename="../../libopenimu/qt/Charts.py" line="127"/>
         <source>Date</source>
         <translation>Date</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/Charts.py" line="133"/>
+        <location filename="../../libopenimu/qt/Charts.py" line="134"/>
         <source>Values</source>
         <translation>Valeurs</translation>
     </message>
@@ -558,36 +554,6 @@
         <location filename="../ui/ImportBrowser.ui" line="605"/>
         <source>Drag &amp; drop files to import here</source>
         <translation>Glisser &amp; déposer les fichiers à importer ici</translation>
-    </message>
-    <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="133"/>
-        <source>Invalid import structure</source>
-        <translation>Format d&apos;importation invalide</translation>
-    </message>
-    <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="159"/>
-        <source>Unknown file type</source>
-        <translation>Type de fichier inconnu</translation>
-    </message>
-    <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="160"/>
-        <source>Skipping file</source>
-        <translation>Fichier ignoré</translation>
-    </message>
-    <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="185"/>
-        <source>Data importation</source>
-        <translation>Importation des données</translation>
-    </message>
-    <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="196"/>
-        <source>Error while importing data</source>
-        <translation>Erreur lors de l&apos;importation des données</translation>
-    </message>
-    <message>
-        <location filename="../../libopenimu/qt/ImportBrowser.py" line="197"/>
-        <source>Error occured while importing data files. See logs for more information.</source>
-        <translation>Au moins une erreur est survenue lors de l&apos;importation des fichiers. Voir dans les journaux pour plus d&apos;information.</translation>
     </message>
     <message>
         <location filename="../../libopenimu/qt/ImportBrowser.py" line="225"/>
@@ -786,6 +752,36 @@
         <translation>ignorées.</translation>
     </message>
     <message>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="133"/>
+        <source>Invalid import structure</source>
+        <translation>Format d&apos;importation invalide</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="159"/>
+        <source>Unknown file type</source>
+        <translation>Type de fichier inconnu</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="160"/>
+        <source>Skipping file</source>
+        <translation>Fichier ignoré</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="185"/>
+        <source>Data importation</source>
+        <translation>Importation des données</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="196"/>
+        <source>Error while importing data</source>
+        <translation>Erreur lors de l&apos;importation des données</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/ImportBrowser.py" line="197"/>
+        <source>Error occured while importing data files. See logs for more information.</source>
+        <translation>Au moins une erreur est survenue lors de l&apos;importation des fichiers. Voir dans les journaux pour plus d&apos;information.</translation>
+    </message>
+    <message>
         <location filename="../../libopenimu/qt/ImportBrowser.py" line="99"/>
         <source>Loading file:</source>
         <translation>Chargement du fichier:</translation>
@@ -800,13 +796,13 @@
         <translation>Structure des données</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="365"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="366"/>
         <location filename="../ui/MainWindow.ui" line="183"/>
         <source>New group</source>
         <translation>Nouveau groupe</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="398"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="399"/>
         <location filename="../ui/MainWindow.ui" line="224"/>
         <source>New participant</source>
         <translation>Nouveau participant</translation>
@@ -918,104 +914,104 @@
         <translation>Données chargées!</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="320"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="321"/>
         <source>Close?</source>
         <translation>Fermer?</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="326"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="327"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="326"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="327"/>
         <source>was closed.</source>
         <translation>a été fermé.</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="339"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="340"/>
         <source>Database file will be cleaned up and optimized. This can take some time.</source>
         <translation>Le fichier de base de données sera nettoyé et optimisé. Ceci prendra du temps.</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="340"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="341"/>
         <source>Do you want to continue?</source>
         <translation>Voulez-vous continuer?</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="341"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="346"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="342"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="347"/>
         <source>Database cleanup</source>
         <translation>Nettoyage de base de données</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="348"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="349"/>
         <source>Cleanup</source>
         <translation>Nettoyage</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="371"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="404"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="372"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="405"/>
         <source>added.</source>
         <translation>ajouté.</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="371"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="515"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="372"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="516"/>
         <source>Group</source>
         <translation>Groupe</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="515"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="520"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="516"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="521"/>
         <source>updated.</source>
         <translation>mis à jour.</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="404"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="520"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="405"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="521"/>
         <source>Participant</source>
         <translation>Participant</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="715"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="719"/>
         <source>Data Editor</source>
         <translation>Éditeur de données</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="551"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="555"/>
         <source>Are you sure you want to delete</source>
         <translation>Êtes-vous sûrs de vouloir supprimer</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="319"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="320"/>
         <source>This database will be closed. Do you want to continue?</source>
         <translation>Cette base de données sera fermée. Souhaitez-vous continuer?</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="552"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="556"/>
         <source>and all associated elements?</source>
         <translation>et tous les éléments associés?</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="553"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="557"/>
         <source>Confirm deletion</source>
         <translation>Confirmation de suppression</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="564"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="570"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="580"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="587"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="595"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="611"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="623"/>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="637"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="568"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="574"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="584"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="591"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="599"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="615"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="627"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="641"/>
         <source>Deleting</source>
         <translation>Suppression</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/MainWindow.py" line="643"/>
+        <location filename="../../libopenimu/qt/MainWindow.py" line="647"/>
         <source>was deleted.</source>
         <translation>a été supprimé.</translation>
     </message>
@@ -1029,7 +1025,7 @@
     </message>
 </context>
 <context>
-    <name>ProcessSelectWindow</name>
+    <name>Processor</name>
     <message>
         <location filename="../../libopenimu/qt/ProcessSelectWindow.py" line="127"/>
         <source>Data processing</source>
@@ -1070,40 +1066,68 @@
     </message>
 </context>
 <context>
+    <name>PromptsView</name>
+    <message>
+        <location filename="../../libopenimu/qt/PromptsView.py" line="25"/>
+        <source>Timestamp</source>
+        <translation>Date / heure</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/PromptsView.py" line="25"/>
+        <source>ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/PromptsView.py" line="25"/>
+        <source>Question</source>
+        <translation>Question</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/PromptsView.py" line="26"/>
+        <source>Answer(s)</source>
+        <translation>Réponse(s)</translation>
+    </message>
+    <message>
+        <location filename="../../libopenimu/qt/PromptsView.py" line="26"/>
+        <source>Reply time</source>
+        <translation>Temps de réponse</translation>
+    </message>
+</context>
+<context>
     <name>RecordsetWindow</name>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="231"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="232"/>
         <source>Warning</source>
         <translation>Avertissement</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="232"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="233"/>
         <source>Displaying a timeline spanning over more than 2 years isn&apos;t supported for now</source>
         <translation>L&apos;affichage d&apos;une ligne du temps de 2 ans ou plus n&apos;est pas supportée pour l&apos;instant</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="280"/>
         <location filename="../../libopenimu/qt/RecordsetWindow.py" line="281"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="282"/>
         <source>No data.</source>
         <translation>Aucune donnée.</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="499"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="503"/>
         <source>Loading temporal data</source>
         <translation>Chargement des données temporelles</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="504"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="508"/>
         <source>Loading</source>
         <translation>Chargement</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="716"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="739"/>
         <source>Loading data...</source>
         <translation>Chargement des données...</translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="720"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="743"/>
         <source>Processing</source>
         <translation>Traitement</translation>
     </message>
@@ -1702,7 +1726,7 @@ dans la base de données</translation>
         <translation>Affichage - données</translation>
     </message>
     <message>
-        <location filename="../ui/TableDataViewWidget.ui" line="26"/>
+        <location filename="../ui/TableDataViewWidget.ui" line="27"/>
         <source>Channel:</source>
         <translation>Canal:</translation>
     </message>
