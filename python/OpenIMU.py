@@ -22,7 +22,8 @@ if __name__ == '__main__':
     from libopenimu.qt.OpenIMUApp import OpenIMUApp
     from libopenimu.qt.MainWindow import MainWindow
 
-    faulthandler.enable()  # start @ the beginning
+    if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
+        faulthandler.enable()  # start @ the beginning
 
     try:
         # Close the splash screen, if running from a frozen package with pyinstaller

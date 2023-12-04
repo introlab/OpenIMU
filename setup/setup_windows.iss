@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OpenIMU"
-#define MyAppVersion "1.0.1"
+#define MyAppVersion "1.1.0"
 #define MyAppPublisher "INTER - CdRV - 3IT - USherbrooke"
 #define MyAppURL "https://github.com/introlab/OpenIMU"
 #define MyAppExeName "OpenIMU.exe"

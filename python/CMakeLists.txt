@@ -112,17 +112,7 @@ message(STATUS ${python_files})
 
 # PyInstaller
 set (installer_args
-    #--hidden-import scipy._lib.messagestream
-    #--hidden-import sqlalchemy.ext.baked
     --hidden-import logging.config
-#    --exclude-module PySide6.QtQml
-#    --exclude-module PySide6.QtQmlModels
-#    --exclude-module PySide6.QtQuick3DUtils
-#    --exclude-module PySide6.QtSerialPort
-#    --exclude-module PySide6.QtVirtualKeyboard
-#    --exclude-module PySide6.QtPositioning
-#    --exclude-module PySide6.QtWebChannel
-#    --exclude-module PySide6.QtWebEngineWidgets
     --clean
     -y
     --windowed # If windowed, no console is displayed
