@@ -276,7 +276,7 @@ class ImportBrowser(QDialog):
 
     def add_dir_to_list(self, dir_path: str):
         # Browse all files in directory
-        dir_browser = QDirIterator(dir_path, QDir.Files | QDir.NoDotAndDotDot, QDirIterator.Subdirectories)
+        dir_browser = QDirIterator(dir_path, [], QDir.Files | QDir.NoDotAndDotDot, QDirIterator.Subdirectories)
         files = []
         while dir_browser.hasNext():
             files.append(dir_browser.next())

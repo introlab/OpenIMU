@@ -15,7 +15,7 @@ class IMUChartView(QChartView, BaseGraph):
 
     def __init__(self, parent=None):
         BaseGraph.__init__(self)
-        QChartView.__init__(self, parent=parent)
+        QChartView.__init__(self, parent)
 
         # Render on OpenGL
         self.setViewport(QOpenGLWidget(self))
@@ -113,7 +113,8 @@ class IMUChartView(QChartView, BaseGraph):
             axis.applyNiceNumbers()
 
     def update_axes(self):
-
+        if not self.chart:
+            return
         # Get and remove all axes
         for axis in self.chart.axes():
             self.chart.removeAxis(axis)
@@ -197,16 +198,17 @@ class IMUChartView(QChartView, BaseGraph):
             curve.setName(legend_text)
 
         # Needed for mouse events on series
-        self.chart.setAcceptHoverEvents(True)
-        self.xvalues[self.ncurves] = np.array(xdecimated)
+        if self.chart:
+            self.chart.setAcceptHoverEvents(True)
+            self.xvalues[self.ncurves] = np.array(xdecimated)
 
-        # connect signals / slots
-        # curve.clicked.connect(self.lineseries_clicked)
-        # curve.hovered.connect(self.lineseries_hovered)
+            # connect signals / slots
+            # curve.clicked.connect(self.lineseries_clicked)
+            # curve.hovered.connect(self.lineseries_hovered)
 
-        # Add series
-        self.chart.addSeries(curve)
-        self.ncurves += 1
+            # Add series
+            self.chart.addSeries(curve)
+            self.ncurves += 1
         self.update_axes()
 
     def update_data(self, xdata, ydata, series_id):
@@ -420,6 +422,8 @@ class IMUChartView(QChartView, BaseGraph):
                                           self.chart.mapToValue(QPointF(end_pos, 0)).x())
 
     def set_selection_area_from_time(self, start_time, end_time, emit_signal=False):
+        if not start_time or not end_time:
+            return
         # Convert times to x values
         if isinstance(start_time, datetime.datetime):
             start_time = start_time.timestamp() * 1000
@@ -463,7 +467,7 @@ class IMUChartView(QChartView, BaseGraph):
             idx = (np.abs(self.xvalues[i] - xmap_initial)).argmin()
             ymap = self.chart.series()[i].at(idx).y()
             xmap = self.chart.series()[i].at(idx).x()
-            if i == 0:
+            if i == 0 and xmap_initial >= 0:
                 display += "<i>" + (datetime.datetime.fromtimestamp(xmap_initial / 1000)).strftime(
                     '%d-%m-%Y %H:%M:%S:%f') + \
                            "</i>"
@@ -471,7 +475,7 @@ class IMUChartView(QChartView, BaseGraph):
             # Compute where to display label
             if last_val is None or ymap > last_val:
                 last_val = ymap
-                ypos = self.chart.mapToPosition(QPointF(xmap, ymap)).y()
+                # ypos = self.chart.mapToPosition(QPointF(xmap, ymap)).y()
             if display != '':
                 display += '<br />'
 
@@ -511,6 +515,8 @@ class IMUChartView(QChartView, BaseGraph):
                 pos = pos1
         else:
             pos = pos1
+        if pos < 0:
+            pos = 0
         return pos
 
     def resizeEvent(self, e: QResizeEvent):
@@ -561,7 +567,9 @@ class IMUChartView(QChartView, BaseGraph):
 
     @property
     def is_zoomed(self):
-        return self.chart.isZoomed()
+        if self.chart:
+            return self.chart.isZoomed()
+        return False
 
 
 class OpenIMUBarGraphView(QChartView):

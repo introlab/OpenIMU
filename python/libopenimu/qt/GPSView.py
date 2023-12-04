@@ -17,7 +17,7 @@ class GPSView(QWebEngineView, BaseGraph):
 
     def __init__(self, parent):
         BaseGraph.__init__(self)
-        QWebEngineView.__init__(self, parent=parent)
+        QWebEngineView.__init__(self, parent)
         self.path = []
         self.marker_position = []
         self.positions = collections.OrderedDict()

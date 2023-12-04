@@ -24,6 +24,7 @@ class Sensor(Base):
     location = Column(String, nullable=False)
     sampling_rate = Column(Float, nullable=False)
     data_rate = Column(Integer, nullable=False)
+    settings = Column(String, nullable=True)
 
     # Which sensor type
     # sensor_type = relationship("SensorType")
@@ -36,8 +37,9 @@ class Sensor(Base):
 
     # Database rep (optional)
     def __repr__(self):
-        return "<Sensor(id_sensor_type='%i', name='%s', hw_name='%s', hw_id='%s', location='%s', sampling_rate='%f'" \
-               ", data_rate='%i')>" % (self.id_sensor_type, self.name, self.hw_name, self.hw_id, self.location,
-                                       self.sampling_rate, self.data_rate)
+        return ("<Sensor(id_sensor_type='%i', name='%s', hw_name='%s', hw_id='%s', location='%s', sampling_rate='%f'" 
+                ", data_rate='%i, settings='%s')>" %
+                (self.id_sensor_type, self.name, self.hw_name, self.hw_id, self.location, self.sampling_rate,
+                 self.data_rate, self.settings))
 
 

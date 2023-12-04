@@ -1,5 +1,5 @@
 #TODO MAKE THIS GENERIC
-set (PYTHON_VERSION 3.10)
+set (PYTHON_VERSION 3.11)
 add_subdirectory(env)
 
 set(PYTHON_ENV_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/env/python-${PYTHON_VERSION})
@@ -112,17 +112,7 @@ message(STATUS ${python_files})
 
 # PyInstaller
 set (installer_args
-    #--hidden-import scipy._lib.messagestream
-    #--hidden-import sqlalchemy.ext.baked
     --hidden-import logging.config
-#    --exclude-module PySide6.QtQml
-#    --exclude-module PySide6.QtQmlModels
-#    --exclude-module PySide6.QtQuick3DUtils
-#    --exclude-module PySide6.QtSerialPort
-#    --exclude-module PySide6.QtVirtualKeyboard
-#    --exclude-module PySide6.QtPositioning
-#    --exclude-module PySide6.QtWebChannel
-#    --exclude-module PySide6.QtWebEngineWidgets
     --clean
     -y
     --windowed # If windowed, no console is displayed
@@ -138,6 +128,7 @@ if(WIN32)
         #--hidden-import pkg_resources.py2_warn
         --paths ${PYTHON_ENV_DIRECTORY}/Lib/site-packages/scipy/.libs # PyInstaller doesn't seem to find all required DLLs for SciPy...
         --paths ${PYTHON_ENV_DIRECTORY}/Library/bin # PyInstaller doesn't seem to find sqlite3.dll...
+        --splash ../setup/splash.png # For now, only works on Windows and Linux
     )
 
     # Build this target to make a package

@@ -139,15 +139,13 @@ class AppleWatchRequestHandler(BaseHTTPRequestHandler, QObject):
 
         # Supported file type?
         if file_type.lower() in ['data', 'dat', 'csv', 'txt', 'oimi']:
-
-            if file_type.lower() in ['data', 'dat']:
-                # Binary file
-                fh = open(destination_path, 'wb')
-                text_format = False
-            else:
-                # Text file
-                fh = open(destination_path, 'w')
-                text_format = True
+            # if file_type.lower() in ['data', 'dat']:
+            # Binary file
+            fh = open(destination_path, 'wb')
+            text_format = False
+            # else: # Text file
+            #    fh = open(destination_path, 'w')
+            #    text_format = True
 
             # print("About to receive: " + file_name + ": " + str(content_size_remaining) + " bytes.")
             while content_size_remaining > 0 and self.streamer.server_running:
@@ -162,10 +160,10 @@ class AppleWatchRequestHandler(BaseHTTPRequestHandler, QObject):
                     self.streamer.file_error_occured.emit(device_name, file_name, str(err_desc))
                     return
 
-                if text_format:
-                    fh.write(data.decode())
-                else:
-                    fh.write(data)
+                # if text_format:
+                #     fh.write(data.decode(encoding='unicode'))
+                # else:
+                fh.write(data)
                 content_size_remaining -= buffer_size
                 content_received = (content_length - content_size_remaining)
                 pc = math.floor((content_received / content_length) * 100)

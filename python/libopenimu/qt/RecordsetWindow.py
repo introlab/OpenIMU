@@ -181,7 +181,8 @@ class RecordsetWindow(QWidget):
         self.update_tile_buttons_state()
 
     def __del__(self):
-        self.UI.mdiArea.closeAllSubWindows()
+        # self.UI.mdiArea.closeAllSubWindows()
+        pass
 
     def paintEvent(self, paint_event):
         if not self.time_pixmap:
@@ -490,6 +491,9 @@ class RecordsetWindow(QWidget):
         # self.UI.graphSensorsTimeline.setMaximumHeight(self.timeSensorsScene.itemsBoundingRect().height())
 
     def load_sensors_blocks(self):
+        import gc
+        gc.collect()
+
         # Create request tasks
         tasks = []
         for location in self.sensors_location:
@@ -505,8 +509,6 @@ class RecordsetWindow(QWidget):
 
         process.start()
         dialog.exec()
-        process.deleteLater()
-        dialog.deleteLater()
         QGuiApplication.restoreOverrideCursor()
 
         # Combine tasks results
@@ -519,6 +521,7 @@ class RecordsetWindow(QWidget):
                 end_time = result['end_time']
                 data = {"start_time": start_time, "end_time": end_time}
                 self.sensors_blocks[result['sensor_id']].append(data)
+            del task
 
     def create_sensors_rects(self):
         rects = []
@@ -573,7 +576,11 @@ class RecordsetWindow(QWidget):
                 or sensor.id_sensor_type == SensorType.TEMPERATURE \
                 or sensor.id_sensor_type == SensorType.HEARTRATE \
                 or sensor.id_sensor_type == SensorType.ORIENTATION \
-                or sensor.id_sensor_type == SensorType.FSR:
+                or sensor.id_sensor_type == SensorType.FSR \
+                or sensor.id_sensor_type == SensorType.STEP \
+                or sensor.id_sensor_type == SensorType.ACTIVITY \
+                or sensor.id_sensor_type == SensorType.HEADINGS \
+                or sensor.id_sensor_type == SensorType.BIOMETRICS:
             return GraphType.LINECHART
 
         if sensor.id_sensor_type == SensorType.BEACON:
@@ -581,6 +588,9 @@ class RecordsetWindow(QWidget):
 
         if sensor.id_sensor_type == SensorType.GPS:
             return GraphType.MAP
+
+        if sensor.id_sensor_type == SensorType.QUESTIONS:
+            return GraphType.QUESTIONS
 
         return GraphType.UNKNOWN
 
@@ -616,22 +626,23 @@ class RecordsetWindow(QWidget):
 
         if sensor_item.isChecked():
             # Choose the correct display for each sensor
-            graph_window = None
             timeseries, channel_data = self.get_sensor_data(sensor)  # Fetch all sensor data
 
             # Color map for curves
-            colors = [Qt.blue, Qt.green, Qt.yellow, Qt.red]
+            colors = [Qt.darkMagenta, Qt.gray, Qt.darkCyan, Qt.darkRed, Qt.darkYellow, Qt.darkGreen, Qt.darkBlue,
+                      Qt.white, Qt.magenta, Qt.cyan, Qt.blue, Qt.green, Qt.yellow, Qt.red]
 
             graph_type = self.get_sensor_graph_type(sensor)
             graph_window = GraphWindow(graph_type, sensor, self.UI.mdiArea)
 
             if graph_type == GraphType.LINECHART:
-                # Add series
-                for series in timeseries:
-                    graph_window.graph.add_data(series['x'], series['y'], color=colors.pop(),
-                                                legend_text=series['label'])
+                if graph_window.graph:
+                    # Add series
+                    for series in timeseries:
+                        graph_window.graph.add_data(series['x'], series['y'], color=colors.pop(),
+                                                    legend_text=series['label'])
 
-                graph_window.graph.set_title(sensor_label)
+                    graph_window.graph.set_title(sensor_label)
 
             if graph_type == GraphType.MAP:
                 import platform
@@ -670,6 +681,18 @@ class RecordsetWindow(QWidget):
                 # Select first channel
                 graph_window.graph.on_channel_changed()
 
+            if graph_type == GraphType.QUESTIONS:
+                graph_window.graph.load_question_datas(sensor.settings)
+                # Now load each questions
+                for series in timeseries:
+                    current_index = 0
+                    for answer in series['y']:
+                        graph_window.graph.add_answer(np.array([series['x'][current_index*2],
+                                                                series['x'][current_index*2+1]]), answer)
+                        current_index += 1
+
+                graph_window.graph.refresh()
+
             if graph_window is not None:
                 subwindow = QMdiSubWindow()
                 subwindow.setAttribute(Qt.WA_DeleteOnClose)
@@ -704,7 +727,7 @@ class RecordsetWindow(QWidget):
                 if self.sensors_graphs[sensor.id_sensor] is not None:
                     self.UI.mdiArea.removeSubWindow(self.sensors_graphs[sensor.id_sensor].parent())
                     self.sensors_graphs[sensor.id_sensor].hide()
-                    del self.sensors_graphs[sensor.id_sensor]
+                    # del self.sensors_graphs[sensor.id_sensor]
                     self.UI.mdiArea.tileSubWindows()
             except KeyError:
                 pass
@@ -716,13 +739,10 @@ class RecordsetWindow(QWidget):
         task = DBSensorAllDataTask(self.tr('Loading data...'), self.dbMan, sensor, start_time, end_time,
                                    self.recordsets)
 
-        process = BackgroundProcess([task])
+        process = BackgroundProcess([task], self)
         dialog = ProgressDialog(process, self.tr('Processing'), self)
-
         process.start()
         dialog.exec()
-        process.deleteLater()
-        dialog.deleteLater()
         QGuiApplication.restoreOverrideCursor()
 
         return task.results['timeseries'], task.results['channel_data']
@@ -742,8 +762,8 @@ class RecordsetWindow(QWidget):
         for sensor_id, sensor_graph in self.sensors_graphs.items():
             if sensor_graph == graph:
                 # self.sensors_graphs[sensor_id] = None
-                del self.sensors_graphs[sensor_id]
                 self.sensors_items[sensor_id].setChecked(False)
+                del self.sensors_graphs[sensor_id]
                 break
 
         self.UI.mdiArea.tileSubWindows()

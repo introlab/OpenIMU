@@ -20,4 +20,4 @@ def upgrade():
 
 
 def downgrade():
-    op.remove_column('tabSensors', 'hw_id')
+    op.drop_column('tabSensors', 'hw_id')

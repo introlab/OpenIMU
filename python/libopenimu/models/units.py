@@ -20,6 +20,12 @@ class Units:
     GAUSS = 11
     CELCIUS = 12
     BPM = 13
+    DEGREES = 14
+    KCALORIES = 15
+    PERCENTAGE = 16
+    MLKGMIN = 17
+    SECONDS = 18
+    MILLISECONDS = 19
 
     value_dict = {METERS: 'METERS',
                   GRAVITY_G: 'G',
@@ -34,7 +40,13 @@ class Units:
                   UTESLA: 'MICROTESLA',
                   GAUSS: 'GAUSS',
                   CELCIUS: 'CELCIUS',
-                  BPM: 'BPM'}
+                  BPM: 'BPM',
+                  DEGREES: 'DEGREES',
+                  KCALORIES: 'kCAL',
+                  PERCENTAGE: '%',
+                  MLKGMIN: 'ML/KG/MIN',
+                  SECONDS: 'S',
+                  MILLISECONDS: 'MS'}
 
     @staticmethod
     def as_dict():

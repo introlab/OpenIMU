@@ -21,4 +21,4 @@ def upgrade():
 
 
 def downgrade():
-    op.remove_column('tabProcessedData', 'params')
+    op.drop_column('tabProcessedData', 'params')

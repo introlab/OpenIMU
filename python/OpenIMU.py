@@ -1,5 +1,6 @@
 import sys
 import platform
+import faulthandler
 
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtCore import Qt
@@ -21,16 +22,15 @@ if __name__ == '__main__':
     from libopenimu.qt.OpenIMUApp import OpenIMUApp
     from libopenimu.qt.MainWindow import MainWindow
 
+    if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
+        faulthandler.enable()  # start @ the beginning
+
     try:
         # Close the splash screen, if running from a frozen package with pyinstaller
         import pyi_splash
         pyi_splash.close()
     except ModuleNotFoundError:
         pass
-
-    # Support high DPI scaling
-    # Must be done before starting the app
-    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
 
     # Needed for the webengine to work properly
     # Initially useful for MacOS, but also seem to improve speed a little in Windows...

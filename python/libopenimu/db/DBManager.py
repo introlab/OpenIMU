@@ -10,15 +10,13 @@ from sqlalchemy import create_engine, asc, or_, and_
 from sqlalchemy.orm import sessionmaker
 # noinspection PyProtectedMember
 from sqlalchemy.engine import Engine
-from sqlalchemy import event
+from sqlalchemy import event, text
 
 import os
 import datetime
-import numpy as np
 import pickle
 import sys
 import warnings
-import scipy.io as sio
 
 from PySide6.QtCore import QObject, Signal
 
@@ -155,7 +153,8 @@ class DBManager(QObject):
 
     def compact(self):
         self.clean_db()
-        self.engine.execute("VACUUM")
+        with self.engine.connect() as connection:
+            connection.execute(text("VACUUM"))
 
     # GROUPS
     def update_group(self, group):
@@ -255,18 +254,20 @@ class DBManager(QObject):
         # self.engine.execute("VACUUM")
 
     #
-    def add_sensor(self, _id_sensor_type, _name, _hw_name, _location, _sampling_rate, _data_rate):
+    def add_sensor(self, _id_sensor_type, _name, _hw_name, _location, _sampling_rate, _data_rate,
+                   _settings: str | None = None):
         # Check if that sensor is already present in the database
         query = self.session.query(Sensor).filter((Sensor.id_sensor_type == _id_sensor_type) &
                                                   (Sensor.location == _location) &
                                                   (Sensor.name == _name) &
                                                   (Sensor.hw_name == _hw_name) &
                                                   (Sensor.sampling_rate == _sampling_rate) &
-                                                  (Sensor.data_rate) == _data_rate)
+                                                  (Sensor.data_rate == _data_rate) &
+                                                  (Sensor.settings == _settings))
 
         if query.first():
             # print("Sensor " + _name + " already present in DB!")
-            return query.first();
+            return query.first()
 
         # Create object
         sensor = Sensor(
@@ -275,7 +276,8 @@ class DBManager(QObject):
             hw_name=_hw_name,
             location=_location,
             sampling_rate=_sampling_rate,
-            data_rate=_data_rate)
+            data_rate=_data_rate,
+            settings=_settings)
         self.session.add(sensor)
         self.commit()
         return sensor
@@ -504,10 +506,11 @@ class DBManager(QObject):
             result = query.all()
 
             # Convert to the right format
-            for sensor_data in result:
-                # print('data len:', len(sensor_data.data))
-                sensor_data.data = DataFormat.from_bytes(sensor_data.data, sensor_data.channel.id_data_format)
-
+            with self.session.no_autoflush:
+                for sensor_data in result:
+                    # print('data len:', len(sensor_data.data))
+                    sensor_data.data = DataFormat.from_bytes(sensor_data.data, sensor_data.channel.id_data_format)
+            self.session.rollback()
             return result
 
     def get_sensor_times(self, sensor: Sensor, recordset: Recordset):
