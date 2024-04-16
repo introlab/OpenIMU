@@ -5,6 +5,7 @@
     @date 30/05/2018
 
 """
+import logging
 
 from libopenimu.importers.BaseImporter import BaseImporter
 from libopenimu.models.sensor_types import SensorType
@@ -549,7 +550,7 @@ class AppleWatchImporter(BaseImporter):
         sensoria_acc_channels.append(self.add_channel_to_db(sensoria_acc_sensor, Units.GRAVITY_G,
                                                             DataFormat.FLOAT32, 'Accelerometer_Z'))
 
-        sensoria_gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyrometer', 'Sensoria', 'Foot',
+        sensoria_gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyroscope', 'Sensoria', 'Foot',
                                                      sample_rate, 1, settings)
         sensoria_gyro_channels = list()
         sensoria_gyro_channels.append(self.add_channel_to_db(sensoria_gyro_sensor, Units.DEG_PER_SEC,
@@ -707,12 +708,12 @@ class AppleWatchImporter(BaseImporter):
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(beacons) / 2 * 100))
 
-    def import_motion_to_database(self, settings, sampling_rate, motion: dict):
+    def import_motion_to_database(self, settings, sampling_rate, motion: dict, version: int):
         # DL Oct. 16 2018, New import to database
 
         # Create channels and sensors
         accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer',
-                                                     'AppleWatch','Wrist', sampling_rate, 1, settings)
+                                                     'AppleWatch', 'Wrist', sampling_rate, 1, settings)
 
         accelerometer_channels = list()
 
@@ -727,8 +728,8 @@ class AppleWatchImporter(BaseImporter):
                                                              DataFormat.FLOAT32, 'Accelerometer_Z'))
 
         # Create sensor
-        gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyro','AppleWatch','Wrist',
-                                            sampling_rate, 1, settings)
+        gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyroscope', 'AppleWatch',
+                                            'Wrist', sampling_rate, 1, settings)
 
         gyro_channels = list()
 
@@ -750,6 +751,18 @@ class AppleWatchImporter(BaseImporter):
         orientation_channels.append(self.add_channel_to_db(orientation_sensor, Units.NONE, DataFormat.FLOAT32, 'q1'))
         orientation_channels.append(self.add_channel_to_db(orientation_sensor, Units.NONE, DataFormat.FLOAT32, 'q2'))
         orientation_channels.append(self.add_channel_to_db(orientation_sensor, Units.NONE, DataFormat.FLOAT32, 'q3'))
+
+        mag_channels = list()
+        magneto_sensor = None
+        if version >= 3:  # Also includes magnetometer values
+            # Create sensor
+            magneto_sensor = self.add_sensor_to_db(SensorType.MAGNETOMETER, 'Magnetometer', 'AppleWatch',
+                                                   'Wrist', sampling_rate, 1, settings)
+
+            # Create channels
+            mag_channels.append(self.add_channel_to_db(magneto_sensor, Units.UTESLA, DataFormat.FLOAT32, 'Mag_X'))
+            mag_channels.append(self.add_channel_to_db(magneto_sensor, Units.UTESLA, DataFormat.FLOAT32, 'Mag_Y'))
+            mag_channels.append(self.add_channel_to_db(magneto_sensor, Units.UTESLA, DataFormat.FLOAT32, 'Mag_Z'))
 
         # Data is already hour-aligned iterate through hours
         count = 0
@@ -794,10 +807,18 @@ class AppleWatchImporter(BaseImporter):
                 self.add_sensor_data_to_db(recordset, gyro_sensor, gyro_channel,
                                            sensor_timestamps, valuesarray[:, i + 6])
 
+            # Magneto
+            current_offset = 9
+            if magneto_sensor:
+                for i, mag_channel in enumerate(mag_channels):
+                    self.add_sensor_data_to_db(recordset, magneto_sensor, mag_channel, sensor_timestamps,
+                                               valuesarray[:, i + current_offset])
+                current_offset = 12
+
             # Attitude
             for i, channel in enumerate(orientation_channels):
                 self.add_sensor_data_to_db(recordset, orientation_sensor, channel, sensor_timestamps,
-                                           valuesarray[:, i + 9])
+                                           valuesarray[:, i + current_offset])
 
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(motion) / 2 * 100))
@@ -1136,7 +1157,7 @@ class AppleWatchImporter(BaseImporter):
                 sampling_rate = res['motion']['sampling_rate']
                 if res['motion']['timestamps']:
                     self.import_motion_to_database(res['motion']['settings'], sampling_rate,
-                                                   res['motion']['timestamps'])
+                                                   res['motion']['timestamps'], res['motion']['version'])
 
             if res.__contains__('battery'):
                 sampling_rate = res['battery']['sampling_rate']
@@ -1286,7 +1307,7 @@ class AppleWatchImporter(BaseImporter):
 
         # if version == 1: Nothing more to do
 
-        if version == 2:
+        if version >= 2:
             [json_data_size] = struct.unpack("<I", file.read(4))
             [json_data] = struct.unpack("<{}s".format(json_data_size), file.read(json_data_size))
             settings_json_str = json_data.decode("utf-8")
@@ -1329,16 +1350,31 @@ class AppleWatchImporter(BaseImporter):
         elif sensor_id == self.COORDINATES_ID:
             read_data_func = self.read_coordinates_data
             dict_name = 'coordinates'
-        # deprecated
         elif sensor_id == self.RAW_MOTION_ID:
+            # deprecated
             read_data_func = self.read_raw_motion_data
             dict_name = 'raw_motion'
         elif sensor_id == self.RAW_ACCELERO_ID:
             read_data_func = self.read_raw_accelerometer_data
             dict_name = 'raw_accelero'
         elif sensor_id == self.RAW_GYRO_ID:
+            # Check if has processed motion (same data) - ignore if it's the case
+            basename = os.path.basename(file.name)
+            motion_file_name = file.name.replace(basename, 'watch_ProcessedMotion.data')
+            if os.path.isfile(motion_file_name):
+                self.last_error = "Ignoring gyro data - using processed motion instead"
+                return None
             read_data_func = self.read_raw_gyro_data
             dict_name = 'raw_gyro'
+        elif sensor_id == self.RAW_MAGNETO_ID:
+            # Check if has processed motion (same data) - ignore if it's the case
+            basename = os.path.basename(file.name)
+            motion_file_name = file.name.replace(basename, 'watch_ProcessedMotion.data')
+            if os.path.isfile(motion_file_name):
+                self.last_error = "Ignoring magneto data - using processed motion instead"
+                return None
+            read_data_func = self.read_raw_magneto_data
+            dict_name = 'raw_magneto'
         elif sensor_id == self.PEDOMETER_ID:
             read_data_func = self.read_pedometer_data
             dict_name = 'pedometer'
@@ -1351,9 +1387,6 @@ class AppleWatchImporter(BaseImporter):
         elif sensor_id == self.HEALTH_ID:
             read_data_func = self.read_health_data
             dict_name = 'health'
-        elif sensor_id == self.RAW_MAGNETO_ID:
-            read_data_func = self.read_raw_magneto_data
-            dict_name = 'raw_magneto'
         elif sensor_id == self.QUESTION_ID:
             read_data_func = self.read_prompt_data
             dict_name = 'question'
@@ -1369,8 +1402,9 @@ class AppleWatchImporter(BaseImporter):
 
         results[dict_name]['timestamps'] = {}
 
-        # Insert sampling rate information
+        # Insert sampling rate & file version information
         results[dict_name]['sampling_rate'] = self.get_sampling_rate_from_header(sensor_id, settings_json_str)
+        results[dict_name]['version'] = version
         results[dict_name]['settings'] = settings_json_str
 
         # lists of co-dependant timestamp(ms) and data
@@ -1397,7 +1431,7 @@ class AppleWatchImporter(BaseImporter):
                 # results_ms_ts.append(int(local_ms_ts))
 
                 results_ms_ts.append(int(timestamp_ms))
-                results_ms_data.append(read_data_func(file, debug))
+                results_ms_data.append(read_data_func(file, debug=debug, version=version))
 
                 if file.seekable():
                     new_progress = np.floor((file.tell() / self.current_file_size) * 100 / 2)
@@ -1436,7 +1470,7 @@ class AppleWatchImporter(BaseImporter):
         return results
 
     @staticmethod
-    def read_battery_data(file, debug=False):
+    def read_battery_data(file, debug=False, version=2):
         """
         • Byte integer for battery level between 0 and 100 (percent)
         ◦ 0 meaning invalid level (eg. where state is .unknown)
@@ -1454,7 +1488,7 @@ class AppleWatchImporter(BaseImporter):
         return data
 
     @staticmethod
-    def read_sensoria_data(file, debug=False):
+    def read_sensoria_data(file, debug=False, version=2):
         """
         46 bytes of received frame (will require further processing)
         This assumes that all socks we have use the F20 streaming protocol, as defined in
@@ -1476,7 +1510,7 @@ class AppleWatchImporter(BaseImporter):
         return data
 
     @staticmethod
-    def read_heartrate_data(file, debug=False):
+    def read_heartrate_data(file, debug=False, version=2):
         """
         unsigned integer as single Byte for bpm
         ** assumes that bpm cannot go above 255, hence values above are clamped to 255
@@ -1491,22 +1525,27 @@ class AppleWatchImporter(BaseImporter):
         return data
 
     @staticmethod
-    def read_motion_data(file, debug=False):
+    def read_motion_data(file, debug=False, version=2):
         """
-         13 Float32 values, hence 52 bytes, with following fields
+         13 to 16 Float32 values, with following fields
         • acceleration (x,y,z)
         • gravity vector (x,y,z)
         • gyroscope (x,y,z)
+        • magneto (x,y,z) [File version 3+ only]
         • attitude quaternion (w,x,y,z)
             """
-        chunk = file.read(52)
-        data = struct.unpack("<13f", chunk)
+        if version == 3:
+            chunk = file.read(64)
+            data = struct.unpack("<16f", chunk)
+        else:  # Version 2
+            chunk = file.read(52)
+            data = struct.unpack("<13f", chunk)
         if debug:
             print('MOTION: ', data)
         return data
 
     @staticmethod
-    def read_beacons_data(file, debug=False):
+    def read_beacons_data(file, debug=False, version=2):
         """
         10 Bytes Char for namespace
         6 Bytes Char for instance ID
@@ -1521,7 +1560,7 @@ class AppleWatchImporter(BaseImporter):
         return data
 
     @staticmethod
-    def read_coordinates_data(file, debug=False):
+    def read_coordinates_data(file, debug=False, version=2):
         """
           7 Float32 values, hence 28 bytes
         • latitude
@@ -1541,7 +1580,7 @@ class AppleWatchImporter(BaseImporter):
 
     # deprecated, not used anymore, separated into two files
     @staticmethod
-    def read_raw_motion_data(file, debug=False):
+    def read_raw_motion_data(file, debug=False, version=2):
         """
          6 Float32 values, hence 24 bytes, with following fields
             acceleration (x,y,z)
@@ -1554,7 +1593,7 @@ class AppleWatchImporter(BaseImporter):
         return data
 
     @staticmethod
-    def read_raw_accelerometer_data(file, debug=False):
+    def read_raw_accelerometer_data(file, debug=False, version=2):
         """
          3 Float32 values, hence 12 bytes, with following fields
             acceleration (x,y,z)
@@ -1566,7 +1605,7 @@ class AppleWatchImporter(BaseImporter):
         return data
 
     @staticmethod
-    def read_raw_gyro_data(file, debug=False):
+    def read_raw_gyro_data(file, debug=False, version=2):
         """
          3 Float32 values, hence 12 bytes, with following fields
             gyroscope (x,y,z)
@@ -1578,7 +1617,7 @@ class AppleWatchImporter(BaseImporter):
         return data
 
     @staticmethod
-    def read_pedometer_data(file, debug=False):
+    def read_pedometer_data(file, debug=False, version=2):
         """
          - Number of steps:     uint32
          - Distance:            float32, -1.0 if the value is not available on device
@@ -1595,7 +1634,7 @@ class AppleWatchImporter(BaseImporter):
         return data
 
     @staticmethod
-    def read_activity_data(file, debug=False):
+    def read_activity_data(file, debug=False, version=2):
         """
         Detected Activities: UInt8 -- 1 byte: Detected activities and confidence level:
             Bits 0-1: Confidence level:
@@ -1616,7 +1655,7 @@ class AppleWatchImporter(BaseImporter):
         return data
 
     @staticmethod
-    def read_headings_data(file, debug=False):
+    def read_headings_data(file, debug=False, version=2):
         """
         True Heading: Float32 -- 4 bytes: Heading in degrees relative to true north (0 = North, 180 = South). Only valid if "True Heading Accuracy" is positive.
         True Heading Accuracy: Float32 -- 4 bytes: Accuracy in degrees of "True Heading", with negative values representing unreliable or uncalibrated sensor.
@@ -1632,7 +1671,7 @@ class AppleWatchImporter(BaseImporter):
         return data
 
     @staticmethod
-    def read_health_data(file, debug=False):
+    def read_health_data(file, debug=False, version=2):
         """
         Start Timestamp: UInt64 -- 8 bytes: Sample start timestamp (Unix format) with milliseconds precision
         End Timestamp: UInt64 -- 8 bytes: Sample end timestamp (Unix format) with milliseconds precision
@@ -1646,7 +1685,7 @@ class AppleWatchImporter(BaseImporter):
         return data
 
     @staticmethod
-    def read_raw_magneto_data(file, debug=False):
+    def read_raw_magneto_data(file, debug=False, version=2):
         """
         Magnetometer x-data: Float32 -- 4 bytes: Magnetometer data for x-axis (microTeslas)
         Magnetometer y-data: Float32 -- 4 bytes: Magnetometer data for y-axis (microTeslas)
@@ -1659,7 +1698,7 @@ class AppleWatchImporter(BaseImporter):
         return data
 
     @staticmethod
-    def read_tremor_data(file, debug=False):
+    def read_tremor_data(file, debug=False, version=2):
         """
         Start Timestamp: Uint64 -- 8 bytes: Timestamp (Unix format) with milliseconds precision on which the measurement started
         End Timestamp: Uint64 -- 8 bytes: Timestamp (Unix format) with milliseconds precision on which the measurement ended
@@ -1676,7 +1715,7 @@ class AppleWatchImporter(BaseImporter):
         return data
 
     @staticmethod
-    def read_prompt_data(file, debug=False):
+    def read_prompt_data(file, debug=False, version=2):
         """
         Prompt ID size: UInt16 -- 2 bytes: Size of prompt ID string (N)
         Prompt ID: String -- N bytes: Prompt identifier
