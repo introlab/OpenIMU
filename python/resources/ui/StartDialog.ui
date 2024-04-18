@@ -385,7 +385,7 @@ in database</string>
         </font>
        </property>
        <property name="text">
-        <string notr="true">1.1.0</string>
+        <string notr="true">1.1.2</string>
        </property>
       </widget>
      </item>
