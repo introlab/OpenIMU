@@ -19,3 +19,4 @@ python-3.10
 .DS_Store
 *.dmg
 python-3.11
+build
