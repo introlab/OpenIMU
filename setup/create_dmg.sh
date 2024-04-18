@@ -9,7 +9,7 @@ rm -r ${SCRIPT_PATH}/../python/dist/dmg/*
 cp -R "${SCRIPT_PATH}/../python/dist/OpenIMU.app" "${SCRIPT_PATH}/../python/dist/dmg"
 # If the DMG already exists, delete it.
 test -f "${SCRIPT_PATH}/../python/dist/OpenIMU.dmg" && rm "${SCRIPT_PATH}/../python/dist/OpenIMU.dmg"
-/usr/local/bin/create-dmg \
+create-dmg \
   --volname "OpenIMU" \
   --volicon "${SCRIPT_PATH}/../python/resources/icons/OpenIMU.icns" \
   --window-pos 200 120 \
