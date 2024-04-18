@@ -55,6 +55,7 @@ class AppleWatchImporter(BaseImporter):
     HEADINGS_ID = 16
     RAW_MAGNETO_ID = 17
     TREMOR_ID = 18
+    DYSKINETIC_ID = 19
 
     def __init__(self, manager: DBManager, participant: Participant):
         super().__init__(manager, participant)
@@ -1071,6 +1072,56 @@ class AppleWatchImporter(BaseImporter):
             count += 1
             self.update_progress.emit(50 + np.floor(count / len(tremor) / 2 * 100))
 
+    def import_dyskinetic_to_database(self, settings, dysk: dict):
+        # Create channels and sensors
+        dysk_sensor = self.add_sensor_to_db(SensorType.BIOMETRICS, 'Dyskinetic Mvt', 'AppleWatch', 'Wrist', 0, 1,
+                                            settings)
+
+        dysk_channels = list()
+        dysk_channels.append(self.add_channel_to_db(dysk_sensor, Units.MILLISECONDS, DataFormat.UINT64,
+                                                    'Start Timestamp'))
+
+        dysk_channels.append(self.add_channel_to_db(dysk_sensor, Units.MILLISECONDS, DataFormat.UINT64,
+                                                    'End Timestamp'))
+
+        dysk_channels.append(self.add_channel_to_db(dysk_sensor, Units.PERCENTAGE, DataFormat.FLOAT32, 'Likeliness'))
+
+        # Data is already hour-aligned iterate through hours
+        count = 0
+        for timestamp in dysk:
+            # Filter invalid timestamp if needed
+            if timestamp.year < 2000:
+                continue
+
+            # Calculate recordset
+            recordset = self.get_recordset(timestamp.timestamp(), session_name=self.session_name)
+
+            # Add data to database
+
+            # Create time array as float64
+            timesarray = np.asarray(dysk[timestamp]['times'], dtype=np.float64)
+
+            if len(timesarray) == 0:
+                self.last_error = "Aucune données temporelles."
+                return
+
+            valuesarray = np.asarray(dysk[timestamp]['values'], dtype=np.float32)
+
+            # Create sensor timestamps first
+            sensor_timestamps = self.create_sensor_timestamps(timesarray, recordset)
+
+            for i, channel in enumerate(dysk_channels):
+                # Start and end timestamp are larger than float32 - a cast is required (channel 0 and 1)
+                if i <= 1:
+                    current_timestamp = np.uint64(valuesarray[:, i*2:i*2+1])
+                    self.add_sensor_data_to_db(recordset, dysk_sensor, channel, sensor_timestamps, current_timestamp)
+                else:
+                    self.add_sensor_data_to_db(recordset, dysk_sensor, channel, sensor_timestamps,
+                                               valuesarray[:, i + 3])
+
+            count += 1
+            self.update_progress.emit(50 + np.floor(count / len(dysk) / 2 * 100))
+
     def import_question_to_database(self, settings, question: dict):
         # Create base sensor(s)
         questions_sensor = self.add_sensor_to_db(SensorType.QUESTIONS, 'Prompts', 'AppleWatch',
@@ -1393,6 +1444,9 @@ class AppleWatchImporter(BaseImporter):
         # elif sensor_id == self.TREMOR_ID:
         #     read_data_func = self.read_tremor_data
         #     dict_name = 'tremor'
+        # elif sensor_id == self.DYSKINETIC_ID:
+        #     read_data_func = self.read_dyskinetic_data
+        #     dict_name = 'dysk'
         else:
             self.last_error = "Unknown sensor ID:" + str(sensor_id)
             return None
@@ -1712,6 +1766,19 @@ class AppleWatchImporter(BaseImporter):
         data = struct.unpack("<2Q<4f", chunk)
         if debug:
             print('TREMOR: ', data)
+        return data
+
+    @staticmethod
+    def read_dyskinetic_data(file, debug=False, version=2):
+        """
+        Start Timestamp: Uint64 -- 8 bytes: Timestamp (Unix format) with milliseconds precision on which the measurement started
+        End Timestamp: Uint64 -- 8 bytes: Timestamp (Unix format) with milliseconds precision on which the measurement ended
+        Percent likely: Float32 -- 4 bytes: Percent likely that there is dyskinetic movements
+        """
+        chunk = file.read(20)
+        data = struct.unpack("<2Q<1f", chunk)
+        if debug:
+            print('DYSKINETIC: ', data)
         return data
 
     @staticmethod
