@@ -1,5 +1,5 @@
 pypiwin32==223; sys_platform == 'win32'
-PySide6==6.7.0
+PySide6==6.6.3
 cython==3.0.10
 numpy==1.26.4
 scipy==1.11.4

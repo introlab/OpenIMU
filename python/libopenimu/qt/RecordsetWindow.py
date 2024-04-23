@@ -265,7 +265,7 @@ class RecordsetWindow(QWidget):
                         self.sensors_menu.addSection(sensor.location)
                     if sensor.id_sensor not in self.sensors:
                         self.sensors[sensor.id_sensor] = sensor
-                        sensor_item = QAction(sensor.name + ' [' + str(sensor.sampling_rate) + ' Hz]')
+                        sensor_item = QAction(sensor.name + ' [' + "{:.1f}".format(sensor.sampling_rate) + ' Hz]')
                         sensor_item.setCheckable(True)
                         sensor_item.setProperty("sensor_id", sensor.id_sensor)
                         self.sensors_items[sensor.id_sensor] = sensor_item
@@ -449,7 +449,8 @@ class RecordsetWindow(QWidget):
             for sensor_id in sensors:
                 sensor = self.sensors[sensor_id]
                 # Sensor names
-                label = self.timeSensorsScene.addText(sensor.name + ' [' + str(sensor.sampling_rate) + ' Hz]')
+                label = self.timeSensorsScene.addText(sensor.name + ' [' + "{:.1f}".format(sensor.sampling_rate)
+                                                      + ' Hz]')
                 label.setPos(0, pos)
                 label.setDefaultTextColor(Qt.black)
                 # label.setFont(QFont("Times", 10, QFont.Bold))
@@ -622,7 +623,8 @@ class RecordsetWindow(QWidget):
     def sensor_graph_selected(self, sensor_item):
         sensor_id = sensor_item.property("sensor_id")
         sensor = self.sensors[sensor_id]
-        sensor_label = sensor.name + " (" + sensor.location + ")" + ' [' + str(sensor.sampling_rate) + ' Hz]'
+        sensor_label = (sensor.name + " (" + sensor.location + ")" + ' [' + "{:.1f}".format(sensor.sampling_rate) +
+                        ' Hz]')
 
         if sensor_item.isChecked():
             # Choose the correct display for each sensor
@@ -707,7 +709,7 @@ class RecordsetWindow(QWidget):
                 # self.UI.displayContents.layout().insertWidget(0,graph)
 
                 graph_window.show()
-                QApplication.instance().processEvents()
+                # QApplication.instance().processEvents()
 
                 graph_window.aboutToClose.connect(self.graph_was_closed)
                 graph_window.requestData.connect(self.query_sensor_data)
