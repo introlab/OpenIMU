@@ -32,9 +32,6 @@ class GPSView(QWebEngineView, BaseGraph):
         # Load file from qrc
         self.setUrl(QUrl('qrc:/OpenIMU/html/map.html'))
 
-        # 3IT = 45.3790193,-71.9430778
-        # self.setCurrentPosition(45.3790193, -71.9430778)
-
     # def closeEvent(self, QCloseEvent):
     #    self.aboutToClose.emit(self)
 

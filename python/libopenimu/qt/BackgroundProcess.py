@@ -264,7 +264,7 @@ class ProgressDialog(QDialog):
             self.work_speed_estimates.append(instant_speed)
             if len(self.work_speed_estimates) > min(10, int(self.total_work_load / 25)):
                 mean_speed = sum(self.work_speed_estimates) / len(self.work_speed_estimates)
-                remaining_time = int(mean_speed) * (self.total_work_load - self.total_work_done)
+                remaining_time = int(mean_speed) * (self.total_work_load - self.total_work_done) - elapsed_time
                 self.work_speed_estimates.pop(0)
                 self.UI.lblRemainingValue.setText(self.format_time_display(remaining_time))
 

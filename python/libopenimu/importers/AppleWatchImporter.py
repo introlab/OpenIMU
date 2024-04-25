@@ -1365,6 +1365,11 @@ class AppleWatchImporter(BaseImporter):
             if debug:
                 print('setting_json : ', settings_json_str)
 
+            # Sort settings values
+            settings_json = json.loads(settings_json_str)
+            settings_json = dict(sorted(settings_json.items()))
+            settings_json_str = json.dumps(settings_json)
+
             [end_header_id] = struct.unpack("<H", file.read(2))
             if end_header_id != self.HEADER:
                 if debug:
