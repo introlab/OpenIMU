@@ -276,7 +276,7 @@ class MainWindow(QMainWindow):
         # importer.setStyleSheet(self.styleSheet())
         if importer.exec() == QDialog.Accepted:
             self.load_data_from_dataset()
-            gc.collect()
+            # gc.collect()
 
     @Slot()
     def export_requested(self):

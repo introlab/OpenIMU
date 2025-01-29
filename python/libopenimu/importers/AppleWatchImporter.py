@@ -5,27 +5,19 @@
     @date 30/05/2018
 
 """
-import logging
 
 from libopenimu.importers.BaseImporter import BaseImporter
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.SensorTimestamps import SensorTimestamps
 from libopenimu.models.units import Units
-# from libopenimu.models.Recordset import Recordset
 from libopenimu.models.data_formats import DataFormat
-# from libopenimu.tools.timing import timing
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.Participant import Participant
 from libopenimu.importers.wimu import GPSGeodetic
-# from libopenimu.importers.importer_types import BeaconData
 
 import numpy as np
-# import math
 
-# import sys
-# import binascii
 import datetime
-# import string
 import os
 import zipfile
 import struct
@@ -445,13 +437,31 @@ class AppleWatchImporter(BaseImporter):
             for i, value in enumerate(valuesarray):
                 # Build gps data
                 geo = GPSGeodetic()
-                geo.latitude = value[0] * 1e7
-                geo.longitude = value[1] * 1e7
+                geo.nav_valid = 1
+                geo.latitude = int(value[0] * 1e7)
+                geo.longitude = int(value[1] * 1e7)
+                geo.accuracy = np.uint16(value[2]*100)
+                geo.altitude_mls = np.uint16(value[3])
+                geo.altitude_accuracy = np.uint16(value[4]*100)
+                if value[5] < 0:
+                    value[5] = 0
+                geo.speed_over_ground = np.uint16(value[5]*100)
+                if value[6] < 0:
+                    value[6] = 0
+                geo.course_over_ground = np.uint16(value[6])
 
                 # Create sensor timestamps first
                 sensor_timestamps = SensorTimestamps()
                 sensor_timestamps.timestamps = timesarray[i:i + 1]
                 sensor_timestamps.update_timestamps()
+
+                current_timestamp = datetime.datetime.fromtimestamp(timesarray[i:i + 1][0])
+                geo.year = current_timestamp.year
+                geo.month = current_timestamp.month
+                geo.day = current_timestamp.day
+                geo.hour = current_timestamp.hour
+                geo.minute = current_timestamp.minute
+                geo.second = current_timestamp.second
 
                 # Calculate recordset
                 recordset = self.get_recordset(sensor_timestamps.start_timestamp.timestamp(),
