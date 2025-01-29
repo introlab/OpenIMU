@@ -348,8 +348,7 @@ class MainWindow(QMainWindow):
             process = BackgroundProcess([task])
             dialog = ProgressDialog(process, self.tr('Cleanup'), self)
             process.start()
-            dialog.setWindowModality(Qt.WindowModality.ApplicationModal)
-            dialog.open()
+            dialog.show()
             while process.isRunning():
                 QCoreApplication.processEvents()
 
@@ -644,8 +643,7 @@ class MainWindow(QMainWindow):
                 dialog = ProgressDialog(process, self.tr('Deleting'), self)
                 # Start tasks
                 process.start()
-                dialog.setWindowModality(Qt.WindowModality.ApplicationModal)
-                dialog.open()
+                dialog.show()
                 while process.isRunning():
                     QCoreApplication.processEvents()
                 # self.dbMan.clean_db()

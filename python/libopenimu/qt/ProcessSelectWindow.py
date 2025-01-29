@@ -131,8 +131,7 @@ class ProcessSelectWindow(QDialog):
             process.start()
 
             # dialog.exec()
-            dialog.setWindowModality(Qt.WindowModality.ApplicationModal)
-            dialog.open()
+            dialog.show()
             while process.isRunning():
                 QCoreApplication.processEvents()
 

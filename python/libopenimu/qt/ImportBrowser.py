@@ -189,9 +189,7 @@ class ImportBrowser(QDialog):
 
         # Show progress dialog
         # self.showMinimized()
-        # dialog.exec()
-        dialog.setWindowModality(Qt.WindowModality.ApplicationModal)
-        dialog.open()
+        dialog.show()
         while process.isRunning():
             QCoreApplication.processEvents()
 

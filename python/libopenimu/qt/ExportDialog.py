@@ -190,8 +190,7 @@ class ExportWindow(QDialog):
 
         # Show dialog
         self.hide()
-        dialog.setWindowModality(Qt.WindowModality.ApplicationModal)
-        dialog.open()
+        dialog.show()
         while process.isRunning():
             QCoreApplication.processEvents()
 

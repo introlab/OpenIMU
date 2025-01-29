@@ -509,8 +509,7 @@ class RecordsetWindow(QWidget):
         dialog = ProgressDialog(process, self.tr('Loading'), self)
 
         process.start()
-        dialog.setWindowModality(Qt.WindowModality.ApplicationModal)
-        dialog.open()
+        dialog.show()
         while process.isRunning():
             QCoreApplication.processEvents()
         QGuiApplication.restoreOverrideCursor()
@@ -747,8 +746,7 @@ class RecordsetWindow(QWidget):
         process = BackgroundProcess([task], self)
         dialog = ProgressDialog(process, self.tr('Processing'), self)
         process.start()
-        dialog.setWindowModality(Qt.WindowModality.ApplicationModal)
-        dialog.open()
+        dialog.show()
         while process.isRunning():
             QCoreApplication.processEvents()
         QGuiApplication.restoreOverrideCursor()
