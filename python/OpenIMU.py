@@ -36,8 +36,8 @@ if __name__ == '__main__':
     # Initially useful for MacOS, but also seem to improve speed a little in Windows...
 
     # if platform.system() == 'Darwin':
-    #QApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
-    #QQuickWindow.setGraphicsApi(QSGRendererInterface.OpenGLRhi)
+    QApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
+    QQuickWindow.setGraphicsApi(QSGRendererInterface.OpenGLRhi)
 
     app = OpenIMUApp()
 

@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox
-from PySide6.QtCore import Slot, Signal
+from PySide6.QtCore import Qt, Slot, Signal, QCoreApplication
 
 from resources.ui.python.ExportDialog_ui import Ui_ExportDialog
 
@@ -100,7 +100,8 @@ class ExportWindow(QDialog):
             shutil.rmtree(export_path, ignore_errors=True)
 
         if not os.path.exists(export_path):
-            os.mkdir(export_path)
+            #os.mkdir(export_path)
+            os.makedirs(export_path)
 
         # print('Should export in : ', directory)
 
@@ -189,7 +190,10 @@ class ExportWindow(QDialog):
 
         # Show dialog
         self.hide()
-        dialog.exec()
+        dialog.setWindowModality(Qt.WindowModality.ApplicationModal)
+        dialog.open()
+        while process.isRunning():
+            QCoreApplication.processEvents()
 
         # Show warning if errors
         if self.has_export_errors:

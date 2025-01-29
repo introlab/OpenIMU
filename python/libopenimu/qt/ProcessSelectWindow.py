@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QDialog, QListWidgetItem, QVBoxLayout, QWidget
-from PySide6.QtCore import Slot
+from PySide6.QtCore import Qt, Slot, QCoreApplication
 from PySide6.QtGui import QIcon
 from resources.ui.python.ProcessSelectDialog_ui import Ui_dlgProcessSelect
 
@@ -130,7 +130,11 @@ class ProcessSelectWindow(QDialog):
             # process.trigger.connect(dialog.trigger)
             process.start()
 
-            dialog.exec()
+            # dialog.exec()
+            dialog.setWindowModality(Qt.WindowModality.ApplicationModal)
+            dialog.open()
+            while process.isRunning():
+                QCoreApplication.processEvents()
 
             results = processor.get_results()
 

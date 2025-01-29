@@ -1,4 +1,4 @@
-from PySide6.QtCore import Slot, Qt, Signal, QObject, QEvent, QFileInfo, QDirIterator, QDir
+from PySide6.QtCore import Slot, Qt, Signal, QObject, QEvent, QFileInfo, QDirIterator, QDir, QCoreApplication
 from PySide6.QtWidgets import QDialog, QTableWidgetItem, QComboBox, QApplication, QHBoxLayout, QFileDialog, QMessageBox
 from PySide6.QtGui import QDropEvent, QDragEnterEvent, QDragMoveEvent, QDragLeaveEvent, QIcon, QKeyEvent
 
@@ -189,7 +189,11 @@ class ImportBrowser(QDialog):
 
         # Show progress dialog
         # self.showMinimized()
-        dialog.exec()
+        # dialog.exec()
+        dialog.setWindowModality(Qt.WindowModality.ApplicationModal)
+        dialog.open()
+        while process.isRunning():
+            QCoreApplication.processEvents()
 
         if self.has_error:
             # Error occured while importing

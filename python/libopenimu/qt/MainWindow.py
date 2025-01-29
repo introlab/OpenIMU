@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QApplication, QDialog, QTreeWidgetItem, QHBoxLayou
 from PySide6.QtWidgets import QMessageBox
 from PySide6.QtGui import QKeyEvent, QMouseEvent, QKeySequence
 
-from PySide6.QtCore import Slot, Signal, QObject, QEvent, Qt
+from PySide6.QtCore import Slot, Signal, QObject, QEvent, Qt, QCoreApplication
 import gc
 
 # UI
@@ -348,7 +348,10 @@ class MainWindow(QMainWindow):
             process = BackgroundProcess([task])
             dialog = ProgressDialog(process, self.tr('Cleanup'), self)
             process.start()
-            dialog.exec()
+            dialog.setWindowModality(Qt.WindowModality.ApplicationModal)
+            dialog.open()
+            while process.isRunning():
+                QCoreApplication.processEvents()
 
     @Slot()
     def new_group_requested(self):
@@ -641,7 +644,10 @@ class MainWindow(QMainWindow):
                 dialog = ProgressDialog(process, self.tr('Deleting'), self)
                 # Start tasks
                 process.start()
-                dialog.exec()
+                dialog.setWindowModality(Qt.WindowModality.ApplicationModal)
+                dialog.open()
+                while process.isRunning():
+                    QCoreApplication.processEvents()
                 # self.dbMan.clean_db()
 
             self.add_to_log(item_name + ' ' + self.tr('was deleted.'), LogTypes.LOGTYPE_DONE)
