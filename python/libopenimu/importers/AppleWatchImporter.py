@@ -59,6 +59,7 @@ class AppleWatchImporter(BaseImporter):
 
     def __init__(self, manager: DBManager, participant: Participant):
         super().__init__(manager, participant)
+        self.last_error = None
         self.session_name = str()
         self.current_file_size = 0
 
@@ -503,7 +504,7 @@ class AppleWatchImporter(BaseImporter):
             sensor_timestamps = self.create_sensor_timestamps(timesarray, recordset)
 
             # Step counts as UInt32
-            valuesarray = np.asarray(pedometer[timestamp]['values'], dtype=np.uint32)
+            valuesarray = np.asarray(pedometer[timestamp]['values'], dtype=np.int32)
 
             # Store counts
             self.add_sensor_data_to_db(recordset, pedometer_sensor, step_channel, sensor_timestamps,
@@ -655,7 +656,7 @@ class AppleWatchImporter(BaseImporter):
                 return
 
             # Other values are int8
-            valuesarray = np.asarray(beacons[timestamp]['values'], dtype=np.int8)
+            valuesarray = np.asarray(beacons[timestamp]['values'], dtype=np.int16)
 
             # Iterate through each entry to generate data for each beacon_id
             for i, timearray in enumerate(timesarray):
