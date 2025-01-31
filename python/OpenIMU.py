@@ -42,7 +42,7 @@ if __name__ == '__main__':
     app = OpenIMUApp()
 
     # Route errors to error dialog
-    sys.excepthook = except_hook
+    # sys.excepthook = except_hook
 
     # Set current directory to home path
     QDir.setCurrent(QDir.homePath())

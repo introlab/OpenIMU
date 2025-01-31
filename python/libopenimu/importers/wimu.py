@@ -30,11 +30,13 @@ class GPSGeodetic:
     magnetic_variation = np.int16(0)
     climb_rate = np.int16(0)
     heading_rate = np.int16(0)
+    accuracy = np.uint16(0)
+    altitude_accuracy = np.int16(0)
     original_data = bytes()
     valid = False
 
     def from_bytes(self, data, offset=0):
-        if len(data) != 91:
+        if len(data) != 91 and len(data) != 54:
             print('Error GPSGeo len:', len(data))
             self.valid = False
             return False
@@ -63,8 +65,9 @@ class GPSGeodetic:
         [self.magnetic_variation] = struct.unpack_from('>h', data, offset=44)
         [self.climb_rate] = struct.unpack_from('>h', data, offset=46)
         [self.heading_rate] = struct.unpack_from('>h', data, offset=48)
-
-        # TODO continue other fields
+        if len(data) == 54:
+            [self.accuracy] = struct.unpack_from('>H', data, offset=50)
+            [self.altitude_accuracy] = struct.unpack_from('>H', data, offset=52)
 
         # print('latitude', self.latitude / 1e7, 'longitude', self.longitude / 1e7)
 
@@ -84,10 +87,32 @@ class GPSGeodetic:
         if len(self.original_data) > 0:
             return self.original_data
         else:
-            # TODO Write all fields
-            data = np.zeros(91, dtype=np.uint8)
-            struct.pack_into('>i', data, 23, int(self.latitude))
-            struct.pack_into('>i', data, 27, int(self.longitude))
+            data = np.zeros(54, dtype=np.uint8)
+            struct.pack_into('>B', data, 0, self.message_id)
+            struct.pack_into('>H', data, 1, self.nav_valid)
+            struct.pack_into('>H', data, 3, self.nav_type)
+            struct.pack_into('>H', data, 5, self.extended_week_number)
+            struct.pack_into('>I', data, 7, self.tow)
+            struct.pack_into('>H', data, 11, self.year)
+            struct.pack_into('>B', data, 13, self.month)
+            struct.pack_into('>B', data, 14, self.day)
+            struct.pack_into('>B', data, 15, self.hour)
+            struct.pack_into('>B', data, 16, self.minute)
+            struct.pack_into('>H', data, 17, self.second)
+            struct.pack_into('>I', data, 19, self.satellite_id_list)
+            struct.pack_into('>i', data, 23, self.latitude)
+            struct.pack_into('>i', data, 27, self.longitude)
+            struct.pack_into('>i', data, 31, self.altitude_ellipsoid)
+            struct.pack_into('>i', data, 35, self.altitude_mls)
+            struct.pack_into('>b', data, 39, self.map_datum)
+            struct.pack_into('>H', data, 40, self.speed_over_ground)
+            struct.pack_into('>H', data, 42, self.course_over_ground)
+            struct.pack_into('>h', data, 44, self.magnetic_variation)
+            struct.pack_into('>h', data, 46, self.climb_rate)
+            struct.pack_into('>h', data, 48, self.heading_rate)
+            struct.pack_into('>H', data, 50, self.accuracy)
+            struct.pack_into('>H', data, 52, self.altitude_accuracy)
+
             return data
 
 

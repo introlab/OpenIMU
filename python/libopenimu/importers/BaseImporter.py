@@ -87,8 +87,8 @@ class BaseImporter(QObject):
         return recordset
 
     def add_sensor_to_db(self, sensor_type, name, hw_name, location, sampling_rate, data_rate,
-                         settings: str | None = None):
-        sensor = self.db.add_sensor(sensor_type, name, hw_name, location, sampling_rate, data_rate, settings)
+                         settings: str | None = None, hw_id: str | None = None):
+        sensor = self.db.add_sensor(sensor_type, name, hw_name, location, sampling_rate, data_rate, settings, hw_id)
         return sensor
 
     def add_channel_to_db(self, sensor, unit, data_format, label):

@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QApplication, QDialog, QTreeWidgetItem, QHBoxLayou
 from PySide6.QtWidgets import QMessageBox
 from PySide6.QtGui import QKeyEvent, QMouseEvent, QKeySequence
 
-from PySide6.QtCore import Slot, Signal, QObject, QEvent, Qt
+from PySide6.QtCore import Slot, Signal, QObject, QEvent, Qt, QCoreApplication
 import gc
 
 # UI
@@ -267,7 +267,7 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def import_requested(self):
-        importer = ImportBrowser(data_manager=self.dbMan)
+        importer = ImportBrowser(data_manager=self.dbMan, parent=self)
         importer.participant_added.connect(self.load_data_from_dataset)
         current_part_id = self.UI.treeDataSet.get_current_participant_id()
         if current_part_id >= 0:
@@ -276,7 +276,7 @@ class MainWindow(QMainWindow):
         # importer.setStyleSheet(self.styleSheet())
         if importer.exec() == QDialog.Accepted:
             self.load_data_from_dataset()
-            gc.collect()
+            # gc.collect()
 
     @Slot()
     def export_requested(self):
@@ -348,7 +348,9 @@ class MainWindow(QMainWindow):
             process = BackgroundProcess([task])
             dialog = ProgressDialog(process, self.tr('Cleanup'), self)
             process.start()
-            dialog.exec()
+            dialog.show()
+            while process.isRunning():
+                QCoreApplication.processEvents()
 
     @Slot()
     def new_group_requested(self):
@@ -641,7 +643,9 @@ class MainWindow(QMainWindow):
                 dialog = ProgressDialog(process, self.tr('Deleting'), self)
                 # Start tasks
                 process.start()
-                dialog.exec()
+                dialog.show()
+                while process.isRunning():
+                    QCoreApplication.processEvents()
                 # self.dbMan.clean_db()
 
             self.add_to_log(item_name + ' ' + self.tr('was deleted.'), LogTypes.LOGTYPE_DONE)

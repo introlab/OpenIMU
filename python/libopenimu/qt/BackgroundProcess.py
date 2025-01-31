@@ -157,6 +157,8 @@ class ProgressDialog(QDialog):
         self.UI = Ui_ProgressDialog()
         self.UI.setupUi(self)
         self.setWindowFlags(Qt.SplashScreen)
+        self.setWindowModality(Qt.WindowModality.ApplicationModal)
+        self.setModal(True)
 
         # self.UI.frameCancel.hide()  # Hide cancel frame
 

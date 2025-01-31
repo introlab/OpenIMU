@@ -1112,22 +1112,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="503"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="504"/>
         <source>Loading temporal data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="508"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="509"/>
         <source>Loading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="739"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="741"/>
         <source>Loading data...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="743"/>
+        <location filename="../../libopenimu/qt/RecordsetWindow.py" line="745"/>
         <source>Processing</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1265,50 +1265,50 @@ in database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="540"/>
+        <location filename="../ui/StreamWindow.ui" line="543"/>
         <source>Progress</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="545"/>
-        <location filename="../ui/StreamWindow.ui" line="605"/>
+        <location filename="../ui/StreamWindow.ui" line="548"/>
+        <location filename="../ui/StreamWindow.ui" line="608"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="550"/>
-        <location filename="../ui/StreamWindow.ui" line="610"/>
-        <location filename="../ui/StreamWindow.ui" line="654"/>
+        <location filename="../ui/StreamWindow.ui" line="553"/>
+        <location filename="../ui/StreamWindow.ui" line="613"/>
+        <location filename="../ui/StreamWindow.ui" line="657"/>
         <source>Filename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="563"/>
+        <location filename="../ui/StreamWindow.ui" line="566"/>
         <source>Completed (0)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="600"/>
+        <location filename="../ui/StreamWindow.ui" line="603"/>
         <source>Device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="623"/>
+        <location filename="../ui/StreamWindow.ui" line="626"/>
         <source>Errors (0)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="659"/>
+        <location filename="../ui/StreamWindow.ui" line="662"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="672"/>
+        <location filename="../ui/StreamWindow.ui" line="675"/>
         <source>Transfer log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/StreamWindow.ui" line="736"/>
+        <location filename="../ui/StreamWindow.ui" line="739"/>
         <source>Close and import data</source>
         <translation type="unfinished"></translation>
     </message>

@@ -5,27 +5,19 @@
     @date 30/05/2018
 
 """
-import logging
 
 from libopenimu.importers.BaseImporter import BaseImporter
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.SensorTimestamps import SensorTimestamps
 from libopenimu.models.units import Units
-# from libopenimu.models.Recordset import Recordset
 from libopenimu.models.data_formats import DataFormat
-# from libopenimu.tools.timing import timing
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.Participant import Participant
 from libopenimu.importers.wimu import GPSGeodetic
-# from libopenimu.importers.importer_types import BeaconData
 
 import numpy as np
-# import math
 
-# import sys
-# import binascii
 import datetime
-# import string
 import os
 import zipfile
 import struct
@@ -59,8 +51,10 @@ class AppleWatchImporter(BaseImporter):
 
     def __init__(self, manager: DBManager, participant: Participant):
         super().__init__(manager, participant)
+        self.last_error = None
         self.session_name = str()
         self.current_file_size = 0
+        self.device_id = None
 
     def load(self, filename: str):
         # print('AppleWatchImporter.load')
@@ -89,6 +83,8 @@ class AppleWatchImporter(BaseImporter):
                             # TODO better session name?
                             if session_info.__contains__('participant') and session_info.__contains__('timestamp'):
                                 self.session_name = session_info['timestamp'] + '_' + session_info['participant']
+                            if 'deviceID' in session_info:
+                                self.device_id = session_info['deviceID']
 
                     # print('Loading File: ', filename)
                     self.current_file_size = os.stat(filename).st_size
@@ -156,7 +152,7 @@ class AppleWatchImporter(BaseImporter):
 
     def import_activity_to_database(self, settings: str, activity: dict):
         activity_sensor = self.add_sensor_to_db(SensorType.ACTIVITY, 'Activity', 'AppleWatch', 'Wrist',
-                                                0, 1, settings)
+                                                0, 1, settings, self.device_id)
         confidence_channel = self.add_channel_to_db(activity_sensor, Units.NONE, DataFormat.UINT8, 'Confidence')
         car_channel = self.add_channel_to_db(activity_sensor, Units.NONE, DataFormat.UINT8, 'Automotive')
         cycle_channel = self.add_channel_to_db(activity_sensor, Units.NONE, DataFormat.UINT8, 'Cycling')
@@ -223,7 +219,7 @@ class AppleWatchImporter(BaseImporter):
         # DL Oct. 17 2018, New import to database
         raw_accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Raw Accelerometer',
                                                          'AppleWatch',
-                                                         'Wrist', sample_rate, 1, settings)
+                                                         'Wrist', sample_rate, 1, settings, self.device_id)
 
         raw_accelerometer_channels = list()
 
@@ -281,7 +277,7 @@ class AppleWatchImporter(BaseImporter):
         # Create sensor
         raw_gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Raw Gyro',
                                                 'AppleWatch',
-                                                'Wrist', sample_rate, 1, settings)
+                                                'Wrist', sample_rate, 1, settings, self.device_id)
 
         raw_gyro_channels = list()
 
@@ -339,7 +335,7 @@ class AppleWatchImporter(BaseImporter):
     def import_raw_magneto_to_database(self, settings, sample_rate, raw_data: dict):
         # Create sensor
         raw_magneto_sensor = self.add_sensor_to_db(SensorType.MAGNETOMETER, 'Raw Magneto', 'AppleWatch',
-                                                   'Wrist', sample_rate, 1, settings)
+                                                   'Wrist', sample_rate, 1, settings, self.device_id)
 
         raw_mag_channels = list()
 
@@ -383,7 +379,7 @@ class AppleWatchImporter(BaseImporter):
 
     def import_heartrate_to_database(self, settings, sample_rate, heartrate: dict):
         heartrate_sensor = self.add_sensor_to_db(SensorType.HEARTRATE, 'Heartrate', 'AppleWatch', 'Wrist',
-                                                 sample_rate, 1, settings)
+                                                 sample_rate, 1, settings, self.device_id)
 
         heartrate_channel = self.add_channel_to_db(heartrate_sensor, Units.BPM, DataFormat.UINT8, 'Heartrate')
         count = 0
@@ -419,7 +415,7 @@ class AppleWatchImporter(BaseImporter):
     def import_coordinates_to_database(self, settings, sample_rate, coordinates: dict):
         # DL Oct. 17 2018, New import to database
         coordinates_sensor = self.add_sensor_to_db(SensorType.GPS, 'Coordinates', 'AppleWatch', 'Wrist',
-                                                   sample_rate, 1, settings)
+                                                   sample_rate, 1, settings, self.device_id)
         coordinates_channel = self.add_channel_to_db(coordinates_sensor, Units.NONE, DataFormat.UINT8, 'Coordinates')
 
         for timestamp in coordinates:
@@ -444,13 +440,31 @@ class AppleWatchImporter(BaseImporter):
             for i, value in enumerate(valuesarray):
                 # Build gps data
                 geo = GPSGeodetic()
-                geo.latitude = value[0] * 1e7
-                geo.longitude = value[1] * 1e7
+                geo.nav_valid = 1
+                geo.latitude = int(value[0] * 1e7)
+                geo.longitude = int(value[1] * 1e7)
+                geo.accuracy = np.uint16(value[2]*100)
+                geo.altitude_mls = np.uint16(value[3])
+                geo.altitude_accuracy = np.uint16(value[4]*100)
+                if value[5] < 0:
+                    value[5] = 0
+                geo.speed_over_ground = np.uint16(value[5]*100)
+                if value[6] < 0:
+                    value[6] = 0
+                geo.course_over_ground = np.uint16(value[6])
 
                 # Create sensor timestamps first
                 sensor_timestamps = SensorTimestamps()
                 sensor_timestamps.timestamps = timesarray[i:i + 1]
                 sensor_timestamps.update_timestamps()
+
+                current_timestamp = datetime.datetime.fromtimestamp(timesarray[i:i + 1][0])
+                geo.year = current_timestamp.year
+                geo.month = current_timestamp.month
+                geo.day = current_timestamp.day
+                geo.hour = current_timestamp.hour
+                geo.minute = current_timestamp.minute
+                geo.second = current_timestamp.second
 
                 # Calculate recordset
                 recordset = self.get_recordset(sensor_timestamps.start_timestamp.timestamp(),
@@ -471,7 +485,7 @@ class AppleWatchImporter(BaseImporter):
 
     def import_pedometer_to_database(self, settings, pedometer: dict):
         pedometer_sensor = self.add_sensor_to_db(SensorType.STEP, 'Pedometer', 'AppleWatch', 'Wrist',
-                                                 0, 1, settings)
+                                                 0, 1, settings, self.device_id)
         step_channel = self.add_channel_to_db(pedometer_sensor, Units.NONE, DataFormat.UINT32, 'Step count')
         distance_channel = self.add_channel_to_db(pedometer_sensor, Units.METERS, DataFormat.FLOAT32, 'Distance')
         average_pace_channel = self.add_channel_to_db(pedometer_sensor, Units.METERS_PER_SEC, DataFormat.FLOAT32,
@@ -503,7 +517,7 @@ class AppleWatchImporter(BaseImporter):
             sensor_timestamps = self.create_sensor_timestamps(timesarray, recordset)
 
             # Step counts as UInt32
-            valuesarray = np.asarray(pedometer[timestamp]['values'], dtype=np.uint32)
+            valuesarray = np.asarray(pedometer[timestamp]['values'], dtype=np.int32)
 
             # Store counts
             self.add_sensor_data_to_db(recordset, pedometer_sensor, step_channel, sensor_timestamps,
@@ -541,7 +555,7 @@ class AppleWatchImporter(BaseImporter):
     def import_sensoria_to_database(self, settings, sample_rate, sensoria: dict):
         # DL Oct. 17 2018, New import to database
         sensoria_acc_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer', 'Sensoria', 'Foot',
-                                                    sample_rate, 1, settings)
+                                                    sample_rate, 1, settings, self.device_id)
 
         sensoria_acc_channels = list()
         sensoria_acc_channels.append(self.add_channel_to_db(sensoria_acc_sensor, Units.GRAVITY_G,
@@ -552,7 +566,7 @@ class AppleWatchImporter(BaseImporter):
                                                             DataFormat.FLOAT32, 'Accelerometer_Z'))
 
         sensoria_gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyroscope', 'Sensoria', 'Foot',
-                                                     sample_rate, 1, settings)
+                                                     sample_rate, 1, settings, self.device_id)
         sensoria_gyro_channels = list()
         sensoria_gyro_channels.append(self.add_channel_to_db(sensoria_gyro_sensor, Units.DEG_PER_SEC,
                                                              DataFormat.FLOAT32, 'Gyro_X'))
@@ -562,7 +576,7 @@ class AppleWatchImporter(BaseImporter):
                                                              DataFormat.FLOAT32, 'Gyro_Z'))
 
         sensoria_mag_sensor = self.add_sensor_to_db(SensorType.MAGNETOMETER, 'Magnetometer', 'Sensoria', 'Foot',
-                                                    sample_rate, 1, settings)
+                                                    sample_rate, 1, settings, self.device_id)
         sensoria_mag_channels = list()
         sensoria_mag_channels.append(self.add_channel_to_db(sensoria_mag_sensor, Units.GAUSS,
                                                             DataFormat.FLOAT32, 'Mag_X'))
@@ -572,7 +586,7 @@ class AppleWatchImporter(BaseImporter):
                                                             DataFormat.FLOAT32, 'Mag_Z'))
 
         sensoria_fsr_sensor = self.add_sensor_to_db(SensorType.FSR, 'FSR', 'Sensoria', 'Foot',
-                                                    sample_rate, 1, settings)
+                                                    sample_rate, 1, settings, self.device_id)
         sensoria_fsr_channels = list()
         sensoria_fsr_channels.append(self.add_channel_to_db(sensoria_fsr_sensor, Units.NONE,
                                                             DataFormat.UINT16, 'META-1'))
@@ -636,7 +650,7 @@ class AppleWatchImporter(BaseImporter):
     def import_beacons_to_database(self, settings, sample_rate, beacons: dict):
         # DL Oct. 17 2018, New import to database
         beacons_sensor = self.add_sensor_to_db(SensorType.BEACON, 'Beacons', 'Kontact', 'Environment',
-                                               sample_rate, 1, settings)
+                                               sample_rate, 1, settings, self.device_id)
         channel_values = dict()
 
         # Data is already hour-aligned iterate through hours
@@ -655,7 +669,7 @@ class AppleWatchImporter(BaseImporter):
                 return
 
             # Other values are int8
-            valuesarray = np.asarray(beacons[timestamp]['values'], dtype=np.int8)
+            valuesarray = np.asarray(beacons[timestamp]['values'], dtype=np.int16)
 
             # Iterate through each entry to generate data for each beacon_id
             for i, timearray in enumerate(timesarray):
@@ -714,7 +728,7 @@ class AppleWatchImporter(BaseImporter):
 
         # Create channels and sensors
         accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer',
-                                                     'AppleWatch', 'Wrist', sampling_rate, 1, settings)
+                                                     'AppleWatch', 'Wrist', sampling_rate, 1, settings, self.device_id)
 
         accelerometer_channels = list()
 
@@ -730,7 +744,7 @@ class AppleWatchImporter(BaseImporter):
 
         # Create sensor
         gyro_sensor = self.add_sensor_to_db(SensorType.GYROMETER, 'Gyroscope', 'AppleWatch',
-                                            'Wrist', sampling_rate, 1, settings)
+                                            'Wrist', sampling_rate, 1, settings, self.device_id)
 
         gyro_channels = list()
 
@@ -745,7 +759,7 @@ class AppleWatchImporter(BaseImporter):
                                                     DataFormat.FLOAT32, 'Gyro_Z'))
 
         orientation_sensor = self.add_sensor_to_db(SensorType.ORIENTATION, 'Attitude', 'AppleWatch',
-                                                   'Wrist', sampling_rate, 1, settings)
+                                                   'Wrist', sampling_rate, 1, settings, self.device_id)
 
         orientation_channels = list()
         orientation_channels.append(self.add_channel_to_db(orientation_sensor, Units.NONE, DataFormat.FLOAT32, 'q0'))
@@ -758,7 +772,7 @@ class AppleWatchImporter(BaseImporter):
         if version >= 3:  # Also includes magnetometer values
             # Create sensor
             magneto_sensor = self.add_sensor_to_db(SensorType.MAGNETOMETER, 'Magnetometer', 'AppleWatch',
-                                                   'Wrist', sampling_rate, 1, settings)
+                                                   'Wrist', sampling_rate, 1, settings, self.device_id)
 
             # Create channels
             mag_channels.append(self.add_channel_to_db(magneto_sensor, Units.UTESLA, DataFormat.FLOAT32, 'Mag_X'))
@@ -827,7 +841,7 @@ class AppleWatchImporter(BaseImporter):
     def import_battery_to_database(self, settings, sampling_rate, battery: dict):
         # DL Oct. 16 2018, New import to database
         battery_sensor = self.add_sensor_to_db(SensorType.BATTERY, 'Battery', 'AppleWatch', 'Wrist',
-                                               sampling_rate, 1, settings)
+                                               sampling_rate, 1, settings, self.device_id)
 
         battery_channel = self.add_channel_to_db(battery_sensor, Units.VOLTS, DataFormat.UINT8, 'Battery Percentage')
 
@@ -866,7 +880,7 @@ class AppleWatchImporter(BaseImporter):
     def import_headings_to_database(self, settings, sampling_rate, headings: dict):
         # Create channels and sensors
         orientation_sensor = self.add_sensor_to_db(SensorType.HEADINGS, 'Headings', 'AppleWatch',
-                                                   'Wrist', sampling_rate, 1, settings)
+                                                   'Wrist', sampling_rate, 1, settings, self.device_id)
 
         orientation_channels = list()
         orientation_channels.append(self.add_channel_to_db(orientation_sensor, Units.DEGREES, DataFormat.FLOAT32,
@@ -880,7 +894,7 @@ class AppleWatchImporter(BaseImporter):
 
         # Create sensor
         magneto_sensor = self.add_sensor_to_db(SensorType.MAGNETOMETER, 'Magnetometer', 'AppleWatch',
-                                               'Wrist', sampling_rate, 1, settings)
+                                               'Wrist', sampling_rate, 1, settings, self.device_id)
 
         magneto_channels = list()
 
@@ -937,17 +951,17 @@ class AppleWatchImporter(BaseImporter):
 
         # Create base sensor(s)
         health_sensor = self.add_sensor_to_db(SensorType.BIOMETRICS, 'Health', 'AppleWatch',
-                                              'Wrist', 0, 1, settings)
+                                              'Wrist', 0, 1, settings, self.device_id)
 
         step_sensor = None
         if 'stepCount' in health_types:
             step_sensor = self.add_sensor_to_db(SensorType.STEP, 'Step Count (Health)', 'AppleWatch', 'Wrist',
-                                                0, 1)
+                                                0, 1, self.device_id)
 
         heartrate_sensor = None
         if 'heartRate' in health_types:
             heartrate_sensor = self.add_sensor_to_db(SensorType.HEARTRATE, 'Heartrate (Health)', 'AppleWatch', 'Wrist',
-                                                     0, 1)
+                                                     0, 1, self.device_id)
 
         health_channels = list()
 
@@ -1021,7 +1035,7 @@ class AppleWatchImporter(BaseImporter):
     def import_tremor_to_database(self, settings, tremor: dict):
         # Create channels and sensors
         tremor_sensor = self.add_sensor_to_db(SensorType.BIOMETRICS, 'Tremor', 'AppleWatch', 'Wrist', 0, 1,
-                                              settings)
+                                              settings, self.device_id)
 
         tremor_channels = list()
         tremor_channels.append(self.add_channel_to_db(tremor_sensor, Units.MILLISECONDS, DataFormat.UINT64,
@@ -1075,7 +1089,7 @@ class AppleWatchImporter(BaseImporter):
     def import_dyskinetic_to_database(self, settings, dysk: dict):
         # Create channels and sensors
         dysk_sensor = self.add_sensor_to_db(SensorType.BIOMETRICS, 'Dyskinetic Mvt', 'AppleWatch', 'Wrist', 0, 1,
-                                            settings)
+                                            settings, self.device_id)
 
         dysk_channels = list()
         dysk_channels.append(self.add_channel_to_db(dysk_sensor, Units.MILLISECONDS, DataFormat.UINT64,
@@ -1125,7 +1139,7 @@ class AppleWatchImporter(BaseImporter):
     def import_question_to_database(self, settings, question: dict):
         # Create base sensor(s)
         questions_sensor = self.add_sensor_to_db(SensorType.QUESTIONS, 'Prompts', 'AppleWatch',
-                                                 'Wrist', 0, 1, settings)
+                                                 'Wrist', 0, 1, settings, self.device_id)
 
         # Create channel for each prompt
         prompt_channels = {}

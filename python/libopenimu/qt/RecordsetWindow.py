@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QWidget
 from PySide6.QtWidgets import QGraphicsScene, QApplication, QGraphicsRectItem, QGraphicsLineItem, QGraphicsItem
 from PySide6.QtWidgets import QMenu, QMessageBox, QMdiSubWindow
 from PySide6.QtGui import QBrush, QPen, QColor, QFont, QGuiApplication, QAction
-from PySide6.QtCore import Qt, Slot, Signal, QPoint, QRect, QObject, QRectF, QFile
+from PySide6.QtCore import Qt, Slot, Signal, QPoint, QRect, QObject, QRectF, QFile, QCoreApplication
 
 from resources.ui.python.RecordsetWidget_ui import Ui_frmRecordsets
 from libopenimu.qt.GraphWindow import GraphType, GraphWindow
@@ -509,7 +509,9 @@ class RecordsetWindow(QWidget):
         dialog = ProgressDialog(process, self.tr('Loading'), self)
 
         process.start()
-        dialog.exec()
+        dialog.show()
+        while process.isRunning():
+            QCoreApplication.processEvents()
         QGuiApplication.restoreOverrideCursor()
 
         # Combine tasks results
@@ -744,10 +746,13 @@ class RecordsetWindow(QWidget):
         process = BackgroundProcess([task], self)
         dialog = ProgressDialog(process, self.tr('Processing'), self)
         process.start()
-        dialog.exec()
+        dialog.show()
+        while process.isRunning():
+            QCoreApplication.processEvents()
         QGuiApplication.restoreOverrideCursor()
 
         return task.results['timeseries'], task.results['channel_data']
+
 
     def update_tile_buttons_state(self):
         if self.sensors_graphs.keys().__len__() > 1:
