@@ -267,7 +267,7 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def import_requested(self):
-        importer = ImportBrowser(data_manager=self.dbMan)
+        importer = ImportBrowser(data_manager=self.dbMan, parent=self)
         importer.participant_added.connect(self.load_data_from_dataset)
         current_part_id = self.UI.treeDataSet.get_current_participant_id()
         if current_part_id >= 0:
