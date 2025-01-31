@@ -113,6 +113,7 @@ message(STATUS ${python_files})
 # PyInstaller
 set (installer_args
     --hidden-import logging.config
+    --hidden-import scipy._lib.array_api_compat.numpy.fft
     --clean
     -y
     --windowed # If windowed, no console is displayed
@@ -125,7 +126,6 @@ if(WIN32)
     set (installer_args
         ${installer_args}
         --hidden-import win32api
-        --hidden-import scipy._lib.array_api_compat.numpy.fft
         #--hidden-import pkg_resources.py2_warn
         --paths ${PYTHON_ENV_DIRECTORY}/Lib/site-packages/scipy/.libs # PyInstaller doesn't seem to find all required DLLs for SciPy...
         --paths ${PYTHON_ENV_DIRECTORY}/Library/bin # PyInstaller doesn't seem to find sqlite3.dll...
