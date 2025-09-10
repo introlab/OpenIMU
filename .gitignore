@@ -10,7 +10,7 @@ __pycache__/
 python/qt/resources/python/
 python/env/python-*
 CMakeLists.txt.user
-/python/qt/resources/ui/python
+python/qt/resources/ui/python
 .idea
 /setup/*.exe
 python-3.6_bak
