@@ -7,10 +7,10 @@ python/dist/
 python/build/
 build/
 __pycache__/
-python/resources/python/
+python/qt/resources/python/
 python/env/python-*
 CMakeLists.txt.user
-/python/resources/ui/python
+/python/qt/resources/ui/python
 .idea
 /setup/*.exe
 python-3.6_bak
