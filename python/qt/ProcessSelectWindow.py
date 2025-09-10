@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QDialog, QListWidgetItem, QVBoxLayout, QWidget
 from PySide6.QtCore import Qt, Slot, QCoreApplication
 from PySide6.QtGui import QIcon
-from resources.ui.python.ProcessSelectDialog_ui import Ui_dlgProcessSelect
+from qt.resources.ui.python.ProcessSelectDialog_ui import Ui_dlgProcessSelect
 
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.Recordset import Recordset

@@ -27,7 +27,7 @@ from PySide6.QtGui import (
     QKeyEvent,
 )
 
-from resources.ui.python.ImportBrowser_ui import Ui_ImportBrowser
+from qt.resources.ui.python.ImportBrowser_ui import Ui_ImportBrowser
 
 from libopenimu.importers.importer_types import ImporterTypes
 from libopenimu.importers.WIMUImporter import WIMUImporter

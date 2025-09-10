@@ -1,6 +1,6 @@
 from PySide6.QtCore import Qt, Slot
 
-from resources.ui.python.ParticipantWidget_ui import Ui_frmParticipant
+from qt.resources.ui.python.ParticipantWidget_ui import Ui_frmParticipant
 from libopenimu.models.Participant import Participant
 from libopenimu.models.Group import Group
 from qt.DataEditor import DataEditor

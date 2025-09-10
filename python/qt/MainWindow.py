@@ -7,7 +7,7 @@ from PySide6.QtCore import Slot, Signal, QObject, QEvent, Qt, QCoreApplication
 import gc
 
 # UI
-from resources.ui.python.MainWindow_ui import Ui_MainWindow
+from qt.resources.ui.python.MainWindow_ui import Ui_MainWindow
 from qt.ImportWindow import ImportWindow
 from qt.GroupWindow import GroupWindow
 from qt.ParticipantWindow import ParticipantWindow

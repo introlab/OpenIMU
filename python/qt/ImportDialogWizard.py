@@ -1,4 +1,4 @@
-from resources.ui.python.ImportDialogWizard_ui import Ui_dlgImportWizard
+from qt.resources.ui.python.ImportDialogWizard_ui import Ui_dlgImportWizard
 
 from PySide6.QtCore import Slot, QFileInfo
 from PySide6.QtWidgets import QDialog, QFileDialog
@@ -8,7 +8,7 @@ from libopenimu.tools.Settings import OpenIMUSettings
 
 class ImportDialogWizard(QDialog):
     useExisting = False
-    databaseFilename: str = ''
+    databaseFilename: str = ""
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -36,23 +36,27 @@ class ImportDialogWizard(QDialog):
         self.UI.frameExisting.setVisible(self.UI.radioExistingDataset.isChecked())
         self.useExisting = self.UI.radioExistingDataset.isChecked()
         if self.UI.radioExistingDataset.isChecked():
-            self.UI.btnNext.setEnabled(self.UI.cmbFilename.currentText() != '')
+            self.UI.btnNext.setEnabled(self.UI.cmbFilename.currentText() != "")
         else:
             self.UI.btnNext.setEnabled(True)
 
     @Slot()
     def browse_clicked(self):
 
-        file_diag = QFileDialog.getOpenFileName(parent=self, caption=self.tr('Dataset to import data into'),
-                                                filter='*.oi', dir=self.settings.database_base_path)
+        file_diag = QFileDialog.getOpenFileName(
+            parent=self,
+            caption=self.tr("Dataset to import data into"),
+            filter="*.oi",
+            dir=self.settings.database_base_path,
+        )
 
-        if file_diag[0] != '':
+        if file_diag[0] != "":
             self.UI.cmbFilename.setCurrentText(file_diag[0])
             self.settings.database_base_path = QFileInfo(file_diag[0]).path()
 
     @Slot()
     def filename_changed(self):
-        self.UI.btnNext.setEnabled(self.UI.cmbFilename.currentText() != '')
+        self.UI.btnNext.setEnabled(self.UI.cmbFilename.currentText() != "")
 
     @Slot()
     def next_clicked(self):

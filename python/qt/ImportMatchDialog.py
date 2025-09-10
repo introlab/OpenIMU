@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QDialog, QTableWidgetItem, QComboBox, QHBoxLayout
 from PySide6.QtCore import Slot
 from PySide6.QtGui import QIcon
 
-from resources.ui.python.ImportMatchDialog_ui import Ui_ImportMatchDialog
+from qt.resources.ui.python.ImportMatchDialog_ui import Ui_ImportMatchDialog
 from qt.ParticipantWindow import ParticipantWindow
 from libopenimu.tools.FileManager import FileManager
 

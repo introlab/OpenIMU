@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QTableWidgetItem, QWidget
 from PySide6.QtCore import Slot, Signal, Qt
 
 from qt.BaseGraph import BaseGraph
-from resources.ui.python.TableDataViewWidget_ui import Ui_tableDataViewWidget
+from qt.resources.ui.python.TableDataViewWidget_ui import Ui_tableDataViewWidget
 import numpy as np
 import json
 import datetime

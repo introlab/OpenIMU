@@ -20,7 +20,7 @@ from PySide6.QtCore import (
     QCoreApplication,
 )
 
-from resources.ui.python.RecordsetWidget_ui import Ui_frmRecordsets
+from qt.resources.ui.python.RecordsetWidget_ui import Ui_frmRecordsets
 from qt.GraphWindow import GraphType, GraphWindow
 
 from libopenimu.models.sensor_types import SensorType
