@@ -1,11 +1,10 @@
 """
 
-    Unit testing for units
-    @authors Simon Brière, Dominic Létourneau
-    @date 03/04/2018
+Unit testing for units
+@authors Simon Brière, Dominic Létourneau
+@date 03/04/2018
 
 """
-
 
 import unittest
 from libopenimu.models.units import Units
@@ -21,7 +20,7 @@ class UnitsTest(unittest.TestCase):
 
     def test_as_dict(self):
         my_dict = Units.as_dict()
-        self.assertEqual(len(my_dict), 14)
+        self.assertEqual(len(my_dict), 20)
 
     def test_validation(self):
         self.assertTrue(Units.is_valid(Units.METERS))
@@ -36,4 +35,3 @@ class UnitsTest(unittest.TestCase):
         self.assertTrue(Units.is_valid(Units.KPA))
         self.assertTrue(Units.is_valid(Units.UTESLA))
         self.assertTrue(Units.is_valid(Units.BPM))
-
