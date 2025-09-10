@@ -5,8 +5,10 @@ python/env/python-3.6/
 python/core_rc.py
 python/dist/
 python/build/
+build/
 __pycache__/
 python/resources/python/
+python/env/python-*
 CMakeLists.txt.user
 /python/resources/ui/python
 .idea

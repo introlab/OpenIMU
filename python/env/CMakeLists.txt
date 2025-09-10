@@ -5,7 +5,7 @@ if(WIN32)
     message(STATUS "env $ENV{HOMEPATH}")
     set(CONDA_PATH "$ENV{SYSTEMDRIVE}$ENV{HOMEPATH}/Miniconda3/Scripts/conda.exe")
 else(WIN32)
-    set(CONDA_PATH "$ENV{HOME}/opt/miniconda3/bin/conda")
+    set(CONDA_PATH "$ENV{HOME}/miniconda3/bin/conda")
 endif(WIN32)
 
 
@@ -90,7 +90,7 @@ else(WIN32)
     # Always proceed...
     # TODO - INSTALL WITH CONDA ?
     add_custom_target(
-        python-env
+        python-env ALL
         COMMAND ${ENV_PATH}/bin/python${PYTHON_VERSION} -m pip install -r ${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt --upgrade
         WORKING_DIRECTORY ${ENV_PATH}/bin
         DEPENDS python_symlink
