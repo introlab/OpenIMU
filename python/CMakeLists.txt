@@ -17,20 +17,20 @@ if(WIN32)
     #PySide Translator
     set(PYSIDE_TR_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyside6-lupdate.exe)
     set(PYSIDE_TRQM_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyside6-lrelease.exe)
-    set(APP_ICON ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/OpenIMU.ico)
+    set(APP_ICON ${CMAKE_CURRENT_SOURCE_DIR}/qt/resources/icons/OpenIMU.ico)
 
 else(WIN32)
-    set(PYTHON_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/python${PYTHON_VERSION})
+    set(PYTHON_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/python)
     set(PYTHON_PIP_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pip)
     set(PYTHON_INSTALLER_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pyinstaller)
     #PySide Ui wrapper
     set(PYSIDE_UIC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pyside6-uic)
     #PySide Ressources compiler
-    set(PYSIDE_RCC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin//pyside6-rcc)
+    set(PYSIDE_RCC_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/bin/pyside6-rcc)
     #PySide Translator
     set(PYSIDE_TR_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyside6-lupdate)
     set(PYSIDE_TRQM_EXECUTABLE ${PYTHON_ENV_DIRECTORY}/Scripts/pyside6-lrelease)
-    set(APP_ICON ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/OpenIMU.icns)
+    set(APP_ICON ${CMAKE_CURRENT_SOURCE_DIR}/qt/resources/icons/OpenIMU.icns)
 endif(WIN32)
 
 #This will generate ui_ files (not needed by python)
@@ -105,8 +105,9 @@ endforeach(rcfile)
 # Find all python files
 file(GLOB_RECURSE libopenimu_python_files libopenimu/*.py)
 file(GLOB openimuapp_python_files *.py)
+file(GLOB openimu_qt_python_files qt/*.py)
 
-add_custom_target(python_target SOURCES ${libopenimu_python_files} ${openimuapp_python_files})
+add_custom_target(python_target SOURCES ${libopenimu_python_files} ${openimuapp_python_files} ${openimu_qt_python_files})
 
 message(STATUS ${python_files})
 
@@ -248,4 +249,4 @@ add_custom_target(translation_files
 
 
 # Build this target to generate environment and Qt ui/qrc files
-add_custom_target(python-all DEPENDS ${python_uis} ${python_qrcs} python-env)
+add_custom_target(python-all ALL DEPENDS ${python_uis} ${python_qrcs} python-env)
