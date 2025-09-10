@@ -1,11 +1,13 @@
 """
 
-    test_AppleWatchImporter
-    @authors Dominic Létourneau, Simon Brière
-    @date 30/05/2018
+test_AppleWatchImporter
+@authors Dominic Létourneau, Simon Brière
+@date 30/05/2018
 
 """
+
 import unittest
+import os
 from libopenimu.importers.AppleWatchImporter import AppleWatchImporter
 from libopenimu.models.Participant import Participant
 from libopenimu.db.DBManager import DBManager
@@ -26,11 +28,14 @@ class AppleWatchImporterTest(unittest.TestCase):
     def test_load_zip_file():
         # Testing
 
-        manager = DBManager('applewatch.oi', overwrite=True, newfile=True)
-        participant = Participant(name='My Participant', description='Participant Description')
+        manager = DBManager("applewatch.oi", overwrite=True, newfile=True)
+        participant = Participant(
+            name="My Participant", description="Participant Description"
+        )
         manager.update_participant(participant)
         importer = AppleWatchImporter(manager, participant)
-        results = importer.load('/Users/dominic/WA/OpenIMU.git/python/applewatch_data.zip')
+        dirname = os.path.dirname(__file__)
+        results = importer.load(os.path.join(dirname, "samples/AppleWatch.zip"))
         # print('results', results)
         importer.import_to_database(results)
 
@@ -38,11 +43,15 @@ class AppleWatchImporterTest(unittest.TestCase):
     def test_load_data_file():
         # Testing
 
-        manager = DBManager('applewatch.oi', overwrite=True)
-        participant = Participant(name='My Participant', description='Participant Description')
+        manager = DBManager("applewatch.oi", overwrite=True)
+        participant = Participant(
+            name="My Participant", description="Participant Description"
+        )
         manager.update_participant(participant)
         importer = AppleWatchImporter(manager, participant)
 
-        results = importer.load('/Users/dominic/Documents/working_area/OpenIMU.git/python/watch_ProcessedMotion.data')
+        results = importer.load(
+            "/Users/dominic/Documents/working_area/OpenIMU.git/python/watch_ProcessedMotion.data"
+        )
         # print('results', results)
         importer.import_to_database(results)
