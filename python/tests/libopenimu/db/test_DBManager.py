@@ -9,6 +9,7 @@ Unit testing for DBManager
 import unittest
 import datetime
 import os
+import numpy as np
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.models.units import Units
@@ -19,8 +20,6 @@ from libopenimu.models.Group import Group
 from libopenimu.models.Participant import Participant
 from libopenimu.models.Channel import Channel
 
-import numpy as np
-
 
 class DBManagerTest(unittest.TestCase):
 
@@ -30,10 +29,9 @@ class DBManagerTest(unittest.TestCase):
     def setUp(self):
 
         # Cleanup database
-        if True:
-            if os.path.isfile(DBManagerTest.TESTDB_NAME):
-                print("Removing database : ", DBManagerTest.TESTDB_NAME)
-                os.remove(DBManagerTest.TESTDB_NAME)
+        if os.path.isfile(DBManagerTest.TESTDB_NAME):
+            print("Removing database : ", DBManagerTest.TESTDB_NAME)
+            os.remove(DBManagerTest.TESTDB_NAME)
 
     def tearDown(self):
         pass

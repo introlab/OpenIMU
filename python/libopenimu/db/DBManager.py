@@ -1,13 +1,14 @@
 """
- DBManager
- Will contain sqlite driver and model interface
- @authors Simon Brière, Dominic Létourneau
- @date 27/03/2018
+DBManager
+Will contain sqlite driver and model interface
+@authors Simon Brière, Dominic Létourneau
+@date 27/03/2018
 """
 
 import sqlalchemy
 from sqlalchemy import create_engine, asc, or_, and_
 from sqlalchemy.orm import sessionmaker
+
 # noinspection PyProtectedMember
 from sqlalchemy.engine import Engine
 from sqlalchemy import event, text
@@ -48,13 +49,13 @@ class DBManager(QObject):
 
     def __init__(self, filename, overwrite=False, echo=False, newfile=False):
         QObject.__init__(self)
-        warnings.simplefilter(action='ignore', category=FutureWarning)
+        warnings.simplefilter(action="ignore", category=FutureWarning)
 
-        dburl = 'sqlite:///' + filename + '?check_same_thread=False'
+        dburl = "sqlite:///" + filename + "?check_same_thread=False"
         # Cleanup database
         if overwrite is True:
             if os.path.isfile(filename):
-                print('removing database')
+                print("removing database")
                 os.remove(filename)
 
         # print('Using sqlalchemy version: ', sqlalchemy.__version__)
@@ -84,7 +85,7 @@ class DBManager(QObject):
     @staticmethod
     def init_alembic(dburl):
         # determine if application is a script file or frozen exe
-        if getattr(sys, 'frozen', False):
+        if getattr(sys, "frozen", False):
             # If the application is run as a bundle, the pyInstaller bootloader
             # extends the sys module by a flag frozen=True and sets the app
             # path into variable _MEIPASS'.
@@ -93,17 +94,18 @@ class DBManager(QObject):
             root_directory = this_file_directory
         else:
             this_file_directory = os.path.dirname(os.path.abspath(__file__))
-            root_directory = os.path.join(this_file_directory, '..' + os.sep + '..')
+            root_directory = this_file_directory
+            # root_directory = os.path.join(this_file_directory, "alembic")
 
         # this_file_directory = os.path.dirname(os.path.abspath(inspect.stack()[0][1]))
 
-        alembic_directory = os.path.join(root_directory, 'alembic')
-        ini_path = os.path.join(root_directory, 'alembic.ini')
+        alembic_directory = os.path.join(root_directory, "alembic")
+        ini_path = os.path.join(alembic_directory, "alembic.ini")
 
         # create Alembic config and feed it with paths
         config = Config(ini_path)
-        config.set_main_option('script_location', alembic_directory)
-        config.set_main_option('sqlalchemy.url', dburl)
+        config.set_main_option("script_location", alembic_directory)
+        config.set_main_option("sqlalchemy.url", dburl)
 
         return config
 
@@ -111,7 +113,7 @@ class DBManager(QObject):
         config = self.init_alembic(dburl)
 
         # prepare and run the command
-        revision = 'head'
+        revision = "head"
         sql = False
         tag = None
 
@@ -122,7 +124,7 @@ class DBManager(QObject):
         config = self.init_alembic(dburl)
 
         # prepare and run the command
-        revision = 'head'
+        revision = "head"
         sql = False
         tag = None
 
@@ -162,7 +164,11 @@ class DBManager(QObject):
             if group.id_group is None:
                 self.session.add(group)
             else:
-                src_group = self.session.query(Group).filter(Group.id_group == group.id_group).first()
+                src_group = (
+                    self.session.query(Group)
+                    .filter(Group.id_group == group.id_group)
+                    .first()
+                )
                 src_group.name = group.name
                 src_group.description = group.description
                 group.id_group = src_group.id_group
@@ -172,8 +178,8 @@ class DBManager(QObject):
             return group
 
         except Exception as e:
-            message = 'Error updating group' + ': ' + str(e)
-            print('Error: ', message)
+            message = "Error updating group" + ": " + str(e)
+            print("Error: ", message)
             raise
 
     def delete_group(self, group):
@@ -181,8 +187,8 @@ class DBManager(QObject):
             self.session.delete(group)
             self.commit()
         except Exception as e:
-            message = 'Error deleting group' + ': ' + str(e)
-            print('Error: ', message)
+            message = "Error deleting group" + ": " + str(e)
+            print("Error: ", message)
             raise
 
         # Check if we have orphan items dandling around
@@ -205,8 +211,11 @@ class DBManager(QObject):
             if participant.id_participant is None:
                 self.session.add(participant)
             else:
-                src_part = self.session.query(Participant).filter(
-                    Participant.id_participant == participant.id_participant).first()
+                src_part = (
+                    self.session.query(Participant)
+                    .filter(Participant.id_participant == participant.id_participant)
+                    .first()
+                )
                 src_part.name = participant.name
                 src_part.description = participant.description
                 src_part.id_group = participant.id_group
@@ -217,25 +226,33 @@ class DBManager(QObject):
             return participant
 
         except Exception as e:
-            message = 'Error updating participant' + ': ' + str(e)
-            print('Error: ', message)
+            message = "Error updating participant" + ": " + str(e)
+            print("Error: ", message)
             raise
 
     def get_participant(self, id_participant) -> Participant:
-        query = self.session.query(Participant).filter(Participant.id_participant == id_participant)
+        query = self.session.query(Participant).filter(
+            Participant.id_participant == id_participant
+        )
         return query.first()
 
     def get_processed_data(self, id_processed_data) -> ProcessedData:
-        query = self.session.query(ProcessedData).filter(ProcessedData.id_processed_data == id_processed_data)
+        query = self.session.query(ProcessedData).filter(
+            ProcessedData.id_processed_data == id_processed_data
+        )
         return query.first()
 
     def get_all_participants(self):
-        query = self.session.query(Participant).order_by(Participant.name.asc(), Participant.id_group.asc())
+        query = self.session.query(Participant).order_by(
+            Participant.name.asc(), Participant.id_group.asc()
+        )
         return query.all()
 
     def get_participants_for_group(self, group):
         if group is not None:
-            query = self.session.query(Participant).filter(Participant.id_group == group.id_group)
+            query = self.session.query(Participant).filter(
+                Participant.id_group == group.id_group
+            )
         else:
             query = self.session.query(Participant).filter(Participant.id_group == None)
         return query.all()
@@ -245,8 +262,8 @@ class DBManager(QObject):
             self.session.delete(part)
             self.commit()
         except Exception as e:
-            message = 'Error deleting participant' + ': ' + str(e)
-            print('Error: ', message)
+            message = "Error deleting participant" + ": " + str(e)
+            print("Error: ", message)
             raise
 
         # Check if we have orphan items dandling around
@@ -254,17 +271,28 @@ class DBManager(QObject):
         # self.engine.execute("VACUUM")
 
     #
-    def add_sensor(self, _id_sensor_type, _name, _hw_name, _location, _sampling_rate, _data_rate,
-                   _settings: str | None = None, _hw_id: str | None = None):
+    def add_sensor(
+        self,
+        _id_sensor_type,
+        _name,
+        _hw_name,
+        _location,
+        _sampling_rate,
+        _data_rate,
+        _settings: str | None = None,
+        _hw_id: str | None = None,
+    ):
         # Check if that sensor is already present in the database
-        query = self.session.query(Sensor).filter((Sensor.id_sensor_type == _id_sensor_type) &
-                                                  (Sensor.location == _location) &
-                                                  (Sensor.name == _name) &
-                                                  (Sensor.hw_name == _hw_name) &
-                                                  (Sensor.sampling_rate == _sampling_rate) &
-                                                  (Sensor.data_rate == _data_rate) &
-                                                  (Sensor.settings == _settings) &
-                                                  (Sensor.hw_id == _hw_id))
+        query = self.session.query(Sensor).filter(
+            (Sensor.id_sensor_type == _id_sensor_type)
+            & (Sensor.location == _location)
+            & (Sensor.name == _name)
+            & (Sensor.hw_name == _hw_name)
+            & (Sensor.sampling_rate == _sampling_rate)
+            & (Sensor.data_rate == _data_rate)
+            & (Sensor.settings == _settings)
+            & (Sensor.hw_id == _hw_id)
+        )
 
         if query.first():
             # print("Sensor " + _name + " already present in DB!")
@@ -279,7 +307,8 @@ class DBManager(QObject):
             location=_location,
             sampling_rate=_sampling_rate,
             data_rate=_data_rate,
-            settings=_settings)
+            settings=_settings,
+        )
         self.session.add(sensor)
         self.commit()
         return sensor
@@ -294,14 +323,24 @@ class DBManager(QObject):
             query = self.session.query(Sensor)
             return query.all()
         else:
-            query = self.session.query(Sensor).filter(Sensor.id_sensor_type == id_sensor_type)
+            query = self.session.query(Sensor).filter(
+                Sensor.id_sensor_type == id_sensor_type
+            )
             return query.all()
 
-    def add_recordset(self, participant: Participant, name, start_timestamp, end_timestamp, force=False):
+    def add_recordset(
+        self,
+        participant: Participant,
+        name,
+        start_timestamp,
+        end_timestamp,
+        force=False,
+    ):
 
         if not force:  # Check if we already have a recordset for that period
             query = self.session.query(Recordset).filter(
-                (Recordset.participant == participant) & (Recordset.name == name))
+                (Recordset.participant == participant) & (Recordset.name == name)
+            )
             if query.first():
                 # Update start and end times, if needed.
                 current_record = query.first()
@@ -318,14 +357,20 @@ class DBManager(QObject):
                 return current_record
 
         # Create object
-        record = Recordset(participant=participant, name=name, start_timestamp=start_timestamp,
-                           end_timestamp=end_timestamp)
+        record = Recordset(
+            participant=participant,
+            name=name,
+            start_timestamp=start_timestamp,
+            end_timestamp=end_timestamp,
+        )
         self.session.add(record)
         self.commit()
         return record
 
     def get_recordset(self, id_recordset) -> Recordset | None:
-        query = self.session.query(Recordset).filter(Recordset.id_recordset == id_recordset)
+        query = self.session.query(Recordset).filter(
+            Recordset.id_recordset == id_recordset
+        )
         # print('get_recordset', query.first())
         return query.first()
 
@@ -335,15 +380,19 @@ class DBManager(QObject):
             self.session.delete(recordset)
             self.commit()
         except Exception as e:
-            message = 'Error deleting recordset' + ': ' + str(e)
-            print('Error: ', message)
+            message = "Error deleting recordset" + ": " + str(e)
+            print("Error: ", message)
             raise
 
         # Check if we have orphan items dandling around
         # self.clean_db()
 
     def delete_orphan_sensors(self):
-        query = self.session.query(Sensor.id_sensor).outerjoin(SensorData).filter(SensorData.id_sensor_data == None)
+        query = (
+            self.session.query(Sensor.id_sensor)
+            .outerjoin(SensorData)
+            .filter(SensorData.id_sensor_data == None)
+        )
         orphan_sensors = query.all()
         if len(orphan_sensors) > 0:
             query = self.session.query(Sensor).filter(Sensor.id_sensor.in_(query))
@@ -351,7 +400,11 @@ class DBManager(QObject):
             self.commit()
 
     def delete_orphan_channels(self):
-        query = self.session.query(Channel.id_channel).outerjoin(SensorData).filter(SensorData.id_sensor_data == None)
+        query = (
+            self.session.query(Channel.id_channel)
+            .outerjoin(SensorData)
+            .filter(SensorData.id_sensor_data == None)
+        )
         orphan_channels = query.all()
         if len(orphan_channels) > 0:
             query = self.session.query(Channel).filter(Channel.id_channel.in_(query))
@@ -359,20 +412,30 @@ class DBManager(QObject):
             self.commit()
 
     def delete_orphan_processed_data(self):
-        query = self.session.query(ProcessedData.id_processed_data).outerjoin(ProcessedDataRef).filter(
-            ProcessedDataRef.id_processed_data_ref == None)
+        query = (
+            self.session.query(ProcessedData.id_processed_data)
+            .outerjoin(ProcessedDataRef)
+            .filter(ProcessedDataRef.id_processed_data_ref == None)
+        )
         orphan = query.all()
         if len(orphan) > 0:
-            query = self.session.query(ProcessedData).filter(ProcessedData.id_processed_data.in_(query))
+            query = self.session.query(ProcessedData).filter(
+                ProcessedData.id_processed_data.in_(query)
+            )
             query.delete(synchronize_session=False)
             self.commit()
 
     def delete_orphan_sensors_timestamps(self):
-        query = self.session.query(SensorTimestamps.id_sensor_timestamps).outerjoin(SensorData).filter(
-            SensorData.id_sensor_data == None)
+        query = (
+            self.session.query(SensorTimestamps.id_sensor_timestamps)
+            .outerjoin(SensorData)
+            .filter(SensorData.id_sensor_data == None)
+        )
         orphan = query.all()
         if len(orphan) > 0:
-            query = self.session.query(SensorTimestamps).filter(SensorTimestamps.id_sensor_timestamps.in_(query))
+            query = self.session.query(SensorTimestamps).filter(
+                SensorTimestamps.id_sensor_timestamps.in_(query)
+            )
             query.delete(synchronize_session=False)
             self.commit()
 
@@ -385,41 +448,64 @@ class DBManager(QObject):
 
     def get_all_recordsets(self, participant=Participant(), start_date=None):
         from sqlalchemy import func
+
         if start_date is not None:
-            query = self.session.query(Recordset).filter(func.date(Recordset.start_timestamp) == start_date) \
+            query = (
+                self.session.query(Recordset)
+                .filter(func.date(Recordset.start_timestamp) == start_date)
                 .order_by(asc(Recordset.start_timestamp))
+            )
             if participant.id_participant is not None:
-                query = query.filter(Recordset.id_participant == participant.id_participant)
+                query = query.filter(
+                    Recordset.id_participant == participant.id_participant
+                )
             return query.all()
 
         if participant.id_participant is None:
-            query = self.session.query(Recordset).order_by(asc(Recordset.start_timestamp))
+            query = self.session.query(Recordset).order_by(
+                asc(Recordset.start_timestamp)
+            )
             # print (query)
             return query.all()
         else:
-            query = self.session.query(Recordset).filter(Recordset.id_participant == participant.id_participant) \
+            query = (
+                self.session.query(Recordset)
+                .filter(Recordset.id_participant == participant.id_participant)
                 .order_by(asc(Recordset.start_timestamp))
+            )
             return query.all()
 
     def get_sensors(self, recordset):
-        query = self.session.query(Sensor).join(SensorData).filter(SensorData.id_recordset == recordset.id_recordset) \
-            .group_by(Sensor.id_sensor).order_by(asc(Sensor.location)).order_by(asc(Sensor.name))
+        query = (
+            self.session.query(Sensor)
+            .join(SensorData)
+            .filter(SensorData.id_recordset == recordset.id_recordset)
+            .group_by(Sensor.id_sensor)
+            .order_by(asc(Sensor.location))
+            .order_by(asc(Sensor.name))
+        )
         return query.all()
 
     def add_channel(self, sensor, id_sensor_unit, id_data_format, label):
         # Check if that sensor is already present in the database
-        query = self.session.query(Channel).filter((Channel.sensor == sensor) &
-                                                   (Channel.id_sensor_unit == id_sensor_unit) &
-                                                   (Channel.id_data_format == id_data_format) &
-                                                   (Channel.label == label))
+        query = self.session.query(Channel).filter(
+            (Channel.sensor == sensor)
+            & (Channel.id_sensor_unit == id_sensor_unit)
+            & (Channel.id_data_format == id_data_format)
+            & (Channel.label == label)
+        )
 
         if query.first():
             # print("Channel " + label + " already present in DB!")
             return query.first()
 
         # Create object
-        channel = Channel(sensor=sensor, id_sensor_unit=id_sensor_unit,
-                          id_data_format=id_data_format, label=label)
+        channel = Channel(
+            sensor=sensor,
+            id_sensor_unit=id_sensor_unit,
+            id_data_format=id_data_format,
+            label=label,
+        )
 
         self.session.add(channel)
         self.commit()
@@ -430,7 +516,7 @@ class DBManager(QObject):
         return query.first()
 
     def get_all_channels(self, **kwargs):
-        sensor = kwargs.get('sensor', None)
+        sensor = kwargs.get("sensor", None)
 
         # Get all channels
         query = self.session.query(Channel)
@@ -441,13 +527,23 @@ class DBManager(QObject):
         # Return all channels
         return query.all()
 
-    def add_sensor_data(self, recordset: Recordset, sensor: Sensor, channel: Channel, timestamps: SensorTimestamps,
-                        data):
+    def add_sensor_data(
+        self,
+        recordset: Recordset,
+        sensor: Sensor,
+        channel: Channel,
+        timestamps: SensorTimestamps,
+        data,
+    ):
 
         # Create object
-        sensordata = SensorData(recordset=recordset, sensor=sensor,
-                                channel=channel, timestamps=timestamps,
-                                data=data.tobytes())
+        sensordata = SensorData(
+            recordset=recordset,
+            sensor=sensor,
+            channel=channel,
+            timestamps=timestamps,
+            data=data.tobytes(),
+        )
 
         self.session.add(sensordata)
 
@@ -456,24 +552,28 @@ class DBManager(QObject):
 
     def get_sensor_data(self, id_sensor_data):
 
-        query = self.session.query(SensorData).filter(SensorData.id_sensor_data == id_sensor_data)
+        query = self.session.query(SensorData).filter(
+            SensorData.id_sensor_data == id_sensor_data
+        )
 
         my_sensor_data = query.first()
 
         # Do something to convert bytes in the right format
-        my_sensor_data.data = DataFormat.from_bytes(my_sensor_data.data, my_sensor_data.channel.id_data_format)
+        my_sensor_data.data = DataFormat.from_bytes(
+            my_sensor_data.data, my_sensor_data.channel.id_data_format
+        )
 
         return my_sensor_data
 
     def get_all_sensor_data(self, **kwargs):
 
         # Initialize from kwargs (and default values)
-        convert = kwargs.get('convert', False)
-        sensor = kwargs.get('sensor', None)
-        channel = kwargs.get('channel', None)
-        recordset = kwargs.get('recordset', None)
-        start_time = kwargs.get('start_time', None)
-        end_time = kwargs.get('end_time', None)
+        convert = kwargs.get("convert", False)
+        sensor = kwargs.get("sensor", None)
+        channel = kwargs.get("channel", None)
+        recordset = kwargs.get("recordset", None)
+        start_time = kwargs.get("start_time", None)
+        end_time = kwargs.get("end_time", None)
 
         # Get all sensor data
         query = self.session.query(SensorData)
@@ -490,14 +590,38 @@ class DBManager(QObject):
             query = query.filter(SensorData.id_channel == channel.id_channel)
 
         if start_time is not None:
-            query = query.filter(or_(SensorData.timestamps.has(SensorTimestamps.start_timestamp >= start_time),
-                                     and_(SensorData.timestamps.has(SensorTimestamps.start_timestamp <= start_time),
-                                          SensorData.timestamps.has(SensorTimestamps.end_timestamp >= start_time))))
+            query = query.filter(
+                or_(
+                    SensorData.timestamps.has(
+                        SensorTimestamps.start_timestamp >= start_time
+                    ),
+                    and_(
+                        SensorData.timestamps.has(
+                            SensorTimestamps.start_timestamp <= start_time
+                        ),
+                        SensorData.timestamps.has(
+                            SensorTimestamps.end_timestamp >= start_time
+                        ),
+                    ),
+                )
+            )
 
         if end_time is not None:
-            query = query.filter(or_(SensorData.timestamps.has(SensorTimestamps.end_timestamp <= end_time),
-                                     and_(SensorData.timestamps.has(SensorTimestamps.start_timestamp <= end_time),
-                                          SensorData.timestamps.has(SensorTimestamps.end_timestamp >= end_time))))
+            query = query.filter(
+                or_(
+                    SensorData.timestamps.has(
+                        SensorTimestamps.end_timestamp <= end_time
+                    ),
+                    and_(
+                        SensorData.timestamps.has(
+                            SensorTimestamps.start_timestamp <= end_time
+                        ),
+                        SensorData.timestamps.has(
+                            SensorTimestamps.end_timestamp >= end_time
+                        ),
+                    ),
+                )
+            )
 
         # print(query)
 
@@ -511,15 +635,21 @@ class DBManager(QObject):
             with self.session.no_autoflush:
                 for sensor_data in result:
                     # print('data len:', len(sensor_data.data))
-                    sensor_data.data = DataFormat.from_bytes(sensor_data.data, sensor_data.channel.id_data_format)
+                    sensor_data.data = DataFormat.from_bytes(
+                        sensor_data.data, sensor_data.channel.id_data_format
+                    )
             self.session.rollback()
             return result
 
     def get_sensor_times(self, sensor: Sensor, recordset: Recordset):
         # from sqlalchemy.orm import noload
-        query = self.session.query(SensorTimestamps).join(SensorData).filter(SensorData.id_sensor == sensor.id_sensor) \
-            .filter(SensorData.id_recordset == recordset.id_recordset) \
+        query = (
+            self.session.query(SensorTimestamps)
+            .join(SensorData)
+            .filter(SensorData.id_sensor == sensor.id_sensor)
+            .filter(SensorData.id_recordset == recordset.id_recordset)
             .filter(SensorData.id_channel == sensor.channels[0].id_channel)
+        )
         return query.all()
 
     def set_dataset_infos(self, name, desc, creation_date, upload_date, author):
@@ -527,15 +657,20 @@ class DBManager(QObject):
         try:
             self.session.query(DataSet).delete()
             self.session.commit()
-            dataset = DataSet(name=name, description=desc, creation_date=creation_date, upload_date=upload_date,
-                              author=author)
+            dataset = DataSet(
+                name=name,
+                description=desc,
+                creation_date=creation_date,
+                upload_date=upload_date,
+                author=author,
+            )
             self.session.add(dataset)
             self.commit()
             return dataset
 
         except Exception as e:
-            message = 'Error setting dataset infos' + ': ' + str(e)
-            print('Error: ', message)
+            message = "Error setting dataset infos" + ": " + str(e)
+            print("Error: ", message)
             raise
 
     def get_dataset(self):
@@ -543,8 +678,11 @@ class DBManager(QObject):
         return query.first()
 
     #####################
-    def add_processed_data(self, data_processor_id: int, name: str, results, recordsets, params: dict):
+    def add_processed_data(
+        self, data_processor_id: int, name: str, results, recordsets, params: dict
+    ):
         import json
+
         # Add results
         data = ProcessedData()
         data.id_data_processor = data_processor_id
@@ -571,8 +709,13 @@ class DBManager(QObject):
             query = self.session.query(ProcessedData)
             datas = query.all()
         else:
-            query = self.session.query(ProcessedData).join(ProcessedDataRef).join(Recordset).join(Participant).filter(
-                Participant.id_participant == participant.id_participant)
+            query = (
+                self.session.query(ProcessedData)
+                .join(ProcessedDataRef)
+                .join(Recordset)
+                .join(Participant)
+                .filter(Participant.id_participant == participant.id_participant)
+            )
             datas = query.all()
 
         return datas
@@ -582,6 +725,6 @@ class DBManager(QObject):
             self.session.delete(result)
             self.commit()
         except Exception as e:
-            message = 'Error deleting processed data' + ': ' + str(e)
-            print('Error: ', message)
+            message = "Error deleting processed data" + ": " + str(e)
+            print("Error: ", message)
             raise
