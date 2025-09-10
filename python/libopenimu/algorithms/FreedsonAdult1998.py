@@ -3,11 +3,20 @@ from .BaseAlgorithm import BaseAlgorithm
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.db.DBManager import DBManager
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QGridLayout, QSpinBox, QComboBox, QFrame, QSizePolicy, \
-    QLabel
+from PySide6.QtWidgets import (
+    QWidget,
+    QVBoxLayout,
+    QScrollArea,
+    QGridLayout,
+    QSpinBox,
+    QComboBox,
+    QFrame,
+    QSizePolicy,
+    QLabel,
+)
 from PySide6.QtCore import Qt
 
-from libopenimu.qt.Charts import OpenIMUBarGraphView
+from qt.Charts import OpenIMUBarGraphView
 
 # actual algorithm is here
 from .freedson_adult_1998 import freedson_adult_1998
@@ -36,17 +45,30 @@ class FreedsonAdult1998(BaseAlgorithm):
                 channels = manager.get_all_channels(sensor=sensor)
                 # print('Found channels: ', channels)
                 for channel in channels:
-                    if channel.label == 'Accelerometer_Y':
+                    if channel.label == "Accelerometer_Y":
                         # print('Processing Channel :', channel)
                         # Will get all data (converted to floats)
-                        channel_data = manager.get_all_sensor_data(recordset=record, convert=True, sensor=sensor,
-                                                                   channel=channel)
+                        channel_data = manager.get_all_sensor_data(
+                            recordset=record,
+                            convert=True,
+                            sensor=sensor,
+                            channel=channel,
+                        )
                         if len(channel_data) > 0:
                             # Process all sensor data
-                            result = {'id_recordset': record.id_recordset,
-                                      'result_name': record.name + ' (' + sensor.location + '/' + sensor.name + ')',
-                                      'id_sensor': sensor.id_sensor, 'result':
-                                          freedson_adult_1998(self.params, channel_data, sensor.sampling_rate)}
+                            result = {
+                                "id_recordset": record.id_recordset,
+                                "result_name": record.name
+                                + " ("
+                                + sensor.location
+                                + "/"
+                                + sensor.name
+                                + ")",
+                                "id_sensor": sensor.id_sensor,
+                                "result": freedson_adult_1998(
+                                    self.params, channel_data, sensor.sampling_rate
+                                ),
+                            }
                             results.append(result)
 
         # Return an array with results for each recordset
@@ -68,46 +90,55 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
         return FreedsonAdult1998(params)
 
     def params(self):
-        return {'sedentary_cutoff': self.config_sedentary_input.value(),
-                'light_cutoff': self.config_light_input.value(),
-                'moderate_cutoff': self.config_moderate_input.value(),
-                'vigorous_cutoff': self.config_vigorous_input.value()}
+        return {
+            "sedentary_cutoff": self.config_sedentary_input.value(),
+            "light_cutoff": self.config_light_input.value(),
+            "moderate_cutoff": self.config_moderate_input.value(),
+            "vigorous_cutoff": self.config_vigorous_input.value(),
+        }
 
     def name(self):
-        return 'Freedson Adult 1998'
+        return "Freedson Adult 1998"
 
     def unique_id(self):
         return 1
 
     def info(self):
-        my_info = {'description': """ \
-        It is a uniaxial accelerometer that assesses accelerations ranging from 0.05-2.0 G and is band limited with a 
+        my_info = {
+            "description": """ \
+        It is a uniaxial accelerometer that assesses accelerations ranging from 0.05-2.0 G and is band limited with a
         frequency response from 0.25-2.5 Hz.
-                
-        The acceleration signal is filtered by an analog bandpass filter and digitized by an 8 bit A/D converter at a 
+
+        The acceleration signal is filtered by an analog bandpass filter and digitized by an 8 bit A/D converter at a
         sampling rate of 10 samples per second.
-        
-        Each digitized signal is summed over a user specified time interval (epoch), and at the end of each epoch 
+
+        Each digitized signal is summed over a user specified time interval (epoch), and at the end of each epoch
         the activity count is stored internally and the accumulator is reset to zero. In the current study, a 60-s
-         epoch was used and activity counts were expressed as the average counts per minute over the 6 min of exercise. 
-        
-        
-        Cut points (intensity buckets): 
+         epoch was used and activity counts were expressed as the average counts per minute over the 6 min of exercise.
+
+
+        Cut points (intensity buckets):
         * https://actigraph.desk.com/customer/portal/articles/2515802
-        
+
         Counts (accelerator sum over 60 s)
         * https://actigraph.desk.com/customer/portal/articles/2515580-What-are-counts-
-        
+
         Notes:
         --> Only Y axis used on Actigraph devices.
         8 bits = 256 = 2g
-        
+
         epoch = 60 seconds
-                        
-        """, 'name': self.name(), 'author': 'Dominic Létourneau', 'version': '0.1',
-                   'reference': ("Freedson PS1, Melanson E, Sirard J., Calibration of the Computer Science and "
-                                 "Applications, Inc. accelerometer., Med Sci Sports Exerc. 1998 May;30(5):777-81"),
-                   'unique_id': self.unique_id()}
+
+        """,
+            "name": self.name(),
+            "author": "Dominic Létourneau",
+            "version": "0.1",
+            "reference": (
+                "Freedson PS1, Melanson E, Sirard J., Calibration of the Computer Science and "
+                "Applications, Inc. accelerometer., Med Sci Sports Exerc. 1998 May;30(5):777-81"
+            ),
+            "unique_id": self.unique_id(),
+        }
 
         return my_info
 
@@ -118,18 +149,22 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
         # Initialize inputs
         self.config_preset_input = QComboBox()
         # self.config_preset_input.addItem('')
-        self.config_preset_input.addItem(self.tr('Original values'), [99, 1951, 5724, 9498])
-        self.config_preset_input.addItem(self.tr('Custom values'), [-1, -1, -1, -1])
+        self.config_preset_input.addItem(
+            self.tr("Original values"), [99, 1951, 5724, 9498]
+        )
+        self.config_preset_input.addItem(self.tr("Custom values"), [-1, -1, -1, -1])
         # self.config_preset_input.addItem('Child', [99, 573, 1002, 0])
         self.config_preset_input.currentIndexChanged.connect(self.config_preset_changed)
 
         base_layout = QVBoxLayout()
         preset_frame = QFrame()
-        preset_frame.setStyleSheet('QFrame{background-color: rgba(200,200,200,50%);}'
-                                   'QLabel{background-color: rgba(0,0,0,0%);}')
+        preset_frame.setStyleSheet(
+            "QFrame{background-color: rgba(200,200,200,50%);}"
+            "QLabel{background-color: rgba(0,0,0,0%);}"
+        )
         preset_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Maximum)
         frame_layout = QGridLayout()
-        item_label = QLabel(self.tr('Preset'))
+        item_label = QLabel(self.tr("Preset"))
         frame_layout.addWidget(item_label, 0, 0)
         frame_layout.addWidget(self.config_preset_input, 0, 1)
         # frame_layout.addRow('Preset', self.config_preset_input)
@@ -140,25 +175,25 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
         layout.setAlignment(Qt.AlignTop)
         self.config_sedentary_input = QSpinBox()
         self.config_sedentary_input.setRange(0, 15000)
-        item_label = QLabel('Cut-off Sedentary')
+        item_label = QLabel("Cut-off Sedentary")
         layout.addWidget(item_label, 0, 0)
         layout.addWidget(self.config_sedentary_input, 0, 1)
         # layout.addRow("Cut-off Sedentary", self.config_sedentary_input)
         self.config_light_input = QSpinBox()
         self.config_light_input.setRange(0, 15000)
-        item_label = QLabel('Cut-off Light')
+        item_label = QLabel("Cut-off Light")
         layout.addWidget(item_label, 1, 0)
         layout.addWidget(self.config_light_input, 1, 1)
         # layout.addRow("Cut-off Light", self.config_light_input)
         self.config_moderate_input = QSpinBox()
         self.config_moderate_input.setRange(0, 15000)
-        item_label = QLabel('Cut-off Moderate')
+        item_label = QLabel("Cut-off Moderate")
         layout.addWidget(item_label, 2, 0)
         layout.addWidget(self.config_moderate_input, 2, 1)
         # layout.addRow("Cut-off Moderate", self.config_moderate_input)
         self.config_vigorous_input = QSpinBox()
         self.config_vigorous_input.setRange(0, 15000)
-        item_label = QLabel('Cut-off Vigorous')
+        item_label = QLabel("Cut-off Vigorous")
         layout.addWidget(item_label, 3, 0)
         layout.addWidget(self.config_vigorous_input, 3, 1)
         # layout.addRow("Cut-off Vigorous", self.config_vigorous_input)
@@ -171,10 +206,10 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
         if default_params is None:
             self.config_preset_changed()
         else:
-            self.config_sedentary_input = default_params['sedentary_cutoff']
-            self.config_light_input = default_params['light_cutoff']
-            self.config_moderate_input = default_params['moderate_cutoff']
-            self.config_vigorous_input = default_params['vigorous_cutoff']
+            self.config_sedentary_input = default_params["sedentary_cutoff"]
+            self.config_light_input = default_params["light_cutoff"]
+            self.config_moderate_input = default_params["moderate_cutoff"]
+            self.config_vigorous_input = default_params["vigorous_cutoff"]
 
         return base_widget
 
@@ -199,18 +234,18 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
 
         scroll.setLayout(layout)
         view = OpenIMUBarGraphView(scroll)
-        view.set_title(self.tr('Active minutes'))
+        view.set_title(self.tr("Active minutes"))
         layout.addWidget(view)
 
         for result in results:
-            data = result['result']
+            data = result["result"]
             view.set_category_axis(data.keys())
             values = []
 
             for key in data:
                 values.append(data[key])
 
-            label = result['result_name']
+            label = result["result_name"]
             view.add_set(label, values)
 
         # if len(results) == len(recordsets):
@@ -238,14 +273,14 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
         if isinstance(results, list):
             for result in results:
                 if isinstance(result, dict):
-                    result_data = result['result']
-                    result_name = result['result_name']
+                    result_data = result["result"]
+                    result_name = result["result_name"]
                     headers.append(result_name)
                     if not data_names:
                         data_names = list(result_data.keys())
                     data.append(list(result_data.values()))
 
-            data_table = {'headers': headers, 'data_names': data_names, 'data': data}
+            data_table = {"headers": headers, "data_names": data_names, "data": data}
 
         return data_table
 
@@ -253,6 +288,3 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
 # Factory init
 def init():
     return BaseAlgorithmFactory.register_factory(FreedsonAdult1998Factory())
-
-
-

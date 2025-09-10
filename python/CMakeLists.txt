@@ -35,31 +35,31 @@ endif(WIN32)
 
 #This will generate ui_ files (not needed by python)
 SET(uis
-    resources/ui/MainWindow.ui
-    resources/ui/StartDialog.ui
-    resources/ui/ImportDialog.ui
-    resources/ui/GroupWidget.ui
-    resources/ui/ParticipantWidget.ui
-    resources/ui/RecordsetWidget.ui
-    resources/ui/ResultWidget.ui
-    resources/ui/ImportBrowser.ui
-    resources/ui/ExportDialog.ui
-    resources/ui/ProcessSelectDialog.ui
-    resources/ui/GraphWidget.ui
-    resources/ui/DataInfosWidget.ui
-    resources/ui/ProgressDialog.ui
-    resources/ui/StreamWindow.ui
-    resources/ui/ImportMatchDialog.ui
-    resources/ui/CrashDialog.ui
-    resources/ui/ImportDialogWizard.ui
-    resources/ui/TableDataViewWidget.ui
-    resources/ui/DataSelector.ui
-    resources/ui/DataSelectorDialog.ui
-    resources/ui/AboutScreen.ui
+    qt/resources/ui/MainWindow.ui
+    qt/resources/ui/StartDialog.ui
+    qt/resources/ui/ImportDialog.ui
+    qt/resources/ui/GroupWidget.ui
+    qt/resources/ui/ParticipantWidget.ui
+    qt/resources/ui/RecordsetWidget.ui
+    qt/resources/ui/ResultWidget.ui
+    qt/resources/ui/ImportBrowser.ui
+    qt/resources/ui/ExportDialog.ui
+    qt/resources/ui/ProcessSelectDialog.ui
+    qt/resources/ui/GraphWidget.ui
+    qt/resources/ui/DataInfosWidget.ui
+    qt/resources/ui/ProgressDialog.ui
+    qt/resources/ui/StreamWindow.ui
+    qt/resources/ui/ImportMatchDialog.ui
+    qt/resources/ui/CrashDialog.ui
+    qt/resources/ui/ImportDialogWizard.ui
+    qt/resources/ui/TableDataViewWidget.ui
+    qt/resources/ui/DataSelector.ui
+    qt/resources/ui/DataSelectorDialog.ui
+    qt/resources/ui/AboutScreen.ui
 )
 
 SET(qrcs
-    resources/core.qrc
+    qt/resources/core.qrc
 )
 
 FILE(GLOB srcs "libopenimu/**/*.py")
@@ -70,7 +70,7 @@ add_custom_target(uis_target SOURCES ${uis} ${qrcs})
 #    resources/test.qml
 #)
 
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/resources/ui/python)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/qt/resources/ui/python)
 
 # Generate PySide ui files
 set(python_uis)
@@ -81,7 +81,7 @@ foreach(uifile ${uis})
     set(output_file ${name_without_extension}_ui.py)
     list(APPEND python_uis ${output_file})
     add_custom_target(${output_file}
-        COMMAND ${PYSIDE_UIC_EXECUTABLE} ${uifile} -o resources/ui/python/${output_file}
+        COMMAND ${PYSIDE_UIC_EXECUTABLE} ${uifile} -o qt/resources/ui/python/${output_file}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         DEPENDS ${uifile} python-env)
 endforeach(uifile)
@@ -135,8 +135,8 @@ if(WIN32)
     # Build this target to make a package
     add_custom_target(python_package
         COMMAND ${PYTHON_INSTALLER_EXECUTABLE} ${installer_args} ${CMAKE_CURRENT_SOURCE_DIR}/OpenIMU.py
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/alembic.ini ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/alembic ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU/alembic
+        # COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/alembic.ini ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU
+        # COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/alembic ${CMAKE_CURRENT_SOURCE_DIR}/dist/OpenIMU/alembic
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         DEPENDS python_target ${python_uis} ${python_qrcs} python-env
     )
@@ -226,22 +226,22 @@ endif(APPLE)
 #Translation files, this is done manually to avoid removing the file when doing make clean
 # Add -noobsolete parameter to remove obsoleted translations
 add_custom_target(openimu_en_ts
-    COMMAND ${PYSIDE_TR_EXECUTABLE} -target-language en ${srcs} ${uis} -ts resources/translations/openimu_en.ts -noobsolete
+    COMMAND ${PYSIDE_TR_EXECUTABLE} -target-language en ${srcs} ${uis} -ts qt/resources/translations/openimu_en.ts -noobsolete
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 add_custom_target(openimu_fr_ts
-    COMMAND ${PYSIDE_TR_EXECUTABLE} -target-language fr ${srcs} ${uis} -ts resources/translations/openimu_fr.ts -noobsolete
+    COMMAND ${PYSIDE_TR_EXECUTABLE} -target-language fr ${srcs} ${uis} -ts qt/resources/translations/openimu_fr.ts -noobsolete
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 #set qm files output directory
-set_source_files_properties(${translation_files_srcs} PROPERTIES OUTPUT_LOCATION resources/translations/)
+set_source_files_properties(${translation_files_srcs} PROPERTIES OUTPUT_LOCATION qt/resources/translations/)
 
 #Build this target to update translations
 add_custom_target(translations DEPENDS openimu_en_ts openimu_fr_ts)
 add_custom_target(translation_files
-    COMMAND ${PYSIDE_TRQM_EXECUTABLE} resources/translations/openimu_en.ts resources/translations/openimu_fr.ts
+    COMMAND ${PYSIDE_TRQM_EXECUTABLE} qt/resources/translations/openimu_en.ts qt/resources/translations/openimu_fr.ts
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     SOURCES ${translation_files_srcs}
 )

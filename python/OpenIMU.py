@@ -10,24 +10,26 @@ from PySide6.QtQuick import QQuickWindow, QSGRendererInterface
 
 def except_hook(cls, exception, traceback):
     # Display error dialog
-    from libopenimu.qt.CrashWindow import CrashWindow
+    from qt.CrashWindow import CrashWindow
+
     crash_dlg = CrashWindow(traceback, exception)
     crash_dlg.exec()
     sys.__excepthook__(cls, exception, traceback)
 
 
 # Main
-if __name__ == '__main__':
+if __name__ == "__main__":
     from PySide6.QtCore import QDir
-    from libopenimu.qt.OpenIMUApp import OpenIMUApp
-    from libopenimu.qt.MainWindow import MainWindow
+    from qt.OpenIMUApp import OpenIMUApp
+    from qt.MainWindow import MainWindow
 
-    if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
+    if not (getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS")):
         faulthandler.enable()  # start @ the beginning
 
     try:
         # Close the splash screen, if running from a frozen package with pyinstaller
         import pyi_splash
+
         pyi_splash.close()
     except ModuleNotFoundError:
         pass
@@ -66,5 +68,3 @@ if __name__ == '__main__':
     # Exec application
     exit_code = app.exec()
     sys.exit(exit_code)
-
-
