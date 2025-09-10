@@ -41,4 +41,4 @@ packages = ["libopenimu"]
 "" = "."
 
 [tool.setuptools.package-data]
-libopenimu = ["**/*.py"]
+libopenimu = ["**/*.py", "**/*.ini", "**/*.mako"]
