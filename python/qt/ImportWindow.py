@@ -5,7 +5,7 @@ from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox
 
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.DataSet import DataSet
-from libopenimu.tools.Settings import OpenIMUSettings
+from qt.Settings import OpenIMUSettings
 
 from sqlalchemy.exc import DBAPIError, DatabaseError, DataError
 

@@ -5,6 +5,12 @@ Will contain sqlite driver and model interface
 @date 27/03/2018
 """
 
+import os
+import datetime
+import pickle
+import sys
+import warnings
+
 import sqlalchemy
 from sqlalchemy import create_engine, asc, or_, and_
 from sqlalchemy.orm import sessionmaker
@@ -13,13 +19,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.engine import Engine
 from sqlalchemy import event, text
 
-import os
-import datetime
-import pickle
-import sys
-import warnings
 
-from PySide6.QtCore import QObject, Signal
+# from PySide6.QtCore import QObject, Signal
 
 # Basic definitions
 from libopenimu.models.data_formats import DataFormat
@@ -42,13 +43,10 @@ from alembic.config import Config
 from alembic import command
 
 
-class DBManager(QObject):
-
-    groupUpdated = Signal(Group)
-    participantUpdated = Signal(Participant)
+class DBManager:
 
     def __init__(self, filename, overwrite=False, echo=False, newfile=False):
-        QObject.__init__(self)
+        # QObject.__init__(self)
         warnings.simplefilter(action="ignore", category=FutureWarning)
 
         dburl = "sqlite:///" + filename + "?check_same_thread=False"
@@ -81,6 +79,12 @@ class DBManager(QObject):
 
         # Keep copy of the filename
         self.dbFilename = filename
+
+    def notify_participant_update(self, participant):
+        pass
+
+    def notify_group_update(self, group):
+        pass
 
     @staticmethod
     def init_alembic(dburl):
@@ -174,7 +178,8 @@ class DBManager(QObject):
                 group.id_group = src_group.id_group
 
             self.commit()
-            self.groupUpdated.emit(group)
+            # self.groupUpdated.emit(group)
+            self.notify_group_update(group)
             return group
 
         except Exception as e:
@@ -222,7 +227,8 @@ class DBManager(QObject):
                 participant.id_participant = src_part.id_participant
 
             self.commit()
-            self.participantUpdated.emit(participant)
+            # self.participantUpdated.emit(participant)
+            self.notify_participant_update(participant)
             return participant
 
         except Exception as e:

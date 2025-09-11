@@ -32,7 +32,7 @@ from libopenimu.models.DataSet import DataSet
 from libopenimu.models.LogTypes import LogTypes
 
 # Database
-from libopenimu.db.DBManager import DBManager
+from qt.QDBManager import QDBManager
 
 # Tools
 from libopenimu.tools.FileManager import FileManager
@@ -68,7 +68,7 @@ class MainWindow(QMainWindow):
 
         # Init database manager
         self.currentFileName = filename
-        self.dbMan = DBManager(self.currentFileName)
+        self.dbMan = QDBManager(self.currentFileName)
         self.setWindowTitle("OpenIMU - " + os.path.basename(self.currentFileName))
 
         # Load data

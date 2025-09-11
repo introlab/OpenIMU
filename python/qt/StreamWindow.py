@@ -114,7 +114,7 @@ class StreamWindow(QDialog):
             self.UI.spinPort.setButtonSymbols(QSpinBox.UpDownArrows)
 
     def load_settings(self):
-        from libopenimu.tools.Settings import OpenIMUSettings
+        from qt.Settings import OpenIMUSettings
 
         settings = OpenIMUSettings()
         self.UI.txtDataPath.setText(settings.streamer_data_save_path)
@@ -122,7 +122,7 @@ class StreamWindow(QDialog):
         self.UI.chkDeleteFiles.setChecked(settings.streamer_delete_data_after_transfer)
 
     def save_settings(self):
-        from libopenimu.tools.Settings import OpenIMUSettings
+        from qt.Settings import OpenIMUSettings
 
         settings = OpenIMUSettings()
         settings.streamer_port = self.UI.spinPort.value()

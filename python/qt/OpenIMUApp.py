@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QApplication, QDialog, QHBoxLayout
 from PySide6.QtCore import Qt, QFile, QLocale, QTranslator, QLibraryInfo, Slot
 
-from libopenimu.tools.Settings import OpenIMUSettings
+from qt.Settings import OpenIMUSettings
 from qt.StartWindow import StartWindow
 from qt.MainWindow import MainWindow
 

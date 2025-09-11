@@ -8,7 +8,7 @@ from PySide6.QtCore import Slot, Signal, QLocale, QFileInfo
 from PySide6.QtWidgets import QDialog, QFileDialog, QApplication, QMessageBox
 from PySide6.QtGui import QMouseEvent
 
-from libopenimu.tools.Settings import OpenIMUSettings
+from qt.Settings import OpenIMUSettings
 
 
 class StartWindow(QDialog):

@@ -11,7 +11,7 @@ from libopenimu.models.LogTypes import LogTypes
 from qt.BackgroundProcess import BackgroundProcess, ProgressDialog, WorkerTask
 from qt.DataSelector import DataSelector
 
-from libopenimu.tools.Settings import OpenIMUSettings
+from qt.Settings import OpenIMUSettings
 import os
 import shutil
 

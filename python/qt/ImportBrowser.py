@@ -41,7 +41,7 @@ from libopenimu.models.DataSource import DataSource
 from libopenimu.models.Participant import Participant
 from libopenimu.models.LogTypes import LogTypes
 from libopenimu.tools.timing import timing
-from libopenimu.tools.Settings import OpenIMUSettings
+from qt.Settings import OpenIMUSettings
 
 import os
 import platform

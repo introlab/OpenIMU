@@ -3,7 +3,7 @@ from qt.resources.ui.python.ImportDialogWizard_ui import Ui_dlgImportWizard
 from PySide6.QtCore import Slot, QFileInfo
 from PySide6.QtWidgets import QDialog, QFileDialog
 
-from libopenimu.tools.Settings import OpenIMUSettings
+from qt.Settings import OpenIMUSettings
 
 
 class ImportDialogWizard(QDialog):

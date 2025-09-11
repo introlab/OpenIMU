@@ -6,6 +6,9 @@ from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QSurfaceFormat
 from PySide6.QtQuick import QQuickWindow, QSGRendererInterface
+from PySide6.QtCore import QDir
+from qt.OpenIMUApp import OpenIMUApp
+from qt.MainWindow import MainWindow
 
 
 def except_hook(cls, exception, traceback):
@@ -19,9 +22,6 @@ def except_hook(cls, exception, traceback):
 
 # Main
 if __name__ == "__main__":
-    from PySide6.QtCore import QDir
-    from qt.OpenIMUApp import OpenIMUApp
-    from qt.MainWindow import MainWindow
 
     if not (getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS")):
         faulthandler.enable()  # start @ the beginning
