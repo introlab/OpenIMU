@@ -19,9 +19,6 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.engine import Engine
 from sqlalchemy import event, text
 
-
-# from PySide6.QtCore import QObject, Signal
-
 # Basic definitions
 from libopenimu.models.data_formats import DataFormat
 
@@ -178,7 +175,6 @@ class DBManager:
                 group.id_group = src_group.id_group
 
             self.commit()
-            # self.groupUpdated.emit(group)
             self.notify_group_update(group)
             return group
 
@@ -227,7 +223,6 @@ class DBManager:
                 participant.id_participant = src_part.id_participant
 
             self.commit()
-            # self.participantUpdated.emit(participant)
             self.notify_participant_update(participant)
             return participant
 

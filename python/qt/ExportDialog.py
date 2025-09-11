@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox
 from PySide6.QtCore import Qt, Slot, Signal, QCoreApplication
+from PySide6.QtGui import QIcon
 
 from qt.resources.ui.python.ExportDialog_ui import Ui_ExportDialog
 
@@ -37,7 +38,7 @@ class ExportWindow(QDialog):
 
         for exporter_id in ExporterTypes.value_types:
             self.UI.comboFormat.addItem(
-                ExporterTypes.get_icon_for_type(exporter_id),
+                QIcon(ExporterTypes.get_icon_for_type(exporter_id)),
                 ExporterTypes.value_names[exporter_id],
                 exporter_id,
             )
