@@ -93,30 +93,30 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
         return {
             "sedentary_cutoff": {
                 "type": "float",
-                "default_value": 0.0,
+                "default_value": 99.0,
                 "min_value": 0,
-                "max_value": 0,
+                "max_value": 15000,
                 "description": "sedentary_cutoff description",
             },
             "light_cutoff": {
                 "type": "float",
-                "default_value": 0.0,
+                "default_value": 1951.0,
                 "min_value": 0,
-                "max_value": 0,
+                "max_value": 15000,
                 "description": "light_cutoff description",
             },
             "moderate_cutoff": {
                 "type": "float",
-                "default_value": 0.0,
+                "default_value": 5724.0,
                 "min_value": 0,
-                "max_value": 0,
+                "max_value": 15000,
                 "description": "moderate_cutoff description",
             },
             "vigorous_cutoff": {
                 "type": "float",
-                "default_value": 0.0,
+                "default_value": 9498.0,
                 "min_value": 0,
-                "max_value": 0,
+                "max_value": 15000,
                 "description": "vigorous_cutoff description",
             },
         }

@@ -260,21 +260,21 @@ class Evenson2008Factory(BaseAlgorithmFactory):
         return {
             "sedentary_cutoff": {
                 "type": "float",
-                "default_value": 0.0,
+                "default_value": 25.0,
                 "min_value": 0.0,
                 "max_value": 15000.0,
                 "description": "sedentary_cutoff description",
             },
             "light_cutoff": {
                 "type": "float",
-                "default_value": 0.0,
+                "default_value": 573.0,
                 "min_value": 0.0,
                 "max_value": 15000.0,
                 "description": "light_cutoff description",
             },
             "moderate_cutoff": {
                 "type": "float",
-                "default_value": 0.0,
+                "default_value": 1002.0,
                 "min_value": 0.0,
                 "max_value": 15000.0,
                 "description": "moderate_cutoff description",
