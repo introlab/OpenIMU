@@ -7,15 +7,14 @@ from libopenimu.db.DBManager import DBManager
 from libopenimu.models.Participant import Participant
 
 
-
 class WIMUImporter(BaseImporter):
     def __init__(self, manager: DBManager, participant: Participant):
-        super().__init__(manager, participant)
-        print('WIMU Importer')
+        BaseImporter.__init__(self, manager, participant)
+        print("WIMU Importer")
 
     @timing
     def load(self, filename):
-        print('WIMUImporter loading:', filename)
+        print("WIMUImporter loading:", filename)
         result = wimu.wimu_importer(filename)
         return result
 
@@ -32,60 +31,60 @@ class WIMUImporter(BaseImporter):
 
         # if results.__contains__('acc'):
 
-            # Create sensor
-            # accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer',
-            #                                              'WIMUGPS',
-            #                                              'Unknown', config.general.sampling_rate, 1)
-            #
-            # accelerometer_channels = list()
-            #
-            # # Create channels
-            # accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
-            #                                                      DataFormat.FLOAT32, 'Accelerometer_X'))
-            #
-            # accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
-            #                                                      DataFormat.FLOAT32, 'Accelerometer_Y'))
-            #
-            # accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
-            #                                                      DataFormat.FLOAT32, 'Accelerometer_Z'))
-            #
-            # for item in result['acc']:
-            #
-            #     # We have a list of list
-            #     for record in item:
-            #         [timestamp, acc_dict] = record
-            #         acc_x = acc_dict['acc_x']
-            #         acc_y = acc_dict['acc_y']
-            #         acc_z = acc_dict['acc_z']
-            #
-            #         recordset = self.get_recordset(timestamp)
-            #
-            #         # Update end_timestamp if required
-            #         if timestamp > recordset.end_timestamp.timestamp():
-            #             recordset.end_timestamp = datetime.datetime.fromtimestamp(timestamp)
-            #
-            #         if len(acc_x) > 0:
-            #             data_len = len(acc_x) / config.general.sampling_rate
-            #             end_timestamp = timestamp + data_len
-            #             self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[0],
-            #                                        datetime.datetime.fromtimestamp(timestamp),
-            #                                        datetime.datetime.fromtimestamp(end_timestamp), acc_x)
-            #
-            #         if len(acc_y) > 0:
-            #             data_len = len(acc_y) / config.general.sampling_rate
-            #             end_timestamp = timestamp + data_len
-            #             self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[1],
-            #                                        datetime.datetime.fromtimestamp(timestamp),
-            #                                        datetime.datetime.fromtimestamp(end_timestamp), acc_y)
-            #
-            #         if len(acc_z) > 0:
-            #             data_len = len(acc_z) / config.general.sampling_rate
-            #             end_timestamp = timestamp + data_len
-            #             self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[2],
-            #                                        datetime.datetime.fromtimestamp(timestamp),
-            #                                        datetime.datetime.fromtimestamp(end_timestamp), acc_z)
-            #
-            #     self.db.flush()
+        # Create sensor
+        # accelerometer_sensor = self.add_sensor_to_db(SensorType.ACCELEROMETER, 'Accelerometer',
+        #                                              'WIMUGPS',
+        #                                              'Unknown', config.general.sampling_rate, 1)
+        #
+        # accelerometer_channels = list()
+        #
+        # # Create channels
+        # accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
+        #                                                      DataFormat.FLOAT32, 'Accelerometer_X'))
+        #
+        # accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
+        #                                                      DataFormat.FLOAT32, 'Accelerometer_Y'))
+        #
+        # accelerometer_channels.append(self.add_channel_to_db(accelerometer_sensor, Units.GRAVITY_G,
+        #                                                      DataFormat.FLOAT32, 'Accelerometer_Z'))
+        #
+        # for item in result['acc']:
+        #
+        #     # We have a list of list
+        #     for record in item:
+        #         [timestamp, acc_dict] = record
+        #         acc_x = acc_dict['acc_x']
+        #         acc_y = acc_dict['acc_y']
+        #         acc_z = acc_dict['acc_z']
+        #
+        #         recordset = self.get_recordset(timestamp)
+        #
+        #         # Update end_timestamp if required
+        #         if timestamp > recordset.end_timestamp.timestamp():
+        #             recordset.end_timestamp = datetime.datetime.fromtimestamp(timestamp)
+        #
+        #         if len(acc_x) > 0:
+        #             data_len = len(acc_x) / config.general.sampling_rate
+        #             end_timestamp = timestamp + data_len
+        #             self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[0],
+        #                                        datetime.datetime.fromtimestamp(timestamp),
+        #                                        datetime.datetime.fromtimestamp(end_timestamp), acc_x)
+        #
+        #         if len(acc_y) > 0:
+        #             data_len = len(acc_y) / config.general.sampling_rate
+        #             end_timestamp = timestamp + data_len
+        #             self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[1],
+        #                                        datetime.datetime.fromtimestamp(timestamp),
+        #                                        datetime.datetime.fromtimestamp(end_timestamp), acc_y)
+        #
+        #         if len(acc_z) > 0:
+        #             data_len = len(acc_z) / config.general.sampling_rate
+        #             end_timestamp = timestamp + data_len
+        #             self.add_sensor_data_to_db(recordset, accelerometer_sensor, accelerometer_channels[2],
+        #                                        datetime.datetime.fromtimestamp(timestamp),
+        #                                        datetime.datetime.fromtimestamp(end_timestamp), acc_z)
+        #
+        #     self.db.flush()
 
         # if results.__contains__('gyr'):
         #     # Create sensor
