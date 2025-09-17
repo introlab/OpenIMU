@@ -1,40 +1,40 @@
 """
 
-    Base Algorithm class
-    @authors Dominic Létourneau
-    @date 04/05/2018
+Base Algorithm class
+@authors Dominic Létourneau
+@date 04/05/2018
 
 """
 
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 from libopenimu.db.DBManager import DBManager
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
-from PySide6.QtCore import QObject
+# from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
+# from PySide6.QtCore import QObject
 
 
-class BaseAlgorithm(QObject):
-    params = dict
+class BaseAlgorithm(ABC):
 
     def __init__(self, params: dict):
-        QObject.__init__(self)
+        self.params = params
         self.configure(params)
 
     @abstractmethod
     def configure(self, params: dict):
-        self.params = params
+        pass
 
     @abstractmethod
     def calculate(self, manager: DBManager, recordsets: list):
         pass
 
 
-class BaseAlgorithmFactory(QObject):
+class BaseAlgorithmFactory(ABC):  # (QObject):
     # Will hold all factories
-    factories = list()
+    factories: list["BaseAlgorithmFactory"] = []
 
     def __init__(self):
-        QObject.__init__(self)
+        pass
+        # QObject.__init__(self)
 
     @staticmethod
     def factory_count():
@@ -48,9 +48,9 @@ class BaseAlgorithmFactory(QObject):
     @staticmethod
     def print_factories():
         for factory in BaseAlgorithmFactory.factories:
-            print('factory name', factory.name())
-            print('factory params', factory.params())
-            print('factory info', factory.info())
+            print("factory name", factory.name())
+            print("factory params", factory.params())
+            print("factory info", factory.info())
 
     @staticmethod
     def get_factory_named(name):
@@ -59,16 +59,9 @@ class BaseAlgorithmFactory(QObject):
                 return factory
         return None
 
-    @staticmethod
-    def get_factory_with_id(f_id):
-        for factory in BaseAlgorithmFactory.factories:
-            if factory.unique_id() == f_id:
-                return factory
-        return None
-
     @abstractmethod
     def create(self, params: dict):
-        self.configure(params)
+        pass
 
     @abstractmethod
     def params(self):
@@ -84,7 +77,7 @@ class BaseAlgorithmFactory(QObject):
 
     @abstractmethod
     def info(self):
-        '''
+        """
         Should return a dict with
         'description' : string
         'author' : string
@@ -93,7 +86,7 @@ class BaseAlgorithmFactory(QObject):
         'reference': string
         '
         :return dict:
-        '''
+        """
         pass
 
     @abstractmethod
@@ -101,23 +94,24 @@ class BaseAlgorithmFactory(QObject):
         return []
 
     @abstractmethod
-    def build_display_widget(self, parent_widget: QWidget, results, recordsets):
-        return QWidget()
-
-    @abstractmethod
-    def build_config_widget(self, parent_widget: QWidget, default_params: dict = None):
-        layout = QVBoxLayout()
-        label = QLabel(self.tr('No settings available for that algorithm'))
-        layout.addWidget(label)
-
-        base_widget = QWidget(parent_widget)
-        base_widget.setLayout(layout)
-        return base_widget
-
-    # This method is used to build a table of results
-    # Returns a dictionary: "headers" -> List of headers (one per column)
-    #                       "data_names" -> List of data names (one per row)
-    #                       "data" -> List of list of data (one list per row, then one list by column)
-    @abstractmethod
     def build_data_table(self, results):
-        return {'headers': [], 'data_names': [], 'data': []}
+        return {"headers": [], "data_names": [], "data": []}
+
+    # @abstractmethod
+    # def build_display_widget(self, parent_widget: QWidget, results, recordsets):
+    #     return QWidget()
+
+    # @abstractmethod
+    # def build_config_widget(self, parent_widget: QWidget, default_params: dict = None):
+    #     layout = QVBoxLayout()
+    #     label = QLabel(self.tr("No settings available for that algorithm"))
+    #     layout.addWidget(label)
+
+    #     base_widget = QWidget(parent_widget)
+    #     base_widget.setLayout(layout)
+    #     return base_widget
+
+    # # This method is used to build a table of results
+    # # Returns a dictionary: "headers" -> List of headers (one per column)
+    # #                       "data_names" -> List of data names (one per row)
+    # #                       "data" -> List of list of data (one list per row, then one list by column)

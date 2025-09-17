@@ -1,22 +1,22 @@
-from .BaseAlgorithm import BaseAlgorithmFactory
-from .BaseAlgorithm import BaseAlgorithm
 from libopenimu.models.sensor_types import SensorType
 from libopenimu.db.DBManager import DBManager
+from .BaseAlgorithm import BaseAlgorithmFactory
+from .BaseAlgorithm import BaseAlgorithm
 
-from PySide6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
-    QScrollArea,
-    QGridLayout,
-    QSpinBox,
-    QComboBox,
-    QFrame,
-    QSizePolicy,
-    QLabel,
-)
-from PySide6.QtCore import Qt
+# from PySide6.QtWidgets import (
+#     QWidget,
+#     QVBoxLayout,
+#     QScrollArea,
+#     QGridLayout,
+#     QSpinBox,
+#     QComboBox,
+#     QFrame,
+#     QSizePolicy,
+#     QLabel,
+# )
+# from PySide6.QtCore import Qt
 
-from qt.Charts import OpenIMUBarGraphView
+# from qt.Charts import OpenIMUBarGraphView
 
 # actual algorithm is here
 from .freedson_adult_1998 import freedson_adult_1998
@@ -76,11 +76,11 @@ class FreedsonAdult1998(BaseAlgorithm):
 
 
 class FreedsonAdult1998Factory(BaseAlgorithmFactory):
-    config_preset_input = QComboBox
-    config_sedentary_input = QSpinBox
-    config_light_input = QSpinBox
-    config_moderate_input = QSpinBox
-    config_vigorous_input = QSpinBox
+    # config_preset_input = QComboBox
+    # config_sedentary_input = QSpinBox
+    # config_light_input = QSpinBox
+    # config_moderate_input = QSpinBox
+    # config_vigorous_input = QSpinBox
 
     def __init__(self):
         super().__init__()
@@ -91,10 +91,34 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
 
     def params(self):
         return {
-            "sedentary_cutoff": self.config_sedentary_input.value(),
-            "light_cutoff": self.config_light_input.value(),
-            "moderate_cutoff": self.config_moderate_input.value(),
-            "vigorous_cutoff": self.config_vigorous_input.value(),
+            "sedentary_cutoff": {
+                "type": "float",
+                "default_value": 0.0,
+                "min_value": 0,
+                "max_value": 0,
+                "description": "sedentary_cutoff description",
+            },
+            "light_cutoff": {
+                "type": "float",
+                "default_value": 0.0,
+                "min_value": 0,
+                "max_value": 0,
+                "description": "light_cutoff description",
+            },
+            "moderate_cutoff": {
+                "type": "float",
+                "default_value": 0.0,
+                "min_value": 0,
+                "max_value": 0,
+                "description": "moderate_cutoff description",
+            },
+            "vigorous_cutoff": {
+                "type": "float",
+                "default_value": 0.0,
+                "min_value": 0,
+                "max_value": 0,
+                "description": "vigorous_cutoff description",
+            },
         }
 
     def name(self):
@@ -145,124 +169,124 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
     def required_sensors(self):
         return [SensorType.ACCELEROMETER]
 
-    def build_config_widget(self, parent_widget: QWidget, default_params: dict = None):
-        # Initialize inputs
-        self.config_preset_input = QComboBox()
-        # self.config_preset_input.addItem('')
-        self.config_preset_input.addItem(
-            self.tr("Original values"), [99, 1951, 5724, 9498]
-        )
-        self.config_preset_input.addItem(self.tr("Custom values"), [-1, -1, -1, -1])
-        # self.config_preset_input.addItem('Child', [99, 573, 1002, 0])
-        self.config_preset_input.currentIndexChanged.connect(self.config_preset_changed)
+    # def build_config_widget(self, parent_widget: QWidget, default_params: dict = None):
+    #     # Initialize inputs
+    #     self.config_preset_input = QComboBox()
+    #     # self.config_preset_input.addItem('')
+    #     self.config_preset_input.addItem(
+    #         self.tr("Original values"), [99, 1951, 5724, 9498]
+    #     )
+    #     self.config_preset_input.addItem(self.tr("Custom values"), [-1, -1, -1, -1])
+    #     # self.config_preset_input.addItem('Child', [99, 573, 1002, 0])
+    #     self.config_preset_input.currentIndexChanged.connect(self.config_preset_changed)
 
-        base_layout = QVBoxLayout()
-        preset_frame = QFrame()
-        preset_frame.setStyleSheet(
-            "QFrame{background-color: rgba(200,200,200,50%);}"
-            "QLabel{background-color: rgba(0,0,0,0%);}"
-        )
-        preset_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Maximum)
-        frame_layout = QGridLayout()
-        item_label = QLabel(self.tr("Preset"))
-        frame_layout.addWidget(item_label, 0, 0)
-        frame_layout.addWidget(self.config_preset_input, 0, 1)
-        # frame_layout.addRow('Preset', self.config_preset_input)
-        preset_frame.setLayout(frame_layout)
-        base_layout.addWidget(preset_frame)
+    #     base_layout = QVBoxLayout()
+    #     preset_frame = QFrame()
+    #     preset_frame.setStyleSheet(
+    #         "QFrame{background-color: rgba(200,200,200,50%);}"
+    #         "QLabel{background-color: rgba(0,0,0,0%);}"
+    #     )
+    #     preset_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Maximum)
+    #     frame_layout = QGridLayout()
+    #     item_label = QLabel(self.tr("Preset"))
+    #     frame_layout.addWidget(item_label, 0, 0)
+    #     frame_layout.addWidget(self.config_preset_input, 0, 1)
+    #     # frame_layout.addRow('Preset', self.config_preset_input)
+    #     preset_frame.setLayout(frame_layout)
+    #     base_layout.addWidget(preset_frame)
 
-        layout = QGridLayout()
-        layout.setAlignment(Qt.AlignTop)
-        self.config_sedentary_input = QSpinBox()
-        self.config_sedentary_input.setRange(0, 15000)
-        item_label = QLabel("Cut-off Sedentary")
-        layout.addWidget(item_label, 0, 0)
-        layout.addWidget(self.config_sedentary_input, 0, 1)
-        # layout.addRow("Cut-off Sedentary", self.config_sedentary_input)
-        self.config_light_input = QSpinBox()
-        self.config_light_input.setRange(0, 15000)
-        item_label = QLabel("Cut-off Light")
-        layout.addWidget(item_label, 1, 0)
-        layout.addWidget(self.config_light_input, 1, 1)
-        # layout.addRow("Cut-off Light", self.config_light_input)
-        self.config_moderate_input = QSpinBox()
-        self.config_moderate_input.setRange(0, 15000)
-        item_label = QLabel("Cut-off Moderate")
-        layout.addWidget(item_label, 2, 0)
-        layout.addWidget(self.config_moderate_input, 2, 1)
-        # layout.addRow("Cut-off Moderate", self.config_moderate_input)
-        self.config_vigorous_input = QSpinBox()
-        self.config_vigorous_input.setRange(0, 15000)
-        item_label = QLabel("Cut-off Vigorous")
-        layout.addWidget(item_label, 3, 0)
-        layout.addWidget(self.config_vigorous_input, 3, 1)
-        # layout.addRow("Cut-off Vigorous", self.config_vigorous_input)
-        base_layout.addLayout(layout)
+    #     layout = QGridLayout()
+    #     layout.setAlignment(Qt.AlignTop)
+    #     self.config_sedentary_input = QSpinBox()
+    #     self.config_sedentary_input.setRange(0, 15000)
+    #     item_label = QLabel("Cut-off Sedentary")
+    #     layout.addWidget(item_label, 0, 0)
+    #     layout.addWidget(self.config_sedentary_input, 0, 1)
+    #     # layout.addRow("Cut-off Sedentary", self.config_sedentary_input)
+    #     self.config_light_input = QSpinBox()
+    #     self.config_light_input.setRange(0, 15000)
+    #     item_label = QLabel("Cut-off Light")
+    #     layout.addWidget(item_label, 1, 0)
+    #     layout.addWidget(self.config_light_input, 1, 1)
+    #     # layout.addRow("Cut-off Light", self.config_light_input)
+    #     self.config_moderate_input = QSpinBox()
+    #     self.config_moderate_input.setRange(0, 15000)
+    #     item_label = QLabel("Cut-off Moderate")
+    #     layout.addWidget(item_label, 2, 0)
+    #     layout.addWidget(self.config_moderate_input, 2, 1)
+    #     # layout.addRow("Cut-off Moderate", self.config_moderate_input)
+    #     self.config_vigorous_input = QSpinBox()
+    #     self.config_vigorous_input.setRange(0, 15000)
+    #     item_label = QLabel("Cut-off Vigorous")
+    #     layout.addWidget(item_label, 3, 0)
+    #     layout.addWidget(self.config_vigorous_input, 3, 1)
+    #     # layout.addRow("Cut-off Vigorous", self.config_vigorous_input)
+    #     base_layout.addLayout(layout)
 
-        base_widget = QWidget(parent_widget)
-        base_widget.setLayout(base_layout)
+    #     base_widget = QWidget(parent_widget)
+    #     base_widget.setLayout(base_layout)
 
-        # Set default values
-        if default_params is None:
-            self.config_preset_changed()
-        else:
-            self.config_sedentary_input = default_params["sedentary_cutoff"]
-            self.config_light_input = default_params["light_cutoff"]
-            self.config_moderate_input = default_params["moderate_cutoff"]
-            self.config_vigorous_input = default_params["vigorous_cutoff"]
+    #     # Set default values
+    #     if default_params is None:
+    #         self.config_preset_changed()
+    #     else:
+    #         self.config_sedentary_input = default_params["sedentary_cutoff"]
+    #         self.config_light_input = default_params["light_cutoff"]
+    #         self.config_moderate_input = default_params["moderate_cutoff"]
+    #         self.config_vigorous_input = default_params["vigorous_cutoff"]
 
-        return base_widget
+    #     return base_widget
 
-    def config_preset_changed(self):
-        params = self.config_preset_input.currentData()
-        if params is not None and len(params) == 4:
-            if params[0] != -1:
-                self.config_sedentary_input.setValue(params[0])
-                self.config_light_input.setValue(params[1])
-                self.config_moderate_input.setValue(params[2])
-                self.config_vigorous_input.setValue(params[3])
-            self.config_sedentary_input.setEnabled(params[0] == -1)
-            self.config_light_input.setEnabled(params[0] == -1)
-            self.config_moderate_input.setEnabled(params[0] == -1)
-            self.config_vigorous_input.setEnabled(params[0] == -1)
+    # def config_preset_changed(self):
+    #     params = self.config_preset_input.currentData()
+    #     if params is not None and len(params) == 4:
+    #         if params[0] != -1:
+    #             self.config_sedentary_input.setValue(params[0])
+    #             self.config_light_input.setValue(params[1])
+    #             self.config_moderate_input.setValue(params[2])
+    #             self.config_vigorous_input.setValue(params[3])
+    #         self.config_sedentary_input.setEnabled(params[0] == -1)
+    #         self.config_light_input.setEnabled(params[0] == -1)
+    #         self.config_moderate_input.setEnabled(params[0] == -1)
+    #         self.config_vigorous_input.setEnabled(params[0] == -1)
 
-    def build_display_widget(self, parent_widget: QWidget, results, recordsets):
+    # def build_display_widget(self, parent_widget: QWidget, results, recordsets):
 
-        layout = QVBoxLayout()
-        # Add Scroll area
-        scroll = QScrollArea(parent=parent_widget)
+    #     layout = QVBoxLayout()
+    #     # Add Scroll area
+    #     scroll = QScrollArea(parent=parent_widget)
 
-        scroll.setLayout(layout)
-        view = OpenIMUBarGraphView(scroll)
-        view.set_title(self.tr("Active minutes"))
-        layout.addWidget(view)
+    #     scroll.setLayout(layout)
+    #     view = OpenIMUBarGraphView(scroll)
+    #     view.set_title(self.tr("Active minutes"))
+    #     layout.addWidget(view)
 
-        for result in results:
-            data = result["result"]
-            view.set_category_axis(data.keys())
-            values = []
+    #     for result in results:
+    #         data = result["result"]
+    #         view.set_category_axis(data.keys())
+    #         values = []
 
-            for key in data:
-                values.append(data[key])
+    #         for key in data:
+    #             values.append(data[key])
 
-            label = result["result_name"]
-            view.add_set(label, values)
+    #         label = result["result_name"]
+    #         view.add_set(label, values)
 
-        # if len(results) == len(recordsets):
-        #     for i, _ in enumerate(results):
-        #         view.set_category_axis(results[i].keys())
-        #         values = []
-        #
-        #         for key in results[i]:
-        #             values.append(results[i][key])
-        #
-        #         label = recordsets[i].name
-        #         view.add_set(label, values)
+    #     # if len(results) == len(recordsets):
+    #     #     for i, _ in enumerate(results):
+    #     #         view.set_category_axis(results[i].keys())
+    #     #         values = []
+    #     #
+    #     #         for key in results[i]:
+    #     #             values.append(results[i][key])
+    #     #
+    #     #         label = recordsets[i].name
+    #     #         view.add_set(label, values)
 
-        # Update view
-        view.update()
+    #     # Update view
+    #     view.update()
 
-        return scroll
+    #     return scroll
 
     def build_data_table(self, results):
         data_table = {}
