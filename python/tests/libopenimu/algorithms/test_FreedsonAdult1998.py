@@ -1,6 +1,10 @@
 import unittest
+import os
 import libopenimu.algorithms.FreedsonAdult1998 as freedson1998
 from libopenimu.algorithms.BaseAlgorithm import BaseAlgorithmFactory
+from libopenimu.db.DBManager import DBManager
+from libopenimu.models.Participant import Participant
+from libopenimu.importers.AppleWatchImporter import AppleWatchImporter
 
 
 class TestFreedsonAdult1998(unittest.TestCase):
@@ -9,10 +13,15 @@ class TestFreedsonAdult1998(unittest.TestCase):
     """
 
     def setUp(self):
-        pass
+        self.db_manager = self._open_database()
+        self.session = self.db_manager.session
+        self.participant = self._create_participant(
+            self.session, "Test Participant", "For unit testing"
+        )
+        self.assertIsNotNone(self.participant)
 
     def tearDown(self):
-        pass
+        self.session.close()
 
     def test_factory_registered(self):
         """
@@ -30,3 +39,78 @@ class TestFreedsonAdult1998(unittest.TestCase):
         self.assertIn("vigorous_cutoff", factory_params)
         info = factory.info()
         self.assertGreater(len(info), 0)
+
+    def test_data_importation(self):
+        """
+        Test if sample AppleWatch data can be imported
+        """
+        success = self._load_sample_applewatch_data(self.participant)
+        self.assertTrue(success)
+
+    def test_algorithm_execution(self):
+        """
+        Test if the FreedsonAdult1998 algorithm can be executed on sample data
+        """
+        # Load sample data first
+        success = self._load_sample_applewatch_data(self.participant)
+        self.assertTrue(success)
+
+        # Get all recordsets for this participant
+        recordsets = self.db_manager.get_all_recordsets(self.participant)
+        self.assertIsNotNone(recordsets)
+        self.assertGreater(len(recordsets), 0)
+
+        # Get the factory
+        factory = BaseAlgorithmFactory.get_factory_named("Freedson Adult 1998")
+        self.assertIsNotNone(factory)
+
+        params = {
+            "sedentary_cutoff": 100,
+            "light_cutoff": 1951,
+            "moderate_cutoff": 5725,
+            "vigorous_cutoff": 9499,
+        }
+
+        # Create the algorithm with default parameters
+        algorithm = factory.create(params)
+        self.assertIsNotNone(algorithm)
+        self.assertIsInstance(algorithm, freedson1998.FreedsonAdult1998)
+
+        # Execute the algorithm
+        algorithm.calculate(self.db_manager, recordsets)
+
+    def _open_database(self, db_path: str = ":memory:"):
+        # Create a new database in RAM
+        self.manager = DBManager(db_path, overwrite=True, echo=False, newfile=True)
+        self.assertIsNotNone(self.manager)
+        return self.manager
+
+    def _create_participant(self, session, name: str, description: str) -> Participant:
+        participant = Participant()
+        participant.name = name
+        participant.description = description
+        session.add(participant)
+        session.commit()
+        return participant
+
+    def _load_sample_applewatch_data(
+        self, participant: Participant = None
+    ) -> list | None:
+        if participant is None:
+            return None
+
+        importer = AppleWatchImporter(self.db_manager, participant)
+        self.assertIsNotNone(importer)
+
+        # Get current file path
+        current_path = os.path.dirname(os.path.abspath(__file__))
+        sample_data_path = os.path.join(
+            current_path, "..", "importers", "samples", "AppleWatch.zip"
+        )
+
+        results = importer.load(sample_data_path)
+        self.assertIsNotNone(results)
+        self.assertGreater(len(results), 0)
+
+        importer.import_to_database(results)
+        return True

@@ -34,40 +34,39 @@ class BaseAlgorithmFactory(ABC):  # (QObject):
 
     def __init__(self):
         pass
-        # QObject.__init__(self)
 
     @staticmethod
-    def factory_count():
+    def factory_count() -> int:
         return len(BaseAlgorithmFactory.factories)
 
     @staticmethod
-    def register_factory(factory):
+    def register_factory(factory) -> "BaseAlgorithmFactory":
         BaseAlgorithmFactory.factories.append(factory)
         return factory
 
     @staticmethod
-    def print_factories():
+    def print_factories() -> None:
         for factory in BaseAlgorithmFactory.factories:
             print("factory name", factory.name())
             print("factory params", factory.params())
             print("factory info", factory.info())
 
     @staticmethod
-    def get_factory_named(name):
+    def get_factory_named(name) -> str | None:
         for factory in BaseAlgorithmFactory.factories:
             if factory.name() == name:
                 return factory
         return None
 
     @staticmethod
-    def get_factory_id(unique_id):
+    def get_factory_id(unique_id) -> int | None:
         for factory in BaseAlgorithmFactory.factories:
             if factory.unique_id() == unique_id:
                 return factory
         return None
 
     @abstractmethod
-    def create(self, params: dict):
+    def create(self, params: dict) -> "BaseAlgorithm":
         pass
 
     @abstractmethod
@@ -76,11 +75,11 @@ class BaseAlgorithmFactory(ABC):  # (QObject):
 
     @abstractmethod
     def name(self):
-        pass
+        return "BaseAlgorithm"
 
     @abstractmethod
     def unique_id(self):
-        pass
+        return 0
 
     @abstractmethod
     def info(self):
@@ -100,6 +99,10 @@ class BaseAlgorithmFactory(ABC):  # (QObject):
     def required_sensors(self):
         return []
 
+    # This method is used to build a table of results
+    # Returns a dictionary: "headers" -> List of headers (one per column)
+    #                       "data_names" -> List of data names (one per row)
+    #                       "data" -> List of list of data (one list per row, then one list by column)
     @abstractmethod
     def build_data_table(self, results):
         return {"headers": [], "data_names": [], "data": []}
@@ -117,8 +120,3 @@ class BaseAlgorithmFactory(ABC):  # (QObject):
     #     base_widget = QWidget(parent_widget)
     #     base_widget.setLayout(layout)
     #     return base_widget
-
-    # # This method is used to build a table of results
-    # # Returns a dictionary: "headers" -> List of headers (one per column)
-    # #                       "data_names" -> List of data names (one per row)
-    # #                       "data" -> List of list of data (one list per row, then one list by column)
