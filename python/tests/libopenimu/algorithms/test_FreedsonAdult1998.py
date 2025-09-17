@@ -77,7 +77,13 @@ class TestFreedsonAdult1998(unittest.TestCase):
         self.assertIsInstance(algorithm, freedson1998.FreedsonAdult1998)
 
         # Execute the algorithm
-        algorithm.calculate(self.db_manager, recordsets)
+        results = algorithm.calculate(self.db_manager, recordsets)
+        self.assertIsNotNone(results)
+        self.assertEqual(len(results), 1)  # Expecting 4 categories
+        self.assertIn("Sedentary", results[0]["result"])
+        self.assertIn("Light", results[0]["result"])
+        self.assertIn("Moderate", results[0]["result"])
+        self.assertIn("Vigorous", results[0]["result"])
 
     def _open_database(self, db_path: str = ":memory:"):
         # Create a new database in RAM
