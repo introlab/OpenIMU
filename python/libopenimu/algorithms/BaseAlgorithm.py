@@ -59,6 +59,13 @@ class BaseAlgorithmFactory(ABC):  # (QObject):
                 return factory
         return None
 
+    @staticmethod
+    def get_factory_id(unique_id):
+        for factory in BaseAlgorithmFactory.factories:
+            if factory.unique_id() == unique_id:
+                return factory
+        return None
+
     @abstractmethod
     def create(self, params: dict):
         pass
