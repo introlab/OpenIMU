@@ -9,6 +9,7 @@ from libopenimu.models.Recordset import Recordset
 from libopenimu.algorithms.BaseAlgorithm import BaseAlgorithmFactory
 
 from qt.BackgroundProcess import BackgroundProcess, ProgressDialog, WorkerTask
+from qt.algorithms.AlgorithmWidgetsFactory import AlgorithmWidgetsFactory
 
 
 class ProcessSelectWindow(QDialog):
@@ -79,8 +80,10 @@ class ProcessSelectWindow(QDialog):
 
         param_layout = QVBoxLayout()
         # TODO FIX config widget
-        # param_widget = self.factory.build_config_widget(self.UI.tabParams)
-        param_widget = QWidget()
+        widgets_factory = AlgorithmWidgetsFactory.get_factory_with_id(
+            self.factory.unique_id()
+        )
+        param_widget = widgets_factory.build_config_widget(self.UI.tabParams)
         param_layout.addWidget(param_widget)
         self.UI.tabParams.setLayout(param_layout)
 
