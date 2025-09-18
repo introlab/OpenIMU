@@ -78,7 +78,9 @@ class ProcessSelectWindow(QDialog):
             QWidget().setLayout(self.UI.tabParams.layout())
 
         param_layout = QVBoxLayout()
-        param_widget = self.factory.build_config_widget(self.UI.tabParams)
+        # TODO FIX config widget
+        # param_widget = self.factory.build_config_widget(self.UI.tabParams)
+        param_widget = QWidget()
         param_layout.addWidget(param_widget)
         self.UI.tabParams.setLayout(param_layout)
 

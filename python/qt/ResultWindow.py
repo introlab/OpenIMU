@@ -64,9 +64,11 @@ class ResultWindow(QWidget):
         if self.factory is not None:
             cdata = pickle.loads(self.data.data)  # Unpacks data from blob in database
 
-            display_widget = self.factory.build_display_widget(
-                self.UI.centralWidget, cdata, self.recordsets
-            )
+            # TODO Fix display widget
+            # display_widget = self.factory.build_display_widget(
+            #    self.UI.centralWidget, cdata, self.recordsets
+            # )
+            display_widget = QWidget()
             self.UI.centralWidget.layout().addWidget(display_widget)
 
             # Data table
