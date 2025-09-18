@@ -22,7 +22,7 @@ from qt.ProcessSelectWindow import ProcessSelectWindow
 from qt.DataSelectorDialog import DataSelectorDialog
 from qt.DataEditor import DataEditor
 from qt.AboutScreen import AboutScreen
-from libopenimu.streamers.streamer_types import StreamerTypes
+from qt.streamers.streamer_types import StreamerTypes
 
 from qt.TreeDataWidget import TreeDataWidget
 

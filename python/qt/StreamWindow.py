@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QBrush, QIcon, QColor
 
 # from libopenimu.streamers.streamer_types import StreamerTypes
-from libopenimu.streamers.AppleWatchStreamer import AppleWatchStreamer
+from qt.streamers.AppleWatchStreamer import AppleWatchStreamer
 
 from libopenimu.models.LogTypes import LogTypes
 

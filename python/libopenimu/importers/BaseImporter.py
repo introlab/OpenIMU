@@ -133,20 +133,32 @@ class BaseImporter:
             except Exception as e:
                 print(f"Error notifying observer {observer}: {e}")
 
-    def notify_error(self, message: str):
+    def notify_error(self, message: str) -> None:
+        """
+        Notify observers of an import error
+        """
         self.last_error = message
         print("Error in importer: " + message)
         self._notify_observers("on_import_error", self, message)
 
-    def notify_progress(self, progress: float):
+    def notify_progress(self, progress: float) -> None:
+        """
+        Notify observers of import progress
+        """
         print("Progress: " + str(progress))
         self._notify_observers("on_import_progress", self, progress)
 
-    def notify_import_started(self, filename: str):
+    def notify_import_started(self, filename: str) -> None:
+        """
+        Notify observers that import has started
+        """
         print("Import started: " + filename)
         self._notify_observers("on_import_started", self, filename)
 
     def notify_import_completed(self, result: Any) -> None:
+        """
+        Notify observers that import has completed
+        """
         print("Import completed")
         self._notify_observers("on_import_completed", self, result)
 

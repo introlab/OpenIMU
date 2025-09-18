@@ -1,3 +1,5 @@
+from typing import Protocol, List, Any
+
 from PySide6.QtCore import (
     Slot,
     Qt,
@@ -98,10 +100,60 @@ class ImportBrowser(QDialog):
                 super().__init__(filename, task_size)
                 self.filename = filename
                 self.importer = file_importer
-                self.importer.update_progress.connect(self.update_progress)
+                # self.importer.update_progress.connect(self.update_progress)
+                self.importer.add_observer(self)
                 self.short_filename = DataSource.build_short_filename(self.filename)
                 self.title = self.short_filename
                 self.results = []
+
+            def on_import_error(
+                self, importer: "BaseImporter", error_message: str
+            ) -> None:
+                """
+                Called when an import error occurs
+
+                Args:
+                    importer: The importer that generated the error
+                    error_message: Description of the error
+                """
+                print("ImportBrowser.Importer.on_import_error", importer, error_message)
+
+            def on_import_progress(
+                self, importer: "BaseImporter", progress: float
+            ) -> None:
+                """
+                Called when import progress is updated
+
+                Args:
+                    importer: The importer reporting progress
+                    progress: Progress value between 0.0 and 1.0
+                """
+                print("ImportBrowser.Importer.on_import_progress", importer, progress)
+                self.update_progress.emit(int(progress))
+
+            def on_import_started(
+                self, importer: "BaseImporter", filename: str
+            ) -> None:
+                """
+                Called when import process starts
+
+                Args:
+                    importer: The importer that started
+                    filename: The file being imported
+                """
+                print("ImportBrowser.Importer.on_import_started", importer, filename)
+
+            def on_import_completed(
+                self, importer: "BaseImporter", result: Any
+            ) -> None:
+                """
+                Called when import process completes successfully
+
+                Args:
+                    importer: The importer that completed
+                    result: The import result
+                """
+                print("ImportBrowser.Importer.on_import_completed", importer, result)
 
             # For testing only
             @timing
