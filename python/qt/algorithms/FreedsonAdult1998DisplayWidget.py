@@ -19,7 +19,7 @@ from qt.Charts import OpenIMUBarGraphView
 
 class FreedsonAdult1998DisplayWidget(QWidget):
 
-    def __init__(self, data, results, parent):
+    def __init__(self, results: dict, recordsets: list, parent: QWidget):
         QWidget.__init__(self, parent=parent)
 
         layout = QVBoxLayout()

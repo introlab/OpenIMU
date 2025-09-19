@@ -55,5 +55,8 @@ class AlgorithmWidgetsFactory(ABC):
         pass
 
     @abstractmethod
-    def build_display_widget(self, parent: QWidget, data, recordsets) -> QWidget:
+    def build_display_widget(self, parent: QWidget, results, recordsets) -> QWidget:
         pass
+
+    def build_data_table(self, results: dict):
+        return self.base_factory.build_data_table(results)
