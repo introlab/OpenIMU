@@ -9,9 +9,8 @@ class FreedsonAdult1998WidgetsFactory(AlgorithmWidgetsFactory):
     def __init__(self, base_factory):
         AlgorithmWidgetsFactory.__init__(self, base_factory)
 
-    def build_config_widget(self, parent) -> QWidget:
-        return FreedsonAdult1998ConfigWidget(parent)
+    def build_config_widget(self, parent: QWidget) -> QWidget:
+        return FreedsonAdult1998ConfigWidget(self.params(), parent)
 
-    def build_display_widget(self, parent, data, recordsets) -> QWidget:
-        # TODO ARGS
-        return FreedsonAdult1998DisplayWidget(parent)
+    def build_display_widget(self, parent: QWidget, results, recordsets) -> QWidget:
+        return FreedsonAdult1998DisplayWidget(results, recordsets, parent)

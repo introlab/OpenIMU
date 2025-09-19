@@ -37,23 +37,23 @@ class AlgorithmWidgetsFactory(ABC):
             print("factory info", factory.info())
 
     @staticmethod
-    def get_factory_named(name) -> str | None:
+    def get_factory_named(name) -> "AlgorithmWidgetsFactory | None":
         for factory in AlgorithmWidgetsFactory.factories:
             if factory.name() == name:
                 return factory
         return None
 
     @staticmethod
-    def get_factory_with_id(unique_id) -> int | None:
+    def get_factory_with_id(unique_id) -> "AlgorithmWidgetsFactory | None":
         for factory in AlgorithmWidgetsFactory.factories:
             if factory.unique_id() == unique_id:
                 return factory
         return None
 
     @abstractmethod
-    def build_config_widget(self, parent) -> QWidget:
+    def build_config_widget(self, parent: QWidget) -> QWidget:
         pass
 
     @abstractmethod
-    def build_display_widget(self, parent, data, recordsets) -> QWidget:
+    def build_display_widget(self, parent: QWidget, data, recordsets) -> QWidget:
         pass

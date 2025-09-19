@@ -14,6 +14,7 @@ from libopenimu.db.DBManager import DBManager
 from libopenimu.models.ProcessedData import ProcessedData
 
 from libopenimu.algorithms.BaseAlgorithm import BaseAlgorithmFactory
+from qt.algorithms.AlgorithmWidgetsFactory import AlgorithmWidgetsFactory
 
 import pickle
 
@@ -57,18 +58,17 @@ class ResultWindow(QWidget):
             self.recordsets.append(ref.recordset)
 
         # Find correct factory and display results
-        self.factory = BaseAlgorithmFactory.get_factory_with_id(
+        self.factory = AlgorithmWidgetsFactory.get_factory_with_id(
             self.data.id_data_processor
         )
 
         if self.factory is not None:
             cdata = pickle.loads(self.data.data)  # Unpacks data from blob in database
 
-            # TODO Fix display widget
-            # display_widget = self.factory.build_display_widget(
-            #    self.UI.centralWidget, cdata, self.recordsets
-            # )
-            display_widget = QWidget()
+            display_widget = self.factory.build_display_widget(
+                self.UI.centralWidget, cdata, self.recordsets
+            )
+
             self.UI.centralWidget.layout().addWidget(display_widget)
 
             # Data table
