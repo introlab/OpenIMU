@@ -24,7 +24,7 @@ class BaseAlgorithm(ABC):
         pass
 
     @abstractmethod
-    def calculate(self, manager: DBManager, recordsets: list):
+    def calculate(self, manager: DBManager, recordsets: list) -> dict:
         pass
 
 

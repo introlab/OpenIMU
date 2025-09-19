@@ -14,25 +14,26 @@ from PySide6.QtWidgets import (
 )
 
 
-# from qt.Charts import OpenIMUBarGraphView
+from qt.algorithms.BaseConfigWidget import BaseConfigWidget
 
-class FreedsonAdult1998ConfigWidget(QWidget):
+
+class FreedsonAdult1998ConfigWidget(BaseConfigWidget):
 
     def __init__(self, params, parent):
-        QWidget.__init__(self, parent=parent)
-        self.params = params
+        BaseConfigWidget.__init__(self, params, parent=parent)
 
         # Initialize inputs
         self.config_preset_input = QComboBox(self)
 
-
         self.config_preset_input.addItem(
-            self.tr("Default values"), [
+            self.tr("Default values"),
+            [
                 params["sedentary_cutoff"]["default_value"],
                 params["light_cutoff"]["default_value"],
                 params["moderate_cutoff"]["default_value"],
-                params["vigorous_cutoff"]["default_value"]
-            ])
+                params["vigorous_cutoff"]["default_value"],
+            ],
+        )
 
         self.config_preset_input.addItem(self.tr("Custom values"), [-1, -1, -1, -1])
         self.config_preset_input.currentIndexChanged.connect(self.config_preset_changed)
@@ -55,35 +56,41 @@ class FreedsonAdult1998ConfigWidget(QWidget):
         layout = QGridLayout()
         layout.setAlignment(Qt.AlignTop)
         self.config_sedentary_input = QSpinBox()
-        self.config_sedentary_input.setRange(params["sedentary_cutoff"]["min_value"],
-                                             params["sedentary_cutoff"]["max_value"])
-        self.config_sedentary_input.setValue(params["sedentary_cutoff"]["default_value"])
+        self.config_sedentary_input.setRange(
+            params["sedentary_cutoff"]["min_value"],
+            params["sedentary_cutoff"]["max_value"],
+        )
+        self.config_sedentary_input.setValue(
+            params["sedentary_cutoff"]["default_value"]
+        )
         item_label = QLabel("Cut-off Sedentary")
         layout.addWidget(item_label, 0, 0)
         layout.addWidget(self.config_sedentary_input, 0, 1)
 
-
         self.config_light_input = QSpinBox()
-        self.config_light_input.setRange(params["light_cutoff"]["min_value"],
-                                         params["light_cutoff"]["max_value"])
+        self.config_light_input.setRange(
+            params["light_cutoff"]["min_value"], params["light_cutoff"]["max_value"]
+        )
         self.config_light_input.setValue(params["light_cutoff"]["default_value"])
         item_label = QLabel("Cut-off Light")
         layout.addWidget(item_label, 1, 0)
         layout.addWidget(self.config_light_input, 1, 1)
 
-
         self.config_moderate_input = QSpinBox()
-        self.config_moderate_input.setRange(params["moderate_cutoff"]["min_value"],
-                                            params["moderate_cutoff"]["max_value"])
+        self.config_moderate_input.setRange(
+            params["moderate_cutoff"]["min_value"],
+            params["moderate_cutoff"]["max_value"],
+        )
         self.config_moderate_input.setValue(params["moderate_cutoff"]["default_value"])
         item_label = QLabel("Cut-off Moderate")
         layout.addWidget(item_label, 2, 0)
         layout.addWidget(self.config_moderate_input, 2, 1)
 
-
         self.config_vigorous_input = QSpinBox()
-        self.config_vigorous_input.setRange(params["vigorous_cutoff"]["min_value"],
-                                            params["vigorous_cutoff"]["max_value"])
+        self.config_vigorous_input.setRange(
+            params["vigorous_cutoff"]["min_value"],
+            params["vigorous_cutoff"]["max_value"],
+        )
         self.config_vigorous_input.setValue(params["vigorous_cutoff"]["default_value"])
         item_label = QLabel("Cut-off Vigorous")
         layout.addWidget(item_label, 3, 0)
@@ -100,7 +107,7 @@ class FreedsonAdult1998ConfigWidget(QWidget):
             "sedentary_cutoff": self.config_sedentary_input.value(),
             "light_cutoff": self.config_light_input.value(),
             "moderate_cutoff": self.config_moderate_input.value(),
-            "vigorous_cutoff": self.config_vigorous_input.value()
+            "vigorous_cutoff": self.config_vigorous_input.value(),
         }
 
     def config_preset_changed(self):

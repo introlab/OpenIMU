@@ -6,10 +6,11 @@ from qt.resources.ui.python.ProcessSelectDialog_ui import Ui_dlgProcessSelect
 from libopenimu.db.DBManager import DBManager
 from libopenimu.models.Recordset import Recordset
 
-from libopenimu.algorithms.BaseAlgorithm import BaseAlgorithmFactory
+from libopenimu.algorithms.BaseAlgorithm import BaseAlgorithmFactory, BaseAlgorithm
 
 from qt.BackgroundProcess import BackgroundProcess, ProgressDialog, WorkerTask
 from qt.algorithms.AlgorithmWidgetsFactory import AlgorithmWidgetsFactory
+from qt.algorithms.BaseConfigWidget import BaseConfigWidget
 
 
 class ProcessSelectWindow(QDialog):
@@ -30,6 +31,8 @@ class ProcessSelectWindow(QDialog):
         self.recordsets = recordsets
         self.factory = None
         self.fill_algorithms_list()
+
+        self.config_widget: BaseConfigWidget = None
 
         # Connect signals
         self.UI.btnProcess.clicked.connect(self.on_process_button_clicked)
@@ -78,14 +81,14 @@ class ProcessSelectWindow(QDialog):
             # Remove current layout by setting it to a temporary object
             QWidget().setLayout(self.UI.tabParams.layout())
 
-        param_layout = QVBoxLayout()
-        # TODO FIX config widget
+        config_layout = QVBoxLayout()
+
         widgets_factory = AlgorithmWidgetsFactory.get_factory_with_id(
             self.factory.unique_id()
         )
-        param_widget = widgets_factory.build_config_widget(self.UI.tabParams)
-        param_layout.addWidget(param_widget)
-        self.UI.tabParams.setLayout(param_layout)
+        self.config_widget = widgets_factory.build_config_widget(self.UI.tabParams)
+        config_layout.addWidget(self.config_widget)
+        self.UI.tabParams.setLayout(config_layout)
 
         self.UI.btnProcess.setEnabled(True)
         self.UI.tabAlgo.setCurrentIndex(0)
@@ -95,7 +98,14 @@ class ProcessSelectWindow(QDialog):
         if self.factory is not None:
 
             class Processor(WorkerTask):
-                def __init__(self, title, algor, dbmanager, recordsets, parent=None):
+                def __init__(
+                    self,
+                    title,
+                    algor: BaseAlgorithm,
+                    dbmanager,
+                    recordsets,
+                    parent=None,
+                ):
                     super(Processor, self).__init__(title, 0, parent)
                     self.algo = algor
                     self.dbMan = dbmanager
@@ -105,7 +115,7 @@ class ProcessSelectWindow(QDialog):
                 def process(self):
                     # print('Processor starting')
                     self.results = algo.calculate(self.dbMan, self.recordsets)
-                    # print('results:', self.results)
+                    print("results:", self.results)
                     # print('Processor done!')
 
                 def get_results(self):
@@ -113,7 +123,7 @@ class ProcessSelectWindow(QDialog):
                     return self.results
 
             # Initialize processor
-            params = self.factory.params()
+            params = self.config_widget.get_params()
             algo = self.factory.create(params)
 
             # Remove recordsets that don't have the required sensors

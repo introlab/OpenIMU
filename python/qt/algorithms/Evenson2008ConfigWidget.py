@@ -13,12 +13,13 @@ from PySide6.QtWidgets import (
     QLabel,
 )
 
+from qt.algorithms.BaseConfigWidget import BaseConfigWidget
 
-class Evenson2008ConfigWidget(QWidget):
+
+class Evenson2008ConfigWidget(BaseConfigWidget):
 
     def __init__(self, params, parent):
-        QWidget.__init__(self, parent=parent)
-        self.params = params
+        BaseConfigWidget.__init__(self, params, parent=parent)
 
         # Initialize inputs
         self.config_preset_input = QComboBox(self)
