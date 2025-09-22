@@ -24,3 +24,6 @@ python-3.11
 build
 python-3.12
 .env
+*.egg-info
+*.egg
+*.log

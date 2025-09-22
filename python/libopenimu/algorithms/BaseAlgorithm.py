@@ -66,6 +66,11 @@ class BaseAlgorithmFactory(ABC):  # (QObject):
         return None
 
     @abstractmethod
+    def unique_key(self):
+        # return class name based on class information
+        return __class__.__name__
+
+    @abstractmethod
     def create(self, params: dict) -> "BaseAlgorithm":
         pass
 

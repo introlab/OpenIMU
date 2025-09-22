@@ -241,6 +241,9 @@ class Evenson2008Factory(BaseAlgorithmFactory):
         # Create instance of algorithm
         return Evenson2008(params)
 
+    def unique_key(self):
+        return "Evenson2008"
+
     def params(self):
         return {
             "sedentary_cutoff": {

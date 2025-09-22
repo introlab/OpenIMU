@@ -31,3 +31,10 @@ class TestBaseAlgorithmFactory(unittest.TestCase):
         self.assertNotEqual(
             base.BaseAlgorithmFactory.get_factory_named("Evenson 2008"), None
         )
+
+    def test_get_factory_key_is_unique(self):
+        keys = []
+        for factory in base.BaseAlgorithmFactory.factories:
+            key = factory.unique_key()
+            self.assertNotIn(key, keys)
+            keys.append(key)

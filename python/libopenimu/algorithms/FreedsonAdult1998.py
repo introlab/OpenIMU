@@ -70,6 +70,9 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
     def __init__(self):
         super().__init__()
 
+    def unique_key(self):
+        return "FreedsonAdult1998"
+
     def create(self, params: dict):
         # Create instance of algorithm
         return FreedsonAdult1998(params)

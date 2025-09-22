@@ -56,6 +56,11 @@ class ProcessSelectWindow(QDialog):
         # print('onListWidgetItemClicked')
         # Fill info
         self.factory = BaseAlgorithmFactory.get_factory_named(item.text())
+        print(f"Factory for {item.text()}: {self.factory}")
+        if self.factory is None:
+            print("Factory is None!")
+            return
+
         info = self.factory.info()
         if info.__contains__("author"):
             self.UI.lblAuthorValue.setText(info["author"])
@@ -86,7 +91,24 @@ class ProcessSelectWindow(QDialog):
         widgets_factory = AlgorithmWidgetsFactory.get_factory_with_id(
             self.factory.unique_id()
         )
-        self.config_widget = widgets_factory.build_config_widget(self.UI.tabParams)
+        print(f"Widgets factory: {widgets_factory}")
+        if widgets_factory is None:
+            print("Widgets factory is None!")
+            return
+
+        try:
+            self.config_widget = widgets_factory.build_config_widget(None)  # Don't pass parent
+            print(f"Config widget: {self.config_widget}")
+        except Exception as e:
+            print(f"Exception creating config widget: {e}")
+            import traceback
+            traceback.print_exc()
+            return
+
+        if self.config_widget is None:
+            print("Config widget is None!")
+            return
+
         config_layout.addWidget(self.config_widget)
         self.UI.tabParams.setLayout(config_layout)
 
@@ -121,6 +143,10 @@ class ProcessSelectWindow(QDialog):
                 def get_results(self):
                     # print('getting results')
                     return self.results
+
+            if self.config_widget is None:
+                print("Config widget is None!")
+                return
 
             # Initialize processor
             params = self.config_widget.get_params()
