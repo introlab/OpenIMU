@@ -23,13 +23,19 @@ class FreedsonAdult1998DisplayWidget(QWidget):
         QWidget.__init__(self, parent=parent)
 
         layout = QVBoxLayout()
-        # Add Scroll area
-        scroll = QScrollArea(parent=self)
+        self.setLayout(layout)
 
-        scroll.setLayout(layout)
-        view = OpenIMUBarGraphView(scroll)
+        # Add Scroll area
+        scroll = QScrollArea()
+        view = OpenIMUBarGraphView()
+        scroll.setWidget(view)
+        scroll.setWidgetResizable(True)
+
+        # Set minimum size to prevent tiny display
+        view.setMinimumSize(600, 400)
+
         view.set_title(self.tr("Active minutes"))
-        layout.addWidget(view)
+        layout.addWidget(scroll)
 
         for result in results:
             data = result["result"]

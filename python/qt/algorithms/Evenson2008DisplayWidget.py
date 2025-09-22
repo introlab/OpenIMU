@@ -21,13 +21,19 @@ class Evenson2008DisplayWidget(QWidget):
     def __init__(self, results: dict, recordsets: list, parent: QWidget):
         QWidget.__init__(self, parent=parent)
         layout = QVBoxLayout()
-        # Add Scroll area
-        scroll = QScrollArea(parent=self)
+        self.setLayout(layout)
 
-        scroll.setLayout(layout)
-        view = OpenIMUBarGraphView(scroll)
+        # Add Scroll area
+        scroll = QScrollArea()
+        view = OpenIMUBarGraphView()
+        scroll.setWidget(view)
+        scroll.setWidgetResizable(True)
+
+        # Set minimum size to prevent tiny display
+        view.setMinimumSize(600, 400)
+
         view.set_title(self.tr("Active minutes"))
-        layout.addWidget(view)
+        layout.addWidget(scroll)
 
         for result in results:
             data = result["result"]
