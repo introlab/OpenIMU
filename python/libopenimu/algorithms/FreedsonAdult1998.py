@@ -61,16 +61,12 @@ class FreedsonAdult1998(BaseAlgorithm):
 
 
 class FreedsonAdult1998Factory(BaseAlgorithmFactory):
-    # config_preset_input = QComboBox
-    # config_sedentary_input = QSpinBox
-    # config_light_input = QSpinBox
-    # config_moderate_input = QSpinBox
-    # config_vigorous_input = QSpinBox
+    """Factory for Freedson Adult 1998 algorithm."""
 
     def __init__(self):
         super().__init__()
 
-    def unique_key(self):
+    def unique_key(self) -> str:
         return "FreedsonAdult1998"
 
     def create(self, params: dict):
@@ -109,6 +105,18 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
             },
         }
 
+    def results(self) -> list:
+        """
+        Should return a dict with the results structure and description.
+        :return dict:
+        """
+        return [
+            {"name": "sedentary", "description": "Minutes for sedentary activity"},
+            {"name": "light", "description": "Minutes for light activity"},
+            {"name": "moderate", "description": "Minutes for moderate activity"},
+            {"name": "vigorous", "description": "Minutes for vigorous activity"},
+        ]
+
     def name(self):
         return "Freedson Adult 1998"
 
@@ -144,6 +152,7 @@ class FreedsonAdult1998Factory(BaseAlgorithmFactory):
         """,
             "name": self.name(),
             "author": "Dominic Létourneau",
+            "key": self.unique_key(),
             "version": "0.1",
             "reference": (
                 "Freedson PS1, Melanson E, Sirard J., Calibration of the Computer Science and "

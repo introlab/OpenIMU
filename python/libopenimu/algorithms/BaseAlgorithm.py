@@ -9,9 +9,6 @@ Base Algorithm class
 from abc import abstractmethod, ABC
 from libopenimu.db.DBManager import DBManager
 
-# from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
-# from PySide6.QtCore import QObject
-
 
 class BaseAlgorithm(ABC):
 
@@ -52,42 +49,75 @@ class BaseAlgorithmFactory(ABC):  # (QObject):
             print("factory info", factory.info())
 
     @staticmethod
-    def get_factory_named(name) -> str | None:
+    def get_factory_named(name) -> "BaseAlgorithmFactory | None":
+        """
+        Get a factory with its name
+        :param name: str
+        :return BaseAlgorithmFactory | None:
+        """
         for factory in BaseAlgorithmFactory.factories:
             if factory.name() == name:
                 return factory
         return None
 
     @staticmethod
-    def get_factory_with_id(unique_id) -> int | None:
+    def get_factory_with_id(unique_id) -> "BaseAlgorithmFactory | None":
+        """
+        Get a factory with its unique ID
+        :param unique_id: int
+        :return BaseAlgorithmFactory | None:
+        """
         for factory in BaseAlgorithmFactory.factories:
             if factory.unique_id() == unique_id:
                 return factory
         return None
 
     @abstractmethod
-    def unique_key(self):
-        # return class name based on class information
-        return __class__.__name__
+    def unique_key(self) -> str:
+        """
+        Should return a unique string key for that factory
+        :return str:
+        """
+        pass
 
     @abstractmethod
     def create(self, params: dict) -> "BaseAlgorithm":
         pass
 
     @abstractmethod
-    def params(self):
+    def params(self) -> dict:
+        """
+        Should return a dict with the parameters and their default values
+        :return dict:
+        """
         return {}
 
     @abstractmethod
-    def name(self):
+    def results(self) -> list:
+        """
+        Should return a dict with the results structure
+        :return dict:
+        """
+        return []
+
+    @abstractmethod
+    def name(self) -> str:
+        """
+        Should return the name of the algorithm
+        :return str:
+        """
         return "BaseAlgorithm"
 
     @abstractmethod
-    def unique_id(self):
+    def unique_id(self) -> int:
+        """
+        Should return a unique identifier for the algorithm
+        :return int:
+        """
         return 0
 
     @abstractmethod
-    def info(self):
+    def info(self) -> dict:
         """
         Should return a dict with
         'description' : string
@@ -111,17 +141,3 @@ class BaseAlgorithmFactory(ABC):  # (QObject):
     @abstractmethod
     def build_data_table(self, results):
         return {"headers": [], "data_names": [], "data": []}
-
-    # @abstractmethod
-    # def build_display_widget(self, parent_widget: QWidget, results, recordsets):
-    #     return QWidget()
-
-    # @abstractmethod
-    # def build_config_widget(self, parent_widget: QWidget, default_params: dict = None):
-    #     layout = QVBoxLayout()
-    #     label = QLabel(self.tr("No settings available for that algorithm"))
-    #     layout.addWidget(label)
-
-    #     base_widget = QWidget(parent_widget)
-    #     base_widget.setLayout(layout)
-    #     return base_widget

@@ -30,7 +30,7 @@ class ActigraphImporterTest(unittest.TestCase):
 
     def test_loading(self):
 
-        manager = DBManager("test.oi", overwrite=True)
+        manager = DBManager(":memory:", overwrite=False)
         participant = Participant(
             name="My Participant", description="Participant Description"
         )
@@ -38,7 +38,7 @@ class ActigraphImporterTest(unittest.TestCase):
 
         # Import to database
         importer = ActigraphImporter(manager, participant)
-        results = importer.load("../../../resources/samples/test.gt3x")
+        results = importer.load("samples/test.gt3x")
 
         samples = 0
         for activity in results[1]["activity"]:

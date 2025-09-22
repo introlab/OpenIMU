@@ -16,8 +16,9 @@ from libopenimu.tools.timing import timing
 
 class RecordType:
     """
-        All Actigraph record types.
+    All Actigraph record types.
     """
+
     ACTIVITY = 0x00
     BATTERY = 0x02
     EVENT = 0x03
@@ -45,7 +46,7 @@ class SensorColumn:
         self.offset = 0
         self.size = 0
         self.scale_factor = 0
-        self.label = 'Unknown'
+        self.label = "Unknown"
 
 
 class SensorSchema:
@@ -125,7 +126,7 @@ class ParameterKeys:
 
     @staticmethod
     def decode_float(data):
-        value = struct.unpack_from('<I', data)
+        value = struct.unpack_from("<I", data)
 
         if ParameterKeys.Conversion.ENCODED_MAXIMUM == value:
             return sys.float_info.max
@@ -133,7 +134,10 @@ class ParameterKeys:
             return -sys.float_info.max
 
         # Exponent
-        i32 = np.int32((value & ParameterKeys.Conversion.EXPONENT_MASK) >> ParameterKeys.Conversion.EXPONENT_OFFSET)
+        i32 = np.int32(
+            (value & ParameterKeys.Conversion.EXPONENT_MASK)
+            >> ParameterKeys.Conversion.EXPONENT_OFFSET
+        )
         if 0 != (i32 & 0x80):
             i32 |= 0xFFFFFF00
         exponent = np.double(i32)
@@ -150,13 +154,13 @@ class ParameterKeys:
     @staticmethod
     def decode_uint32(data):
         # print('decode uint32')
-        (value) = struct.unpack_from('<I', data)
+        (value) = struct.unpack_from("<I", data)
         return value
 
     @staticmethod
     def decode_int32(data):
         # print('decode int32')
-        (value) = struct.unpack_from('<i', data)
+        (value) = struct.unpack_from("<i", data)
         return value
 
     @staticmethod
@@ -165,7 +169,7 @@ class ParameterKeys:
         for v in ParameterKeys.__dict__:
             if ParameterKeys.__dict__[v] == value:
                 return v
-        return 'unknown'
+        return "unknown"
 
     @staticmethod
     def decode_param(key, param_data):
@@ -267,19 +271,21 @@ class ParameterKeys:
         elif key == ParameterKeys.SENSOR_CONFIGURATION:
             value = ParameterKeys.decode_int32(param_data)
         else:
-            print('Ignore key:', hex(key))
+            print("Ignore key:", hex(key))
 
-        if param_name == 'unknown':
+        if param_name == "unknown":
             return {}
         else:
             return {param_name: value}
 
+
 def gt3x_read_int16(data, nb_axis=3):
     lines = int(np.floor(len(data) * 8 / (16 * nb_axis)))
     values = np.frombuffer(data, np.int16)
-    samples = np.reshape(values, (lines, nb_axis), 'C')
+    samples = np.reshape(values, (lines, nb_axis), "C")
 
     return samples
+
 
 def gt3x_read_uint12(data, nb_axis=3):
     """
@@ -299,7 +305,7 @@ def gt3x_read_uint12(data, nb_axis=3):
     # C-Style array
     lines = int(np.floor(len(data) * 8 / (12 * nb_axis)))
     # print ('lines:',lines)
-    samples = np.ndarray(shape=(lines, nb_axis), dtype=np.int16, order='C')
+    samples = np.ndarray(shape=(lines, nb_axis), dtype=np.int16, order="C")
 
     # We know exactly how many samples the data should contain
     for line in range(0, lines):
@@ -321,15 +327,19 @@ def gt3x_read_uint12(data, nb_axis=3):
                 offset += 4
                 current = data[byte_index]
                 byte_index += 1
-                shifter |= (current & 0xFF)
+                shifter |= current & 0xFF
                 offset += 8
             # Sign extension
             if (shifter & 0x0800) != 0:
                 shifter |= 0xF000
 
             # Fill data
-            samples[line][axis] = np.int16(shifter)
-            # print('sample:', np.int16(shifter))
+            try:
+                samples[line][axis] = np.uint16(shifter).astype(np.int16)
+            except Exception as e:
+                print(
+                    f"Error filling data for line {line}, axis {axis}: {e} shifter: {shifter} "
+                )
 
     return samples
 
@@ -369,35 +379,37 @@ def gt3x_activity_extractor(timestamp, data, samplerate, scale):
     # return samples in g
     return [timestamp, samples]
 
+
 def gt3x_activity2_extractor(timestamp, data, samplerate, scale):
     """
-        One second of raw activity samples as little-endian signed-shorts in XYZ order.
+    One second of raw activity samples as little-endian signed-shorts in XYZ order.
 
-        Once a sample has been parsed we must:
+    Once a sample has been parsed we must:
 
-        Scale the resultant by the scale factor (this gives us an acceleration value in g's). Device serial numbers
-        starting with NEO and CLE use a scale factor of 341 LSB/g (±6g). MOS devices use a 256 LSB/g scale factor (±8g).
-        If a LOG_PARAMETER record is preset, then the ACCEL_SCALE value should be used.
+    Scale the resultant by the scale factor (this gives us an acceleration value in g's). Device serial numbers
+    starting with NEO and CLE use a scale factor of 341 LSB/g (±6g). MOS devices use a 256 LSB/g scale factor (±8g).
+    If a LOG_PARAMETER record is preset, then the ACCEL_SCALE value should be used.
 
-        Round the value to three decimal places.
+    Round the value to three decimal places.
 
-        Activity Log Record Type with 1-Byte Payload
-        An 'Activity2' (id: 0x1A) log record type with a 1-byte payload is captured on a USB connection event (and does
-        not represent a reading from the activity monitor's accelerometer). This event is captured upon docking the
-        activity monitor (via USB) to a PC or CentrePoint Data Hub (CDH) device. Therefore such records cannot be parsed
-        as the traditional activity log records and can be ignored.
+    Activity Log Record Type with 1-Byte Payload
+    An 'Activity2' (id: 0x1A) log record type with a 1-byte payload is captured on a USB connection event (and does
+    not represent a reading from the activity monitor's accelerometer). This event is captured upon docking the
+    activity monitor (via USB) to a PC or CentrePoint Data Hub (CDH) device. Therefore such records cannot be parsed
+    as the traditional activity log records and can be ignored.
 
-        :param data:
-        :param timestamp:
-        :param samplerate:
-        :return:
-        """
+    :param data:
+    :param timestamp:
+    :param samplerate:
+    :return:
+    """
 
     # This will generate float values
     samples = gt3x_read_int16(data) / np.float32(scale)
 
     # return samples in g
     return [timestamp, samples]
+
 
 def gt3x_battery_extractor(timestamp, data, samplerate):
     """
@@ -412,7 +424,7 @@ def gt3x_battery_extractor(timestamp, data, samplerate):
     battery = 0.0
 
     if len(data) == 2:
-        [battery] = struct.unpack_from('<H', data)
+        [battery] = struct.unpack_from("<H", data)
         # Convert to volts
         battery *= 0.001
         # print('battery:', battery)
@@ -443,7 +455,7 @@ def gt3x_lux_extractor(timestamp, data, samplerate):
     lux = 0
 
     if len(data) == 2:
-        lux = struct.unpack_from('<H', data)
+        lux = struct.unpack_from("<H", data)
 
     return [timestamp, np.int16(lux)]
 
@@ -457,8 +469,14 @@ def gt3x_capsense_extractor(timestamp, data, samplerate):
     :return:
     """
     if len(data) == 6:
-        [signal, reference, state, bursts] = struct.unpack_from('<HHBB', data)
-        return [timestamp, np.uint16(signal), np.uint16(reference), np.uint8(state), np.uint8(bursts)]
+        [signal, reference, state, bursts] = struct.unpack_from("<HHBB", data)
+        return [
+            timestamp,
+            np.uint16(signal),
+            np.uint16(reference),
+            np.uint8(state),
+            np.uint8(bursts),
+        ]
     else:
         return [timestamp, [np.uint16(0), np.uint16(0), np.uint8(0), np.uint8(0)]]
 
@@ -494,7 +512,7 @@ def gt3x_parameters_extractor(timestamp, data, samplerate):
     # Each parameter is 8 bytes
     for param_index in range(0, int(len(data) / 8)):
         # unsigned int32, 4 bytes of data
-        [key, param_data] = struct.unpack_from('<I4s', data, offset=param_index * 8)
+        [key, param_data] = struct.unpack_from("<I4s", data, offset=param_index * 8)
 
         # update parameters result dict
         result.update(ParameterKeys.decode_param(key, param_data))
@@ -506,7 +524,9 @@ def gt3x_sensor_schema_extractor(data):
     schema = SensorSchema()
     schema.schema_id = np.frombuffer(buffer=data[0:2], dtype=np.int16, count=1)[0]
     schema.columns_per_row = np.frombuffer(buffer=data[2:4], dtype=np.int16, count=1)[0]
-    schema.samples_in_record = np.frombuffer(buffer=data[4:6], dtype=np.int16, count=1)[0]
+    schema.samples_in_record = np.frombuffer(buffer=data[4:6], dtype=np.int16, count=1)[
+        0
+    ]
 
     bytes_per_column = 23
     for col in range(0, schema.columns_per_row):
@@ -519,8 +539,12 @@ def gt3x_sensor_schema_extractor(data):
         sensor_col.size = data[starting_offset + 2]
         # scale_factor = np.round(np.frombuffer(buffer=data[starting_offset + 3:starting_offset + 7], dtype=np.single,
         #                                       count=1), 6)[0]
-        sensor_col.scale_factor = ParameterKeys.decode_float(data[starting_offset + 3:starting_offset + 7])
-        sensor_col.label = data[starting_offset+7:starting_offset+23].decode("utf-8").strip()
+        sensor_col.scale_factor = ParameterKeys.decode_float(
+            data[starting_offset + 3 : starting_offset + 7]
+        )
+        sensor_col.label = (
+            data[starting_offset + 7 : starting_offset + 23].decode("utf-8").strip()
+        )
 
         schema.sensor_columns.append(sensor_col)
 
@@ -529,22 +553,30 @@ def gt3x_sensor_schema_extractor(data):
 
 def gt3x_sensor_data_extractor(timestamp, data, sensor_schema: list):
     schema_id = np.frombuffer(buffer=data, dtype=np.int16, count=1)
-    current_schema = [schema for schema in sensor_schema if schema.schema_id == schema_id]
+    current_schema = [
+        schema for schema in sensor_schema if schema.schema_id == schema_id
+    ]
     if not current_schema:
-        print('Unknown schema id ' + schema_id)
+        print("Unknown schema id " + schema_id)
         return []
     current_schema = current_schema[0]
 
     sensor_datas = {}
-    sensor_mapping = [column.label.split()[0] for column in current_schema.sensor_columns if column.label]
-    sensor_mapping.extend(['' for missing in range(len(sensor_mapping),current_schema.columns_per_row)])
+    sensor_mapping = [
+        column.label.split()[0]
+        for column in current_schema.sensor_columns
+        if column.label
+    ]
+    sensor_mapping.extend(
+        ["" for missing in range(len(sensor_mapping), current_schema.columns_per_row)]
+    )
     sensor_names = set(sensor_mapping)
     sensor_values = {name: [] for name in sensor_names}
 
     current_offset = 2
     samples_num = current_schema.samples_in_record
     if samples_num == 0:
-        record_size = sum([column.size/8 for column in current_schema.sensor_columns])
+        record_size = sum([column.size / 8 for column in current_schema.sensor_columns])
         samples_num = int((len(data) - current_offset) / record_size)
     for sample in range(0, samples_num):
         current_values = {name: [] for name in sensor_names}
@@ -553,24 +585,26 @@ def gt3x_sensor_data_extractor(timestamp, data, sensor_schema: list):
 
             if sensor_column.signed:
                 if bytes_in_value == 2:
-                    dt = 'h'
+                    dt = "h"
                 else:
-                    dt = 'b'
+                    dt = "b"
             else:
                 if bytes_in_value == 2:
-                    dt = 'H'
+                    dt = "H"
                 else:
-                    dt = 'B'
+                    dt = "B"
             if bytes_in_value >= 2:
                 if sensor_column.big_endian:
-                    dt = '>' + dt
+                    dt = ">" + dt
                 else:
-                    dt = '<' + dt
-            value = struct.unpack(dt, data[current_offset:current_offset+bytes_in_value])[0]
+                    dt = "<" + dt
+            value = struct.unpack(
+                dt, data[current_offset : current_offset + bytes_in_value]
+            )[0]
             if sensor_column.scale_factor != 0:
                 value /= sensor_column.scale_factor
 
-            if sensor_mapping[col_index] == 'Temperature':
+            if sensor_mapping[col_index] == "Temperature":
                 value += 21  # Offset required to have an adequate temperature reading
 
             current_values[sensor_mapping[col_index]].append(value)
@@ -582,7 +616,9 @@ def gt3x_sensor_data_extractor(timestamp, data, sensor_schema: list):
     return [timestamp, sensor_values]
 
 
-def gt3x_calculate_checksum(separator, record_type, timestamp, record_size, record_data):
+def gt3x_calculate_checksum(
+    separator, record_type, timestamp, record_size, record_data
+):
     """
 
     A 1-byte checksum immediately follows the record payload. It is a 1's complement,
@@ -601,12 +637,12 @@ def gt3x_calculate_checksum(separator, record_type, timestamp, record_size, reco
 
     checksum = np.uint8(separator)
     checksum ^= record_type & 0xFF
-    checksum ^= (timestamp & 0xFF)
-    checksum ^= ((timestamp >> 8) & 0xFF)
-    checksum ^= ((timestamp >> 16) & 0xFF)
-    checksum ^= ((timestamp >> 24) & 0xFF)
-    checksum ^= (record_size & 0xFF)
-    checksum ^= ((record_size >> 8) & 0xFF)
+    checksum ^= timestamp & 0xFF
+    checksum ^= (timestamp >> 8) & 0xFF
+    checksum ^= (timestamp >> 16) & 0xFF
+    checksum ^= (timestamp >> 24) & 0xFF
+    checksum ^= record_size & 0xFF
+    checksum ^= (record_size >> 8) & 0xFF
 
     for record in record_data:
         checksum ^= record
@@ -625,7 +661,7 @@ def gt3x_importer(filename):
     :param filename: The gt3x file name
     :return: The data
     """
-    print('Loading: ', filename)
+    print("Loading: ", filename)
 
     # Dict containing the information of the file
     info = {}
@@ -645,94 +681,150 @@ def gt3x_importer(filename):
 
     with zipfile.ZipFile(filename) as myzip:
         # Reading info.txt file
-        with myzip.open('info.txt') as myfile:
+        with myzip.open("info.txt") as myfile:
             lines = myfile.readlines()
             for line in lines:
-                items = line.decode('UTF-8').rstrip('\r\n').split(': ')
+                items = line.decode("UTF-8").rstrip("\r\n").split(": ")
                 # We must have the list with 2 items, key and value
                 if len(items) == 2:
                     info[items[0]] = items[1]
 
-        sample_rate = float(info['Sample Rate'])
-        scale = float(info['Acceleration Scale'])
+        sample_rate = float(info["Sample Rate"])
+        scale = float(info["Acceleration Scale"])
         time_offset = 0
-        if 'TimeZone' in info:
-            time_offset = int(info['TimeZone'].split(':')[0]) * 3600
-        print('info', info)
+        if "TimeZone" in info:
+            time_offset = int(info["TimeZone"].split(":")[0]) * 3600
+        print("info", info)
         # print('My Sample rate:', sample_rate)
 
         # Reading log.bin
-        with myzip.open('log.bin') as myfile:
+        with myzip.open("log.bin") as myfile:
             filedata = myfile.read()
-            print('filedata size', len(filedata), 'type:', type(filedata))
+            print("filedata size", len(filedata), "type:", type(filedata))
             data_offset = 0
 
             while data_offset < len(filedata):
                 # print('data_offset:', data_offset)
                 # < Little Endian, byte, byte, uint32, uint16
-                [separator, record_type, timestamp, record_size] = struct.unpack_from('<BBIH', filedata, offset=data_offset)
-                if separator != 0x1e:
-                    print('Separator Error!!!')
+                [separator, record_type, timestamp, record_size] = struct.unpack_from(
+                    "<BBIH", filedata, offset=data_offset
+                )
+                if separator != 0x1E:
+                    print("Separator Error!!!")
 
                 # print('Extracting record: ', hex(separator), hex(record_type), hex(timestamp), hex(record_size))
-                [record_data, checksum] = struct.unpack_from('<' + str(record_size) + 'sB', filedata, offset=data_offset + 8)
+                [record_data, checksum] = struct.unpack_from(
+                    "<" + str(record_size) + "sB", filedata, offset=data_offset + 8
+                )
 
                 # Verify checksum
-                cs_check = gt3x_calculate_checksum(separator, record_type, timestamp, record_size, record_data)
+                cs_check = gt3x_calculate_checksum(
+                    separator, record_type, timestamp, record_size, record_data
+                )
 
                 if checksum == cs_check:
                     # Apply timezone offset
                     timestamp -= time_offset
 
                     if record_type is RecordType.ACTIVITY:
-                        activity_data.append(gt3x_activity_extractor(timestamp, record_data, sample_rate, scale))
+                        activity_data.append(
+                            gt3x_activity_extractor(
+                                timestamp, record_data, sample_rate, scale
+                            )
+                        )
                     elif record_type is RecordType.BATTERY:
-                        battery_data.append(gt3x_battery_extractor(timestamp, record_data, sample_rate))
+                        battery_data.append(
+                            gt3x_battery_extractor(timestamp, record_data, sample_rate)
+                        )
                     elif record_type is RecordType.EVENT:
-                        event_data.append(gt3x_event_extractor(timestamp, record_data, sample_rate))
+                        event_data.append(
+                            gt3x_event_extractor(timestamp, record_data, sample_rate)
+                        )
                     elif record_type is RecordType.LUX:
-                        lux_data.append(gt3x_lux_extractor(timestamp, record_data, sample_rate))
+                        lux_data.append(
+                            gt3x_lux_extractor(timestamp, record_data, sample_rate)
+                        )
                     elif record_type is RecordType.METADATA:
-                        metadata_data.append(gt3x_metadata_extractor(timestamp, record_data, sample_rate))
+                        metadata_data.append(
+                            gt3x_metadata_extractor(timestamp, record_data, sample_rate)
+                        )
                     elif record_type is RecordType.PARAMETERS:
-                        parameters_data.append(gt3x_parameters_extractor(timestamp, record_data, sample_rate))
+                        parameters_data.append(
+                            gt3x_parameters_extractor(
+                                timestamp, record_data, sample_rate
+                            )
+                        )
                     elif record_type is RecordType.CAPSENSE:
-                        capsense_data.append(gt3x_capsense_extractor(timestamp, record_data, sample_rate))
+                        capsense_data.append(
+                            gt3x_capsense_extractor(timestamp, record_data, sample_rate)
+                        )
                     elif record_type is RecordType.SENSOR_SCHEMA:
                         sensor_schema.append(gt3x_sensor_schema_extractor(record_data))
                     elif record_type is RecordType.SENSOR_DATA:
                         if sensor_schema:
-                            sensor_data_data.append(gt3x_sensor_data_extractor(timestamp, record_data, sensor_schema))
+                            sensor_data_data.append(
+                                gt3x_sensor_data_extractor(
+                                    timestamp, record_data, sensor_schema
+                                )
+                            )
                         else:
-                            print('Trying to extract SENSOR_DATA, but no SENSOR_SCHEMA!')
+                            print(
+                                "Trying to extract SENSOR_DATA, but no SENSOR_SCHEMA!"
+                            )
                     elif record_type is RecordType.ACTIVITY2:
                         if len(record_data) > 1:
-                            activity_data.append(gt3x_activity2_extractor(timestamp, record_data, sample_rate, scale))
+                            activity_data.append(
+                                gt3x_activity2_extractor(
+                                    timestamp, record_data, sample_rate, scale
+                                )
+                            )
                         else:
                             # Placed on USB charger - ignoring.
                             pass
                     else:
-                        print('Unhandled record type:', hex(record_type), 'size:', len(record_data),
-                              ' read ', data_offset, ' / ', len(filedata))
+                        print(
+                            "Unhandled record type:",
+                            hex(record_type),
+                            "size:",
+                            len(record_data),
+                            " read ",
+                            data_offset,
+                            " / ",
+                            len(filedata),
+                        )
                 else:
-                    print('Checksum error read:', checksum, 'calculated:', cs_check, ' read ',
-                          data_offset, ' / ', len(filedata))
-                    print('Extracted record: ', hex(separator), hex(record_type), hex(timestamp), hex(record_size))
+                    print(
+                        "Checksum error read:",
+                        checksum,
+                        "calculated:",
+                        cs_check,
+                        " read ",
+                        data_offset,
+                        " / ",
+                        len(filedata),
+                    )
+                    print(
+                        "Extracted record: ",
+                        hex(separator),
+                        hex(record_type),
+                        hex(timestamp),
+                        hex(record_size),
+                    )
 
                 # print('record length:', len(record_data), 'checksum:', hex(checksum))
                 data_offset += 8 + len(record_data) + 1
 
     # Return file info and data contents
-    return [info, {'activity': activity_data,
-                   'sensor_data': sensor_data_data,
-                   'battery': battery_data,
-                   'lux': lux_data,
-                   'capsense': capsense_data,
-                   'event': event_data,
-                   'parameters': parameters_data,
-                   'metadata': metadata_data
-                   }]
-
-
-
-
+    return [
+        info,
+        {
+            "activity": activity_data,
+            "sensor_data": sensor_data_data,
+            "battery": battery_data,
+            "lux": lux_data,
+            "capsense": capsense_data,
+            "event": event_data,
+            "parameters": parameters_data,
+            "metadata": metadata_data,
+        },
+    ]

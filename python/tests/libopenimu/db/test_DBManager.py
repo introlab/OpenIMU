@@ -24,20 +24,21 @@ from libopenimu.models.Channel import Channel
 class DBManagerTest(unittest.TestCase):
 
     # All tests will use this name for the database
-    TESTDB_NAME = "openimu.db"
+    TESTDB_NAME = ":memory:"
 
     def setUp(self):
-
-        # Cleanup database
-        if os.path.isfile(DBManagerTest.TESTDB_NAME):
-            print("Removing database : ", DBManagerTest.TESTDB_NAME)
-            os.remove(DBManagerTest.TESTDB_NAME)
+        pass
 
     def tearDown(self):
         pass
 
     def test_add_group(self):
-        manager = DBManager(filename=DBManagerTest.TESTDB_NAME, overwrite=True)
+        manager = DBManager(
+            filename=DBManagerTest.TESTDB_NAME,
+            echo=True,
+            overwrite=False,
+            newfile=True,
+        )
 
         # Group information
         group = Group(name="Group Name", description="Group Description")
@@ -50,7 +51,12 @@ class DBManagerTest(unittest.TestCase):
         manager.close()
 
     def test_add_sensor(self):
-        manager = DBManager(filename="openimu.db", overwrite=True)
+        manager = DBManager(
+            filename=DBManagerTest.TESTDB_NAME,
+            echo=True,
+            overwrite=False,
+            newfile=True,
+        )
 
         # Sensor information
         id_sensor_type = SensorType.ACCELEROMETER
@@ -77,7 +83,12 @@ class DBManagerTest(unittest.TestCase):
 
     def test_get_all_sensors(self):
 
-        manager = DBManager(filename="openimu.db", overwrite=True)
+        manager = DBManager(
+            filename=DBManagerTest.TESTDB_NAME,
+            echo=True,
+            overwrite=False,
+            newfile=True,
+        )
 
         # Sensor information
         id_sensor_type = SensorType.ACCELEROMETER
@@ -116,7 +127,12 @@ class DBManagerTest(unittest.TestCase):
         manager.close()
 
     def test_add_participant(self):
-        manager = DBManager(filename="openimu.db", overwrite=True)
+        manager = DBManager(
+            filename=DBManagerTest.TESTDB_NAME,
+            echo=True,
+            overwrite=False,
+            newfile=True,
+        )
 
         # Participant information
         group_name = "My Group"
@@ -141,7 +157,12 @@ class DBManagerTest(unittest.TestCase):
         manager.close()
 
     def test_get_all_participants(self):
-        manager = DBManager(filename="openimu.db", overwrite=True)
+        manager = DBManager(
+            filename=DBManagerTest.TESTDB_NAME,
+            echo=True,
+            overwrite=False,
+            newfile=True,
+        )
         # This will add participants
 
         # Participant information
@@ -176,7 +197,12 @@ class DBManagerTest(unittest.TestCase):
         manager.close()
 
     def test_add_recordset(self):
-        manager = DBManager(filename="openimu.db", overwrite=True, echo=False)
+        manager = DBManager(
+            filename=DBManagerTest.TESTDB_NAME,
+            echo=True,
+            overwrite=False,
+            newfile=True,
+        )
 
         # Participant information
         group = manager.update_group(
@@ -203,7 +229,12 @@ class DBManagerTest(unittest.TestCase):
         manager.close()
 
     def test_get_all_recordsets(self):
-        manager = DBManager(filename="openimu.db", overwrite=True)
+        manager = DBManager(
+            filename=DBManagerTest.TESTDB_NAME,
+            echo=True,
+            overwrite=False,
+            newfile=True,
+        )
 
         # Participant information
         group = manager.update_group(
@@ -259,7 +290,12 @@ class DBManagerTest(unittest.TestCase):
         manager.close()
 
     def test_add_channel(self):
-        manager = DBManager(filename="openimu.db", overwrite=True)
+        manager = DBManager(
+            filename=DBManagerTest.TESTDB_NAME,
+            echo=True,
+            overwrite=False,
+            newfile=True,
+        )
 
         # Create sensor in DB
         sensor = manager.add_sensor(
@@ -274,15 +310,26 @@ class DBManagerTest(unittest.TestCase):
         manager.close()
 
     def test_get_all_channels(self):
-        manager = DBManager(filename="openimu.db", overwrite=True)
+        manager = DBManager(
+            filename=DBManagerTest.TESTDB_NAME,
+            echo=True,
+            overwrite=False,
+            newfile=True,
+        )
 
         # Create sensor in DB
         sensor = manager.add_sensor(
             SensorType.ACCELEROMETER, "Sensor Name", "Hardware Name", "Wrist", 30.0, 1
         )
-        # channelx = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_X')
-        # channely = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_Y')
-        # channelz = manager.add_channel(sensor, Units.GRAVITY_G, DataFormat.FLOAT32, 'Accelerometer_Z')
+        channelx = manager.add_channel(
+            sensor, Units.GRAVITY_G, DataFormat.FLOAT32, "Accelerometer_X"
+        )
+        channely = manager.add_channel(
+            sensor, Units.GRAVITY_G, DataFormat.FLOAT32, "Accelerometer_Y"
+        )
+        channelz = manager.add_channel(
+            sensor, Units.GRAVITY_G, DataFormat.FLOAT32, "Accelerometer_Z"
+        )
 
         # Get all channels (from all sensor)
         channels = manager.get_all_channels()
@@ -299,7 +346,12 @@ class DBManagerTest(unittest.TestCase):
         manager.close()
 
     def test_add_sensor_data(self):
-        manager = DBManager(filename="openimu.db", overwrite=True)
+        manager = DBManager(
+            filename=DBManagerTest.TESTDB_NAME,
+            echo=True,
+            overwrite=False,
+            newfile=True,
+        )
 
         # Create sensor in DB
         group = manager.update_group(
@@ -345,7 +397,12 @@ class DBManagerTest(unittest.TestCase):
         manager.close()
 
     def test_get_all_sensor_data_with_args(self):
-        manager = DBManager(filename="openimu.db", overwrite=True, echo=False)
+        manager = DBManager(
+            filename=DBManagerTest.TESTDB_NAME,
+            echo=True,
+            overwrite=False,
+            newfile=True,
+        )
 
         # Create sensor in DB
         group = manager.update_group(
@@ -384,15 +441,19 @@ class DBManagerTest(unittest.TestCase):
         )
 
         data = np.zeros(40, dtype=np.float32)
-        # sensordata = manager.add_sensor_data(recordset, sensor, channel1, timestamps, data)
-        # sensordata = manager.add_sensor_data(recordset, sensor, channel2, timestamps, data)
+        sensordata = manager.add_sensor_data(
+            recordset, sensor, channel1, timestamps, data
+        )
+        sensordata = manager.add_sensor_data(
+            recordset, sensor, channel2, timestamps, data
+        )
         manager.commit()
 
         # Test with no args, return everything in the recordset
         sensordata_res = manager.get_all_sensor_data(recordset=recordset, convert=True)
         self.assertEqual(len(sensordata_res), 2)
         for sensor_data in sensordata_res:
-            self.assertEqual(len(sensor_data.data), len(data))
+            self.assertEqual(len(sensor_data.data), 4 * len(data))
 
         # Test with a valid sensor arg
         sensordata_res = manager.get_all_sensor_data(
@@ -400,7 +461,7 @@ class DBManagerTest(unittest.TestCase):
         )
         self.assertEqual(len(sensordata_res), 2)
         for sensor_data in sensordata_res:
-            self.assertEqual(len(sensor_data.data), len(data))
+            self.assertEqual(len(sensor_data.data), 4 * len(data))
 
         # Test with not the right sensor arg
         sensordata_res = manager.get_all_sensor_data(
@@ -420,7 +481,7 @@ class DBManagerTest(unittest.TestCase):
         )
         self.assertEqual(len(sensordata_res), 1)
         for sensor_data in sensordata_res:
-            self.assertEqual(len(sensor_data.data), len(data))
+            self.assertEqual(len(sensor_data.data), 4 * len(data))
 
         # Testing with channel2
         sensordata_res = manager.get_all_sensor_data(
@@ -428,7 +489,7 @@ class DBManagerTest(unittest.TestCase):
         )
         self.assertEqual(len(sensordata_res), 1)
         for sensor_data in sensordata_res:
-            self.assertEqual(len(sensor_data.data), len(data))
+            self.assertEqual(len(sensor_data.data), 4 * len(data))
 
         # Testing with invalid channel
         sensordata_res = manager.get_all_sensor_data(

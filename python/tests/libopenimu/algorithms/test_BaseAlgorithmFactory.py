@@ -38,3 +38,15 @@ class TestBaseAlgorithmFactory(unittest.TestCase):
             key = factory.unique_key()
             self.assertNotIn(key, keys)
             keys.append(key)
+
+    def test_all_factories_have_params(self):
+        for factory in base.BaseAlgorithmFactory.factories:
+            params = factory.params()
+            self.assertIsInstance(params, dict)
+            self.assertGreater(len(params), 0)
+
+    def test_all_factories_have_results(self):
+        for factory in base.BaseAlgorithmFactory.factories:
+            results = factory.results()
+            self.assertIsInstance(results, list)
+            self.assertGreater(len(results), 0)

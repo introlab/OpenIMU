@@ -241,7 +241,7 @@ class Evenson2008Factory(BaseAlgorithmFactory):
         # Create instance of algorithm
         return Evenson2008(params)
 
-    def unique_key(self):
+    def unique_key(self) -> str:
         return "Evenson2008"
 
     def params(self):
@@ -269,6 +269,17 @@ class Evenson2008Factory(BaseAlgorithmFactory):
             },
         }
 
+    def results(self) -> list:
+        """
+        Should return a dict with the results structure and description.
+        :return dict:
+        """
+        return [
+            {"name": "sedentary", "description": "Minutes for sedentary activity"},
+            {"name": "light", "description": "Minutes for light activity"},
+            {"name": "moderate", "description": "Minutes for moderate activity"},
+        ]
+
     def name(self):
         return "Evenson 2008"
 
@@ -295,6 +306,7 @@ class Evenson2008Factory(BaseAlgorithmFactory):
 
         """,
             "name": self.name(),
+            "key": self.unique_key(),
             "author": "Simon Brière",
             "version": "0.1",
             "reference": (
