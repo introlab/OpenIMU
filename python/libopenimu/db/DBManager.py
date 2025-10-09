@@ -141,6 +141,7 @@ class DBManager:
 
     def close(self):
         self.session.close()
+        self.engine.dispose()
 
     def commit(self):
         self.session.commit()
