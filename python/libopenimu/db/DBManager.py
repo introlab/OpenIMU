@@ -14,6 +14,7 @@ import warnings
 import sqlalchemy
 from sqlalchemy import create_engine, asc, or_, and_
 from sqlalchemy.orm import sessionmaker
+from sqlite3 import Connection as SQLite3Connection
 
 # noinspection PyProtectedMember
 from sqlalchemy.engine import Engine
@@ -135,9 +136,10 @@ class DBManager:
     @staticmethod
     @event.listens_for(Engine, "connect")
     def set_sqlite_pragma(dbapi_connection, connection_record):
-        cursor = dbapi_connection.cursor()
-        cursor.execute("PRAGMA foreign_keys=ON")
-        cursor.close()
+        if isinstance(dbapi_connection, SQLite3Connection):
+            cursor = dbapi_connection.cursor()
+            cursor.execute("PRAGMA foreign_keys=ON")
+            cursor.close()
 
     def close(self):
         self.session.close()

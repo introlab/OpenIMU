@@ -145,7 +145,7 @@ class BaseImporter:
         """
         Notify observers of import progress
         """
-        print("Progress: " + str(progress))
+        # print("Progress: " + str(progress))
         self._notify_observers("on_import_progress", self, progress)
 
     def notify_import_started(self, filename: str) -> None:
