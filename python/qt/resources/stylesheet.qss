@@ -352,6 +352,12 @@ QTableWidget#tableParams QHeaderView, QTableWidget#tableData QHeaderView{
 /************************/
 QListWidget{
     background-color:rgba(200,200,200,70%);
+    color: black;
+}
+QListWidget::item:selected{
+    background-color:rgba(173, 216, 230, 100%);
+    color: black;
+    font-weight: bold;
 }
 /*
 QListWidget#lstSensors, QListWidget#lstDevices{
@@ -417,7 +423,7 @@ QComboBox{
 /************************/
 /* QSpinBox            */
 /************************/
-
+/*
 QSpinBox{
    background-color:rgba(226, 226, 226,90%);
    border-radius:0px;
@@ -427,7 +433,7 @@ QSpinBox{
 QSpinBox:!enabled{
     color: white;
     background-color: transparent;
-}
+}*/
 
 QSpinBox#spinPort:!enabled{
     color: orange;

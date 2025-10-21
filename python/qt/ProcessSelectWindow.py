@@ -30,9 +30,8 @@ class ProcessSelectWindow(QDialog):
         self.UI.btnProcess.setEnabled(False)
         self.recordsets = recordsets
         self.factory = None
-        self.fill_algorithms_list()
-
         self.config_widget: BaseConfigWidget = None
+        self.fill_algorithms_list()
 
         # Connect signals
         self.UI.btnProcess.clicked.connect(self.on_process_button_clicked)
