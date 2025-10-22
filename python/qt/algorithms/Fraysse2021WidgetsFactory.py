@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QTableWidgetItem, QWidget
 from qt.algorithms.AlgorithmWidgetsFactory import AlgorithmWidgetsFactory
 from qt.algorithms.Fraysse2021ConfigWidget import Fraysse2021ConfigWidget
+from qt.algorithms.Fraysse2021DisplayWidget import Fraysse2021DisplayWidget
 
 
 class Fraysse2021WidgetsFactory(AlgorithmWidgetsFactory):
@@ -12,4 +13,4 @@ class Fraysse2021WidgetsFactory(AlgorithmWidgetsFactory):
         return Fraysse2021ConfigWidget(self.params(), parent)
 
     def build_display_widget(self, parent: QWidget, results, recordsets) -> QWidget:
-        pass
+        return Fraysse2021DisplayWidget(results, recordsets, parent)

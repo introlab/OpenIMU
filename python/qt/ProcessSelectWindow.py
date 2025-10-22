@@ -55,7 +55,7 @@ class ProcessSelectWindow(QDialog):
         # print('onListWidgetItemClicked')
         # Fill info
         self.factory = BaseAlgorithmFactory.get_factory_named(item.text())
-        print(f"Factory for {item.text()}: {self.factory}")
+        # print(f"Factory for {item.text()}: {self.factory}")
         if self.factory is None:
             print("Factory is None!")
             return
@@ -90,14 +90,14 @@ class ProcessSelectWindow(QDialog):
         widgets_factory = AlgorithmWidgetsFactory.get_factory_with_id(
             self.factory.unique_id()
         )
-        print(f"Widgets factory: {widgets_factory}")
+        # print(f"Widgets factory: {widgets_factory}")
         if widgets_factory is None:
             print("Widgets factory is None!")
             return
 
         try:
             self.config_widget = widgets_factory.build_config_widget(None)  # Don't pass parent
-            print(f"Config widget: {self.config_widget}")
+            # print(f"Config widget: {self.config_widget}")
         except Exception as e:
             print(f"Exception creating config widget: {e}")
             import traceback

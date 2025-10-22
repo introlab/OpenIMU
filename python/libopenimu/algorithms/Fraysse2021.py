@@ -1,4 +1,5 @@
 from scipy.signal import butter, sosfilt
+import numpy as np
 
 from .BaseAlgorithm import BaseAlgorithmFactory
 from .BaseAlgorithm import BaseAlgorithm
@@ -13,7 +14,7 @@ class Fraysse2021(BaseAlgorithm):
     def configure(self, params: dict):
         pass
 
-    def calculate(self, manager: DBManager, recordsets: list) -> dict:
+    def calculate(self, manager: DBManager, recordsets: list):
         # Load accelerometer data for the recordsets
         results = []
 
@@ -50,13 +51,70 @@ class Fraysse2021(BaseAlgorithm):
                     wn = self.params["cutoff"] / sensor.sampling_rate
                     sos = butter(2, wn, btype='lowpass', output='sos')
 
-                    # acc_x_filt = sosfilt(sos, all_channels_data["Accelerometer_X"])
-                    # acc_y_filt = sosfilt(sos, all_channels_data["Accelerometer_Y"])
-                    # acc_z_filt = sosfilt(sos, all_channels_data["Accelerometer_Z"])
+                    all_values = np.zeros((samples_num, len(all_channels_data)))
+                    all_timestamps = np.zeros(samples_num)
 
+                    for channel_index, channel in enumerate(all_channels_data):
+                        current_index = 0
+                        for sample in all_channels_data[channel]:
+                            # Get time series
+                            values = sample.to_ndarray()
 
+                            # Filter data bandpass (0.25-2.5 Hz), order = 4
+                            filtered_data = sosfilt(sos, values)
+                            all_values[
+                                current_index: current_index + len(filtered_data), channel_index
+                            ] = filtered_data
+                            if channel_index == 0:
+                                all_timestamps[
+                                    current_index: current_index + len(filtered_data)
+                                ] = sample.timestamps.to_ndarray()
+                            current_index += len(filtered_data)
 
-        # Apply filtering
+                    # Compute acceleration vector norm
+                    timeseries = {
+                        "values": np.linalg.norm(all_values, axis=1),
+                        "time": all_timestamps,
+                    }
+                    del all_timestamps
+                    del all_values
+                    # Remove gravity
+                    timeseries["values"][timeseries["values"] > 0] = timeseries["values"][
+                                                                          timeseries["values"] > 0] - 1
+
+                    # Remove negative values
+                    np.absolute(timeseries['values'], out=timeseries['values'])
+
+                    # Sum over window size
+                    timeseries['values'] = np.convolve(timeseries['values'],
+                                                       np.ones(self.params['window']*int(sensor.sampling_rate), dtype=int),
+                                                       'valid')
+
+                    # Categorize values
+                    sedentary_light_threshold = self.params["light_cutoff"]/12*sensor.sampling_rate/100
+                    light_moderate_threshold = self.params["moderate_cutoff"]/12*sensor.sampling_rate/100
+
+                    cat = np.ones(timeseries['values'].size)
+                    cat[timeseries['values'] > light_moderate_threshold] = 2
+                    cat[timeseries['values'] < sedentary_light_threshold] = 0
+
+                    # Compute time and generate results
+                    result = {
+                        "id_recordset": record.id_recordset,
+                        "result_name": record.name
+                                       + " ("
+                                       + sensor.location
+                                       + "/"
+                                       + sensor.name
+                                       + ")",
+                        "id_sensor": sensor.id_sensor,
+                        "result": {'Sedentary': np.sum(cat == 0) / sensor.sampling_rate,
+                                   'Light': np.sum(cat == 1) / sensor.sampling_rate,
+                                   'Moderate': np.sum(cat == 2) / sensor.sampling_rate},
+                    }
+                    results.append(result)
+
+        return results
 
 
 
